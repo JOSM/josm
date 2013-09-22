@@ -131,7 +131,7 @@ public final class AlignInLineAction extends JosmAction {
             Way w = null;
             if(selectedWays.size() == 1) {
                 w = selectedWays.iterator().next();
-                if(w.containsNode(n) == false)
+                if (!w.containsNode(n))
                     // warning
                     return;
             } else {

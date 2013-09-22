@@ -96,7 +96,7 @@ public class Diff {
      */
     public Diff(Object[] a,Object[] b) {
         Map<Object,Integer> h = new HashMap<Object,Integer>(a.length + b.length);
-        filevec = new file_data[] { new file_data(a,h),new file_data(b,h) };
+        filevec = new FileData[] { new FileData(a,h),new FileData(b,h) };
     }
 
     /** 1 more than the maximum equivalence value used for this or its
@@ -122,7 +122,7 @@ public class Diff {
                    along the given diagonal in the backward
                    search of the edit matrix. */
     private int fdiagoff, bdiagoff;
-    private final file_data[] filevec;
+    private final FileData[] filevec;
     private int cost;
     /** Snakes bigger than this are considered "big". */
     private static final int SNAKE_LIMIT = 20;
@@ -357,8 +357,7 @@ public class Diff {
             while (xoff < xlim) {
                 filevec[0].changed_flag[1+filevec[0].realindexes[xoff++]] = true;
             }
-        } else
-        {
+        } else {
             /* Find a point of correspondence in the middle of the files.  */
 
             int d = diag (xoff, xlim, yoff, ylim);
@@ -377,9 +376,9 @@ public class Diff {
                 /* Use that point to split this problem into two subproblems.  */
                 compareseq (xoff, b, yoff, b - d);
                 /* This used to use f instead of b,
-           but that is incorrect!
-           It is not necessarily the case that diagonal d
-           has a snake from b to f.  */
+                   but that is incorrect!
+                   It is not necessarily the case that diagonal d
+                   has a snake from b to f.  */
                 compareseq (b, xlim, b - d, ylim);
             }
         }
@@ -387,7 +386,6 @@ public class Diff {
 
     /** Discard lines from one file that have no matches in the other file.
      */
-
     private void discard_confusing_lines() {
         filevec[0].discard_confusing_lines(filevec[1]);
         filevec[1].discard_confusing_lines(filevec[0]);
@@ -396,9 +394,8 @@ public class Diff {
     private boolean inhibit = false;
 
     /** Adjust inserts/deletes of blank lines to join changes
-     as much as possible.
+        as much as possible.
      */
-
     private void shift_boundaries() {
         if (inhibit)
             return;
@@ -408,14 +405,14 @@ public class Diff {
 
     public interface ScriptBuilder {
         /** Scan the tables of which lines are inserted and deleted,
-     producing an edit script.
-   @param changed0 true for lines in first file which do not match 2nd
-   @param len0 number of lines in first file
-   @param changed1 true for lines in 2nd file which do not match 1st
-   @param len1 number of lines in 2nd file
-   @return a linked list of changes - or null
+            producing an edit script.
+            @param changed0 true for lines in first file which do not match 2nd
+            @param len0 number of lines in first file
+            @param changed1 true for lines in 2nd file which do not match 1st
+            @param len1 number of lines in 2nd file
+            @return a linked list of changes - or null
          */
-        public change build_script(
+        public Change build_script(
                 boolean[] changed0,int len0,
                 boolean[] changed1,int len1
         );
@@ -426,11 +423,11 @@ public class Diff {
 
     static class ReverseScript implements ScriptBuilder {
         @Override
-        public  change build_script(
+        public  Change build_script(
                 final boolean[] changed0,int len0,
                 final boolean[] changed1,int len1)
         {
-            change script = null;
+            Change script = null;
             int i0 = 0, i1 = 0;
             while (i0 < len0 || i1 < len1) {
                 if (changed0[1+i0] || changed1[1+i1]) {
@@ -445,7 +442,7 @@ public class Diff {
                     }
 
                     /* Record this change.  */
-                    script = new change(line0, line1, i0 - line0, i1 - line1, script);
+                    script = new Change(line0, line1, i0 - line0, i1 - line1, script);
                 }
 
                 /* We have reached lines in the two files that match each other.  */
@@ -458,13 +455,13 @@ public class Diff {
 
     static class ForwardScript implements ScriptBuilder {
         /** Scan the tables of which lines are inserted and deleted,
-       producing an edit script in forward order.  */
+            producing an edit script in forward order.  */
         @Override
-        public change build_script(
+        public Change build_script(
                 final boolean[] changed0,int len0,
                 final boolean[] changed1,int len1)
         {
-            change script = null;
+            Change script = null;
             int i0 = len0, i1 = len1;
 
             while (i0 >= 0 || i1 >= 0)
@@ -482,7 +479,7 @@ public class Diff {
                     }
 
                     /* Record this change.  */
-                    script = new change(i0, i1, line0 - i0, line1 - i1, script);
+                    script = new Change(i0, i1, line0 - i0, line1 - i1, script);
                 }
 
                 /* We have reached lines in the two files that match each other.  */
@@ -498,9 +495,9 @@ public class Diff {
     forwardScript = new ForwardScript(),
     reverseScript = new ReverseScript();
 
-    /* Report the differences of two files.  DEPTH is the current directory
-     depth. */
-    public final change diff_2(final boolean reverse) {
+    /** Report the differences of two files.  DEPTH is the current directory
+        depth. */
+    public final Change diff_2(final boolean reverse) {
         return diff(reverse ? reverseScript : forwardScript);
     }
 
@@ -512,7 +509,7 @@ public class Diff {
      @param bld an object to build the script from change flags
      @return the head of a list of changes
      */
-    public change diff(final ScriptBuilder bld) {
+    public Change diff(final ScriptBuilder bld) {
 
         /* Some lines are obviously insertions or deletions
        because they don't match anything.  Detect them now,
@@ -565,9 +562,9 @@ public class Diff {
      If DELETED is 0 then LINE0 is the number of the line before
      which the insertion was done; vice versa for INSERTED and LINE1.  */
 
-    public static class change {
+    public static class Change {
         /** Previous or next edit command. */
-        public change link;
+        public Change link;
         /** # lines of file 1 changed here.  */
         public final int inserted;
         /** # lines of file 0 changed here.  */
@@ -576,8 +573,6 @@ public class Diff {
         public final int line0;
         /** Line number of 1st inserted line.  */
         public final int line1;
-        /** Change is ignorable. */
-        public boolean ignore;
 
         /** Cons an additional entry onto the front of an edit script OLD.
        LINE0 and LINE1 are the first affected lines in the two files (origin 0).
@@ -586,7 +581,7 @@ public class Diff {
 
        If DELETED is 0 then LINE0 is the number of the line before
        which the insertion was done; vice versa for INSERTED and LINE1.  */
-        public change(int line0, int line1, int deleted, int inserted, change old) {
+        public Change(int line0, int line1, int deleted, int inserted, Change old) {
             this.line0 = line0;
             this.line1 = line1;
             this.inserted = inserted;
@@ -603,19 +598,19 @@ public class Diff {
     /** Data on one input file being compared.
      */
 
-    class file_data {
+    class FileData {
 
         /** Allocate changed array for the results of comparison.  */
         void clear() {
             /* Allocate a flag for each line of each file, saying whether that line
-     is an insertion or deletion.
-     Allocate an extra element, always zero, at each end of each vector.
+               is an insertion or deletion.
+               Allocate an extra element, always zero, at each end of each vector.
              */
             changed_flag = new boolean[buffered_lines + 2];
         }
 
         /** Return equiv_count[I] as the number of lines in this file
-       that fall in equivalence class I.
+         that fall in equivalence class I.
          @return the array of equivalence class counts.
          */
         int[] equivCount() {
@@ -639,7 +634,7 @@ public class Diff {
        so that it will be printed in the output.
       @param f the other file
          */
-        void discard_confusing_lines(file_data f) {
+        void discard_confusing_lines(FileData f) {
             clear();
             /* Set up table of which lines are going to be discarded. */
             final byte[] discarded = discardable(f.equivCount());
@@ -728,20 +723,17 @@ public class Diff {
                     }
 
                     /* Now we have the length of a run of discardable lines
-           whose first and last are not provisional.  */
+                       whose first and last are not provisional.  */
                     length = j - i;
 
                     /* If 1/4 of the lines in the run are provisional,
-           cancel discarding of all provisional lines in the run.  */
-                    if (provisional * 4 > length)
-                    {
+                       cancel discarding of all provisional lines in the run.  */
+                    if (provisional * 4 > length) {
                         while (j > i)
                             if (discards[--j] == 2) {
                                 discards[j] = 0;
                             }
-                    }
-                    else
-                    {
+                    } else {
                         int consec;
                         int minimum = 1;
                         int tem = length / 4;
@@ -816,7 +808,7 @@ public class Diff {
         }
 
         /** Actually discard the lines.
-      @param discards flags lines to be discarded
+            @param discards flags lines to be discarded
          */
         private void discard(final byte[] discards) {
             final int end = buffered_lines;
@@ -832,14 +824,14 @@ public class Diff {
             nondiscarded_lines = j;
         }
 
-        file_data(int[] data) {
+        FileData(int[] data) {
             buffered_lines = data.length;
             equivs = data;
             undiscarded = new int[buffered_lines];
             realindexes = new int[buffered_lines];
         }
         
-        file_data(Object[] data,Map<Object,Integer> h) {
+        FileData(Object[] data,Map<Object,Integer> h) {
             this(new int[data.length]);
             // FIXME: diff 2.7 removes common prefix and common suffix
             for (int i = 0; i < data.length; ++i) {
@@ -865,7 +857,7 @@ public class Diff {
       @param f the file being compared against
          */
 
-        void shift_boundaries(file_data f) {
+        void shift_boundaries(FileData f) {
             final boolean[] changed = changed_flag;
             final boolean[] other_changed = f.changed_flag;
             int i = 0;
@@ -908,13 +900,13 @@ public class Diff {
                     end = i;
 
                     /* If the first changed line matches the following unchanged one,
-         and this run does not follow right after a previous run,
-         and there are no lines deleted from the other file here,
-         then classify the first changed line as unchanged
-         and the following line as changed in its place.  */
+                       and this run does not follow right after a previous run,
+                       and there are no lines deleted from the other file here,
+                       then classify the first changed line as unchanged
+                       and the following line as changed in its place.  */
 
                     /* You might ask, how could this run follow right after another?
-         Only because the previous run was shifted here.  */
+                       Only because the previous run was shifted here.  */
 
                     if (end != i_end
                             && equivs[start] == equivs[end]
@@ -928,8 +920,8 @@ public class Diff {
                         changed[1+start++] = false;
                         ++i;
                         /* Since one line-that-matches is now before this run
-             instead of after, we must advance in the other file
-             to keep in synch.  */
+                           instead of after, we must advance in the other file
+                           to keep in synch.  */
                         ++j;
                     } else {
                         break;
@@ -964,6 +956,5 @@ public class Diff {
            containing true for a line that is an insertion or a deletion.
            The results of comparison are stored here.  */
         boolean[]       changed_flag;
-
     }
 }

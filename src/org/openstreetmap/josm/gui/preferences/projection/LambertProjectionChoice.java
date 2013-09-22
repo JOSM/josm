@@ -15,13 +15,16 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class LambertProjectionChoice extends ListProjectionChoice {
 
-    public static String[] lambert4zones = {
+    private static final String[] lambert4zones = {
         tr("{0} ({1} to {2} degrees)", 1,"51.30","48.15"),
         tr("{0} ({1} to {2} degrees)", 2,"48.15","45.45"),
         tr("{0} ({1} to {2} degrees)", 3,"45.45","42.76"),
         tr("{0} (Corsica)", 4)
     };
 
+    /**
+     * Constructs a new {@code LambertProjectionChoice}.
+     */
     public LambertProjectionChoice() {
         super(tr("Lambert 4 Zones (France)"), "core:lambert", lambert4zones, tr("Lambert CC Zone"));
     }

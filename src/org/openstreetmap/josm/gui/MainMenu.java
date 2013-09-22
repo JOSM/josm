@@ -328,7 +328,7 @@ public class MainMenu extends JMenuBar {
      */
     public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 11, ht("/Menu/Help"));
 
-    private final int defaultMenuPos = 11;
+    private static final int defaultMenuPos = 11;
 
     public final JosmAction moveUpAction = new MoveAction(MoveAction.Direction.UP);
     public final JosmAction moveDownAction = new MoveAction(MoveAction.Direction.DOWN);

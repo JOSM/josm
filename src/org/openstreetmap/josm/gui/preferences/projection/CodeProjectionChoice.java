@@ -49,7 +49,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         public JList selectionList;
         List<String> data;
         List<String> filteredData;
-        final String DEFAULT_CODE = "EPSG:3857";
+        static final String DEFAULT_CODE = "EPSG:3857";
         String lastCode = DEFAULT_CODE;
         ActionListener listener;
 

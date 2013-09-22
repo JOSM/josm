@@ -37,7 +37,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -373,24 +372,23 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                         break;
                     }
                 }
-                Collection<Command> commands=new Vector<Command>();
+                Collection<Command> commands = new ArrayList<Command>();
                 commands.add(new ChangePropertyCommand(sel, key, null));
                 if (value.equals(tr("<different>"))) {
-                    HashMap<String, Vector<OsmPrimitive>> map=new HashMap<String, Vector<OsmPrimitive>>();
+                    Map<String, ArrayList<OsmPrimitive>> map = new HashMap<String, ArrayList<OsmPrimitive>>();
                     for (OsmPrimitive osm: sel) {
-                        String val=osm.get(key);
-                        if(val != null)
-                        {
+                        String val = osm.get(key);
+                        if (val != null) {
                             if (map.containsKey(val)) {
                                 map.get(val).add(osm);
                             } else {
-                                Vector<OsmPrimitive> v = new Vector<OsmPrimitive>();
+                                ArrayList<OsmPrimitive> v = new ArrayList<OsmPrimitive>();
                                 v.add(osm);
                                 map.put(val, v);
                             }
                         }
                     }
-                    for (Map.Entry<String, Vector<OsmPrimitive>> e: map.entrySet()) {
+                    for (Map.Entry<String, ArrayList<OsmPrimitive>> e: map.entrySet()) {
                         commands.add(new ChangePropertyCommand(e.getValue(), newkey, e.getKey()));
                     }
                 } else {

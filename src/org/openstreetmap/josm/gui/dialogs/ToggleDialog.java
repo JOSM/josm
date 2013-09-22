@@ -235,7 +235,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         @Override
         public void actionPerformed(ActionEvent e) {
             toggleButtonHook();
-            if(getValue("toolbarbutton") != null && getValue("toolbarbutton") instanceof JButton) {
+            if (getValue("toolbarbutton") instanceof JButton) {
                 ((JButton) getValue("toolbarbutton")).setSelected(!isShowing);
             }
             if (isShowing) {
@@ -254,11 +254,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 }
                 showNotify();
             }
-        }
-
-        @Override
-        public void destroy() {
-            super.destroy();
         }
     }
 

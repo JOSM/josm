@@ -411,7 +411,9 @@ public class ImageProvider {
                                 } else {
                                     try {
                                         return new ImageResource(ImageIO.read(new ByteArrayInputStream(bytes)));
-                                    } catch (IOException e) {}
+                                    } catch (IOException e) {
+                                        Main.warn("IOException while reading image: "+e.getMessage());
+                                    }
                                 }
                     }
                 }
@@ -521,7 +523,9 @@ public class ImageProvider {
                 BufferedImage img = null;
                 try {
                     img = ImageIO.read(is.getFile().toURI().toURL());
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                    Main.warn("IOException while reading HTTP image: "+e.getMessage());
+                }
                 return img == null ? null : new ImageResource(img);
             default:
                 throw new AssertionError();

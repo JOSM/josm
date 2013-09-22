@@ -31,11 +31,6 @@ public class TaggingPresetMenu extends TaggingPreset {
                     tr("Preset group {0}", getLocaleName())));
         putValue("toolbar", "tagginggroup_" + getRawName());
     }
-    
-    @Override
-    public void setIcon(String iconName) {
-        super.setIcon(iconName);
-    }
 
     private Component copyMenuComponent(Component menuComponent) {
         if (menuComponent instanceof JMenu) {

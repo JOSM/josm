@@ -16,7 +16,7 @@ public class GeoJSONWriter implements Visitor {
 
     private OsmDataLayer layer;
     private StringBuilder out;
-    private final boolean skipEmptyNodes = true;
+    private static final boolean skipEmptyNodes = true;
     private boolean insertComma = false;
 
     public GeoJSONWriter(OsmDataLayer layer) {

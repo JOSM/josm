@@ -7,7 +7,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -37,7 +39,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class AutoScaleAction extends JosmAction {
 
-    public static final String[] MODES = {
+    public static final Collection<String> MODES = Collections.unmodifiableList(Arrays.asList(
         marktr("data"),
         marktr("layer"),
         marktr("selection"),
@@ -45,7 +47,7 @@ public class AutoScaleAction extends JosmAction {
         marktr("download"),
         marktr("problem"),
         marktr("previous"),
-        marktr("next")};
+        marktr("next")));
 
     private final String mode;
 

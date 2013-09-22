@@ -309,7 +309,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
 
-        if(sanityCheck() == false)
+        if (!sanityCheck())
             return;
 
         updateFlagsOnlyChangeableOnPress();
@@ -583,10 +583,6 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     private String getStringPref(String subKey, String def) {
         return Main.pref.get(prefKey(subKey), def);
-    }
-
-    private String getStringPref(String subKey) {
-        return getStringPref(subKey, null);
     }
 
     @Override

@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.Destroyable;
 public class DialogsPanel extends JPanel implements Destroyable {
     protected List<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
     protected MultiSplitPane mSpltPane = new MultiSplitPane();
-    final protected int DIVIDER_SIZE = 5;
+    protected static final int DIVIDER_SIZE = 5;
 
     /**
      * Panels that are added to the multisplitpane.

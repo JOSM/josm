@@ -25,12 +25,6 @@ public class RotateCommand extends TransformNodesCommand {
     private EastNorth pivot;
 
     /**
-     * World position of the mouse when the user started the command.
-     *
-     */
-    EastNorth startEN = null;
-
-    /**
      * angle of rotation starting click to pivot
      */
     private double startAngle = 0.0;
@@ -48,13 +42,6 @@ public class RotateCommand extends TransformNodesCommand {
         super(objects);
 
         pivot = getNodesCenter();
-
-        // We remember the very first position of the mouse for this action.
-        // Note that SelectAction will keep the same ScaleCommand when the user
-        // releases the button and presses it again with the same modifiers.
-        // The very first point of this operation is stored here.
-        startEN   = currentEN;
-
         startAngle = getAngle(currentEN);
         rotationAngle = 0.0;
 

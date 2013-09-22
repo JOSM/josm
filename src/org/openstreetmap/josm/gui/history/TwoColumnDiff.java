@@ -64,7 +64,7 @@ class TwoColumnDiff {
     
     private void diff() {
         Diff diff = new Diff(reference, current);
-        Diff.change script = diff.diff_2(false);
+        Diff.Change script = diff.diff_2(false);
         twoColumnDiffFromScript(script, reference, current);
     }
 
@@ -72,7 +72,7 @@ class TwoColumnDiff {
      * The result from the diff algorithm is a "script" (a compressed description of the changes)
      * This method expands this script into a full two column description.
      */
-    private void twoColumnDiffFromScript(Diff.change script, Object[] a, Object[] b) {
+    private void twoColumnDiffFromScript(Diff.Change script, Object[] a, Object[] b) {
         int ia = 0;
         int ib = 0;
 

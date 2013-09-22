@@ -174,7 +174,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
          *
          * Using the UTM transvers Mercator projection and specific geodesic settings.
          */
-        registerProjectionChoice(utm_france_dom = new UTM_France_DOM_ProjectionChoice());                            // FR
+        registerProjectionChoice(utm_france_dom = new UTMFranceDOMProjectionChoice());                            // FR
 
         /**
          * LKS-92/ Latvia TM projection.

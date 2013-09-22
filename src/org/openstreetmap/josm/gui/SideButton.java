@@ -28,15 +28,13 @@ public class SideButton extends JButton implements Destroyable {
 
     private PropertyChangeListener propertyChangeListener;
 
-    public SideButton(Action action)
-    {
+    public SideButton(Action action) {
         super(action);
         fixIcon(action);
         doStyle();
     }
 
-    public SideButton(Action action, boolean usename)
-    {
+    public SideButton(Action action, boolean usename) {
         super(action);
         if(!usename) {
             setText(null);
@@ -45,8 +43,7 @@ public class SideButton extends JButton implements Destroyable {
         }
     }
 
-    public SideButton(Action action, String imagename)
-    {
+    public SideButton(Action action, String imagename) {
         super(action);
         setIcon(makeIcon(imagename));
         doStyle();
@@ -66,7 +63,7 @@ public class SideButton extends JButton implements Destroyable {
             });
         }
         Icon i = getIcon();
-        if (i != null && i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
+        if (i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
             setIcon(getScaledImage(((ImageIcon) i).getImage()));
         }
     }

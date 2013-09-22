@@ -83,7 +83,7 @@ public class OsmValidator implements LayerChangeListener {
      * TODO: is there any way to find out automatically all available tests?
      */
     @SuppressWarnings("unchecked")
-    public static Class<Test>[] allAvailableTests = new Class[] {
+    private static final Class<Test>[] allAvailableTests = new Class[] {
         DuplicateNode.class, // ID    1 ..   99
         OverlappingWays.class, // ID  101 ..  199
         UntaggedNode.class, // ID  201 ..  299
