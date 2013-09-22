@@ -27,6 +27,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmChangeTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmCompressedTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmUrlTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadSessionTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -61,6 +62,7 @@ public class OpenLocationAction extends JosmAction {
         addDownloadTaskClass(DownloadOsmUrlTask.class);
         addDownloadTaskClass(DownloadOsmCompressedTask.class);
         addDownloadTaskClass(DownloadOsmChangeCompressedTask.class);
+        addDownloadTaskClass(DownloadSessionTask.class);
     }
 
     /**
