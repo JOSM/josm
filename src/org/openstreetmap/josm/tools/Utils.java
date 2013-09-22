@@ -727,4 +727,23 @@ public class Utils {
         Utils.close(input);
         return all.toString();
     }
+
+    /**
+     * Returns the JOSM temp directory.
+     * @return The JOSM temp directory ({@code <java.io.tmpdir>/JOSM}), or {@code null} if {@code java.io.tmpdir} is not defined
+     * @since 6245
+     */
+    public static File getJosmTempDir() {
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        if (tmpDir == null) {
+            return null;
+        }
+        File josmTmpDir = new File(tmpDir, "JOSM");
+        if (!josmTmpDir.exists()) {
+            if (!josmTmpDir.mkdirs()) {
+                Main.warn("Unable to create temp directory "+josmTmpDir);
+            }
+        }
+        return josmTmpDir;
+    }
 }
