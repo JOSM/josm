@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.Collections;
 
-public class UTM_France_DOM_ProjectionChoice extends ListProjectionChoice {
+public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
 
     private final static String FortMarigotName = tr("Guadeloupe Fort-Marigot 1949");
     private final static String SainteAnneName = tr("Guadeloupe Ste-Anne 1948");
@@ -22,7 +22,10 @@ public class UTM_France_DOM_ProjectionChoice extends ListProjectionChoice {
     private final static Integer GuyaneEPSG = 2972;
     private final static Integer[] utmEPSGs = { FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG, ReunionEPSG, GuyaneEPSG };
 
-    public UTM_France_DOM_ProjectionChoice() {
+    /**
+     * Constructs a new {@code UTMFranceDOMProjectionChoice}.
+     */
+    public UTMFranceDOMProjectionChoice() {
         super(tr("UTM France (DOM)"), "core:utmfrancedom", utmGeodesicsNames, tr("UTM Geodesic system"));
     }
 

@@ -394,16 +394,13 @@ public class MainApplication extends Main {
         boolean maximized = Boolean.parseBoolean(Main.pref.get("gui.maximized"));
         if ((!args.containsKey(Option.NO_MAXIMIZE) && maximized) || args.containsKey(Option.MAXIMIZE)) {
             if (Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH)) {
-                // Main.debug("Main window maximized");
                 Main.windowState = JFrame.MAXIMIZED_BOTH;
                 mainFrame.setExtendedState(Main.windowState);
             } else {
                 Main.debug("Main window: maximizing not supported");
             }
-        } else {
-            // Main.debug("Main window not maximized");
         }
-        if(main.menu.fullscreenToggleAction != null) {
+        if (main.menu.fullscreenToggleAction != null) {
             main.menu.fullscreenToggleAction.initial();
         }
 

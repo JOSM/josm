@@ -26,7 +26,7 @@ import javax.swing.event.MenuListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.actions.Map_Rectifier_WMSmenuAction;
+import org.openstreetmap.josm.actions.MapRectifierWMSmenuAction;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
@@ -79,7 +79,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
 
     private JMenuItem singleOffset = new JMenuItem(offsetAction);
     private JMenuItem offsetMenuItem = singleOffset;
-    private Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
+    private MapRectifierWMSmenuAction rectaction = new MapRectifierWMSmenuAction();
 
     public ImageryMenu(JMenu subMenu) {
         super(tr("Imagery"));

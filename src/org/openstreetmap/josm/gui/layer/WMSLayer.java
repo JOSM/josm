@@ -121,7 +121,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     protected int minZoom = 3;
 
     protected GeorefImage[][] images;
-    protected final int serializeFormatVersion = 5;
+    protected static final int serializeFormatVersion = 5;
     protected boolean autoDownloadEnabled = true;
     protected boolean autoResolutionEnabled = true;
     protected boolean settingsChanged;

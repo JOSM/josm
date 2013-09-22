@@ -62,7 +62,6 @@ public class LafPreference implements SubPreferenceSetting {
             );
         } catch (Exception ex) {
             // just ignore, Quaqua may not even be installed...
-            //System.out.println("Failed to load Quaqua: " + ex);
         }
 
         String laf = Main.pref.get("laf", Main.platform.getDefaultStyle());

@@ -1,5 +1,5 @@
 /**
- * @(#)MenuScroller.java    1.5.0 04/02/12
+ * MenuScroller.java    1.5.0 04/02/12
  * License: use / modify without restrictions (see http://tips4java.wordpress.com/about/)
  */
 package org.openstreetmap.josm.gui;
@@ -437,7 +437,7 @@ public class MenuScroller {
      * @see MenuScroller#dispose()
      */
     @Override
-    public void finalize() throws Throwable {
+    protected void finalize() throws Throwable {
         dispose();
     }
 

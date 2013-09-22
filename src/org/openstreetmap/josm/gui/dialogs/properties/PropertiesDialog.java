@@ -821,16 +821,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     if (cur == last + 1) {
                         ++cnt;
                     } else if (cnt == 0) {
-                        positionString += "," + String.valueOf(cur);
+                        positionString += "," + cur;
                     } else {
-                        positionString += "-" + String.valueOf(last);
-                        positionString += "," + String.valueOf(cur);
+                        positionString += "-" + last;
+                        positionString += "," + cur;
                         cnt = 0;
                     }
                     last = cur;
                 }
                 if (cnt >= 1) {
-                    positionString += "-" + String.valueOf(last);
+                    positionString += "-" + last;
                 }
             }
             if (positionString.length() > 20) {

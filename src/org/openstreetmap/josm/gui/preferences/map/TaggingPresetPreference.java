@@ -186,7 +186,7 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
 
     static class TaggingPresetSourceEditor extends SourceEditor {
 
-        final private String iconpref = "taggingpreset.icon.sources";
+        private static final String iconpref = "taggingpreset.icon.sources";
 
         public TaggingPresetSourceEditor() {
             super(false, Main.JOSM_WEBSITE+"/presets", presetSourceProviders);

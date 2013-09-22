@@ -203,7 +203,7 @@ public final class TaggingPresetItems {
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             String cstring;
             if(count > 0 && !required) {
-                cstring = "0,"+String.valueOf(count);
+                cstring = "0,"+count;
             } else if(count > 0) {
                 cstring = String.valueOf(count);
             } else if(!required) {
@@ -1009,8 +1009,8 @@ public final class TaggingPresetItems {
             return display_array;
         }
 
-        protected String getDisplayIfNull(String display) {
-            return display;
+        protected String getDisplayIfNull() {
+            return null;
         }
 
         @Override
@@ -1019,7 +1019,7 @@ public final class TaggingPresetItems {
             String display = (obj == null) ? null : obj.toString();
             String value = null;
             if (display == null) {
-                display = getDisplayIfNull(display);
+                display = getDisplayIfNull();
             }
 
             if (display != null) {
@@ -1207,12 +1207,11 @@ public final class TaggingPresetItems {
         }
 
         @Override
-        protected String getDisplayIfNull(String display) {
+        protected String getDisplayIfNull() {
             if (combo.isEditable())
                 return combo.getEditor().getItem().toString();
             else
-                return display;
-
+                return null;
         }
     }
     public static class MultiSelect extends ComboMultiSelect {

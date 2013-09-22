@@ -304,8 +304,14 @@ public class AudioPlayer extends Thread {
                                             throw new IOException(tr("This is after the end of the recording"));
                                         bytesToSkip -= nBytesRead;
                                     }
-                                    if (bytesToSkip > 0) {
-                                        audioInputStream.skip(bytesToSkip);
+                                    while (bytesToSkip > 0) {
+                                        long skippedBytes = audioInputStream.skip(bytesToSkip);
+                                        bytesToSkip -= skippedBytes;
+                                        if (skippedBytes == 0) {
+                                            // Avoid inifinite loop
+                                            Main.warn("Unable to skip bytes from audio input stream");
+                                            bytesToSkip = 0;
+                                        }
                                     }
                                     position = offset;
                                 }

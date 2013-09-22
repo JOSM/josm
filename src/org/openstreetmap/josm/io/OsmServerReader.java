@@ -145,11 +145,10 @@ public abstract class OsmServerReader extends OsmConnection {
                 }
 
                 return FixEncoding(new ProgressInputStream(activeConnection, progressMonitor), encoding);
-            } catch(Exception e) {
-                if (e instanceof OsmTransferException)
-                    throw (OsmTransferException)e;
-                else
-                    throw new OsmTransferException(e);
+            } catch (OsmTransferException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new OsmTransferException(e);
             }
         } finally {
             progressMonitor.invalidate();
