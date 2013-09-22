@@ -62,9 +62,7 @@ public class JoinAreasAction extends JosmAction {
      */
     public static class JoinAreasResult {
 
-        public boolean mergeSuccessful;
         public boolean hasChanges;
-        public boolean hasRelationProblems;
 
         public List<Multipolygon> polygons;
     }
@@ -538,7 +536,6 @@ public class JoinAreasAction extends JosmAction {
         }
 
         result.hasChanges = true;
-        result.mergeSuccessful = true;
         result.polygons = polygons;
         return result;
     }

@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.UrlLabel;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
-public class Map_Rectifier_WMSmenuAction extends JosmAction {
+public class MapRectifierWMSmenuAction extends JosmAction {
     /**
      * Class that bundles all required information of a rectifier service
      */
@@ -64,7 +64,7 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
      */
     public ArrayList<RectifierService> services = new ArrayList<RectifierService>();
 
-    public Map_Rectifier_WMSmenuAction() {
+    public MapRectifierWMSmenuAction() {
         super(tr("Rectified Image..."),
                 "OLmarker",
                 tr("Download Rectified Images From Various Services"),

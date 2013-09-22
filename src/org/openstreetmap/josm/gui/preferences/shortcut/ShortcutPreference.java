@@ -40,7 +40,7 @@ public class ShortcutPreference extends DefaultTabPreferenceSetting {
     public void addGui(PreferenceTabbedPane gui) {
         JPanel p = gui.createPreferenceTab(this);
 
-        PrefJPanel prefpanel = new PrefJPanel(new scListModel());
+        PrefJPanel prefpanel = new PrefJPanel(new ScListModel());
         p.add(prefpanel, GBC.eol().fill(GBC.BOTH));
         if (defaultFilter!=null) prefpanel.filter(defaultFilter);
     }
@@ -55,11 +55,11 @@ public class ShortcutPreference extends DefaultTabPreferenceSetting {
     }
 
     // Maybe move this to prefPanel? There's no need for it to be here.
-    private static class scListModel extends AbstractTableModel {
+    private static class ScListModel extends AbstractTableModel {
         private String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
         private List<Shortcut> data;
 
-        public scListModel() {
+        public ScListModel() {
             data = Shortcut.listAll();
         }
         @Override

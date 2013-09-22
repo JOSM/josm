@@ -48,7 +48,7 @@ public class ExifReaderTest {
     @Test
     public void testReadOrientation() {
         Integer orientation = ExifReader.readOrientation(sampleFile);
-        assertEquals(new Integer(1), orientation);
+        assertEquals(Integer.valueOf(1), orientation);
     }
     
     /**

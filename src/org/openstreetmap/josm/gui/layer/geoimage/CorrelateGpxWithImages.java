@@ -36,7 +36,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 import javax.swing.AbstractAction;
@@ -115,7 +114,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     ExtendedDialog syncDialog;
-    Vector<GpxDataWrapper> gpxLst = new Vector<GpxDataWrapper>();
+    List<GpxDataWrapper> gpxLst = new ArrayList<GpxDataWrapper>();
     JPanel outerPanel;
     JosmComboBox cbGpx;
     JosmTextField tfTimezone;
@@ -291,7 +290,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             panelTf.add(new JLabel(tr("I am in the timezone of: ")), gc);
 
             String[] tmp = TimeZone.getAvailableIDs();
-            Vector<String> vtTimezones = new Vector<String>(tmp.length);
+            List<String> vtTimezones = new ArrayList<String>(tmp.length);
 
             for (String tzStr : tmp) {
                 TimeZone tz = TimeZone.getTimeZone(tzStr);
@@ -903,7 +902,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             // This is called whenever one of the sliders is moved.
             // It updates the labels and also calls the "match photos" code
-            class sliderListener implements ChangeListener {
+            class SliderListener implements ChangeListener {
                 @Override
                 public void stateChanged(ChangeEvent e) {
                     // parse slider position into real timezone
@@ -969,12 +968,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
 
             // Call the sliderListener once manually so labels get adjusted
-            new sliderListener().stateChanged(null);
+            new SliderListener().stateChanged(null);
             // Listeners added here, otherwise it tries to match three times
             // (when setting the default values)
-            sldTimezone.addChangeListener(new sliderListener());
-            sldMinutes.addChangeListener(new sliderListener());
-            sldSeconds.addChangeListener(new sliderListener());
+            sldTimezone.addChangeListener(new SliderListener());
+            sldMinutes.addChangeListener(new SliderListener());
+            sldSeconds.addChangeListener(new SliderListener());
 
             // There is no way to cancel this dialog, all changes get applied
             // immediately. Therefore "Close" is marked with an "OK" icon.

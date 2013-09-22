@@ -49,7 +49,7 @@ public final class WaySegment implements Comparable<WaySegment> {
     }
 
     @Override public boolean equals(Object o) {
-        return o != null && o instanceof WaySegment
+        return o instanceof WaySegment
             && ((WaySegment) o).way == way
             && ((WaySegment) o).lowerIndex == lowerIndex;
     }

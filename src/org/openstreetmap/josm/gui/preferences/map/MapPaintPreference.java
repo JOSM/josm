@@ -85,7 +85,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
     static class MapPaintSourceEditor extends SourceEditor {
 
-        final private String iconpref = "mappaint.icon.sources";
+        private static final String iconpref = "mappaint.icon.sources";
 
         public MapPaintSourceEditor() {
             super(true, Main.JOSM_WEBSITE+"/styles", styleSourceProviders);

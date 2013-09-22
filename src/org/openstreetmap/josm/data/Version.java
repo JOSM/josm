@@ -130,7 +130,7 @@ public class Version {
         //
         isLocalBuild = false;
         value = properties.get("Is-Local-Build");
-        if (value != null && value.trim().toLowerCase().equals("true"))  {
+        if (value != null && value.trim().equalsIgnoreCase("true"))  {
             isLocalBuild = true;
         }
 

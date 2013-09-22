@@ -397,7 +397,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public void setVisible(boolean visible) throws IllegalStateException{
-        if (isNew() && visible == false)
+        if (isNew() && !visible)
             throw new IllegalStateException(tr("A primitive with ID = 0 cannot be invisible."));
         updateFlags(FLAG_VISIBLE, visible);
     }

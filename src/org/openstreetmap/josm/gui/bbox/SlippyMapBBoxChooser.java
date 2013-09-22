@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JOptionPane;
@@ -381,7 +380,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
         MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
 
-        Vector<MapMarker> marker = new Vector<MapMarker>(2);
+        List<MapMarker> marker = new ArrayList<MapMarker>(2);
         marker.add(xmin_ymin);
         marker.add(xmax_ymax);
         setMapMarkerList(marker);

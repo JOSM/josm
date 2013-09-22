@@ -33,15 +33,12 @@ public class TextTagParser {
     protected static final int MAX_VALUE_LENGTH = 255;
     
     public static class TextAnalyzer {
-        int start = 0;
-        boolean keyFound = false;
         boolean quotesStarted = false;
         boolean esc = false;
         StringBuilder s = new StringBuilder(200);
         int pos;
         String data;
         int n;
-        boolean notFound;
 
         public TextAnalyzer(String text) {
             pos = 0;

@@ -30,8 +30,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
         LinemodPrototype linemod = new LinemodPrototype();
         AreaPrototype area = new AreaPrototype();
         IconPrototype icon = new IconPrototype();
-        public void init()
-        {
+        public void init() {
             conditions = null;
             scaleMax = Double.POSITIVE_INFINITY;
             scaleMin = 0;
@@ -49,8 +48,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
         rule.init();
     }
 
-    Color convertColor(String colString)
-    {
+    Color convertColor(String colString) {
         int i = colString.indexOf('#');
         Color ret;
         if (i < 0) {
@@ -79,16 +77,13 @@ public class XmlStyleSourceHandler extends DefaultHandler
     }
 
     private void startElementLine(String qName, Attributes atts, LinePrototype line) {
-        for (int count=0; count<atts.getLength(); count++)
-        {
-            if(atts.getQName(count).equals("width"))
-            {
+        for (int count=0; count<atts.getLength(); count++) {
+            if(atts.getQName(count).equals("width")) {
                 String val = atts.getValue(count);
                 if (! (val.startsWith("+") || val.startsWith("-") || val.endsWith("%"))) {
                     line.setWidth(Integer.parseInt(val));
                 }
-            }
-            else if (atts.getQName(count).equals("colour")) {
+            } else if (atts.getQName(count).equals("colour")) {
                 line.color=convertColor(atts.getValue(count));
             } else if (atts.getQName(count).equals("realwidth")) {
                 line.realWidth=Integer.parseInt(atts.getValue(count));
@@ -121,23 +116,16 @@ public class XmlStyleSourceHandler extends DefaultHandler
 
     private void startElementLinemod(String qName, Attributes atts, LinemodPrototype line) {
         startElementLine(qName, atts, line);
-        for (int count=0; count<atts.getLength(); count++)
-        {
-            if(atts.getQName(count).equals("width"))
-            {
+        for (int count=0; count<atts.getLength(); count++) {
+            if (atts.getQName(count).equals("width")) {
                 String val = atts.getValue(count);
-                if(val.startsWith("+"))
-                {
+                if (val.startsWith("+")) {
                     line.setWidth(Integer.parseInt(val.substring(1)));
                     line.widthMode = LinemodPrototype.WidthMode.OFFSET;
-                }
-                else if(val.startsWith("-"))
-                {
+                } else if(val.startsWith("-")) {
                     line.setWidth(Integer.parseInt(val));
                     line.widthMode = LinemodPrototype.WidthMode.OFFSET;
-                }
-                else if(val.endsWith("%"))
-                {
+                } else if(val.endsWith("%")) {
                     line.setWidth(Integer.parseInt(val.substring(0, val.length()-1)));
                     line.widthMode = LinemodPrototype.WidthMode.PERCENT;
                 } else {
@@ -150,12 +138,10 @@ public class XmlStyleSourceHandler extends DefaultHandler
     }
 
     @Override public void startElement(String uri,String name, String qName, Attributes atts) {
-        if (inDoc==true)
-        {
+        if (inDoc) {
             if (qName.equals("rule")) {
                 inRule=true;
-            } else if (qName.equals("rules"))
-            {
+            } else if (qName.equals("rules")) {
                 if (style.name == null) {
                     style.name = atts.getValue("name");
                 }
@@ -165,17 +151,14 @@ public class XmlStyleSourceHandler extends DefaultHandler
                 if (style.icon == null) {
                     style.icon = atts.getValue("icon");
                 }
-            }
-            else if (qName.equals("scale_max")) {
+            } else if (qName.equals("scale_max")) {
                 inScaleMax = true;
             } else if (qName.equals("scale_min")) {
                 inScaleMin = true;
-            } else if (qName.equals("condition") && inRule)
-            {
+            } else if (qName.equals("condition") && inRule) {
                 inCondition=true;
                 XmlCondition c = rule.cond;
-                if(c.key != null)
-                {
+                if (c.key != null) {
                     if(rule.conditions == null) {
                         rule.conditions = new LinkedList<XmlCondition>();
                     }
@@ -183,11 +166,10 @@ public class XmlStyleSourceHandler extends DefaultHandler
                     c = new XmlCondition();
                     rule.conditions.add(c);
                 }
-                for (int count=0; count<atts.getLength(); count++)
-                {
-                    if(atts.getQName(count).equals("k")) {
+                for (int count=0; count<atts.getLength(); count++) {
+                    if (atts.getQName(count).equals("k")) {
                         c.key = atts.getValue(count);
-                    } else if(atts.getQName(count).equals("v")) {
+                    } else if (atts.getQName(count).equals("v")) {
                         c.value = atts.getValue(count);
                     } else if(atts.getQName(count).equals("b")) {
                         c.boolValue = atts.getValue(count);
@@ -198,22 +180,15 @@ public class XmlStyleSourceHandler extends DefaultHandler
                 if(c.key == null) {
                     error("The condition has no key!");
                 }
-            }
-            else if (qName.equals("line"))
-            {
+            } else if (qName.equals("line")) {
                 hadLine = inLine = true;
                 startElementLine(qName, atts, rule.line);
-            }
-            else if (qName.equals("linemod"))
-            {
+            } else if (qName.equals("linemod")) {
                 hadLineMod = inLineMod = true;
                 startElementLinemod(qName, atts, rule.linemod);
-            }
-            else if (qName.equals("icon"))
-            {
+            } else if (qName.equals("icon")) {
                 inIcon = true;
-                for (int count=0; count<atts.getLength(); count++)
-                {
+                for (int count=0; count<atts.getLength(); count++) {
                     if (atts.getQName(count).equals("src")) {
                         IconReference icon = new IconReference(atts.getValue(count), style);
                         hadIcon = (icon != null);
@@ -226,9 +201,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
                         error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
                     }
                 }
-            }
-            else if (qName.equals("area"))
-            {
+            } else if (qName.equals("area")) {
                 hadArea = inArea = true;
                 for (int count=0; count<atts.getLength(); count++)
                 {
@@ -250,24 +223,22 @@ public class XmlStyleSourceHandler extends DefaultHandler
 
     @Override public void endElement(String uri,String name, String qName)
     {
-        if (inRule && qName.equals("rule"))
-        {
-            if(hadLine)
-            {
+        if (inRule && qName.equals("rule")) {
+            if (hadLine) {
                 style.add(rule.cond, rule.conditions,
                         new LinePrototype(rule.line, new Range(rule.scaleMin, rule.scaleMax)));
             }
-            if(hadLineMod)
+            if (hadLineMod)
             {
                 style.add(rule.cond, rule.conditions,
                         new LinemodPrototype(rule.linemod, new Range(rule.scaleMin, rule.scaleMax)));
             }
-            if(hadIcon)
+            if (hadIcon)
             {
                 style.add(rule.cond, rule.conditions,
                         new IconPrototype(rule.icon, new Range(rule.scaleMin, rule.scaleMax)));
             }
-            if(hadArea)
+            if (hadArea)
             {
                 style.add(rule.cond, rule.conditions,
                         new AreaPrototype(rule.area, new Range(rule.scaleMin, rule.scaleMax)));
@@ -275,8 +246,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
             inRule = false;
             hadLine = hadLineMod = hadIcon = hadArea = false;
             rule.init();
-        }
-        else if (inCondition && qName.equals("condition")) {
+        } else if (inCondition && qName.equals("condition")) {
             inCondition = false;
         } else if (inLine && qName.equals("line")) {
             inLine = false;
@@ -293,11 +263,10 @@ public class XmlStyleSourceHandler extends DefaultHandler
         }
     }
 
-    @Override public void characters(char[] ch, int start, int length)
-    {
-        if (inScaleMax == true) {
+    @Override public void characters(char[] ch, int start, int length) {
+        if (inScaleMax) {
             rule.scaleMax = Long.parseLong(new String(ch, start, length));
-        } else if (inScaleMin == true) {
+        } else if (inScaleMin) {
             rule.scaleMin = Long.parseLong(new String(ch, start, length));
         }
     }

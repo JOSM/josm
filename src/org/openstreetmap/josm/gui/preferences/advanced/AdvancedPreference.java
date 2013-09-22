@@ -331,7 +331,11 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                         "Are you sure you want to continue?")
                         +"</html>", null, "")) {
                     Main.pref.resetToDefault();
-                    try { Main.pref.save(); } catch (IOException ex) {}
+                    try {
+                        Main.pref.save();
+                    } catch (IOException e) {
+                        Main.warn("IOException while saving preferences: "+e.getMessage());
+                    }
                     readPreferences(Main.pref);
                     applyFilter();
                 }

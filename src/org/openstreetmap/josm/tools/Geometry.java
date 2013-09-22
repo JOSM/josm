@@ -180,7 +180,7 @@ public class Geometry {
 
 
         for (int pos = 0; pos < ways.size(); pos ++) {
-            if (changedWays[pos] == false) {
+            if (!changedWays[pos]) {
                 continue;
             }
 

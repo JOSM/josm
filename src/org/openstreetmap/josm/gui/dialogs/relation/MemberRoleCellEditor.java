@@ -49,16 +49,6 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
         return editor.getText();
     }
 
-    @Override
-    public void cancelCellEditing() {
-        super.cancelCellEditing();
-    }
-
-    @Override
-    public boolean stopCellEditing() {
-        return super.stopCellEditing();
-    }
-
     /** Returns the edit field for this cell editor. */
     public AutoCompletingTextField getEditor() {
         return editor;

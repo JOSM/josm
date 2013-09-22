@@ -428,7 +428,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
          * sideToolBar: add dynamic popup menu
          */
         sideToolBar.setComponentPopupMenu(new JPopupMenu() {
-            final int staticMenuEntryCount = 2;
+            static final int staticMenuEntryCount = 2;
             JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide toolbar")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {

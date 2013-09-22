@@ -311,7 +311,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 }
                 // only show merge to node cursor if nearby node and that node is currently
                 // not being dragged
-                final boolean hasTarget = osm != null && osm instanceof Node && !osm.isSelected();
+                final boolean hasTarget = osm instanceof Node && !osm.isSelected();
                 c = hasTarget ? "merge_to_node" : "merge";
                 break;
             }
