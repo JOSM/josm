@@ -264,7 +264,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 return;
             }
         }
-        System.out.println(tr("Warning: error header \"{0}\" did not match with an expected pattern", errorHeader));
+        Main.warn(tr("Error header \"{0}\" did not match with an expected pattern", errorHeader));
         handleUploadConflictForUnknownConflict();
     }
 
@@ -279,7 +279,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         if (conflict != null) {
             handleUploadPreconditionFailedConflict(e, conflict);
         } else {
-            System.out.println(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
+            Main.warn(tr("Error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
             ExceptionDialogUtil.explainPreconditionFailed(e);
         }
     }

@@ -29,11 +29,11 @@ public class HTMLGrabber extends WMSGrabber {
     protected BufferedImage grab(WMSRequest request, URL url, int attempt) throws IOException {
         String urlstring = url.toExternalForm();
 
-        System.out.println("Grabbing HTML " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
+        Main.info("Grabbing HTML " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
         ArrayList<String> cmdParams = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(MessageFormat.format(PROP_BROWSER.get(), urlstring));
-        while( st.hasMoreTokens() ) {
+        while (st.hasMoreTokens()) {
             cmdParams.add(st.nextToken());
         }
 
@@ -42,7 +42,7 @@ public class HTMLGrabber extends WMSGrabber {
         Process browser;
         try {
             browser = builder.start();
-        } catch(IOException ioe) {
+        } catch (IOException ioe) {
             throw new IOException( "Could not start browser. Please check that the executable path is correct.\n" + ioe.getMessage() );
         }
 

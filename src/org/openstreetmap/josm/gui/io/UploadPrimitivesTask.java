@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -36,8 +37,6 @@ import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
-
-import org.openstreetmap.josm.gui.Notification;
 
 /**
  * The task for uploading a collection of primitives
@@ -205,7 +204,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 msg = tr("Object ''{0}'' is already deleted. Skipping object in upload.", displayName);
             }
             monitor.appendLogMessage(msg);
-            System.out.println(tr("Warning: {0}", msg));
+            Main.warn(msg);
             processedPrimitives.addAll(writer.getProcessedPrimitives());
             processedPrimitives.add(p);
             toUpload.removeProcessed(processedPrimitives);
@@ -300,7 +299,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         }
         } catch (Exception e) {
             if (uploadCanceled) {
-                System.out.println(tr("Ignoring caught exception because upload is canceled. Exception is: {0}", e.toString()));
+                Main.info(tr("Ignoring caught exception because upload is canceled. Exception is: {0}", e.toString()));
             } else {
                 lastException = e;
             }

@@ -134,7 +134,6 @@ public class GpxLayer extends Layer {
                 }
             }
         }
-        //System.out.println("scanning "+data.tracks.size()+" tracks, found min,max"+min+"--"+max);
         if (min==1e100 || max==-1e100) return null;
         return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000)), };
     }
@@ -424,7 +423,6 @@ public class GpxLayer extends Layer {
         /****************************************************************
          ********** STEP 1 - GET CONFIG VALUES **************************
          ****************************************************************/
-        // Long startTime = System.currentTimeMillis();
         Color neutralColor = getColor(true);
         String spec="layer "+getName();
 
@@ -787,8 +785,6 @@ public class GpxLayer extends Layer {
         {
             g.setStroke(storedStroke);
         }
-        // Long duration = System.currentTimeMillis() - startTime;
-        // System.out.println(duration);
     } // end paint
 
     @Override

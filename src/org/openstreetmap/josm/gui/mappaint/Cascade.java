@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -48,7 +49,7 @@ public class Cascade implements Cloneable {
         T res = convertTo(o, klass);
         if (res == null) {
             if (!suppressWarnings) {
-                System.err.println(String.format("Warning: unable to convert property %s to type %s: found %s of type %s!", key, klass, o, o.getClass()));
+                Main.warn(String.format("Unable to convert property %s to type %s: found %s of type %s!", key, klass, o, o.getClass()));
             }
             return def;
         } else

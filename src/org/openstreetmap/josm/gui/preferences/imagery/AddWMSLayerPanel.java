@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -82,8 +83,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 } catch (WMSImagery.WMSGetCapabilitiesException ex) {
                     JOptionPane.showMessageDialog(getParent(), tr("Could not parse WMS layer list."),
                             tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
-                    System.err.println("Could not parse WMS layer list. Incoming data:");
-                    System.err.println(ex.getIncomingData());
+                    Main.error("Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData());
                 }
             }
         });

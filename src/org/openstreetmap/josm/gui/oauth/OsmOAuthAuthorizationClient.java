@@ -109,15 +109,15 @@ public class OsmOAuthAuthorizationClient {
                 if (con != null) {
                     con.disconnect();
                 }
-            } catch(NoSuchFieldException e) {
+            } catch (NoSuchFieldException e) {
                 e.printStackTrace();
-                System.err.println(tr("Warning: failed to cancel running OAuth operation"));
-            } catch(SecurityException e) {
+                Main.warn(tr("Failed to cancel running OAuth operation"));
+            } catch (SecurityException e) {
                 e.printStackTrace();
-                System.err.println(tr("Warning: failed to cancel running OAuth operation"));
-            } catch(IllegalAccessException e) {
+                Main.warn(tr("Failed to cancel running OAuth operation"));
+            } catch (IllegalAccessException e) {
                 e.printStackTrace();
-                System.err.println(tr("Warning: failed to cancel running OAuth operation"));
+                Main.warn(tr("Failed to cancel running OAuth operation"));
             }
         }
         synchronized(this) {

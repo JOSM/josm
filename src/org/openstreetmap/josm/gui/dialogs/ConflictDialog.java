@@ -316,7 +316,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
     @Override
     public void onConflictsRemoved(ConflictCollection conflicts) {
-        System.err.println("1 conflict has been resolved.");
+        Main.info("1 conflict has been resolved.");
         refreshView();
     }
 

@@ -103,15 +103,4 @@ abstract public class AbstractProjection implements Projection {
     protected static final double convertDegreeMinuteSecond(double degree, double minute, double second) {
         return degree + (minute/60.0) + (second/3600.0);
     }
-
-    public void dump() {
-        System.err.println("x_0="+x_0);
-        System.err.println("y_0="+y_0);
-        System.err.println("lon_0="+lon_0);
-        System.err.println("k_0="+k_0);
-        System.err.println("ellps="+ellps);
-        System.err.println("proj="+proj);
-        System.err.println("datum="+datum);
-    }
-
 }

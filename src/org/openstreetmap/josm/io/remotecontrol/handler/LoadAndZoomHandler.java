@@ -96,14 +96,10 @@ public class LoadAndZoomHandler extends RequestHandler
         try {
             boolean newLayer = isLoadInNewLayer();
 
-            if(command.equals(myCommand))
-            {
-                if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed())
-                {
-                    System.out.println("RemoteControl: download forbidden by preferences");
-                }
-                else
-                {
+            if (command.equals(myCommand)) {
+                if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed()) {
+                    Main.info("RemoteControl: download forbidden by preferences");
+                } else {
                     Area toDownload = null;
                     if (!newLayer) {
                         // find out whether some data has already been downloaded
@@ -115,8 +111,7 @@ public class LoadAndZoomHandler extends RequestHandler
                         if (present != null && !present.isEmpty()) {
                             toDownload = new Area(new Rectangle2D.Double(minlon,minlat,maxlon-minlon,maxlat-minlat));
                             toDownload.subtract(present);
-                            if (!toDownload.isEmpty())
-                            {
+                            if (!toDownload.isEmpty()) {
                                 // the result might not be a rectangle (L shaped etc)
                                 Rectangle2D downloadBounds = toDownload.getBounds2D();
                                 minlat = downloadBounds.getMinY();
@@ -126,19 +121,16 @@ public class LoadAndZoomHandler extends RequestHandler
                             }
                         }
                     }
-                    if (toDownload != null && toDownload.isEmpty())
-                    {
-                        System.out.println("RemoteControl: no download necessary");
-                    }
-                    else
-                    {
+                    if (toDownload != null && toDownload.isEmpty()) {
+                        Main.info("RemoteControl: no download necessary");
+                    } else {
                         Future<?> future = osmTask.download(newLayer, new Bounds(minlat,minlon,maxlat,maxlon), null /* let the task manage the progress monitor */);
                         Main.worker.submit(new PostDownloadHandler(osmTask, future));
                     }
                 }
             }
         } catch (Exception ex) {
-            System.out.println("RemoteControl: Error parsing load_and_zoom remote control request:");
+            Main.warn("RemoteControl: Error parsing load_and_zoom remote control request:");
             ex.printStackTrace();
             throw new RequestHandlerErrorException();
         }
@@ -261,10 +253,10 @@ public class LoadAndZoomHandler extends RequestHandler
                     } else if (item.startsWith("rel")) {
                         relations.add(Long.parseLong(item.substring(3)));
                     } else {
-                        System.out.println("RemoteControl: invalid selection '"+item+"' ignored");
+                        Main.warn("RemoteControl: invalid selection '"+item+"' ignored");
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("RemoteControl: invalid selection '"+item+"' ignored");
+                    Main.warn("RemoteControl: invalid selection '"+item+"' ignored");
                 }
             }
         }

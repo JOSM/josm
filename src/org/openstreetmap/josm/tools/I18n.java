@@ -4,8 +4,8 @@ package org.openstreetmap.josm.tools;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -13,9 +13,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
-import java.util.Locale;
 
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -640,7 +640,7 @@ public class I18n {
                 Locale.setDefault(l);
             } else {
                 if (!l.getLanguage().equals("en")) {
-                    System.out.println(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
+                    Main.info(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
                             l.getDisplayName(), Locale.getDefault().getDisplayName()));
                 } else {
                     strings = null;

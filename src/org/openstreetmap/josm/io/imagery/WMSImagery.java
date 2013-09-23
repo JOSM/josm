@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
@@ -126,7 +127,7 @@ public class WMSImagery {
             return;
         }
 
-        System.out.println("GET " + getCapabilitiesUrl.toString());
+        Main.info("GET " + getCapabilitiesUrl.toString());
         URLConnection openConnection = Utils.openHttpConnection(getCapabilitiesUrl);
         InputStream inputStream = openConnection.getInputStream();
         BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream, "UTF-8"));
@@ -138,7 +139,6 @@ public class WMSImagery {
         }
         String incomingData = ba.toString();
 
-        //System.out.println("WMS capabilities:\n"+incomingData+"\n");
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setValidating(false);
@@ -148,7 +148,7 @@ public class WMSImagery {
             builder.setEntityResolver(new EntityResolver() {
                 @Override
                 public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-                    System.out.println("Ignoring DTD " + publicId + ", " + systemId);
+                    Main.info("Ignoring DTD " + publicId + ", " + systemId);
                     return new InputSource(new StringReader(""));
                 }
             });
@@ -174,7 +174,7 @@ public class WMSImagery {
             if (child != null) {
                 String baseURL = child.getAttribute("xlink:href");
                 if (baseURL != null && !baseURL.equals(serviceUrlStr)) {
-                    System.out.println("GetCapabilities specifies a different service URL: " + baseURL);
+                    Main.info("GetCapabilities specifies a different service URL: " + baseURL);
                     serviceUrl = new URL(baseURL);
                 }
             }

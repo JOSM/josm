@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
 import java.util.HashMap;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.AddCommand;
@@ -14,7 +15,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
-import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 
 /**
  * Handler for add_node request.
@@ -76,7 +76,7 @@ public class AddNodeHandler extends RequestHandler {
     private void addNode(HashMap<String, String> args){
 
         // Parse the arguments
-        System.out.println("Adding node at (" + lat + ", " + lon + ")");
+        Main.info("Adding node at (" + lat + ", " + lon + ")");
 
         // Create a new node
         LatLon ll = new LatLon(lat, lon);

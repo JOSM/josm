@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -100,14 +101,14 @@ public abstract class AbstractReader {
                     }
                 }
                 if (n.isDeleted()) {
-                    System.out.println(tr("Deleted node {0} is part of way {1}", id, w.getId()));
+                    Main.info(tr("Deleted node {0} is part of way {1}", id, w.getId()));
                 } else {
                     wayNodes.add(n);
                 }
             }
             w.setNodes(wayNodes);
             if (w.hasIncompleteNodes()) {
-                  System.out.println(tr("Way {0} with {1} nodes has incomplete nodes because at least one node was missing in the loaded data.",
+                Main.info(tr("Way {0} with {1} nodes has incomplete nodes because at least one node was missing in the loaded data.",
                           externalWayId, w.getNodesCount()));
             }
             ds.addPrimitive(w);
@@ -173,7 +174,7 @@ public abstract class AbstractReader {
                     }
                 }
                 if (primitive.isDeleted()) {
-                    System.out.println(tr("Deleted member {0} is used by relation {1}", primitive.getId(), relation.getId()));
+                    Main.info(tr("Deleted member {0} is used by relation {1}", primitive.getId(), relation.getId()));
                 } else {
                     relationMembers.add(new RelationMember(rm.getRole(), primitive));
                 }

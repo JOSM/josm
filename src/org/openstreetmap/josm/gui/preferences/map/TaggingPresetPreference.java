@@ -83,7 +83,7 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
                             TaggingPresetReader.readAll(source.url, false);
                             canLoad = true;
                         } catch (IOException e) {
-                            System.err.println(tr("Warning: Could not read tagging preset source: {0}", source));
+                            Main.warn(tr("Could not read tagging preset source: {0}", source));
                             ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Error"),
                                     new String[] {tr("Yes"), tr("No"), tr("Cancel")});
                             ed.setContent(tr("Could not read tagging preset source: {0}\nDo you want to keep it?", source));
@@ -107,7 +107,7 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
                         } catch (IOException e) {
                             // Should not happen, but at least show message
                             String msg = tr("Could not read tagging preset source {0}", source);
-                            System.err.println(msg);
+                            Main.error(msg);
                             JOptionPane.showMessageDialog(Main.parent, msg);
                             return false;
                         } catch (SAXParseException e) {
@@ -134,7 +134,7 @@ public class TaggingPresetPreference implements SubPreferenceSetting {
                         }
 
                         if (errorMessage != null) {
-                            System.err.println("Error: "+errorMessage);
+                            Main.error(errorMessage);
                             int result = JOptionPane.showConfirmDialog(Main.parent, new JLabel(errorMessage), tr("Error"),
                                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 

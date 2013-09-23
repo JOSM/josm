@@ -48,7 +48,7 @@ public class ConflictAddCommand extends Command {
 
     @Override public void undoCommand() {
         if (! Main.map.mapView.hasLayer(getLayer())) {
-            System.out.println(tr("Warning: Layer ''{0}'' does not exist any more. Cannot remove conflict for object ''{1}''.",
+            Main.warn(tr("Layer ''{0}'' does not exist any more. Cannot remove conflict for object ''{1}''.",
                     getLayer().getName(),
                     conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
             ));

@@ -186,8 +186,8 @@ public final class TaggingPresetReader {
             try {
                 allPresets.addAll(readAll(source, validate));
             } catch (IOException e) {
-                System.err.println(e.getClass().getName()+": "+e.getMessage());
-                System.err.println(source);
+                Main.error(e);
+                Main.error(source);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Could not read tagging preset source: {0}",source),
@@ -195,8 +195,8 @@ public final class TaggingPresetReader {
                         JOptionPane.ERROR_MESSAGE
                         );
             } catch (SAXException e) {
-                System.err.println(e.getClass().getName()+": "+e.getMessage());
-                System.err.println(source);
+                Main.error(e);
+                Main.error(source);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         "<html>" + tr("Error parsing {0}: ", source) + "<br><br><table width=600>" + e.getMessage() + "</table></html>",

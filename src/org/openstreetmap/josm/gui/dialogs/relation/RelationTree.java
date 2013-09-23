@@ -158,7 +158,7 @@ public class RelationTree extends JTree {
                         .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(Exception e) {
                 if (canceled) {
-                    System.out.println(tr("Warning: Ignoring exception because task was canceled. Exception: {0}", e.toString()));
+                    Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                     return;
                 }
                 this.lastException = e;

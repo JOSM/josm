@@ -72,7 +72,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
 
     private void error(String message) {
         String warning = style.getDisplayString() + " (" + rule.cond.key + "=" + rule.cond.value + "): " + message;
-        System.err.println(warning);
+        Main.warn(warning);
         style.logError(new Exception(warning));
     }
 

@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences.advanced;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -16,8 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.swing.AbstractAction;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -355,9 +355,9 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                    int idx = s.indexOf('_');
                    if (idx>=0) {
                         String t=s.substring(0,idx);
-                        System.out.println(t);
-                        if (profileTypes.containsKey(t))
+                        if (profileTypes.containsKey(t)) {
                             p.add(new ImportProfileAction(s, f, t));
+                        }
                    }
                 }
                 for (File f: Main.pref.getPreferencesDirFile().listFiles()) {
@@ -365,8 +365,9 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
                    int idx = s.indexOf('_');
                    if (idx>=0) {
                         String t=s.substring(0,idx);
-                        if (profileTypes.containsKey(t))
+                        if (profileTypes.containsKey(t)) {
                             p.add(new ImportProfileAction(s, f, t));
+                        }
                    }
                 }
             }

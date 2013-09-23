@@ -157,7 +157,7 @@ public class WMSGrabber extends Grabber {
     }
 
     protected BufferedImage grab(WMSRequest request, URL url, int attempt) throws IOException, OsmTransferException {
-        System.out.println("Grabbing WMS " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
+        Main.info("Grabbing WMS " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
         HttpURLConnection conn = Utils.openHttpConnection(url);
         for(Entry<String, String> e : props.entrySet()) {

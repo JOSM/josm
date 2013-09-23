@@ -40,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -198,62 +199,109 @@ abstract public class Main {
     private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<MapFrameListener>();
 
     /**
-     * Logging level (3 = debug, 2 = info, 1 = warn, 0 = none).
+     * Logging level (4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
+     * @since 6248
      */
-    static public int log_level = 2;
+    public static int logLevel = 3;
+    
     /**
-     * Print a warning message if logging is on.
+     * Prints an error message if logging is on.
+     * @param msg The message to print.
+     * @since 6248
+     */
+    public static void error(String msg) {
+        if (logLevel < 1)
+            return;
+        System.err.println(tr("ERROR: {0}", msg));
+    }
+    
+    /**
+     * Prints a warning message if logging is on.
      * @param msg The message to print.
      */
-    static public void warn(String msg) {
-        if (log_level < 1)
+    public static void warn(String msg) {
+        if (logLevel < 2)
             return;
         System.err.println(tr("WARNING: {0}", msg));
     }
+    
     /**
-     * Print an informational message if logging is on.
+     * Prints an informational message if logging is on.
      * @param msg The message to print.
      */
-    static public void info(String msg) {
-        if (log_level < 2)
+    public static void info(String msg) {
+        if (logLevel < 3)
             return;
-        System.err.println(tr("INFO: {0}", msg));
+        System.out.println(tr("INFO: {0}", msg));
     }
+    
     /**
-     * Print an debug message if logging is on.
+     * Prints a debug message if logging is on.
      * @param msg The message to print.
      */
-    static public void debug(String msg) {
-        if (log_level < 3)
+    public static void debug(String msg) {
+        if (logLevel < 4)
             return;
-        System.err.println(tr("DEBUG: {0}", msg));
+        System.out.println(tr("DEBUG: {0}", msg));
     }
+    
     /**
-     * Print a formated warning message if logging is on. Calls {@link MessageFormat#format}
+     * Prints a formated error message if logging is on. Calls {@link MessageFormat#format}
+     * function to format text.
+     * @param msg The formated message to print.
+     * @param objects The objects to insert into format string.
+     * @since 6248
+     */
+    public static void error(String msg, Object... objects) {
+        error(MessageFormat.format(msg, objects));
+    }
+    
+    /**
+     * Prints a formated warning message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
      * @param msg The formated message to print.
      * @param objects The objects to insert into format string.
      */
-    static public void warn(String msg, Object... objects) {
+    public static void warn(String msg, Object... objects) {
         warn(MessageFormat.format(msg, objects));
     }
+    
     /**
-     * Print a formated informational message if logging is on. Calls {@link MessageFormat#format}
+     * Prints a formated informational message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
      * @param msg The formated message to print.
      * @param objects The objects to insert into format string.
      */
-    static public void info(String msg, Object... objects) {
+    public static void info(String msg, Object... objects) {
         info(MessageFormat.format(msg, objects));
     }
+    
     /**
-     * Print a formated debug message if logging is on. Calls {@link MessageFormat#format}
+     * Prints a formated debug message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
      * @param msg The formated message to print.
      * @param objects The objects to insert into format string.
      */
-    static public void debug(String msg, Object... objects) {
+    public static void debug(String msg, Object... objects) {
         debug(MessageFormat.format(msg, objects));
+    }
+    
+    /**
+     * Prints an error message for the given Throwable.
+     * @param t The throwable object causing the error
+     * @since 6248
+     */
+    public static void error(Throwable t) {
+        error(t.getClass().getName()+": "+t.getMessage());
+    }
+    
+    /**
+     * Prints a warning message for the given Throwable.
+     * @param t The throwable object causing the error
+     * @since 6248
+     */
+    public static void warn(Throwable t) {
+        warn(t.getClass().getName()+": "+t.getMessage());
     }
 
     /**
@@ -530,7 +578,7 @@ abstract public class Main {
         InputMap inputMap = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         Object existing = inputMap.get(keyStroke);
         if (existing != null && !existing.equals(action)) {
-            System.out.println(String.format("Keystroke %s is already assigned to %s, will be overridden by %s", keyStroke, existing, action));
+            info(String.format("Keystroke %s is already assigned to %s, will be overridden by %s", keyStroke, existing, action));
         }
         inputMap.put(keyStroke, action);
 
@@ -599,12 +647,12 @@ abstract public class Main {
             try {
                 UIManager.setLookAndFeel(laf);
             }
-            catch (final java.lang.ClassNotFoundException e) {
-                System.out.println("Look and Feel not found: " + laf);
+            catch (final ClassNotFoundException e) {
+                info("Look and Feel not found: " + laf);
                 Main.pref.put("laf", defaultlaf);
             }
-            catch (final javax.swing.UnsupportedLookAndFeelException e) {
-                System.out.println("Look and Feel not supported: " + laf);
+            catch (final UnsupportedLookAndFeelException e) {
+                info("Look and Feel not supported: " + laf);
                 Main.pref.put("laf", defaultlaf);
             }
             toolbar = new ToolbarPreferences();
@@ -852,7 +900,7 @@ abstract public class Main {
     public static void determinePlatformHook() {
         String os = System.getProperty("os.name");
         if (os == null) {
-            System.err.println("Your operating system has no name, so I'm guessing its some kind of *nix.");
+            warn("Your operating system has no name, so I'm guessing its some kind of *nix.");
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase().startsWith("windows")) {
             platform = new PlatformHookWindows();
@@ -863,7 +911,7 @@ abstract public class Main {
         } else if (os.toLowerCase().startsWith("mac os x")) {
             platform = new PlatformHookOsx();
         } else {
-            System.err.println("I don't know your operating system '"+os+"', so I'm guessing its some kind of *nix.");
+            warn("I don't know your operating system '"+os+"', so I'm guessing its some kind of *nix.");
             platform = new PlatformHookUnixoid();
         }
     }
@@ -947,7 +995,7 @@ abstract public class Main {
                 return;
             }
         }
-        System.err.println("Error: Could not recognize Java Version: "+version);
+        error("Could not recognize Java Version: "+version);
     }
 
     /* ----------------------------------------------------------------------------------------- */

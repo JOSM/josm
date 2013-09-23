@@ -798,7 +798,7 @@ public class DataSet implements Cloneable, ProjectionChangeListener {
     private OsmPrimitive getPrimitiveByIdChecked(PrimitiveId primitiveId) {
         OsmPrimitive result = getPrimitiveById(primitiveId);
         if (result == null) {
-            System.out.println(tr("JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
+            Main.warn(tr("JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
                     + "at http://josm.openstreetmap.de/. This is not a critical error, it should be safe to continue in your work.",
                     primitiveId.getType(), Long.toString(primitiveId.getUniqueId())));
             new Exception().printStackTrace();

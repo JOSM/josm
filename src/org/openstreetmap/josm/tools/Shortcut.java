@@ -370,7 +370,7 @@ public class Shortcut {
         Shortcut potentialShortcut = findShortcut(key, modifier);
         if (potentialShortcut != null) {
             // this always is a logic error in the hook
-            System.err.println("CONFLICT WITH SYSTEM KEY "+shortText);
+            Main.error("CONFLICT WITH SYSTEM KEY "+shortText);
             return null;
         }
         potentialShortcut = new Shortcut(shortText, longText, key, RESERVED, key, modifier, true, false);
@@ -414,7 +414,7 @@ public class Shortcut {
                     int newmodifier = getGroupModifier(m);
                     if ( findShortcut(k, newmodifier) == null ) {
                         Shortcut newsc = new Shortcut(shortText, longText, requestedKey, m, k, newmodifier, false, false);
-                        System.out.println(tr("Silent shortcut conflict: ''{0}'' moved by ''{1}'' to ''{2}''.",
+                        Main.info(tr("Silent shortcut conflict: ''{0}'' moved by ''{1}'' to ''{2}''.",
                             shortText, conflict.getShortText(), newsc.getKeyText()));
                         newsc.saveDefault();
                         shortcuts.put(shortText, newsc);

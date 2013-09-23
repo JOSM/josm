@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Use this class if you want to cache a lot of files that shouldn't be kept in memory. You can
@@ -114,8 +115,8 @@ public class CacheFiles {
             byte[] bytes = new byte[(int) data.length()];
             new RandomAccessFile(data, "r").readFully(bytes);
             return bytes;
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            Main.warn(e);
         }
         return null;
     }
@@ -129,13 +130,18 @@ public class CacheFiles {
         if(!enabled) return;
         try {
             File f = getPath(ident);
-            if(f.exists()) {
+            if (f.exists()) {
                 f.delete();
             }
             // rws also updates the file meta-data, i.e. last mod time
-            new RandomAccessFile(f, "rws").write(data);
-        } catch(Exception e){
-            System.out.println(e.getMessage());
+            RandomAccessFile raf = new RandomAccessFile(f, "rws");
+            try {
+                raf.write(data);
+            } finally {
+                Utils.close(raf);
+            }
+        } catch (Exception e) {
+            Main.warn(e);
         }
 
         writes++;
@@ -163,8 +169,8 @@ public class CacheFiles {
                 img.setLastModified(System.currentTimeMillis());
             }
             return ImageIO.read(img);
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            Main.warn(e);
         }
         return null;
     }
@@ -175,11 +181,11 @@ public class CacheFiles {
      * @param image imaga data for storage
      */
     public void saveImg(String ident, BufferedImage image) {
-        if(!enabled) return;
+        if (!enabled) return;
         try {
             ImageIO.write(image, "png", getPath(ident, "png"));
-        } catch(Exception e){
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            Main.warn(e);
         }
 
         writes++;

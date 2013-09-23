@@ -557,7 +557,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             e.setPos(e.getExifCoor());
 
         } catch (Exception ex) { // (other exceptions, e.g. #5271)
-            System.err.println("Error reading EXIF from file: "+ex);
+            Main.error("Error reading EXIF from file: "+ex);
             e.setExifCoor(null);
             e.setPos(null);
         }
@@ -650,7 +650,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 }
 
                 if (toDelete.getFile().delete()) {
-                    System.out.println("File "+toDelete.getFile().toString()+" deleted. ");
+                    Main.info("File "+toDelete.getFile().toString()+" deleted. ");
                 } else {
                     JOptionPane.showMessageDialog(
                             Main.parent,

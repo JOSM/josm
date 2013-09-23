@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.Main;
 
 public class MapCSSParser {
     MapCSSStyleSource sheet;
@@ -572,8 +573,8 @@ void error_skipto(int kind, MapCSSException me) {
         e = new ParseException(pe.getMessage()); // prevent memory leak
     }
     
-    System.err.println("Skipping to the next rule, because of an error:");
-    System.err.println(e);
+    Main.error("Skipping to the next rule, because of an error:");
+    Main.error(e);
     if (sheet != null) {
         sheet.logError(e);
     }
@@ -597,7 +598,7 @@ String readRaw() {
         if ((t.kind == S || t.kind == STRING || t.kind == UNEXPECTED_CHAR) &&
                 t.image.contains("\n")) {
             ParseException e = new ParseException(String.format("Warning: end of line while reading an unquoted string at line %s column %s.", t.beginLine, t.beginColumn));
-            System.err.println(e);
+            Main.error(e);
             if (sheet != null) {
                 sheet.logError(e);
             }

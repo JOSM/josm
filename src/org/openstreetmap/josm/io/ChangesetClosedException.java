@@ -11,6 +11,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * A ChangesetClosedException is thrown if the server replies with a HTTP
  * return code 409 (Conflict) with the error header {@link #ERROR_HEADER_PATTERN}.
@@ -80,11 +82,11 @@ public class ChangesetClosedException extends OsmTransferException {
             try {
                 closedOn = formatter.parse(m.group(2));
             } catch(ParseException ex) {
-                System.err.println(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
+                Main.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
                 ex.printStackTrace();
             }
         } else {
-            System.err.println(tr("Unexpected format of error header for conflict in changeset update. Got ''{0}''", errorHeader));
+            Main.error(tr("Unexpected format of error header for conflict in changeset update. Got ''{0}''", errorHeader));
         }
     }
 

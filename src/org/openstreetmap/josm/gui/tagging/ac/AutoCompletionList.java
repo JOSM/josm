@@ -290,12 +290,4 @@ public class AutoCompletionList extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         return list == null ? null : getFilteredItem(rowIndex);
     }
-
-    public void dump() {
-        System.out.println("---------------------------------");
-        for (AutoCompletionListItem item: list) {
-            System.out.println(item);
-        }
-        System.out.println("---------------------------------");
-    }
 }

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.server;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
@@ -143,8 +144,8 @@ public class OAuthAccessTokenHolder {
             token = cm.lookupOAuthAccessToken();
         } catch(CredentialsAgentException e) {
             e.printStackTrace();
-            System.err.println(tr("Warning: Failed to retrieve OAuth Access Token from credential manager"));
-            System.err.println(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
+            Main.warn(tr("Failed to retrieve OAuth Access Token from credential manager"));
+            Main.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
         }
         saveToPreferences = pref.getBoolean("oauth.access-token.save-to-preferences", true);
         if (token != null) {
@@ -174,8 +175,8 @@ public class OAuthAccessTokenHolder {
             }
         } catch(CredentialsAgentException e){
             e.printStackTrace();
-            System.err.println(tr("Warning: Failed to store OAuth Access Token to credentials manager"));
-            System.err.println(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
+            Main.warn(tr("Failed to store OAuth Access Token to credentials manager"));
+            Main.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
         }
     }
 

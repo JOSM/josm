@@ -23,6 +23,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -295,7 +296,7 @@ public class XmlObjectParser implements Iterable<Object> {
                 reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             } catch (SAXException e) {
                 // Exception very unlikely to happen, so no need to translate this
-                System.err.println("Cannot disable 'load-external-dtd' feature: "+e.getMessage());
+                Main.error("Cannot disable 'load-external-dtd' feature: "+e.getMessage());
             }
             reader.parse(new InputSource(in));
             queueIterator = queue.iterator();

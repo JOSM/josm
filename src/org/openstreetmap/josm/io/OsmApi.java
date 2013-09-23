@@ -228,8 +228,8 @@ public class OsmApi extends OsmConnection {
             if (capabilities.supportsVersion("0.6")) {
                 version = "0.6";
             } else {
-                System.err.println(tr("This version of JOSM is incompatible with the configured server."));
-                System.err.println(tr("It supports protocol version 0.6, while the server says it supports {0} to {1}.",
+                Main.error(tr("This version of JOSM is incompatible with the configured server."));
+                Main.error(tr("It supports protocol version 0.6, while the server says it supports {0} to {1}.",
                         capabilities.get("version", "minimum"), capabilities.get("version", "maximum")));
                 initialized = false; // FIXME gets overridden by next assignment
             }
@@ -255,7 +255,7 @@ public class OsmApi extends OsmConnection {
             if (Main.isDisplayingMapView()) {
                 for (Layer l : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {
                     if (((ImageryLayer) l).getInfo().isBlacklisted()) {
-                        System.out.println(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
+                        Main.info(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
                         Main.main.removeLayer(l);
                     }
                 }
@@ -547,7 +547,7 @@ public class OsmApi extends OsmConnection {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {}
         }
-        System.out.println(tr("OK - trying again."));
+        Main.info(tr("OK - trying again."));
     }
 
     /**
@@ -627,13 +627,13 @@ public class OsmApi extends OsmConnection {
                 }
 
                 activeConnection.connect();
-                System.out.println(activeConnection.getResponseMessage());
+                Main.info(activeConnection.getResponseMessage());
                 int retCode = activeConnection.getResponseCode();
 
                 if (retCode >= 500) {
                     if (retries-- > 0) {
                         sleepAndListen(retries, monitor);
-                        System.out.println(tr("Starting retry {0} of {1}.", getMaxRetries() - retries,getMaxRetries()));
+                        Main.info(tr("Starting retry {0} of {1}.", getMaxRetries() - retries,getMaxRetries()));
                         continue;
                     }
                 }
@@ -665,9 +665,9 @@ public class OsmApi extends OsmConnection {
                 // Look for a detailed error message from the server
                 if (activeConnection.getHeaderField("Error") != null) {
                     errorHeader = activeConnection.getHeaderField("Error");
-                    System.err.println("Error header: " + errorHeader);
+                    Main.error("Error header: " + errorHeader);
                 } else if (retCode != 200 && responseBody.length()>0) {
-                    System.err.println("Error body: " + responseBody);
+                    Main.error("Error body: " + responseBody);
                 }
                 activeConnection.disconnect();
 

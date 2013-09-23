@@ -372,7 +372,7 @@ public class Preferences {
             }
         }
         if (!cacheDirFile.exists() && !cacheDirFile.mkdirs()) {
-            System.err.println(tr("Warning: Failed to create missing cache directory: {0}", cacheDirFile.getAbsoluteFile()));
+            Main.warn(tr("Failed to create missing cache directory: {0}", cacheDirFile.getAbsoluteFile()));
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>Failed to create missing cache directory: {0}</html>", cacheDirFile.getAbsoluteFile()),
@@ -498,7 +498,7 @@ public class Preferences {
         if(!defaults.containsKey(key) || defaults.get(key) == null) {
             defaults.put(key, def);
         } else if(def != null && !defaults.get(key).equals(def)) {
-            System.out.println("Defaults for " + key + " differ: " + def + " != " + defaults.get(key));
+            Main.info("Defaults for " + key + " differ: " + def + " != " + defaults.get(key));
         }
     }
 
@@ -555,8 +555,8 @@ public class Preferences {
                 }
                 try {
                     save();
-                } catch(IOException e){
-                    System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+                } catch (IOException e) {
+                    Main.warn(tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
                 }
                 changed = true;
             }
@@ -651,7 +651,7 @@ public class Preferences {
         File prefDir = getPreferencesDirFile();
         if (prefDir.exists()) {
             if(!prefDir.isDirectory()) {
-                System.err.println(tr("Warning: Failed to initialize preferences. Preference directory ''{0}'' is not a directory.", prefDir.getAbsoluteFile()));
+                Main.warn(tr("Failed to initialize preferences. Preference directory ''{0}'' is not a directory.", prefDir.getAbsoluteFile()));
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("<html>Failed to initialize preferences.<br>Preference directory ''{0}'' is not a directory.</html>", prefDir.getAbsoluteFile()),
@@ -662,7 +662,7 @@ public class Preferences {
             }
         } else {
             if (! prefDir.mkdirs()) {
-                System.err.println(tr("Warning: Failed to initialize preferences. Failed to create missing preference directory: {0}", prefDir.getAbsoluteFile()));
+                Main.warn(tr("Failed to initialize preferences. Failed to create missing preference directory: {0}", prefDir.getAbsoluteFile()));
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("<html>Failed to initialize preferences.<br>Failed to create missing preference directory: {0}</html>",prefDir.getAbsoluteFile()),
@@ -676,11 +676,11 @@ public class Preferences {
         File preferenceFile = getPreferenceFile();
         try {
             if (!preferenceFile.exists()) {
-                System.out.println(tr("Info: Missing preference file ''{0}''. Creating a default preference file.", preferenceFile.getAbsoluteFile()));
+                Main.info(tr("Missing preference file ''{0}''. Creating a default preference file.", preferenceFile.getAbsoluteFile()));
                 resetToDefault();
                 save();
             } else if (reset) {
-                System.out.println(tr("Warning: Replacing existing preference file ''{0}'' with default preference file.", preferenceFile.getAbsoluteFile()));
+                Main.warn(tr("Replacing existing preference file ''{0}'' with default preference file.", preferenceFile.getAbsoluteFile()));
                 resetToDefault();
                 save();
             }
@@ -711,7 +711,7 @@ public class Preferences {
                 save();
             } catch(IOException e1) {
                 e1.printStackTrace();
-                System.err.println(tr("Warning: Failed to initialize preferences. Failed to reset preference file to default: {0}", getPreferenceFile()));
+                Main.warn(tr("Failed to initialize preferences. Failed to reset preference file to default: {0}", getPreferenceFile()));
             }
         }
     }
@@ -905,8 +905,8 @@ public class Preferences {
             }
             try {
                 save();
-            } catch(IOException e){
-                System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+            } catch (IOException e){
+                Main.warn(tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
             }
         }
         // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
@@ -1005,8 +1005,8 @@ public class Preferences {
             }
             try {
                 save();
-            } catch(IOException e){
-                System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+            } catch (IOException e){
+                Main.warn(tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
             }
         }
         // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
@@ -1074,8 +1074,8 @@ public class Preferences {
             }
             try {
                 save();
-            } catch(IOException e){
-                System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+            } catch (IOException e) {
+                Main.warn(tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
             }
         }
         // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
@@ -1656,12 +1656,13 @@ public class Preferences {
         };
         for (String key : obsolete) {
             boolean removed = false;
-            if(properties.containsKey(key)) { properties.remove(key); removed = true; }
-            if(collectionProperties.containsKey(key)) { collectionProperties.remove(key); removed = true; }
-            if(arrayProperties.containsKey(key)) { arrayProperties.remove(key); removed = true; }
-            if(listOfStructsProperties.containsKey(key)) { listOfStructsProperties.remove(key); removed = true; }
-            if(removed)
-                System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", key));
+            if (properties.containsKey(key)) { properties.remove(key); removed = true; }
+            if (collectionProperties.containsKey(key)) { collectionProperties.remove(key); removed = true; }
+            if (arrayProperties.containsKey(key)) { arrayProperties.remove(key); removed = true; }
+            if (listOfStructsProperties.containsKey(key)) { listOfStructsProperties.remove(key); removed = true; }
+            if (removed) {
+                Main.info(tr("Preference setting {0} has been removed since it is no longer used.", key));
+            }
         }
     }
 

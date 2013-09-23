@@ -3,9 +3,9 @@ package org.openstreetmap.josm.gui.mappaint.xml;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,16 +75,16 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             while(parser.hasNext()) {
             }
 
-        } catch(IOException e) {
-            System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
+        } catch (IOException e) {
+            Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
             e.printStackTrace();
             logError(e);
-        } catch(SAXParseException e) {
-            System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}", url, e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
+        } catch (SAXParseException e) {
+            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}", url, e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
             e.printStackTrace();
             logError(e);
-        } catch(SAXException e) {
-            System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+        } catch (SAXException e) {
+            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
             e.printStackTrace();
             logError(e);
         }

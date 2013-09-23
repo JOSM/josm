@@ -202,7 +202,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             List<User> users = model.getSelectedUsers(rows);
             if (users.isEmpty()) return;
             if (users.size() > 10) {
-                System.out.println(tr("Warning: only launching info browsers for the first {0} of {1} selected users", 10, users.size()));
+                Main.warn(tr("Only launching info browsers for the first {0} of {1} selected users", 10, users.size()));
             }
             int num = Math.min(10, users.size());
             Iterator<User> it = users.iterator();

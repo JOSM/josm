@@ -625,7 +625,7 @@ public final class TaggingPresetItems {
                         });
                         pnl.add(aibutton, GBC.std());
                     } catch (ParseException x) {
-                        System.err.println("Cannot parse auto-increment value of '" + ai + "' into an integer");
+                        Main.error("Cannot parse auto-increment value of '" + ai + "' into an integer");
                     }
                 }
 
@@ -672,7 +672,7 @@ public final class TaggingPresetItems {
             // return if unchanged
             String v = getValue(value);
             if (v == null) {
-                System.err.println("No 'last value' support for component " + value);
+                Main.error("No 'last value' support for component " + value);
                 return;
             }
             
@@ -920,17 +920,17 @@ public final class TaggingPresetItems {
                 initListEntriesFromAttributes();
             } else {
                 if (values != null) {
-                    System.err.println(tr("Warning in tagging preset \"{0}-{1}\": "
+                    Main.warn(tr("Warning in tagging preset \"{0}-{1}\": "
                             + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
                             key, text, "values", "list_entry"));
                 }
                 if (display_values != null || locale_display_values != null) {
-                    System.err.println(tr("Warning in tagging preset \"{0}-{1}\": "
+                    Main.warn(tr("Warning in tagging preset \"{0}-{1}\": "
                             + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
                             key, text, "display_values", "list_entry"));
                 }
                 if (short_descriptions != null || locale_short_descriptions != null) {
-                    System.err.println(tr("Warning in tagging preset \"{0}-{1}\": "
+                    Main.warn(tr("Warning in tagging preset \"{0}-{1}\": "
                             + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
                             key, text, "short_descriptions", "list_entry"));
                 }
@@ -962,11 +962,11 @@ public final class TaggingPresetItems {
                                 && method.getReturnType().equals(String[].class) && method.getParameterTypes().length == 0) {
                             value_array = (String[]) method.invoke(null);
                         } else {
-                            System.err.println(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' is not \"{2}\"", key, text,
+                            Main.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' is not \"{2}\"", key, text,
                                     "public static String[] methodName()"));
                         }
                     } catch (Exception e) {
-                        System.err.println(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' threw {2} ({3})", key, text,
+                        Main.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' threw {2} ({3})", key, text,
                                 e.getClass().getName(), e.getMessage()));
                     }
                 }
@@ -983,12 +983,12 @@ public final class TaggingPresetItems {
             String[] short_descriptions_array = descr == null ? null : splitEscaped(delChar, descr);
 
             if (display_array.length != value_array.length) {
-                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''", key, text));
+                Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''", key, text));
                 display_array = value_array;
             }
 
             if (short_descriptions_array != null && short_descriptions_array.length != value_array.length) {
-                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''", key, text));
+                Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''", key, text));
                 short_descriptions_array = null;
             }
 

@@ -130,7 +130,7 @@ public class ImportAudioAction extends AbstractAction {
         try {
             url = wavFile.toURI().toURL();
         } catch (MalformedURLException e) {
-            System.err.println("Unable to convert filename " + wavFile.getAbsolutePath() + " to URL");
+            Main.error("Unable to convert filename " + wavFile.getAbsolutePath() + " to URL");
         }
         Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
         boolean timedMarkersOmitted = false;

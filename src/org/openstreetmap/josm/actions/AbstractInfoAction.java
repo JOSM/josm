@@ -42,7 +42,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         Pattern pattern = Pattern.compile("/api/?$");
         String ret =  pattern.matcher(baseUrl).replaceAll("/browse");
         if (ret.equals(baseUrl)) {
-            System.out.println(tr("WARNING: unexpected format of API base URL. Redirection to info or history page for OSM object will probably fail. API base URL is: ''{0}''",baseUrl));
+            Main.warn(tr("Unexpected format of API base URL. Redirection to info or history page for OSM object will probably fail. API base URL is: ''{0}''",baseUrl));
         }
         if (ret.startsWith("http://api.openstreetmap.org/")) {
             ret = ret.substring("http://api.openstreetmap.org/".length());
@@ -61,7 +61,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         Pattern pattern = Pattern.compile("/api/?$");
         String ret =  pattern.matcher(baseUrl).replaceAll("/user");
         if (ret.equals(baseUrl)) {
-            System.out.println(tr("WARNING: unexpected format of API base URL. Redirection to user page for OSM user will probably fail. API base URL is: ''{0}''",baseUrl));
+            Main.warn(tr("Unexpected format of API base URL. Redirection to user page for OSM user will probably fail. API base URL is: ''{0}''",baseUrl));
         }
         if (ret.startsWith("http://api.openstreetmap.org/")) {
             ret = ret.substring("http://api.openstreetmap.org/".length());

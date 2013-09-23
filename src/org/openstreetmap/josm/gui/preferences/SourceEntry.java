@@ -7,6 +7,8 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * A source entry primarily used to save the user's selection of mappaint styles,
  * but also for preset sources.
@@ -126,7 +128,7 @@ public class SourceEntry {
         if (m.find()) {
             return m.group(1);
         } else {
-            System.err.println("Warning: Unexpected URL format: "+url);
+            Main.warn("Unexpected URL format: "+url);
             return url;
         }
     }

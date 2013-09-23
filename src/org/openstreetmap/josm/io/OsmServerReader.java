@@ -106,7 +106,7 @@ public abstract class OsmServerReader extends OsmConnection {
             activeConnection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
             try {
-                System.out.println("GET " + url);
+                Main.info("GET " + url);
                 activeConnection.connect();
             } catch (Exception e) {
                 e.printStackTrace();

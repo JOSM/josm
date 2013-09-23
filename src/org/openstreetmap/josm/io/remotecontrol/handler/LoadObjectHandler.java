@@ -49,7 +49,7 @@ public class LoadObjectHandler extends RequestHandler {
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
         if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed()) {
-            System.out.println("RemoteControl: download forbidden by preferences");
+            Main.info("RemoteControl: download forbidden by preferences");
         }
         if (!ps.isEmpty()) {
             final boolean newLayer = isLoadInNewLayer();
@@ -87,7 +87,7 @@ public class LoadObjectHandler extends RequestHandler {
             try {
                 ps.add(SimplePrimitiveId.fromString(i));
             } catch (IllegalArgumentException e) {
-                System.out.println("RemoteControl: invalid selection '"+i+"' ignored");
+                Main.warn("RemoteControl: invalid selection '"+i+"' ignored");
             }
         }
     }

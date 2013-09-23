@@ -290,7 +290,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 }
             }
         } catch (URISyntaxException e) {
-            Main.warn("URISyntaxException: "+e.getMessage());
+            Main.warn(e);
         }
         return true;
     }

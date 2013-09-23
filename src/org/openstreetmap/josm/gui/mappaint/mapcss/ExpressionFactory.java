@@ -524,7 +524,7 @@ public class ExpressionFactory {
             } catch (IllegalArgumentException ex) {
                 throw new RuntimeException(ex);
             } catch (InvocationTargetException ex) {
-                System.err.println(ex);
+                Main.error(ex);
                 return null;
             }
             return result;
@@ -573,7 +573,7 @@ public class ExpressionFactory {
             } catch (IllegalArgumentException ex) {
                 throw new RuntimeException(ex);
             } catch (InvocationTargetException ex) {
-                System.err.println(ex);
+                Main.error(ex);
                 return null;
             }
             return result;

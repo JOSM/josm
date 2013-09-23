@@ -55,7 +55,7 @@ public class OffsetBookmark {
             this.centerY = Double.valueOf(array.get(6));
         }
         if (projectionCode == null) {
-            System.err.println(tr("Projection ''{0}'' is not found, bookmark ''{1}'' is not usable", projectionCode, name));
+            Main.error(tr("Projection ''{0}'' is not found, bookmark ''{1}'' is not usable", projectionCode, name));
         }
     }
 

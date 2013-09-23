@@ -129,7 +129,7 @@ public final class GettingStarted extends JPanel {
                     try {
                         content = new MotdContent().updateIfRequiredString();
                     } catch (IOException ex) {
-                        System.out.println(tr("Warning: failed to read MOTD. Exception was: {0}", ex.toString()));
+                        Main.warn(tr("Failed to read MOTD. Exception was: {0}", ex.toString()));
                         content = "<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
                                 + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
                     }

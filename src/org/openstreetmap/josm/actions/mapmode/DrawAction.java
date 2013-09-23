@@ -1364,7 +1364,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     snapAngles[i] = Double.parseDouble(s); i++;
                     snapAngles[i] = 360-Double.parseDouble(s); i++;
                 } catch (NumberFormatException e) {
-                    System.err.println("Warning: incorrect number in draw.anglesnap.angles preferences: "+s);
+                    Main.warn("Incorrect number in draw.anglesnap.angles preferences: "+s);
                     snapAngles[i]=0;i++;
                     snapAngles[i]=0;i++;
                 }

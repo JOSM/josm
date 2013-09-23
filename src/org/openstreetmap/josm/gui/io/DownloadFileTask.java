@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.tools.Utils;
@@ -120,16 +121,16 @@ public class DownloadFileTask extends PleaseWaitRunnable{
             }
             Utils.close(out);
             if (!canceled) {
-                System.out.println(tr("Download finished"));
+                Main.info(tr("Download finished"));
                 if (unpack) {
-                    System.out.println(tr("Unpacking {0} into {1}", file.getAbsolutePath(), file.getParent()));
+                    Main.info(tr("Unpacking {0} into {1}", file.getAbsolutePath(), file.getParent()));
                     unzipFileRecursively(file, file.getParent());
                     file.delete();
                 }
             }
         } catch(MalformedURLException e) {
-            String msg = tr("Warning: Cannot download file ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.", file.getName(), address);
-            System.err.println(msg);
+            String msg = tr("Cannot download file ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.", file.getName(), address);
+            Main.warn(msg);
             throw new DownloadException(msg);
         } catch (IOException e) {
             if (canceled)

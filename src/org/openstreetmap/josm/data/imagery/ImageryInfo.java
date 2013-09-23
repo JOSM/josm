@@ -228,7 +228,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
                         bounds.addShape(new Shape(s, ","));
                     }
                 } catch (IllegalArgumentException ex) {
-                    Main.warn(ex.toString());
+                    Main.warn(ex);
                 }
             }
         }

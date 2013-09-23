@@ -859,8 +859,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
                             >> 32 << 32); // resolution in numbers with large exponent not needed here..
 
                     if (perDistSq < snapDistanceSq && a < c + snapDistanceSq && b < c + snapDistanceSq) {
-                        //System.err.println(Double.toHexString(perDistSq));
-
                         List<WaySegment> wslist;
                         if (nearestMap.containsKey(perDistSq)) {
                             wslist = nearestMap.get(perDistSq);

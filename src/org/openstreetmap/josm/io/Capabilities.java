@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * Represents the server capabilities
  *
@@ -119,12 +121,12 @@ public class Capabilities {
         try {
             int n = Integer.parseInt(v);
             if (n <= 0) {
-                System.err.println(tr("Warning: illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", "changesets", "maximum_elements", n ));
+                Main.warn(tr("Illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", "changesets", "maximum_elements", n ));
                 return -1;
             }
             return n;
-        } catch(NumberFormatException e) {
-            System.err.println(tr("Warning: illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", "changesets", "maximum_elements", v ));
+        } catch (NumberFormatException e) {
+            Main.warn(tr("Illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", "changesets", "maximum_elements", v ));
             return -1;
         }
     }
