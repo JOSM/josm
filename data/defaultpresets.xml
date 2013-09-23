@@ -4985,7 +4985,7 @@ Note that for a match, at least one positive and no negative is required.
                 <list_entry value="wave" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
                 <list_entry value="wind" icon="http://wiki.openstreetmap.org/w/images/0/03/2020_stBN_powergensource_wind.svg" />
             </combo>
-            <combo key="generator:method" text="Method">
+            <combo key="generator:method" text="Method" values_context="generator method">
                 <list_entry value="anaerobic_digestion" short_description="" /> <!-- Recheck -->
                 <list_entry value="barrage" short_description="tidal" />
                 <list_entry value="combustion" short_description="bio / coal / diesel / gas / gasoline / oil / waste" />
