@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -53,12 +54,11 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
         //
         super.executeCommand();
 
-        // replace the list of nodes of 'my' way by the list of merged
-        // nodes
+        // replace the list of nodes of 'my' way by the list of merged nodes
         //
         for (Node n:mergedNodeList) {
             if (! getLayer().data.getNodes().contains(n)) {
-                System.out.println(tr("Main dataset does not include node {0}", n.toString()));
+                Main.warn(tr("Main dataset does not include node {0}", n.toString()));
             }
         }
         conflict.getMy().setNodes(mergedNodeList);

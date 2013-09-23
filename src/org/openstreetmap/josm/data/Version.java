@@ -47,7 +47,7 @@ public class Version {
             }
             s = sb.toString();
         } catch (IOException e) {
-            System.err.println(tr("Failed to load resource ''{0}'', error is {1}.", resource.toString(), e.toString()));
+            Main.error(tr("Failed to load resource ''{0}'', error is {1}.", resource.toString(), e.toString()));
             e.printStackTrace();
         }
         return s;
@@ -113,7 +113,7 @@ public class Version {
                 version = Integer.parseInt(value);
             } catch(NumberFormatException e) {
                 version = 0;
-                System.err.println(tr("Warning: unexpected JOSM version number in revision file, value is ''{0}''", value));
+                Main.warn(tr("Unexpected JOSM version number in revision file, value is ''{0}''", value));
             }
         } else {
             version = JOSM_UNKNOWN_VERSION;
@@ -157,7 +157,7 @@ public class Version {
     public void init() {
         URL u = Main.class.getResource("/REVISION");
         if (u == null) {
-            System.err.println(tr("Warning: the revision file ''/REVISION'' is missing."));
+            Main.warn(tr("The revision file ''/REVISION'' is missing."));
             version = 0;
             releaseDescription = "";
             return;

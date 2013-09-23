@@ -30,7 +30,6 @@ import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
@@ -44,6 +43,7 @@ import java.util.Map;
 
 import javax.swing.UIManager;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -1262,7 +1262,7 @@ public class MultiSplitLayout implements LayoutManager {
             return root.getChildren().get(0);
         }
         catch (Exception e) {
-            System.err.println(e);
+            Main.error(e);
         }
         finally {
             Utils.close(r);
@@ -1318,25 +1318,5 @@ public class MultiSplitLayout implements LayoutManager {
      */
     public static Node parseModel(String s) {
         return parseModel(new StringReader(s));
-    }
-
-    private static void printModel(String indent, Node root) {
-        if (root instanceof Split) {
-            Split split = (Split)root;
-            System.out.println(indent + split);
-            for(Node child : split.getChildren()) {
-                printModel(indent + "  ", child);
-            }
-        }
-        else {
-            System.out.println(indent + root);
-        }
-    }
-
-    /**
-     * Print the tree with enough detail for simple debugging.
-     */
-    public static void printModel(Node root) {
-        printModel("", root);
     }
 }

@@ -16,14 +16,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.EventObject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
-import static javax.swing.Action.SHORT_DESCRIPTION;
-import static javax.swing.Action.SMALL_ICON;
 import javax.swing.CellEditor;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
@@ -37,14 +32,14 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.text.JTextComponent;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.PasteTagsAction.TagPaster;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -463,7 +458,7 @@ public class TagTable extends JTable  {
 
     public void setAutoCompletionManager(AutoCompletionManager autocomplete) {
         if (autocomplete == null) {
-            System.out.println("argument autocomplete should not be null. Aborting.");
+            Main.warn("argument autocomplete should not be null. Aborting.");
             Thread.dumpStack();
             return;
         }

@@ -136,7 +136,7 @@ public abstract class RequestHandler {
         {
             if (!Main.pref.getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
                 String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by preferences", myCommand);
-                System.out.println(err);
+                Main.info(err);
                 throw new RequestHandlerForbiddenException(err);
             }
         }
@@ -210,7 +210,7 @@ public abstract class RequestHandler {
             String value = args.get(key);
             if ((value == null) || (value.length() == 0)) {
                 error = true;
-                System.out.println("'" + myCommand + "' remote control request must have '" + key + "' parameter");
+                Main.warn("'" + myCommand + "' remote control request must have '" + key + "' parameter");
                 missingKeys.add(key);
             }
         }

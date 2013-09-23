@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
@@ -109,11 +110,11 @@ public class RequestProcessor extends Thread {
         }
         String commandWithSlash = "/" + command;
         if (handlers.get(commandWithSlash) != null) {
-            System.out.println("RemoteControl: ignoring duplicate command " + command
+            Main.info("RemoteControl: ignoring duplicate command " + command
                     + " with handler " + handler.getName());
         } else {
             if (!silent) {
-                System.out.println("RemoteControl: adding command \"" +
+                Main.info("RemoteControl: adding command \"" +
                     command + "\" (handled by " + handler.getSimpleName() + ")");
             }
             handlers.put(commandWithSlash, handler);
@@ -150,7 +151,7 @@ public class RequestProcessor extends Thread {
                 sendError(out);
                 return;
             }
-            System.out.println("RemoteControl received: " + get);
+            Main.info("RemoteControl received: " + get);
 
             StringTokenizer st = new StringTokenizer(get);
             if (!st.hasMoreTokens()) {

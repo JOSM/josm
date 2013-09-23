@@ -328,7 +328,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 UTFInputStreamReader in = UTFInputStreamReader.create(Utils.openURL(u), "utf-8");
                 String r = new Scanner(in).useDelimiter("\\A").next();
                 Utils.close(in);
-                System.out.println("Successfully loaded Bing attribution data.");
+                Main.info("Successfully loaded Bing attribution data.");
                 return r.getBytes("utf-8");
             }
         }
@@ -346,7 +346,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                             String xml = attributionLoader.updateIfRequiredString();
                             return parseAttributionText(new InputSource(new StringReader((xml))));
                         } catch (IOException ex) {
-                            System.err.println("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
+                            Main.warn("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
                             Thread.sleep(waitTimeSec * 1000L);
                             waitTimeSec *= 2;
                         }

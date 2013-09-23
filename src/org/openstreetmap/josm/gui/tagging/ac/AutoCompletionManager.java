@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -155,7 +156,7 @@ public class AutoCompletionManager implements DataSetListener {
                         try {
                             presetTagCache.putAll(ki.key, ki.getValues());
                         } catch (NullPointerException e) {
-                            System.err.println(p+": Unable to cache "+ki);
+                            Main.error(p+": Unable to cache "+ki);
                         }
                     }
                 } else if (item instanceof TaggingPresetItems.Roles) {

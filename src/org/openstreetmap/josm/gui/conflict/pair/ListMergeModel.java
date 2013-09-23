@@ -718,7 +718,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
             } else if (value instanceof RelationMember) {
                 return ((RelationMember)value).getMember();
             } else {
-                System.err.println("Unknown object type: "+value);
+                Main.error("Unknown object type: "+value);
                 return null;
             }
         }

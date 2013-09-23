@@ -32,7 +32,14 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Delete unnecessary nodes from a way
+ */
 public class SimplifyWayAction extends JosmAction {
+    
+    /**
+     * Constructs a new {@code SimplifyWayAction}.
+     */
     public SimplifyWayAction() {
         super(tr("Simplify Way"), "simplify", tr("Delete unnecessary nodes from a way."), Shortcut.registerShortcut("tools:simplify", tr("Tool: {0}", tr("Simplify Way")),
                 KeyEvent.VK_Y, Shortcut.SHIFT), true);
@@ -40,7 +47,6 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     protected boolean confirmWayWithNodesOutsideBoundingBox(List<? extends OsmPrimitive> primitives) {
-        System.out.println(primitives);
         return DeleteCommand.checkAndConfirmOutlyingDelete(Main.map.mapView.getEditLayer(), primitives, null);
     }
 

@@ -1051,14 +1051,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
             timezone = (double)Math.round(tz * 2)/2; // hours, rounded to one decimal place
             delta = Math.round(diff - timezone*60*60); // seconds
 
-            /*System.out.println("phto " + firstExifDate);
-            System.out.println("gpx  " + firstGPXDate);
-            System.out.println("diff " + diff);
-            System.out.println("difh " + diffInH);
-            System.out.println("days " + dayOffset);
-            System.out.println("time " + tz);
-            System.out.println("fix  " + timezone);
-            System.out.println("offt " + delta);*/
+            /*Main.debug("phto " + firstExifDate);
+            Main.debug("gpx  " + firstGPXDate);
+            Main.debug("diff " + diff);
+            Main.debug("difh " + diffInH);
+            Main.debug("days " + dayOffset);
+            Main.debug("time " + tz);
+            Main.debug("fix  " + timezone);
+            Main.debug("offt " + delta);*/
 
             tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
             tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
@@ -1159,7 +1159,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                             prevWpTime = curWpTime;
 
                         } catch(ParseException e) {
-                            System.err.println("Error while parsing date \"" + curWpTimeStr + '"');
+                            Main.error("Error while parsing date \"" + curWpTimeStr + '"');
                             e.printStackTrace();
                             prevWp = null;
                             prevWpTime = 0;

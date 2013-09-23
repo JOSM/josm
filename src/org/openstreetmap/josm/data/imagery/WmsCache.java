@@ -122,9 +122,9 @@ public class WmsCache {
                 fis = new FileInputStream(layerIndexFile);
                 layersIndex.load(fis);
             } catch (FileNotFoundException e) {
-                System.out.println("Unable to load layers index for wms cache (file " + layerIndexFile + " not found)");
+                Main.error("Unable to load layers index for wms cache (file " + layerIndexFile + " not found)");
             } catch (IOException e) {
-                System.err.println("Unable to load layers index for wms cache");
+                Main.error("Unable to load layers index for wms cache");
                 e.printStackTrace();
             }
 
@@ -150,7 +150,7 @@ public class WmsCache {
                     fos = new FileOutputStream(layerIndexFile);
                     layersIndex.store(fos, "");
                 } catch (IOException e) {
-                    System.err.println("Unable to save layer index for wms cache");
+                    Main.error("Unable to save layer index for wms cache");
                     e.printStackTrace();
                 }
             }
@@ -186,7 +186,7 @@ public class WmsCache {
             WmsCacheType cacheEntries = (WmsCacheType)unmarshaller.unmarshal(new FileInputStream(indexFile));
             totalFileSize = cacheEntries.getTotalFileSize();
             if (cacheEntries.getTileSize() != tileSize) {
-                System.out.println("Cache created with different tileSize, cache will be discarded");
+                Main.info("Cache created with different tileSize, cache will be discarded");
                 return;
             }
             for (ProjectionType projectionType: cacheEntries.getProjection()) {
@@ -201,9 +201,9 @@ public class WmsCache {
         } catch (Exception e) {
             if (indexFile.exists()) {
                 e.printStackTrace();
-                System.out.println("Unable to load index for wms-cache, new file will be created");
+                Main.info("Unable to load index for wms-cache, new file will be created");
             } else {
-                System.out.println("Index for wms-cache doesn't exist, new file will be created");
+                Main.info("Index for wms-cache doesn't exist, new file will be created");
             }
         }
 
@@ -296,7 +296,7 @@ public class WmsCache {
             Marshaller marshaller = context.createMarshaller();
             marshaller.marshal(index, new FileOutputStream(new File(cacheDir, INDEX_FILENAME)));
         } catch (Exception e) {
-            System.err.println("Failed to save wms-cache file");
+            Main.error("Failed to save wms-cache file");
             e.printStackTrace();
         }
     }
@@ -363,7 +363,7 @@ public class WmsCache {
             try {
                 return loadImage(projectionEntries, entry);
             } catch (IOException e) {
-                System.err.println("Unable to load file from wms cache");
+                Main.error("Unable to load file from wms cache");
                 e.printStackTrace();
                 return null;
             }

@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
@@ -69,16 +70,16 @@ public class MapCSSStyleSource extends StyleSource {
             parser.sheet(this);
             loadMeta();
             loadCanvas();
-        } catch(IOException e) {
-            System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
+        } catch (IOException e) {
+            Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
             e.printStackTrace();
             logError(e);
         } catch (TokenMgrError e) {
-            System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
             e.printStackTrace();
             logError(e);
         } catch (ParseException e) {
-            System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
             e.printStackTrace();
             logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
         }

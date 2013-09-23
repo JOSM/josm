@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -92,7 +93,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         if (p.isDeleted()) {
             // we tried to delete an already deleted primitive.
             //
-            System.out.println(tr("Warning: object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
+            Main.warn(tr("Object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
             processedPrimitives.addAll(writer.getProcessedPrimitives());
             processedPrimitives.add(p);
             toUpload.removeAll(processedPrimitives);
@@ -137,7 +138,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
             }
         } catch (Exception sxe) {
             if (isCanceled()) {
-                System.out.println("Ignoring exception caught because upload is canceled. Exception is: " + sxe.toString());
+                Main.info("Ignoring exception caught because upload is canceled. Exception is: " + sxe.toString());
                 return;
             }
             setLastException(sxe);

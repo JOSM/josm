@@ -258,7 +258,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             File pluginDir = Main.pref.getPluginsDirectory();
             if (!pluginDir.exists()) {
                 if (! pluginDir.mkdirs()) {
-                    System.err.println(tr("Warning: failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
+                    Main.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
                 }
             }
             File cacheFile = createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST);
@@ -310,11 +310,11 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             InputStream in = new ByteArrayInputStream(doc.getBytes("UTF-8"));
             List<PluginInformation> pis = new PluginListParser().parse(in);
             availablePlugins.addAll(filterDeprecatedPlugins(pis));
-        } catch(UnsupportedEncodingException e) {
-            System.err.println(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
+        } catch (UnsupportedEncodingException e) {
+            Main.error(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
             e.printStackTrace();
-        } catch(PluginListParseException e) {
-            System.err.println(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
+        } catch (PluginListParseException e) {
+            Main.error(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
             e.printStackTrace();
         }
     }

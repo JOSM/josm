@@ -99,9 +99,8 @@ public class MapPaintStyles {
                 .setWidth(width)
                 .setHeight(height)
                 .setOptional(true).get();
-        if(i == null)
-        {
-            System.out.println("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
+        if (i == null) {
+            Main.warn("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
             return null;
         }
         return i;
@@ -242,11 +241,11 @@ public class MapPaintStyles {
                             return new MapCSSStyleSource(entry);
                     }
                 }
-                System.err.println("Warning: Could not detect style type. Using default (xml).");
+                Main.warn("Could not detect style type. Using default (xml).");
                 return new XmlStyleSource(entry);
             }
         } catch (IOException e) {
-            System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
+            Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
             e.printStackTrace();
         } finally {
             Utils.close(in);

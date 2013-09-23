@@ -39,16 +39,13 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Method MsetEnabledPreferencesMenu = Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", new Class[] { boolean.class });
             MsetEnabledPreferencesMenu.invoke(Ocom_apple_eawt_Application, new Object[] { Boolean.TRUE });
         } catch (Exception ex) {
-            // Oops, what now?
-            // We'll just ignore this for now. The user will still be able to close JOSM
-            // by closing all its windows.
-            System.out.println("Failed to register with OSX: " + ex);
+            // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
+            Main.warn("Failed to register with OSX: " + ex);
         }
     }
     @Override
     public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {
         Boolean handled = Boolean.TRUE;
-        //System.out.println("Going to handle method "+method+" (short: "+method.getName()+") with event "+args[0]);
         if (method.getName().equals("handleQuit")) {
             handled = Main.exitJosm(false, 0);
         } else if (method.getName().equals("handleAbout")) {
@@ -61,14 +58,13 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             try {
                 args[0].getClass().getDeclaredMethod("setHandled", new Class[] { boolean.class }).invoke(args[0], new Object[] { handled });
             } catch (Exception ex) {
-                System.out.println("Failed to report handled event: " + ex);
+                Main.warn("Failed to report handled event: " + ex);
             }
         }
         return null;
     }
     @Override
     public void openUrl(String url) throws IOException {
-        // Ain't that KISS?
         Runtime.getRuntime().exec("open " + url);
     }
 

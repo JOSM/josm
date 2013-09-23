@@ -129,7 +129,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         @Override
         public void appendLogMessage(String message) {
             if (message != null && !message.isEmpty()) {
-                System.out.println("appendLogMessage not implemented for background tasks. Message was: " + message);
+                Main.info("appendLogMessage not implemented for background tasks. Message was: " + message);
             }
         }
 

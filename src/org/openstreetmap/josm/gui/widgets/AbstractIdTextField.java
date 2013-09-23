@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.widgets;
 
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -38,7 +38,7 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
                 validator = klass.getConstructor(JTextComponent.class).newInstance(this);
             }
         } catch (Exception e) {
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            Main.error(e);
         } finally {
             this.validator = validator;
         }

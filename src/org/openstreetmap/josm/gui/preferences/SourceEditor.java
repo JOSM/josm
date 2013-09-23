@@ -1246,7 +1246,7 @@ public abstract class SourceEditor extends JPanel {
                     if (line.startsWith("\t")) {
                         Matcher m = Pattern.compile("^\t([^:]+): *(.+)$").matcher(line);
                         if (! m.matches()) {
-                            System.err.println(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
+                            Main.error(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
                             continue;
                         }
                         if (last != null) {
@@ -1290,7 +1290,7 @@ public abstract class SourceEditor extends JPanel {
                         if (m.matches()) {
                             sources.add(last = new ExtendedSourceEntry(m.group(1), m.group(2)));
                         } else {
-                            System.err.println(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
+                            Main.error(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
                         }
                     }
                 }

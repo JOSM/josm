@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.xml;
 import java.awt.Color;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.mappaint.Range;
@@ -61,7 +62,7 @@ public class LinePrototype extends Prototype {
                 found = true;
             }
             if (f < 0) {
-                System.err.println(I18n.tr("Illegal dash pattern, values must be positive"));
+                Main.error(I18n.tr("Illegal dash pattern, values must be positive"));
                 this.dashed = null;
                 return;
             }
@@ -69,7 +70,7 @@ public class LinePrototype extends Prototype {
         if (found) {
             this.dashed = dashed;
         } else {
-            System.err.println(I18n.tr("Illegal dash pattern, at least one value must be > 0"));
+            Main.error(I18n.tr("Illegal dash pattern, at least one value must be > 0"));
         }
     }
 

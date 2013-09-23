@@ -144,7 +144,7 @@ public class HelpBrowser extends JDialog {
                 css.append("\n");
             }
         } catch(Exception e) {
-            System.err.println(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));
+            Main.error(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));
             e.printStackTrace();
             return ss;
         } finally {
@@ -498,7 +498,6 @@ public class HelpBrowser extends JDialog {
         }
         @Override
         public void update(Observable o, Object arg) {
-            //System.out.println("BackAction: canGoBoack=" + history.canGoBack() );
             setEnabled(history.canGoBack());
         }
     }
@@ -558,8 +557,8 @@ public class HelpBrowser extends JDialog {
                         help.scrollRectToVisible(r);
                         return true;
                     }
-                } catch(BadLocationException e) {
-                    System.err.println(tr("Warning: bad location in HTML document. Exception was: {0}", e.toString()));
+                } catch (BadLocationException e) {
+                    Main.warn(tr("Bad location in HTML document. Exception was: {0}", e.toString()));
                     e.printStackTrace();
                 }
             }

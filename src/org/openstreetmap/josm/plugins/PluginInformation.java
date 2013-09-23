@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
@@ -185,7 +186,7 @@ public class PluginInformation {
             try {
                 new URL(s);
             } catch (MalformedURLException e) {
-                System.out.println(tr("Invalid URL ''{0}'' in plugin {1}", s, name));
+                Main.info(tr("Invalid URL ''{0}'' in plugin {1}", s, name));
                 s = null;
             }
         }
@@ -199,7 +200,7 @@ public class PluginInformation {
                 try {
                     s = tr(s);
                 } catch (IllegalArgumentException e) {
-                    System.out.println(tr("Invalid plugin description ''{0}'' in plugin {1}", s, name));
+                    Main.info(tr("Invalid plugin description ''{0}'' in plugin {1}", s, name));
                 }
             }
         }

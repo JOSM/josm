@@ -302,7 +302,7 @@ public class OpenFileAction extends DiskAccessAction {
                         }
                         Utils.close(reader);
                     } catch (Exception e) {
-                        System.err.println(e.getMessage());
+                        Main.error(e);
                     }
                 }
 

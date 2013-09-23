@@ -10,6 +10,8 @@ import javax.swing.TransferHandler;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * A subclass of {@link JPasswordField} to implement a workaround to 
  * <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6322854">JDK bug 6322854</a>.
@@ -102,7 +104,7 @@ public class JosmPasswordField extends JPasswordField {
                     try {
                         pasteAction.actionPerformed(e);
                     } catch (NullPointerException npe) {
-                        System.err.println("NullPointerException occured because of JDK bug 6322854. "
+                        Main.error("NullPointerException occured because of JDK bug 6322854. "
                                 +"Copy/Paste operation has not been performed. Please complain to Oracle: "+
                                 "http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6322854");
                     }

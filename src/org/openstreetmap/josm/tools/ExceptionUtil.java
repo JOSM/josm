@@ -369,8 +369,8 @@ public class ExceptionUtil {
                 Date closeDate = null;
                 try {
                     closeDate = formatter.parse(m.group(2));
-                } catch(ParseException ex) {
-                    System.err.println(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
+                } catch (ParseException ex) {
+                    Main.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
                     ex.printStackTrace();
                 }
                 if (closeDate == null) {
