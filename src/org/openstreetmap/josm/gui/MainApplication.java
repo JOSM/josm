@@ -319,7 +319,7 @@ public class MainApplication extends Main {
         if (args.containsKey(Option.LOAD_PREFERENCES)) {
             CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
-                System.out.println("Reading preferences from " + i);
+                info("Reading preferences from " + i);
                 try {
                     config.openAndReadXML(Utils.openURL(new URL(i)));
                 } catch (Exception ex) {
@@ -445,7 +445,7 @@ public class MainApplication extends Main {
 
         if (Main.pref.getBoolean("debug.edt-checker.enable", Version.getInstance().isLocalBuild())) {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process but they don't seem to break anything and are difficult to fix
-            System.out.println("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
+            info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
         }
     }

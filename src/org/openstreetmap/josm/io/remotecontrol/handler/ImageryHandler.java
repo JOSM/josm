@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
-import java.util.Arrays;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.openstreetmap.josm.Main;
@@ -60,7 +60,7 @@ public class ImageryHandler extends RequestHandler {
             try {
                 imgInfo.setDefaultMinZoom(Integer.parseInt(min_zoom));
             } catch (NumberFormatException e) {
-                System.err.println("NumberFormatException ("+e.getMessage()+")");
+                Main.error(e);
             }
         }
         String max_zoom = args.get("max_zoom");
@@ -68,7 +68,7 @@ public class ImageryHandler extends RequestHandler {
             try {
                 imgInfo.setDefaultMaxZoom(Integer.parseInt(max_zoom));
             } catch (NumberFormatException e) {
-                System.err.println("NumberFormatException ("+e.getMessage()+")");
+                Main.error(e);
             }
         }
         GuiHelper.runInEDT(new Runnable() {

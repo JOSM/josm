@@ -253,7 +253,7 @@ public class LatLon extends Coordinate {
         // rounding errors could make the argument of asin greater than 1
         // (This should almost never happen.)
         if (java.lang.Double.isNaN(d)) {
-            System.err.println("Error: NaN in greatCircleDistance");
+            Main.error("NaN in greatCircleDistance");
             d = PI * R;
         }
         return d;

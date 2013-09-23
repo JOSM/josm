@@ -8,20 +8,22 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
+
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.actionsupport.AlignImageryPanel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
-import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.gui.preferences.imagery.WMSLayerTree;
+import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -77,7 +79,6 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             final WMSImagery wms = new WMSImagery();
             wms.attemptGetCapabilities(info.getUrl());
 
-            System.out.println(wms.getLayers());
             final WMSLayerTree tree = new WMSLayerTree();
             tree.updateTree(wms);
             final JComboBox formats = new JComboBox(wms.getFormats().toArray());
@@ -107,8 +108,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         } catch (WMSImagery.WMSGetCapabilitiesException ex) {
             JOptionPane.showMessageDialog(Main.parent, tr("Could not parse WMS layer list."),
                     tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
-            System.err.println("Could not parse WMS layer list. Incoming data:");
-            System.err.println(ex.getIncomingData());
+            Main.error("Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData());
         }
         return null;
     }

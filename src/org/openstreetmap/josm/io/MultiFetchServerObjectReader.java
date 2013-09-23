@@ -48,10 +48,10 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *         .append(new Node(72343));
  *    reader.parseOsm();
  *    if (!reader.getMissingPrimitives().isEmpty()) {
- *        System.out.println("There are missing primitives: " + reader.getMissingPrimitives());
+ *        Main.info("There are missing primitives: " + reader.getMissingPrimitives());
  *    }
  *    if (!reader.getSkippedWays().isEmpty()) {
- *       System.out.println("There are skipped ways: " + reader.getMissingPrimitives());
+ *       Main.info("There are skipped ways: " + reader.getMissingPrimitives());
  *    }
  * </pre>
  */
@@ -488,7 +488,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                 return multiGetIdPackage(type, pkg, progressMonitor);
             } catch (OsmApiException e) {
                 if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    System.out.println(tr("Server replied with response code 404, retrying with an individual request for each object."));
+                    Main.info(tr("Server replied with response code 404, retrying with an individual request for each object."));
                     return singleGetIdPackage(type, pkg, progressMonitor);
                 } else {
                     throw e;
@@ -566,7 +566,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                     result.dataSet.mergeFrom(singleGetId(type, id, progressMonitor));
                 } catch (OsmApiException e) {
                     if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                        System.out.println(tr("Server replied with response code 404 for id {0}. Skipping.", Long.toString(id)));
+                        Main.info(tr("Server replied with response code 404 for id {0}. Skipping.", Long.toString(id)));
                         result.missingPrimitives.add(new SimplePrimitiveId(id, type));
                     } else {
                         throw e;

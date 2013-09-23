@@ -903,12 +903,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     userObject = action;
                     Object tb = action.getValue("toolbar");
                     if(tb == null) {
-                        System.out.println(tr("Toolbar action without name: {0}",
+                        Main.info(tr("Toolbar action without name: {0}",
                         action.getClass().getName()));
                         continue;
                     } else if (!(tb instanceof String)) {
                         if(!(tb instanceof Boolean) || (Boolean)tb) {
-                            System.out.println(tr("Strange toolbar value: {0}",
+                            Main.info(tr("Strange toolbar value: {0}",
                             action.getClass().getName()));
                         }
                         continue;
@@ -916,7 +916,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         String toolbar = (String) tb;
                         Action r = actions.get(toolbar);
                         if(r != null && r != action && !toolbar.startsWith("imagery_")) {
-                            System.out.println(tr("Toolbar action {0} overwritten: {1} gets {2}",
+                            Main.info(tr("Toolbar action {0} overwritten: {1} gets {2}",
                             toolbar, r.getClass().getName(), action.getClass().getName()));
                         }
                         actions.put(toolbar, action);
@@ -987,7 +987,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 if(a != null) {
                     result.add(a);
                 } else {
-                    System.out.println("Could not load tool definition "+s);
+                    Main.info("Could not load tool definition "+s);
                 }
             }
         }
@@ -1000,13 +1000,13 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
      */
     public Action register(Action action) {
         String toolbar = (String) action.getValue("toolbar");
-        if(toolbar == null) {
-            System.out.println(tr("Registered toolbar action without name: {0}",
+        if (toolbar == null) {
+            Main.info(tr("Registered toolbar action without name: {0}",
             action.getClass().getName()));
         } else {
             Action r = regactions.get(toolbar);
-            if(r != null) {
-                System.out.println(tr("Registered toolbar action {0} overwritten: {1} gets {2}",
+            if (r != null) {
+                Main.info(tr("Registered toolbar action {0} overwritten: {1} gets {2}",
                 toolbar, r.getClass().getName(), action.getClass().getName()));
             }
         }

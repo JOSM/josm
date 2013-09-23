@@ -5,10 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.io.IOException;
 import java.net.BindException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.InetAddress;
 
 import org.openstreetmap.josm.Main;
 
@@ -36,7 +36,7 @@ public class RemoteControlHttpServer extends Thread {
             instance = new RemoteControlHttpServer(port);
             instance.start();
         } catch (BindException ex) {
-            Main.warn(marktr("Warning: Cannot start remotecontrol server on port {0}: {1}"),
+            Main.warn(marktr("Cannot start remotecontrol server on port {0}: {1}"),
                     Integer.toString(port), ex.getLocalizedMessage());
         } catch (IOException ioe) {
             ioe.printStackTrace();

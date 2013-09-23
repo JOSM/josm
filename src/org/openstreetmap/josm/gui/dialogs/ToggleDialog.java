@@ -845,7 +845,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                     if (action != null) {
                         buttonActions.add(action);
                     } else {
-                        System.err.println("Button " + button + " doesn't have action defined");
+                        Main.warn("Button " + button + " doesn't have action defined");
                         new Exception().printStackTrace();
                     }
                 }

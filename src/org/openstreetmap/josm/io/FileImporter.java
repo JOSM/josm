@@ -62,7 +62,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
      */
     public boolean importDataHandleExceptions(File f, ProgressMonitor progressMonitor) {
         try {
-            System.out.println("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
+            Main.info("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
             importData(f, progressMonitor);
             return true;
         } catch (Exception e) {
@@ -78,7 +78,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
     }
     public boolean importDataHandleExceptions(List<File> files, ProgressMonitor progressMonitor) {
         try {
-            System.out.println("Open "+files.size()+" files");
+            Main.info("Open "+files.size()+" files");
             importData(files, progressMonitor);
             return true;
         } catch (Exception e) {

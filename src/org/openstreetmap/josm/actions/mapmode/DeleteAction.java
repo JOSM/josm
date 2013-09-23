@@ -115,7 +115,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         } catch (SecurityException ex) {
-            System.out.println(ex);
+            Main.warn(ex);
         }
     }
 
@@ -126,7 +126,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         } catch (SecurityException ex) {
-            System.out.println(ex);
+            Main.warn(ex);
         }
         removeHighlighting();
     }

@@ -149,7 +149,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         }
                     });
                 } else {
-                    System.out.println("Could not get presets icon " + iconName);
+                    Main.warn("Could not get presets icon " + iconName);
                 }
             }
         });
@@ -166,7 +166,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         try {
             this.nameTemplate = new TemplateParser(pattern).parse();
         } catch (ParseError e) {
-            System.err.println("Error while parsing " + pattern + ": " + e.getMessage());
+            Main.error("Error while parsing " + pattern + ": " + e.getMessage());
             throw new SAXException(e);
         }
     }
@@ -175,7 +175,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         try {
             this.nameTemplateFilter = SearchCompiler.compile(filter, false, false);
         } catch (org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
-            System.err.println("Error while parsing" + filter + ": " + e.getMessage());
+            Main.error("Error while parsing" + filter + ": " + e.getMessage());
             throw new SAXException(e);
         }
     }

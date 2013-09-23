@@ -80,7 +80,7 @@ public class RelationMemberConflictResolverCommand extends Command {
     @Override
     public void undoCommand() {
         if (! Main.map.mapView.hasLayer(layer)) {
-            System.out.println(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
+            Main.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     layer.toString()
             ));

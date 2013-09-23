@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
-import java.awt.BasicStroke;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -195,11 +195,11 @@ public class GuiHelper {
                    sumAbs += Math.abs(dash[i]);
                 }
             } catch (NumberFormatException ex) {
-                System.err.println("Error in stroke preference format: "+code);
+                Main.error("Error in stroke preference format: "+code);
                 dash = new float[]{5.0f};
             }
             if (sumAbs < 1e-1) {
-                System.err.println("Error in stroke dash fomat (all zeros): "+code);
+                Main.error("Error in stroke dash fomat (all zeros): "+code);
                 return new BasicStroke(w);
             }
             // dashed stroke

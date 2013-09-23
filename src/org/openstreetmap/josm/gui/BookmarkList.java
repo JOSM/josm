@@ -111,8 +111,8 @@ public class BookmarkList extends JList {
                 try {
                     bookmarks.add(new Bookmark(entry));
                 }
-                catch(Exception e) {
-                    System.err.println(tr("Error reading bookmark entry: %s", e.getMessage()));
+                catch (Exception e) {
+                    Main.error(tr("Error reading bookmark entry: %s", e.getMessage()));
                 }
             }
             Collections.sort(bookmarks);
@@ -125,14 +125,14 @@ public class BookmarkList extends JList {
             try {
                 LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
                 if (bookmarkFile.exists()) {
-                    System.out.println("Try loading obsolete bookmarks file");
+                    Main.info("Try loading obsolete bookmarks file");
                     BufferedReader in = new BufferedReader(new InputStreamReader(
                             new FileInputStream(bookmarkFile), "utf-8"));
 
                     for (String line = in.readLine(); line != null; line = in.readLine()) {
                         Matcher m = Pattern.compile("^(.+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)$").matcher(line);
                         if (!m.matches() || m.groupCount() != 5) {
-                            System.err.println(tr("Error: Unexpected line ''{0}'' in bookmark file ''{1}''",line, bookmarkFile.toString()));
+                            Main.error(tr("Unexpected line ''{0}'' in bookmark file ''{1}''",line, bookmarkFile.toString()));
                             continue;
                         }
                         Bookmark b = new Bookmark();
@@ -141,8 +141,8 @@ public class BookmarkList extends JList {
                         for (int i = 0; i < 4; ++i) {
                             try {
                                 values[i] = Double.parseDouble(m.group(i+2));
-                            } catch(NumberFormatException e) {
-                                System.err.println(tr("Error: Illegal double value ''{0}'' on line ''{1}'' in bookmark file ''{2}''",m.group(i+2),line, bookmarkFile.toString()));
+                            } catch (NumberFormatException e) {
+                                Main.error(tr("Illegal double value ''{0}'' on line ''{1}'' in bookmark file ''{2}''",m.group(i+2),line, bookmarkFile.toString()));
                                 continue;
                             }
                         }
@@ -155,7 +155,7 @@ public class BookmarkList extends JList {
                         model.addElement(b);
                     }
                     save();
-                    System.out.println("Removing obsolete bookmarks file");
+                    Main.info("Removing obsolete bookmarks file");
                     bookmarkFile.delete();
                 }
             } catch (IOException e) {

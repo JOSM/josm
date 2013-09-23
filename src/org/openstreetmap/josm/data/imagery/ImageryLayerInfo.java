@@ -8,13 +8,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.xml.sax.SAXException;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.tools.Utils;
+import org.xml.sax.SAXException;
 
 /**
  * Manages the list of imagery entries that are shown in the imagery menu.
@@ -49,7 +48,7 @@ public class ImageryLayerInfo {
                     ImageryInfo i = new ImageryInfo(prefEntry);
                     add(i);
                 } catch (IllegalArgumentException e) {
-                    System.err.println("Warning: Unable to load imagery preference entry:"+e);
+                    Main.warn("Unable to load imagery preference entry:"+e);
                 }
             }
             Collections.sort(layers);

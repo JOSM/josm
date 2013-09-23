@@ -36,7 +36,7 @@ public class ThumbsLoader implements Runnable {
 
     @Override
     public void run() {
-        System.err.println("Load Thumbnails");
+        Main.debug("Load Thumbnails");
         tracker = new MediaTracker(Main.map.mapView);
         for (int i = 0; i < data.size(); i++) {
             if (stop) return;
@@ -70,8 +70,8 @@ public class ThumbsLoader implements Runnable {
 
         if (!cacheOff) {
             BufferedImage cached = cache.getImg(cacheIdent);
-            if(cached != null) {
-                System.err.println(" from cache");
+            if (cached != null) {
+                Main.debug(" from cache");
                 return cached;
             }
         }
@@ -81,11 +81,11 @@ public class ThumbsLoader implements Runnable {
         try {
             tracker.waitForID(0);
         } catch (InterruptedException e) {
-            System.err.println(" InterruptedException");
+            Main.error(" InterruptedException");
             return null;
         }
         if (tracker.isErrorID(1) || img.getWidth(null) <= 0 || img.getHeight(null) <= 0) {
-            System.err.println(" Invalid image");
+            Main.error(" Invalid image");
             return null;
         }
         Rectangle targetSize = ImageDisplay.calculateDrawImageRectangle(
@@ -103,7 +103,7 @@ public class ThumbsLoader implements Runnable {
         tracker.removeImage(img);
 
         if (scaledBI.getWidth() <= 0 || scaledBI.getHeight() <= 0) {
-            System.err.println(" Invalid image");
+            Main.error(" Invalid image");
             return null;
         }
 
@@ -111,7 +111,6 @@ public class ThumbsLoader implements Runnable {
             cache.saveImg(cacheIdent, scaledBI);
         }
 
-        System.err.println("");
         return scaledBI;
     }
 

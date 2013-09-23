@@ -3,8 +3,8 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.net.HttpURLConnection;
 import java.net.Authenticator.RequestorType;
+import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -18,8 +18,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
-import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.Base64;
 
 /**
@@ -131,8 +131,8 @@ public class OsmConnection {
         } else if (authMethod.equals("oauth")) {
             addOAuthAuthorizationHeader(connection);
         } else {
-            String msg = tr("Warning: unexpected value for preference ''{0}''. Got ''{1}''.", "osm-server.auth-method", authMethod);
-            System.err.println(msg);
+            String msg = tr("Unexpected value for preference ''{0}''. Got ''{1}''.", "osm-server.auth-method", authMethod);
+            Main.warn(msg);
             throw new OsmTransferException(msg);
         }
     }

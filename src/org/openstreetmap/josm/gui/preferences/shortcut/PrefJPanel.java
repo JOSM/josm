@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.shortcut;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -8,17 +11,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-
-import static org.openstreetmap.josm.tools.I18n.marktr;
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import java.util.regex.PatternSyntaxException;
+
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -37,16 +36,16 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
-
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is the keyboard preferences content.
@@ -116,7 +115,6 @@ public class PrefJPanel extends JPanel {
                     String s = KeyEvent.getKeyText(i);
                     if (s != null && s.length() > 0 && !s.contains(unknown)) {
                         list.put(Integer.valueOf(i), s);
-                        //System.out.println(i+": "+s);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

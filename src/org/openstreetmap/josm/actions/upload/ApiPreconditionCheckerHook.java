@@ -52,12 +52,11 @@ public class ApiPreconditionCheckerHook implements UploadHook {
         for (OsmPrimitive osmPrimitive : primitives) {
             for (String key: osmPrimitive.keySet()) {
                 String value = osmPrimitive.get(key);
-                if(key.length() > 255) {
+                if (key.length() > 255) {
                     if (osmPrimitive.isDeleted()) {
-                        // if OsmPrimitive is going to be deleted we automatically shorten the
-                        // value
-                        System.out.println(
-                                tr("Warning: automatically truncating value of tag ''{0}'' on deleted object {1}",
+                        // if OsmPrimitive is going to be deleted we automatically shorten the value
+                        Main.warn(
+                                tr("Automatically truncating value of tag ''{0}'' on deleted object {1}",
                                         key,
                                         Long.toString(osmPrimitive.getId())
                                 )

@@ -307,7 +307,7 @@ public class ImageProvider {
                 throw new RuntimeException(tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.", name + ext));
             } else {
                 if (!suppressWarnings) {
-                    System.err.println(tr("Failed to locate image ''{0}''", name));
+                    Main.error(tr("Failed to locate image ''{0}''", name));
                 }
                 return null;
             }
@@ -612,7 +612,7 @@ public class ImageProvider {
                 }
             }
         } catch (Exception e) {
-            System.err.println(tr("Warning: failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
+            Main.warn(tr("Failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
         } finally {
             Utils.close(zipFile);
         }
@@ -670,8 +670,8 @@ public class ImageProvider {
                     if (u != null)
                         return u;
                 } catch (SecurityException e) {
-                    System.out.println(tr(
-                            "Warning: failed to access directory ''{0}'' for security reasons. Exception was: {1}",
+                    Main.warn(tr(
+                            "Failed to access directory ''{0}'' for security reasons. Exception was: {1}",
                             name, e.toString()));
                 }
 
@@ -684,8 +684,8 @@ public class ImageProvider {
             if (u != null)
                 return u;
         } catch (SecurityException e) {
-            System.out.println(tr(
-                    "Warning: failed to access directory ''{0}'' for security reasons. Exception was: {1}", dir, e
+            Main.warn(tr(
+                    "Failed to access directory ''{0}'' for security reasons. Exception was: {1}", dir, e
                     .toString()));
         }
 
@@ -735,7 +735,6 @@ public class ImageProvider {
             parser.setContentHandler(new DefaultHandler() {
                 @Override
                 public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-                    System.out.println();
                     if (localName.equalsIgnoreCase("img")) {
                         String val = atts.getValue("src");
                         if (val.endsWith(fn))
@@ -758,10 +757,10 @@ public class ImageProvider {
         } catch (SAXReturnException r) {
             return r.getResult();
         } catch (Exception e) {
-            System.out.println("INFO: parsing " + base + fn + " failed:\n" + e);
+            Main.warn("Parsing " + base + fn + " failed:\n" + e);
             return null;
         }
-        System.out.println("INFO: parsing " + base + fn + " failed: Unexpected content.");
+        Main.warn("Parsing " + base + fn + " failed: Unexpected content.");
         return null;
     }
 

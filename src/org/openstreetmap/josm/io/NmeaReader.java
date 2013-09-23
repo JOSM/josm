@@ -246,11 +246,10 @@ public class NmeaReader {
             {
                 byte[] chb = chkstrings[0].getBytes();
                 int chk=0;
-                for(int i = 1; i < chb.length; i++) {
+                for (int i = 1; i < chb.length; i++) {
                     chk ^= chb[i];
                 }
-                if(Integer.parseInt(chkstrings[1].substring(0,2),16) != chk) {
-                    //System.out.println("Checksum error");
+                if (Integer.parseInt(chkstrings[1].substring(0,2),16) != chk) {
                     ps.checksum_errors++;
                     ps.p_Wp=null;
                     return false;
@@ -446,10 +445,8 @@ public class NmeaReader {
             }
             return true;
 
-        } catch(RuntimeException x) {
+        } catch (RuntimeException x) {
             // out of bounds and such
-            // x.printStackTrace();
-            // System.out.println("Malformed line: "+s.toString().trim());
             ps.malformed++;
             ps.p_Wp=null;
             return false;

@@ -203,7 +203,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             }
         }
         if (!toReload.isEmpty()) {
-            System.out.println(trn("Reloading {0} map style.", "Reloading {0} map styles.", toReload.size(), toReload.size()));
+            Main.info(trn("Reloading {0} map style.", "Reloading {0} map styles.", toReload.size(), toReload.size()));
             Main.worker.submit(new MapPaintStyleLoader(toReload));
         }
     }

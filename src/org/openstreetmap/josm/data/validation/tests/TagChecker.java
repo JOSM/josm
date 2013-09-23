@@ -258,7 +258,7 @@ public class TagChecker extends Test
                             if (err == null) {
                                 checkerData.add(d);
                             } else {
-                                System.err.println(tr("Invalid tagchecker line - {0}: {1}", err, line));
+                                Main.error(tr("Invalid tagchecker line - {0}: {1}", err, line));
                             }
                         }
                     } else if (line.charAt(0) == '+') {
@@ -266,7 +266,7 @@ public class TagChecker extends Test
                     } else if (line.charAt(0) == '-' && okValue != null) {
                         spellCheckKeyData.put(line.substring(1), okValue);
                     } else {
-                        System.err.println(tr("Invalid spellcheck line: {0}", line));
+                        Main.error(tr("Invalid spellcheck line: {0}", line));
                     }
                 }
             } catch (IOException e) {
@@ -309,7 +309,7 @@ public class TagChecker extends Test
                             try {
                                 presetsValueData.putAll(ky.key, ky.getValues());
                             } catch (NullPointerException e) {
-                                System.err.println(p+": Unable to initialize "+ky);
+                                Main.error(p+": Unable to initialize "+ky);
                             }
                         }
                     }

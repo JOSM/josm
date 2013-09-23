@@ -235,7 +235,7 @@ public class CustomConfigurator {
             exportDocument = builder.newDocument();
             root = document.getDocumentElement();
         } catch (Exception ex) {
-            System.out.println("Error getting preferences to save:" +ex.getMessage());
+            Main.warn("Error getting preferences to save:" +ex.getMessage());
         }
         if (root==null) return;
         try {
@@ -264,7 +264,7 @@ public class CustomConfigurator {
             ts.setOutputProperty(OutputKeys.INDENT, "yes");
             ts.transform(new DOMSource(exportDocument), new StreamResult(f.toURI().getPath()));
         } catch (Exception ex) {
-            System.out.println("Error saving preferences part: " +ex.getMessage());
+            Main.warn("Error saving preferences part: " +ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -344,7 +344,6 @@ public class CustomConfigurator {
                         List<PluginInformation> toRemovePlugins = new ArrayList<PluginInformation>();
                         List<PluginInformation> toDeletePlugins = new ArrayList<PluginInformation>();
                         for (PluginInformation pi: availablePlugins) {
-                            //System.out.print(pi.name+";");
                             String name = pi.name.toLowerCase();
                             if (installList.contains(name)) toInstallPlugins.add(pi);
                             if (removeList.contains(name)) toRemovePlugins.add(pi);
@@ -354,20 +353,21 @@ public class CustomConfigurator {
                             PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(Main.parent, toInstallPlugins, tr ("Installing plugins"));
                             Main.worker.submit(pluginDownloadTask);
                         }
-                            Collection<String> pls = new ArrayList<String>(Main.pref.getCollection("plugins"));
-                            for (PluginInformation pi: toInstallPlugins) {
-                                if (!pls.contains(pi.name)) pls.add(pi.name);
+                        Collection<String> pls = new ArrayList<String>(Main.pref.getCollection("plugins"));
+                        for (PluginInformation pi: toInstallPlugins) {
+                            if (!pls.contains(pi.name)) {
+                                pls.add(pi.name);
                             }
-                            for (PluginInformation pi: toRemovePlugins) {
-                                pls.remove(pi.name);
-                            }
-                            for (PluginInformation pi: toDeletePlugins) {
-                                pls.remove(pi.name);
-                                new File(Main.pref.getPluginsDirectory(),pi.name+".jar").deleteOnExit();
-                            }
-                            System.out.println(pls);
-                            Main.pref.putCollection("plugins",pls);
                         }
+                        for (PluginInformation pi: toRemovePlugins) {
+                            pls.remove(pi.name);
+                        }
+                        for (PluginInformation pi: toDeletePlugins) {
+                            pls.remove(pi.name);
+                            new File(Main.pref.getPluginsDirectory(), pi.name+".jar").deleteOnExit();
+                        }
+                        Main.pref.putCollection("plugins",pls);
+                    }
                 });
             }
             }
@@ -948,8 +948,6 @@ public class CustomConfigurator {
                 ? new ArrayList<Map<String, String>>(existing) : new ArrayList<Map<String, String>>(defaults);
     }
 
-
-
     private static void defaultUnknownWarning(String key) {
         log("Warning: Unknown default value of %s , skipped\n", key);
         JOptionPane.showMessageDialog(
@@ -960,10 +958,10 @@ public class CustomConfigurator {
     }
 
     private static void showPrefs(Preferences tmpPref) {
-        System.out.println("properties: " + tmpPref.properties);
-        System.out.println("collections: " + tmpPref.collectionProperties);
-        System.out.println("arrays: " + tmpPref.arrayProperties);
-        System.out.println("maps: " + tmpPref.listOfStructsProperties);
+        Main.info("properties: " + tmpPref.properties);
+        Main.info("collections: " + tmpPref.collectionProperties);
+        Main.info("arrays: " + tmpPref.arrayProperties);
+        Main.info("maps: " + tmpPref.listOfStructsProperties);
     }
 
     private static void modifyPreferencesByScript(ScriptEngine engine, Preferences tmpPref, String js) throws ScriptException {
@@ -972,8 +970,7 @@ public class CustomConfigurator {
         readPrefsFromJS(engine, tmpPref, "API.pref");
     }
 
-
-     /**
+    /**
      * Convert JavaScript preferences object to preferences data structures
      * @param engine - JS engine to put object
      * @param tmpPref - preferences to fill from JS
@@ -1058,9 +1055,7 @@ public class CustomConfigurator {
             if (Preferences.equalListOfStructs(e.getValue(), tmpPref.listOfStructsDefaults.get(e.getKey()))) continue;
             tmpPref.listOfStructsProperties.put(e.getKey(), e.getValue());
         }
-
     }
-
 
     /**
      * Convert preferences data structures to JavaScript object
@@ -1152,14 +1147,8 @@ public class CustomConfigurator {
             whereToPutInJS+"[String(e.getKey())] = jslistmap;"+
             "}\n";
 
-        //System.out.println("map1: "+stringMap );
-        //System.out.println("lists1: "+listMap );
-        //System.out.println("listlist1: "+listlistMap );
-        //System.out.println("listmap1: "+listmapMap );
-
         // Execute conversion script
         engine.eval(init);
-
     }
     }
 }

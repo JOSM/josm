@@ -88,11 +88,11 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         if (PROP_INTERVAL.get() > 0) {
 
             if (!autosaveDir.exists() && !autosaveDir.mkdirs()) {
-                System.out.println(tr("Unable to create directory {0}, autosave will be disabled", autosaveDir.getAbsolutePath()));
+                Main.warn(tr("Unable to create directory {0}, autosave will be disabled", autosaveDir.getAbsolutePath()));
                 return;
             }
             if (!deletedLayersDir.exists() && !deletedLayersDir.mkdirs()) {
-                System.out.println(tr("Unable to create directory {0}, autosave will be disabled", deletedLayersDir.getAbsolutePath()));
+                Main.warn(tr("Unable to create directory {0}, autosave will be disabled", deletedLayersDir.getAbsolutePath()));
                 return;
             }
 
@@ -158,16 +158,16 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                         ps.println(ManagementFactory.getRuntimeMXBean().getName());
                         Utils.close(ps);
                     } catch (Throwable t) {
-                        System.err.println(t.getMessage());
+                        Main.error(t);
                     }
                     return result;
                 } else {
-                    System.out.println(tr("Unable to create file {0}, other filename will be used", result.getAbsolutePath()));
+                    Main.warn(tr("Unable to create file {0}, other filename will be used", result.getAbsolutePath()));
                     if (index > PROP_INDEX_LIMIT.get())
                         throw new IOException("index limit exceeded");
                 }
             } catch (IOException e) {
-                System.err.println(tr("IOError while creating file, autosave will be skipped: {0}", e.getMessage()));
+                Main.error(tr("IOError while creating file, autosave will be skipped: {0}", e.getMessage()));
                 return null;
             }
             index++;
@@ -189,7 +189,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         while (info.backupFiles.size() > PROP_FILES_PER_LAYER.get()) {
             File oldFile = info.backupFiles.remove();
             if (!oldFile.delete()) {
-                System.out.println(tr("Unable to delete old backup file {0}", oldFile.getAbsolutePath()));
+                Main.warn(tr("Unable to delete old backup file {0}", oldFile.getAbsolutePath()));
             } else {
                 getPidFile(oldFile).delete();
             }
@@ -206,7 +206,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 changedDatasets.clear();
             } catch (Throwable t) {
                 // Don't let exception stop time thread
-                System.err.println("Autosave failed: ");
+                Main.error("Autosave failed:");
+                Main.error(t);
                 t.printStackTrace();
             }
         }
@@ -256,7 +257,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                                 }
                             }
                         } catch (IOException e) {
-                            System.err.println(tr("Error while creating backup of removed layer: {0}", e.getMessage()));
+                            Main.error(tr("Error while creating backup of removed layer: {0}", e.getMessage()));
                         }
 
                         it.remove();
@@ -299,12 +300,12 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                                 skipFile = jvmPerfDataFileExists(pid);
                             }
                         } catch (Throwable t) {
-                            System.err.println(t.getClass()+":"+t.getMessage());
+                            Main.error(t);
                         } finally {
                             Utils.close(reader);
                         }
                     } catch (Throwable t) {
-                        System.err.println(t.getClass()+":"+t.getMessage());
+                        Main.error(t);
                     }
                 }
                 if (!skipFile) {
@@ -358,17 +359,17 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         if (backupFile.exists()) {
             deletedLayers.remove(backupFile);
             if (!backupFile.delete()) {
-                System.err.println(String.format("Warning: Could not delete old backup file %s", backupFile));
+                Main.warn(String.format("Could not delete old backup file %s", backupFile));
             }
         }
         if (f.renameTo(backupFile)) {
             deletedLayers.add(backupFile);
             pidFile.delete();
         } else {
-            System.err.println(String.format("Warning: Could not move autosaved file %s to %s folder", f.getName(), deletedLayersDir.getName()));
+            Main.warn(String.format("Could not move autosaved file %s to %s folder", f.getName(), deletedLayersDir.getName()));
             // we cannot move to deleted folder, so just try to delete it directly
             if (!f.delete()) {
-                System.err.println(String.format("Warning: Could not delete backup file %s", f));
+                Main.warn(String.format("Could not delete backup file %s", f));
             } else {
                 pidFile.delete();
             }
@@ -379,7 +380,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 break;
             }
             if (!next.delete()) {
-                System.err.println(String.format("Warning: Could not delete archived backup file %s", next));
+                Main.warn(String.format("Could not delete archived backup file %s", next));
             }
         }
     }

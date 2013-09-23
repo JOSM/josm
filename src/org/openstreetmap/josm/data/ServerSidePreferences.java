@@ -46,7 +46,7 @@ public class ServerSidePreferences extends Preferences {
         }
         public String download() throws MissingPassword {
             try {
-                System.out.println("reading preferences from "+serverUrl);
+                Main.info("reading preferences from "+serverUrl);
                 URLConnection con = serverUrl.openConnection();
                 String username = get("applet.username");
                 String password = get("applet.password");
@@ -79,7 +79,7 @@ public class ServerSidePreferences extends Preferences {
         public void upload(String s) {
             try {
                 URL u = new URL(getPreferencesDir());
-                System.out.println("uploading preferences to "+u);
+                Main.info("uploading preferences to "+u);
                 HttpURLConnection con = (HttpURLConnection)u.openConnection();
                 String username = get("applet.username");
                 String password = get("applet.password");

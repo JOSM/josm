@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -223,7 +224,7 @@ public interface Selector {
                 try {
                     if (!c.applies(env)) return false;
                 } catch (PatternSyntaxException e) {
-                    System.err.println("PatternSyntaxException while applying condition" + c +": "+e.getMessage());
+                    Main.error("PatternSyntaxException while applying condition" + c +": "+e.getMessage());
                     return false;
                 }
             }

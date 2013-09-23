@@ -137,7 +137,7 @@ public class Projections {
                     if (m.matches()) {
                         inits.put("EPSG:" + m.group(1), Pair.create(name, m.group(2).trim()));
                     } else {
-                        System.err.println("Warning: failed to parse line from the epsg projection definition: "+line);
+                        Main.warn("Failed to parse line from the EPSG projection definition: "+line);
                     }
                 }
                 lastline = line;

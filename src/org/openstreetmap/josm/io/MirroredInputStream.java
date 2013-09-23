@@ -149,8 +149,8 @@ public class MirroredInputStream extends InputStream {
                 Utils.close(zipFile);
             }
         } catch (Exception e) {
-            if(file.getName().endsWith(".zip")) {
-                System.err.println(tr("Warning: failed to open file with extension ''{2}'' and namepart ''{3}'' in zip file ''{0}''. Exception was: {1}",
+            if (file.getName().endsWith(".zip")) {
+                Main.warn(tr("Failed to open file with extension ''{2}'' and namepart ''{3}'' in zip file ''{0}''. Exception was: {1}",
                         file.getName(), e.toString(), extension, namepart));
             }
         }
@@ -256,13 +256,12 @@ public class MirroredInputStream extends InputStream {
                 Main.pref.putCollection(prefKey, Arrays.asList(new String[]
                 {Long.toString(System.currentTimeMillis()), localFile.toString()}));
             } else {
-                System.out.println(tr("Failed to rename file {0} to {1}.",
+                Main.warn(tr("Failed to rename file {0} to {1}.",
                 destDirFile.getPath(), localFile.getPath()));
             }
         } catch (IOException e) {
             if (age >= maxTime*1000 && age < maxTime*1000*2) {
-                System.out.println(tr("Failed to load {0}, use cached file and retry next time: {1}",
-                url, e));
+                Main.warn(tr("Failed to load {0}, use cached file and retry next time: {1}", url, e));
                 return localFile;
             } else {
                 throw e;
@@ -318,7 +317,7 @@ public class MirroredInputStream extends InputStream {
                     String msg = tr("Too many redirects to the download URL detected. Aborting.");
                     throw new IOException(msg);
                 }
-                System.out.println(tr("Download redirected to ''{0}''", downloadUrl));
+                Main.info(tr("Download redirected to ''{0}''", downloadUrl));
                 break;
             default:
                 String msg = tr("Failed to read from ''{0}''. Server responded with status code {1}.", downloadUrl, con.getResponseCode());

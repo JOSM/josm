@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -56,7 +57,7 @@ public class OsmChangesetContentParser {
             } else if (qName.equals("delete")) {
                 currentModificationType = ChangesetModificationType.DELETED;
             } else {
-                System.err.println(tr("Warning: unsupported start element ''{0}'' in changeset content at position ({1},{2}). Skipping.", qName, locator.getLineNumber(), locator.getColumnNumber()));
+                Main.warn(tr("Unsupported start element ''{0}'' in changeset content at position ({1},{2}). Skipping.", qName, locator.getLineNumber(), locator.getColumnNumber()));
             }
         }
 
@@ -84,7 +85,7 @@ public class OsmChangesetContentParser {
             } else if (qName.equals("member")) {
                 // do nothing
             } else {
-                System.err.println(tr("Warning: unsupported end element ''{0}'' in changeset content at position ({1},{2}). Skipping.", qName, locator.getLineNumber(), locator.getColumnNumber()));
+                Main.warn(tr("Unsupported end element ''{0}'' in changeset content at position ({1},{2}). Skipping.", qName, locator.getLineNumber(), locator.getColumnNumber()));
             }
         }
 

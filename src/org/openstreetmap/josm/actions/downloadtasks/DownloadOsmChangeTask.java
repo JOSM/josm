@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -183,7 +183,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                         try {
                             data.setVisible(hp.isVisible());
                         } catch (IllegalStateException e) {
-                            System.err.println("Cannot change visibility for "+p+": "+e.getMessage());
+                            Main.error("Cannot change visibility for "+p+": "+e.getMessage());
                         }
                         data.setTimestamp(hp.getTimestamp());
                         data.setKeys(hp.getTags());
@@ -195,7 +195,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                             // Forget this primitive
                             it.remove();
                         } catch (AssertionError e) {
-                            System.err.println("Cannot load "+p + ": " + e.getMessage());
+                            Main.error("Cannot load "+p + ": " + e.getMessage());
                         }
                     }
                 }
