@@ -73,6 +73,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     private Color mainColor;
     private Stroke mainStroke;
 
+    /** settings value whether shared nodes should be ignored or not */
+    private boolean ignoreSharedNodes;
+
     /**
      * drawing settings for helper lines
      */
@@ -213,6 +216,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         nodeDragWithoutCtrl = Main.pref.getBoolean("extrude.drag-nodes-without-ctrl", false);
         oldLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.ctrl.stroke.old-line", "1"));
         mainStroke = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.stroke.main", "3"));
+
+        ignoreSharedNodes = Main.pref.getBoolean("extrude.ignore-shared-nodes", true);
     }
 
     @Override public void exitMode() {
@@ -442,12 +447,22 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         //find if the new points overlap existing segments (in case of 90 degree angles)
         Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
         boolean nodeOverlapsSegment = prevNode != null && Geometry.segmentsParallel(initialN1en, prevNode.getEastNorth(), initialN1en, newN1en);
+        // segmentAngleZero marks subset of nodeOverlapsSegment. nodeOverlapsSegment is true if angle between segments is 0 or PI, segmentAngleZero only if angle is 0
+        boolean segmentAngleZero = prevNode != null && Math.abs(Geometry.getCornerAngle(prevNode.getEastNorth(), initialN1en, newN1en)) < 1e-5;
         boolean hasOtherWays = this.hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
 
         if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
             //move existing node
             Node n1Old = selectedSegment.getFirstNode();
             cmds.add(new MoveCommand(n1Old, Main.getProjection().eastNorth2latlon(newN1en)));
+        } else if (ignoreSharedNodes && segmentAngleZero && !alwaysCreateNodes && hasOtherWays) {
+            // replace shared node with new one
+            Node n1Old = selectedSegment.getFirstNode();
+            Node n1New = new Node(Main.getProjection().eastNorth2latlon(newN1en));
+            wnew.addNode(insertionPoint, n1New);
+            wnew.removeNode(n1Old);
+            wayWasModified = true;
+            cmds.add(new AddCommand(n1New));
         } else {
             //introduce new node
             Node n1New = new Node(Main.getProjection().eastNorth2latlon(newN1en));
@@ -460,12 +475,21 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         //find if the new points overlap existing segments (in case of 90 degree angles)
         Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
         nodeOverlapsSegment = nextNode != null && Geometry.segmentsParallel(initialN2en, nextNode.getEastNorth(), initialN2en, newN2en);
+        segmentAngleZero = nextNode != null && Math.abs(Geometry.getCornerAngle(nextNode.getEastNorth(), initialN2en, newN2en)) < 1e-5;
         hasOtherWays = hasNodeOtherWays(selectedSegment.getSecondNode(), selectedSegment.way);
 
         if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
             //move existing node
             Node n2Old = selectedSegment.getSecondNode();
             cmds.add(new MoveCommand(n2Old, Main.getProjection().eastNorth2latlon(newN2en)));
+        } else if (ignoreSharedNodes && segmentAngleZero && !alwaysCreateNodes && hasOtherWays) {
+            // replace shared node with new one
+            Node n2Old = selectedSegment.getSecondNode();
+            Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
+            wnew.addNode(insertionPoint, n2New);
+            wnew.removeNode(n2Old);
+            wayWasModified = true;
+            cmds.add(new AddCommand(n2New));
         } else {
             //introduce new node
             Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
