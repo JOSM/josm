@@ -761,7 +761,7 @@ public class TagChecker extends Test
 
     protected static class CheckerData {
         private String description;
-        private List<CheckerElement> data = new ArrayList<CheckerElement>();
+        protected List<CheckerElement> data = new ArrayList<CheckerElement>();
         private OsmPrimitiveType type;
         private int code;
         protected Severity severity;
@@ -769,7 +769,7 @@ public class TagChecker extends Test
         protected static final int TAG_CHECK_WARN   = 1260;
         protected static final int TAG_CHECK_INFO   = 1270;
 
-        private static class CheckerElement {
+        protected static class CheckerElement {
             public Object tag;
             public Object value;
             public boolean noMatch;
