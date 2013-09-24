@@ -2713,7 +2713,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route_master"/>
             <label text="Edit Route master"/>
             <key key="type" value="route_master"/>
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry"/>
+            <combo key="route_master" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry"/>
             <text key="name" text="Name"/>
             <text key="ref" text="Reference"/>
             <optional>
