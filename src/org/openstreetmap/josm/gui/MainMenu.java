@@ -84,6 +84,7 @@ import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
 import org.openstreetmap.josm.actions.UnGlueAction;
+import org.openstreetmap.josm.actions.UnJoinNodeWayAction;
 import org.openstreetmap.josm.actions.UndoAction;
 import org.openstreetmap.josm.actions.UnselectAllAction;
 import org.openstreetmap.josm.actions.UpdateDataAction;
@@ -224,6 +225,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction createCircle = new CreateCircleAction();
     public final JosmAction mergeNodes = new MergeNodesAction();
     public final JosmAction joinNodeWay = new JoinNodeWayAction();
+    public final JosmAction unJoinNodeWay = new UnJoinNodeWayAction();
     public final JosmAction unglueNodes = new UnGlueAction();
     public final JosmAction joinAreas = new JoinAreasAction();
     public final JosmAction createMultipolygon = new CreateMultipolygonAction();
@@ -685,6 +687,7 @@ public class MainMenu extends JMenuBar {
         toolsMenu.addSeparator();
         add(toolsMenu, mergeNodes);
         add(toolsMenu, joinNodeWay);
+        add(toolsMenu, unJoinNodeWay);
         add(toolsMenu, unglueNodes);
         toolsMenu.addSeparator();
         add(toolsMenu, joinAreas);
