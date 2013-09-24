@@ -3,6 +3,8 @@ package org.openstreetmap.josm.plugins;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -26,21 +28,28 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
- * An asynchronous task for downloading plugin lists from the configured plugin download
- * sites.
- *
+ * An asynchronous task for downloading plugin lists from the configured plugin download sites.
+ * @since 2817
  */
-public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
+public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
 
     private Collection<String> sites;
     private boolean canceled;
@@ -142,9 +151,9 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
      * @param monitor a progress monitor
      * @return the downloaded list
      */
-    protected String downloadPluginList(String site, ProgressMonitor monitor) {
+    protected String downloadPluginList(String site, final ProgressMonitor monitor) {
         BufferedReader in = null;
-        StringBuilder sb = new StringBuilder();
+        String line;
         try {
             /* replace %<x> with empty string or x=plugins (separated with comma) */
             String pl = Utils.join(",", Main.pref.getCollection("plugins"));
@@ -165,18 +174,18 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                 connection.setRequestProperty("Accept-Charset", "utf-8");
             }
             in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-            String line;
-            while((line = in.readLine()) != null) {
+            StringBuilder sb = new StringBuilder();
+            while ((line = in.readLine()) != null) {
                 sb.append(line).append("\n");
             }
             return sb.toString();
-        } catch(MalformedURLException e) {
+        } catch (MalformedURLException e) {
             if (canceled) return null;
             e.printStackTrace();
             return null;
-        } catch(IOException e) {
+        } catch (IOException e) {
             if (canceled) return null;
-            e.printStackTrace();
+            handleIOException(monitor, e, tr("Plugin list download error"), tr("JOSM failed to download plugin list:"));
             return null;
         } finally {
             synchronized(this) {
@@ -188,6 +197,52 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             Utils.close(in);
             monitor.finishTask();
         }
+    }
+    
+    private void handleIOException(final ProgressMonitor monitor, IOException e, final String title, String firstMessage) {
+        InputStream errStream = connection.getErrorStream();
+        StringBuilder sb = new StringBuilder();
+        if (errStream != null) {
+            BufferedReader err = null;
+            try {
+                String line;
+                err = new BufferedReader(new InputStreamReader(errStream, "UTF-8"));
+                while ((line = err.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+            } catch (Exception ex) {
+                Main.error(e);
+                Main.error(ex);
+            } finally {
+                Utils.close(err);
+            }
+        }
+        final String msg = e.getMessage();
+        final String details = sb.toString();
+        Main.error(details.isEmpty() ? msg : msg + " - Details:\n" + details);
+        
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override public void run() {
+                JPanel panel = new JPanel(new GridBagLayout());
+                panel.add(new JLabel(tr("JOSM failed to download plugin list:")), GBC.eol().insets(0, 0, 0, 10));
+                StringBuilder b = new StringBuilder();
+                for (String part : msg.split("(?<=\\G.{200})")) {
+                    b.append(part).append("\n");
+                }
+                panel.add(new JLabel("<html><body width=\"500\"><b>"+b.toString().trim()+"</b></body></html>"), GBC.eol().insets(0, 0, 0, 10));
+                if (!details.isEmpty()) {
+                    panel.add(new JLabel(tr("Details:")), GBC.eol().insets(0, 0, 0, 10));
+                    JosmTextArea area = new JosmTextArea(details);
+                    area.setEditable(false);
+                    area.setLineWrap(true);  
+                    area.setWrapStyleWord(true); 
+                    JScrollPane scrollPane = new JScrollPane(area);
+                    scrollPane.setPreferredSize(new Dimension(500, 300));
+                    panel.add(scrollPane, GBC.eol().fill());
+                }
+                JOptionPane.showMessageDialog(monitor.getWindowParent(), panel, title, JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     /**
@@ -216,13 +271,13 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
                 out.write(buffer, 0, read);
             }
-        } catch(MalformedURLException e) {
+        } catch (MalformedURLException e) {
             if (canceled) return;
             e.printStackTrace();
             return;
-        } catch(IOException e) {
+        } catch (IOException e) {
             if (canceled) return;
-            e.printStackTrace();
+            handleIOException(monitor, e, tr("Plugin icons download error"), tr("JOSM failed to download plugin icons:"));
             return;
         } finally {
             Utils.close(out);
