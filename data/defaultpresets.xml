@@ -28,7 +28,7 @@ label: simple static text label
 
 space: empty line
 
-optional: optional tags, short for "label" plus "space"
+optional: optional tags, short for "space" plus "label" plus "space"
   text: the text to display (defaults to "Optional Attributes:")
 
 separator: separator line in menus
@@ -67,7 +67,7 @@ combo: combo box, with multiple choices and possible to enter free form text
                       display_value. (Only if it is not possible to describe
                       the entry in 2-3 words.) Instead of comma separated list
   instead using values, display_values and short_descriptions, the following form is also supported:
-    <list_entry value="" display_value="" short_description="" icon="" icon_size=""/>
+    <list_entry value="" display_value="" short_description="" icon="" icon_size="" />
         icon: location of icon
         icon_size: maximal size of icon. If tag is not setup it is taken default size of icon file
   default: default string to display (defaults to "")
@@ -92,7 +92,7 @@ multiselect: list of values from which zero or more can be selected
                       display_value. (Only if it is not possible to describe
                       the entry in 2-3 words.) Instead of a separated list
   instead using values, display_values and short_descriptions, the following form is also supported:
-    <list_entry value="" display_value="' short_description="" icon="" icon_size=""/>
+    <list_entry value="" display_value="' short_description="" icon="" icon_size="" />
         icon: location of icon
         icon_size: maximal size of icon. If tag is not setup it is taken default size of icon file
   default: default string to display (defaults to "")
@@ -2523,13 +2523,27 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=car"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=car" />
             <label text="Edit Car Shop" />
+            <space />
             <key key="shop" value="car" />
             <text key="name" text="Name" />
+            <text key="brand" text="Brand" />
             <text key="operator" text="Operator" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
         </item>
         <item name="Repair" icon="presets/car_repair.png" type="node,closedway">
             <label text="Edit Car Repair" />
             <key key="shop" value="car_repair" />
+            <text key="name" text="Name" />
+            <text key="brand" text="Brand" />
+            <text key="operator" text="Operator" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
+        </item>
+        <item name="Parts" icon="presets/car_repair.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=car_parts"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=car_parts" />
+            <label text="Edit Car Parts" />
+            <space />
+            <key key="shop" value="car_parts" />
             <text key="name" text="Name" />
             <text key="brand" text="Brand" />
             <text key="operator" text="Operator" />
@@ -2547,7 +2561,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="fax" text="Fax Number" />
                 <text key="website" text="Website" />
                 <text key="email" text="Email Address" />
-         </item>
+        </item>
         <separator/>
         <item name="Rental" icon="presets/car_rental.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=car_rental"
@@ -5252,21 +5266,21 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Seafood" icon="presets/seafood.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=seafood"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=seafood"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=seafood" />
             <label text="Edit Seafood" />
             <space />            
             <key key="shop" value="seafood" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
         </item>
         <item name="Deli (Fine Food)" icon="presets/deli.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=deli"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=deli"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=deli" />
             <label text="Edit Deli (Fine Food)" />
-            <space />            
+            <space />
             <key key="shop" value="deli" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
         </item>                     
@@ -5303,11 +5317,11 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=greengrocer"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=greengrocer"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:shop=greengrocer"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=greengrocer"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=greengrocer" />
             <label text="Edit Greengrocer" />
             <space />            
             <key key="shop" value="greengrocer" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
             <text key="website" text="Website" />
         </item>
@@ -5315,7 +5329,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=farm"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=farm"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=farm"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=farm"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=farm" />
             <label text="Edit Farm Stand" />
             <space />
             <key key="shop" value="farm" />
@@ -5364,14 +5378,14 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=boutique"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=boutique"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=boutique"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=boutique"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=boutique" />
             <label text="Edit Boutique" />
-            <space />            
+            <space />
             <key key="shop" value="boutique" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>            
+        </item>
          <item name="Shoes" icon="styles/standard/shop/shoes.png" type="node,closedway">
             <label text="Edit Shoe Shop" />
             <key key="shop" value="shoes" />
@@ -5419,14 +5433,14 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Fabric" icon="presets/fabric.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=fabric"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=fabric"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=fabric" />
             <label text="Edit Fabric" />
-            <space />            
+            <space />
             <key key="shop" value="fabric" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                                                
+        </item>
     </group> <!-- Clothes -->
     <group name="Electronic" icon="styles/standard/shop/electronics.png">
         <item name="Computer" icon="styles/standard/shop/computer.png" type="node,closedway">
@@ -5444,24 +5458,24 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Mobile Phone" icon="presets/mobile_phone.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=mobile_phone"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=mobile_phone"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=mobile_phone"/>
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=mobile_phone" />
             <label text="Edit Mobile Phone" />
-            <space />            
+            <space />
             <key key="shop" value="mobile_phone" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                                     
+        </item>
         <item name="Vacuum Cleaner" icon="presets/vacuum_cleaner.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=vacuum_cleaner"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=vacuum_cleaner"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=vacuum_cleaner" />
             <label text="Edit Vacuum Cleaner" />
-            <space />            
+            <space />
             <key key="shop" value="vacuum_cleaner" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>        
+        </item>
         <item name="Hifi" icon="styles/standard/shop/hifi.png" type="node,closedway">
             <label text="Edit Hifi Shop" />
             <key key="shop" value="hifi" />
@@ -5526,26 +5540,26 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=department_store"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:shop=department_store"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=department_store"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=department_store"/>
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=department_store" />
             <label text="Edit Department Store" />
-            <space />            
+            <space />
             <key key="shop" value="department_store" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                                  
+        </item>
         <item name="Mall" icon="styles/standard/shop/mall.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=mall"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=mall"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=mall"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=mall"/>
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=mall" />
             <label text="Edit Mall" />
-            <space />            
+            <space />
             <key key="shop" value="mall" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                                  
+        </item>
         <separator/>
         <item name="Chemist" icon="styles/standard/shop/chemist.png" type="node,closedway">
             <label text="Edit Chemist" />
@@ -5567,24 +5581,41 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Jewelry" icon="styles/standard/shop/jewelry.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=jewelry"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=jewelry"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=jewelry" />
             <label text="Edit Jewelry" />
-            <space />            
+            <space />
             <key key="shop" value="jewelry" />
-            <text key="name" text="Name" />            
-            <text key="operator" text="Operator" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" /> 
-        </item>                               
-        <item name="Erotic" icon="presets/erotic.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=erotic"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=erotic"/>
-            <label text="Edit Erotic" />
-            <space />            
-            <key key="shop" value="erotic" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                    
+        </item>
+        <item name="Gift" icon="http://openclipart.org/people/secretlondon/secretlondon_chocolate_present.svg" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=gift"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=gift"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=gift"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=gift"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=gift" />
+            <label text="Edit Gift Shop" />
+            <space />
+            <key key="shop" value="gift" />
+            <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
+            <optional>
+                <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" />
+                <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
+            </optional>
+        </item>
+        <item name="Erotic" icon="presets/erotic.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=erotic"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=erotic" />
+            <label text="Edit Erotic" />
+            <space />
+            <key key="shop" value="erotic" />
+            <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
+        </item>
         <separator/>
         <item name="Florist" icon="styles/standard/shop/florist.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=florist"
@@ -5629,14 +5660,14 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Paint" icon="presets/paint.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=paint"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=paint"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=paint" />
             <label text="Edit Paint" />
-            <space />            
+            <space />
             <key key="shop" value="paint" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                                       
+        </item>
         <separator/>
         <item name="Furniture" icon="styles/standard/shop/furniture.png" type="node,closedway">
             <label text="Edit Furniture Shop" />
@@ -5647,34 +5678,34 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Kitchen" icon="presets/kitchen.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=kitchen"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=kitchen"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=kitchen"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=kitchen" />
             <label text="Edit Kitchen" />
-            <space />            
+            <space />
             <key key="shop" value="kitchen" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                   
+        </item>
         <item name="Curtain" icon="presets/curtain.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=curtain"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=curtain"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=curtain" />
             <label text="Edit Curtain" />
-            <space />            
+            <space />
             <key key="shop" value="curtain" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                     
+        </item>
         <item name="Frame" icon="presets/frame.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=frame"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=frame"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=frame" />
             <label text="Edit Frames" />
-            <space />            
+            <space />
             <key key="shop" value="frame" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                             
+        </item>
         <separator/>
         <item name="Stationery" icon="presets/stationery.png" type="node,closedway">
             <label text="Edit Stationery Shop" />
@@ -5684,11 +5715,11 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Copyshop" icon="presets/copyshop.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=copyshop"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=copyshop"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=copyshop" />
             <label text="Edit Copyshop" />
-            <space />            
+            <space />
             <key key="shop" value="copyshop" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
         </item>
@@ -5718,14 +5749,14 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Musical Instrument" icon="presets/musical_instrument.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=musical_instrument"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=musical_instrument"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=musical_instrument" />
             <label text="Edit Musical Instruments" />
-            <space />            
+            <space />
             <key key="shop" value="musical_instrument" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
-        </item>                                    
+        </item>
         <item name="Toys" icon="styles/standard/shop/toys.png" type="node,closedway">
             <label text="Edit Toy Shop" />
             <key key="shop" value="toys" />
@@ -5734,11 +5765,11 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Variety Store" icon="presets/variety_store.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=variety_store"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=variety_store"/>
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=variety_store" />
             <label text="Edit Variety Store" />
-            <space />            
+            <space />
             <key key="shop" value="variety_store" />
-            <text key="name" text="Name" />            
+            <text key="name" text="Name" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" />
         </item>
