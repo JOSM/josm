@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.osm.RelationMember;
 
@@ -64,7 +65,7 @@ public class RelationSorter {
         }
     }
 
-    /*
+    /**
      * Sort a collection of relation members by the way they are linked.
      *
      * @param relationMembers collection of relation members
@@ -92,8 +93,8 @@ public class RelationSorter {
         }
 
         // Sort members and add them to result
-        for (AdditionalSorter s : customMap.keySet()) {
-            newMembers.addAll(s.sortMembers(customMap.get(s)));
+        for (Entry<AdditionalSorter, List<RelationMember>> entry : customMap.entrySet()) {
+            newMembers.addAll(entry.getKey().sortMembers(entry.getValue()));
         }
 
         RelationNodeMap map = new RelationNodeMap(defaultMembers);

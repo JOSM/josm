@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -450,8 +451,9 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 setIcon(ImageProvider.get("data", "object"));
             }
             String text = "";
-            for (OsmPrimitiveType type: stat.keySet()) {
-                int numPrimitives = stat.get(type) == null ? 0 : stat.get(type);
+            for (Entry<OsmPrimitiveType, Integer> entry: stat.entrySet()) {
+                OsmPrimitiveType type = entry.getKey();
+                int numPrimitives = entry.getValue() == null ? 0 : entry.getValue();
                 if (numPrimitives == 0) {
                     continue;
                 }

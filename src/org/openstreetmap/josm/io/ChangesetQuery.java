@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -367,7 +368,8 @@ public class ChangesetQuery {
         protected ChangesetQuery crateFromMap(Map<String,String> queryParams) throws ChangesetQueryUrlException {
             ChangesetQuery csQuery = new ChangesetQuery();
 
-            for (String k: queryParams.keySet()) {
+            for (Entry<String, String> entry: queryParams.entrySet()) {
+                String k = entry.getKey();
                 if (k.equals("uid")) {
                     if (queryParams.containsKey("display_name"))
                         throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
@@ -377,13 +379,13 @@ public class ChangesetQuery {
                         throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
                     csQuery.forUser(queryParams.get("display_name"));
                 } else if (k.equals("open")) {
-                    boolean b = parseBoolean(queryParams.get(k), "open");
+                    boolean b = parseBoolean(entry.getValue(), "open");
                     csQuery.beingOpen(b);
                 } else if (k.equals("closed")) {
-                    boolean b = parseBoolean(queryParams.get(k), "closed");
+                    boolean b = parseBoolean(entry.getValue(), "closed");
                     csQuery.beingClosed(b);
                 } else if (k.equals("time")) {
-                    Date[] dates = parseTime(queryParams.get(k));
+                    Date[] dates = parseTime(entry.getValue());
                     switch(dates.length) {
                     case 1:
                         csQuery.closedAfter(dates[0]);
@@ -394,12 +396,12 @@ public class ChangesetQuery {
                     }
                 } else if (k.equals("bbox")) {
                     try {
-                        csQuery.inBbox(new Bounds(queryParams.get(k), ","));
+                        csQuery.inBbox(new Bounds(entry.getValue(), ","));
                     } catch(IllegalArgumentException e) {
                         throw new ChangesetQueryUrlException(e);
                     }
                 } else
-                    throw new ChangesetQueryUrlException(tr("Unsupported parameter ''{0}'' in changeset query string",k ));
+                    throw new ChangesetQueryUrlException(tr("Unsupported parameter ''{0}'' in changeset query string", k));
             }
             return csQuery;
         }

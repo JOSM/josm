@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.table.AbstractTableModel;
@@ -368,9 +369,8 @@ public class TagEditorModel extends AbstractTableModel {
      */
     public void initFromTags(Map<String,String> tags) {
         this.tags.clear();
-        for (String key : tags.keySet()) {
-            String value = tags.get(key);
-            this.tags.add(new TagModel(key,value));
+        for (Entry<String, String> entry : tags.entrySet()) {
+            this.tags.add(new TagModel(entry.getKey(), entry.getValue()));
         }
         sort();
         TagModel tag = new TagModel();
