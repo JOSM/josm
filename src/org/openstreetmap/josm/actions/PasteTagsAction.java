@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -39,6 +40,9 @@ public final class PasteTagsAction extends JosmAction {
 
     private static final String help = ht("/Action/PasteTags");
 
+    /**
+     * Constructs a new {@code PasteTagsAction}.
+     */
     public PasteTagsAction() {
         super(tr("Paste Tags"), "pastetags",
                 tr("Apply tags of contents of paste buffer to all selected items."),
@@ -269,10 +273,9 @@ public final class PasteTagsAction extends JosmAction {
         if (!TextTagParser.validateTags(tags)) return false;
 
         List<Command> commands = new ArrayList<Command>(tags.size());
-        String v;
-        for (String key: tags.keySet()) {
-            v = tags.get(key);
-            commands.add(new ChangePropertyCommand(selection, key, "".equals(v)?null:v));
+        for (Entry<String, String> entry: tags.entrySet()) {
+            String v = entry.getValue();
+            commands.add(new ChangePropertyCommand(selection, entry.getKey(), "".equals(v)?null:v));
         }
         commitCommands(selection, commands);
         return !commands.isEmpty();

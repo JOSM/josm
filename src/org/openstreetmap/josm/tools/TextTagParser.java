@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -231,7 +232,6 @@ public class TextTagParser {
      * @return true if the tags should be pasted
      */
     public static boolean validateTags(Map<String, String> tags) {
-        String value;
         int r;
         int s = tags.size();
         if (s > MAX_KEY_COUNT) {
@@ -241,8 +241,9 @@ public class TextTagParser {
             s), "", "tags.paste.toomanytags");
             if (r==2 || r==3) return false; if (r==4) return true;
         }
-        for (String key: tags.keySet()) {
-            value = tags.get(key);
+        for (Entry<String, String> entry : tags.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
             if (key.length() > MAX_KEY_LENGTH) {
                 r = warning(tr("Key is too long (max {0} characters):", MAX_KEY_LENGTH), key+"="+value, "tags.paste.keytoolong");
                 if (r==2 || r==3) return false; if (r==4) return true;

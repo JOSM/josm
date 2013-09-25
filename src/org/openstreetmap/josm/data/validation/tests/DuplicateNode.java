@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -206,8 +207,8 @@ public class DuplicateNode extends Test {
                 }
 
                 int nbType=0;
-                for (String type: typeMap.keySet()) {
-                    if (typeMap.get(type)) {
+                for (Entry<String, Boolean> entry: typeMap.entrySet()) {
+                    if (entry.getValue()) {
                         nbType++;
                     }
                 }
