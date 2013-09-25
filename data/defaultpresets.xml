@@ -1924,7 +1924,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="ferry_terminal" />
             <text key="name" text="Name" />
-            <combo key="cargo" text="Cargo" values="passengers,vehicle,bicycle,hgv,passengers;vehicle" />
+            <combo key="cargo" text="Cargo" values="passengers,vehicle,bicycle,hgv,passengers;vehicle" values_context="cargo"/>
         </item>
         <item name="Ferry Route" icon="presets/ferry.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ferry"
@@ -4255,7 +4255,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="clock" />
             <optional>
                 <combo key="display" text="Display" values="analog,digital,sundial,unorthodox" />
-                <combo key="support" text="Support" values="pole,wall_mounted,billboard,ground" />
+                <combo key="support" text="Support" values="pole,wall_mounted,billboard,ground" values_context="mounting/support" />
                 <combo key="visibility" text="Visibility/readability" values="house,street,area" display_values="house (up to 5m),street (up to 20m),area (more than 20m)" />
                 <check key="date" text="Shows current date" default="off" />
                 <check key="thermometer" text="Shows temperature" default="off" />
@@ -6734,7 +6734,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit general route" />
             <space />
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" />
+            <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" values_context="route type"/>
             <text key="name" text="Name" />
             <text key="ref" text="Reference" />
             <text key="symbol" text="Symbol description" />
