@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -311,9 +312,9 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
     public void setDefaultChangesetTags(Map<String, String> tags) {
         pnlTagSettings.setDefaultTags(tags);
-         for (String key: tags.keySet()) {
-            if (key.equals("comment")) {
-                changesetCommentModel.setComment(tags.get(key));
+         for (Entry<String, String> entry: tags.entrySet()) {
+            if ("comment".equals(entry.getKey())) {
+                changesetCommentModel.setComment(entry.getValue());
             }
         }
     }

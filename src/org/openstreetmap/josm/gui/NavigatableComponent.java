@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -664,9 +665,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         Map<Double, List<Node>> nlists = getNearestNodesImpl(p, predicate);
         if (!nlists.isEmpty()) {
             Double minDistSq = null;
-            List<Node> nlist;
-            for (Double distSq : nlists.keySet()) {
-                nlist = nlists.get(distSq);
+            for (Entry<Double, List<Node>> entry : nlists.entrySet()) {
+                Double distSq = entry.getKey();
+                List<Node> nlist = entry.getValue();
 
                 // filter nodes to be ignored before determining minDistSq..
                 nlist.removeAll(ignore);
@@ -753,18 +754,19 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param preferredRefs primitives, whose nodes we prefer
      */
     public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate,
-            boolean use_selected, Collection<OsmPrimitive> preferredRefs) {
+            boolean useSelected, Collection<OsmPrimitive> preferredRefs) {
 
         Map<Double, List<Node>> nlists = getNearestNodesImpl(p, predicate);
         if (nlists.isEmpty()) return null;
 
         if (preferredRefs != null && preferredRefs.isEmpty()) preferredRefs = null;
         Node ntsel = null, ntnew = null, ntref = null;
-        boolean useNtsel = use_selected;
+        boolean useNtsel = useSelected;
         double minDistSq = nlists.keySet().iterator().next();
 
-        for (Double distSq : nlists.keySet()) {
-            for (Node nd : nlists.get(distSq)) {
+        for (Entry<Double, List<Node>> entry : nlists.entrySet()) {
+            Double distSq = entry.getKey();
+            for (Node nd : entry.getValue()) {
                 // find the nearest selected node
                 if (ntsel == null && nd.isSelected()) {
                     ntsel = nd;

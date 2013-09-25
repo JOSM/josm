@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -146,11 +147,11 @@ public class Addresses extends Test {
             }
             // Report duplicate house numbers
             String englishDescription = marktr("House number ''{0}'' duplicated");
-            for (String key : map.keySet()) {
-                List<OsmPrimitive> list = map.get(key);
+            for (Entry<String, List<OsmPrimitive>> entry : map.entrySet()) {
+                List<OsmPrimitive> list = entry.getValue();
                 if (list.size() > 1) {
                     errors.add(new AddressError(DUPLICATE_HOUSE_NUMBER, list,
-                            tr("Duplicate house numbers"), tr(englishDescription, key), englishDescription));
+                            tr("Duplicate house numbers"), tr(englishDescription, entry.getKey()), englishDescription));
                 }
             }
             // Report wrong street names

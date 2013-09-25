@@ -11,12 +11,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.swing.JOptionPane;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -50,6 +51,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class CreateMultipolygonAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code CreateMultipolygonAction}.
+     */
     public CreateMultipolygonAction() {
         super(tr("Create multipolygon"), "multipoly_create", tr("Create multipolygon."),
             Shortcut.registerShortcut("tools:multipoly", tr("Tool: {0}", tr("Create multipolygon")),
@@ -257,17 +261,18 @@ public class CreateMultipolygonAction extends JosmAction {
         List<Command> commands = new ArrayList<Command>();
         boolean moveTags = Main.pref.getBoolean("multipoly.movetags", true);
 
-        for( String key : values.keySet() ) {
+        for (Entry<String, String> entry : values.entrySet()) {
             List<OsmPrimitive> affectedWays = new ArrayList<OsmPrimitive>();
-            String value = values.get(key);
+            String key = entry.getKey();
+            String value = entry.getValue();
 
-            for( Way way : innerWays ) {
-                if( way.hasKey(key) && (value.equals(way.get(key))) ) {
+            for (Way way : innerWays) {
+                if (way.hasKey(key) && (value.equals(way.get(key)))) {
                     affectedWays.add(way);
                 }
             }
 
-            if( moveTags ) {
+            if (moveTags) {
                 // remove duplicated tags from outer ways
                 for( Way way : outerWays ) {
                     if( way.hasKey(key) ) {
@@ -276,27 +281,28 @@ public class CreateMultipolygonAction extends JosmAction {
                 }
             }
 
-            if(!affectedWays.isEmpty()) {
+            if (!affectedWays.isEmpty()) {
                 // reset key tag on affected ways
                 commands.add(new ChangePropertyCommand(affectedWays, key, null));
             }
         }
 
-        if( moveTags ) {
+        if (moveTags) {
             // add those tag values to the relation
 
             boolean fixed = false;
             Relation r2 = new Relation(relation);
-            for( String key : values.keySet() ) {
-                if( !r2.hasKey(key) && !key.equals("area") ) {
-                    if( relation.isNew() )
-                        relation.put(key, values.get(key));
+            for (Entry<String, String> entry : values.entrySet()) {
+                String key = entry.getKey();
+                if (!r2.hasKey(key) && !key.equals("area") ) {
+                    if (relation.isNew())
+                        relation.put(key, entry.getValue());
                     else
-                        r2.put(key, values.get(key));
+                        r2.put(key, entry.getValue());
                     fixed = true;
                 }
             }
-            if( fixed && !relation.isNew() )
+            if (fixed && !relation.isNew())
                 commands.add(new ChangeCommand(relation, r2));
         }
 

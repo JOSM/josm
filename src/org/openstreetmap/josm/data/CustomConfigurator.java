@@ -894,10 +894,11 @@ public class CustomConfigurator {
 
     private static void deletePreferenceKeyByPattern(String pattern, Preferences pref) {
         Map<String, Setting> allSettings = pref.getAllSettings();
-        for (String key : allSettings.keySet()) {
+        for (Entry<String, Setting> entry : allSettings.entrySet()) {
+            String key = entry.getKey();
             if (key.matches(pattern)) {
-                log("Deleting preferences:  deleting key from preferences: " + key);
-                pref.putSetting(key, allSettings.get(key).getNullInstance());
+                log("Deleting preferences: deleting key from preferences: " + key);
+                pref.putSetting(key, entry.getValue().getNullInstance());
             }
         }
     }
@@ -905,7 +906,7 @@ public class CustomConfigurator {
     private static void deletePreferenceKey(String key, Preferences pref) {
         Map<String, Setting> allSettings = pref.getAllSettings();
         if (allSettings.containsKey(key)) {
-            log("Deleting preferences:  deleting key from preferences: " + key);
+            log("Deleting preferences: deleting key from preferences: " + key);
             pref.putSetting(key, allSettings.get(key).getNullInstance());
         }
     }
