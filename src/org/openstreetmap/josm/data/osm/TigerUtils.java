@@ -43,13 +43,14 @@ public class TigerUtils {
                 return value;
             }
         }
-        String combined = "";
+        StringBuilder combined = new StringBuilder();
         for (Object part : resultSet) {
-            if (combined.length() > 0)
-                combined += ":";
-            combined += part;
+            if (combined.length() > 0) {
+                combined.append(":");
+            }
+            combined.append(part);
         }
-        return combined;
+        return combined.toString();
     }
 
     public static String combineTags(String name, String t1, String t2) {

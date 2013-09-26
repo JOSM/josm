@@ -63,12 +63,12 @@ public class ReverseWayNoTagCorrector {
         if (tags.size() == 1) {
             return tags.iterator().next().toString();
         } else if (tags.size() > 1) {
-            String s = "<ul>";
+            StringBuilder s = new StringBuilder("<ul>");
             for (Tag t : tags) {
-                s += "<li>" + t.toString() + "</li>";
+                s.append("<li>").append(t).append("</li>");
             }
-            s += "</ul>";
-            return s;
+            s.append("</ul>");
+            return s.toString();
         } else {
             return "";
         }

@@ -1227,7 +1227,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             if (sel.isEmpty())
                 return;
             String sep = "";
-            String s = "";
+            StringBuilder s = new StringBuilder();
             for (OsmPrimitive p : sel) {
                 String val = p.get(key);
                 if (val == null) {
@@ -1243,13 +1243,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 } else if (p instanceof Relation) {
                     t = "type:relation ";
                 }
-                s += sep + "(" + t + "\"" +
-                        org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(key) + "\"=\"" +
-                        org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(val) + "\")";
+                s.append(sep).append("(").append(t).append("\"").append(
+                        org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(key)).append("\"=\"").append(
+                        org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(val)).append("\")");
                 sep = " OR ";
             }
 
-            SearchSetting ss = new SearchSetting(s, SearchMode.replace, true, false, false);
+            SearchSetting ss = new SearchSetting(s.toString(), SearchMode.replace, true, false, false);
             org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(ss);
         }
     }

@@ -450,7 +450,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
             } else {
                 setIcon(ImageProvider.get("data", "object"));
             }
-            String text = "";
+            StringBuilder text = new StringBuilder();
             for (Entry<OsmPrimitiveType, Integer> entry: stat.entrySet()) {
                 OsmPrimitiveType type = entry.getKey();
                 int numPrimitives = entry.getValue() == null ? 0 : entry.getValue();
@@ -463,9 +463,12 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
                 case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
                 }
-                text = text.isEmpty() ? msg : text + ", " + msg;
+                if (text.length() > 0) {
+                    text.append(", ");
+                }
+                text.append(msg);
             }
-            setText(text);
+            setText(text.toString());
         }
 
         protected void renderFrom(StatisticsInfo info) {

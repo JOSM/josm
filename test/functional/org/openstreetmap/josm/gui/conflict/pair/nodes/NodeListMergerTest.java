@@ -22,11 +22,11 @@ public class NodeListMergerTest extends JFrame {
         for (int i=0; i < 20; i++) {
             n1.put("key" + i, "value" + i);
         }
-        String note = "";
+        StringBuilder note = new StringBuilder();
         for (int i=0; i < 50; i++) {
-            note += " A very long text ";
+            note.append(" A very long text ");
         }
-        n1.put("note", note);
+        n1.put("note", note.toString());
         w1.addNode(new Node(2));
         w1.addNode(new Node(3));
 
