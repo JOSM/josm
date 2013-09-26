@@ -21,6 +21,9 @@ public class WikiReader {
         this.baseurl = baseurl;
     }
 
+    /**
+     * Constructs a new {@code WikiReader}.
+     */
     public WikiReader() {
         this.baseurl = Main.pref.get("help.baseurl", Main.JOSM_WEBSITE);
     }
@@ -85,10 +88,10 @@ public class WikiReader {
     }
 
     private String readNormal(BufferedReader in) throws IOException {
-        String b = "";
+        StringBuilder b = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (!line.contains("[[TranslatedPages]]")) {
-                b += line.replaceAll(" />", ">") + "\n";
+                b.append(line.replaceAll(" />", ">")).append("\n");
             }
         }
         return "<html>" + b + "</html>";

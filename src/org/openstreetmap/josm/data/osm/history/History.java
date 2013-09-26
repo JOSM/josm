@@ -240,15 +240,15 @@ public class History{
 
     @Override
     public String toString() {
-        String result = "History ["
-                + (type != null ? "type=" + type + ", " : "") + "id=" + id;
+        StringBuilder result = new StringBuilder("History ["
+                + (type != null ? "type=" + type + ", " : "") + "id=" + id);
         if (versions != null) {
-            result += ", versions=\n";
+            result.append(", versions=\n");
             for (HistoryOsmPrimitive v : versions) {
-                result += "\t" + v + ",\n";
+                result.append("\t").append(v).append(",\n");
             }
         }
-        result += "]";
-        return result;
+        result.append("]");
+        return result.toString();
     }
 }

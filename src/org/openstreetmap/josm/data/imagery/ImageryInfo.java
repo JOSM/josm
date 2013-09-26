@@ -143,15 +143,15 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             icon = i.icon;
             if (i.bounds != null) {
                 bounds = i.bounds.encodeAsString(",");
-                String shapesString = "";
+                StringBuilder shapesString = new StringBuilder();
                 for (Shape s : i.bounds.getShapes()) {
-                    if (!shapesString.isEmpty()) {
-                        shapesString += ";";
+                    if (shapesString.length() > 0) {
+                        shapesString.append(";");
                     }
-                    shapesString += s.encodeAsString(",");
+                    shapesString.append(s.encodeAsString(","));
                 }
-                if (!shapesString.isEmpty()) {
-                    shapes = shapesString;
+                if (shapesString.length() > 0) {
+                    shapes = shapesString.toString();
                 }
             }
             if (i.serverProjections != null && !i.serverProjections.isEmpty()) {

@@ -155,19 +155,19 @@ public class OpenLocationAction extends JosmAction {
      * @since 6031
      */
     public String findSummaryDocumentation() {
-        String result = "<table>";
+        StringBuilder result = new StringBuilder("<table>");
         for (Class<? extends DownloadTask> taskClass : downloadTasks) {
             if (taskClass != null) {
                 try {
                     DownloadTask task = taskClass.getConstructor().newInstance();
-                    result += task.acceptsDocumentationSummary();
+                    result.append(task.acceptsDocumentationSummary());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
-        result += "</table>";
-        return result;
+        result.append("</table>");
+        return result.toString();
     }
 
     /**
