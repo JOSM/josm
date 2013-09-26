@@ -37,20 +37,20 @@ public class JumpToMarkerActions {
         MultikeyActionsHandler.getInstance().removeAction(jumpToPreviousMarkerAction);
     }
 
-    public static final class JumpToNextMarker extends AbstractAction implements MultikeyShortcutAction {
+    private static abstract class JumpToMarker extends AbstractAction implements MultikeyShortcutAction {
 
         private final Layer layer;
+        private final Shortcut multikeyShortcut;
         private WeakReference<Layer> lastLayer;
-        private Shortcut multikeyShortcut;
-
-        public JumpToNextMarker(JumpToMarkerLayer layer) {
-            multikeyShortcut = Shortcut.registerShortcut("core_multikey:nextMarker", tr("Multikey: {0}", tr("Next marker")),
-                    KeyEvent.VK_J, Shortcut.ALT_CTRL);
-            multikeyShortcut.setAccelerator(this);
-            putValue(SHORT_DESCRIPTION, tr("Jump to next marker"));
-            putValue(NAME, tr("Jump to next marker"));
-
-            this.layer = (Layer)layer;
+        
+        public JumpToMarker(JumpToMarkerLayer layer, Shortcut shortcut) {
+            this.layer = (Layer) layer;
+            this.multikeyShortcut = shortcut;
+            this.multikeyShortcut.setAccelerator(this);
+        }
+        
+        protected final void setLastLayer(Layer l) {
+            lastLayer = new WeakReference<Layer>(l);
         }
 
         @Override
@@ -78,16 +78,13 @@ public class JumpToMarkerActions {
             }
         }
 
-        private void execute(Layer l) {
-            ((JumpToMarkerLayer)l).jumpToNextMarker();
-            lastLayer = new WeakReference<Layer>(l);
-        }
+        protected abstract void execute(Layer l);
 
         @Override
         public List<MultikeyInfo> getMultikeyCombinations() {
             return LayerListDialog.getLayerInfoByClass(JumpToMarkerLayer.class);
         }
-
+        
         @Override
         public MultikeyInfo getLastMultikeyAction() {
             if (lastLayer != null)
@@ -95,66 +92,37 @@ public class JumpToMarkerActions {
             else
                 return null;
         }
-
     }
 
-    public static final class JumpToPreviousMarker extends AbstractAction implements MultikeyShortcutAction {
+    public static final class JumpToNextMarker extends JumpToMarker {
 
-        private WeakReference<Layer> lastLayer;
-        private final Layer layer;
-        private Shortcut multikeyShortcut;
+        public JumpToNextMarker(JumpToMarkerLayer layer) {
+            super(layer, Shortcut.registerShortcut("core_multikey:nextMarker", tr("Multikey: {0}", tr("Next marker")),
+                    KeyEvent.VK_J, Shortcut.ALT_CTRL));
+            putValue(SHORT_DESCRIPTION, tr("Jump to next marker"));
+            putValue(NAME, tr("Jump to next marker"));
+        }
+
+        @Override
+        protected void execute(Layer l) {
+            ((JumpToMarkerLayer)l).jumpToNextMarker();
+            setLastLayer(l);
+        }
+    }
+
+    public static final class JumpToPreviousMarker extends JumpToMarker {
 
         public JumpToPreviousMarker(JumpToMarkerLayer layer) {
-            this.layer = (Layer)layer;
-
-            multikeyShortcut = Shortcut.registerShortcut("core_multikey:previousMarker", tr("Multikey: {0}", tr("Previos marker")),
-                    KeyEvent.VK_P, Shortcut.ALT_CTRL);
-            multikeyShortcut.setAccelerator(this);
+            super(layer, Shortcut.registerShortcut("core_multikey:previousMarker", tr("Multikey: {0}", tr("Previous marker")),
+                    KeyEvent.VK_P, Shortcut.ALT_CTRL));
             putValue(SHORT_DESCRIPTION, tr("Jump to previous marker"));
             putValue(NAME, tr("Jump to previous marker"));
         }
 
         @Override
-        public Shortcut getMultikeyShortcut() {
-            return multikeyShortcut;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            execute(layer);
-        }
-
-        @Override
-        public void executeMultikeyAction(int index, boolean repeat) {
-            Layer l = LayerListDialog.getLayerForIndex(index);
-            if (l != null) {
-                if (l instanceof JumpToMarkerLayer) {
-                    execute(l);
-                }
-            } else if (repeat && lastLayer != null) {
-                l = lastLayer.get();
-                if (LayerListDialog.isLayerValid(l)) {
-                    execute(l);
-                }
-            }
-        }
-
-        private void execute(Layer l) {
+        protected void execute(Layer l) {
             ((JumpToMarkerLayer) l).jumpToPreviousMarker();
-            lastLayer = new WeakReference<Layer>(l);
-        }
-
-        @Override
-        public List<MultikeyInfo> getMultikeyCombinations() {
-            return LayerListDialog.getLayerInfoByClass(JumpToMarkerLayer.class);
-        }
-
-        @Override
-        public MultikeyInfo getLastMultikeyAction() {
-            if (lastLayer != null)
-                return LayerListDialog.getLayerInfo(lastLayer.get());
-            else
-                return null;
+            setLastLayer(l);
         }
     }
 }
