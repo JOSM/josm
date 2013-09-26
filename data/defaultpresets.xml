@@ -4368,7 +4368,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="ref" text="Reference" />
             <text key="operator" text="Operator" />
             <space />
-            <combo key="fire_hydrant:position" text="Position" values="lane,parking_lot,sidewalk,green" values_context="hydrant position" />
+            <combo key="fire_hydrant:position" text="Hydrant Position" values="lane,parking_lot,sidewalk,green" />
             <combo key="fire_hydrant:pressure" text="Pressure (in bar)" values="5,6,8,suction" />
             <text key="fire_hydrant:count" text="Count" values="" />
         </item>
