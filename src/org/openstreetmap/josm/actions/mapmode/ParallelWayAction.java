@@ -522,8 +522,6 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     private void clearSourceWays() {
         assert (sourceWays != null);
-        if (sourceWays == null)
-            return;
         getCurrentDataSet().clearSelection(sourceWays);
         for (Way w : sourceWays) {
             w.setHighlighted(false);

@@ -263,9 +263,6 @@ public class WayConnectionTypeCalculator {
             break;
         }
 
-        if (refNodes == null)
-            return NONE;
-
         for (Node n : refNodes) {
             if (n == null) {
                 continue;
