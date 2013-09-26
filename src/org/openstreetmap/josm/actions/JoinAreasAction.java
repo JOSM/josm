@@ -1448,8 +1448,6 @@ public class JoinAreasAction extends JosmAction {
      * @param x The Way to remove all tags from
      */
     private void stripTags(Way x) {
-        if (x.getKeys() == null)
-            return;
         Way y = new Way(x);
         for (String key : x.keySet()) {
             y.remove(key);

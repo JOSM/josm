@@ -754,7 +754,7 @@ public class SearchCompiler {
         }
 
         @Override public String toString() {
-            return "user=" + user == null ? "" : user;
+            return "user=" + (user == null ? "" : user);
         }
     }
 

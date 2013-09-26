@@ -391,7 +391,6 @@ public class RequestProcessor extends Thread {
             ex.printStackTrace();
             return null;
         }
-        if (handler==null) return null;
 
         r.printf("{ \"request\" : \"%s\"", cmd);
         r.append(", \"parameters\" : [");
