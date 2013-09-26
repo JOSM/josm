@@ -32,7 +32,7 @@ public class MultipleNameVisitor extends NameVisitor
      * @param data The collection of primitives
      */
     public void visit(Collection<? extends OsmPrimitive> data) {
-        String multipleName = "";
+        StringBuilder multipleName = new StringBuilder();
         String multiplePluralClassname = null;
         size = data.size();
 
@@ -43,10 +43,10 @@ public class MultipleNameVisitor extends NameVisitor
                 name = osm.get("ref");
             }
             if (name != null && !name.isEmpty() && multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH) {
-                if (!multipleName.isEmpty()) {
-                    multipleName += ", ";
+                if (multipleName.length() > 0) {
+                    multipleName.append(", ");
                 }
-                multipleName += name;
+                multipleName.append(name);
             }
 
             osm.accept(this);
@@ -63,7 +63,7 @@ public class MultipleNameVisitor extends NameVisitor
             displayName = name;
         } else {
             displayName = size + " " + trn(multipleClassname, multiplePluralClassname, size);
-            if (!multipleName.isEmpty()) {
+            if (multipleName.length() > 0) {
                 if (multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH) {
                     displayName += ": " + multipleName;
                 } else {

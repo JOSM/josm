@@ -169,7 +169,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      */
     public String getIgnoreState() {
         Collection<String> strings = new TreeSet<String>();
-        String ignorestring = getIgnoreSubGroup();
+        StringBuilder ignorestring = new StringBuilder(getIgnoreSubGroup());
         for (OsmPrimitive o : primitives) {
             // ignore data not yet uploaded
             if (o.isNew())
@@ -185,9 +185,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
             strings.add(type + "_" + o.getId());
         }
         for (String o : strings) {
-            ignorestring += ":" + o;
+            ignorestring.append(":").append(o);
         }
-        return ignorestring;
+        return ignorestring.toString();
     }
 
     public String getIgnoreSubGroup() {

@@ -685,18 +685,16 @@ public class TagChecker extends Test
         Main.pref.put(PREF_USE_DATA_FILE, prefUseDataFile.isSelected());
         Main.pref.put(PREF_USE_IGNORE_FILE, prefUseIgnoreFile.isSelected());
         Main.pref.put(PREF_USE_SPELL_FILE, prefUseSpellFile.isSelected());
-        String sources = "";
+        StringBuilder sources = new StringBuilder();
         if (sourcesList.getModel().getSize() > 0) {
-            String sb = "";
             for (int i = 0; i < sourcesList.getModel().getSize(); ++i) {
-                sb += ";"+sourcesList.getModel().getElementAt(i);
+                if (sources.length() > 0) {
+                    sources.append(";");
+                }
+                sources.append(sourcesList.getModel().getElementAt(i));
             }
-            sources = sb.substring(1);
         }
-        if (sources.length() == 0) {
-            sources = null;
-        }
-        return Main.pref.put(PREF_SOURCES, sources);
+        return Main.pref.put(PREF_SOURCES, sources.length() > 0 ? sources.toString() : null);
     }
 
     @Override

@@ -1030,12 +1030,12 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     @Override
     public String nameSupportedProjections() {
-        String res = "";
-        for(String p : info.getServerProjections()) {
-            if(!res.isEmpty()) {
-                res += ", ";
+        StringBuilder res = new StringBuilder();
+        for (String p : info.getServerProjections()) {
+            if (res.length() > 0) {
+                res.append(", ");
             }
-            res += p;
+            res.append(p);
         }
         return tr("Supported projections are: {0}", res);
     }

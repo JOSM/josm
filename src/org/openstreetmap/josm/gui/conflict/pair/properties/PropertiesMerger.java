@@ -310,12 +310,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     public String referrersToString(List<OsmPrimitive> referrers) {
         if (referrers.isEmpty())
             return tr("(none)");
-        String str = "<html>";
+        StringBuilder str = new StringBuilder("<html>");
         for (OsmPrimitive r: referrers) {
-            str = str + r.getDisplayName(DefaultNameFormatter.getInstance()) + "<br>";
+            str.append(r.getDisplayName(DefaultNameFormatter.getInstance())).append("<br>");
         }
-        str = str + "</html>";
-        return str;
+        str.append("</html>");
+        return str.toString();
     }
 
     protected void updateCoordinates() {

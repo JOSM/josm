@@ -39,6 +39,9 @@ public class SplashScreen extends JFrame {
     private SplashScreenProgressRenderer progressRenderer;
     private SwingRenderingProgressMonitor progressMonitor;
 
+    /**
+     * Constructs a new {@code SplashScreen}.
+     */
     public SplashScreen() {
         super();
         setUndecorated(true);
@@ -156,7 +159,7 @@ public class SplashScreen extends JFrame {
         @Override
         public void setCustomText(String message) {
             if(message.isEmpty())
-                message = " "; /* prevent killing of additional line */
+                message = " "; // prevent killing of additional line
             lblCustomText.setText(message);
             repaint();
         }
@@ -197,10 +200,10 @@ public class SplashScreen extends JFrame {
             if (!taskTitle.isEmpty()) {
                 messages.add(taskTitle);
             }
-            String html = "";
+            StringBuilder html = new StringBuilder();
             int i = 0;
             for (String m : messages) {
-                html += "<p class=\"entry" + (++i) + "\">" + m + "</p>";
+                html.append("<p class=\"entry").append(++i).append("\">").append(m).append("</p>");
             }
 
             lblTaskTitle.setText("<html><style>"
