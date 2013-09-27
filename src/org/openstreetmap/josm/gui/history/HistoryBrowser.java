@@ -30,7 +30,6 @@ public class HistoryBrowser extends JPanel {
     private RelationMemberListViewer relationMemberListViewer;
     private CoordinateInfoViewer coordinateInfoViewer;
     private JTabbedPane tpViewers;
-    private VersionTable versionTable;
 
     /**
      * embedds table in a {@link JScrollPane}
@@ -54,7 +53,7 @@ public class HistoryBrowser extends JPanel {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
 
-        versionTable = new VersionTable(model);
+        VersionTable versionTable = new VersionTable(model);
         pnl.add(embeddInScrollPane(versionTable), BorderLayout.CENTER);
         return pnl;
     }

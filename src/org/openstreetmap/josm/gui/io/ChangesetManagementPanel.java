@@ -50,12 +50,9 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     public final static String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
     public final static String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
 
-    private ButtonGroup bgUseNewOrExisting;
     private JRadioButton rbUseNew;
     private JRadioButton rbExisting;
     private JosmComboBox cbOpenChangesets;
-    private JButton btnRefresh;
-    private JButton btnClose;
     private JCheckBox cbCloseAfterUpload;
     private OpenChangesetComboBoxModel model;
     private ChangesetCommentModel changesetCommentModel;
@@ -68,7 +65,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         GridBagConstraints gc = new GridBagConstraints();
         setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
 
-        bgUseNewOrExisting = new ButtonGroup();
+        ButtonGroup bgUseNewOrExisting = new ButtonGroup();
 
         gc.gridwidth = 4;
         gc.gridx = 0;
@@ -124,7 +121,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         gc.weightx = 0.0;
         gc.gridwidth = 1;
         gc.weightx = 0.0;
-        btnRefresh = new JButton(new RefreshAction());
+        JButton btnRefresh = new JButton(new RefreshAction());
         btnRefresh.setMargin(new Insets(0,0,0,0));
         add(btnRefresh, gc);
 
@@ -132,7 +129,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         gc.gridy = 2;
         gc.gridwidth = 1;
         CloseChangesetAction closeChangesetAction = new CloseChangesetAction();
-        btnClose = new JButton(closeChangesetAction);
+        JButton btnClose = new JButton(closeChangesetAction);
         btnClose.setMargin(new Insets(0,0,0,0));
         cbOpenChangesets.addItemListener(closeChangesetAction);
         rbExisting.addItemListener(closeChangesetAction);

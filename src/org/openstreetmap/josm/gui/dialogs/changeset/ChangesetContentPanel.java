@@ -62,7 +62,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     private ChangesetContentTableModel model;
     private Changeset currentChangeset;
-    private JTable tblContent;
 
     private DonwloadChangesetContentAction actDownloadContentAction;
     private ShowHistoryAction actShowHistory;
@@ -102,7 +101,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     protected JPanel buildContentPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
-        tblContent = new JTable(
+        JTable tblContent = new JTable(
                 model,
                 new ChangesetContentTableColumnModel(),
                 model.getSelectionModel()

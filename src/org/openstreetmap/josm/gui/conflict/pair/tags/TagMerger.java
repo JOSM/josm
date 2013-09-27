@@ -40,8 +40,6 @@ public class TagMerger extends JPanel implements IConflictResolver {
     private JTable mergedTable;
     private JTable theirTable;
     private final TagMergeModel model;
-    private JButton btnKeepMine;
-    private JButton btnKeepTheir;
     AdjustmentSynchronizer adjustmentSynchronizer;
 
     /**
@@ -172,7 +170,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.weighty = 0.0;
         KeepMineAction keepMineAction = new KeepMineAction();
         mineTable.getSelectionModel().addListSelectionListener(keepMineAction);
-        btnKeepMine = new JButton(keepMineAction);
+        JButton btnKeepMine = new JButton(keepMineAction);
         btnKeepMine.setName("button.keepmine");
         add(btnKeepMine, gc);
 
@@ -195,7 +193,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         KeepTheirAction keepTheirAction = new KeepTheirAction();
-        btnKeepTheir = new JButton(keepTheirAction);
+        JButton btnKeepTheir = new JButton(keepTheirAction);
         btnKeepTheir.setName("button.keeptheir");
         add(btnKeepTheir, gc);
 

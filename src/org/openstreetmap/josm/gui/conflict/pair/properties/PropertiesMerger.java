@@ -36,10 +36,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class PropertiesMerger extends JPanel implements Observer, IConflictResolver {
     private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000000");
 
-    private  JLabel lblMyVersion;
-    private  JLabel lblMergedVersion;
-    private  JLabel lblTheirVersion;
-
     private JLabel lblMyCoordinates;
     private JLabel lblMergedCoordinates;
     private JLabel lblTheirCoordinates;
@@ -74,19 +70,19 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.insets = new Insets(10,0,10,0);
-        lblMyVersion = new JLabel(tr("My version"));
+        JLabel lblMyVersion = new JLabel(tr("My version"));
         lblMyVersion.setToolTipText(tr("Properties in my dataset, i.e. the local dataset"));
         add(lblMyVersion, gc);
 
         gc.gridx = 3;
         gc.gridy = 0;
-        lblMergedVersion = new JLabel(tr("Merged version"));
+        JLabel lblMergedVersion = new JLabel(tr("Merged version"));
         lblMergedVersion.setToolTipText(tr("Properties in the merged element. They will replace properties in my elements when merge decisions are applied."));
         add(lblMergedVersion, gc);
 
         gc.gridx = 5;
         gc.gridy = 0;
-        lblTheirVersion = new JLabel(tr("Their version"));
+        JLabel lblTheirVersion = new JLabel(tr("Their version"));
         lblTheirVersion.setToolTipText(tr("Properties in their dataset, i.e. the server dataset"));
         add(lblTheirVersion, gc);
     }

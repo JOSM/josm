@@ -32,9 +32,6 @@ import org.openstreetmap.josm.actions.upload.UploadHook;
  */
 public class RelationUploadOrderHook implements UploadHook {
 
-    /** the data to be analyzed */
-    private APIDataSet data;
-
     /**
      * builds the panel which warns users about a cyclic dependency
      *
@@ -98,9 +95,8 @@ public class RelationUploadOrderHook implements UploadHook {
 
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
-        this.data = apiDataSet;
         try {
-            data.adjustRelationUploadOrder();
+            apiDataSet.adjustRelationUploadOrder();
             return true;
         } catch(CyclicUploadDependencyException e) {
             warnCyclicUploadDependency(e);

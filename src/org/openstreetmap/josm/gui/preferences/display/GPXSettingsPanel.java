@@ -51,7 +51,6 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private JCheckBox forceRawGpsLines = new JCheckBox(tr("Force lines if no segments imported"));
     private JCheckBox largeGpsPoints = new JCheckBox(tr("Draw large GPS points"));
     private JCheckBox hdopCircleGpsPoints = new JCheckBox(tr("Draw a circle from HDOP value"));
-    private ButtonGroup colorGroup;
     private JRadioButton colorTypeVelocity = new JRadioButton(tr("Velocity (red = slow, green = fast)"));
     private JRadioButton colorTypeDirection = new JRadioButton(tr("Direction (red = west, yellow = north, green = east, blue = south)"));
     private JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
@@ -206,7 +205,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         ExpertToggleAction.addVisibilitySwitcher(useGpsAntialiasing);
 
         // colorTracks
-        colorGroup = new ButtonGroup();
+        ButtonGroup colorGroup = new ButtonGroup();
         if (layerName!=null) {
             colorGroup.add(colorTypeGlobal);
         }

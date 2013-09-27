@@ -39,7 +39,6 @@ public class JumpToAction extends JosmAction {
     private JosmTextField lon = new JosmTextField();
     private JosmTextField zm = new JosmTextField();
 
-    private double zoomFactor = 0;
     public void showJumpToDialog() {
         MapView mv = Main.map.mapView;
         if(mv == null)
@@ -49,7 +48,7 @@ public class JumpToAction extends JosmAction {
         lon.setText(java.lang.Double.toString(curPos.lon()));
 
         double dist = mv.getDist100Pixel();
-        zoomFactor = 1/dist;
+        double zoomFactor = 1/dist;
 
         zm.setText(java.lang.Long.toString(Math.round(dist*100)/100));
         updateUrl(true);

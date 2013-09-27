@@ -32,7 +32,6 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
 
     /** the OSM user name */
     private JosmTextField tfOsmUserName;
-    private UserNameValidator valUserName;
     /** the OSM password */
     private JosmPasswordField tfOsmPassword;
     /** a panel with further information, e.g. some warnings */
@@ -57,7 +56,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
         gc.weightx = 1.0;
         add(tfOsmUserName = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmUserName);
-        valUserName = new UserNameValidator(tfOsmUserName);
+        UserNameValidator valUserName = new UserNameValidator(tfOsmUserName);
         valUserName.validate();
 
         // -- OSM password

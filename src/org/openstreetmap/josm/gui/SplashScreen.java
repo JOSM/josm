@@ -36,7 +36,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class SplashScreen extends JFrame {
 
-    private SplashScreenProgressRenderer progressRenderer;
     private SwingRenderingProgressMonitor progressMonitor;
 
     /**
@@ -88,7 +87,7 @@ public class SplashScreen extends JFrame {
         innerContentPane.add(separator, gbc);
 
         // Add a status message
-        progressRenderer = new SplashScreenProgressRenderer();
+        SplashScreenProgressRenderer progressRenderer = new SplashScreenProgressRenderer();
         gbc.gridy = 3;
         gbc.insets = new Insets(0, 0, 10, 0);
         innerContentPane.add(progressRenderer, gbc);

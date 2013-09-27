@@ -54,8 +54,6 @@ public class PluginUpdatePolicyPanel extends JPanel {
         }
     }
 
-    private ButtonGroup bgVersionBasedUpdatePolicy;
-    private ButtonGroup bgTimeBasedUpdatePolicy;
     private Map<Policy, JRadioButton> rbVersionBasedUpatePolicy;
     private Map<Policy, JRadioButton> rbTimeBasedUpatePolicy;
     private JosmTextField tfUpdateInterval;
@@ -68,7 +66,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx  =1.0;
 
-        bgVersionBasedUpdatePolicy = new ButtonGroup();
+        ButtonGroup bgVersionBasedUpdatePolicy = new ButtonGroup();
         rbVersionBasedUpatePolicy = new HashMap<Policy, JRadioButton>();
         JRadioButton btn = new JRadioButton(tr("Ask before updating"));
         rbVersionBasedUpatePolicy.put(Policy.ASK, btn);
@@ -109,7 +107,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
 
         TimeBasedPolicyChangeListener changeListener = new TimeBasedPolicyChangeListener();
 
-        bgTimeBasedUpdatePolicy = new ButtonGroup();
+        ButtonGroup bgTimeBasedUpdatePolicy = new ButtonGroup();
         rbTimeBasedUpatePolicy = new HashMap<Policy, JRadioButton>();
         JRadioButton btn = new JRadioButton(tr("Ask before updating"));
         btn.addChangeListener(changeListener);
@@ -156,6 +154,9 @@ public class PluginUpdatePolicyPanel extends JPanel {
         add(new JPanel(), gc);
     }
 
+    /**
+     * Constructs a new {@code PluginUpdatePolicyPanel}.
+     */
     public PluginUpdatePolicyPanel() {
         build();
         initFromPreferences();

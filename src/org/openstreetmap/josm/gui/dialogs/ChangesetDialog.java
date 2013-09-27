@@ -80,7 +80,7 @@ public class ChangesetDialog extends ToggleDialog{
 
     // the actions
     private SelectObjectsAction selectObjectsAction;
-    private  ReadChangesetsAction readChangesetAction;
+    private ReadChangesetsAction readChangesetAction;
     private ShowChangesetInfoAction showChangesetInfoAction;
     private CloseOpenChangesetsAction closeChangesetAction;
     private LaunchChangesetManagerAction launchChangesetManagerAction;

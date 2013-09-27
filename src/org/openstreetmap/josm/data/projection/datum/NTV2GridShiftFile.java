@@ -62,7 +62,6 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class NTV2GridShiftFile implements Serializable {
 
-    private String overviewHeaderCountId;
     private int overviewHeaderCount;
     private int subGridHeaderCount;
     private int subGridCount;
@@ -103,7 +102,7 @@ public class NTV2GridShiftFile implements Serializable {
         toEllipsoid = "";
         topLevelSubGrid = null;
         in.read(b8);
-        overviewHeaderCountId = new String(b8);
+        String overviewHeaderCountId = new String(b8);
         if (!"NUM_OREC".equals(overviewHeaderCountId))
             throw new IllegalArgumentException("Input file is not an NTv2 grid shift file");
         in.read(b8);

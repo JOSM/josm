@@ -38,16 +38,14 @@ public class VersionInfoPanel extends JPanel implements Observer{
     private JMultilineLabel lblInfo;
     private UrlLabel lblUser;
     private UrlLabel lblChangeset;
-    private JPanel pnlUserAndChangeset;
 
     protected void build() {
         JPanel pnl1 = new JPanel();
         pnl1.setLayout(new BorderLayout());
         lblInfo = new JMultilineLabel("");
-        //lblInfo.setHorizontalAlignment(JLabel.LEFT);
         pnl1.add(lblInfo, BorderLayout.CENTER);
 
-        pnlUserAndChangeset = new JPanel();
+        JPanel pnlUserAndChangeset = new JPanel();
         pnlUserAndChangeset.setLayout(new GridLayout(2,2));
         lblUser = new UrlLabel("", 2);
         pnlUserAndChangeset.add(new JLabel(tr("User:")));
