@@ -74,10 +74,6 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
     private AdjustmentSynchronizer adjustmentSynchronizer;
 
-    private  JCheckBox cbLockMyScrolling;
-    private  JCheckBox cbLockMergedScrolling;
-    private  JCheckBox cbLockTheirScrolling;
-
     private  JLabel lblMyVersion;
     private  JLabel lblMergedVersion;
     private  JLabel lblTheirVersion;
@@ -306,19 +302,19 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         gc.weightx = 0.33;
         gc.weighty = 0.0;
         gc.insets = new Insets(0,0,0,0);
-        cbLockMyScrolling = new JCheckBox();
+        JCheckBox cbLockMyScrolling = new JCheckBox();
         cbLockMyScrolling.setName("checkbox.lockmyscrolling");
         add(buildAdjustmentLockControlPanel(cbLockMyScrolling), gc);
 
         gc.gridx = 2;
         gc.gridy = 1;
-        cbLockMergedScrolling = new JCheckBox();
+        JCheckBox cbLockMergedScrolling = new JCheckBox();
         cbLockMergedScrolling.setName("checkbox.lockmergedscrolling");
         add(buildAdjustmentLockControlPanel(cbLockMergedScrolling), gc);
 
         gc.gridx = 4;
         gc.gridy = 1;
-        cbLockTheirScrolling = new JCheckBox();
+        JCheckBox cbLockTheirScrolling = new JCheckBox();
         cbLockTheirScrolling.setName("checkbox.locktheirscrolling");
         add(buildAdjustmentLockControlPanel(cbLockTheirScrolling), gc);
 

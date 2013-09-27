@@ -143,8 +143,6 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     private final JPanel leftPanel;
     private final DialogsPanel dialogsPanel;
 
-    private final boolean unregisterTab;
-
     /**
      * Default width of the toggle dialog area.
      */
@@ -238,7 +236,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         statusLine = new MapStatus(this);
         MapView.addLayerChangeListener(this);
 
-        unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null;
+        boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0)!=null;
         if (unregisterTab) {
             for (JComponent c: allDialogButtons) c.setFocusTraversalKeysEnabled(false);
             for (JComponent c: allMapModeButtons) c.setFocusTraversalKeysEnabled(false);

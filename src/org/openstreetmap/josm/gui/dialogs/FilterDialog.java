@@ -58,16 +58,14 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     private JTable userTable;
     private FilterTableModel filterModel = new FilterTableModel();
-    private SideButton addButton;
-    private SideButton editButton;
-    private SideButton deleteButton;
-    private SideButton upButton;
-    private SideButton downButton;
 
     private EnableFilterAction enableFilterAction;
     private HidingFilterAction hidingFilterAction;
 
-    public FilterDialog(){
+    /**
+     * Constructs a new {@code FilterDialog}
+     */
+    public FilterDialog() {
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
                 Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")),
                         KeyEvent.VK_F, Shortcut.ALT_SHIFT), 162);
@@ -139,7 +137,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         userTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
         userTable.setDefaultRenderer(String.class, new StringRenderer());
 
-        addButton = new SideButton(new AbstractAction() {
+        SideButton addButton = new SideButton(new AbstractAction() {
             {
                 putValue(NAME, tr("Add"));
                 putValue(SHORT_DESCRIPTION,  tr("Add filter."));
@@ -152,7 +150,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                     filterModel.addFilter(filter);
                 }
             }});
-        editButton = new SideButton(new AbstractAction() {
+        SideButton editButton = new SideButton(new AbstractAction() {
             {
                 putValue(NAME, tr("Edit"));
                 putValue(SHORT_DESCRIPTION, tr("Edit filter."));
@@ -169,7 +167,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 }
             }
         });
-        deleteButton = new SideButton(new AbstractAction() {
+        SideButton deleteButton = new SideButton(new AbstractAction() {
             {
                 putValue(NAME, tr("Delete"));
                 putValue(SHORT_DESCRIPTION, tr("Delete filter."));
@@ -182,7 +180,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                 filterModel.removeFilter(index);
             }
         });
-        upButton = new SideButton(new AbstractAction() {
+        SideButton upButton = new SideButton(new AbstractAction() {
             {
                 putValue(NAME, tr("Up"));
                 putValue(SHORT_DESCRIPTION, tr("Move filter up."));
@@ -197,7 +195,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             }
 
         });
-        downButton = new SideButton(new AbstractAction() {
+        SideButton downButton = new SideButton(new AbstractAction() {
             {
                 putValue(NAME, tr("Down"));
                 putValue(SHORT_DESCRIPTION, tr("Move filter down."));

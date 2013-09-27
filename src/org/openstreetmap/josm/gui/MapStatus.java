@@ -145,7 +145,6 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
     final JProgressBar progressBar = new JProgressBar();
     public final BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
 
-    private final MouseListener jumpToOnLeftClick;
     private final SoMChangeListener somListener;
 
     private double distValue; // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
@@ -708,7 +707,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         });
 
         // also show Jump To dialog on mouse click (except context menu)
-        jumpToOnLeftClick = new MouseAdapter() {
+        MouseListener jumpToOnLeftClick = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() != MouseEvent.BUTTON3) {

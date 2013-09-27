@@ -50,8 +50,6 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
     private static final Color BG_COLOR_ERROR = new Color(255,224,224);
 
-    private ButtonGroup bgStrategies;
-    private ButtonGroup bgMultiChangesetPolicies;
     private Map<UploadStrategy, JRadioButton> rbStrategy;
     private Map<UploadStrategy, JLabel> lblNumRequests;
     private Map<UploadStrategy, JMultilineLabel> lblStrategies;
@@ -63,6 +61,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
     private long numUploadedObjects = 0;
 
+    /**
+     * Constructs a new {@code UploadStrategySelectionPanel}.
+     */
     public UploadStrategySelectionPanel() {
         build();
     }
@@ -70,7 +71,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     protected JPanel buildUploadStrategyPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
-        bgStrategies = new ButtonGroup();
+        ButtonGroup bgStrategies = new ButtonGroup();
         rbStrategy = new HashMap<UploadStrategy, JRadioButton>();
         lblStrategies = new HashMap<UploadStrategy, JMultilineLabel>();
         lblNumRequests = new HashMap<UploadStrategy, JLabel>();
@@ -192,7 +193,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         gc.gridy = 2;
         pnlMultiChangesetPolicyPanel.add(rbUseMultipleChangesets = new JRadioButton(tr("Open and use as many new changesets as necessary")),gc);
 
-        bgMultiChangesetPolicies = new ButtonGroup();
+        ButtonGroup bgMultiChangesetPolicies = new ButtonGroup();
         bgMultiChangesetPolicies.add(rbFillOneChangeset);
         bgMultiChangesetPolicies.add(rbUseMultipleChangesets);
         return pnlMultiChangesetPolicyPanel;

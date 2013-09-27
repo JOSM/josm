@@ -71,7 +71,6 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     public static final String PROXY_USER = "proxy.user";
     public static final String PROXY_PASS = "proxy.pass";
 
-    private ButtonGroup bgProxyPolicy;
     private Map<ProxyPolicy, JRadioButton> rbProxyPolicy;
     private JosmTextField tfProxyHttpHost;
     private JosmTextField tfProxyHttpPort;
@@ -208,7 +207,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
-        bgProxyPolicy = new ButtonGroup();
+        ButtonGroup bgProxyPolicy = new ButtonGroup();
         rbProxyPolicy = new HashMap<ProxyPolicy, JRadioButton>();
         ProxyPolicyChangeListener policyChangeListener = new ProxyPolicyChangeListener();
         for (ProxyPolicy pp: ProxyPolicy.values()) {

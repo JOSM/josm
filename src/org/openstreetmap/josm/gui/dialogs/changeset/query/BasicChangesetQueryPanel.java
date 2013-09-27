@@ -40,17 +40,14 @@ public class BasicChangesetQueryPanel extends JPanel {
         CHANGESETS_IN_MAP_VIEW;
     }
 
-    private ButtonGroup bgQueries;
     private Map<BasicQuery, JRadioButton> rbQueries;
     private Map<BasicQuery, JMultilineLabel> lblQueries;
     private JCheckBox cbMyChangesetsOnly;
-    private HtmlPanel pnlInfos;
-
 
     protected JPanel buildQueriesPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
 
-        bgQueries = new ButtonGroup();
+        ButtonGroup bgQueries = new ButtonGroup();
         rbQueries = new HashMap<BasicQuery, JRadioButton>();
         lblQueries = new HashMap<BasicQuery, JMultilineLabel>();
         SelectQueryHandler selectedQueryHandler = new SelectQueryHandler();
@@ -122,7 +119,7 @@ public class BasicChangesetQueryPanel extends JPanel {
     }
 
     protected JPanel buildInfoPanel() {
-        pnlInfos = new HtmlPanel();
+        HtmlPanel pnlInfos = new HtmlPanel();
         pnlInfos.setText(tr("<html>Please select one the following <strong>standard queries</strong>."
                 + "Select <strong>Download my changesets only</strong>"
                 + " if you only want to download changesets created by yourself.<br>"

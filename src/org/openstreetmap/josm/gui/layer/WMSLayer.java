@@ -147,8 +147,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     private final Condition queueEmpty = requestQueueLock.newCondition();
     private final List<Grabber> grabbers = new ArrayList<Grabber>();
     private final List<Thread> grabberThreads = new ArrayList<Thread>();
-    private int threadCount;
-    private int workingThreadCount;
     private boolean canceled;
 
     /** set to true if this layer uses an invalid base url */
@@ -568,8 +566,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public WMSRequest getRequest(boolean localOnly) {
         requestQueueLock.lock();
         try {
-            workingThreadCount--;
-
             sortRequests(localOnly);
             while (!canceled && (requestQueue.isEmpty() || (localOnly && !requestQueue.get(0).hasExactMatch()))) {
                 try {
@@ -580,7 +576,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 }
             }
 
-            workingThreadCount++;
             if (canceled)
                 return null;
             else {
@@ -957,8 +952,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 t.start();
                 grabberThreads.add(t);
             }
-            this.workingThreadCount = grabbers.size();
-            this.threadCount = grabbers.size();
         } finally {
             requestQueueLock.unlock();
         }

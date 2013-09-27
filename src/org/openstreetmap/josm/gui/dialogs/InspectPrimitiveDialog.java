@@ -60,7 +60,6 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected List<OsmPrimitive> primitives;
     protected OsmDataLayer layer;
-    private JosmTextArea txtData;
     private JosmTextArea txtMappaint;
     boolean mappaintTabLoaded;
 
@@ -93,7 +92,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected JPanel buildDataPanel() {
         JPanel p = new JPanel(new GridBagLayout());
-        txtData = new JosmTextArea();
+        JosmTextArea txtData = new JosmTextArea();
         txtData.setFont(new Font("Monospaced", txtData.getFont().getStyle(), txtData.getFont().getSize()));
         txtData.setEditable(false);
         txtData.setText(buildDataText());
