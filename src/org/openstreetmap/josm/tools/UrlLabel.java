@@ -17,8 +17,10 @@ public class UrlLabel extends JLabel implements MouseListener {
 
     private String url = "";
     private String description = "";
-    private int fontPlus;
 
+    /**
+     * Constructs a new {@code UrlLabel}.
+     */
     public UrlLabel() {
         addMouseListener(this);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -40,8 +42,9 @@ public class UrlLabel extends JLabel implements MouseListener {
         this();
         setUrl(url);
         setDescription(description);
-        this.fontPlus = fontPlus;
-        if (fontPlus!=0) setFont(getFont().deriveFont(0, getFont().getSize()+fontPlus));
+        if (fontPlus!=0) {
+            setFont(getFont().deriveFont(0, getFont().getSize()+fontPlus));
+        }
         refresh();
     }
 

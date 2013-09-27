@@ -19,7 +19,6 @@ import javax.swing.text.View;
  */
 public class JMultilineLabel extends JLabel {
     private int maxWidth = Integer.MAX_VALUE;
-    private Dimension superPreferred = null;
     private Rectangle oldbounds = null;
     private Dimension oldPreferred = null;
 
@@ -56,24 +55,25 @@ public class JMultilineLabel extends JLabel {
      * that dimension.
      */
     @Override
-    public Dimension getPreferredSize()
-    {
+    public Dimension getPreferredSize() {
         // Without this check it will result in an infinite loop calling
         // getPreferredSize. Remember the old bounds and only recalculate if
         // the size actually changed.
-        if(this.getBounds().equals(oldbounds) && oldPreferred != null)
+        if (this.getBounds().equals(oldbounds) && oldPreferred != null) {
             return oldPreferred;
+        }
         oldbounds = this.getBounds();
 
-        this.superPreferred = super.getPreferredSize();
+        Dimension superPreferred = super.getPreferredSize();
         // Make it not larger than required
         int width = Math.min(superPreferred.width, maxWidth);
 
         // Calculate suitable width and height
         final View v = (View) super.getClientProperty(BasicHTML.propertyKey);
 
-        if(v == null)
+        if (v == null) {
             return superPreferred;
+        }
 
         v.setSize(width, 0);
         int w = (int) Math.ceil(v.getPreferredSpan(View.X_AXIS));

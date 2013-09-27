@@ -55,7 +55,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *
  */
 public class OAuthAuthorizationWizard extends JDialog {
-    private HtmlPanel pnlMessage;
     private boolean canceled;
     private final String apiUrl;
 
@@ -108,7 +107,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         // OAuth in a nutshell ...
         gc.gridy  = 1;
         gc.insets = new Insets(5,0,0,5);
-        pnlMessage = new HtmlPanel();
+        HtmlPanel pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("With OAuth you grant JOSM the right to upload map data and GPS tracks "
                         + "on your behalf (<a href=\"{0}\">more info...</a>).",  "http://oauth.net/")

@@ -22,7 +22,6 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
 
     private JosmTextField tfUserName;
     private JosmPasswordField tfPassword;
-    private UserNameValidator valUserName;
 
     private JCheckBox cbWriteMapData;
     private JCheckBox cbWriteGpsTraces;
@@ -43,7 +42,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
         gc.weightx = 1.0;
         pnl.add(tfUserName = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfUserName);
-        valUserName = new UserNameValidator(tfUserName);
+        UserNameValidator valUserName = new UserNameValidator(tfUserName);
         valUserName.validate();
 
         gc.anchor = GridBagConstraints.NORTHWEST;

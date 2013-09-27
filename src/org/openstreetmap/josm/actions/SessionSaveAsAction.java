@@ -51,8 +51,6 @@ public class SessionSaveAsAction extends DiskAccessAction {
     private Map<Layer, SessionLayerExporter> exporters;
     private MultiMap<Layer, Layer> dependencies;
 
-    private boolean zipRequired;
-
     /**
      * Constructs a new {@code SessionSaveAsAction}.
      */
@@ -71,7 +69,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         dlg.showDialog();
         if (dlg.getValue() != 1) return;
 
-        zipRequired = false;
+        boolean zipRequired = false;
         for (Layer l : layers) {
             SessionLayerExporter ex = exporters.get(l);
             if (ex != null && ex.requiresZip()) {
