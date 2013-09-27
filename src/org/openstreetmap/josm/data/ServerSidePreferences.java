@@ -63,15 +63,20 @@ public class ServerSidePreferences extends Preferences {
                 }
                 BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 StringBuilder b = new StringBuilder();
-                for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                    b.append(line);
-                    b.append("\n");
+                try {
+                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                        b.append(line);
+                        b.append("\n");
+                    }
+                } finally {
+                    reader.close();
                 }
                 if (con instanceof HttpURLConnection) {
                     ((HttpURLConnection) con).disconnect();
                 }
                 return b.toString();
             } catch (IOException e) {
+                Main.error(e);
                 e.printStackTrace();
             }
             return null;

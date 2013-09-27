@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -144,7 +145,9 @@ public class OsmServerBackreferenceReaderTest {
         // load properties
         //
         try {
-            testProperties.load(MultiFetchServerObjectReaderTest.class.getResourceAsStream("/test-functional-env.properties"));
+            InputStream is = MultiFetchServerObjectReaderTest.class.getResourceAsStream("/test-functional-env.properties");
+            testProperties.load(is);
+            is.close();
         } catch(Exception e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
             fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
