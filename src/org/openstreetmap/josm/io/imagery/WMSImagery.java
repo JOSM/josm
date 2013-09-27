@@ -133,9 +133,13 @@ public class WMSImagery {
         BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream, "UTF-8"));
         String line;
         StringBuilder ba = new StringBuilder();
-        while ((line = br.readLine()) != null) {
-            ba.append(line);
-            ba.append("\n");
+        try {
+            while ((line = br.readLine()) != null) {
+                ba.append(line);
+                ba.append("\n");
+            }
+        } finally {
+            br.close();
         }
         String incomingData = ba.toString();
 

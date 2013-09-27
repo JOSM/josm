@@ -673,6 +673,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
                 while ((line = reader.readLine()) != null) {
                     txtSource.append(line + "\n");
                 }
+                reader.close();
             } catch (IOException ex) {
                 txtSource.append("<ERROR: failed to read file!>");
             } finally {

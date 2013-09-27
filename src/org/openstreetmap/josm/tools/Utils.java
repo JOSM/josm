@@ -327,8 +327,8 @@ public class Utils {
         if (c == null) return;
         try {
             c.close();
-        } catch(IOException e) {
-            // ignore
+        } catch (IOException e) {
+            Main.warn(e);
         }
     }
 
@@ -341,15 +341,21 @@ public class Utils {
         if (zip == null) return;
         try {
             zip.close();
-        } catch(IOException e) {
-            // ignore
+        } catch (IOException e) {
+            Main.warn(e);
         }
     }
 
-    private final static double EPSILION = 1e-11;
+    private final static double EPSILON = 1e-11;
 
+    /**
+     * Determines if the two given double values are equal (their delta being smaller than a fixed epsilon)
+     * @param a The first double value to compare
+     * @param b The second double value to compare
+     * @return {@code true} if {@code abs(a - b) <= 1e-11}, {@code false} otherwise
+     */
     public static boolean equalsEpsilon(double a, double b) {
-        return Math.abs(a - b) <= EPSILION;
+        return Math.abs(a - b) <= EPSILON;
     }
 
     /**
