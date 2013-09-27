@@ -61,6 +61,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Check for misspelled or wrong properties
@@ -204,6 +205,7 @@ public class TagChecker extends Test
         if (sources.length() == 0)
             return;
         for (String source : sources.split(";")) {
+            BufferedReader reader = null;
             try {
                 MirroredInputStream s = new MirroredInputStream(source);
                 InputStreamReader r;
@@ -212,7 +214,7 @@ public class TagChecker extends Test
                 } catch (UnsupportedEncodingException e) {
                     r = new InputStreamReader(s);
                 }
-                BufferedReader reader = new BufferedReader(r);
+                reader = new BufferedReader(r);
 
                 String okValue = null;
                 boolean tagcheckerfile = false;
@@ -271,6 +273,8 @@ public class TagChecker extends Test
                 }
             } catch (IOException e) {
                 errorSources += source + "\n";
+            } finally {
+                Utils.close(reader);
             }
         }
 

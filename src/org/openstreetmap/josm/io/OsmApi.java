@@ -620,8 +620,12 @@ public class OsmApi extends OsmConnection {
                     // even if there is no payload.
                     if (requestBody != null) {
                         BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                        bwr.write(requestBody);
-                        bwr.flush();
+                        try {
+                            bwr.write(requestBody);
+                            bwr.flush();
+                        } finally {
+                            bwr.close();
+                        }
                     }
                     Utils.close(out);
                 }
@@ -656,9 +660,13 @@ public class OsmApi extends OsmConnection {
                     //
                     BufferedReader in = new BufferedReader(new InputStreamReader(i));
                     String s;
-                    while((s = in.readLine()) != null) {
-                        responseBody.append(s);
-                        responseBody.append("\n");
+                    try {
+                        while((s = in.readLine()) != null) {
+                            responseBody.append(s);
+                            responseBody.append("\n");
+                        }
+                    } finally {
+                        in.close();
                     }
                 }
                 String errorHeader = null;

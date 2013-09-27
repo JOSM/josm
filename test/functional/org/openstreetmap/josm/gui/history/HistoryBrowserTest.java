@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -36,7 +37,9 @@ public class HistoryBrowserTest extends JFrame {
         // load properties
         //
         try {
-            testProperties.load(HistoryBrowserTest.class.getResourceAsStream("/test-functional-env.properties"));
+            InputStream is = HistoryBrowserTest.class.getResourceAsStream("/test-functional-env.properties");
+            testProperties.load(is);
+            is.close();
         } catch(Exception e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
             fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
@@ -82,6 +85,9 @@ public class HistoryBrowserTest extends JFrame {
         browser.populate(h);
     }
 
+    /**
+     * Constructs a new {@code HistoryBrowserTest}.
+     */
     public HistoryBrowserTest(){
         build();
         //populate(OsmPrimitiveType.NODE,354117);

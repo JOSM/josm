@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class to handle projections
@@ -124,9 +125,10 @@ public class Projections {
      */
     private static void loadInits() {
         Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
+        BufferedReader r = null;
         try {
             InputStream in = new MirroredInputStream("resource://data/epsg");
-            BufferedReader r = new BufferedReader(new InputStreamReader(in));
+            r = new BufferedReader(new InputStreamReader(in));
             String line, lastline = "";
             while ((line = r.readLine()) != null) {
                 line = line.trim();
@@ -143,7 +145,9 @@ public class Projections {
                 lastline = line;
             }
         } catch (IOException ex) {
-            throw new RuntimeException();
+            throw new RuntimeException(ex);
+        } finally {
+            Utils.close(r);
         }
     }
 
