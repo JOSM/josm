@@ -155,13 +155,14 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
                 }
             }
             if (i.serverProjections != null && !i.serverProjections.isEmpty()) {
-                String val = "";
+                StringBuilder val = new StringBuilder();
                 for (String p : i.serverProjections) {
-                    if (!val.isEmpty())
-                        val += ",";
-                    val += p;
+                    if (val.length() > 0) {
+                        val.append(",");
+                    }
+                    val.append(p);
                 }
-                projections = val;
+                projections = val.toString();
             }
         }
     }
