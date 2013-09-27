@@ -100,13 +100,13 @@ public class TagMergeItem {
         } else if (mergeDecision == MergeDecisionType.KEEP_THEIR) {
             if (theirTagValue == null) {
                 primitive.remove(key);
-            } else if (theirTagValue != null) {
+            } else {
                 primitive.put(key, theirTagValue);
             }
         } else if (mergeDecision == MergeDecisionType.KEEP_MINE) {
             if (myTagValue == null) {
                 primitive.remove(key);
-            } else if (myTagValue != null) {
+            } else {
                 primitive.put(key, myTagValue);
             }
         } else {

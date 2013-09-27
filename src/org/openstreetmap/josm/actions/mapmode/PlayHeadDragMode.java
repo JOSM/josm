@@ -54,7 +54,6 @@ public class PlayHeadDragMode extends MapMode {
         if (mouseStart == null || mousePos == null) return;
         if ((ev.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0) return;
         Point p = ev.getPoint();
-        if (p == null) return;
         if (! dragging) {
             if (p.distance(mouseStart) < 3) return;
             playHeadMarker.startDrag();

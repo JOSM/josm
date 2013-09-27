@@ -366,8 +366,7 @@ public class TagChecker extends Test
             }
         }
 
-        Map<String, String> props = (p.getKeys() == null) ? Collections.<String, String>emptyMap() : p.getKeys();
-        for (Entry<String, String> prop : props.entrySet()) {
+        for (Entry<String, String> prop : p.getKeys().entrySet()) {
             String s = marktr("Key ''{0}'' invalid.");
             String key = prop.getKey();
             String value = prop.getValue();

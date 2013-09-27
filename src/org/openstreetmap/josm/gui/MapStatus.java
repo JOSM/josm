@@ -281,12 +281,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                                     // Popup Information
                                     // display them if the middle mouse button is pressed and
                                     // keep them until the mouse is moved
-                                    if (middleMouseDown || isAtOldPosition)
-                                    {
+                                    if (middleMouseDown || isAtOldPosition) {
                                         Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos, OsmPrimitive.isUsablePredicate);
-
-                                        if (osms == null)
-                                            return;
 
                                         final JPanel c = new JPanel(new GridBagLayout());
                                         final JLabel lbl = new JLabel(
