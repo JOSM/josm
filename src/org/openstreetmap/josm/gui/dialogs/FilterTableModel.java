@@ -45,6 +45,9 @@ public class FilterTableModel extends AbstractTableModel {
     // number of primitives that are disabled and hidden
     public int disabledAndHiddenCount;
 
+    /**
+     * Constructs a new {@code FilterTableModel}.
+     */
     public FilterTableModel() {
         loadPrefs();
     }
@@ -279,6 +282,9 @@ public class FilterTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int row, int column) {
+        if (row >= filters.size()) {
+            return;
+        }
         Filter f = filters.get(row);
         switch (column) {
         case COL_ENABLED:
@@ -309,6 +315,9 @@ public class FilterTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int column) {
+        if (row >= filters.size()) {
+            return null;
+        }
         Filter f = filters.get(row);
         switch (column) {
         case COL_ENABLED:
