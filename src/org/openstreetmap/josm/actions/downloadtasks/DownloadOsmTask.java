@@ -38,7 +38,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
 
     private static final String PATTERN_OSM_API_URL           = "http://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
     private static final String PATTERN_OVERPASS_API_URL      = "http://.*/interpreter\\?data=.*";
-    private static final String PATTERN_OVERPASS_API_XAPI_URL = "http://.*/xapi\\?.*\\[@meta\\].*";
+    private static final String PATTERN_OVERPASS_API_XAPI_URL = "http://.*/xapi(\\?.*\\[@meta\\]|_meta\\?).*";
     private static final String PATTERN_EXTERNAL_OSM_FILE     = "https?://.*/.*\\.osm";
 
     protected Bounds currentBounds;
