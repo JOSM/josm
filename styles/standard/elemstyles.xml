@@ -372,7 +372,7 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="barrier" v="bump_gate"/>
-		<icon annotate="true" src="misc/no_icon.png" priority="-100"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 	</rule>
 	<rule>
 		<condition k="barrier" v="sally_port"/>
