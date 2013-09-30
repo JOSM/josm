@@ -79,16 +79,26 @@ public class SessionWriter {
         }
     }
 
-    private List<Layer> layers;
-    private Map<Layer, SessionLayerExporter> exporters;
-    private MultiMap<Layer, Layer> dependencies;
-    private boolean zip;
+    private final List<Layer> layers;
+    private final int active; 
+    private final Map<Layer, SessionLayerExporter> exporters;
+    private final MultiMap<Layer, Layer> dependencies;
+    private final boolean zip;
 
     private ZipOutputStream zipOut;
 
-    public SessionWriter(List<Layer> layers, Map<Layer, SessionLayerExporter> exporters,
+    /**
+     * Constructs a new {@code SessionWriter}.
+     * @param layers The ordered list of layers to save
+     * @param active The index of active layer in {@code layers} (starts to 0). Ignored if set to -1
+     * @param exporters The exprters to use to save layers
+     * @param zip {@code true} if a joz archive has to be created, {@code false otherwise}
+     * @since 6271
+     */
+    public SessionWriter(List<Layer> layers, int active, Map<Layer, SessionLayerExporter> exporters,
                 MultiMap<Layer, Layer> dependencies, boolean zip) {
         this.layers = layers;
+        this.active = active;
         this.exporters = exporters;
         this.dependencies = dependencies;
         this.zip = zip;
@@ -181,6 +191,9 @@ public class SessionWriter {
         scale.setAttribute("meter-per-pixel", Double.toString(dist100px / 100));
 
         Element layersEl = doc.createElement("layers");
+        if (active >= 0) {
+            layersEl.setAttribute("active", Integer.toString(active+1));
+        }
         root.appendChild(layersEl);
 
         for (int index=0; index<layers.size(); ++index) {

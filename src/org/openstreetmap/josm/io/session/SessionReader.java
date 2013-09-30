@@ -88,6 +88,7 @@ public class SessionReader {
     private boolean zip; // true, if session file is a .joz file; false if it is a .jos file
     private ZipFile zipFile;
     private List<Layer> layers = new ArrayList<Layer>();
+    private int active = -1;
     private List<Runnable> postLoadTasks = new ArrayList<Runnable>();
     private ViewportData viewport;
 
@@ -96,6 +97,15 @@ public class SessionReader {
      */
     public List<Layer> getLayers() {
         return layers;
+    }
+
+    /**
+     * @return active layer, or {@code null} if not set
+     * @since 6271
+     */
+    public Layer getActive() {
+        // layers is in reverse order because of the way TreeMap is built
+        return (active >= 0 && active < layers.size()) ? layers.get(layers.size()-1-active) : null;
     }
 
     /**
@@ -326,6 +336,14 @@ public class SessionReader {
         Element layersEl = getElementByTagName(root, "layers");
         if (layersEl == null) return;
 
+        String activeAtt = layersEl.getAttribute("active");
+        try {
+            active = (activeAtt != null && !activeAtt.isEmpty()) ? Integer.parseInt(activeAtt)-1 : -1;
+        } catch (NumberFormatException e) {
+            Main.warn("Unsupported value for 'active' layer attribute. Ignoring it. Error was: "+e.getMessage());
+            active = -1;
+        }
+        
         MultiMap<Integer, Integer> deps = new MultiMap<Integer, Integer>();
         Map<Integer, Element> elems = new HashMap<Integer, Element>();
 
