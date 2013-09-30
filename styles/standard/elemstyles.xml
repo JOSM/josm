@@ -2511,6 +2511,12 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="shop" v="pawnbroker"/>
+		<icon annotate="true" src="presets/pawnbroker.svg"/>
+		<area colour="shop#00005f"/>
+	</rule>
+
+	<rule>
 		<condition k="shop" v="seafood"/>
 		<icon annotate="true" src="shop/groceries/seafood.png"/>
 		<area colour="shop#00005f"/>

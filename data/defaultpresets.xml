@@ -5720,6 +5720,16 @@ Note that for a match, at least one positive and no negative is required.
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
         </item>
+        <item name="Pawnbroker" icon="presets/pawnbroker.svg" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=pawnbroker"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=pawnbroker"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=pawnbroker" />
+            <label text="Edit Pawnbroker" />
+            <space />
+            <key key="shop" value="pawnbroker" />
+            <text key="name" text="Name" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
+        </item>
     </group> <!-- Cash -->
     <group name="Other" icon="styles/standard/shop/mall.png">
         <item name="Department Store" icon="styles/standard/shop/mall.png" type="node,closedway">
