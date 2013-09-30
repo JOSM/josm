@@ -66,6 +66,7 @@ public class SessionLoadAction extends DiskAccessAction {
         private final InputStream is;
         private final boolean zip;
         private List<Layer> layers;
+        private Layer active;
         private List<Runnable> postLoadTasks;
         private ViewportData viewport;
 
@@ -122,6 +123,9 @@ public class SessionLoadAction extends DiskAccessAction {
                             if (canceled) return;
                             Main.main.addLayer(l);
                         }
+                        if (active != null) {
+                            Main.map.mapView.setActiveLayer(active);
+                        }
                         if (noMap) {
                             Main.map.setVisible(true);
                         }
@@ -157,6 +161,7 @@ public class SessionLoadAction extends DiskAccessAction {
                     }
                     reader.loadSession(file, zip, monitor);
                     layers = reader.getLayers();
+                    active = reader.getActive();
                     postLoadTasks = reader.getPostLoadTasks();
                     viewport = reader.getViewport();
                 } finally {

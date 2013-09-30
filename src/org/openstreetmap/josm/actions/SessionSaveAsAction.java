@@ -122,8 +122,14 @@ public class SessionSaveAsAction extends DiskAccessAction {
             // TODO: resolve dependencies for layers excluded by the user
             layersOut.add(layer);
         }
+        
+        int active = -1;
+        Layer activeLayer = Main.map.mapView.getActiveLayer();
+        if (activeLayer != null) {
+            active = layersOut.indexOf(activeLayer);
+        }
 
-        SessionWriter sw = new SessionWriter(layersOut, exporters, dependencies, zip);
+        SessionWriter sw = new SessionWriter(layersOut, active, exporters, dependencies, zip);
         try {
             sw.write(file);
         } catch (IOException ex) {
@@ -156,6 +162,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
             setContent(build(), false);
         }
 
+        /**
+         * Initializes action.
+         */
         public void initialize() {
             layers = new ArrayList<Layer>(Main.map.mapView.getAllLayersAsList());
             exporters = new HashMap<Layer, SessionLayerExporter>();
@@ -195,7 +204,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             }
         }
 
-        public Component build() {
+        protected Component build() {
             JPanel p = new JPanel(new GridBagLayout());
             JPanel ip = new JPanel(new GridBagLayout());
             for (Layer layer : layers) {
