@@ -339,9 +339,12 @@ public class MergeNodesAction extends JosmAction {
             // build the commands
             //
             if (targetNode != targetLocationNode) {
-                Node newTargetNode = new Node(targetNode);
-                newTargetNode.setCoor(targetLocationNode.getCoor());
-                cmds.add(new ChangeCommand(targetNode, newTargetNode));
+                LatLon targetLocationCoor = targetLocationNode.getCoor();
+                if (!targetNode.getCoor().equals(targetLocationCoor)) {
+                    Node newTargetNode = new Node(targetNode);
+                    newTargetNode.setCoor(targetLocationCoor);
+                    cmds.add(new ChangeCommand(targetNode, newTargetNode));
+                }
             }
             cmds.addAll(resultion);
             if (!nodesToDelete.isEmpty()) {
