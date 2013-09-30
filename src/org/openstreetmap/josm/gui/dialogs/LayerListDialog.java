@@ -448,6 +448,9 @@ public class LayerListDialog extends ToggleDialog {
             }
         }
 
+        /**
+         * Constructs a new {@code ShowHideLayerAction}.
+         */
         public ShowHideLayerAction() {
             this(true);
         }
@@ -639,6 +642,9 @@ public class LayerListDialog extends ToggleDialog {
             updateEnabledState();
         }
 
+        /**
+         * Constructs a new {@code ActivateLayerAction}.
+         */
         public ActivateLayerAction() {
             putValue(NAME, tr("Activate"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
@@ -743,6 +749,9 @@ public class LayerListDialog extends ToggleDialog {
             updateEnabledState();
         }
 
+        /**
+         * Constructs a new {@code MergeAction}.
+         */
         public MergeAction() {
             putValue(NAME, tr("Merge"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "mergedown"));
@@ -810,6 +819,9 @@ public class LayerListDialog extends ToggleDialog {
             updateEnabledState();
         }
 
+        /**
+         * Constructs a new {@code DuplicateAction}.
+         */
         public DuplicateAction() {
             putValue(NAME, tr("Duplicate"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "duplicatelayer"));
@@ -1020,10 +1032,10 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     class PopupMenuHandler extends PopupMenuLauncher {
-        @Override public void launch(MouseEvent evt) {
+        @Override public void showMenu(MouseEvent evt) {
             Layer layer = getModel().getLayer(layerList.getSelectedRow());
             menu = new LayerListPopup(getModel().getSelectedLayers(), layer);
-            super.launch(evt);
+            super.showMenu(evt);
         }
     }
 
