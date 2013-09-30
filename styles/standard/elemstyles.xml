@@ -282,12 +282,12 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="maxstay"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/no_icon.png" priority="-100"/>
 	</rule>
 
 	<rule>
 		<condition k="toll"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/no_icon.png" priority="-100"/>
 	</rule>
 
 	<rule>
@@ -372,7 +372,7 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="barrier" v="bump_gate"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-100"/>
 	</rule>
 	<rule>
 		<condition k="barrier" v="sally_port"/>
