@@ -31,6 +31,9 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
     private Image enabledNodeIcon;
     private Image disabledNodeIcon;
 
+    private boolean enabledNodeIconIsTemporary;
+    private boolean disabledNodeIconIsTemporary;
+
     public enum SymbolShape { SQUARE, CIRCLE, TRIANGLE, PENTAGON, HEXAGON, HEPTAGON, OCTAGON, NONAGON, DECAGON }
 
     public static class Symbol {
@@ -240,13 +243,15 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
             if (mapImage != null && painter.isShowIcons()) {
                 final Image nodeIcon;
                 if (painter.isInactiveMode() || n.isDisabled()) {
-                    if (disabledNodeIcon == null) {
+                    if (disabledNodeIcon == null || disabledNodeIconIsTemporary) {
                         disabledNodeIcon = mapImage.getDisplayedNodeIcon(true);
+                        disabledNodeIconIsTemporary = mapImage.isTemporary();
                     }
                     nodeIcon = disabledNodeIcon;
                 } else {
-                    if (enabledNodeIcon == null) {
+                    if (enabledNodeIcon == null || enabledNodeIconIsTemporary) {
                         enabledNodeIcon = mapImage.getDisplayedNodeIcon(false);
+                        enabledNodeIconIsTemporary = mapImage.isTemporary();
                     }
                     nodeIcon = enabledNodeIcon;
                 }
