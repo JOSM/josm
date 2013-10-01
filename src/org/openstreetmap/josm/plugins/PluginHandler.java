@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -526,10 +528,12 @@ public class PluginHandler {
         }
 
         // create a classloader for all plugins:
-        URL[] jarUrls = new URL[allPluginLibraries.size()];
-        jarUrls = allPluginLibraries.toArray(jarUrls);
-        URLClassLoader pluginClassLoader = new URLClassLoader(jarUrls, Main.class.getClassLoader());
-        return pluginClassLoader;
+        final URL[] jarUrls = allPluginLibraries.toArray(new URL[allPluginLibraries.size()]);
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+            public ClassLoader run() {
+                return new URLClassLoader(jarUrls, Main.class.getClassLoader());
+            }
+      });
     }
 
     /**
