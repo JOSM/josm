@@ -61,7 +61,8 @@ public class LafPreference implements SubPreferenceSetting {
                     new UIManager.LookAndFeelInfo(((javax.swing.LookAndFeel)Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
             );
         } catch (Exception ex) {
-            // just ignore, Quaqua may not even be installed...
+            // just debug, Quaqua may not even be installed...
+            Main.debug(ex.getMessage());
         }
 
         String laf = Main.pref.get("laf", Main.platform.getDefaultStyle());
