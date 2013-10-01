@@ -11,7 +11,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Vector;
 
 import javax.accessibility.Accessible;
 import javax.swing.ComboBoxEditor;
@@ -98,19 +97,6 @@ public class JosmComboBox extends JComboBox {
     public JosmComboBox(Object[] items) {
         super(items);
         init(findPrototypeDisplayValue(Arrays.asList(items)));
-    }
-
-    /**
-     * Creates a <code>JosmComboBox</code> that contains the elements
-     * in the specified Vector. By default the first item in the vector
-     * (and therefore the data model) becomes selected.
-     *
-     * @param items  an array of vectors to insert into the combo box
-     * @see DefaultComboBoxModel
-     */
-    public JosmComboBox(Vector<?> items) {
-        super(items);
-        init(findPrototypeDisplayValue(items));
     }
     
     /**
