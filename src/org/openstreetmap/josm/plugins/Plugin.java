@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -141,8 +143,11 @@ public abstract class Plugin implements MapFrameListener {
     public ClassLoader getPluginResourceClassLoader() {
         File pluginDir = Main.pref.getPluginsDirectory();
         File pluginJar = new File(pluginDir, info.name + ".jar");
-        URL pluginJarUrl = PluginInformation.fileToURL(pluginJar);
-        URLClassLoader pluginClassLoader = new URLClassLoader(new URL[] { pluginJarUrl } , Main.class.getClassLoader());
-        return pluginClassLoader;
+        final URL pluginJarUrl = PluginInformation.fileToURL(pluginJar);
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+              public ClassLoader run() {
+                  return new URLClassLoader(new URL[] {pluginJarUrl}, Main.class.getClassLoader());
+              }
+        });
     }
 }
