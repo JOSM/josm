@@ -629,7 +629,9 @@ public class ImageProvider {
             BufferedImage img = null;
             try {
                 img = ImageIO.read(path);
-            } catch (IOException e) {}
+            } catch (IOException e) {
+                Main.warn(e);
+            }
             return img == null ? null : new ImageResource(img);
         default:
             throw new AssertionError();
