@@ -1,5 +1,4 @@
 // License: GPL. See LICENSE file for details.
-
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import java.awt.Graphics2D;
@@ -52,17 +51,6 @@ public class ThumbsLoader implements Runnable {
         }
         layer.updateOffscreenBuffer = true;
         Main.map.mapView.repaint();
-        (new Thread() {             // clean up the garbage - shouldn't hurt
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(200);
-                }
-                catch (InterruptedException ie) {}
-                System.gc();
-            }
-        }).start();
-
     }
 
     private BufferedImage loadThumb(ImageEntry entry) {
