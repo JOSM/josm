@@ -10,7 +10,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 
 public class EllipsoidTest {
 
-    final double EPSILON = 1e-8;
+    private static final double EPSILON = 1e-8;
 
     /**
      * convert latlon to cartesian coordinates back and forth
