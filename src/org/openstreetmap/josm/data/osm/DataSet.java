@@ -87,7 +87,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public class DataSet implements Cloneable, ProjectionChangeListener {
+public final class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
