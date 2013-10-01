@@ -4469,7 +4469,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="running" default="track" />
         </item>
-        <item name="Climbing" icon="styles/standard/sport/climbing.png" type="node,closedway">
+        <item name="Climbing" icon="styles/standard/sport/climbing.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=climbing"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=climbing" />
             <label text="Edit Climbing" />
