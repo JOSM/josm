@@ -15,6 +15,9 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
 abstract public class ElemStyle implements StyleKeys {
 
+    protected static final String[] ICON_KEYS = {"icon-image", "icon-width", "icon-height", "icon-opacity"};
+    protected static final String[] REPEAT_IMAGE_KEYS = {"repeat-image", "repeat-image-width", "repeat-image-height", "repeat-image-opacity"};
+
     public float major_z_index;
     public float z_index;
     public float object_z_index;
