@@ -15,7 +15,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direct
 
 public class WayConnectionTypeCalculator {
 
-    private final int UNCONNECTED = Integer.MIN_VALUE;
+    private static final int UNCONNECTED = Integer.MIN_VALUE;
 
     private List<RelationMember> members;
 
