@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Simple map of properties with dynamic typing.
  */
-public class Cascade implements Cloneable {
+public final class Cascade implements Cloneable {
 
     public static final Cascade EMPTY_CASCADE = new Cascade();
 
