@@ -1,10 +1,8 @@
-//License: GPL. Copyright 2008 by Christoph Brill
-
+//License: GPL. See README for details.
 package org.openstreetmap.josm.io;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParsePosition;
@@ -14,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
@@ -195,12 +194,12 @@ public class NmeaReader {
                 }
                 int c = rd.read();
                 if(c=='$') {
-                    ParseNMEASentence(sb.toString(), ps);
+                    parseNMEASentence(sb.toString(), ps);
                     sb.delete(0, sb.length());
                     sb.append('$');
                 } else if(c == -1) {
                     // EOF: add last WayPoint if it works out
-                    ParseNMEASentence(sb.toString(),ps);
+                    parseNMEASentence(sb.toString(),ps);
                     break;
                 } else {
                     sb.append((char)c);
@@ -209,8 +208,8 @@ public class NmeaReader {
             currentTrack.add(ps.waypoints);
             data.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
 
-        } catch (IOException e) {
-            // TODO tell user about the problem?
+        } catch (Exception e) {
+            Main.warn(e);
         } finally {
             Utils.close(rd);
         }
@@ -232,10 +231,11 @@ public class NmeaReader {
     // Parses split up sentences into WayPoints which are stored
     // in the collection in the NMEAParserState object.
     // Returns true if the input made sence, false otherwise.
-    private boolean ParseNMEASentence(String s, NMEAParserState ps) {
+    private boolean parseNMEASentence(String s, NMEAParserState ps) throws IllegalDataException {
         try {
-            if (s.isEmpty())
-                throw new NullPointerException();
+            if (s.isEmpty()) {
+                throw new IllegalArgumentException("s is empty");
+            }
 
             // checksum check:
             // the bytes between the $ and the * are xored;
@@ -273,10 +273,11 @@ public class NmeaReader {
                         e[GPGGA.LATITUDE.position],
                         e[GPGGA.LONGITUDE.position]
                 );
-                if(latLon==null)
-                    throw new NullPointerException(); // malformed
+                if (latLon==null) {
+                    throw new IllegalDataException("Malformed lat/lon");
+                }
 
-                if((latLon.lat()==0.0) && (latLon.lon()==0.0)) {
+                if ((latLon.lat()==0.0) && (latLon.lon()==0.0)) {
                     ps.zero_coord++;
                     return false;
                 }
