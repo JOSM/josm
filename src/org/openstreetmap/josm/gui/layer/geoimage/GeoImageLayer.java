@@ -120,8 +120,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             Collection<File> files = new ArrayList<File>();
             try {
                 addRecursiveFiles(files, selection);
-            } catch(NullPointerException npe) {
-                rememberError(tr("One of the selected files was null"));
+            } catch (IllegalStateException e) {
+                rememberError(e.getMessage());
             }
 
             if (canceled)
@@ -208,8 +208,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 }
             }
 
-            if (nullFile)
-                throw new NullPointerException();
+            if (nullFile) {
+                throw new IllegalStateException(tr("One of the selected files was null"));
+            }
         }
 
         protected String formatErrorMessages() {
