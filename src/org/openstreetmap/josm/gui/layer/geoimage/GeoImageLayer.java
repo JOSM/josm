@@ -531,8 +531,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
 
         try {
-            int orientation = dirExif.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-            e.setExifOrientation(orientation);
+            if (dirExif != null) {
+                int orientation = dirExif.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+                e.setExifOrientation(orientation);
+            }
         } catch (MetadataException ex) {
         }
 
