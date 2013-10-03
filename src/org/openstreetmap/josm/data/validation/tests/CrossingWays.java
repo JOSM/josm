@@ -70,6 +70,7 @@ public class CrossingWays extends Test {
         String natural1 = w.get("natural");
         String landuse1 = w.get("landuse");
         boolean isCoastline1 = "water".equals(natural1) || "coastline".equals(natural1) || "reservoir".equals(landuse1);
+        String highway1 = w.get("highway");
         String railway1 = w.get("railway");
         boolean isSubway1 = "subway".equals(railway1);
         boolean isTram1 = "tram".equals(railway1);
@@ -89,7 +90,7 @@ public class CrossingWays extends Test {
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
             WaySegment ws = new WaySegment(w, i);
-            ExtendedSegment es1 = new ExtendedSegment(ws, layer1, railway1, isCoastline1, waterway1);
+            ExtendedSegment es1 = new ExtendedSegment(ws, layer1, highway1, railway1, isCoastline1, waterway1);
             for (List<ExtendedSegment> segments : getSegments(es1.n1, es1.n2)) {
                 for (ExtendedSegment es2 : segments) {
                     List<Way> prims;
@@ -100,6 +101,7 @@ public class CrossingWays extends Test {
                     }
 
                     String layer2 = es2.layer;
+                    String highway2 = es2.highway;
                     String railway2 = es2.railway;
                     boolean isCoastline2 = es2.coastline;
                     if (layer1 == null ? layer2 != null : !layer1.equals(layer2)) {
@@ -124,7 +126,8 @@ public class CrossingWays extends Test {
                         continue;
                     }
 
-                    if (("abandoned".equals(es1.railway)) || ("abandoned".equals(railway2))) {
+                    if ("proposed".equals(es1.highway) || "proposed".equals(highway2)
+                     || "abandoned".equals(es1.railway) || "abandoned".equals(railway2)) {
                         continue;
                     }
 
@@ -139,8 +142,8 @@ public class CrossingWays extends Test {
                             message = tr("Crossing buildings");
                         } else if ((es1.waterway != null && es2.waterway != null)) {
                             message = tr("Crossing waterways");
-                        } else if ((es1.waterway != null && es2.ws.way.get("highway") != null)
-                                || (es2.waterway != null && es1.ws.way.get("highway") != null)) {
+                        } else if ((es1.waterway != null && es2.highway != null)
+                                || (es2.waterway != null && es1.highway != null)) {
                             message = tr("Crossing waterway/highway");
                         } else {
                             message = tr("Crossing ways");
@@ -188,35 +191,40 @@ public class CrossingWays extends Test {
      * A way segment with some additional information
      */
     public static class ExtendedSegment {
-        private Node n1, n2;
+        private final Node n1, n2;
 
-        private WaySegment ws;
+        private final WaySegment ws;
 
         /** The layer */
-        private String layer;
+        private final String layer;
+
+        /** The highway type */
+        private final String highway;
 
         /** The railway type */
-        private String railway;
+        private final String railway;
 
         /** The waterway type */
-        private String waterway;
+        private final String waterway;
 
         /** The coastline type */
-        private boolean coastline;
+        private final boolean coastline;
 
         /**
          * Constructor
          * @param ws The way segment
          * @param layer The layer of the way this segment is in
+         * @param highway The highway type of the way this segment is in
          * @param railway The railway type of the way this segment is in
          * @param coastline The coastline flag of the way the segment is in
          * @param waterway The waterway type of the way this segment is in
          */
-        public ExtendedSegment(WaySegment ws, String layer, String railway, boolean coastline, String waterway) {
+        public ExtendedSegment(WaySegment ws, String layer, String highway, String railway, boolean coastline, String waterway) {
             this.ws = ws;
             this.n1 = ws.way.getNodes().get(ws.lowerIndex);
             this.n2 = ws.way.getNodes().get(ws.lowerIndex + 1);
             this.layer = layer;
+            this.highway = highway;
             this.railway = railway;
             this.coastline = coastline;
             this.waterway = waterway;
