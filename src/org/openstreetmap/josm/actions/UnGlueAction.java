@@ -367,7 +367,7 @@ public class UnGlueAction extends JosmAction {
                 }
             }
             if (wayWithSelectedNode == null) {
-                wayWithSelectedNode = parentWays.removeFirst();
+                parentWays.removeFirst();
             }
             for (Way w : parentWays) {
                 cmds.add(new ChangeCommand(w, modifyWay(selectedNode, w, cmds, newNodes)));

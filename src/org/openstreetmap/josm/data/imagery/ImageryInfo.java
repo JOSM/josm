@@ -76,6 +76,31 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         public List<Shape> getShapes() {
             return shapes;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + ((shapes == null) ? 0 : shapes.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj))
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            ImageryBounds other = (ImageryBounds) obj;
+            if (shapes == null) {
+                if (other.shapes != null)
+                    return false;
+            } else if (!shapes.equals(other.shapes))
+                return false;
+            return true;
+        }
     }
 
     private String name;

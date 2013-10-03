@@ -41,8 +41,7 @@ public class MapPaintStyles {
 
     private static ElemStyles styles = new ElemStyles();
 
-    public static ElemStyles getStyles()
-    {
+    public static ElemStyles getStyles() {
         return styles;
     }
 
@@ -56,7 +55,7 @@ public class MapPaintStyles {
      */
     public static class TagKeyReference {
         public final String key;
-        public TagKeyReference(String key){
+        public TagKeyReference(String key) {
             this.key = key;
         }
 
@@ -225,21 +224,25 @@ public class MapPaintStyles {
                 return new XmlStyleSource(entry);
             else {
                 InputStreamReader reader = new InputStreamReader(in);
-                WHILE: while (true) {
-                    int c = reader.read();
-                    switch (c) {
-                        case -1:
-                            break WHILE;
-                        case ' ':
-                        case '\t':
-                        case '\n':
-                        case '\r':
-                            continue;
-                        case '<':
-                            return new XmlStyleSource(entry);
-                        default:
-                            return new MapCSSStyleSource(entry);
+                try {
+                    WHILE: while (true) {
+                        int c = reader.read();
+                        switch (c) {
+                            case -1:
+                                break WHILE;
+                            case ' ':
+                            case '\t':
+                            case '\n':
+                            case '\r':
+                                continue;
+                            case '<':
+                                return new XmlStyleSource(entry);
+                            default:
+                                return new MapCSSStyleSource(entry);
+                        }
                     }
+                } finally {
+                    reader.close();
                 }
                 Main.warn("Could not detect style type. Using default (xml).");
                 return new XmlStyleSource(entry);

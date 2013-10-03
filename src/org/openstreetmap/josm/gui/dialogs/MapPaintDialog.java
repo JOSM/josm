@@ -533,12 +533,17 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
                 BufferedInputStream bis = null;
                 BufferedOutputStream bos = null;
                 try {
-                    bis = new BufferedInputStream(s.getSourceInputStream());
-                    bos = new BufferedOutputStream(new FileOutputStream(file));
-                    byte[] buffer = new byte[4096];
-                    int length;
-                    while ((length = bis.read(buffer)) > -1 && !canceled) {
-                        bos.write(buffer, 0, length);
+                    InputStream in = s.getSourceInputStream();
+                    try {
+                        bis = new BufferedInputStream(in);
+                        bos = new BufferedOutputStream(new FileOutputStream(file));
+                        byte[] buffer = new byte[4096];
+                        int length;
+                        while ((length = bis.read(buffer)) > -1 && !canceled) {
+                            bos.write(buffer, 0, length);
+                        }
+                    } finally {
+                        s.closeSourceInputStream(in);
                     }
                 } catch (IOException e) {
                     error = true;
@@ -665,19 +670,23 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             txtSource.setEditable(false);
             p.add(new JScrollPane(txtSource), GBC.std().fill());
 
-            InputStream is = null;
             try {
-                is = s.getSourceInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    txtSource.append(line + "\n");
+                InputStream is = s.getSourceInputStream();
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    try {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            txtSource.append(line + "\n");
+                        }
+                    } finally {
+                        reader.close();
+                    }
+                } finally {
+                    s.closeSourceInputStream(is);
                 }
-                reader.close();
             } catch (IOException ex) {
                 txtSource.append("<ERROR: failed to read file!>");
-            } finally {
-                Utils.close(is);
             }
         }
 

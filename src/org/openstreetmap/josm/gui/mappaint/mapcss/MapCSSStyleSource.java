@@ -36,6 +36,7 @@ public class MapCSSStyleSource extends StyleSource {
     final public List<MapCSSRule> rules;
     private Color backgroundColorOverride;
     private String css = null;
+    private ZipFile zipFile;
 
     public MapCSSStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
@@ -66,10 +67,15 @@ public class MapCSSStyleSource extends StyleSource {
         init();
         rules.clear();
         try {
-            MapCSSParser parser = new MapCSSParser(getSourceInputStream(), "UTF-8");
-            parser.sheet(this);
-            loadMeta();
-            loadCanvas();
+            InputStream in = getSourceInputStream();
+            try {
+                MapCSSParser parser = new MapCSSParser(in, "UTF-8");
+                parser.sheet(this);
+                loadMeta();
+                loadCanvas();
+            } finally {
+                closeSourceInputStream(in);
+            }
         } catch (IOException e) {
             Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
             e.printStackTrace();
@@ -87,20 +93,29 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public InputStream getSourceInputStream() throws IOException {
-        if (css != null)
+        if (css != null) {
             return new ByteArrayInputStream(css.getBytes("UTF-8"));
-
+        }
         MirroredInputStream in = new MirroredInputStream(url);
         if (isZip) {
             File file = in.getFile();
             Utils.close(in);
-            ZipFile zipFile = new ZipFile(file);
+            zipFile = new ZipFile(file);
             zipIcons = file;
             ZipEntry zipEntry = zipFile.getEntry(zipEntryPath);
             return zipFile.getInputStream(zipEntry);
         } else {
+            zipFile = null;
             zipIcons = null;
             return in;
+        }
+    }
+
+    @Override
+    public void closeSourceInputStream(InputStream is) {
+        super.closeSourceInputStream(is);
+        if (isZip) {
+            Utils.close(zipFile);
         }
     }
 
