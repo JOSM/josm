@@ -32,6 +32,9 @@ public class UTMProjectionChoice extends ListProjectionChoice {
         }
     }
 
+    /**
+     * Constructs a new {@code UTMProjectionChoice}.
+     */
     public UTMProjectionChoice() {
         super(tr("UTM"), "core:utm", cbEntries.toArray(), tr("UTM Zone"));
     }
@@ -95,6 +98,9 @@ public class UTMProjectionChoice extends ListProjectionChoice {
 
     @Override
     public Collection<String> getPreferences(JPanel panel) {
+        if (!(panel instanceof UTMPanel)) {
+            throw new IllegalArgumentException();
+        }
         UTMPanel p = (UTMPanel) panel;
         int index = p.prefcb.getSelectedIndex();
         Hemisphere hemisphere = p.south.isSelected()?Hemisphere.South:Hemisphere.North;
@@ -132,7 +138,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
         super.setPreferences(args);
         Hemisphere hemisphere = DEFAULT_HEMISPHERE;
 
-        if(args != null) {
+        if (args != null) {
             String[] array = args.toArray(new String[args.size()]);
 
             if (array.length > 1) {
@@ -154,5 +160,4 @@ public class UTMProjectionChoice extends ListProjectionChoice {
         } catch(NumberFormatException e) {}
         return defaultIndex;
     }
-
 }

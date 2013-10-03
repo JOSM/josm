@@ -10,6 +10,9 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice {
 
     private static String[] zones = { "2", "3", "4", "5" };
 
+    /**
+     * Constructs a new {@code GaussKruegerProjectionChoice}.
+     */
     public GaussKruegerProjectionChoice() {
         super(tr("Gau\u00DF-Kr\u00FCger"), "core:gauss-krueger", zones, tr("GK Zone"));
     }

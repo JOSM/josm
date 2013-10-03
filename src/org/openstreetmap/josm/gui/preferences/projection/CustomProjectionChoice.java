@@ -41,6 +41,9 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
 
     private String pref;
 
+    /**
+     * Constructs a new {@code CustomProjectionChoice}.
+     */
     public CustomProjectionChoice() {
         super(tr("Custom Projection"), "core:custom");
     }
@@ -155,6 +158,9 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
 
     public static class ParameterInfoDialog extends ExtendedDialog {
 
+        /**
+         * Constructs a new {@code ParameterInfoDialog}.
+         */
         public ParameterInfoDialog() {
             super(null, tr("Parameter information"), new String[] { tr("Close") }, false);
             setContent(build());
@@ -224,6 +230,9 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
 
     @Override
     public Collection<String> getPreferences(JPanel panel) {
+        if (!(panel instanceof PreferencePanel)) {
+            throw new IllegalArgumentException();
+        }
         PreferencePanel prefPanel = (PreferencePanel) panel;
         String pref = prefPanel.input.getText();
         prefPanel.rememberHistory();
