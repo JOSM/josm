@@ -735,18 +735,17 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-
     public static class ChangeResolutionAction extends AbstractAction implements LayerAction {
+        
+        /**
+         * Constructs a new {@code ChangeResolutionAction}
+         */
         public ChangeResolutionAction() {
             super(tr("Change resolution"));
         }
 
         @Override
         public void actionPerformed(ActionEvent ev) {
-
-            if (LayerListDialog.getInstance() == null)
-                return;
-
             List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
             for (Layer l: layers) {
                 changeResolution((WMSLayer) l, false);

@@ -202,7 +202,7 @@ public class OsmValidator implements LayerChangeListener {
     /** Gets a map from simple names to all tests. */
     public static Map<String, Test> getAllTestsMap() {
         Map<String, Test> tests = new HashMap<String, Test>();
-        for (Class<Test> testClass : getAllAvailableTests()) {
+        for (Class<Test> testClass : allAvailableTests) {
             try {
                 Test test = testClass.newInstance();
                 tests.put(testClass.getSimpleName(), test);
@@ -257,7 +257,7 @@ public class OsmValidator implements LayerChangeListener {
      * @return An array of the test classes
      */
     public static Class<Test>[] getAllAvailableTests() {
-        return allAvailableTests;
+        return Arrays.copyOf(allAvailableTests, allAvailableTests.length);
     }
 
     /**

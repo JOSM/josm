@@ -1169,7 +1169,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     @Override
     public String getModeHelpText() {
-        String rv = "";
+        StringBuilder rv;
         /*
          *  No modifiers: all (Connect, Node Re-Use, Auto-Weld)
          *  CTRL: disables node re-use, auto-weld
@@ -1192,15 +1192,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // oldHighlights stores the current highlights. If this
         // list is empty we can assume that we won't do any joins
         if (ctrl || oldHighlights.isEmpty()) {
-            rv = tr("Create new node.");
+            rv = new StringBuilder(tr("Create new node."));
         } else {
             // oldHighlights may store a node or way, check if it's a node
             OsmPrimitive x = oldHighlights.iterator().next();
             if (x instanceof Node) {
-                rv = tr("Select node under cursor.");
+                rv = new StringBuilder(tr("Select node under cursor."));
             } else {
-                rv = trn("Insert new node into way.", "Insert new node into {0} ways.",
-                        oldHighlights.size(), oldHighlights.size());
+                rv = new StringBuilder(trn("Insert new node into way.", "Insert new node into {0} ways.",
+                        oldHighlights.size(), oldHighlights.size()));
             }
         }
 
@@ -1209,12 +1209,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
          */
         if (currentBaseNode != null && !wayIsFinished) {
             if (alt) {
-                rv += " " + tr("Start new way from last node.");
+                rv.append(" ").append(tr("Start new way from last node."));
             } else {
-                rv += " " + tr("Continue way from last node.");
+                rv.append(" ").append(tr("Continue way from last node."));
             }
             if (snapHelper.isSnapOn()) {
-                rv += " "+ tr("Angle snapping active.");
+                rv.append(" ").append(tr("Angle snapping active."));
             }
         }
 
@@ -1224,9 +1224,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
          */
         if (n != null && getCurrentDataSet() != null && getCurrentDataSet().getSelectedNodes().contains(n)) {
             if (wayIsFinished) {
-                rv = tr("Select node under cursor.");
+                rv = new StringBuilder(tr("Select node under cursor."));
             } else {
-                rv = tr("Finish drawing.");
+                rv = new StringBuilder(tr("Finish drawing."));
             }
         }
 
@@ -1237,12 +1237,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             Way w = getCurrentDataSet().getSelectedWays().iterator().next();
             for (Node m : w.getNodes()) {
                 if (m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {
-                    rv += " " + tr("Finish drawing.");
+                    rv.append(" ").append(tr("Finish drawing."));
                     break;
                 }
             }
         }
-        return rv;
+        return rv.toString();
     }
 
     /**

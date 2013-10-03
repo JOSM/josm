@@ -188,7 +188,6 @@ public class AutoScaleAction extends JosmAction {
      * @return the first selected layer in the layer list dialog
      */
     protected Layer getFirstSelectedLayer() {
-        if (LayerListDialog.getInstance() == null) return null;
         List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
         if (layers.isEmpty()) return null;
         return layers.get(0);

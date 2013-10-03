@@ -19,9 +19,13 @@ public class Filter extends SearchSetting {
     public boolean hiding = false;
     public boolean inverted = false;
 
+    /**
+     * Constructs a new {@code Filter}.
+     */
     public Filter() {
         super("", SearchMode.add, false, false, false);
     }
+    
     public Filter(String text, SearchMode mode, boolean caseSensitive,
             boolean regexSearch, boolean allElements) {
         super(text, mode, caseSensitive, regexSearch, allElements);

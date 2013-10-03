@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 abstract public class StyleSource extends SourceEntry {
 
@@ -46,7 +47,23 @@ abstract public class StyleSource extends SourceEntry {
 
     abstract public void loadStyleSource();
 
+    /**
+     * Returns a new {@code InputStream} to the style source. When finished, {@link #closeSourceInputStream(InputStream)} must be called.
+     * @return A new {@code InputStream} to the style source that must be closed by the caller
+     * @throws IOException if any I/O error occurs.
+     * @see #closeSourceInputStream(InputStream)
+     */
     abstract public InputStream getSourceInputStream() throws IOException;
+
+    /**
+     * Closes the source input stream previously returned by {@link #getSourceInputStream()} and other linked resources, if applicable.
+     * @param is The source input stream that must be closed
+     * @since 6289
+     * @see #getSourceInputStream()
+     */
+    public void closeSourceInputStream(InputStream is) {
+        Utils.close(is);
+    }
 
     public void logError(Throwable e) {
         errors.add(e);
