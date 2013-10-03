@@ -27,6 +27,9 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
         tr("{0} ({1} to {2} degrees)", 9,49,51)
     };
 
+    /**
+     * Constructs a new {@code LambertCC9ZonesProjectionChoice}.
+     */
     public LambertCC9ZonesProjectionChoice() {
         super(tr("Lambert CC9 Zone (France)"), "core:lambertcc9", lambert9zones, tr("Lambert CC Zone"));
     }

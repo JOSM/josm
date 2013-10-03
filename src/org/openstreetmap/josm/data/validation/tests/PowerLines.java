@@ -127,7 +127,7 @@ public class PowerLines extends Test {
 
     @Override
     public Command fixError(TestError testError) {
-        if (isFixable(testError)) {
+        if (testError instanceof PowerLineError && isFixable(testError)) {
             return new ChangePropertyCommand(
                     testError.getPrimitives().iterator().next(), 
                     "power", towerPoleTagMap.get(((PowerLineError)testError).line));

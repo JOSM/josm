@@ -14,6 +14,9 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class SwissGridProjectionChoice extends SingleProjectionChoice {
 
+    /**
+     * Constructs a new {@code SwissGridProjectionChoice}.
+     */
     public SwissGridProjectionChoice() {
         super(tr("Swiss Grid (Switzerland)"), "core:swissgrid", "EPSG:21781");
     }

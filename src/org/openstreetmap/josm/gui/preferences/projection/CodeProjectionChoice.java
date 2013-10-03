@@ -212,8 +212,11 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
     }
 
     @Override
-    public Collection<String> getPreferences(JPanel pnl) {
-        CodeSelectionPanel csPanel = (CodeSelectionPanel) pnl;
+    public Collection<String> getPreferences(JPanel panel) {
+        if (!(panel instanceof CodeSelectionPanel)) {
+            throw new IllegalArgumentException();
+        }
+        CodeSelectionPanel csPanel = (CodeSelectionPanel) panel;
         return Collections.singleton(csPanel.getCode());
     }
 
