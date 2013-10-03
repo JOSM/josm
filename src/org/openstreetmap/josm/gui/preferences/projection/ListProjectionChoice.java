@@ -104,6 +104,9 @@ abstract public class ListProjectionChoice extends AbstractProjectionChoice {
 
     @Override
     public Collection<String> getPreferences(JPanel panel) {
+        if (!(panel instanceof CBPanel)) {
+            throw new IllegalArgumentException();
+        }
         CBPanel p = (CBPanel) panel;
         int index = p.prefcb.getSelectedIndex();
         return Collections.singleton(indexToZone(index));

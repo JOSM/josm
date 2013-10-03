@@ -94,7 +94,7 @@ public class Diff {
       be needed again later to print the results of the comparison as
       an edit script, if desired.
      */
-    public Diff(Object[] a,Object[] b) {
+    public Diff(Object[] a, Object[] b) {
         Map<Object,Integer> h = new HashMap<Object,Integer>(a.length + b.length);
         filevec = new FileData[] { new FileData(a,h),new FileData(b,h) };
     }
@@ -824,15 +824,15 @@ public class Diff {
             nondiscarded_lines = j;
         }
 
-        FileData(int[] data) {
-            buffered_lines = data.length;
-            equivs = data;
+        FileData(int length) {
+            buffered_lines = length;
+            equivs = new int[length];
             undiscarded = new int[buffered_lines];
             realindexes = new int[buffered_lines];
         }
         
-        FileData(Object[] data,Map<Object,Integer> h) {
-            this(new int[data.length]);
+        FileData(Object[] data, Map<Object,Integer> h) {
+            this(data.length);
             // FIXME: diff 2.7 removes common prefix and common suffix
             for (int i = 0; i < data.length; ++i) {
                 Integer ir = h.get(data[i]);
