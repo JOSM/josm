@@ -139,8 +139,11 @@ public class MultiFetchServerObjectReaderTest {
         //
         try {
             InputStream is = MultiFetchServerObjectReaderTest.class.getResourceAsStream("/test-functional-env.properties");
-            testProperties.load(is);
-            is.close();
+            try {
+                testProperties.load(is);
+            } finally {
+                is.close();
+            }
         } catch(Exception e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
             fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));

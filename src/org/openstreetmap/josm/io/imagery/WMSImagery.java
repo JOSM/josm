@@ -227,7 +227,7 @@ public class WMSImagery {
         crsChildren.addAll(getChildren(element, "SRS"));
         for (Element child : crsChildren) {
             String crs = (String) getContent(child);
-            if (crs != null) {
+            if (!crs.isEmpty()) {
                 String upperCase = crs.trim().toUpperCase();
                 crsList.add(upperCase);
             }
@@ -279,7 +279,7 @@ public class WMSImagery {
             return missing;
         else {
             String content = (String) getContent(child);
-            return (content != null) ? content : empty;
+            return (!content.isEmpty()) ? content : empty;
         }
     }
 

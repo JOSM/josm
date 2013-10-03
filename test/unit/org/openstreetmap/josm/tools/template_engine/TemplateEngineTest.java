@@ -156,7 +156,7 @@ public class TemplateEngineTest {
 
     @Test
     public void testSearchExpression() throws Exception {
-        Match match = compile("(parent type=type1 type=parent1) | (parent type=type2 type=parent2)");
+        compile("(parent type=type1 type=parent1) | (parent type=type2 type=parent2)");
         //"parent(type=type1,type=parent1) | (parent(type=type2,type=parent2)"
         //TODO
     }
