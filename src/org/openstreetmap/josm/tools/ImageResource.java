@@ -70,9 +70,9 @@ class ImageResource {
             int height = dim.height;
             ImageIcon icon = new ImageIcon(base);
             if (width == -1) {
-                width = icon.getIconWidth() * height / icon.getIconHeight();
+                width = Math.max(1, icon.getIconWidth() * height / icon.getIconHeight());
             } else if (height == -1) {
-                height = icon.getIconHeight() * width / icon.getIconWidth();
+                height = Math.max(1, icon.getIconHeight() * width / icon.getIconWidth());
             }
             Image i = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
             img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
