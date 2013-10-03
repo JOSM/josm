@@ -564,7 +564,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Service Way" />
             <space />
             <key key="highway" value="service" />
-            <combo key="service" text="Service way type" values="alley,driveway,parking_aisle" />
+            <combo key="service" text="Service way type" values="alley,driveway,parking_aisle,drive-through" />
             <optional>
                 <text key="name" text="Name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
@@ -4196,11 +4196,15 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=post_box"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=post_box"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=post_box"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=post_box"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=post_box" />
             <label text="Edit Postbox" />
             <space />
             <key key="amenity" value="post_box" />
             <text key="operator" text="Operator" />
+            <text key="ref" text="Reference number" />
+            <text key="collection_times" text="Collection times" />
+            <check key="drive_through" text="Drive through" />
         </item>
         <item name="Telephone" icon="presets/telephone.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=telephone"
@@ -4834,7 +4838,7 @@ Note that for a match, at least one positive and no negative is required.
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <label text="Edit Building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail" values_context="building" default="yes" match="keyvalue" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed" values_context="building" default="yes" match="keyvalue" />
             <text key="name" text="Name" />
         </item>
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation">
@@ -5917,6 +5921,10 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <separator/>
         <item name="Stationery" icon="presets/stationery.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=stationery"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=stationery"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=stationery"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=stationery" />
             <label text="Edit Stationery Shop" />
             <space />
             <key key="shop" value="stationery" />
