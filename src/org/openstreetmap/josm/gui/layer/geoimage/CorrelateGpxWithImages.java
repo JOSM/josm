@@ -1,7 +1,4 @@
 // License: GPL. See LICENSE file for details.
-// Copyright 2007 by Christian Gallioz (aka khris78)
-// Parts of code from Geotagged plugin (by Rob Neild)
-
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -80,7 +77,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.PrimaryDateParser;
 import org.xml.sax.SAXException;
 
-/** This class displays the window to select the GPX file and the offset (timezone + delta).
+/** 
+ * This class displays the window to select the GPX file and the offset (timezone + delta).
  * Then it correlates the images of the layer with that GPX file.
  */
 public class CorrelateGpxWithImages extends AbstractAction {
@@ -540,14 +538,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
         boolean ticked = yLayer.thumbsLoaded || Main.pref.getBoolean("geoimage.showThumbs", false);
         cbShowThumbs = new JCheckBox(tr("Show Thumbnail images on the map"), ticked);
         cbShowThumbs.setEnabled(!yLayer.thumbsLoaded);
-        /*cbShowThumbs.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    yLayer.loadThumbs();
-                } else {
-                }
-            }
-        });*/
 
         int y=0;
         GBC gbc = GBC.eol();
@@ -1050,15 +1040,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // -2 minutes offset. This determines the real timezone and finds offset.
             timezone = (double)Math.round(tz * 2)/2; // hours, rounded to one decimal place
             delta = Math.round(diff - timezone*60*60); // seconds
-
-            /*Main.debug("phto " + firstExifDate);
-            Main.debug("gpx  " + firstGPXDate);
-            Main.debug("diff " + diff);
-            Main.debug("difh " + diffInH);
-            Main.debug("days " + dayOffset);
-            Main.debug("time " + tz);
-            Main.debug("fix  " + timezone);
-            Main.debug("offt " + delta);*/
 
             tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
             tfOffset.getDocument().removeDocumentListener(statusBarUpdater);

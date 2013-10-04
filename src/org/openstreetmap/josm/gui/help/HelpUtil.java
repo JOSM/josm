@@ -118,7 +118,7 @@ public class HelpUtil {
         String ret = LanguageInfo.getWikiLanguagePrefix(type);
         if(ret == null)
             return ret;
-        ret = "/" + ret + Main.pref.get("help.pathhelp", "/Help").replaceAll("^\\/+", ""); // remove leading /;
+        ret = "/" + ret + Main.pref.get("help.pathhelp", "/Help").replaceAll("^\\/+", ""); // remove leading /
         return ret.replaceAll("\\/+", "\\/"); // collapse sequences of //
     }
 

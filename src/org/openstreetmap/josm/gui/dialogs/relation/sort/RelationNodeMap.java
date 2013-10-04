@@ -99,26 +99,6 @@ public class RelationNodeMap {
         }
 
         remaining.addAll(map.ways.keySet());
-
-        /*
-         * Clean up the maps, i.e. remove nodes from roundabouts and dead ends that
-         * cannot be used in future. (only for performance)
-         */
-        //        Iterator<Map.Entry<Node,TreeSet<Integer>>> it = map.nodes.entrySet().iterator();
-        //        while (it.hasNext()) {
-        //            Map.Entry<Node,TreeSet<Integer>> nodeLinks = it.next();
-        //
-        //            if (nodeLinks.getValue().size() < 2) {
-        //                if (nodeLinks.getValue().size() != 1) throw new AssertionError();
-        //
-        //                Integer d_way = nodeLinks.getValue().iterator().next();
-        //                TreeSet<Node> d_way_nodes = map.ways.get(d_way);
-        //                d_way_nodes.remove(nodeLinks.getKey());
-        //
-        //                it.remove();
-        //                continue;
-        //            }
-        //        }
     }
 
     private void addPair(Node n, int i) {

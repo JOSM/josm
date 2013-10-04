@@ -68,7 +68,6 @@ public class ScaleCommand extends TransformNodesCommand {
      */
     @Override
     protected void transformNodes() {
-        // scalingFactor = 2.0;
         for (Node n : nodes) {
             EastNorth oldEastNorth = oldStates.get(n).eastNorth;
             double dx = oldEastNorth.east() - pivot.east();

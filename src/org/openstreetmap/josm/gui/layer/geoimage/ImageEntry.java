@@ -1,8 +1,4 @@
 // License: GPL. See LICENSE file for details.
-// Copyright 2007 by Christian Gallioz (aka khris78)
-// Parts of code from Geotagged plugin (by Rob Neild)
-// and the core JOSM source code (by Immanuel Scholz and others)
-
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import java.awt.Image;
@@ -12,10 +8,9 @@ import java.util.Date;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 
-/*
+/**
  * Stores info about each image
  */
-
 final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     private File file;
     private Integer exifOrientation;

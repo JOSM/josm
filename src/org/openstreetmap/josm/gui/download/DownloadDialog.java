@@ -338,9 +338,6 @@ public class DownloadDialog extends JDialog  {
     }
 
     public static boolean isAutorunEnabled() {
-        //String autorun=Main.pref.get("download.autorun",null);
-        //boolean expert=ExpertToggleAction.isExpert();
-        //return (autorun==null && !expert) || "true".equals(autorun) ;
         return Main.pref.getBoolean("download.autorun",false);
     }
 
@@ -351,8 +348,7 @@ public class DownloadDialog extends JDialog  {
     }
 
     /**
-     * Replies the currently selected download area. May be null, if no download area is selected
-     * yet.
+     * Replies the currently selected download area. May be null, if no download area is selected yet.
      */
     public Bounds getSelectedDownloadArea() {
         return currentBounds;

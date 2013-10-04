@@ -169,10 +169,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 new SideButton(selectRelationAction, false)
         }));
 
-        // activate DEL in the list of relations
-        //displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
-        //displaylist.getActionMap().put("deleteRelation", deleteAction);
-
         InputMapUtils.unassignCtrlShiftUpDown(displaylist, JComponent.WHEN_FOCUSED);
 
         // Select relation on Ctrl-Enter

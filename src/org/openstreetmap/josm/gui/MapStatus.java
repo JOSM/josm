@@ -321,9 +321,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
 
                                     oldMousePos = ms.mousePos;
                                 } catch (ConcurrentModificationException x) {
-                                    //x.printStackTrace();
+                                    Main.warn(x);
                                 } catch (NullPointerException x) {
-                                    //x.printStackTrace();
+                                    Main.warn(x);
                                 } finally {
                                     if (ds != null) {
                                         if(isAtOldPosition && middleMouseDown) {

@@ -1,8 +1,4 @@
 // License: GPL. See LICENSE file for details.
-// Copyright 2007 by Christian Gallioz (aka khris78)
-// Parts of code from Geotagged plugin (by Rob Neild)
-// and the core JOSM source code (by Immanuel Scholz and others)
-
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -55,7 +51,7 @@ public class ImageViewerDialog extends ToggleDialog {
 
     public static ImageViewerDialog getInstance() {
         if (dialog == null)
-            throw new AssertionError(); // a new instance needs to be created first
+            throw new AssertionError("a new instance needs to be created first"); 
         return dialog;
     }
 
@@ -67,7 +63,7 @@ public class ImageViewerDialog extends ToggleDialog {
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged",
         tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.DIRECT), 200);
 
-        /* Don't show a detached dialog right from the start. */
+        // Don't show a detached dialog right from the start.
         if (isShowing && !isDocked) {
             setIsShowing(false);
         }
@@ -218,10 +214,7 @@ public class ImageViewerDialog extends ToggleDialog {
 
     public void displayImage(GeoImageLayer layer, ImageEntry entry) {
         synchronized(this) {
-            //            if (currentLayer == layer && currentEntry == entry) {
-            //                repaint();
-            //                return;
-            //            }                     TODO: pop up image dialog but don't load image again
+            // TODO: pop up image dialog but don't load image again
 
             if (centerView && Main.isDisplayingMapView() && entry != null && entry.getPos() != null) {
                 Main.map.mapView.zoomTo(entry.getPos());
@@ -244,10 +237,6 @@ public class ImageViewerDialog extends ToggleDialog {
             if (entry.getExifImgDir() != null) {
                 osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
             }
-            //if (entry.getPos()  != null) {
-            //    osd.append(tr("\nlat: {0}, lon: {1}", Double.toString(entry.getPos().lat()), Double.toString(entry.getPos().lon())));
-            //}
-            //osd.append(tr("\nfile mtime: {0}", Long.toString(entry.getFile().lastModified())));
             DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
             if (entry.getExifTime() != null) {
                 osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifTime())));

@@ -118,11 +118,8 @@ public class JosmComboBox extends JComboBox {
                 int i = 0;
                 for (Object value : possibleValues) {
                     if (value != null) {
-                        // These two lines work with a "classic" renderer, 
+                        // With a "classic" renderer, we could call setPrototypeDisplayValue(value) + getPreferredSize() 
                         // but not with TaggingPreset custom renderer that return a dummy height if index is equal to -1
-                        //setPrototypeDisplayValue(value);
-                        //Dimension dim = getPreferredSize();
-                        
                         // So we explicitely call the renderer by simulating a correct index for the current value
                         Component c = getRenderer().getListCellRendererComponent(list, value, i, true, true);
                         if (c != null) {

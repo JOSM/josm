@@ -943,9 +943,6 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             if (nearest != null) {
                 osm = nearest;
 
-                // Point p = e.getPoint();
-//              updateKeyModifiers(e); // cycleSetup called only after updateModifiers !
-
                 if (!(alt || multipleMatchesParameter)) {
                     // no real cycling, just one element in cycle list
                     cycleList = MapView.asColl(osm);

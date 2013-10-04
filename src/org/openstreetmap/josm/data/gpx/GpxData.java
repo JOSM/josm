@@ -147,7 +147,7 @@ public class GpxData extends WithAttributes {
          *
          * PN^2 = (Axp + Byp + C)^2 / RS^2 that is the distance from P to the line
          *
-         * so if PN^2 is less than PNmin^2 (initialized to tolerance) we can reject the line;
+         * so if PN^2 is less than PNmin^2 (initialized to tolerance) we can reject the line
          * otherwise... determine if the projected poijnt lies within the bounds of the line: PR^2 -
          * PN^2 <= RS^2 and PS^2 - PN^2 <= RS^2
          *

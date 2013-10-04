@@ -166,11 +166,10 @@ public class WayConnectionTypeCalculator {
                 lastForwardWay = i;
                 wct.isOnewayLoopForwardPart = true;
             }
-            if (dirFW == NONE && dirBW == NONE) { //Not connected to previous
-                //                        unconnectPreviousLink(con, i, true);
-                //                        unconnectPreviousLink(con, i, false);
+            // Not connected to previous
+            if (dirFW == NONE && dirBW == NONE) {
                 wct.linkPrev = false;
-                if (RelationSortUtils.isOneway(m)){
+                if (RelationSortUtils.isOneway(m)) {
                     wct.isOnewayHead = true;
                     lastForwardWay = i-1;
                     lastBackwardWay = i-1;

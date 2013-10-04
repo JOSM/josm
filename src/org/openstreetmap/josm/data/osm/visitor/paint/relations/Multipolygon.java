@@ -487,8 +487,8 @@ public class Multipolygon {
                             }
                         }
                     }
-                } /* for(i = ... */
-            } /* while(joined) */
+                }
+            }
 
             if (nodes == null) {
                 nodes = w.getNodes();
@@ -496,7 +496,7 @@ public class Multipolygon {
             }
 
             result.add(new JoinedWay(nodes, wayIds, selected));
-        } /* while(left != 0) */
+        }
 
         return result;
     }
@@ -574,15 +574,7 @@ public class Multipolygon {
     public List<Way> getInnerWays() {
         return innerWays;
     }
-/*
-    public List<PolyData> getInnerPolygons() {
-        return innerPolygons;
-    }
 
-    public List<PolyData> getOuterPolygons() {
-        return outerPolygons;
-    }
-*/
     public List<PolyData> getCombinedPolygons() {
         return combinedPolygons;
     }

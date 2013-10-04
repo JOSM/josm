@@ -93,8 +93,6 @@ public class JoinNodeWayAction extends JosmAction {
     }
 
     private static void pruneSuccsAndReverse(List<Integer> is) {
-        //if (is.size() < 2) return;
-
         HashSet<Integer> is2 = new HashSet<Integer>();
         for (int i : is) {
             if (!is2.contains(i - 1) && !is2.contains(i + 1)) {

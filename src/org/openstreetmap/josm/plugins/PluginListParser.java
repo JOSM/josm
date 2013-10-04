@@ -64,15 +64,6 @@ public class PluginListParser {
             String name = null;
             String url = null;
             StringBuilder manifest = new StringBuilder();
-            /*
-            code structure:
-                for () {
-                    A;
-                    B;
-                    C;
-                }
-                B;
-             */
             for (String line = r.readLine(); line != null; line = r.readLine()) {
                 if (line.startsWith("\t")) {
                     line = line.substring(1);

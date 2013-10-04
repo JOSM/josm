@@ -39,7 +39,7 @@ public class MoveAction extends JosmAction {
             directiontext = tr("down");
         } else if (dir == Direction.LEFT)  {
             directiontext = tr("left");
-        } else { //dir == Direction.RIGHT) {
+        } else {
             directiontext = tr("right");
         }
         return directiontext;

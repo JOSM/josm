@@ -597,8 +597,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     }
     }
 
-    /*
-     * Remove panel from top of MapView by class     */
+    /**
+     * Remove panel from top of MapView by class     
+     */
     public void removeTopPanel(Class<?> type) {
         int n = leftPanel.getComponentCount();
         for (int i=0; i<n; i++) {
@@ -606,7 +607,6 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             if (type.isInstance(c)) {
                 leftPanel.remove(i);
                 leftPanel.doLayout();
-                //                repaint();
                 return;
             }
         }

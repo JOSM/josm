@@ -29,7 +29,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
     private final String newRole;
     // The old role
     private String oldRole;
-    // Old value of modified;
+    // Old value of modified
     private Boolean oldModified;
 
     public ChangeRelationMemberRoleCommand(Relation relation, int position, String newRole) {

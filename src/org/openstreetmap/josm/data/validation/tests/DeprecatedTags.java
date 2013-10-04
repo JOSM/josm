@@ -185,11 +185,7 @@ public class DeprecatedTags extends Test {
         DeprecationCheck testAndRemove(String key, String value) {
             return test(key, value).remove(key);
         }
-/*
-        DeprecationCheck testAndRemove(String key) {
-            return test(key).remove(key);
-        }
-*/
+
         DeprecationCheck alternative(String key, String value) {
             alternatives.add(new Tag(key, value));
             return this;

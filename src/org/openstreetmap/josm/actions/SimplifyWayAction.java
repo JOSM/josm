@@ -227,7 +227,6 @@ public class SimplifyWayAction extends JosmAction {
         if (imax != -1 && xtemax >= threshold) {
             // Segment cannot be simplified - try shorter segments
             buildSimplifiedNodeList(wnew, from, imax,threshold,simplifiedNodes);
-            //simplifiedNodes.add(wnew.get(imax));
             buildSimplifiedNodeList(wnew, imax, to, threshold,simplifiedNodes);
         } else {
             // Simplify segment
