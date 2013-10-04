@@ -79,14 +79,10 @@ public class DataSetMerger {
      */
     protected void mergePrimitive(OsmPrimitive source, Collection<? extends OsmPrimitive> candidates) {
         if (!source.isNew() ) {
-            // try to merge onto a matching primitive with the same
-            // defined id
+            // try to merge onto a matching primitive with the same defined id
             //
             if (mergeById(source))
                 return;
-            //if (!source.isVisible())
-            // ignore it
-            //    return;
         } else {
             // ignore deleted primitives from source
             if (source.isDeleted()) return;
@@ -100,8 +96,7 @@ public class DataSetMerger {
                 }
                 if (target.hasEqualSemanticAttributes(source)) {
                     mergedMap.put(source.getPrimitiveId(), target.getPrimitiveId());
-                    // copy the technical attributes from other
-                    // version
+                    // copy the technical attributes from other version
                     target.setVisible(source.isVisible());
                     target.setUser(source.getUser());
                     target.setTimestamp(source.getTimestamp());

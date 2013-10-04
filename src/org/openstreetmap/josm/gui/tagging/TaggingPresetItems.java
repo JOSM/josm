@@ -956,7 +956,7 @@ public final class TaggingPresetItems {
                 if (class_method != null && class_method.length == 2) {
                     try {
                         Method method = Class.forName(class_method[0]).getMethod(class_method[1]);
-                        // Check method is public static String[] methodName();
+                        // Check method is public static String[] methodName()
                         int mod = method.getModifiers();
                         if (Modifier.isPublic(mod) && Modifier.isStatic(mod) 
                                 && method.getReturnType().equals(String[].class) && method.getParameterTypes().length == 0) {

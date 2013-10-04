@@ -18,8 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
-//package org.jdesktop.swingx;
 package org.openstreetmap.josm.gui;
 
 import java.awt.Component;
@@ -69,10 +67,9 @@ import org.openstreetmap.josm.tools.Utils;
  * All properties in this class are bound: when a properties value
  * is changed, all PropertyChangeListeners are fired.
  *
- * @author Hans Muller
+ * @author Hans Muller - SwingX
  * @see MultiSplitPane
  */
-
 public class MultiSplitLayout implements LayoutManager {
     private final Map<String, Component> childMap = new HashMap<String, Component>();
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);

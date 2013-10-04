@@ -64,7 +64,6 @@ public class AlignImageryPanel extends JPanel {
             add(detailsList, GBC.std(2,1).fill());
             add(closeButton, GBC.std(3,1).anchor(GBC.EAST));
         }
-//        setBorder(new EmptyBorder(12, 12, 12, 12));
         setBorder(new CompoundBorder(new EtchedBorder(EtchedBorder.LOWERED), new EmptyBorder(12, 12, 12, 12)));
         setBackground(new Color(224, 236, 249));
     }
@@ -78,5 +77,4 @@ public class AlignImageryPanel extends JPanel {
             }
         }
     }
-
 }

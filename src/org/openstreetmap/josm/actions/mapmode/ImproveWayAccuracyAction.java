@@ -206,7 +206,6 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     @Override
     protected void updateEnabledState() {
         setEnabled(getEditLayer() != null);
-        // setEnabled(Main.main.getActiveLayer() instanceof OsmDataLayer);
     }
 
     // -------------------------------------------------------------------------

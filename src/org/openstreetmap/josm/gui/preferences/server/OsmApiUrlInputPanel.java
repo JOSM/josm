@@ -108,6 +108,9 @@ public class OsmApiUrlInputPanel extends JPanel {
         add(btnTest = new SideButton(actTest), gc);
     }
 
+    /**
+     * Constructs a new {@code OsmApiUrlInputPanel}.
+     */
     public OsmApiUrlInputPanel() {
         build();
         HelpUtil.setHelpContext(this, HelpUtil.ht("/Preferences/Connection#ApiUrl"));
@@ -151,7 +154,7 @@ public class OsmApiUrlInputPanel extends JPanel {
             try {
                 OsmApi.getOsmApi().initialize(null);
             } catch (Exception x) {
-                // ignore;
+                Main.warn(x);
             }
         }
     }

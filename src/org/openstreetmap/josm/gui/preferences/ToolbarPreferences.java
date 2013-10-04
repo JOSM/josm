@@ -823,8 +823,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
                 @Override
                 public Dimension preferredLayoutSize(Container parent) {
-                    Dimension l = new Dimension(200, 200); //left.getPreferredSize();
-                    Dimension r = new Dimension(200, 200); //right.getPreferredSize();
+                    Dimension l = new Dimension(200, 200);
+                    Dimension r = new Dimension(200, 200);
                     return new Dimension(l.width+r.width+10+buttons.getPreferredSize().width,Math.max(l.height, r.height));
                 }
                 @Override

@@ -382,7 +382,6 @@ public final class OrthogonalizeAction extends JosmAction {
 
         // rotate back and log the change
         final Collection<Command> commands = new LinkedList<Command>();
-        //        OrthogonalizeAction.rememberMovements.clear();
         for (Node n: allNodes) {
             EastNorth tmp = new EastNorth(nX.get(n), nY.get(n));
             tmp = EN.rotate_cc(pivot, tmp, headingAll);
@@ -447,9 +446,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
             // sum up segments
             EastNorth h = new EastNorth(0.,0.);
-            //double lh = EN.abs(h);
             EastNorth v = new EastNorth(0.,0.);
-            //double lv = EN.abs(v);
             for (int i = 0; i < nSeg; ++i) {
                 EastNorth segment = EN.diff(en[i+1], en[i]);
                 if      (segDirections[i] == Direction.RIGHT) {

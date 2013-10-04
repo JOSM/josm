@@ -238,7 +238,7 @@ public class NmeaReader {
             }
 
             // checksum check:
-            // the bytes between the $ and the * are xored;
+            // the bytes between the $ and the * are xored
             // if there is no * or other meanities it will throw
             // and result in a malformed packet.
             String[] chkstrings = s.split("\\*");

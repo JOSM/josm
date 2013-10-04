@@ -139,7 +139,6 @@ public final class GettingStarted extends JPanel {
                     @Override
                     public void run() {
                         lg.setText(fixImageLinks(content));
-                        // lg.moveCaretPosition(0);
                     }
                 });
             }

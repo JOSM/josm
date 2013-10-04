@@ -1612,8 +1612,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             if (hdg>360) {
                 hdg-=360;
             }
-            //fixed=true;
-            //absoluteFix=true;
             customBaseHeading=hdg;
         }
 

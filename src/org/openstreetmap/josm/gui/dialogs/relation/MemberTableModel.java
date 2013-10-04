@@ -659,42 +659,6 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     /**
-     * get a node we can link against when sorting members
-     * @param element the element we want to link against
-     * @param linked_element already linked against element
-     * @return the unlinked node if element is a way, the node itself if element is a node, null otherwise
-     */
-    /*private static Node getUnusedNode(RelationMember element, RelationMember linked_element)
-    {
-        Node result = null;
-
-        if (element.isWay()) {
-            Way w = element.getWay();
-            if (linked_element.isWay()) {
-                Way x = linked_element.getWay();
-                if ((w.firstNode() == x.firstNode()) || (w.firstNode() == x.lastNode())) {
-                    result = w.lastNode();
-                } else {
-                    result = w.firstNode();
-                }
-            } else if (linked_element.isNode()) {
-                Node m = linked_element.getNode();
-                if (w.firstNode() == m) {
-                    result = w.lastNode();
-                } else {
-                    result = w.firstNode();
-                }
-            }
-        } else if (element.isNode()) {
-            Node n = element.getNode();
-            result = n;
-        }
-
-        return result;
-    }*/
-
-
-    /**
      * Sort the selected relation members by the way they are linked.
      */
     void sort() {
@@ -769,15 +733,4 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             setSelectedMembersIdx(selectedIndices);
         }
     }
-
-    //    private static void unconnectPreviousLink(List<WayConnectionType> con, int beg, boolean backward){
-    //        int i = beg;
-    //        while(true){
-    //            WayConnectionType t = con.get(i--);
-    //            t.isOnewayOppositeConnected = false;
-    //            if(backward && t.isOnewayLoopBackwardPart) break;
-    //            if(!backward && t.isOnewayLoopForwardPart) break;
-    //        }
-    //    }
-
 }

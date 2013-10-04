@@ -671,7 +671,6 @@ abstract public class Main {
         // init default coordinate format
         //
         try {
-            //CoordinateFormat format = CoordinateFormat.valueOf(Main.pref.get("coordinates"));
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.valueOf(Main.pref.get("coordinates")));
         } catch (IllegalArgumentException iae) {
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.DECIMAL_DEGREES);
