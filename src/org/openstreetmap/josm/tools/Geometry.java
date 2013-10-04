@@ -497,7 +497,7 @@ public class Geometry {
                 continue;
             }
 
-            //order points so p1.lat <= p2.lat;
+            //order points so p1.lat <= p2.lat
             if (newPoint.getEastNorth().getY() > oldPoint.getEastNorth().getY()) {
                 p1 = oldPoint;
                 p2 = newPoint;

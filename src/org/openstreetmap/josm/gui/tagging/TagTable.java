@@ -367,7 +367,6 @@ public class TagTable extends JTable  {
      */
     protected void init() {
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        //setCellSelectionEnabled(true);
         setRowSelectionAllowed(true);
         setColumnSelectionAllowed(true);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);

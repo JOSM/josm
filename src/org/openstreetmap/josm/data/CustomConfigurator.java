@@ -483,7 +483,6 @@ public class CustomConfigurator {
                 Node item = childNodes.item(i);
                 if (item.getNodeType() != Node.ELEMENT_NODE) continue;
                 String elementName = item.getNodeName();
-                //if (monitor!=null) monitor.indeterminateSubTask(elementName);
                 Element elem = (Element) item;
 
                 if ("var".equals(elementName)) {
@@ -683,20 +682,19 @@ public class CustomConfigurator {
         }
 
         /**
-         * subsititute ${expression} = expression evaluated by JavaScript
+         * substitute ${expression} = expression evaluated by JavaScript
          */
         private String evalVars(String s) {
             Pattern p = Pattern.compile("\\$\\{([^\\}]*)\\}");
             Matcher mr =  p.matcher(s);
             StringBuffer sb = new StringBuffer();
             while (mr.find()) {
-            try {
-                String result = engine.eval(mr.group(1)).toString();
-                mr.appendReplacement(sb, result);
-            } catch (ScriptException ex) {
-                log("Error: Can not evaluate expression %s : %s",  mr.group(1), ex.getMessage());
-                //mr.appendReplacement(sb, mr.group(0));
-            }
+                try {
+                    String result = engine.eval(mr.group(1)).toString();
+                    mr.appendReplacement(sb, result);
+                } catch (ScriptException ex) {
+                    log("Error: Can not evaluate expression %s : %s",  mr.group(1), ex.getMessage());
+                }
             }
             mr.appendTail(sb);
             return sb.toString();

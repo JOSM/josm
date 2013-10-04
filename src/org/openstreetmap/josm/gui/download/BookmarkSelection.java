@@ -209,7 +209,6 @@ public class BookmarkSelection implements DownloadSelection {
 
     class RemoveAction extends AbstractAction implements ListSelectionListener{
         public RemoveAction() {
-            //putValue(NAME, tr("Remove"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(SHORT_DESCRIPTION, tr("Remove the currently selected bookmarks"));
             updateEnabledState();
@@ -236,7 +235,6 @@ public class BookmarkSelection implements DownloadSelection {
 
     class RenameAction extends AbstractAction implements ListSelectionListener{
         public RenameAction() {
-            //putValue(NAME, tr("Remove"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             putValue(SHORT_DESCRIPTION, tr("Rename the currently selected bookmark"));
             updateEnabledState();

@@ -505,7 +505,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             QBLevel<T> orig = q;
             QBLevel<T> next;
             next = q.nextContentNode();
-            //if (consistency_testing && (orig == next))
             if (orig == next) {
                 abort("got same leaf back leaf: " + q.isLeaf());
             }

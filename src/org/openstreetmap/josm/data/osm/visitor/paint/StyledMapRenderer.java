@@ -497,7 +497,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 g.fill(area);
             } else {
                 TexturePaint texture = new TexturePaint(fillImage.getImage(),
-                        //                        new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
                         new Rectangle(0, 0, fillImage.getWidth(), fillImage.getHeight()));
                 g.setPaint(texture);
                 Float alpha = Utils.color_int2float(fillImage.alpha);
@@ -510,9 +509,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         if (text != null && isShowNames()) {
-            /*
-             * abort if we can't compose the label to be rendered
-             */
+            // abort if we can't compose the label to be rendered
             if (text.labelCompositionStrategy == null) return;
             String name = text.labelCompositionStrategy.compose(osm);
             if (name == null) return;
@@ -521,18 +518,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
             Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
 
-            // Point2D c = getCentroid(polygon);
             // Using the Centroid is Nicer for buildings like: +--------+
             // but this needs to be fast.  As most houses are  |   42   |
             // boxes anyway, the center of the bounding box    +---++---+
             // will have to do.                                    ++
             // Centroids are not optimal either, just imagine a U-shaped house.
-            // Point2D c = new Point2D.Double(pb.x + pb.width / 2.0, pb.y + pb.height / 2.0);
-            // Rectangle2D.Double centeredNBounds =
-            //     new Rectangle2D.Double(c.getX() - nb.getWidth()/2,
-            //                            c.getY() - nb.getHeight()/2,
-            //                            nb.getWidth(),
-            //                            nb.getHeight());
 
             Rectangle centeredNBounds = new Rectangle(pb.x + (int)((pb.width - nb.getWidth())/2.0),
                     pb.y + (int)((pb.height - nb.getHeight())/2.0),

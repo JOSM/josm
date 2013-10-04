@@ -167,7 +167,6 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         propertyTable = new JTable(tm) {
 
             private static final long serialVersionUID = 1L;
-            ///private final DefaultCellEditor textEditor = new DefaultCellEditor( new JTextField() );
 
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -287,7 +286,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         findExistingTags();
     }
 
-     /*
+    /**
      * parse addtags parameters Example URL (part):
      * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
      */

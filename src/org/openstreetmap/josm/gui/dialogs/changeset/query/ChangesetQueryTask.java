@@ -109,7 +109,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
             return;
         }
 
-        // update the global changeset cache with the downloaded changesets;
+        // update the global changeset cache with the downloaded changesets.
         // this will trigger change events which views are listening to. They
         // will update their views accordingly.
         //

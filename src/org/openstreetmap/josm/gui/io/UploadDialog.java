@@ -496,11 +496,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         }
 
         @Override
-        public void windowOpened(WindowEvent e) {
-            //startUserInput();
-        }
-
-        @Override
         public void windowActivated(WindowEvent arg0) {
             if (tpConfigPanels.getSelectedIndex() == 0) {
                 pnlBasicUploadSettings.initEditingOfUploadComment();

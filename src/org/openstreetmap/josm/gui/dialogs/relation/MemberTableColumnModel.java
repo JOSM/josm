@@ -27,7 +27,6 @@ public class MemberTableColumnModel extends DefaultTableColumnModel {
         col.setHeaderValue(tr("Refers to"));
         col.setResizable(true);
         col.setPreferredWidth(300);
-        // col.setCellRenderer(new OsmPrimitivRenderer());
         col.setCellRenderer(new MemberTableMemberCellRenderer());
         addColumn(col);
 

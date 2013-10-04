@@ -271,8 +271,8 @@ public class Diff {
                                 && xoff + SNAKE_LIMIT <= x && x < xlim
                                 && yoff + SNAKE_LIMIT <= y && y < ylim)
                         {
-                            /* We have a good enough best diagonal;
-               now insist that it end with a significant snake.  */
+                            /* We have a good enough best diagonal.
+                               now insist that it end with a significant snake.  */
                             int k;
 
                             for (k = 1; xvec[x - k] == yvec[y - k]; k++)
@@ -304,8 +304,8 @@ public class Diff {
                                 && xoff < x && x <= xlim - SNAKE_LIMIT
                                 && yoff < y && y <= ylim - SNAKE_LIMIT)
                         {
-                            /* We have a good enough best diagonal;
-               now insist that it end with a significant snake.  */
+                            /* We have a good enough best diagonal.
+                               now insist that it end with a significant snake.  */
                             int k;
 
                             for (k = 0; xvec[x + k] == yvec[y + k]; k++)
@@ -362,7 +362,6 @@ public class Diff {
 
             int d = diag (xoff, xlim, yoff, ylim);
             int c = cost;
-            //int f = fdiag[fdiagoff + d];
             int b = bdiag[bdiagoff + d];
 
             if (c == 1)

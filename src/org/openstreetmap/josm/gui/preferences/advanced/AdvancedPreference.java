@@ -245,16 +245,12 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
             CustomConfigurator.readXML(f, tmpPrefs);
             log.append(CustomConfigurator.getLog());
         }
-        //try { Main.pref.save();  } catch (IOException ex) { }
         log.append("</html>");
         String msg = log.toString().replace("\n", "<br/>");
 
         new LogShowDialog(tr("Import log"), tr("<html>Here is file import summary. <br/>"
                 + "You can reject preferences changes by pressing \"Cancel\" in preferences dialog <br/>"
                 + "To activate some changes JOSM restart may be needed.</html>"), msg).showDialog();
-
-        //JOptionPane.showMessageDialog(Main.parent,
-        //   tr("Installed plugins and some changes in preferences will start to work after JOSM restart"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
 
         readPreferences(tmpPrefs);
         // sorting after modification - first modified, then non-default, then default entries

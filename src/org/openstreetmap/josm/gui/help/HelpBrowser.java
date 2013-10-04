@@ -470,7 +470,6 @@ public class HelpBrowser extends JDialog {
 
     class ReloadAction extends AbstractAction {
         public ReloadAction() {
-            //putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr("Reload the current help page"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
         }
@@ -486,7 +485,6 @@ public class HelpBrowser extends JDialog {
         public BackAction(HelpBrowserHistory history) {
             this.history = history;
             history.addObserver(this);
-            //putValue(NAME, tr("Back"));
             putValue(SHORT_DESCRIPTION, tr("Go to the previous page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "previous"));
             setEnabled(history.canGoBack());
@@ -507,7 +505,6 @@ public class HelpBrowser extends JDialog {
         public ForwardAction(HelpBrowserHistory history) {
             this.history = history;
             history.addObserver(this);
-            //putValue(NAME, tr("Forward"));
             putValue(SHORT_DESCRIPTION, tr("Go to the next page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "next"));
             setEnabled(history.canGoForward());
@@ -525,7 +522,6 @@ public class HelpBrowser extends JDialog {
 
     class HomeAction extends AbstractAction  {
         public HomeAction() {
-            //putValue(NAME, tr("Home"));
             putValue(SHORT_DESCRIPTION, tr("Go to the JOSM help home page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "home"));
         }

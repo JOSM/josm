@@ -41,6 +41,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class CreateCircleAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code CreateCircleAction}.
+     */
     public CreateCircleAction() {
         super(tr("Create Circle"), "createcircle", tr("Create a circle from three selected nodes."),
             Shortcut.registerShortcut("tools:createcircle", tr("Tool: {0}", tr("Create Circle")),
@@ -178,9 +181,6 @@ public final class CreateCircleAction extends JosmAction {
                 if (parents.isEmpty() || ((parents.size() == 1) && (parents.contains(existingWay)))) {
                     cmds.add(new DeleteCommand(n1));
                 }
-
-                // or insert it
-                // wayToAdd.nodes.add((numberOfNodesInCircle - 1) / 2, n1);
             }
 
         } else if (nodes.size() == 3) {

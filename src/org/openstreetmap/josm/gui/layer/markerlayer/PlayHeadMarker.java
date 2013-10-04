@@ -37,8 +37,6 @@ public class PlayHeadMarker extends Marker {
 
     private Timer timer = null;
     private double animationInterval = 0.0; // seconds
-    // private Rectangle audioTracer = null;
-    // private Icon audioTracerIcon = null;
     static private PlayHeadMarker playHead = null;
     private MapMode oldMode = null;
     private LatLon oldCoor;

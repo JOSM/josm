@@ -147,9 +147,7 @@ public class GeorefImage implements Serializable {
                 img.flush();
             }
             long freeMem = Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory();
-            //Main.debug("Free Memory:           "+ (freeMem/1024/1024) +" MB");
             // Notice that this value can get negative due to integer overflows
-            //Main.debug("Img Size:              "+ (width*height*3/1024/1024) +" MB");
 
             int multipl = alphaChannel ? 4 : 3;
             // This happens when requesting images while zoomed out and then zooming in

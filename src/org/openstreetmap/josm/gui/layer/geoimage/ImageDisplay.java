@@ -1,6 +1,4 @@
 // License: GPL. See LICENSE file for details.
-// Copyright 2007 by Christian Gallioz (aka khris78)
-
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import static org.openstreetmap.josm.tools.I18n.tr;

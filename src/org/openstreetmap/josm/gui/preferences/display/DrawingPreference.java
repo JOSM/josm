@@ -50,7 +50,6 @@ public class DrawingPreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        //gui.display.setPreferredSize(new Dimension(400,600));
         gpxPanel = new GPXSettingsPanel();
         gui.addValidationListener(gpxPanel);
         JPanel panel = gpxPanel;

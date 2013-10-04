@@ -382,9 +382,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
         Area a = data.getDataSourceArea();
 
-        // copy the merged layer's data source info;
-        // only add source rectangles if they are not contained in the
-        // layer already.
+        // copy the merged layer's data source info.
+        // only add source rectangles if they are not contained in the layer already.
         for (DataSource src : from.dataSources) {
             if (a == null || !a.contains(src.bounds.asRect())) {
                 data.dataSources.add(src);

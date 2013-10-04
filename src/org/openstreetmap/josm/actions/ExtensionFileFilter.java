@@ -35,7 +35,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static final ArrayList<FileExporter> exporters;
 
-    // add some file types only if the relevant classes are there;
+    // add some file types only if the relevant classes are there.
     // this gives us the option to painlessly drop them from the .jar
     // and build JOSM versions without support for these formats
 
