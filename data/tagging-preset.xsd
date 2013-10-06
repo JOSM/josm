@@ -155,6 +155,7 @@
 		<attribute name="display_values" type="string" />
 		<attribute name="default" type="string" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
+        <attribute name="delimiter" type="string" />
 		<attribute name="editable" type="boolean" />
 		<attribute name="match" type="tns:match" />
 		<attribute name="length" type="positiveInteger" />
