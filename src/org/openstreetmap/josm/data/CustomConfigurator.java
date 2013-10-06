@@ -334,7 +334,9 @@ public class CustomConfigurator {
                 synchronized (CustomConfigurator.class) {
                 try { // proceed only after all other tasks were finished
                     while (busy) CustomConfigurator.class.wait();
-                } catch (InterruptedException ex) { }
+                } catch (InterruptedException ex) {
+                    Main.warn(ex);
+                }
 
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -1077,10 +1079,10 @@ public class CustomConfigurator {
             listmapMap.putAll(tmpPref.listOfStructsDefaults);
         }
 
-        while (stringMap.values().remove(null)) { }
-        while (listMap.values().remove(null)) { }
-        while (listlistMap.values().remove(null)) { }
-        while (listmapMap.values().remove(null)) { }
+        while (stringMap.values().remove(null));
+        while (listMap.values().remove(null));
+        while (listlistMap.values().remove(null));
+        while (listmapMap.values().remove(null));
 
         stringMap.putAll(tmpPref.properties);
         listMap.putAll(tmpPref.collectionProperties);

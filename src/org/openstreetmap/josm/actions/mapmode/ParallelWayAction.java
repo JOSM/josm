@@ -162,6 +162,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         } catch (SecurityException ex) {
+            Main.warn(ex);
         }
         sourceWays = new LinkedHashSet<Way>(getCurrentDataSet().getSelectedWays());
         for (Way w : sourceWays) {
@@ -181,6 +182,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         } catch (SecurityException ex) {
+            Main.warn(ex);
         }
         removeWayHighlighting(sourceWays);
         pWays = null;

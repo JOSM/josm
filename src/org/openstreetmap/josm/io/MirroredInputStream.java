@@ -157,22 +157,19 @@ public class MirroredInputStream extends InputStream {
         return res;
     }
 
-    public File getFile()
-    {
+    public File getFile() {
         return file;
     }
 
-    static public void cleanup(String name)
-    {
+    public static void cleanup(String name) {
         cleanup(name, null);
     }
-    static public void cleanup(String name, String destDir)
-    {
+    
+    public static void cleanup(String name, String destDir) {
         URL url;
         try {
             url = new URL(name);
-            if (!url.getProtocol().equals("file"))
-            {
+            if (!url.getProtocol().equals("file")) {
                 String prefKey = getPrefKey(url, destDir);
                 List<String> localPath = new ArrayList<String>(Main.pref.getCollection(prefKey));
                 if (localPath.size() == 2) {
@@ -183,7 +180,9 @@ public class MirroredInputStream extends InputStream {
                 }
                 Main.pref.putCollection(prefKey, null);
             }
-        } catch (java.net.MalformedURLException e) {}
+        } catch (MalformedURLException e) {
+            Main.warn(e);
+        }
     }
 
     /**

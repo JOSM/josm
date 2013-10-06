@@ -437,7 +437,9 @@ public class ExtendedDialog extends JDialog {
             if(parent != null) {
                 x = JOptionPane.getFrameForComponent(parent).getSize();
             }
-        } catch(NullPointerException e) { }
+        } catch(NullPointerException e) {
+            Main.warn(e);
+        }
         return x;
     }
 

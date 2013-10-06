@@ -114,7 +114,9 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             if (exts != null && exts.containsKey("offset")) {
                 try {
                     offset = Double.parseDouble(exts.get("offset"));
-                } catch (NumberFormatException nfe) {}
+                } catch (NumberFormatException nfe) {
+                    Main.warn(nfe);
+                }
             }
             if (offset == null) {
                 offset = time - firstTime;

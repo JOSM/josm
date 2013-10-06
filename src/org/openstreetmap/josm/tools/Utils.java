@@ -393,6 +393,7 @@ public class Utils {
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {
+                    Main.warn(ex);
                 }
             }
         }

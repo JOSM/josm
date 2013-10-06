@@ -257,7 +257,6 @@ public class ImageryReader {
                     entry.setCountryCode(accumulator.toString());
                 } else if (qName.equals("icon")) {
                     entry.setIcon(accumulator.toString());
-                } else {
                 }
                 break;
             case BOUNDS:

@@ -88,7 +88,7 @@ public class ImageryLayerInfo {
                 continue;
             }
         }
-        while (defaultLayers.remove(null)) {}
+        while (defaultLayers.remove(null));
 
         Collection<String> defaults = Main.pref.getCollection("imagery.layers.default");
         ArrayList<String> defaultsSave = new ArrayList<String>();

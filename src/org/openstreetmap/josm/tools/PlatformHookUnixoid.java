@@ -13,6 +13,8 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * see PlatformHook.java
  *
@@ -41,6 +43,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 Runtime.getRuntime().exec(program+" "+url);
                 return;
             } catch (IOException e) {
+                Main.warn(e);
             }
         }
     }
@@ -122,6 +125,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 }
             }
         } catch (IOException e) {
+            Main.warn(e);
         }
         return null;
     }

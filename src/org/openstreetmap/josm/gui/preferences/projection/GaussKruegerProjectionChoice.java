@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.openstreetmap.josm.Main;
+
 public class GaussKruegerProjectionChoice extends ListProjectionChoice {
 
     private static String[] zones = { "2", "3", "4", "5" };
@@ -31,7 +33,9 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice {
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 2;
-        } catch(NumberFormatException e) {}
+        } catch(NumberFormatException e) {
+            Main.warn(e);
+        }
         return defaultIndex;
     }
 
@@ -45,8 +49,7 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice {
     }
 
     @Override
-    public Collection<String> getPreferencesFromCode(String code)
-    {
+    public Collection<String> getPreferencesFromCode(String code) {
         //zone 2 = EPSG:31466 up to zone 5 = EPSG:31469
         for (int zone = 2; zone <= 5; zone++) {
             String epsg = "EPSG:" + (31464 + zone);

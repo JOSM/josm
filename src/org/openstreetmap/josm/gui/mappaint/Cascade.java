@@ -125,6 +125,7 @@ public final class Cascade implements Cloneable {
                 float f = Float.parseFloat((String) o);
                 return f;
             } catch (NumberFormatException e) {
+                Main.warn(e);
             }
         }
         return null;

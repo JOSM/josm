@@ -205,6 +205,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(altKeyListener, AWTEvent.KEY_EVENT_MASK);
         } catch (SecurityException ex) {
+            Main.warn(ex);
         }
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
         mainColor = Main.pref.getColor(marktr("Extrude: main line"), null);
@@ -227,6 +228,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(altKeyListener);
         } catch (SecurityException ex) {
+            Main.warn(ex);
         }
         super.exitMode();
     }

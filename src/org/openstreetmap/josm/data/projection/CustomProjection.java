@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.CentricDatum;
@@ -450,7 +451,9 @@ public class CustomProjection extends AbstractProjection {
         if (code != null && code.startsWith("EPSG:")) {
             try {
                 return Integer.parseInt(code.substring(5));
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+                Main.warn(e);
+            }
         }
         return null;
     }

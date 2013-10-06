@@ -477,7 +477,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * animated fashion.
      */
     public void smoothScrollTo(EastNorth newCenter) {
-        // fixme make these configurable.
+        // FIXME make these configurable.
         final int fps = 20;     // animation frames per second
         final int speed = 1500; // milliseconds for full-screen-width pan
         if (!newCenter.equals(center)) {
@@ -490,11 +490,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
             new Thread(){
                 @Override
                 public void run() {
-                    for (int i=0; i<frames; i++)
-                    {
-                        // fixme - not use zoom history here
+                    for (int i=0; i<frames; i++) {
+                        // FIXME - not use zoom history here
                         zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
-                        try { Thread.sleep(1000 / fps); } catch (InterruptedException ex) { }
+                        try {
+                            Thread.sleep(1000 / fps);
+                        } catch (InterruptedException ex) {
+                            Main.warn(ex);
+                        }
                     }
                 }
             }.start();

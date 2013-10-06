@@ -242,6 +242,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         } catch (SecurityException ex) {
+            Main.warn(ex);
         }
         // would like to but haven't got mouse position yet:
         // computeHelperLine(false, false, false);

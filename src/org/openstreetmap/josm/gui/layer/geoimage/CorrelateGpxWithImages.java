@@ -347,6 +347,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     try {
                         orientation = ExifReader.readOrientation(yLayer.data.get(index).getFile());
                     } catch (Exception e) {
+                        Main.warn(e);
                     }
                     imgDisp.setImage(yLayer.data.get(index).getFile(), orientation);
                     Date date = yLayer.data.get(index).getExifTime();
@@ -380,6 +381,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     try {
                         orientation = ExifReader.readOrientation(sel);
                     } catch (Exception e) {
+                        Main.warn(e);
                     }
                     imgDisp.setImage(sel, orientation);
 
@@ -387,6 +389,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     try {
                         date = ExifReader.readTime(sel);
                     } catch (Exception e) {
+                        Main.warn(e);
                     }
                     if (date != null) {
                         lbExifTime.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(date));

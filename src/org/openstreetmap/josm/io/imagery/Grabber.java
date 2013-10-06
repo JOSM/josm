@@ -65,8 +65,9 @@ abstract public class Grabber implements Runnable {
             } catch (Exception e) {
                 try { // sleep some time and then ask the server again
                     Thread.sleep(random(1000, 2000));
-                } catch (InterruptedException e1) {}
-
+                } catch (InterruptedException e1) {
+                    Main.debug(e1.getMessage());
+                }
                 if(i == maxTries) {
                     e.printStackTrace();
                     request.finish(State.FAILED, null);

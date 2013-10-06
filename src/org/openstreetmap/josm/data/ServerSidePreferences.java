@@ -159,6 +159,7 @@ public class ServerSidePreferences extends Preferences {
         try {
             download();
         } catch (MissingPassword e) {
+            Main.warn(e);
         }
     }
 

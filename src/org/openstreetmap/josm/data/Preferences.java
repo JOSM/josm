@@ -737,20 +737,20 @@ public class Preferences {
 
     /* only for preferences */
     synchronized public String getColorName(String o) {
-        try
-        {
+        try {
             Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
             m.matches();
             return tr("Paint style {0}: {1}", tr(m.group(1)), tr(m.group(2)));
+        } catch (Exception e) {
+            Main.warn(e);
         }
-        catch (Exception e) {}
-        try
-        {
+        try {
             Matcher m = Pattern.compile("layer (.+)").matcher(o);
             m.matches();
             return tr("Layer: {0}", tr(m.group(1)));
+        } catch (Exception e) {
+            Main.warn(e);
         }
-        catch (Exception e) {}
         return tr(colornames.containsKey(o) ? colornames.get(o) : o);
     }
 
