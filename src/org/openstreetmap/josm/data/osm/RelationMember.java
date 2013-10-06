@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Arrays;
+
 /**
  * A linkage class that can be used by an relation to keep a list of
  * members. Since membership may be qualified by a "role", a simple
@@ -20,7 +22,7 @@ public class RelationMember implements PrimitiveId {
     private final OsmPrimitive member;
 
     /**
-     *
+     * Returns the role of this relation member.
      * @return Role name or "". Never returns null
      * @since 1930
      */
@@ -29,7 +31,7 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     *
+     * Determines if this relation member has a role.
      * @return True if role is set
      * @since 1930
      */
@@ -38,7 +40,17 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     *
+     * Determines if this relation member's role is in the given list.
+     * @param roles The roles to look after
+     * @return True if role is in the given list
+     * @since 6305
+     */
+    public boolean hasRole(String ... roles) {
+        return Arrays.asList(roles).contains(role);
+    }
+
+    /**
+     * Determines if this relation member is a relation.
      * @return True if member is relation
      * @since 1937
      */
@@ -47,7 +59,7 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     *
+     * Determines if this relation member is a way.
      * @return True if member is way
      * @since 1937
      */
@@ -65,7 +77,7 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     *
+     * Determines if this relation member is a node.
      * @return True if member is node
      * @since 1937
      */
@@ -74,7 +86,7 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     *
+     * Returns the relation member as a relation.
      * @return Member as relation
      * @since 1937
      */
@@ -83,7 +95,7 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     *
+     * Returns the relation member as a way.
      * @return Member as way
      * @since 1937
      */
@@ -92,7 +104,7 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     *
+     * Returns the relation member as a node.
      * @return Member as node
      * @since 1937
      */
@@ -101,7 +113,7 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     *
+     * Returns the relation member.
      * @return Member. Returned value is never null.
      * @since 1937
      */
@@ -110,7 +122,7 @@ public class RelationMember implements PrimitiveId {
     }
 
     /**
-     *
+     * Constructs a new {@code RelationMember}.
      * @param role Can be null, in this case it's save as ""
      * @param member Cannot be null
      * @throws IllegalArgumentException thrown if member is <code>null</code>
