@@ -70,8 +70,8 @@
 
 	<complexType name="optional">
 		<group ref="tns:optional_elements" maxOccurs="unbounded" />
-        <attribute name="text" type="string" />
-        <attribute name="text_context" type="string" />
+		<attribute name="text" type="string" />
+		<attribute name="text_context" type="string" />
 	</complexType>
 
 	<group name="optional_elements">
@@ -82,7 +82,7 @@
 			<element name="text" type="tns:text" />
 			<element name="combo" type="tns:combo" />
 			<element name="multiselect" type="tns:multiselect" />
-            <element name="checkgroup" type="tns:checkgroup" />
+			<element name="checkgroup" type="tns:checkgroup" />
 			<element name="check" type="tns:check" />
 			<element name="item_separator" type="tns:separator" />
 		</choice>
@@ -155,7 +155,7 @@
 		<attribute name="display_values" type="string" />
 		<attribute name="default" type="string" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
-        <attribute name="delimiter" type="string" />
+		<attribute name="delimiter" type="string" />
 		<attribute name="editable" type="boolean" />
 		<attribute name="match" type="tns:match" />
 		<attribute name="length" type="positiveInteger" />
@@ -169,10 +169,10 @@
 	</complexType>
 
 	<complexType name="multiselect">
-        <!-- use either list_entry's or a combination of values/display_values -->
-        <sequence>
-            <element name="list_entry" type="tns:list_entry" minOccurs="0" maxOccurs="unbounded" />
-        </sequence>
+		<!-- use either list_entry's or a combination of values/display_values -->
+		<sequence>
+			<element name="list_entry" type="tns:list_entry" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
@@ -193,15 +193,15 @@
 		<anyAttribute processContents="skip" />
 	</complexType>
 
-    <complexType name="checkgroup">
-        <sequence>
-            <choice minOccurs="1" maxOccurs="unbounded">
-                <element name="check" type="tns:check" />
-            </choice>
-        </sequence>
-        <attribute name="columns" type="positiveInteger" />
-        <anyAttribute processContents="skip" />
-    </complexType>
+	<complexType name="checkgroup">
+		<sequence>
+			<choice minOccurs="1" maxOccurs="unbounded">
+				<element name="check" type="tns:check" />
+			</choice>
+		</sequence>
+		<attribute name="columns" type="positiveInteger" />
+		<anyAttribute processContents="skip" />
+	</complexType>
 
 	<complexType name="check">
 		<attribute name="key" type="string" use="required" />
