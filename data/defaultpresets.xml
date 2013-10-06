@@ -57,7 +57,8 @@ text: text box
 combo: combo box, with multiple choices and possible to enter free form text
   key: key to set
   text: fixed label to display
-  values: comma separated list of values
+  delimiter: character that separates values (default: comma)
+  values: separated list of values
   values_from: to use instead of "values" if the list of values has to be obtained with a Java method 
                of this form: public static String[] getValues();
                The value must be: "full.package.name.ClassName#methodName"
