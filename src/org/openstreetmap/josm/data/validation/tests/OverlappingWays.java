@@ -60,7 +60,8 @@ public class OverlappingWays extends Test {
                 || p.get("natural") != null
                 || p.get("amenity") != null
                 || p.get("leisure") != null
-                || p.get("building") != null;
+                || p.get("building") != null
+                || p.get("building:part") != null;
     }
     
     private boolean parentMultipolygonConcernsArea(OsmPrimitive p) {
