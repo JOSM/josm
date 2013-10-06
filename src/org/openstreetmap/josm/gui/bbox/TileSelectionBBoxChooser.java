@@ -407,9 +407,6 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 if (!valMinY.isValid()) return;
                 Point min = new Point(valMinX.getTileIndex(), valMinY.getTileIndex());
                 Point max = new Point(valMaxX.getTileIndex(), valMaxY.getTileIndex());
-                if (min.x > max.x) {
-
-                }
                 int zoomlevel = (Integer)spZoomLevel.getValue();
                 TileBounds tb = new TileBounds(min, max, zoomlevel);
                 fireTileBoundsChanged(tb);

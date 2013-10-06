@@ -377,7 +377,9 @@ public class SessionReader {
                             Integer d = null;
                             try {
                                 d = Integer.parseInt(sd);
-                            } catch (NumberFormatException ex) {}
+                            } catch (NumberFormatException ex) {
+                                Main.warn(ex);
+                            }
                             if (d != null) {
                                 deps.put(idx, d);
                             }
@@ -491,7 +493,9 @@ public class SessionReader {
                 try {
                     double opacity = Double.parseDouble(el.getAttribute("opacity"));
                     layer.setOpacity(opacity);
-                } catch (NumberFormatException ex) {}
+                } catch (NumberFormatException ex) {
+                    Main.warn(ex);
+                }
             }
         }
         for (Entry<Integer, Layer> e : layersMap.entrySet()) {

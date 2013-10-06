@@ -81,11 +81,12 @@ public class ThumbsLoader implements Runnable {
                 new Rectangle(0, 0, maxSize, maxSize));
         BufferedImage scaledBI = new BufferedImage(targetSize.width, targetSize.height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = scaledBI.createGraphics();
-        while (!g.drawImage(img, 0, 0, targetSize.width, targetSize.height, null))
-        {
+        while (!g.drawImage(img, 0, 0, targetSize.width, targetSize.height, null)) {
             try {
                 Thread.sleep(10);
-            } catch(InterruptedException ie) {}
+            } catch(InterruptedException ie) {
+                Main.warn(ie);
+            }
         }
         g.dispose();
         tracker.removeImage(img);

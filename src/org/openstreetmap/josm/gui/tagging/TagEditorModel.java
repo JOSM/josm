@@ -409,7 +409,7 @@ public class TagEditorModel extends AbstractTableModel {
      */
     public void applyToPrimitive(Tagged primitive) {
         Map<String,String> tags = primitive.getKeys();
-        applyToTags(tags);
+        applyToTags(tags, false);
         primitive.setKeys(tags);
     }
 
@@ -419,7 +419,7 @@ public class TagEditorModel extends AbstractTableModel {
      * @param tags the map of key/value pairs
      *
      */
-    public void applyToTags(Map<String, String> tags) {
+    public void applyToTags(Map<String, String> tags, boolean keepEmpty) {
         tags.clear();
         for (TagModel tag: this.tags) {
             // tag still holds an unchanged list of different values for the same key.
@@ -430,7 +430,7 @@ public class TagEditorModel extends AbstractTableModel {
 
             // tag name holds an empty key. Don't apply it to the selection.
             //
-            if (tag.getName().trim().isEmpty() || tag.getValue().trim().isEmpty()) {
+            if (!keepEmpty && (tag.getName().trim().isEmpty() || tag.getValue().trim().isEmpty())) {
                 continue;
             }
             tags.put(tag.getName().trim(), tag.getValue().trim());
@@ -438,8 +438,12 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     public Map<String,String> getTags() {
+        return getTags(false);
+    }
+
+    public Map<String,String> getTags(boolean keepEmpty) {
         Map<String,String> tags = new HashMap<String, String>();
-        applyToTags(tags);
+        applyToTags(tags, keepEmpty);
         return tags;
     }
 

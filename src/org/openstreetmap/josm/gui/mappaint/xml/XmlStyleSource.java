@@ -74,8 +74,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
                 parser.startWithValidation(reader,
                         Main.JOSM_WEBSITE+"/mappaint-style-1.0",
                         "resource://data/mappaint-style.xsd");
-                while (parser.hasNext()) {
-                }
+                while (parser.hasNext());
             } finally {
                 closeSourceInputStream(in);
             }
@@ -327,8 +326,8 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             if (refWidth != null && p.linemods != null) {
                 int numOver = 0, numUnder = 0;
 
-                while (mc.hasLayer(String.format("over_%d", ++numOver))) {}
-                while (mc.hasLayer(String.format("under_%d", ++numUnder))) {}
+                while (mc.hasLayer(String.format("over_%d", ++numOver)));
+                while (mc.hasLayer(String.format("under_%d", ++numUnder)));
 
                 for (LinemodPrototype mod : p.linemods) {
                     Cascade c;

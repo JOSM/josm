@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -335,6 +336,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
                 }
             }
         } catch (CloneNotSupportedException cnse) {
+            Main.warn(cnse);
         }
         return clone;
     }

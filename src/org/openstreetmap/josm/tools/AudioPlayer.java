@@ -197,11 +197,12 @@ public class AudioPlayer extends Thread {
      * Resets the audio player.
      */
     public static void reset() {
-        if(audioPlayer != null)
-        {
+        if(audioPlayer != null) {
             try {
                 pause();
-            } catch(Exception e) {}
+            } catch(Exception e) {
+                Main.warn(e);
+            }
             audioPlayer.playingUrl = null;
         }
     }

@@ -22,7 +22,9 @@ public class OsmUrlToBounds {
                 url = URLDecoder.decode(url, "UTF-8");
             }
         } catch (UnsupportedEncodingException x) {
+            Main.error(x);
         } catch (IllegalArgumentException x) {
+            Main.error(x);
         }
         Bounds b = parseShortLink(url);
         if (b != null)

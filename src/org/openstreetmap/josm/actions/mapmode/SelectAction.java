@@ -190,7 +190,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         // This is required to update the cursors when ctrl/shift/alt is pressed
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
-        } catch (SecurityException ex) {}
+        } catch (SecurityException ex) {
+            Main.warn(ex);
+        }
     }
 
     @Override
@@ -202,7 +204,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         mv.setVirtualNodesEnabled(false);
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-        } catch (SecurityException ex) {}
+        } catch (SecurityException ex) {
+            Main.warn(ex);
+        }
         removeHighlighting();
     }
 

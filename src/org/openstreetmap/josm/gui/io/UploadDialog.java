@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -51,6 +52,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -298,7 +300,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         if (cs == null) {
             cs = new Changeset();
         }
-        cs.setKeys(pnlTagSettings.getTags());
+        cs.setKeys(pnlTagSettings.getTags(false));
         return cs;
     }
 
@@ -453,6 +455,30 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                     return;
                 }
             }
+
+            /* test for empty tags in the changeset metadata and proceed only after user's confirmation */
+            List<String> emptyChangesetTags = new ArrayList<String>();
+            for (final Entry<String, String> i : pnlTagSettings.getTags(true).entrySet()) {
+                if (i.getKey() == null || i.getKey().trim().isEmpty()
+                        || i.getValue() == null || i.getValue().trim().isEmpty()) {
+                    emptyChangesetTags.add(tr("{0}={1}", i.getKey(), i.getValue()));
+                }
+            }
+            if (!emptyChangesetTags.isEmpty() && JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(
+                    Main.parent,
+                    trn(
+                            "<html>The following changeset tag contains an empty key/value:<br>{0}<br>Continue?</html>",
+                            "<html>The following changeset tags contain an empty key/value:<br>{0}<br>Continue?</html>",
+                            emptyChangesetTags.size(), Utils.joinAsHtmlUnorderedList(emptyChangesetTags)),
+                    tr("Empty metadata"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            )) {
+                tpConfigPanels.setSelectedIndex(0);
+                pnlBasicUploadSettings.initEditingOfUploadComment();
+                return;
+            }
+
             UploadStrategySpecification strategy = getUploadStrategySpecification();
             if (strategy.getStrategy().equals(UploadStrategy.CHUNKED_DATASET_STRATEGY)) {
                 if (strategy.getChunkSize() == UploadStrategySpecification.UNSPECIFIED_CHUNK_SIZE) {

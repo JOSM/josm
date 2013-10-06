@@ -418,7 +418,9 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             if (sel != null) {
                 setSelectedComponent(sel);
             }
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+            Main.warn(e);
+        }
     }
 
     @Override

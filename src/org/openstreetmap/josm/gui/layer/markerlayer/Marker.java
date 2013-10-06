@@ -232,7 +232,9 @@ public class Marker implements TemplateEngineDataProvider {
                         try {
                             double syncOffset = Double.parseDouble(exts.get("sync-offset"));
                             audioMarker.syncOffset = syncOffset;
-                        } catch (NumberFormatException nfe) {}
+                        } catch (NumberFormatException nfe) {
+                            Main.warn(nfe);
+                        }
                     }
                     return audioMarker;
                 } else if (url.toString().endsWith(".png") || url.toString().endsWith(".jpg") || url.toString().endsWith(".jpeg") || url.toString().endsWith(".gif")) {

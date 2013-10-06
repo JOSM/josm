@@ -258,13 +258,11 @@ public class PlaceSelection implements DownloadSelection {
          */
         @Override
         public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-            if (qName.equals("searchresults")) {
-            } else if (qName.equals("description") && description != null) {
+            if (qName.equals("description") && description != null) {
                 currentResult.description = description.toString();
                 description = null;
             }
             depth--;
-
         }
 
         /**
