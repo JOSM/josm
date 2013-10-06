@@ -247,12 +247,13 @@ public class MultipolygonTest extends Test {
     private void checkMembersAndRoles(Relation r) {
         for (RelationMember rm : r.getMembers()) {
             if (rm.isWay()) {
-                if (!("inner".equals(rm.getRole()) || "outer".equals(rm.getRole()) || !rm.hasRole())) {
+                if (!(rm.hasRole("inner", "outer") || !rm.hasRole())) {
                     addError(r, new TestError(this, Severity.WARNING, tr("No useful role for multipolygon member"), WRONG_MEMBER_ROLE, rm.getMember()));
                 }
             } else {
-                if(!"admin_centre".equals(rm.getRole()) && !"label".equals(rm.getRole()))
+                if (!rm.hasRole("admin_centre", "label", "subarea", "land_area")) {
                     addError(r, new TestError(this, Severity.WARNING, tr("Non-Way in multipolygon"), WRONG_MEMBER_TYPE, rm.getMember()));
+                }
             }
         }
     }
