@@ -79,6 +79,7 @@ public class OverlappingWays extends Test {
                         area++;
                     }
                     if (ws.way.get("landuse") != null
+                            || "riverbank".equals(ws.way.get("waterway"))
                             || ws.way.get("natural") != null
                             || ws.way.get("amenity") != null
                             || ws.way.get("leisure") != null
