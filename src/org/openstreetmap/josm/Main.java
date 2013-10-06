@@ -292,7 +292,7 @@ abstract public class Main {
      * @since 6248
      */
     public static void error(Throwable t) {
-        error(t.getClass().getName()+": "+t.getMessage().trim());
+        error(getErrorMessage(t));
     }
     
     /**
@@ -301,7 +301,16 @@ abstract public class Main {
      * @since 6248
      */
     public static void warn(Throwable t) {
-        warn(t.getClass().getName()+": "+t.getMessage().trim());
+        warn(getErrorMessage(t));
+    }
+    
+    private static String getErrorMessage(Throwable t) {
+        StringBuilder sb = new StringBuilder(t.getClass().getName());
+        String msg = t.getMessage();
+        if (msg != null) {
+            sb.append(": ").append(msg.trim());
+        }
+        return sb.toString();
     }
 
     /**
