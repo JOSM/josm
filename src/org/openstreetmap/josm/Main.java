@@ -292,7 +292,7 @@ abstract public class Main {
      * @since 6248
      */
     public static void error(Throwable t) {
-        error(t.getClass().getName()+": "+t.getMessage());
+        error(t.getClass().getName()+": "+t.getMessage().trim());
     }
     
     /**
@@ -301,7 +301,7 @@ abstract public class Main {
      * @since 6248
      */
     public static void warn(Throwable t) {
-        warn(t.getClass().getName()+": "+t.getMessage());
+        warn(t.getClass().getName()+": "+t.getMessage().trim());
     }
 
     /**

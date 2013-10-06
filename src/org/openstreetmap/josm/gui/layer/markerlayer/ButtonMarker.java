@@ -48,7 +48,7 @@ public class ButtonMarker extends Marker {
         }
         Point screen = mv.getPoint(getEastNorth());
         buttonRectangle.setLocation(screen.x+4, screen.y+2);
-        symbol.paintIcon(mv, g, screen.x+4, screen.y+2);
+        paintIcon(mv, g, screen.x+4, screen.y+2);
         Border b;
         Point mousePosition = mv.getMousePosition();
 

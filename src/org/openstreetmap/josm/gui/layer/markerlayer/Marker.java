@@ -1,9 +1,13 @@
 // License: GPL. Copyright 2008 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
@@ -278,23 +282,25 @@ public class Marker implements TemplateEngineDataProvider {
     private final TemplateEngineDataProvider dataProvider;
     private final String text;
 
-    public final Icon symbol;
+    protected final ImageIcon symbol;
+    private BufferedImage redSymbol = null;
     public final MarkerLayer parentLayer;
-    public double time; /* absolute time of marker in seconds since epoch */
-    public double offset; /* time offset in seconds from the gpx point from which it was derived,
-                             may be adjusted later to sync with other data, so not final */
+    /** Absolute time of marker in seconds since epoch */
+    public double time;
+    /** Time offset in seconds from the gpx point from which it was derived, may be adjusted later to sync with other data, so not final */
+    public double offset; 
 
     private String cachedText;
     private int textVersion = -1;
     private CachedLatLon coor;
+    
+    private boolean erroneous = false;
 
     public Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String iconName, MarkerLayer parentLayer, double time, double offset) {
         setCoor(ll);
 
         this.offset = offset;
         this.time = time;
-        // /* ICON(markers/) */"Bridge"
-        // /* ICON(markers/) */"Crossing"
         this.symbol = iconName != null ? ImageProvider.getIfAvailable("markers",iconName) : null;
         this.parentLayer = parentLayer;
 
@@ -307,8 +313,6 @@ public class Marker implements TemplateEngineDataProvider {
 
         this.offset = offset;
         this.time = time;
-        // /* ICON(markers/) */"Bridge"
-        // /* ICON(markers/) */"Crossing"
         this.symbol = iconName != null ? ImageProvider.getIfAvailable("markers",iconName) : null;
         this.parentLayer = parentLayer;
 
@@ -339,22 +343,37 @@ public class Marker implements TemplateEngineDataProvider {
         return wpt;
     }
 
+    /**
+     * Sets the marker's coordinates.
+     * @param coor The marker's coordinates (lat/lon)
+     */
     public final void setCoor(LatLon coor) {
         this.coor = new CachedLatLon(coor);
     }
 
+    /**
+     * Returns the marker's coordinates.
+     * @return The marker's coordinates (lat/lon)
+     */
     public final LatLon getCoor() {
         return coor;
     }
 
+    /**
+     * Sets the marker's projected coordinates.
+     * @param eastNorth The marker's projected coordinates (easting/northing)
+     */
     public final void setEastNorth(EastNorth eastNorth) {
         this.coor = new CachedLatLon(eastNorth);
     }
 
+    /**
+     * Returns the marker's projected coordinates.
+     * @return The marker's projected coordinates (easting/northing)
+     */
     public final EastNorth getEastNorth() {
         return coor.getEastNorth();
     }
-
 
     /**
      * Checks whether the marker display area contains the given point.
@@ -376,7 +395,6 @@ public class Marker implements TemplateEngineDataProvider {
     public void actionPerformed(ActionEvent ev) {
     }
 
-
     /**
      * Paints the marker.
      * @param g graphics context
@@ -387,7 +405,7 @@ public class Marker implements TemplateEngineDataProvider {
     public void paint(Graphics g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
         Point screen = mv.getPoint(getEastNorth());
         if (symbol != null && showTextOrIcon) {
-            symbol.paintIcon(mv, g, screen.x-symbol.getIconWidth()/2, screen.y-symbol.getIconHeight()/2);
+            paintIcon(mv, g, screen.x-symbol.getIconWidth()/2, screen.y-symbol.getIconHeight()/2);
         } else {
             g.drawLine(screen.x-2, screen.y-2, screen.x+2, screen.y+2);
             g.drawLine(screen.x+2, screen.y-2, screen.x-2, screen.y+2);
@@ -398,7 +416,26 @@ public class Marker implements TemplateEngineDataProvider {
             g.drawString(labelText, screen.x+4, screen.y+2);
         }
     }
-
+    
+    protected void paintIcon(MapView mv, Graphics g, int x, int y) {
+        if (!erroneous) {
+            symbol.paintIcon(mv, g, x, y);
+        } else {
+            if (redSymbol == null) {
+                int width = symbol.getIconWidth();
+                int height = symbol.getIconHeight();
+                                
+                redSymbol = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D gbi = redSymbol.createGraphics();
+                gbi.drawImage(symbol.getImage(), 0, 0, null);
+                gbi.setColor(Color.RED);
+                gbi.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.666f));
+                gbi.fillRect(0, 0, width, height);
+                gbi.dispose();
+            }
+            g.drawImage(redSymbol, x, y, mv);
+        }
+    }
 
     protected TemplateEntryProperty getTextTemplate() {
         return TemplateEntryProperty.forMarker(parentLayer.getName());
@@ -463,5 +500,26 @@ public class Marker implements TemplateEngineDataProvider {
     @Override
     public boolean evaluateCondition(Match condition) {
         throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * Determines if this marker is erroneous.
+     * @return {@code true} if this markers has any kind of error, {@code false} otherwise
+     * @since 6299
+     */
+    public final boolean isErroneous() {
+        return erroneous;
+    }
+    
+    /**
+     * Sets this marker erroneous or not.
+     * @param erroneous {@code true} if this markers has any kind of error, {@code false} otherwise
+     * @since 6299
+     */
+    public final void setErroneous(boolean erroneous) {
+        this.erroneous = erroneous;
+        if (!erroneous) {
+            redSymbol = null;
+        }
     }
 }

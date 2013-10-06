@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer.markerlayer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.net.URL;
 import java.util.Collections;
 
@@ -14,6 +15,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
@@ -24,21 +27,26 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  */
 public class WebMarker extends ButtonMarker {
 
-    public final URL webUrl;
+    private final URL webUrl;
 
     public WebMarker(LatLon ll, URL webUrl, MarkerLayer parentLayer, double time, double offset) {
         super(ll, "web.png", parentLayer, time, offset);
+        CheckParameterUtil.ensureParameterNotNull(webUrl, "webUrl");
         this.webUrl = webUrl;
     }
 
     @Override public void actionPerformed(ActionEvent ev) {
         String error = OpenBrowser.displayUrl(webUrl.toString());
         if (error != null) {
-            JOptionPane.showMessageDialog(Main.parent,
-                    "<html><b>" +
-                            tr("There was an error while trying to display the URL for this marker") +
-                            "</b><br>" + tr("(URL was: ") + webUrl.toString() + ")" + "<br>" + error,
-                            tr("Error displaying URL"), JOptionPane.ERROR_MESSAGE);
+            setErroneous(true);
+            new Notification(
+                    "<b>" + tr("There was an error while trying to display the URL for this marker") + "</b><br>" + 
+                                  tr("(URL was: ") + webUrl.toString() + ")" + "<br>" + error)
+                    .setIcon(JOptionPane.ERROR_MESSAGE)
+                    .setDuration(Notification.TIME_LONG)
+                    .show();
+        } else {
+            updateErroneous();
         }
     }
 
@@ -49,5 +57,19 @@ public class WebMarker extends ButtonMarker {
         link.type = "web";
         wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
         return wpt;
+    }
+    
+    private final void updateErroneous() {
+        if ("file".equals(webUrl.getProtocol())) {
+            String path = webUrl.getPath();
+            try {
+                setErroneous(path.isEmpty() || !new File(path).exists());
+            } catch (Exception e) {
+                Main.warn(e);
+                setErroneous(true);
+            }
+        } else {
+            setErroneous(false);
+        }
     }
 }
