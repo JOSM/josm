@@ -13,6 +13,7 @@ import java.util.Set;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -53,6 +54,24 @@ public class OverlappingWays extends Test {
         nodePairs = new MultiMap<Pair<Node,Node>, WaySegment>(1000);
     }
 
+    private boolean concernsArea(OsmPrimitive p) {
+        return p.get("landuse") != null
+                || "riverbank".equals(p.get("waterway"))
+                || p.get("natural") != null
+                || p.get("amenity") != null
+                || p.get("leisure") != null
+                || p.get("building") != null;
+    }
+    
+    private boolean parentMultipolygonConcernsArea(OsmPrimitive p) {
+        for (Relation r : OsmPrimitive.getFilteredList(p.getReferrers(), Relation.class)) {
+            if (r.isMultipolygon() && concernsArea(r) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     public void endTest() {
         Map<List<Way>, Set<WaySegment>> seenWays = new HashMap<List<Way>, Set<WaySegment>>(500);
@@ -78,12 +97,7 @@ public class OverlappingWays extends Test {
                     if (ar != null && ar) {
                         area++;
                     }
-                    if (ws.way.get("landuse") != null
-                            || "riverbank".equals(ws.way.get("waterway"))
-                            || ws.way.get("natural") != null
-                            || ws.way.get("amenity") != null
-                            || ws.way.get("leisure") != null
-                            || ws.way.get("building") != null) {
+                    if (concernsArea(ws.way) || parentMultipolygonConcernsArea(ws.way)) {
                         area++;
                         ways--;
                     }
