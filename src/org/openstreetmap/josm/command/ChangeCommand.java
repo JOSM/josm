@@ -10,8 +10,10 @@ import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -25,17 +27,29 @@ public class ChangeCommand extends Command {
     private final OsmPrimitive osm;
     private final OsmPrimitive newOsm;
 
-
     public ChangeCommand(OsmPrimitive osm, OsmPrimitive newOsm) {
         super();
         this.osm = osm;
         this.newOsm = newOsm;
+        sanityChecks();
     }
 
     public ChangeCommand(OsmDataLayer layer, OsmPrimitive osm, OsmPrimitive newOsm) {
         super(layer);
         this.osm = osm;
         this.newOsm = newOsm;
+        sanityChecks();
+    }
+    
+    private void sanityChecks() {
+        CheckParameterUtil.ensureParameterNotNull(osm, "osm");
+        CheckParameterUtil.ensureParameterNotNull(newOsm, "newOsm");
+        if (newOsm instanceof Way) {
+            // Do not allow to create empty ways (see #7465)
+            if (((Way)newOsm).getNodesCount() == 0) {
+                throw new IllegalArgumentException(tr("New way {0} has 0 nodes", newOsm));
+            }
+        }
     }
 
     @Override public boolean executeCommand() {
