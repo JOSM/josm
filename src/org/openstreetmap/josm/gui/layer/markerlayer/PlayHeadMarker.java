@@ -273,7 +273,7 @@ public class PlayHeadMarker extends Marker {
     public void paint(Graphics g, MapView mv) {
         if (time < 0.0) return;
         Point screen = mv.getPoint(getEastNorth());
-        symbol.paintIcon(mv, g, screen.x, screen.y);
+        paintIcon(mv, g, screen.x, screen.y);
     }
 
     /**
