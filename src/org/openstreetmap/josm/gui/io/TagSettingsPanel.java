@@ -98,8 +98,8 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      *
      * @return the map with the current tags in the tag editor model.
      */
-    public Map<String,String> getTags() {
-        return pnlTagEditor.getModel().getTags();
+    public Map<String,String> getTags(boolean keepEmpty) {
+        return pnlTagEditor.getModel().getTags(keepEmpty);
     }
 
     public Map<String,String> getDefaultTags() {
