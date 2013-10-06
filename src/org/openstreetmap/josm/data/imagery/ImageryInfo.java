@@ -439,20 +439,20 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         defaultMinZoom = 0;
         for (ImageryType type : ImageryType.values()) {
             Matcher m = Pattern.compile(type.getUrlString()+"(?:\\[(?:(\\d+),)?(\\d+)\\])?:(.*)").matcher(url);
-            if(m.matches()) {
+            if (m.matches()) {
                 this.url = m.group(3);
                 this.imageryType = type;
-                if(m.group(2) != null) {
+                if (m.group(2) != null) {
                     defaultMaxZoom = Integer.valueOf(m.group(2));
                 }
-                if(m.group(1) != null) {
+                if (m.group(1) != null) {
                     defaultMinZoom = Integer.valueOf(m.group(1));
                 }
                 break;
             }
         }
 
-        if(serverProjections == null || serverProjections.isEmpty()) {
+        if (serverProjections == null || serverProjections.isEmpty()) {
             try {
                 serverProjections = new ArrayList<String>();
                 Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase());
@@ -460,7 +460,8 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
                     for(String p : m.group(1).split(","))
                         serverProjections.add(p);
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
+                Main.warn(e);
             }
         }
     }

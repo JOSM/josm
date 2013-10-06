@@ -7,6 +7,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Arrays;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -136,14 +137,14 @@ public class LineElemStyle extends ElemStyle {
 
             /* if we have a "width" tag, try use it */
             String widthTag = env.osm.get("width");
-            if(widthTag == null) {
+            if (widthTag == null) {
                 widthTag = env.osm.get("est_width");
             }
-            if(widthTag != null) {
+            if (widthTag != null) {
                 try {
                     realWidth = Float.valueOf(widthTag);
-                }
-                catch(NumberFormatException nfe) {
+                } catch(NumberFormatException nfe) {
+                    Main.warn(nfe);
                 }
             }
         }

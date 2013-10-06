@@ -619,7 +619,9 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     PROPERTY_RECENT_TAGS_NUMBER.put(v);
                     return;
                 }
-            } catch (NumberFormatException ex) { }
+            } catch (NumberFormatException ex) {
+                Main.warn(ex);
+            }
             JOptionPane.showMessageDialog(this, tr("Please enter integer number between 0 and {0}", MAX_LRU_TAGS_NUMBER));
             
         }

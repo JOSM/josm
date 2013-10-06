@@ -242,6 +242,7 @@ public class GpxLayer extends Layer {
             int i=Main.pref.getInteger("draw.rawgps.colors", "layer " + getName(), 0);
             return colorModes.values()[i];
         } catch (Exception e) {
+            Main.warn(e);
         }
         return colorModes.none;
     }

@@ -149,6 +149,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
             Toolkit.getDefaultToolkit().addAWTEventListener(this,
                     AWTEvent.KEY_EVENT_MASK);
         } catch (SecurityException ex) {
+            Main.warn(ex);
         }
     }
 
@@ -164,6 +165,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         } catch (SecurityException ex) {
+            Main.warn(ex);
         }
 
         Main.map.mapView.repaint();

@@ -19,6 +19,8 @@
  */
 package org.openstreetmap.josm.data.projection.datum;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * A set of static utility methods for reading the NTv2 file format
  *
@@ -111,7 +113,9 @@ public class NTV2Util {
         try {
             Class.forName("java.nio.channels.FileChannel");
             nioAvailable = true;
-        } catch (ClassNotFoundException cnfe) {}
+        } catch (ClassNotFoundException cnfe) {
+            Main.info(cnfe.getMessage());
+        }
         return nioAvailable;
     }
 }

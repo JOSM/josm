@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileExporter;
@@ -61,7 +62,9 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 FileImporter importer = (FileImporter) Class.forName(classname).newInstance();
                 importers.add(importer);
                 MapView.addLayerChangeListener(importer);
-            } catch (Throwable t) { }
+            } catch (Throwable t) {
+                Main.debug(t.getMessage());
+            }
         }
 
         exporters = new ArrayList<FileExporter>();
@@ -80,7 +83,9 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 FileExporter exporter = (FileExporter)Class.forName(classname).newInstance();
                 exporters.add(exporter);
                 MapView.addLayerChangeListener(exporter);
-            } catch (Throwable t) { }
+            } catch (Throwable t) {
+                Main.debug(t.getMessage());
+            }
         }
     }
 

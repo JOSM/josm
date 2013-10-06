@@ -602,7 +602,9 @@ public class ImageProvider {
                         BufferedImage img = null;
                         try {
                             img = ImageIO.read(new ByteArrayInputStream(buf));
-                        } catch (IOException e) {}
+                        } catch (IOException e) {
+                            Main.warn(e);
+                        }
                         return img == null ? null : new ImageResource(img);
                     default:
                         throw new AssertionError();
@@ -656,6 +658,7 @@ public class ImageProvider {
                 if ((path != null || f.isAbsolute()) && f.exists())
                     return f.toURI().toURL();
             } catch (MalformedURLException e) {
+                Main.warn(e);
             }
         }
         return null;

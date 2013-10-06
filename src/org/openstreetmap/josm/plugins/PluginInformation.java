@@ -209,8 +209,11 @@ public class PluginInformation {
         String stageStr = attr.getValue("Plugin-Stage");
         stage = stageStr == null ? 50 : Integer.parseInt(stageStr);
         version = attr.getValue("Plugin-Version");
-        try { mainversion = Integer.parseInt(attr.getValue("Plugin-Mainversion")); }
-        catch(NumberFormatException e) {}
+        try {
+            mainversion = Integer.parseInt(attr.getValue("Plugin-Mainversion"));
+        } catch(NumberFormatException e) {
+            Main.warn(e);
+        }
         author = attr.getValue("Author");
         iconPath = attr.getValue("Plugin-Icon");
         if (iconPath != null && file != null) {

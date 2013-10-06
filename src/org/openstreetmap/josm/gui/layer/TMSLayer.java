@@ -114,6 +114,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         try {
             defPath = OsmFileCacheTileLoader.getDefaultCacheDir().getAbsolutePath();
         } catch (SecurityException e) {
+            Main.warn(e);
         }
         PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache_path", defPath);
     }
@@ -138,6 +139,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                     loader.headers.put("User-Agent", Version.getInstance().getFullAgentString());
                     return loader;
                 } catch (IOException e) {
+                    Main.warn(e);
                 }
             }
             return null;
@@ -145,8 +147,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     };
 
     /**
-    * Plugins that wish to set custom tile loader should call this method
-    */
+     * Plugins that wish to set custom tile loader should call this method
+     */
     public static void setCustomTileLoaderFactory(TileLoaderFactory loaderFactory) {
         TMSLayer.loaderFactory = loaderFactory;
     }

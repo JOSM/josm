@@ -217,7 +217,11 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                     final MouseState ms = new MouseState();
                     synchronized (this) {
                         // TODO Would be better if the timeout wasn't necessary
-                        try {wait(1000);} catch (InterruptedException e) {}
+                        try {
+                            wait(1000);
+                        } catch (InterruptedException e) {
+                            Main.warn(e);
+                        }
                         ms.modifiers = mouseState.modifiers;
                         ms.mousePos = mouseState.mousePos;
                     }
@@ -336,7 +340,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                             }
                         });
                     } catch (Exception e) {
-
+                        Main.warn(e);
                     }
                 }
             } finally {

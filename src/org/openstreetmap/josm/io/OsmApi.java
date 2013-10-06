@@ -536,8 +536,8 @@ public class OsmApi extends OsmConnection {
     }
 
     private void sleepAndListen(int retry, ProgressMonitor monitor) throws OsmTransferCanceledException {
-        System.out.print(tr("Waiting 10 seconds ... "));
-        for(int i=0; i < 10; i++) {
+        Main.info(tr("Waiting 10 seconds ... "));
+        for (int i=0; i < 10; i++) {
             if (monitor != null) {
                 monitor.setCustomText(tr("Starting retry {0} of {1} in {2} seconds ...", getMaxRetries() - retry,getMaxRetries(), 10-i));
             }
@@ -545,7 +545,9 @@ public class OsmApi extends OsmConnection {
                 throw new OsmTransferCanceledException();
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException ex) {}
+            } catch (InterruptedException ex) {
+                Main.warn(ex);
+            }
         }
         Main.info(tr("OK - trying again."));
     }
