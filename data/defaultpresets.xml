@@ -195,12 +195,15 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
-                <check key="oneway" text="Oneway" default="on" />
-                <check key="bridge" text="Bridge" default="off" />
-                <check key="tunnel" text="Tunnel" default="off" />
-                <check key="cutting" text="Cutting" default="off" />
-                <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
+                <checkgroup columns="4">
+                    <check key="oneway" text="Oneway" default="on" />
+                    <check key="bridge" text="Bridge" />
+                    <check key="tunnel" text="Tunnel" />
+                    <check key="cutting" text="Cutting" />
+                    <check key="embankment" text="Embankment" />
+                    <check key="lit" text="Lit" />
+                    <check key="toll" text="Toll" />
+                </checkgroup>
             </optional>
         </item>
         <item name="Trunk" icon="presets/trunk.png" type="way">
@@ -222,13 +225,16 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
-                <check key="oneway" text="Oneway" default="on" />
-                <check key="motorroad" text="Motorroad" default="on" />
-                <check key="bridge" text="Bridge" default="off" />
-                <check key="tunnel" text="Tunnel" default="off" />
-                <check key="cutting" text="Cutting" default="off" />
-                <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
+                <checkgroup columns="4">
+                    <check key="oneway" text="Oneway" default="on" />
+                    <check key="motorroad" text="Motorroad" default="on" />
+                    <check key="bridge" text="Bridge" />
+                    <check key="tunnel" text="Tunnel" />
+                    <check key="cutting" text="Cutting" />
+                    <check key="embankment" text="Embankment" />
+                    <check key="lit" text="Lit" />
+                    <check key="toll" text="Toll" />
+                </checkgroup>
             </optional>
         </item>
         <item name="Trunk Link" icon="presets/trunk.png" type="way">
@@ -248,13 +254,16 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" />
-                <check key="oneway" text="Oneway" default="on" />
-                <check key="motorroad" text="Motorroad" default="on" />
-                <check key="bridge" text="Bridge" default="off" />
-                <check key="tunnel" text="Tunnel" default="off" />
-                <check key="cutting" text="Cutting" default="off" />
-                <check key="embankment" text="Embankment" default="off" />
-                <check key="lit" text="Lit" default="off" /> 
+                <checkgroup columns="4">
+                    <check key="oneway" text="Oneway" default="on" />
+                    <check key="motorroad" text="Motorroad" default="on" />
+                    <check key="bridge" text="Bridge" />
+                    <check key="tunnel" text="Tunnel" />
+                    <check key="cutting" text="Cutting" />
+                    <check key="embankment" text="Embankment" />
+                    <check key="lit" text="Lit" />
+                    <check key="toll" text="Toll" />
+                </checkgroup> 
             </optional>
         </item>
         <separator/>
@@ -747,6 +756,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="maxweight" text="Max. weight (tonnes)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <text key="width" text="Width (meters)" />
+                <check key="toll" text="Toll" />
             </optional>
         </item>
         <item name="Ford" icon="presets/ford.png" type="node,way">
@@ -1566,6 +1576,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <text key="width" text="Width (meters)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
+                <check key="toll" text="Toll" />
             </optional>
         </item>
         <item name="Building Passage" icon="presets/tunnel.png" type="way">
