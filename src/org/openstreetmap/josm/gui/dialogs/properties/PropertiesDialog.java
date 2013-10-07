@@ -59,6 +59,8 @@ import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Node;
@@ -112,7 +114,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener {
+public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener, PreferenceChangedListener {
 
     /**
      * hook for roadsigns plugin to display a small button in the upper right corner of this dialog
@@ -271,6 +273,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         presets.setSize(scrollPane.getSize());
 
         editHelper.loadTagsIfNeeded();
+        
+        Main.pref.addPreferenceChangeListener(this);
     }
 
     private void buildPropertiesTable() {
@@ -280,32 +284,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         propertyTable.getTableHeader().setReorderingAllowed(false);
 
-        propertyTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer(){
-            @Override public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                if (value == null)
-                    return this;
-                if (c instanceof JLabel) {
-                    String str = null;
-                    if (value instanceof String) {
-                        str = (String) value;
-                    } else if (value instanceof Map<?, ?>) {
-                        Map<?, ?> v = (Map<?, ?>) value;
-                        if (v.size() != 1) {
-                            str=tr("<different>");
-                            c.setFont(c.getFont().deriveFont(Font.ITALIC));
-                        } else {
-                            final Map.Entry<?, ?> entry = v.entrySet().iterator().next();
-                            str = (String) entry.getKey();
-                        }
-                    }
-                    ((JLabel)c).putClientProperty("html.disable", Boolean.TRUE); // Fix #8730
-                    ((JLabel)c).setText(str);
-                }
-                return c;
-            }
-        });
+        PropertiesCellRenderer cellRenderer = new PropertiesCellRenderer();
+        propertyTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
+        propertyTable.getColumnModel().getColumn(1).setCellRenderer(cellRenderer);
     }
 
     private void buildMembershipTable() {
@@ -561,6 +542,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     @Override
     public void destroy() {
         super.destroy();
+        Main.pref.removePreferenceChangeListener(this);
         for (JosmAction action : josmActions) {
             action.destroy();
         }
@@ -593,6 +575,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         // re-load property data
         propertyData.setRowCount(0);
 
+        final boolean displayDiscardableKeys = Main.pref.getBoolean("display.discardable-keys", false);
         final Map<String, Integer> keyCount = new HashMap<String, Integer>();
         final Map<String, String> tags = new HashMap<String, String>();
         valueCount.clear();
@@ -600,15 +583,17 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         for (OsmPrimitive osm : newSelection) {
             types.add(TaggingPresetType.forPrimitive(osm));
             for (String key : osm.keySet()) {
-                String value = osm.get(key);
-                keyCount.put(key, keyCount.containsKey(key) ? keyCount.get(key) + 1 : 1);
-                if (valueCount.containsKey(key)) {
-                    Map<String, Integer> v = valueCount.get(key);
-                    v.put(value, v.containsKey(value) ? v.get(value) + 1 : 1);
-                } else {
-                    TreeMap<String, Integer> v = new TreeMap<String, Integer>();
-                    v.put(value, 1);
-                    valueCount.put(key, v);
+                if (displayDiscardableKeys || !OsmPrimitive.getDiscardableKeys().contains(key)) {
+                    String value = osm.get(key);
+                    keyCount.put(key, keyCount.containsKey(key) ? keyCount.get(key) + 1 : 1);
+                    if (valueCount.containsKey(key)) {
+                        Map<String, Integer> v = valueCount.get(key);
+                        v.put(value, v.containsKey(value) ? v.get(value) + 1 : 1);
+                    } else {
+                        TreeMap<String, Integer> v = new TreeMap<String, Integer>();
+                        v.put(value, 1);
+                        valueCount.put(key, v);
+                    }
                 }
             }
         }
@@ -1251,6 +1236,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
             SearchSetting ss = new SearchSetting(s.toString(), SearchMode.replace, true, false, false);
             org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(ss);
+        }
+    }
+
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        if ("display.discardable-keys".equals(e.getKey())) {
+            if (Main.main.getCurrentDataSet() != null) {
+                // Re-load data when display preference change
+                selectionChanged(Main.main.getCurrentDataSet().getSelected());
+            }
         }
     }
 }
