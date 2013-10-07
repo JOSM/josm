@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 
@@ -120,9 +121,9 @@ public class I18n {
         "OptionPane.noButtonText",
         "OptionPane.cancelButtonText"
     };
-    private static HashMap<String, String> strings = null;
-    private static HashMap<String, String[]> pstrings = null;
-    private static HashMap<String, PluralMode> languages = new HashMap<String, PluralMode>();
+    private static Map<String, String> strings = null;
+    private static Map<String, String[]> pstrings = null;
+    private static Map<String, PluralMode> languages = new HashMap<String, PluralMode>();
 
     /**
      * Translates some text for the current locale.
@@ -475,17 +476,13 @@ public class I18n {
         return false;
     }
 
-    private static boolean load(InputStream en, InputStream tr, boolean add)
-    {
-        HashMap<String, String> s;
-        HashMap<String, String[]> p;
-        if(add)
-        {
+    private static boolean load(InputStream en, InputStream tr, boolean add) {
+        Map<String, String> s;
+        Map<String, String[]> p;
+        if (add) {
             s = strings;
             p = pstrings;
-        }
-        else
-        {
+        } else {
             s = new HashMap<String, String>();
             p = new HashMap<String, String[]>();
         }

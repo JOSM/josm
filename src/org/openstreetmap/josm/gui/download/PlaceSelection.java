@@ -385,7 +385,7 @@ public class PlaceSelection implements DownloadSelection {
     }
 
     static class NamedResultTableModel extends DefaultTableModel {
-        private ArrayList<SearchResult> data;
+        private List<SearchResult> data;
         private ListSelectionModel selectionModel;
 
         public NamedResultTableModel(ListSelectionModel selectionModel) {

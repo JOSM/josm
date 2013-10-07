@@ -44,7 +44,7 @@ public class OffsetBookmark {
     }
 
     public OffsetBookmark(Collection<String> list) {
-        ArrayList<String> array = new ArrayList<String>(list);
+        List<String> array = new ArrayList<String>(list);
         this.projectionCode = array.get(0);
         this.layerName = array.get(1);
         this.name = array.get(2);
@@ -59,8 +59,8 @@ public class OffsetBookmark {
         }
     }
 
-    public ArrayList<String> getInfoArray() {
-        ArrayList<String> res = new ArrayList<String>(7);
+    public List<String> getInfoArray() {
+        List<String> res = new ArrayList<String>(7);
         if (projectionCode != null) {
             res.add(projectionCode);
         } else {

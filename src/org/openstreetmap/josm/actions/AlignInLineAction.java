@@ -31,6 +31,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class AlignInLineAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code AlignInLineAction}.
+     */
     public AlignInLineAction() {
         super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes in to a line."),
                 Shortcut.registerShortcut("tools:alignline", tr("Tool: {0}", tr("Align Nodes in Line")), KeyEvent.VK_L, Shortcut.DIRECT), true);
@@ -38,7 +41,7 @@ public final class AlignInLineAction extends JosmAction {
     }
 
     // the joy of single return values only...
-    private void nodePairFurthestApart(ArrayList<Node> nodes, Node[] resultOut) {
+    private void nodePairFurthestApart(List<Node> nodes, Node[] resultOut) {
         if(resultOut.length < 2)
             throw new IllegalArgumentException();
         // Find from the selected nodes two that are the furthest apart.
@@ -106,7 +109,7 @@ public final class AlignInLineAction extends JosmAction {
 
         List<Node> selectedNodes = new ArrayList<Node>(getCurrentDataSet().getSelectedNodes());
         Collection<Way> selectedWays = getCurrentDataSet().getSelectedWays();
-        ArrayList<Node> nodes = new ArrayList<Node>();
+        List<Node> nodes = new ArrayList<Node>();
 
         //// Decide what to align based on selection:
 

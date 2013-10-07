@@ -423,7 +423,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Collection<Command> cmds = new LinkedList<Command>();
         Collection<OsmPrimitive> newSelection = new LinkedList<OsmPrimitive>(ds.getSelected());
 
-        ArrayList<Way> reuseWays = new ArrayList<Way>(),
+        List<Way> reuseWays = new ArrayList<Way>(),
                 replacedWays = new ArrayList<Way>();
         boolean newNode = false;
         Node n = null;
@@ -651,7 +651,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         removeHighlighting();
     }
 
-    private void insertNodeIntoAllNearbySegments(List<WaySegment> wss, Node n, Collection<OsmPrimitive> newSelection, Collection<Command> cmds, ArrayList<Way> replacedWays, ArrayList<Way> reuseWays) {
+    private void insertNodeIntoAllNearbySegments(List<WaySegment> wss, Node n, Collection<OsmPrimitive> newSelection, Collection<Command> cmds, List<Way> replacedWays, List<Way> reuseWays) {
         Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
         for (WaySegment ws : wss) {
             List<Integer> is;

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -42,7 +43,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         sb.append("<strong>id</strong>=")
         .append(primitive.getId())
         .append("<br>");
-        ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
+        List<String> keyList = new ArrayList<String>(primitive.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
             if (i > 0) {

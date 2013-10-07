@@ -205,7 +205,7 @@ public class CustomConfigurator {
      * @param pattern - Regexp pattern forh preferences keys you need to export (".*imagery.*", for example)
      */
     public static void exportPreferencesKeysByPatternToFile(String fileName, boolean append, String pattern) {
-        ArrayList<String> keySet = new ArrayList<String>();
+        List<String> keySet = new ArrayList<String>();
         Map<String, Setting> allSettings = Main.pref.getAllSettings();
         for (String key: allSettings.keySet()) {
             if (key.matches(pattern)) keySet.add(key);
@@ -749,7 +749,7 @@ public class CustomConfigurator {
             }
             // "lists"
             for (Entry<String, List<List<String>>> entry : fragment.arrayProperties.entrySet()) {
-                ArrayList<Collection<String>> array = new ArrayList<Collection<String>>();
+                List<Collection<String>> array = new ArrayList<Collection<String>>();
                 array.addAll(entry.getValue());
                 mainpref.putArray(entry.getKey(), array);
             }

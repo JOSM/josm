@@ -456,7 +456,7 @@ public class JoinAreasAction extends JosmAction {
             return result;
         commitCommands(marktr("Added node on all intersections"));
 
-        ArrayList<RelationRole> relations = new ArrayList<RelationRole>();
+        List<RelationRole> relations = new ArrayList<RelationRole>();
 
         // Remove ways from all relations so ways can be combined/split quietly
         for (Way way : allStartingWays) {
@@ -466,20 +466,20 @@ public class JoinAreasAction extends JosmAction {
         // Don't warn now, because it will really look corrupted
         boolean warnAboutRelations = !relations.isEmpty() && allStartingWays.size() > 1;
 
-        ArrayList<WayInPolygon> preparedWays = new ArrayList<WayInPolygon>();
+        List<WayInPolygon> preparedWays = new ArrayList<WayInPolygon>();
 
         for (Way way : outerStartingWays) {
-            ArrayList<Way> splitWays = splitWayOnNodes(way, nodes);
+            List<Way> splitWays = splitWayOnNodes(way, nodes);
             preparedWays.addAll(markWayInsideSide(splitWays, false));
         }
 
         for (Way way : innerStartingWays) {
-            ArrayList<Way> splitWays = splitWayOnNodes(way, nodes);
+            List<Way> splitWays = splitWayOnNodes(way, nodes);
             preparedWays.addAll(markWayInsideSide(splitWays, true));
         }
 
         // Find boundary ways
-        ArrayList<Way> discardedWays = new ArrayList<Way>();
+        List<Way> discardedWays = new ArrayList<Way>();
         List<AssembledPolygon> bounadries = findBoundaryPolygons(preparedWays, discardedWays);
 
         //find polygons
@@ -658,9 +658,9 @@ public class JoinAreasAction extends JosmAction {
      * @param isInner - if true, reverts the direction (for multipolygon islands)
      * @return list of parts, marked with the inside orientation.
      */
-    private ArrayList<WayInPolygon> markWayInsideSide(List<Way> parts, boolean isInner) {
+    private List<WayInPolygon> markWayInsideSide(List<Way> parts, boolean isInner) {
 
-        ArrayList<WayInPolygon> result = new ArrayList<WayInPolygon>();
+        List<WayInPolygon> result = new ArrayList<WayInPolygon>();
 
         //prepare prev and next maps
         Map<Way, Way> nextWayMap = new HashMap<Way, Way>();
@@ -828,9 +828,9 @@ public class JoinAreasAction extends JosmAction {
      * Uses  SplitWayAction.splitWay for the heavy lifting.
      * @return list of split ways (or original ways if no splitting is done).
      */
-    private ArrayList<Way> splitWayOnNodes(Way way, Set<Node> nodes) {
+    private List<Way> splitWayOnNodes(Way way, Set<Node> nodes) {
 
-        ArrayList<Way> result = new ArrayList<Way>();
+        List<Way> result = new ArrayList<Way>();
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
 
         if (chunks.size() > 1) {
@@ -1343,8 +1343,8 @@ public class JoinAreasAction extends JosmAction {
      * @param osm Element to remove from all relations
      * @return List of relations with roles the primitives was part of
      */
-    private ArrayList<RelationRole> removeFromAllRelations(OsmPrimitive osm) {
-        ArrayList<RelationRole> result = new ArrayList<RelationRole>();
+    private List<RelationRole> removeFromAllRelations(OsmPrimitive osm) {
+        List<RelationRole> result = new ArrayList<RelationRole>();
 
         for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
             if (r.isDeleted()) {
@@ -1382,10 +1382,10 @@ public class JoinAreasAction extends JosmAction {
      * @param ownMultipol elements to directly add as outer
      * @param relationsToDelete set of relations to delete.
      */
-    private void fixRelations(ArrayList<RelationRole> rels, Way outer, RelationRole ownMultipol, Set<Relation> relationsToDelete) {
-        ArrayList<RelationRole> multiouters = new ArrayList<RelationRole>();
+    private void fixRelations(List<RelationRole> rels, Way outer, RelationRole ownMultipol, Set<Relation> relationsToDelete) {
+        List<RelationRole> multiouters = new ArrayList<RelationRole>();
 
-        if (ownMultipol != null){
+        if (ownMultipol != null) {
             multiouters.add(ownMultipol);
         }
 

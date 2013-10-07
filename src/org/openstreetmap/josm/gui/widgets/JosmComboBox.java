@@ -11,6 +11,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import javax.accessibility.Accessible;
 import javax.swing.ComboBoxEditor;
@@ -79,7 +80,7 @@ public class JosmComboBox extends JComboBox {
      */
     public JosmComboBox(ComboBoxModel aModel) {
         super(aModel);
-        ArrayList<Object> list = new ArrayList<Object>(aModel.getSize());
+        List<Object> list = new ArrayList<Object>(aModel.getSize());
         for (int i = 0; i<aModel.getSize(); i++) {
             list.add(aModel.getElementAt(i));
         }

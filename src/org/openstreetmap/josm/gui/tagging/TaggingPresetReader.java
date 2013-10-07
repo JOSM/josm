@@ -38,7 +38,7 @@ public final class TaggingPresetReader {
     
     private static File zipIcons = null;
     
-    public static LinkedList<String> getPresetSources() {
+    public static List<String> getPresetSources() {
         LinkedList<String> sources = new LinkedList<String>();
 
         for (SourceEntry e : (new TaggingPresetPreference.PresetPrefHelper()).get()) {

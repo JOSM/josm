@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.history;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item.DiffItemType;
 import org.openstreetmap.josm.tools.Diff;
@@ -49,8 +50,8 @@ class TwoColumnDiff {
         public final DiffItemType state;
     }
 
-    public ArrayList<Item> referenceDiff;
-    public ArrayList<Item> currentDiff;
+    public List<Item> referenceDiff;
+    public List<Item> currentDiff;
     Object[] reference;
     Object[] current;
 

@@ -464,7 +464,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public List<ExtendedSourceEntry> getSelected() {
-            ArrayList<ExtendedSourceEntry> ret = new ArrayList<ExtendedSourceEntry>();
+            List<ExtendedSourceEntry> ret = new ArrayList<ExtendedSourceEntry>();
             for(int i=0; i<data.size();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     ret.add(data.get(i));
@@ -997,7 +997,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     protected static class IconPathTableModel extends AbstractTableModel {
-        private ArrayList<String> data;
+        private List<String> data;
         private DefaultListSelectionModel selectionModel;
 
         public IconPathTableModel(DefaultListSelectionModel selectionModel) {

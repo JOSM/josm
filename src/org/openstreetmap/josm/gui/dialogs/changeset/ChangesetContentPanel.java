@@ -229,7 +229,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         protected List<HistoryOsmPrimitive> filterPrimitivesWithUnloadedHistory(Collection<HistoryOsmPrimitive> primitives) {
-            ArrayList<HistoryOsmPrimitive> ret = new ArrayList<HistoryOsmPrimitive>(primitives.size());
+            List<HistoryOsmPrimitive> ret = new ArrayList<HistoryOsmPrimitive>(primitives.size());
             for (HistoryOsmPrimitive p: primitives) {
                 if (HistoryDataSet.getInstance().getHistory(p.getPrimitiveId()) == null) {
                     ret.add(p);

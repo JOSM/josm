@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JOptionPane;
@@ -99,7 +100,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
      * TMS TileSource provider for the slippymap chooser
      */
     public static class TMSTileSourceProvider implements TileSourceProvider {
-        static final HashSet<String> existingSlippyMapUrls = new HashSet<String>();
+        static final Set<String> existingSlippyMapUrls = new HashSet<String>();
         static {
             // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
             existingSlippyMapUrls.add("http://tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik

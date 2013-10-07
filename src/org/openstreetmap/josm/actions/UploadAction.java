@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -50,8 +51,8 @@ public class UploadAction extends JosmAction{
      * dialog is the last thing shown before upload really starts; on occasion
      * however, a plugin might also want to insert something after that.
      */
-    private static final LinkedList<UploadHook> uploadHooks = new LinkedList<UploadHook>();
-    private static final LinkedList<UploadHook> lateUploadHooks = new LinkedList<UploadHook>();
+    private static final List<UploadHook> uploadHooks = new LinkedList<UploadHook>();
+    private static final List<UploadHook> lateUploadHooks = new LinkedList<UploadHook>();
     static {
         /**
          * Calls validator before upload.

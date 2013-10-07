@@ -289,7 +289,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      *
      */
     static class UserTableModel extends DefaultTableModel {
-        private ArrayList<UserInfo> data;
+        private List<UserInfo> data;
 
         public UserTableModel() {
             setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%"});

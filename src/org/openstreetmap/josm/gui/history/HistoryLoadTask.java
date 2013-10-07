@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -47,7 +48,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     private boolean canceled = false;
     private Exception lastException  = null;
-    private HashSet<PrimitiveId> toLoad;
+    private Set<PrimitiveId> toLoad;
     private HistoryDataSet loadedData;
     private OsmServerHistoryReader reader = null;
 

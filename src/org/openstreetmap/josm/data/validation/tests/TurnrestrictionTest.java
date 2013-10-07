@@ -65,7 +65,7 @@ public class TurnrestrictionTest extends Test {
             if (m.getMember().isIncomplete())
                 return;
 
-            ArrayList<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
             l.add(r);
             l.add(m.getMember());
             if (m.isWay()) {

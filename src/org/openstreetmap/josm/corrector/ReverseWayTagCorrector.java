@@ -195,7 +195,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap =
             new HashMap<OsmPrimitive, List<TagCorrection>>();
 
-        ArrayList<TagCorrection> tagCorrections = new ArrayList<TagCorrection>();
+        List<TagCorrection> tagCorrections = new ArrayList<TagCorrection>();
         for (String key : way.keySet()) {
             String value = way.get(key);
             Tag newTag = TagSwitcher.apply(key, value);
@@ -220,7 +220,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
         Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap =
             new HashMap<OsmPrimitive, List<RoleCorrection>>();
-        ArrayList<RoleCorrection> roleCorrections = new ArrayList<RoleCorrection>();
+        List<RoleCorrection> roleCorrections = new ArrayList<RoleCorrection>();
 
         Collection<OsmPrimitive> referrers = oldway.getReferrers();
         for (OsmPrimitive referrer: referrers) {

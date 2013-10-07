@@ -10,7 +10,7 @@ public class TagModel {
     private String name = null;
 
     /** the list of values */
-    private ArrayList<String> values = null;
+    private List<String> values = null;
 
     /**
      * constructor

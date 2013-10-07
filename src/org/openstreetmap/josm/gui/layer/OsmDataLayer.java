@@ -500,7 +500,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 new ConsistencyTestAction(),
                 SeparatorLayerAction.INSTANCE,
                 new LayerListPopup.InfoAction(this)};
-        ArrayList<Action> actions = new ArrayList<Action>();
+        List<Action> actions = new ArrayList<Action>();
         actions.addAll(Arrays.asList(new Action[]{
                 LayerListDialog.getInstance().createActivateLayerAction(this),
                 LayerListDialog.getInstance().createShowHideLayerAction(),

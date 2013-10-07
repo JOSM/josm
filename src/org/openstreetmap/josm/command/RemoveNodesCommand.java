@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -25,7 +27,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class RemoveNodesCommand extends Command {
 
     private final Way way;
-    private final HashSet<Node> rmNodes;
+    private final Set<Node> rmNodes;
 
     public RemoveNodesCommand(Way way, List<Node> rmNodes) {
         super();

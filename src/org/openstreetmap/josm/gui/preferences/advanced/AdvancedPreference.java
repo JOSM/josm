@@ -199,7 +199,7 @@ public class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
 
     private void exportSelectedToXML() {
-        ArrayList<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<String>();
         boolean hasLists = false;
 
         for (PrefEntry p: table.getSelectedItems()) {

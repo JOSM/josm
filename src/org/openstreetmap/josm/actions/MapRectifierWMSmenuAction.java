@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +63,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
     /**
      * List of available rectifier services. May be extended from the outside
      */
-    public ArrayList<RectifierService> services = new ArrayList<RectifierService>();
+    public List<RectifierService> services = new ArrayList<RectifierService>();
 
     public MapRectifierWMSmenuAction() {
         super(tr("Rectified Image..."),

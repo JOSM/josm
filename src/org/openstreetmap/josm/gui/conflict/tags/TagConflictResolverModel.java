@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.table.DefaultTableModel;
@@ -23,12 +24,15 @@ public class TagConflictResolverModel extends DefaultTableModel {
     private TagCollection tags;
     private List<String> displayedKeys;
     private Set<String> keysWithConflicts;
-    private HashMap<String, MultiValueResolutionDecision> decisions;
+    private Map<String, MultiValueResolutionDecision> decisions;
     private int numConflicts;
     private PropertyChangeSupport support;
     private boolean showTagsWithConflictsOnly = false;
     private boolean showTagsWithMultiValuesOnly = false;
 
+    /**
+     * Constructs a new {@code TagConflictResolverModel}.
+     */
     public TagConflictResolverModel() {
         numConflicts = 0;
         support = new PropertyChangeSupport(this);

@@ -373,7 +373,7 @@ public class CombineWayAction extends JosmAction {
 
     static public class NodeGraph {
         static public List<NodePair> buildNodePairs(Way way, boolean directed) {
-            ArrayList<NodePair> pairs = new ArrayList<NodePair>();
+            List<NodePair> pairs = new ArrayList<NodePair>();
             for (Pair<Node,Node> pair: way.getNodePairs(false /* don't sort */)) {
                 pairs.add(new NodePair(pair));
                 if (!directed) {
@@ -384,7 +384,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         static public List<NodePair> buildNodePairs(List<Way> ways, boolean directed) {
-            ArrayList<NodePair> pairs = new ArrayList<NodePair>();
+            List<NodePair> pairs = new ArrayList<NodePair>();
             for (Way w: ways) {
                 pairs.addAll(buildNodePairs(w, directed));
             }
@@ -392,7 +392,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         static public List<NodePair> eliminateDuplicateNodePairs(List<NodePair> pairs) {
-            ArrayList<NodePair> cleaned = new ArrayList<NodePair>();
+            List<NodePair> cleaned = new ArrayList<NodePair>();
             for(NodePair p: pairs) {
                 if (!cleaned.contains(p) && !cleaned.contains(p.swap())) {
                     cleaned.add(p);
@@ -445,7 +445,7 @@ public class CombineWayAction extends JosmAction {
                     successors.get(pair.getA()).add(pair);
                 }
             } else {
-                ArrayList<NodePair> l = new ArrayList<NodePair>();
+                List<NodePair> l = new ArrayList<NodePair>();
                 l.add(pair);
                 successors.put(pair.getA(), l);
             }
@@ -457,7 +457,7 @@ public class CombineWayAction extends JosmAction {
                     predecessors.get(pair.getB()).add(pair);
                 }
             } else {
-                ArrayList<NodePair> l = new ArrayList<NodePair>();
+                List<NodePair> l = new ArrayList<NodePair>();
                 l.add(pair);
                 predecessors.put(pair.getB(), l);
             }

@@ -809,7 +809,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
 
             // Construct a list of images that have a date, and sort them on the date.
-            ArrayList<ImageEntry> dateImgLst = getSortedImgList();
+            List<ImageEntry> dateImgLst = getSortedImgList();
             // Create a temporary copy for each image
             for (ImageEntry ie : dateImgLst) {
                 ie.cleanTmp();
@@ -987,7 +987,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 return;
             GpxData gpx = gpxW.data;
 
-            ArrayList<ImageEntry> imgs = getSortedImgList();
+            List<ImageEntry> imgs = getSortedImgList();
             PrimaryDateParser dateParser = new PrimaryDateParser();
 
             // no images found, exit
@@ -1059,7 +1059,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
-    private ArrayList<ImageEntry>  getSortedImgList() {
+    private List<ImageEntry> getSortedImgList() {
         return getSortedImgList(cbExifImg.isSelected(), cbTaggedImg.isSelected());
     }
 
@@ -1070,8 +1070,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @param tagged also returns tagged images
      * @return matching images
      */
-    private ArrayList<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
-        ArrayList<ImageEntry> dateImgLst = new ArrayList<ImageEntry>(yLayer.data.size());
+    private List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
+        List<ImageEntry> dateImgLst = new ArrayList<ImageEntry>(yLayer.data.size());
         for (ImageEntry e : yLayer.data) {
             if (e.getExifTime() == null) {
                 continue;
@@ -1119,7 +1119,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * Match a list of photos to a gpx track with a given offset.
      * All images need a exifTime attribute and the List must be sorted according to these times.
      */
-    private int matchGpxTrack(ArrayList<ImageEntry> images, GpxData selectedGpx, long offset) {
+    private int matchGpxTrack(List<ImageEntry> images, GpxData selectedGpx, long offset) {
         int ret = 0;
 
         PrimaryDateParser dateParser = new PrimaryDateParser();
@@ -1158,7 +1158,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return ret;
     }
 
-    private int matchPoints(ArrayList<ImageEntry> images, WayPoint prevWp, long prevWpTime,
+    private int matchPoints(List<ImageEntry> images, WayPoint prevWp, long prevWpTime,
             WayPoint curWp, long curWpTime, long offset) {
         // Time between the track point and the previous one, 5 sec if first point, i.e. photos take
         // 5 sec before the first track point can be assumed to be take at the starting position
@@ -1245,7 +1245,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return ret;
     }
 
-    private int getLastIndexOfListBefore(ArrayList<ImageEntry> images, long searchedTime) {
+    private int getLastIndexOfListBefore(List<ImageEntry> images, long searchedTime) {
         int lstSize= images.size();
 
         // No photos or the first photo taken is later than the search period

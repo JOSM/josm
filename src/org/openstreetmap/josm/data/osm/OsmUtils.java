@@ -3,15 +3,16 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 public class OsmUtils {
 
-    static ArrayList<String> TRUE_VALUES = new ArrayList<String>(Arrays
+    static List<String> TRUE_VALUES = new ArrayList<String>(Arrays
             .asList(new String[] { "true", "yes", "1", "on" }));
-    static ArrayList<String> FALSE_VALUES = new ArrayList<String>(Arrays
+    static List<String> FALSE_VALUES = new ArrayList<String>(Arrays
             .asList(new String[] { "false", "no", "0", "off" }));
-    static ArrayList<String> REVERSE_VALUES = new ArrayList<String>(Arrays
+    static List<String> REVERSE_VALUES = new ArrayList<String>(Arrays
             .asList(new String[] { "reverse", "-1" }));
 
     public static final String trueval = "yes";

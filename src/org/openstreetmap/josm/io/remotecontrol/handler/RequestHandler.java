@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,7 +33,7 @@ public abstract class RequestHandler {
     public static final boolean loadInNewLayerDefault = false;
 
     /** The GET request arguments */
-    protected HashMap<String,String> args;
+    protected Map<String,String> args;
 
     /** The request URL without "GET". */
     protected String request;

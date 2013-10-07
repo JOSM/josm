@@ -13,6 +13,7 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -332,7 +333,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      *
      */
     static class AdjustmentSynchronizer implements AdjustmentListener {
-        private final ArrayList<Adjustable> synchronizedAdjustables;
+        private final List<Adjustable> synchronizedAdjustables;
 
         public AdjustmentSynchronizer() {
             synchronizedAdjustables = new ArrayList<Adjustable>();

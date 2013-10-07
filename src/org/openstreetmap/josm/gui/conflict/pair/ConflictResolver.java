@@ -275,7 +275,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      * @return the resolution command
      */
     public Command buildResolveCommand() {
-        ArrayList<Command> commands = new ArrayList<Command>();
+        List<Command> commands = new ArrayList<Command>();
 
         if (tagMerger.getModel().getNumResolvedConflicts() > 0) {
             commands.add(tagMerger.getModel().buildResolveCommand(conflict));

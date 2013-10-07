@@ -110,7 +110,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     }
 
     public static List<String> getSearchExpressionHistory() {
-        ArrayList<String> ret = new ArrayList<String>(getSearchHistory().size());
+        List<String> ret = new ArrayList<String>(getSearchHistory().size());
         for (SearchSetting ss: getSearchHistory()) {
             ret.add(ss.text);
         }
@@ -119,6 +119,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     private static SearchSetting lastSearch = null;
 
+    /**
+     * Constructs a new {@code SearchAction}.
+     */
     public SearchAction() {
         super(tr("Search..."), "dialogs/search", tr("Search for objects."),
                 Shortcut.registerShortcut("system:find", tr("Search..."), KeyEvent.VK_F, Shortcut.CTRL), true);

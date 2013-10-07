@@ -11,6 +11,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
@@ -45,6 +46,9 @@ public class XmlObjectParser implements Iterable<Object> {
         private int columnNumber;
         private int lineNumber;
 
+        /**
+         * Constructs a new {@code PresetParsingException}.
+         */
         public PresetParsingException() {
             super();
         }
@@ -273,7 +277,7 @@ public class XmlObjectParser implements Iterable<Object> {
     /**
      * The queue of already parsed items from the parsing thread.
      */
-    private LinkedList<Object> queue = new LinkedList<Object>();
+    private List<Object> queue = new LinkedList<Object>();
     private Iterator<Object> queueIterator = null;
 
     public XmlObjectParser() {

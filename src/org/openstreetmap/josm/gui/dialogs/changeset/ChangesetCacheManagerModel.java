@@ -75,7 +75,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @return the list of selected changesets
      */
     public List<Changeset> getSelectedChangesets() {
-        ArrayList<Changeset> ret = new ArrayList<Changeset>();
+        List<Changeset> ret = new ArrayList<Changeset>();
         for (int i =0; i< data.size();i++) {
             Changeset cs = data.get(i);
             if (selectionModel.isSelectedIndex(i)) {

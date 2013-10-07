@@ -72,7 +72,7 @@ public class RelationSorter {
      * @return sorted collection of relation members
      */
     public List<RelationMember> sortMembers(List<RelationMember> relationMembers) {
-        ArrayList<RelationMember> newMembers = new ArrayList<RelationMember>();
+        List<RelationMember> newMembers = new ArrayList<RelationMember>();
 
         // Sort members with custom mechanisms (relation-dependent)
         List<RelationMember> defaultMembers = new ArrayList<RelationMember>(relationMembers.size());

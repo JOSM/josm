@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.history;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
@@ -10,8 +11,11 @@ import javax.swing.event.ListSelectionListener;
 
 public class SelectionSynchronizer implements ListSelectionListener {
 
-    private ArrayList<ListSelectionModel> participants;
+    private List<ListSelectionModel> participants;
 
+    /**
+     * Constructs a new {@code SelectionSynchronizer}.
+     */
     public SelectionSynchronizer() {
         participants = new ArrayList<ListSelectionModel>();
     }

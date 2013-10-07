@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.DefaultListSelectionModel;
@@ -22,7 +23,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
  */
 public class ChangesetContentTableModel extends AbstractTableModel {
 
-    private final ArrayList<ChangesetContentEntry> data = new ArrayList<ChangesetContentEntry>();
+    private final List<ChangesetContentEntry> data = new ArrayList<ChangesetContentEntry>();
     private DefaultListSelectionModel selectionModel;
 
     public ChangesetContentTableModel(DefaultListSelectionModel selectionModel) {

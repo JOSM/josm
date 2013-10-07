@@ -177,7 +177,7 @@ public class ParallelWays {
     }
 
     private List<Command> makeAddWayAndNodesCommandList() {
-        ArrayList<Command> commands = new ArrayList<Command>(sortedNodes.size() + ways.size());
+        List<Command> commands = new ArrayList<Command>(sortedNodes.size() + ways.size());
         for (int i = 0; i < sortedNodes.size() - (isClosedPath() ? 1 : 0); i++) {
             commands.add(new AddCommand(sortedNodes.get(i)));
         }
