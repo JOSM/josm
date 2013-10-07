@@ -40,6 +40,7 @@ public class DrawingPreference implements SubPreferenceSetting {
     private JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
     private JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
     private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
+    private JCheckBox discardableKeys = new JCheckBox(tr("Display discardable keys"));
 
     // Options that affect performance
     private JCheckBox useHighlighting = new JCheckBox(tr("Highlight target ways and nodes"));
@@ -116,9 +117,13 @@ public class DrawingPreference implements SubPreferenceSetting {
         drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
 
         // outlineOnly
-        outlineOnly.setSelected(Main.pref.getBoolean("draw.data.area_outline_only", false));
         outlineOnly.setToolTipText(tr("This option suppresses the filling of areas, overriding anything specified in the selected style."));
+        outlineOnly.setSelected(Main.pref.getBoolean("draw.data.area_outline_only", false));
 
+        // discardable keys
+        discardableKeys.setToolTipText(tr("Display keys which have been deemed uninteresting to the point that they can be silently removed."));
+        discardableKeys.setSelected(Main.pref.getBoolean("display.discardable-keys", false));
+        
         JLabel performanceLabel = new JLabel(tr("Options that affect drawing performance"));
 
         panel.add(new JLabel(tr("Segment drawing options")),
@@ -143,12 +148,14 @@ public class DrawingPreference implements SubPreferenceSetting {
                 GBC.eop().insets(5,10,0,0));
         panel.add(sourceBounds, GBC.eop().insets(20,0,0,0));
         panel.add(inactive, GBC.eop().insets(20,0,0,0));
+        panel.add(discardableKeys, GBC.eop().insets(20,0,0,0));
 
         ExpertToggleAction.addVisibilitySwitcher(performanceLabel);
         ExpertToggleAction.addVisibilitySwitcher(useAntialiasing);
         ExpertToggleAction.addVisibilitySwitcher(useWireframeAntialiasing);
         ExpertToggleAction.addVisibilitySwitcher(useHighlighting);
         ExpertToggleAction.addVisibilitySwitcher(outlineOnly);
+        ExpertToggleAction.addVisibilitySwitcher(discardableKeys);
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
         scrollpane = new JScrollPane(panel);
@@ -170,6 +177,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         Main.pref.put("mappaint.wireframe.use-antialiasing", useWireframeAntialiasing.isSelected());
         Main.pref.put("draw.target-highlight", useHighlighting.isSelected());
         Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
+        Main.pref.put("display.discardable-keys", discardableKeys.isSelected());
         int vn = Main.pref.getInteger("mappaint.node.virtual-size", 8);
         if (virtualNodes.isSelected()) {
             if (vn < 1) {

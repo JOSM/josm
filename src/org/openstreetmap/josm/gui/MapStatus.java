@@ -23,6 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -340,7 +341,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                                 }
                             }
                         });
-                    } catch (Exception e) {
+                    } catch (InterruptedException e) {
+                        // Occurs frequently during JOSM shutdown, log set to debug only
+                        Main.debug("InterruptedException in "+MapStatus.class.getSimpleName());
+                    } catch (InvocationTargetException e) {
                         Main.warn(e);
                     }
                 }
