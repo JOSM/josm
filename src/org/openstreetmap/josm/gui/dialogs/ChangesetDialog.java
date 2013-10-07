@@ -506,7 +506,7 @@ public class ChangesetDialog extends ToggleDialog{
                         try {
                             future.get();
                         } catch(InterruptedException e) {
-                            e.printStackTrace();
+                            Main.warn("InterruptedException in "+getClass().getSimpleName()+" while downloading changeset header");
                         } catch(ExecutionException e){
                             e.printStackTrace();
                             BugReportExceptionHandler.handleException(e.getCause());

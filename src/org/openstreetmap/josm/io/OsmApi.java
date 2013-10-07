@@ -546,7 +546,7 @@ public class OsmApi extends OsmConnection {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                Main.warn(ex);
+                Main.warn("InterruptedException in "+getClass().getSimpleName()+" during sleep");
             }
         }
         Main.info(tr("OK - trying again."));

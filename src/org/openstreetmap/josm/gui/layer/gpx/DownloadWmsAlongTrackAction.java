@@ -69,7 +69,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
                             try {
                                 wait(200);
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                Main.warn("InterruptedException in "+getClass().getSimpleName()+" while precaching WMS");
                             }
                         }
                     }
