@@ -456,11 +456,12 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                 }
             }
 
-            /* test for empty tags in the changeset metadata and proceed only after user's confirmation */
+            /* test for empty tags in the changeset metadata and proceed only after user's confirmation.
+             * though, accept if key and value are empty (cf. xor). */
             List<String> emptyChangesetTags = new ArrayList<String>();
             for (final Entry<String, String> i : pnlTagSettings.getTags(true).entrySet()) {
-                if (i.getKey() == null || i.getKey().trim().isEmpty()
-                        || i.getValue() == null || i.getValue().trim().isEmpty()) {
+                if ((i.getKey() == null || i.getKey().trim().isEmpty())
+                        ^ (i.getValue() == null || i.getValue().trim().isEmpty())) {
                     emptyChangesetTags.add(tr("{0}={1}", i.getKey(), i.getValue()));
                 }
             }
