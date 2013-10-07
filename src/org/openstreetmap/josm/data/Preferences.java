@@ -739,15 +739,17 @@ public class Preferences {
     synchronized public String getColorName(String o) {
         try {
             Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
-            m.matches();
-            return tr("Paint style {0}: {1}", tr(m.group(1)), tr(m.group(2)));
+            if (m.matches()) {
+                return tr("Paint style {0}: {1}", tr(m.group(1)), tr(m.group(2)));
+            }
         } catch (Exception e) {
             Main.warn(e);
         }
         try {
             Matcher m = Pattern.compile("layer (.+)").matcher(o);
-            m.matches();
-            return tr("Layer: {0}", tr(m.group(1)));
+            if (m.matches()) {
+                return tr("Layer: {0}", tr(m.group(1)));
+            }
         } catch (Exception e) {
             Main.warn(e);
         }
