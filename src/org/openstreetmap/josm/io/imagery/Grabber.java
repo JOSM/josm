@@ -66,7 +66,7 @@ abstract public class Grabber implements Runnable {
                 try { // sleep some time and then ask the server again
                     Thread.sleep(random(1000, 2000));
                 } catch (InterruptedException e1) {
-                    Main.debug(e1.getMessage());
+                    Main.debug("InterruptedException in "+getClass().getSimpleName()+" during WMS request");
                 }
                 if(i == maxTries) {
                     e.printStackTrace();

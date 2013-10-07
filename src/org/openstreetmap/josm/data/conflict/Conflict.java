@@ -123,4 +123,9 @@ public class  Conflict<T extends OsmPrimitive> {
     public final void setMergedMap(Map<PrimitiveId, PrimitiveId> mergedMap) {
         this.mergedMap = mergedMap;
     }
+
+    @Override
+    public String toString() {
+        return "Conflict [my=" + my + ", their=" + their + "]";
+    }
 }

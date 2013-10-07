@@ -55,6 +55,7 @@ public class OsmConnection {
         try {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
+            Main.warn("InterruptedException in "+getClass().getSimpleName()+" during cancel");
         }
 
         synchronized (this) {

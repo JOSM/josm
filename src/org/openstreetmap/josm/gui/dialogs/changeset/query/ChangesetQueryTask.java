@@ -126,7 +126,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
             try {
                 SwingUtilities.invokeAndWait(r);
             } catch(InterruptedException e) {
-                e.printStackTrace();
+                Main.warn("InterruptedException in "+getClass().getSimpleName()+" while updating changeset cache");
             } catch(InvocationTargetException e) {
                 Throwable t = e.getTargetException();
                 if (t instanceof RuntimeException) {

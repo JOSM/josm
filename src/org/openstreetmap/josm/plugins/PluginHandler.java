@@ -686,7 +686,7 @@ public class PluginHandler {
                 e.printStackTrace();
                 return null;
             } catch(InterruptedException e) {
-                e.printStackTrace();
+                Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while loading locally available plugin information");
                 return null;
             }
             HashMap<String, PluginInformation> ret = new HashMap<String, PluginInformation>();
@@ -857,12 +857,11 @@ public class PluginHandler {
                 allPlugins = task1.getAvailablePlugins();
                 plugins = buildListOfPluginsToLoad(parent,monitor.createSubTaskMonitor(1, false));
             } catch (ExecutionException e) {
-                Main.warn(tr("Failed to download plugin information list"));
+                Main.warn(tr("Failed to download plugin information list")+": ExecutionException");
                 e.printStackTrace();
                 // don't abort in case of error, continue with downloading plugins below
             } catch (InterruptedException e) {
-                Main.warn(tr("Failed to download plugin information list"));
-                e.printStackTrace();
+                Main.warn(tr("Failed to download plugin information list")+": InterruptedException");
                 // don't abort in case of error, continue with downloading plugins below
             }
 
@@ -910,7 +909,7 @@ public class PluginHandler {
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
                 } catch(InterruptedException e) {
-                    e.printStackTrace();
+                    Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while updating plugins");
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
                 }

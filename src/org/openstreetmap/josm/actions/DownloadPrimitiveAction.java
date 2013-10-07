@@ -104,7 +104,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                             }
                         });
                     } catch (InterruptedException ex) {
-                        Main.warn(ex);
+                        Main.warn("InterruptedException while displaying error dialog");
                     } catch (InvocationTargetException ex) {
                         Main.warn(ex);
                     }

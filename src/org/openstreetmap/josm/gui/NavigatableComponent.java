@@ -496,7 +496,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                         try {
                             Thread.sleep(1000 / fps);
                         } catch (InterruptedException ex) {
-                            Main.warn(ex);
+                            Main.warn("InterruptedException in "+NavigatableComponent.class.getSimpleName()+" during smooth scrolling");
                         }
                     }
                 }

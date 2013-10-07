@@ -393,7 +393,7 @@ public class Utils {
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {
-                    Main.warn(ex);
+                    Main.warn("InterruptedException in "+Utils.class.getSimpleName()+" while getting clipboard content");
                 }
             }
         }

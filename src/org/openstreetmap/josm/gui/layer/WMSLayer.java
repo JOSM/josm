@@ -572,7 +572,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                     queueEmpty.await();
                     sortRequests(localOnly);
                 } catch (InterruptedException e) {
-                    // Shouldn't happen
+                    Main.warn("InterruptedException in "+getClass().getSimpleName()+" during WMS request");
                 }
             }
 
@@ -929,8 +929,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
                 try {
                     t.join();
                 } catch (InterruptedException e) {
-                    // Shouldn't happen
-                    e.printStackTrace();
+                    Main.warn("InterruptedException in "+getClass().getSimpleName()+" while cancelling grabber threads");
                 }
             }
         }
