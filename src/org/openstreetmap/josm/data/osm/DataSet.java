@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -431,7 +432,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         }
     }
 
-    private LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
+    private Set<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
     private Collection<OsmPrimitive> selectionSnapshot;
 
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {

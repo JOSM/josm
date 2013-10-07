@@ -138,7 +138,7 @@ public class TagCollection implements Iterable<Tag> {
         return tags;
     }
 
-    private final HashSet<Tag> tags = new HashSet<Tag>();
+    private final Set<Tag> tags = new HashSet<Tag>();
 
     /**
      * Creates an empty tag collection

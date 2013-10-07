@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,8 +74,8 @@ public class Version {
     private String buildName;
     private boolean isLocalBuild;
 
-    protected HashMap<String, String> parseManifestStyleFormattedString(String content) {
-        HashMap<String, String> properties = new HashMap<String, String>();
+    protected Map<String, String> parseManifestStyleFormattedString(String content) {
+        Map<String, String> properties = new HashMap<String, String>();
         if (content == null) return properties;
         Pattern p = Pattern.compile("^([^:]+):(.*)$");
         for (String line: content.split("\n")) {
@@ -105,7 +106,7 @@ public class Version {
             return;
         }
 
-        HashMap<String, String> properties = parseManifestStyleFormattedString(revisionInfo);
+        Map<String, String> properties = parseManifestStyleFormattedString(revisionInfo);
         String value = properties.get("Revision");
         if (value != null) {
             value = value.trim();

@@ -30,7 +30,7 @@ import javax.swing.table.AbstractTableModel;
 public class AutoCompletionList extends AbstractTableModel {
 
     /** the bare list of AutoCompletionItems */
-    private ArrayList<AutoCompletionListItem> list = null;
+    private List<AutoCompletionListItem> list = null;
     /**  the filtered list of AutoCompletionItems */
     private ArrayList<AutoCompletionListItem> filtered = null;
     /** the filter expression */

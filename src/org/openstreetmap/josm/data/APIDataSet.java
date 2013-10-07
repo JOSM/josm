@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -34,9 +35,9 @@ import org.openstreetmap.josm.tools.Utils;
  *
  */
 public class APIDataSet {
-    private LinkedList<OsmPrimitive> toAdd;
-    private LinkedList<OsmPrimitive> toUpdate;
-    private LinkedList<OsmPrimitive> toDelete;
+    private List<OsmPrimitive> toAdd;
+    private List<OsmPrimitive> toUpdate;
+    private List<OsmPrimitive> toDelete;
 
     /**
      * creates a new empty data set
@@ -266,7 +267,7 @@ public class APIDataSet {
      *
      */
     private static class RelationUploadDependencyGraph {
-        private HashMap<Relation, Set<Relation>> children;
+        private Map<Relation, Set<Relation>> children;
         private Collection<Relation> relations;
         private Set<Relation> visited;
         private List<Relation> uploadOrder;

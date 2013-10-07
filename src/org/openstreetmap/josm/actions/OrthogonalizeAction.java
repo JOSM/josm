@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -70,7 +71,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Remember movements, so the user can later undo it for certain nodes
      */
-    private static final HashMap<Node, EastNorth> rememberMovements = new HashMap<Node, EastNorth>();
+    private static final Map<Node, EastNorth> rememberMovements = new HashMap<Node, EastNorth>();
 
     /**
      * Undo the previous orthogonalization for certain nodes.
