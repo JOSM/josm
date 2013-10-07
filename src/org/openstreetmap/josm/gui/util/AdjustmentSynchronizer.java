@@ -10,6 +10,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -25,8 +27,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class AdjustmentSynchronizer implements AdjustmentListener {
 
-    private final  ArrayList<Adjustable> synchronizedAdjustables;
-    private final  HashMap<Adjustable, Boolean> enabledMap;
+    private final List<Adjustable> synchronizedAdjustables;
+    private final Map<Adjustable, Boolean> enabledMap;
 
     private final Observable observable;
 

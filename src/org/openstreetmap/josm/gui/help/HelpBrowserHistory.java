@@ -3,11 +3,12 @@ package org.openstreetmap.josm.gui.help;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Observable;
 
 public class HelpBrowserHistory extends Observable {
     private HelpBrowser browser;
-    private ArrayList<String> history;
+    private List<String> history;
     private int historyPos = 0;
 
     public HelpBrowserHistory(HelpBrowser browser) {

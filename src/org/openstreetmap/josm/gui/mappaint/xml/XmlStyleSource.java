@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -33,14 +34,14 @@ import org.xml.sax.SAXParseException;
 
 public class XmlStyleSource extends StyleSource implements StyleKeys {
 
-    protected final HashMap<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
-    protected final HashMap<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
-    protected final HashMap<String, LinemodPrototype> modifiers = new HashMap<String, LinemodPrototype>();
-    protected final HashMap<String, AreaPrototype> areas = new HashMap<String, AreaPrototype>();
-    protected final LinkedList<IconPrototype> iconsList = new LinkedList<IconPrototype>();
-    protected final LinkedList<LinePrototype> linesList = new LinkedList<LinePrototype>();
-    protected final LinkedList<LinemodPrototype> modifiersList = new LinkedList<LinemodPrototype>();
-    protected final LinkedList<AreaPrototype> areasList = new LinkedList<AreaPrototype>();
+    protected final Map<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
+    protected final Map<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
+    protected final Map<String, LinemodPrototype> modifiers = new HashMap<String, LinemodPrototype>();
+    protected final Map<String, AreaPrototype> areas = new HashMap<String, AreaPrototype>();
+    protected final List<IconPrototype> iconsList = new LinkedList<IconPrototype>();
+    protected final List<LinePrototype> linesList = new LinkedList<LinePrototype>();
+    protected final List<LinemodPrototype> modifiersList = new LinkedList<LinemodPrototype>();
+    protected final List<AreaPrototype> areasList = new LinkedList<AreaPrototype>();
 
     public XmlStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);

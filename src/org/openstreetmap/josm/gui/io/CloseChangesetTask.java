@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.SwingUtilities;
 
@@ -25,7 +26,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
     private boolean canceled;
     private Exception lastException;
     private Collection<Changeset> changesets;
-    private ArrayList<Changeset> closedChangesets;
+    private List<Changeset> closedChangesets;
 
     /**
      * Closes all changesets in <code>changesets</code> if they are not null, if they

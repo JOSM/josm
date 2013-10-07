@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions.mapmode;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
@@ -17,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -39,7 +41,6 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Geometry;
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -121,7 +122,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     private WaySegment referenceSegment;
     private ParallelWays pWays;
-    private LinkedHashSet<Way> sourceWays;
+    private Set<Way> sourceWays;
     private EastNorth helperLineStart;
     private EastNorth helperLineEnd;
 

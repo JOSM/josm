@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -34,7 +35,7 @@ public class ImportImagesAction extends AbstractAction {
         HelpAwareOptionPane.showOptionDialog(Main.parent, msg, tr("Import not possible"), JOptionPane.WARNING_MESSAGE, ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer"));
     }
 
-    private void addRecursiveFiles(LinkedList<File> files, File[] sel) {
+    private void addRecursiveFiles(List<File> files, File[] sel) {
         for (File f : sel) {
             if (f.isDirectory()) {
                 addRecursiveFiles(files, f.listFiles());

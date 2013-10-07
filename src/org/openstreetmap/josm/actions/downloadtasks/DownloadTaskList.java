@@ -140,7 +140,7 @@ public class DownloadTaskList {
      * @param potentiallyDeleted a set of ids to check update from the server
      */
     protected void updatePotentiallyDeletedPrimitives(Set<OsmPrimitive> potentiallyDeleted) {
-        final ArrayList<OsmPrimitive> toSelect = new ArrayList<OsmPrimitive>();
+        final List<OsmPrimitive> toSelect = new ArrayList<OsmPrimitive>();
         for (OsmPrimitive primitive : potentiallyDeleted) {
             if (primitive != null) {
                 toSelect.add(primitive);

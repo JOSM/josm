@@ -78,7 +78,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
      */
     static class ExistingValues {
         String tag;
-        HashMap<String, Integer> valueCount;
+        Map<String, Integer> valueCount;
         public ExistingValues(String tag) {
             this.tag=tag; valueCount=new HashMap<String, Integer>();
         }

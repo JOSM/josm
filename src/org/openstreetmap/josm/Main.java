@@ -1046,7 +1046,7 @@ abstract public class Main {
      * explicitly removing the listeners and allows us to transparently register every
      * created dataset as projection change listener.
      */
-    private static final ArrayList<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<WeakReference<ProjectionChangeListener>>();
+    private static final List<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<WeakReference<ProjectionChangeListener>>();
 
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if (newValue == null ^ oldValue == null
@@ -1126,7 +1126,7 @@ abstract public class Main {
         void fromOtherApplication();
     }
 
-    private static final ArrayList<WeakReference<WindowSwitchListener>> windowSwitchListeners = new ArrayList<WeakReference<WindowSwitchListener>>();
+    private static final List<WeakReference<WindowSwitchListener>> windowSwitchListeners = new ArrayList<WeakReference<WindowSwitchListener>>();
 
     /**
      * Register a window switch listener.

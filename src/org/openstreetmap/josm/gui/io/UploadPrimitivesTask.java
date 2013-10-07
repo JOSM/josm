@@ -9,6 +9,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -49,7 +50,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
     private OsmServerWriter writer;
     private OsmDataLayer layer;
     private Changeset changeset;
-    private HashSet<IPrimitive> processedPrimitives;
+    private Set<IPrimitive> processedPrimitives;
     private UploadStrategySpecification strategy;
 
     /**

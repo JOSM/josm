@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -29,7 +30,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
     public final static Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
 
-    private HashMap<OsmPrimitiveType, ImageIcon> icons;
+    private Map<OsmPrimitiveType, ImageIcon> icons;
 
     public RelationMemberListTableCellRenderer(){
         setOpaque(true);

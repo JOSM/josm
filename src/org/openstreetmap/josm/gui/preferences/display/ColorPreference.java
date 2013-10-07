@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -59,7 +60,7 @@ public class ColorPreference implements SubPreferenceSetting {
 
     private DefaultTableModel tableModel;
     private JTable colors;
-    private ArrayList<String> del = new ArrayList<String>();
+    private List<String> del = new ArrayList<String>();
 
     JButton colorEdit;
     JButton defaultSet;

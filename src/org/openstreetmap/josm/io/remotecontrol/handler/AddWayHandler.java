@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -22,7 +23,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
-import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 
 /**
  * Adds a way to the current dataset. For instance, {@code /add_way?way=lat1,lon2;lat2,lon2}.
@@ -39,7 +39,7 @@ public class AddWayHandler extends RequestHandler {
     /**
      * The place to remeber already added nodes (they are reused if needed @since 5845
      */
-    HashMap<LatLon, Node> addedNodes;
+    Map<LatLon, Node> addedNodes;
 
     @Override
     public String[] getMandatoryParams() {

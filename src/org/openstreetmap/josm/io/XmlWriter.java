@@ -5,6 +5,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Helper class to use for xml outputting classes.
@@ -64,7 +65,7 @@ public class XmlWriter implements Closeable {
     /**
      * The output writer to save the values to.
      */
-    final private static HashMap<Character, String> encoding = new HashMap<Character, String>();
+    private static final Map<Character, String> encoding = new HashMap<Character, String>();
     static {
         encoding.put('<', "&lt;");
         encoding.put('>', "&gt;");

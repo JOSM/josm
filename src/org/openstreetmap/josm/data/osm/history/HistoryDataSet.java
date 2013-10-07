@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.history;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.Main;
@@ -86,7 +87,7 @@ public class HistoryDataSet implements LayerChangeListener{
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected, got {1}", "version", version));
 
         SimplePrimitiveId pid = new SimplePrimitiveId(id, type);
-        ArrayList<HistoryOsmPrimitive> versions = data.get(pid);
+        List<HistoryOsmPrimitive> versions = data.get(pid);
         if (versions == null)
             return null;
         for (HistoryOsmPrimitive primitive: versions) {
@@ -140,7 +141,7 @@ public class HistoryDataSet implements LayerChangeListener{
      */
     public History getHistory(PrimitiveId pid) throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(pid, "pid");
-        ArrayList<HistoryOsmPrimitive> versions = data.get(pid);
+        List<HistoryOsmPrimitive> versions = data.get(pid);
         if (versions == null)
             return null;
         return new History(pid.getUniqueId(), pid.getType(), versions);

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -153,7 +154,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         TMSLayer.loaderFactory = loaderFactory;
     }
 
-    HashSet<Tile> tileRequestsOutstanding = new HashSet<Tile>();
+    private Set<Tile> tileRequestsOutstanding = new HashSet<Tile>();
+    
     @Override
     public synchronized void tileLoadingFinished(Tile tile, boolean success) {
         if (tile.hasError()) {

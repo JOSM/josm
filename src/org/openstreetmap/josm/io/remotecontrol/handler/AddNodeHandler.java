@@ -4,7 +4,7 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -73,7 +73,7 @@ public class AddNodeHandler extends RequestHandler {
      * Adds a node, implements the GET /add_node?lon=...&amp;lat=... request.
      * @param args
      */
-    private void addNode(HashMap<String, String> args){
+    private void addNode(Map<String, String> args){
 
         // Parse the arguments
         Main.info("Adding node at (" + lat + ", " + lon + ")");

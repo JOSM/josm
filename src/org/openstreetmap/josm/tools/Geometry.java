@@ -50,7 +50,7 @@ public class Geometry {
 
         int n = ways.size();
         @SuppressWarnings("unchecked")
-        ArrayList<Node>[] newNodes = new ArrayList[n];
+        List<Node>[] newNodes = new ArrayList[n];
         BBox[] wayBounds = new BBox[n];
         boolean[] changedWays = new boolean[n];
 
@@ -73,8 +73,8 @@ public class Geometry {
                     continue;
                 }
 
-                ArrayList<Node> way1Nodes = newNodes[seg1Way];
-                ArrayList<Node> way2Nodes = newNodes[seg2Way];
+                List<Node> way1Nodes = newNodes[seg1Way];
+                List<Node> way2Nodes = newNodes[seg2Way];
 
                 //iterate over primary segmemt
                 for (int seg1Pos = 0; seg1Pos + 1 < way1Nodes.size(); seg1Pos ++) {
@@ -194,10 +194,10 @@ public class Geometry {
         return intersectionNodes;
     }
 
-    private static BBox getNodesBounds(ArrayList<Node> nodes) {
+    private static BBox getNodesBounds(List<Node> nodes) {
 
         BBox bounds = new BBox(nodes.get(0));
-        for(Node n: nodes) {
+        for (Node n: nodes) {
             bounds.add(n.getCoor());
         }
         return bounds;

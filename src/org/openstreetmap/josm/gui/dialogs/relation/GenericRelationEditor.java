@@ -647,7 +647,7 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      */
     protected void cleanSelfReferences() {
-        ArrayList<OsmPrimitive> toCheck = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> toCheck = new ArrayList<OsmPrimitive>();
         toCheck.add(getRelation());
         if (memberTableModel.hasMembersReferringTo(toCheck)) {
             int ret = ConditionalOptionPaneUtil.showOptionDialog(
@@ -768,7 +768,7 @@ public class GenericRelationEditor extends RelationEditor  {
         protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {
             if (primitives == null || primitives.isEmpty())
                 return primitives;
-            ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
             for (OsmPrimitive primitive : primitives) {
                 if (primitive instanceof Relation && getRelation() != null && getRelation().equals(primitive)) {
                     warnOfCircularReferences(primitive);

@@ -20,9 +20,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class StyleCache {
     /* list of boundaries for the scale ranges */
-    ArrayList<Double> bd;
+    private final List<Double> bd;
     /* styles for each scale range */
-    ArrayList<StyleList> data;
+    private final List<StyleList> data;
 
     private final static Storage<StyleCache> internPool = new Storage<StyleCache>(); // TODO: clean up the intern pool from time to time (after purge or layer removal)
 

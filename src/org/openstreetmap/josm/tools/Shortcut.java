@@ -155,7 +155,7 @@ public class Shortcut {
 
     // create a shortcut object from an string as saved in the preferences
     private Shortcut(String prefString) {
-        ArrayList<String> s = (new ArrayList<String>(Main.pref.getCollection(prefString)));
+        List<String> s = (new ArrayList<String>(Main.pref.getCollection(prefString)));
         this.shortText = prefString.substring(15);
         this.longText = s.get(0);
         this.requestedKey = Integer.parseInt(s.get(1));

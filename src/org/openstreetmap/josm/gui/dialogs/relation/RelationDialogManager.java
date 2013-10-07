@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.osm.Relation;
@@ -91,7 +92,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     }
 
     /** the map of open dialogs */
-    private final HashMap<DialogContext, RelationEditor> openDialogs;
+    private final Map<DialogContext, RelationEditor> openDialogs;
 
     /**
      * constructor

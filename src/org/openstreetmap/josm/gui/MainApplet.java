@@ -37,6 +37,9 @@ public class MainApplet extends JApplet {
     final static JFrame frame = new JFrame("Java OpenStreetMap Editor");
 
     public static final class UploadPreferencesAction extends JosmAction {
+        /**
+         * Constructs a new {@code UploadPreferencesAction}.
+         */
         public UploadPreferencesAction() {
             super(tr("Upload Preferences"), "upload-preferences", tr("Upload the current preferences to the server"),
                     Shortcut.registerShortcut("applet:uploadprefs", tr("Upload Preferences"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), true);

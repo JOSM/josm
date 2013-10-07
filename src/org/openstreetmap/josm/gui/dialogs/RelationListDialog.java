@@ -381,8 +381,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      *
      */
     private class RelationListModel extends AbstractListModel {
-        private final ArrayList<Relation> relations = new ArrayList<Relation>();
-        private ArrayList<Relation> filteredRelations;
+        private final List<Relation> relations = new ArrayList<Relation>();
+        private List<Relation> filteredRelations;
         private DefaultListSelectionModel selectionModel;
         private SearchCompiler.Match filter;
 
@@ -537,7 +537,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
          * @return the list of selected, non-new relations.
          */
         public List<Relation> getSelectedRelations() {
-            ArrayList<Relation> ret = new ArrayList<Relation>();
+            List<Relation> ret = new ArrayList<Relation>();
             for (int i=0; i<getSize();i++) {
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;

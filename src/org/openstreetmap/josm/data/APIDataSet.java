@@ -332,7 +332,7 @@ public class APIDataSet {
             for (Relation relation: relations) {
                 visit(path, relation);
             }
-            ArrayList<Relation> ret = new ArrayList<Relation>(relations);
+            List<Relation> ret = new ArrayList<Relation>(relations);
             Collections.sort(
                     ret,
                     new Comparator<Relation>() {
