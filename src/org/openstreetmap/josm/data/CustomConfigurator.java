@@ -335,7 +335,7 @@ public class CustomConfigurator {
                 try { // proceed only after all other tasks were finished
                     while (busy) CustomConfigurator.class.wait();
                 } catch (InterruptedException ex) {
-                    Main.warn(ex);
+                    Main.warn("InterruptedException while reading local plugin information");
                 }
 
                 SwingUtilities.invokeLater(new Runnable() {

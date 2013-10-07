@@ -69,7 +69,7 @@ public class ThumbsLoader implements Runnable {
         try {
             tracker.waitForID(0);
         } catch (InterruptedException e) {
-            Main.error(" InterruptedException");
+            Main.error(" InterruptedException while loading thumb");
             return null;
         }
         if (tracker.isErrorID(1) || img.getWidth(null) <= 0 || img.getHeight(null) <= 0) {
@@ -85,7 +85,7 @@ public class ThumbsLoader implements Runnable {
             try {
                 Thread.sleep(10);
             } catch(InterruptedException ie) {
-                Main.warn(ie);
+                Main.warn("InterruptedException while drawing thumb");
             }
         }
         g.dispose();
