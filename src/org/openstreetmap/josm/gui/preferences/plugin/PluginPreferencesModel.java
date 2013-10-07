@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -20,13 +21,16 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
 public class PluginPreferencesModel extends Observable{
-    private final ArrayList<PluginInformation> availablePlugins = new ArrayList<PluginInformation>();
-    private final ArrayList<PluginInformation> displayedPlugins = new ArrayList<PluginInformation>();
-    private final HashMap<PluginInformation, Boolean> selectedPluginsMap = new HashMap<PluginInformation, Boolean>();
+    private final List<PluginInformation> availablePlugins = new ArrayList<PluginInformation>();
+    private final List<PluginInformation> displayedPlugins = new ArrayList<PluginInformation>();
+    private final Map<PluginInformation, Boolean> selectedPluginsMap = new HashMap<PluginInformation, Boolean>();
     private Set<String> pendingDownloads = new HashSet<String>();
     private String filterExpression;
     private Set<String> currentActivePlugins;
 
+    /**
+     * Constructs a new {@code PluginPreferencesModel}.
+     */
     public PluginPreferencesModel() {
         currentActivePlugins = new HashSet<String>();
         currentActivePlugins.addAll(Main.pref.getCollection("plugins", currentActivePlugins));

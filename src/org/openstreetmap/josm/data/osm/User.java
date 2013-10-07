@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openstreetmap.josm.tools.Utils;
@@ -27,7 +29,7 @@ public class User {
     /**
      * the map of known users
      */
-    private static HashMap<Long,User> userMap = new HashMap<Long,User>();
+    private static Map<Long,User> userMap = new HashMap<Long,User>();
     private final static User anonymous = createLocalUser(tr("<anonymous>"));
 
     private static long getNextLocalUid() {
@@ -117,7 +119,7 @@ public class User {
     }
 
     /** the user name */
-    private final HashSet<String> names = new HashSet<String>();
+    private final Set<String> names = new HashSet<String>();
     /** the user id */
     private final long uid;
 

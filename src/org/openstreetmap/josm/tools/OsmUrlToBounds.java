@@ -102,7 +102,7 @@ public class OsmUrlToBounds {
         }
     }
 
-    private static double parseDouble(HashMap<String, String> map, String key) {
+    private static double parseDouble(Map<String, String> map, String key) {
         if (map.containsKey(key))
             return Double.parseDouble(map.get(key));
         return Double.parseDouble(map.get("m"+key));

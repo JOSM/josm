@@ -1541,50 +1541,53 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private LinkedList<CursorInfo> Cursors = new LinkedList<CursorInfo>();
+    private LinkedList<CursorInfo> cursors = new LinkedList<CursorInfo>();
+    
     /**
      * Set new cursor.
      */
     public void setNewCursor(Cursor cursor, Object reference) {
-        if(!Cursors.isEmpty()) {
-            CursorInfo l = Cursors.getLast();
+        if (!cursors.isEmpty()) {
+            CursorInfo l = cursors.getLast();
             if(l != null && l.cursor == cursor && l.object == reference)
                 return;
             stripCursors(reference);
         }
-        Cursors.add(new CursorInfo(cursor, reference));
+        cursors.add(new CursorInfo(cursor, reference));
         setCursor(cursor);
     }
+    
     public void setNewCursor(int cursor, Object reference) {
         setNewCursor(Cursor.getPredefinedCursor(cursor), reference);
     }
+    
     /**
      * Remove the new cursor and reset to previous
      */
     public void resetCursor(Object reference) {
-        if(Cursors.isEmpty()) {
+        if (cursors.isEmpty()) {
             setCursor(null);
             return;
         }
-        CursorInfo l = Cursors.getLast();
+        CursorInfo l = cursors.getLast();
         stripCursors(reference);
-        if(l != null && l.object == reference) {
-            if(Cursors.isEmpty()) {
+        if (l != null && l.object == reference) {
+            if (cursors.isEmpty()) {
                 setCursor(null);
             } else {
-                setCursor(Cursors.getLast().cursor);
+                setCursor(cursors.getLast().cursor);
             }
         }
     }
 
     private void stripCursors(Object reference) {
         LinkedList<CursorInfo> c = new LinkedList<CursorInfo>();
-        for(CursorInfo i : Cursors) {
+        for(CursorInfo i : cursors) {
             if(i.object != reference) {
                 c.add(i);
             }
         }
-        Cursors = c;
+        cursors = c;
     }
 
     @Override

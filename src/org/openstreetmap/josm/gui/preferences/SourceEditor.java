@@ -423,7 +423,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     protected static class AvailableSourcesListModel extends DefaultListModel {
-        private ArrayList<ExtendedSourceEntry> data;
+        private List<ExtendedSourceEntry> data;
         private DefaultListSelectionModel selectionModel;
 
         public AvailableSourcesListModel(DefaultListSelectionModel selectionModel) {

@@ -475,8 +475,8 @@ public class Preferences {
         return all;
     }
 
-    synchronized public TreeMap<String, String> getAllColors() {
-        final TreeMap<String,String> all = new TreeMap<String,String>();
+    synchronized public Map<String, String> getAllColors() {
+        final Map<String,String> all = new TreeMap<String,String>();
         for (final Entry<String,String> e : defaults.entrySet()) {
             if (e.getKey().startsWith("color.") && e.getValue() != null) {
                 all.put(e.getKey().substring(6), e.getValue());

@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.Main;
@@ -39,9 +40,12 @@ public class HistoryDataSet implements LayerChangeListener{
     }
 
     /** the history data */
-    private HashMap<PrimitiveId, ArrayList<HistoryOsmPrimitive>> data;
+    private Map<PrimitiveId, ArrayList<HistoryOsmPrimitive>> data;
     private CopyOnWriteArrayList<HistoryDataSetListener> listeners;
 
+    /**
+     * Constructs a new {@code HistoryDataSet}.
+     */
     public HistoryDataSet() {
         data = new HashMap<PrimitiveId, ArrayList<HistoryOsmPrimitive>>();
         listeners = new CopyOnWriteArrayList<HistoryDataSetListener>();

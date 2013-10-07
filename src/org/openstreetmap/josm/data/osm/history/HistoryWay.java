@@ -67,7 +67,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * @param nodeIdList the node ids (! null required)
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, ArrayList<Long> nodeIdList) throws IllegalArgumentException {
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, List<Long> nodeIdList) throws IllegalArgumentException {
         this(id, version, visible, user, changesetId, timestamp);
         CheckParameterUtil.ensureParameterNotNull(nodeIdList, "nodeIdList");
         this.nodeIds.addAll(nodeIdList);

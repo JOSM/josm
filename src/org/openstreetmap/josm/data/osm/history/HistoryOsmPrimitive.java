@@ -33,11 +33,12 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     private long changesetId;
     private Date timestamp;
     private long version;
-    private HashMap<String, String> tags;
+    private Map<String, String> tags;
 
     protected void ensurePositiveLong(long value, String name) {
-        if (value <= 0)
+        if (value <= 0) {
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", name, value));
+        }
     }
 
     /**

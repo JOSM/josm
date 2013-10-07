@@ -3,12 +3,13 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 
 /** Comparator, comparing by type and objects display names */
 public class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
-    final private HashMap<OsmPrimitive, String> cache= new HashMap<OsmPrimitive, String>();
+    final private Map<OsmPrimitive, String> cache= new HashMap<OsmPrimitive, String>();
     final private DefaultNameFormatter df = DefaultNameFormatter.getInstance();
     public boolean relationsFirst = false;
 
