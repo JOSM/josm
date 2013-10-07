@@ -57,7 +57,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
     private boolean full;
     private OsmDataLayer layer;
     private Relation child;
-    private ArrayList<Relation> parents;
+    private List<Relation> parents;
     private Runnable continuation;
 
     /**

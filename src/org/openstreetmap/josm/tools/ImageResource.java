@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 
@@ -23,7 +24,7 @@ class ImageResource {
     /**
      * Caches the image data for resized versions of the same image.
      */
-    private HashMap<Dimension, Image> imgCache = new HashMap<Dimension, Image>();
+    private Map<Dimension, Image> imgCache = new HashMap<Dimension, Image>();
     private SVGDiagram svg;
     public static final Dimension DEFAULT_DIMENSION = new Dimension(-1, -1);
 

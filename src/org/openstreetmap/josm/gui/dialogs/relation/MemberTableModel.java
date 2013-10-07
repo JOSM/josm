@@ -386,7 +386,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     protected List<Integer> getSelectedIndices() {
-        ArrayList<Integer> selectedIndices = new ArrayList<Integer>();
+        List<Integer> selectedIndices = new ArrayList<Integer>();
         for (int i = 0; i < members.size(); i++) {
             if (getSelectionModel().isSelectedIndex(i)) {
                 selectedIndices.add(i);
@@ -470,7 +470,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @return a collection with the currently selected relation members
      */
     public Collection<RelationMember> getSelectedMembers() {
-        ArrayList<RelationMember> selectedMembers = new ArrayList<RelationMember>();
+        List<RelationMember> selectedMembers = new ArrayList<RelationMember>();
         for (int i : getSelectedIndices()) {
             selectedMembers.add(members.get(i));
         }
@@ -720,7 +720,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         } else {
             Collections.reverse(selectedIndicesReversed);
 
-            ArrayList<RelationMember> newMembers = new ArrayList<RelationMember>(members);
+            List<RelationMember> newMembers = new ArrayList<RelationMember>(members);
 
             for (int i=0; i < selectedIndices.size(); i++) {
                 newMembers.set(selectedIndices.get(i), members.get(selectedIndicesReversed.get(i)));

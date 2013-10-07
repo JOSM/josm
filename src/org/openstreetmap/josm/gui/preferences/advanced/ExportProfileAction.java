@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -36,7 +37,7 @@ public class ExportProfileAction extends AbstractAction {
     
     @Override
     public void actionPerformed(ActionEvent ae) {
-        ArrayList<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<String>();
         Map<String, Setting> all = prefs.getAllSettings();
         for (String key: all.keySet()) {
             if (key.matches(prefPattern)) {

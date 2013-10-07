@@ -135,7 +135,7 @@ public class User {
      *
      * @return list of names
      */
-    public ArrayList<String> getNames() {
+    public List<String> getNames() {
         return new ArrayList<String>(names);
     }
 

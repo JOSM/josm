@@ -9,6 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -30,7 +31,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     static public final String RELATION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".relationSnapshot";
 
     /** the list of registered relation editor classes */
-    private static ArrayList<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
+    private static List<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
 
     /**
      * Registers a relation editor class. Depending on the type of relation to be edited

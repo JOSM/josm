@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +54,7 @@ public class OsmReader extends AbstractReader {
     protected boolean cancel;
 
     /** Used by plugins to register themselves as data postprocessors. */
-    public static ArrayList<OsmServerReadPostprocessor> postprocessors;
+    public static List<OsmServerReadPostprocessor> postprocessors;
 
     /** register a new postprocessor */
     public static void registerPostprocessor(OsmServerReadPostprocessor pp) {

@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
@@ -116,7 +117,7 @@ public abstract class AbstractInfoAction extends JosmAction {
     }
 
     protected void launchInfoBrowsersForSelectedPrimitives() {
-        ArrayList<OsmPrimitive> primitivesToShow = new ArrayList<OsmPrimitive>(getCurrentDataSet().getAllSelected());
+        List<OsmPrimitive> primitivesToShow = new ArrayList<OsmPrimitive>(getCurrentDataSet().getAllSelected());
 
         // filter out new primitives which are not yet uploaded to the server
         //

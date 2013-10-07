@@ -48,7 +48,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     static private DefaultNameFormatter instance;
 
-    private static final LinkedList<NameFormatterHook> formatHooks = new LinkedList<NameFormatterHook>();
+    private static final List<NameFormatterHook> formatHooks = new LinkedList<NameFormatterHook>();
 
     /**
      * Replies the unique instance of this formatter
@@ -506,7 +506,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         sb.append("<strong>id</strong>=")
         .append(primitive.getId())
         .append("<br>");
-        ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
+        List<String> keyList = new ArrayList<String>(primitive.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
             if (i > 0) {
@@ -679,7 +679,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         sb.append("<strong>id</strong>=")
         .append(primitive.getId())
         .append("<br>");
-        ArrayList<String> keyList = new ArrayList<String>(primitive.getTags().keySet());
+        List<String> keyList = new ArrayList<String>(primitive.getTags().keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
             if (i > 0) {

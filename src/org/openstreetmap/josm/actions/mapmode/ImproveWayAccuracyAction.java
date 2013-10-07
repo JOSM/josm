@@ -612,8 +612,8 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
      *
      */
     private void updateStateByCurrentSelection() {
-        final ArrayList<Node> nodeList = new ArrayList<Node>();
-        final ArrayList<Way> wayList = new ArrayList<Way>();
+        final List<Node> nodeList = new ArrayList<Node>();
+        final List<Way> wayList = new ArrayList<Way>();
         final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         // Collecting nodes and ways from the selection

@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
@@ -101,7 +102,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
      *
      */
     public void hideAll() {
-        ArrayList<HistoryBrowserDialog> dialogs = new ArrayList<HistoryBrowserDialog>();
+        List<HistoryBrowserDialog> dialogs = new ArrayList<HistoryBrowserDialog>();
         dialogs.addAll(this.dialogs.values());
         for (HistoryBrowserDialog dialog: dialogs) {
             dialog.unlinkAsListener();

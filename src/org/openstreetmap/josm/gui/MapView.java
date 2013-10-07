@@ -209,7 +209,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      */
     public MouseEvent lastMEvent = new MouseEvent(this, 0, 0, 0, 0, 0, 0, false); // In case somebody reads it before first mouse move
 
-    private final LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
+    private final List<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
 
     private BufferedImage nonChangedLayersBuffer;
     private BufferedImage offscreenBuffer;
@@ -499,7 +499,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * first, layer with the highest Z-Order last.
      */
     protected List<Layer> getVisibleLayersInZOrder() {
-        ArrayList<Layer> ret = new ArrayList<Layer>();
+        List<Layer> ret = new ArrayList<Layer>();
         for (Layer l: layers) {
             if (l.isVisible()) {
                 ret.add(l);
@@ -733,7 +733,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @return an unmodifiable list of layers of a certain type.
      */
     public <T> List<T>  getLayersOfType(Class<T> ofType) {
-        ArrayList<T> ret = new ArrayList<T>();
+        List<T> ret = new ArrayList<T>();
         for (Layer layer : getAllLayersAsList()) {
             if (ofType.isInstance(layer)) {
                 ret.add(ofType.cast(layer));

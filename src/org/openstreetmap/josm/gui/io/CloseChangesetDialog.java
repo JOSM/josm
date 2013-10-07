@@ -12,6 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -213,7 +214,7 @@ public class CloseChangesetDialog extends JDialog {
      */
     public Collection<Changeset> getSelectedChangesets() {
         Object [] sel = lstOpenChangesets.getSelectedValues();
-        ArrayList<Changeset> ret = new ArrayList<Changeset>(sel.length);
+        List<Changeset> ret = new ArrayList<Changeset>(sel.length);
         for (Object o: sel) {
             ret.add((Changeset)o);
         }

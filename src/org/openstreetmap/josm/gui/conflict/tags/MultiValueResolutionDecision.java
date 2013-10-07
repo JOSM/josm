@@ -147,7 +147,7 @@ public class MultiValueResolutionDecision {
      * @return the list of possible, non empty values
      */
     public List<String> getValues() {
-        ArrayList<String> ret = new ArrayList<String>(tags.getValues());
+        List<String> ret = new ArrayList<String>(tags.getValues());
         ret.remove("");
         ret.remove(null);
         Collections.sort(ret);

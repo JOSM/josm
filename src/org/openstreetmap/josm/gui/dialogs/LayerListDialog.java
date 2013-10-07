@@ -1204,7 +1204,7 @@ public class LayerListDialog extends ToggleDialog {
          * be empty.
          */
         public List<Layer> getSelectedLayers() {
-            ArrayList<Layer> selected = new ArrayList<Layer>();
+            List<Layer> selected = new ArrayList<Layer>();
             for (int i=0; i<getLayers().size(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     selected.add(getLayers().get(i));
@@ -1221,7 +1221,7 @@ public class LayerListDialog extends ToggleDialog {
          * but may be empty.
          */
         public List<Integer> getSelectedRows() {
-            ArrayList<Integer> selected = new ArrayList<Integer>();
+            List<Integer> selected = new ArrayList<Integer>();
             for (int i=0; i<getLayers().size();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     selected.add(i);
@@ -1381,7 +1381,7 @@ public class LayerListDialog extends ToggleDialog {
          * for <code>source</code>. Never null, but can be empty.
          */
         public List<Layer> getPossibleMergeTargets(Layer source) {
-            ArrayList<Layer> targets = new ArrayList<Layer>();
+            List<Layer> targets = new ArrayList<Layer>();
             if (source == null)
                 return targets;
             for (Layer target : getLayers()) {

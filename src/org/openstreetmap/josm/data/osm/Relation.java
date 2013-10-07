@@ -366,7 +366,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
         boolean locked = writeLock();
         try {
-            ArrayList<RelationMember> todelete = new ArrayList<RelationMember>();
+            List<RelationMember> todelete = new ArrayList<RelationMember>();
             for (RelationMember member: members) {
                 if (primitives.contains(member.getMember())) {
                     todelete.add(member);

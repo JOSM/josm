@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 
 import javax.swing.JTable;
@@ -552,7 +553,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      */
     public class TagTableModel extends AbstractTableModel {
 
-        private ArrayList<String> keys;
+        private List<String> keys;
         private PointInTimeType pointInTimeType;
 
         protected void initKeyList() {

@@ -36,7 +36,7 @@ public class OsmServerWriter {
      */
     private Collection<IPrimitive> processed;
 
-    private static ArrayList<OsmServerWritePostprocessor> postprocessors;
+    private static List<OsmServerWritePostprocessor> postprocessors;
     public static void registerPostprocessor(OsmServerWritePostprocessor pp) {
         if (postprocessors == null) {
             postprocessors = new ArrayList<OsmServerWritePostprocessor>();

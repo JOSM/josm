@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 
@@ -372,7 +373,7 @@ public class PrefJPanel extends JPanel {
                 } else {
                     expr = expr.replace("+", "\\+");
                     // split search string on whitespace, do case-insensitive AND search
-                    ArrayList<RowFilter<Object, Object>> andFilters = new ArrayList<RowFilter<Object, Object>>();
+                    List<RowFilter<Object, Object>> andFilters = new ArrayList<RowFilter<Object, Object>>();
                     for (String word : expr.split("\\s+")) {
                         andFilters.add(RowFilter.regexFilter("(?i)" + word));
                     }

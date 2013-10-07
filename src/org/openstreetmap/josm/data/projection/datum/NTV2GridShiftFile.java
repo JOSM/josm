@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.openstreetmap.josm.tools.Utils;
 
@@ -165,7 +166,7 @@ public class NTV2GridShiftFile implements Serializable {
      */
     private NTV2SubGrid[] createSubGridTree(NTV2SubGrid[] subGrid) {
         int topLevelCount = 0;
-        HashMap<String, ArrayList<NTV2SubGrid>> subGridMap = new HashMap<String, ArrayList<NTV2SubGrid>>();
+        HashMap<String, List<NTV2SubGrid>> subGridMap = new HashMap<String, List<NTV2SubGrid>>();
         for (int i = 0; i < subGrid.length; i++) {
             if (subGrid[i].getParentSubGridName().equalsIgnoreCase("NONE")) {
                 topLevelCount++;
@@ -178,13 +179,13 @@ public class NTV2GridShiftFile implements Serializable {
             if (subGrid[i].getParentSubGridName().equalsIgnoreCase("NONE")) {
                 topLevelSubGrid[topLevelCount++] = subGrid[i];
             } else {
-                ArrayList<NTV2SubGrid> parent = subGridMap.get(subGrid[i].getParentSubGridName());
+                List<NTV2SubGrid> parent = subGridMap.get(subGrid[i].getParentSubGridName());
                 parent.add(subGrid[i]);
             }
         }
         NTV2SubGrid[] nullArray = new NTV2SubGrid[0];
         for (int i = 0; i < subGrid.length; i++) {
-            ArrayList<NTV2SubGrid> subSubGrids = subGridMap.get(subGrid[i].getSubGridName());
+            List<NTV2SubGrid> subSubGrids = subGridMap.get(subGrid[i].getSubGridName());
             if (!subSubGrids.isEmpty()) {
                 NTV2SubGrid[] subGridArray = subSubGrids.toArray(nullArray);
                 subGrid[i].setSubGridArray(subGridArray);

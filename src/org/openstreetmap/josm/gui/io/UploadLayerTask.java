@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
@@ -44,7 +45,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
     private ProgressMonitor monitor;
     private Changeset changeset;
     private Collection<OsmPrimitive> toUpload;
-    private HashSet<IPrimitive> processedPrimitives;
+    private Set<IPrimitive> processedPrimitives;
     private UploadStrategySpecification strategy;
 
     /**

@@ -9,14 +9,15 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
-import org.openstreetmap.josm.Main;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.PresetTextComparator;
 
 public class TaggingPresetMenu extends TaggingPreset {
@@ -79,7 +80,7 @@ public class TaggingPresetMenu extends TaggingPreset {
     public static void sortMenu(JMenu menu){
         Component[] items = menu.getMenuComponents();
         PresetTextComparator comp = new PresetTextComparator();
-        ArrayList<JMenuItem> sortarray = new ArrayList<JMenuItem>();
+        List<JMenuItem> sortarray = new ArrayList<JMenuItem>();
         int lastSeparator = 0;
         for (int i = 0; i < items.length; i++) {
             Object item = items[i];

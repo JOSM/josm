@@ -257,7 +257,7 @@ public class AutoCompletionList extends AbstractTableModel {
         return filtered.get(idx);
     }
 
-    ArrayList<AutoCompletionListItem> getList() {
+    List<AutoCompletionListItem> getList() {
         return list;
     }
 

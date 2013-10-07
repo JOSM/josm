@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +46,7 @@ public class BookmarkList extends JList {
         private Bounds area;
 
         public Bookmark(Collection<String> list) throws NumberFormatException, IllegalArgumentException {
-            ArrayList<String> array = new ArrayList<String>(list);
+            List<String> array = new ArrayList<String>(list);
             if(array.size() < 5)
                 throw new IllegalArgumentException(tr("Wrong number of arguments for bookmark"));
             name = array.get(0);

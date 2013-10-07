@@ -19,7 +19,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     /** this selection table model only displays selected primitives in this layer */
     private OsmDataLayer layer;
-    private ArrayList<OsmPrimitive> cache;
+    private List<OsmPrimitive> cache;
 
     /**
      * constructor

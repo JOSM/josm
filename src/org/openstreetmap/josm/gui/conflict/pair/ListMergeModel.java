@@ -73,7 +73,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
 
     private static final int MAX_DELETED_PRIMITIVE_IN_DIALOG = 5;
 
-    protected HashMap<ListRole, ArrayList<T>> entries;
+    protected Map<ListRole, ArrayList<T>> entries;
 
     protected EntriesTableModel myEntriesTableModel;
     protected EntriesTableModel theirEntriesTableModel;
@@ -692,7 +692,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
             return false;
         }
 
-        protected ArrayList<T> getEntries() {
+        protected List<T> getEntries() {
             return entries.get(role);
         }
 
@@ -701,7 +701,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
          *
          * @return the opposite list of entries
          */
-        protected ArrayList<T> getOppositeEntries() {
+        protected List<T> getOppositeEntries() {
             ListRole opposite = getComparePairListModel().getSelectedComparePair().getOppositeRole(role);
             return entries.get(opposite);
         }
@@ -737,7 +737,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      */
     protected class EntriesSelectionModel extends DefaultListSelectionModel {
-        private final ArrayList<T> entries;
+        private final List<T> entries;
 
         public EntriesSelectionModel(ArrayList<T> nodes) {
             this.entries = nodes;

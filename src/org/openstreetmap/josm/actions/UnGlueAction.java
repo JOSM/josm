@@ -296,7 +296,7 @@ public class UnGlueAction extends JosmAction {
         newNodes.add(newNode);
         cmds.add(new AddCommand(newNode));
 
-        ArrayList<Node> nn = new ArrayList<Node>();
+        List<Node> nn = new ArrayList<Node>();
         for (Node pushNode : w.getNodes()) {
             if (originalNode == pushNode) {
                 pushNode = newNode;

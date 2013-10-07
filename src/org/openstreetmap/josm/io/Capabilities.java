@@ -42,8 +42,11 @@ import org.openstreetmap.josm.Main;
 public class Capabilities {
 
     private HashMap<String, HashMap<String,String>> capabilities;
-    private ArrayList<String> imageryBlacklist;
+    private List<String> imageryBlacklist;
 
+    /**
+     * Constructs new {@code Capabilities}.
+     */
     public Capabilities() {
         clear();
     }

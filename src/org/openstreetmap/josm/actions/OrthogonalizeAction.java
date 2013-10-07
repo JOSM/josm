@@ -43,7 +43,7 @@ public final class OrthogonalizeAction extends JosmAction {
             "<h3>When one or more ways are selected, the shape is adjusted such, that all angles are 90 or 180 degrees.</h3>"+
             "You can add two nodes to the selection. Then, the direction is fixed by these two reference nodes. "+
             "(Afterwards, you can undo the movement for certain nodes:<br>"+
-    "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)");
+            "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)");
 
     /**
      * Constructor
@@ -143,8 +143,8 @@ public final class OrthogonalizeAction extends JosmAction {
                 return;
         }
 
-        final ArrayList<Node> nodeList = new ArrayList<Node>();
-        final ArrayList<WayData> wayDataList = new ArrayList<WayData>();
+        final List<Node> nodeList = new ArrayList<Node>();
+        final List<WayData> wayDataList = new ArrayList<WayData>();
         final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         try {
@@ -169,8 +169,8 @@ public final class OrthogonalizeAction extends JosmAction {
                         commands.addAll(orthogonalize(wayDataList, nodeList));
                     }
                     else if (nodeList.isEmpty()) {
-                        List<ArrayList<WayData>> groups = buildGroups(wayDataList);
-                        for (ArrayList<WayData> g: groups) {
+                        List<List<WayData>> groups = buildGroups(wayDataList);
+                        for (List<WayData> g: groups) {
                             commands.addAll(orthogonalize(g, nodeList));
                         }
                     } else
@@ -199,11 +199,11 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Collect groups of ways with common nodes in order to orthogonalize each group separately.
      */
-    private static List<ArrayList<WayData>> buildGroups(ArrayList<WayData> wayDataList) {
-        List<ArrayList<WayData>> groups = new ArrayList<ArrayList<WayData>>();
+    private static List<List<WayData>> buildGroups(List<WayData> wayDataList) {
+        List<List<WayData>> groups = new ArrayList<List<WayData>>();
         Set<WayData> remaining = new HashSet<WayData>(wayDataList);
         while (!remaining.isEmpty()) {
-            ArrayList<WayData> group = new ArrayList<WayData>();
+            List<WayData> group = new ArrayList<WayData>();
             groups.add(group);
             Iterator<WayData> it = remaining.iterator();
             WayData next = it.next();
@@ -246,9 +246,7 @@ public final class OrthogonalizeAction extends JosmAction {
      *  5. Rotate back.
      *
      **/
-    private static Collection<Command> orthogonalize(ArrayList<WayData> wayDataList, ArrayList<Node> headingNodes)
-    throws InvalidUserInputException
-    {
+    private static Collection<Command> orthogonalize(List<WayData> wayDataList, List<Node> headingNodes) throws InvalidUserInputException {
         // find average heading
         double headingAll;
         try {

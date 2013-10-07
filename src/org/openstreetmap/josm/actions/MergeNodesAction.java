@@ -197,7 +197,7 @@ public class MergeNodesAction extends JosmAction {
         Set<Way> waysToDelete = new HashSet<Way>();
 
         for (Way w: OsmPrimitive.getFilteredList(OsmPrimitive.getReferrer(nodesToDelete), Way.class)) {
-            ArrayList<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
+            List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
             for (Node n: w.getNodes()) {
                 if (! nodesToDelete.contains(n) && n != targetNode) {
                     newNodes.add(n);

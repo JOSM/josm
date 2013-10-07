@@ -375,20 +375,20 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 Collection<Command> commands = new ArrayList<Command>();
                 commands.add(new ChangePropertyCommand(sel, key, null));
                 if (value.equals(tr("<different>"))) {
-                    Map<String, ArrayList<OsmPrimitive>> map = new HashMap<String, ArrayList<OsmPrimitive>>();
+                    Map<String, List<OsmPrimitive>> map = new HashMap<String, List<OsmPrimitive>>();
                     for (OsmPrimitive osm: sel) {
                         String val = osm.get(key);
                         if (val != null) {
                             if (map.containsKey(val)) {
                                 map.get(val).add(osm);
                             } else {
-                                ArrayList<OsmPrimitive> v = new ArrayList<OsmPrimitive>();
+                                List<OsmPrimitive> v = new ArrayList<OsmPrimitive>();
                                 v.add(osm);
                                 map.put(val, v);
                             }
                         }
                     }
-                    for (Map.Entry<String, ArrayList<OsmPrimitive>> e: map.entrySet()) {
+                    for (Map.Entry<String, List<OsmPrimitive>> e: map.entrySet()) {
                         commands.add(new ChangePropertyCommand(e.getValue(), newkey, e.getKey()));
                     }
                 } else {

@@ -109,7 +109,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
 
     @Override
     public String[] allCodes() {
-        ArrayList<String> projections = new ArrayList<String>(60*4);
+        List<String> projections = new ArrayList<String>(60*4);
         for (int zone = 1;zone <= 60; zone++) {
             for (Hemisphere hemisphere : Hemisphere.values()) {
                 projections.add("EPSG:" + (32600 + zone + (hemisphere == Hemisphere.South?100:0)));

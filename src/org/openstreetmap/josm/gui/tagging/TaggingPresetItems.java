@@ -78,7 +78,7 @@ public final class TaggingPresetItems {
     /**
      * Last value of each key used in presets, used for prefilling corresponding fields
      */
-    private static final HashMap<String,String> lastValue = new HashMap<String,String>();
+    private static final Map<String,String> lastValue = new HashMap<String,String>();
 
     public static class PresetListEntry {
         public String value;

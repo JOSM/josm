@@ -61,6 +61,9 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
     protected ShowHistoryAction showHistoryAction;
     protected ReloadAction reloadAction;
 
+    /**
+     * Constructs a new {@code HistoryDialog}.
+     */
     public HistoryDialog() {
         super(tr("History"), "history", tr("Display the history of all selected items."),
                 Shortcut.registerShortcut("subwindow:history", tr("Toggle: {0}", tr("History")), KeyEvent.VK_H,
@@ -148,7 +151,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
      *
      */
     static class HistoryItemTableModel extends DefaultTableModel implements SelectionChangedListener{
-        private ArrayList<OsmPrimitive> data;
+        private List<OsmPrimitive> data;
         private DefaultListSelectionModel selectionModel;
 
         public HistoryItemTableModel(DefaultListSelectionModel selectionModel) {
@@ -174,7 +177,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         }
 
         protected List<OsmPrimitive> getSelectedPrimitives() {
-            ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
             for (int i=0; i< data.size(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     ret.add(data.get(i));
@@ -226,7 +229,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
 
         public List<OsmPrimitive> getPrimitives(int [] rows) {
             if (rows == null || rows.length == 0) return Collections.emptyList();
-            ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>(rows.length);
+            List<OsmPrimitive> ret = new ArrayList<OsmPrimitive>(rows.length);
             for (int row: rows) {
                 ret.add(data.get(row));
             }

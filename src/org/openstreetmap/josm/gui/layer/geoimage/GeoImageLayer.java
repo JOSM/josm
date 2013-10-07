@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -96,8 +97,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         private boolean canceled = false;
         private GeoImageLayer layer;
         private Collection<File> selection;
-        private HashSet<String> loadedDirectories = new HashSet<String>();
-        private LinkedHashSet<String> errorMessages;
+        private Set<String> loadedDirectories = new HashSet<String>();
+        private Set<String> errorMessages;
         private GpxLayer gpxLayer;
 
         protected void rememberError(String message) {
