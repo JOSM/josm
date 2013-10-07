@@ -9,12 +9,12 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -426,7 +426,7 @@ public class CombineWayAction extends JosmAction {
             return graph;
         }
 
-        static public NodeGraph createUndirectedGraphFromNodeWays(Collection<Way> ways) {
+        public static NodeGraph createUndirectedGraphFromNodeWays(Collection<Way> ways) {
             NodeGraph graph = new NodeGraph();
             for (Way w: ways) {
                 graph.add(buildNodePairs(w, false /* undirected */));
@@ -436,8 +436,8 @@ public class CombineWayAction extends JosmAction {
 
         private Set<NodePair> edges;
         private int numUndirectedEges = 0;
-        private HashMap<Node, List<NodePair>> successors;
-        private HashMap<Node, List<NodePair>> predecessors;
+        private Map<Node, List<NodePair>> successors;
+        private Map<Node, List<NodePair>> predecessors;
 
         protected void rememberSuccessor(NodePair pair) {
             if (successors.containsKey(pair.getA())) {

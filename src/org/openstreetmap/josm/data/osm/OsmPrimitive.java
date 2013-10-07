@@ -139,8 +139,8 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param type the type to filter for
      * @return the sub-set of OSM primitives of type <code>type</code>
      */
-    static public <T extends OsmPrimitive>  LinkedHashSet<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
-        LinkedHashSet<T> ret = new LinkedHashSet<T>();
+    static public <T extends OsmPrimitive> Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
+        Set<T> ret = new LinkedHashSet<T>();
         if (set != null) {
             for(OsmPrimitive p: set) {
                 if (type.isInstance(p)) {

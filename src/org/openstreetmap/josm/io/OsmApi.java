@@ -23,6 +23,7 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -74,7 +75,7 @@ public class OsmApi extends OsmConnection {
     static public final String DEFAULT_API_URL = "http://api.openstreetmap.org/api";
 
     // The collection of instantiated OSM APIs
-    private static HashMap<String, OsmApi> instances = new HashMap<String, OsmApi>();
+    private static Map<String, OsmApi> instances = new HashMap<String, OsmApi>();
 
     /**
      * Replies the {@link OsmApi} for a given server URL

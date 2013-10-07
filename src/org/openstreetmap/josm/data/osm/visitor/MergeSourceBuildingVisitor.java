@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.visitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -32,7 +33,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class MergeSourceBuildingVisitor extends AbstractVisitor {
     private DataSet selectionBase;
     private DataSet hull;
-    private HashMap<OsmPrimitive, PrimitiveData> mappedPrimitives;
+    private Map<OsmPrimitive, PrimitiveData> mappedPrimitives;
 
     /**
      * Creates the visitor. The visitor starts to build the "hull" from

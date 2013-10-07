@@ -830,8 +830,8 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
 
     public class ComparePairListModel extends AbstractListModel implements ComboBoxModel {
 
-        private  int selectedIdx;
-        private final ArrayList<ComparePairType> compareModes;
+        private int selectedIdx;
+        private final List<ComparePairType> compareModes;
 
         public ComparePairListModel() {
             this.compareModes = new ArrayList<ComparePairType>();

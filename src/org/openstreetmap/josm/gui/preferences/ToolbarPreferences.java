@@ -474,7 +474,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     private DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode(tr("Actions"));
 
     public JToolBar control = new JToolBar();
-    private HashMap<Object, ActionDefinition> buttonActions = new HashMap<Object, ActionDefinition>(30);
+    private Map<Object, ActionDefinition> buttonActions = new HashMap<Object, ActionDefinition>(30);
 
     @Override
     public PreferenceSetting createPreferenceSetting() {

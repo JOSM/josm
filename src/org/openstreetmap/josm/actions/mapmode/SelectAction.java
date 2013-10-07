@@ -366,7 +366,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         return true;
     }
 
-    private boolean repaintIfRequired(HashSet<OsmPrimitive> newHighlights) {
+    private boolean repaintIfRequired(Set<OsmPrimitive> newHighlights) {
         if(!drawTargetHighlight)
             return false;
 

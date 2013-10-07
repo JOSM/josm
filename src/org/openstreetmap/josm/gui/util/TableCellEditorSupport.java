@@ -10,7 +10,7 @@ import javax.swing.event.ChangeEvent;
 
 public class TableCellEditorSupport {
     private Object editor;
-    private LinkedList<CellEditorListener> listeners;
+    private List<CellEditorListener> listeners;
 
     public TableCellEditorSupport(Object editor) {
         this.editor = editor;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 
@@ -41,7 +42,7 @@ import org.openstreetmap.josm.Main;
  */
 public class Capabilities {
 
-    private HashMap<String, HashMap<String,String>> capabilities;
+    private Map<String, HashMap<String,String>> capabilities;
     private List<String> imageryBlacklist;
 
     /**
