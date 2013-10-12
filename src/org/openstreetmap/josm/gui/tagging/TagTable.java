@@ -14,8 +14,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -34,13 +37,18 @@ import javax.swing.table.TableColumn;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.PasteTagsAction.TagPaster;
+import org.openstreetmap.josm.actions.PasteTagsAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.TextTagParser;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the tabular editor component for OSM tags.
@@ -323,10 +331,30 @@ public class TagTable extends JTable  {
         public void run() {
             Relation relation = new Relation();
             model.applyToPrimitive(relation);
-            TagPaster tagPaster = new TagPaster(Main.pasteBuffer.getDirectlyAdded(), Collections.<OsmPrimitive>singletonList(relation));
-            model.updateTags(tagPaster.execute());
+            
+            String buf = Utils.getClipboardContent();
+            if (buf == null || buf.isEmpty() || buf.matches("(\\d+,)*\\d+")) {
+                List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();
+                if (directlyAdded==null || directlyAdded.isEmpty()) return;
+                PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded, Collections.<OsmPrimitive>singletonList(relation));
+                model.updateTags(tagPaster.execute());
+            } else {
+                // Paste tags from arbitrary text
+                 Map<String, String> tags = TextTagParser.readTagsFromText(buf);
+                 if (tags==null || tags.isEmpty()) {
+                    TextTagParser.showBadBufferMessage(ht("/Action/PasteTags"));
+                 } else if (TextTagParser.validateTags(tags)) {
+                     List<Tag> newTags = new ArrayList<Tag>();
+                     for (Map.Entry<String, String> entry: tags.entrySet()) {
+                        String k = entry.getKey();
+                        String v = entry.getValue();
+                        newTags.add(new Tag(k,v));
+                     }
+                     model.updateTags(newTags);
+                 }
+            }
         }
-
+        
         protected void updateEnabledState() {
             setEnabled(TagTable.this.isEnabled());
         }
