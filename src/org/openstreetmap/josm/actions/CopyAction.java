@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -42,7 +43,8 @@ public final class CopyAction extends JosmAction {
     }
 
     /**
-     * Copies the given primitive ids to the clipboard.
+     * Copies the given primitive ids to the clipboard. The output by this function
+     * looks similar to: node 1089302677,node 1089303458,way 93793372
      * @param source The OSM data layer source
      * @param primitives The OSM primitives to copy
      */
@@ -50,6 +52,7 @@ public final class CopyAction extends JosmAction {
         /* copy ids to the clipboard */
         StringBuilder idsBuilder = new StringBuilder();
         for (OsmPrimitive p : primitives) {
+            idsBuilder.append(OsmPrimitiveType.from(p)).append(" ");
             idsBuilder.append(p.getId()).append(",");
         }
         String ids = idsBuilder.substring(0, idsBuilder.length() - 1);
