@@ -37,6 +37,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.PasteTagsAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
@@ -333,7 +334,7 @@ public class TagTable extends JTable  {
             model.applyToPrimitive(relation);
             
             String buf = Utils.getClipboardContent();
-            if (buf == null || buf.isEmpty() || buf.matches("(\\d+,)*\\d+")) {
+            if (buf == null || buf.isEmpty() || buf.matches(CopyAction.CLIPBOARD_REGEXP)) {
                 List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();
                 if (directlyAdded==null || directlyAdded.isEmpty()) return;
                 PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded, Collections.<OsmPrimitive>singletonList(relation));
