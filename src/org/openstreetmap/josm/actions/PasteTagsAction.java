@@ -253,7 +253,7 @@ public final class PasteTagsAction extends JosmAction {
             return;
 
         String buf = Utils.getClipboardContent();
-        if (buf == null || buf.isEmpty() || buf.matches("(\\d+,)*\\d+")) {
+        if (buf == null || buf.isEmpty() || buf.matches(CopyAction.CLIPBOARD_REGEXP)) {
             pasteTagsFromJOSMBuffer(selection);
         } else {
             // Paste tags from arbitrary text

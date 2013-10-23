@@ -23,6 +23,9 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 404
  */
 public final class CopyAction extends JosmAction {
+    
+    // regular expression that matches text clipboard contents after copying
+    public static final String CLIPBOARD_REGEXP = "((node|way|relation)\\s\\d+,)*(node|way|relation)\\s\\d+";
 
     /**
      * Constructs a new {@code CopyAction}.
@@ -52,7 +55,7 @@ public final class CopyAction extends JosmAction {
         /* copy ids to the clipboard */
         StringBuilder idsBuilder = new StringBuilder();
         for (OsmPrimitive p : primitives) {
-            idsBuilder.append(OsmPrimitiveType.from(p)).append(" ");
+            idsBuilder.append(OsmPrimitiveType.from(p).getAPIName()).append(" ");
             idsBuilder.append(p.getId()).append(",");
         }
         String ids = idsBuilder.substring(0, idsBuilder.length() - 1);
