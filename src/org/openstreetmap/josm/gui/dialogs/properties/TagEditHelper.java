@@ -81,7 +81,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * Class that helps PropertiesDialog add and edit tag values
  */
  class TagEditHelper {
-    private final DefaultTableModel propertyData;
+    private final DefaultTableModel tagData;
     private final Map<String, Map<String, Integer>> valueCount;
 
     // Selection that we are editing by using both dialogs
@@ -112,7 +112,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     };
 
     TagEditHelper(DefaultTableModel propertyData, Map<String, Map<String, Integer>> valueCount) {
-        this.propertyData = propertyData;
+        this.tagData = propertyData;
         this.valueCount = valueCount;
     }
 
@@ -120,7 +120,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
      * Open the add selection dialog and add a new key/value to the table (and
      * to the dataset, of course).
      */
-    public void addProperty() {
+    public void addTag() {
         changedKey = null;
         if (Main.map.mapMode instanceof DrawAction) {
             sel = ((DrawAction) Main.map.mapMode).getInProgressSelection();
@@ -143,22 +143,22 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     }
     
     /**
-    * Edit the value in the properties table row
+    * Edit the value in the tags table row
     * @param row The row of the table from which the value is edited.
     * @param focusOnKey Determines if the initial focus should be set on key instead of value
     * @since 5653
     */
-    public void editProperty(final int row, boolean focusOnKey) {
+    public void editTag(final int row, boolean focusOnKey) {
         changedKey = null;
         sel = Main.main.getCurrentDataSet().getSelected();
         if (sel.isEmpty()) return;
 
-        String key = propertyData.getValueAt(row, 0).toString();
+        String key = tagData.getValueAt(row, 0).toString();
         objKey=key;
         
         @SuppressWarnings("unchecked")
         final EditTagDialog editDialog = new EditTagDialog(key, row, 
-                (Map<String, Integer>) propertyData.getValueAt(row, 1), focusOnKey);
+                (Map<String, Integer>) tagData.getValueAt(row, 1), focusOnKey);
         editDialog.showDialog();
         if (editDialog.getValue() !=1 ) return;
         editDialog.performTagEdit();
@@ -539,8 +539,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 if (item.getValue().equals(lastAddKey)) {
                     itemToSelect = item;
                 }
-                for (int i = 0; i < propertyData.getRowCount(); ++i) {
-                    if (item.getValue().equals(propertyData.getValueAt(i, 0))) {
+                for (int i = 0; i < tagData.getRowCount(); ++i) {
+                    if (item.getValue().equals(tagData.getValueAt(i, 0))) {
                         if (itemToSelect == item) {
                             itemToSelect = null;
                         }
@@ -747,8 +747,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         private void disableTagIfNeeded(final Tag t, final JosmAction action) {
             // Disable action if its key is already set on the object (the key being absent from the keys list for this reason
             // performing this action leads to autocomplete to the next key (see #7671 comments)
-            for (int j = 0; j < propertyData.getRowCount(); ++j) {
-                if (t.getKey().equals(propertyData.getValueAt(j, 0))) {
+            for (int j = 0; j < tagData.getRowCount(); ++j) {
+                if (t.getKey().equals(tagData.getValueAt(j, 0))) {
                     action.setEnabled(false);
                     break;
                 }
