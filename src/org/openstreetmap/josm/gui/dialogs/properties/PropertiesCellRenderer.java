@@ -18,7 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
- * Cell renderer of properties table.
+ * Cell renderer of tags table.
  * @since 6314
  */
 public class PropertiesCellRenderer extends DefaultTableCellRenderer {

@@ -35,16 +35,16 @@ public class ChangePropertyCommand extends Command {
     private final List<OsmPrimitive> objects;
     /**
      * Key and value pairs. If value is <code>null</code>, delete all key references with the given
-     * key. Otherwise, change the properties of all objects to the given value or create keys of
+     * key. Otherwise, change the tags of all objects to the given value or create keys of
      * those objects that do not have the key yet.
      */
     private final AbstractMap<String, String> tags;
 
     /**
-     * Creates a command to change multiple properties of multiple objects
+     * Creates a command to change multiple tags of multiple objects
      *
      * @param objects the objects to modify
-     * @param tags the properties to set
+     * @param tags the tags to set
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, AbstractMap<String, String> tags) {
         super();
@@ -54,10 +54,10 @@ public class ChangePropertyCommand extends Command {
     }
 
     /**
-     * Creates a command to change one property of multiple objects
+     * Creates a command to change one tag of multiple objects
      *
      * @param objects the objects to modify
-     * @param key the key of the property to set
+     * @param key the key of the tag to set
      * @param value the value of the key to set
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, String key, String value) {
@@ -68,10 +68,10 @@ public class ChangePropertyCommand extends Command {
     }
 
     /**
-     * Creates a command to change on property of one object
+     * Creates a command to change one tag of one object
      *
      * @param object the object to modify
-     * @param key the key of the property to set
+     * @param key the key of the tag to set
      * @param value the value of the key to set
      */
     public ChangePropertyCommand(OsmPrimitive object, String key, String value) {
@@ -179,9 +179,9 @@ public class ChangePropertyCommand extends Command {
             }
 
             if (allnull) {
-                text = tr("Deleted {0} properties for {1} objects", tags.size(), objects.size());
+                text = tr("Deleted {0} tags for {1} objects", tags.size(), objects.size());
             } else
-                text = tr("Set {0} properties for {1} objects", tags.size(), objects.size());
+                text = tr("Set {0} tags for {1} objects", tags.size(), objects.size());
         }
         return text;
     }
