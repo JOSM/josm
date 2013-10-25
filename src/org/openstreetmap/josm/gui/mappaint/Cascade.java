@@ -120,12 +120,11 @@ public final class Cascade implements Cloneable {
             return new Float((Double) o);
         if (o instanceof Integer)
             return new Float((Integer) o);
-        if (o instanceof String) {
+        if (o instanceof String && !((String) o).isEmpty()) {
             try {
-                float f = Float.parseFloat((String) o);
-                return f;
+                return Float.parseFloat((String) o);
             } catch (NumberFormatException e) {
-                Main.warn(e);
+                Main.debug("'"+o+"' cannot be converted to float");
             }
         }
         return null;
