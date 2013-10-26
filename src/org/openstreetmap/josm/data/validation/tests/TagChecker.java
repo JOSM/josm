@@ -64,7 +64,7 @@ import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Check for misspelled or wrong properties
+ * Check for misspelled or wrong tags
  *
  * @author frsantos
  */
@@ -151,8 +151,7 @@ public class TagChecker extends Test
      * Constructor
      */
     public TagChecker() {
-        super(tr("Properties checker :"),
-                tr("This plugin checks for errors in property keys and values."));
+        super(tr("Tag checker :"), tr("This test checks for errors in tag keys and values."));
     }
 
     @Override
@@ -352,7 +351,7 @@ public class TagChecker extends Test
     }
 
     /**
-     * Checks the primitive properties
+     * Checks the primitive tags
      * @param p The primitive to check
      */
     private void checkPrimitive(OsmPrimitive p) {
@@ -741,7 +740,7 @@ public class TagChecker extends Test
         if (commands.size() == 1)
             return commands.get(0);
 
-        return new SequenceCommand(tr("Fix properties"), commands);
+        return new SequenceCommand(tr("Fix tags"), commands);
     }
 
     @Override
