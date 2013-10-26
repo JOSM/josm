@@ -400,7 +400,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         else if (cmds.size() == 1)
             return cmds.get(0);
         else
-            return new SequenceCommand(tr("Change Properties"), cmds);
+            return new SequenceCommand(tr("Change Tags"), cmds);
     }
 
     private boolean supportsRelation() {

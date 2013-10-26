@@ -70,7 +70,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             p.add(label1, GBC.eop().anchor(GBC.CENTER));
 
             final JMultilineLabel label2 = new JMultilineLabel(
-                    tr("Please select which property changes you want to apply."));
+                    tr("Please select which changes you want to apply."));
             label2.setMaxWidth(600);
             p.add(label2, GBC.eop().anchor(GBC.CENTER));
 
@@ -82,7 +82,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     continue;
                 }
 
-                final JLabel propertiesLabel = new JLabel(tr("Properties of "));
+                final JLabel propertiesLabel = new JLabel(tr("Tags of "));
                 p.add(propertiesLabel, GBC.std());
 
                 final JLabel primitiveLabel = new JLabel(

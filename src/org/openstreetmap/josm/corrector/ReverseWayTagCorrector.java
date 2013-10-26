@@ -258,9 +258,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         }
 
         return applyCorrections(tagCorrectionsMap, roleCorrectionMap,
-                tr("When reversing this way, the following changes to properties "
-                        + "of the way and its nodes are suggested in order "
-                        + "to maintain data consistency."));
+                tr("When reversing this way, the following changes are suggested in order to maintain data consistency."));
     }
 
     private static boolean ignoreKeyForCorrection(String key) {
