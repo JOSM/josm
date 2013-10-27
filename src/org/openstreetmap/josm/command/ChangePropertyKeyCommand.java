@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.validation.util.NameVisitor;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Command that replaces the key of several objects
+ * Command that replaces the key of one or several objects
  *
  */
 public class ChangePropertyKeyCommand extends Command {
@@ -34,7 +34,19 @@ public class ChangePropertyKeyCommand extends Command {
     private final String newKey;
 
     /**
-     * Constructor
+     * Constructs a new {@code ChangePropertyKeyCommand}.
+     *
+     * @param object the object subject to change replacement
+     * @param key The key to replace
+     * @param newKey the new value of the key
+     * @since 6329
+     */
+    public ChangePropertyKeyCommand(OsmPrimitive object, String key, String newKey) {
+        this(Collections.singleton(object), key, newKey);
+    }
+    
+    /**
+     * Constructs a new {@code ChangePropertyKeyCommand}.
      *
      * @param objects all objects subject to change replacement
      * @param key The key to replace

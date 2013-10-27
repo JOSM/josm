@@ -18,7 +18,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -670,8 +669,7 @@ public class TagChecker extends Test
     }
 
     @Override
-    public boolean ok()
-    {
+    public boolean ok() {
         enabled = prefCheckKeys.isSelected() || prefCheckValues.isSelected() || prefCheckComplex.isSelected() || prefCheckFixmes.isSelected();
         testBeforeUpload = prefCheckKeysBeforeUpload.isSelected() || prefCheckValuesBeforeUpload.isSelected()
                 || prefCheckFixmesBeforeUpload.isSelected() || prefCheckComplexBeforeUpload.isSelected();
@@ -715,20 +713,19 @@ public class TagChecker extends Test
                 String key = prop.getKey();
                 String value = prop.getValue();
                 if (value == null || value.trim().length() == 0) {
-                    commands.add(new ChangePropertyCommand(Collections.singleton(p), key, null));
+                    commands.add(new ChangePropertyCommand(p, key, null));
                 } else if (value.startsWith(" ") || value.endsWith(" ")) {
-                    commands.add(new ChangePropertyCommand(Collections.singleton(p), key, value.trim()));
+                    commands.add(new ChangePropertyCommand(p, key, value.trim()));
                 } else if (key.startsWith(" ") || key.endsWith(" ")) {
-                    commands.add(new ChangePropertyKeyCommand(Collections.singleton(p), key, key.trim()));
+                    commands.add(new ChangePropertyKeyCommand(p, key, key.trim()));
                 } else {
                     String evalue = entities.unescape(value);
                     if (!evalue.equals(value)) {
-                        commands.add(new ChangePropertyCommand(Collections.singleton(p), key, evalue));
+                        commands.add(new ChangePropertyCommand(p, key, evalue));
                     } else {
                         String replacementKey = spellCheckKeyData.get(key);
                         if (replacementKey != null) {
-                            commands.add(new ChangePropertyKeyCommand(Collections.singleton(p),
-                                    key, replacementKey));
+                            commands.add(new ChangePropertyKeyCommand(p, key, replacementKey));
                         }
                     }
                 }
