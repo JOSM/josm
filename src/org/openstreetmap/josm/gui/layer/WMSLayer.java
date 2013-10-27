@@ -603,7 +603,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             processingRequests.remove(request);
             if (request.getState() != null && !request.isPrecacheOnly()) {
                 finishedRequests.add(request);
-                if (Main.map != null && Main.map.mapView != null) {
+                if (Main.isDisplayingMapView()) {
                     Main.map.mapView.repaint();
                 }
             }

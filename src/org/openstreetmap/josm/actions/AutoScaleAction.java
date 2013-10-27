@@ -260,7 +260,7 @@ public class AutoScaleAction extends JosmAction {
         if ("selection".equals(mode)) {
             setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
         }  else if ("layer".equals(mode)) {
-            if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getAllLayersAsList().isEmpty()) {
+            if (!Main.isDisplayingMapView() || Main.map.mapView.getAllLayersAsList().isEmpty()) {
                 setEnabled(false);
             } else {
                 // FIXME: should also check for whether a layer is selected in the layer list dialog

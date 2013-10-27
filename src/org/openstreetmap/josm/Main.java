@@ -362,7 +362,7 @@ abstract public class Main {
     public final synchronized void removeLayer(final Layer layer) {
         if (map != null) {
             map.mapView.removeLayer(layer);
-            if (map.mapView.getAllLayers().isEmpty()) {
+            if (isDisplayingMapView() && map.mapView.getAllLayers().isEmpty()) {
                 setMapFrame(null);
             }
         }

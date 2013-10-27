@@ -114,7 +114,7 @@ public class AddWayHandler extends RequestHandler {
     Node findOrCreateNode(LatLon ll,  List<Command> commands) {
         Node nd = null;
 
-        if (Main.map != null && Main.map.mapView != null) {
+        if (Main.isDisplayingMapView()) {
             Point p = Main.map.mapView.getPoint(ll);
             nd = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
             if (nd!=null && nd.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remote.tolerance", 0.1)) {
