@@ -32,7 +32,7 @@ public class FeaturesHandler extends RequestHandler {
                } else {
                    buf.append(", ");
                }
-               String info = RequestProcessor.getHanldlerInfoAsJSON("/"+s);
+               String info = RequestProcessor.getHandlerInfoAsJSON("/"+s);
                if (info!=null) {
                    buf.append(info);
                } else {

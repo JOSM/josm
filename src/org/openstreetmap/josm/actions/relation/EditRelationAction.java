@@ -38,7 +38,7 @@ public class EditRelationAction extends AbstractRelationAction  {
      */
     public static Set<RelationMember> getMembersForCurrentSelection(Relation r) {
         Set<RelationMember> members = new HashSet<RelationMember>();
-        if (Main.map != null && Main.map.mapView != null) {
+        if (Main.isDisplayingMapView()) {
             OsmDataLayer editLayer = Main.map.mapView.getEditLayer();
             if (editLayer != null && editLayer.data != null) {
                 Collection<OsmPrimitive> selection = editLayer.data.getSelected();
