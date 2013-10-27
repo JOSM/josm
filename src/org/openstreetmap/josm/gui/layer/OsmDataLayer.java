@@ -406,7 +406,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             }
         }
         // repaint to make sure new data is displayed properly.
-        if (Main.map != null && Main.map.mapView != null) {
+        if (Main.isDisplayingMapView()) {
             Main.map.mapView.repaint();
         }
         // warn about new conflicts
