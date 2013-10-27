@@ -33,12 +33,10 @@ import org.openstreetmap.josm.tools.GBC;
  * each one can test it.
  *
  * @author frsantos
+ * @since 3669
  */
-public class ValidateUploadHook implements UploadHook
-{
-    /** Serializable ID */
-    private static final long serialVersionUID = -2304521273582574603L;
-
+public class ValidateUploadHook implements UploadHook {
+    
     /**
      * Validate the modified data before uploading
      */
@@ -61,11 +59,9 @@ public class ValidateUploadHook implements UploadHook
             test.visit(selection);
             test.endTest();
             if (Main.pref.getBoolean(ValidatorPreference.PREF_OTHER, false) &&
-                Main.pref.getBoolean(ValidatorPreference.PREF_OTHER_UPLOAD, false))
-            {
-                errors.addAll( test.getErrors() );
-            }
-            else {
+                Main.pref.getBoolean(ValidatorPreference.PREF_OTHER_UPLOAD, false)) {
+                errors.addAll(test.getErrors());
+            } else {
                 for (TestError e : test.getErrors()) {
                     if (e.getSeverity() != Severity.OTHER) {
                         errors.add(e);
@@ -74,6 +70,7 @@ public class ValidateUploadHook implements UploadHook
             }
         }
         tests = null;
+        Main.map.validatorDialog.tree.setErrors(errors);
         if (errors == null || errors.isEmpty())
             return true;
 
@@ -140,10 +137,9 @@ public class ValidateUploadHook implements UploadHook
         ed.setContent(p);
         ed.showDialog();
 
-        if(ed.getValue() != 1) {
+        if (ed.getValue() != 1) {
             OsmValidator.initializeErrorLayer();
             Main.map.validatorDialog.unfurlDialog();
-            Main.map.validatorDialog.tree.setErrors(errors);
             Main.main.getCurrentDataSet().fireSelectionChanged();
             return false;
         }
