@@ -193,10 +193,15 @@ public class Addresses extends Test {
         boolean hasIncompleteWays = false;
         for (Way streetPart : street) {
             for (Pair<Node, Node> chunk : streetPart.getNodePairs(false)) {
-                EastNorth closest = Geometry.closestPointToSegment(
-                        chunk.a.getEastNorth(), chunk.b.getEastNorth(), centroid);
-                if (closest.distance(centroid) <= maxDistance) {
-                    return;
+                EastNorth p1 = chunk.a.getEastNorth();
+                EastNorth p2 = chunk.b.getEastNorth();
+                if (p1 != null && p2 != null) {
+                    EastNorth closest = Geometry.closestPointToSegment(p1, p2, centroid);
+                    if (closest.distance(centroid) <= maxDistance) {
+                        return;
+                    }
+                } else {
+                    Main.warn("Addresses test skipped chunck "+chunk+" for street part "+streetPart+" because p1 or p2 is null"); 
                 }
             }
             if (!hasIncompleteWays && streetPart.isIncomplete()) {
