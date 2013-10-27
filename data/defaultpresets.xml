@@ -2082,7 +2082,7 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="service" text="Service type" values="yard,siding,spur" />
                 <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" lenght="5" />
+                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
                 <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
             </optional>
         </item>
@@ -4160,7 +4160,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="driving_school" />
             <text key="name" text="Name" />
             <text key="operator" text="Operator" />
-            <text key="license_classes" text="License Classes" values="A1;A;B;BE;C" />
+            <combo key="license_classes" text="License Classes" values="A;A1;B;BE;C,A;A1;B;B1;C;C1;D;D1;BE;CE;C1E;DE;D1E" />
         </item>
     </group> <!-- Education -->
     <group name="Health" icon="presets/pharmacy.png">
@@ -4527,7 +4527,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <combo key="fire_hydrant:position" text="Hydrant Position" values="lane,parking_lot,sidewalk,green" values_context="hydrant position" />
             <combo key="fire_hydrant:pressure" text="Pressure (in bar)" values="5,6,8,suction" />
-            <text key="fire_hydrant:count" text="Count" values="" />
+            <text key="fire_hydrant:count" text="Count" />
         </item>
     </group> <!-- Facilities -->
   </group>  <!-- Facilities -->
