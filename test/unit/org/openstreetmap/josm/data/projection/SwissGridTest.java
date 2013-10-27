@@ -51,7 +51,7 @@ public class SwissGridTest {
         for (ProjData pd : data) {
             EastNorth en2 = swiss.latlon2eastNorth(pd.ll);
             if (Math.abs(pd.en.east() - en2.east()) > EPSILON || Math.abs(pd.en.north() - en2.north()) > EPSILON) {
-                errs.append(String.format("%s should be: %s but is: %s\n", pd.name, pd.en, en2));
+                errs.append(String.format("%s should be: %s but is: %s%n", pd.name, pd.en, en2));
             }
         }
         assertTrue(errs.toString(), errs.length() == 0);
