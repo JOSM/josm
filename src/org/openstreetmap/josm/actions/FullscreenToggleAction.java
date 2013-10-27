@@ -51,7 +51,7 @@ public class FullscreenToggleAction extends ToggleAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        toggleSelectedState();
+        toggleSelectedState(e);
         Main.pref.put("draw.fullscreen", isSelected());
         notifySelectedState();
         setMode();

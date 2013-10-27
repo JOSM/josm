@@ -37,7 +37,7 @@ public class DialogsToggleAction extends ToggleAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        toggleSelectedState();
+        toggleSelectedState(e);
         Main.pref.put("draw.dialogspanel", isSelected());
         notifySelectedState();
         setMode();
