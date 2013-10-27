@@ -139,7 +139,7 @@ public class ExpertToggleAction extends ToggleAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        toggleSelectedState();
+        toggleSelectedState(e);
         Main.pref.put("expert", isSelected());
         notifySelectedState();
     }

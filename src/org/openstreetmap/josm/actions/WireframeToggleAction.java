@@ -41,7 +41,7 @@ public class WireframeToggleAction extends ToggleAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        toggleSelectedState();
+        toggleSelectedState(e);
         if (isSelected()) {
             MapRendererFactory.getInstance().activate(WireframeMapRenderer.class);
         } else {
