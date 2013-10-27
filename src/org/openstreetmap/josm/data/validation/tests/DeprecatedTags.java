@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
@@ -212,6 +213,9 @@ public class DeprecatedTags extends Test {
             for (Tag tag : change) {
                 cmds.add(new ChangePropertyCommand(p, tag.getKey(), tag.getValue()));
             }
+            if (test.size() == 1 && alternatives.size() == 1) {
+                cmds.add(new ChangePropertyKeyCommand(p, test.get(0).getKey(), alternatives.get(0).getKey())); 
+            }
             return new SequenceCommand(tr("Deprecation fix of {0}", Utils.join(", ", test)), cmds);
         }
 
@@ -236,7 +240,7 @@ public class DeprecatedTags extends Test {
 
         @Override
         public boolean isFixable() {
-            return !check.change.isEmpty();
+            return !check.change.isEmpty() || (check.test.size() == 1 && check.alternatives.size() == 1);
         }
 
         @Override
