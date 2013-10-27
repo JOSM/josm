@@ -1,11 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ButtonModel;
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -100,7 +106,21 @@ public abstract class ToggleAction extends JosmAction {
         }
     }
 
-    protected final void toggleSelectedState() {
-        setSelected(!isSelected());
+    /**
+     * Toggles the selcted action state, if needed according to the ActionEvent that trigerred the action.
+     * This method will do nothing if the action event comes from a Swing component supporting the SELECTED_KEY property because the component already set the selected state.
+     * This method needs to be called especially if the action is associated with a keyboard shortcut to ensure correct selected state.
+     * @see <a href="https://weblogs.java.net/blog/zixle/archive/2005/11/changes_to_acti.html">Changes to Actions in 1.6</a>
+     * @see <a href="http://docs.oracle.com/javase/6/docs/api/javax/swing/Action.html">Interface Action</a>
+     */
+    protected final void toggleSelectedState(ActionEvent e) {
+        if (e == null || !(e.getSource() instanceof JToggleButton || 
+                           e.getSource() instanceof JCheckBox || 
+                           e.getSource() instanceof JRadioButton || 
+                           e.getSource() instanceof JCheckBoxMenuItem || 
+                           e.getSource() instanceof JRadioButtonMenuItem 
+                           )) {
+            setSelected(!isSelected());
+        }
     }
 }

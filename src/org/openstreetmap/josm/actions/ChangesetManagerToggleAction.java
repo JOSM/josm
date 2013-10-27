@@ -39,7 +39,7 @@ public class ChangesetManagerToggleAction extends ToggleAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        toggleSelectedState();
+        toggleSelectedState(e);
         notifySelectedState();
         if (isSelected()) {
             ChangesetCacheManager.getInstance().addWindowListener(changesetCacheManagerClosedHandler);

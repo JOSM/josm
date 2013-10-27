@@ -34,7 +34,7 @@ public class ViewportFollowToggleAction extends ToggleAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        toggleSelectedState();
+        toggleSelectedState(e);
         Main.map.mapView.viewportFollowing = isSelected();
         notifySelectedState();
     }
