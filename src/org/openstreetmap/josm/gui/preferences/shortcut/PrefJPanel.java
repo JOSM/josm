@@ -56,40 +56,6 @@ public class PrefJPanel extends JPanel {
 
     // table of shortcuts
     private AbstractTableModel model;
-    // comboboxes of modifier groups, mapping selectedIndex to real data
-    private static int[] modifInts = new int[]{
-        -1,
-        0,
-        KeyEvent.SHIFT_DOWN_MASK,
-        KeyEvent.CTRL_DOWN_MASK,
-        KeyEvent.ALT_DOWN_MASK,
-        KeyEvent.META_DOWN_MASK,
-        KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
-        KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
-        KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
-        KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
-        KeyEvent.CTRL_DOWN_MASK | KeyEvent.META_DOWN_MASK,
-        KeyEvent.ALT_DOWN_MASK | KeyEvent.META_DOWN_MASK,
-        KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
-        KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK
-    };
-    // and here are the texts fro the comboboxes
-    private static String[] modifList = new String[] {
-        tr("disabled"),
-        tr("no modifier"),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[2]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[3]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[4]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[5]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[6]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[7]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[8]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[9]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[10]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[11]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[12]).getModifiers()),
-        KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[13]).getModifiers())
-    };
     // this are the display(!) texts for the checkboxes. Let the JVM do the i18n for us <g>.
     // Ok, there's a real reason for this: The JVM should know best how the keys are labelled
     // on the physical keyboard. What language pack is installed in JOSM is completely
@@ -139,7 +105,6 @@ public class PrefJPanel extends JPanel {
     private JosmTextField filterField = new JosmTextField();
 
     /** Creates new form prefJPanel */
-    // Ain't those auto-generated comments helpful or what? <g>
     public PrefJPanel(AbstractTableModel model) {
         this.model = model;
         initComponents();

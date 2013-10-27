@@ -8,7 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.text.JTextComponent;
@@ -22,11 +21,6 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
 
     private JosmTextField tfUserName;
     private JosmPasswordField tfPassword;
-
-    private JCheckBox cbWriteMapData;
-    private JCheckBox cbWriteGpsTraces;
-    private JCheckBox cbReadGpsTraces;
-
 
     protected JPanel buildUserNamePasswordPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());

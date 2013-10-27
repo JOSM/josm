@@ -107,7 +107,7 @@ public class ProjectionRegressionTest {
             }
             EastNorth en = proj.latlon2eastNorth(new LatLon(lat, lon));
             LatLon ll2 = proj.eastNorth2latlon(en);
-            out.write(String.format("%s\n  ll  %s %s\n  en  %s %s\n  ll2 %s %s\n", proj.toCode(), lat, lon, en.east(), en.north(), ll2.lat(), ll2.lon()));
+            out.write(String.format("%s%n  ll  %s %s%n  en  %s %s%n  ll2 %s %s%n", proj.toCode(), lat, lon, en.east(), en.north(), ll2.lat(), ll2.lon()));
         }
         out.close();
     }
@@ -177,17 +177,17 @@ public class ProjectionRegressionTest {
             }
             EastNorth en = proj.latlon2eastNorth(data.ll);
             if (!en.equals(data.en)) {
-                String error = String.format("%s (%s): Projecting latlon(%s,%s):\n" +
-                        "        expected: eastnorth(%s,%s),\n" +
-                        "        but got:  eastnorth(%s,%s)!\n",
+                String error = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
+                        "        expected: eastnorth(%s,%s),%n" +
+                        "        but got:  eastnorth(%s,%s)!%n",
                         proj.toString(), data.code, data.ll.lat(), data.ll.lon(), data.en.east(), data.en.north(), en.east(), en.north());
                 fail.append(error);
             }
             LatLon ll2 = proj.eastNorth2latlon(data.en);
             if (!ll2.equals(data.ll2)) {
-                String error = String.format("%s (%s): Inverse projecting eastnorth(%s,%s):\n" +
-                        "        expected: latlon(%s,%s),\n" +
-                        "        but got:  latlon(%s,%s)!\n",
+                String error = String.format("%s (%s): Inverse projecting eastnorth(%s,%s):%n" +
+                        "        expected: latlon(%s,%s),%n" +
+                        "        but got:  latlon(%s,%s)!%n",
                         proj.toString(), data.code, data.en.east(), data.en.north(), data.ll2.lat(), data.ll2.lon(), ll2.lat(), ll2.lon());
                 fail.append(error);
             }

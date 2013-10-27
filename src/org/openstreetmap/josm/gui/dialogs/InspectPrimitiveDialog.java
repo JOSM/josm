@@ -230,7 +230,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 add(tr("Tags: "));
                 for (String key : o.keySet()) {
                     s.append(INDENT).append(INDENT);
-                    s.append(String.format("\"%s\"=\"%s\"\n", key, o.get(key)));
+                    s.append(String.format("\"%s\"=\"%s\"%n", key, o.get(key)));
                 }
             }
         }

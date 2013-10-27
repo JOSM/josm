@@ -64,7 +64,7 @@ public class ProjectionTest {
             double maxErrLat = 0, maxErrLon = 0;
             Bounds b = p.getWorldBoundsLatLon();
     
-            text += String.format("*** %s %s\n", p.toString(), p.toCode());
+            text += String.format("*** %s %s%n", p.toString(), p.toCode());
             for (int num=0; num < 1000; ++num) {
     
                 double lat = rand.nextDouble() * (b.getMax().lat() - b.getMin().lat()) + b.getMin().lat();
@@ -85,7 +85,7 @@ public class ProjectionTest {
                 mark = "--FAILED-- ";
                 error = true;
             }
-            text += String.format("%s errorLat: %s errorLon: %s\n", mark, maxErrLat, maxErrLon);
+            text += String.format("%s errorLat: %s errorLon: %s%n", mark, maxErrLat, maxErrLon);
         }
     }
 }
