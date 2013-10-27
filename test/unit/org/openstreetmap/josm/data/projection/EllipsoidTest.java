@@ -5,7 +5,6 @@ import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.openstreetmap.josm.data.coor.LatLon;
 
 public class EllipsoidTest {
