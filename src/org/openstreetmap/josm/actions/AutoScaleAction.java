@@ -61,8 +61,7 @@ public class AutoScaleAction extends JosmAction {
      *
      */
     public static void zoomToSelection() {
-        if (Main.main == null || Main.main.getEditLayer() == null) return;
-        if (Main.map == null || Main.map.mapView == null) return;
+        if (Main.main == null || !Main.main.hasEditLayer()) return;
         Collection<OsmPrimitive> sel = Main.main.getEditLayer().data.getSelected();
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(

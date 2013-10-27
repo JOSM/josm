@@ -89,7 +89,7 @@ public class PurgeAction extends JosmAction {
             return;
 
         Collection<OsmPrimitive> sel = getCurrentDataSet().getAllSelected();
-        layer = Main.map.mapView.getEditLayer();
+        layer = Main.main.getEditLayer();
 
         toPurge = new HashSet<OsmPrimitive>(sel);
         toPurgeAdditionally = new ArrayList<OsmPrimitive>();
@@ -208,7 +208,7 @@ public class PurgeAction extends JosmAction {
 
         Main.pref.put("purge.clear_undo_redo", cbClearUndoRedo.isSelected());
 
-        Main.main.undoRedo.add(new PurgeCommand(Main.map.mapView.getEditLayer(), toPurgeChecked, makeIncomplete));
+        Main.main.undoRedo.add(new PurgeCommand(Main.main.getEditLayer(), toPurgeChecked, makeIncomplete));
 
         if (cbClearUndoRedo.isSelected()) {
             Main.main.undoRedo.clean();

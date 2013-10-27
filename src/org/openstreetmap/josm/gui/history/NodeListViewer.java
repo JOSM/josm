@@ -206,9 +206,12 @@ public class NodeListViewer extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled()) return;
             OsmPrimitive p = getPrimitiveToZoom();
-            if (p!= null) {
-                getEditLayer().data.setSelected(p.getPrimitiveId());
-                AutoScaleAction.autoScale("selection");
+            if (p != null) {
+                OsmDataLayer editLayer = Main.main.getEditLayer();
+                if (editLayer != null) {
+                    editLayer.data.setSelected(p.getPrimitiveId());
+                    AutoScaleAction.autoScale("selection");
+                }
             }
         }
 
@@ -217,22 +220,16 @@ public class NodeListViewer extends JPanel {
             updateEnabledState();
         }
 
-        protected OsmDataLayer getEditLayer() {
-            try {
-                return Main.map.mapView.getEditLayer();
-            } catch(NullPointerException e) {
-                return null;
-            }
-        }
-
         protected OsmPrimitive getPrimitiveToZoom() {
             if (primitiveId == null) return null;
-            OsmPrimitive p = getEditLayer().data.getPrimitiveById(primitiveId);
+            OsmDataLayer editLayer = Main.main.getEditLayer();
+            if (editLayer == null) return null;
+            OsmPrimitive p = editLayer.data.getPrimitiveById(primitiveId);
             return p;
         }
 
         public void updateEnabledState() {
-            if (getEditLayer() == null) {
+            if (!Main.main.hasEditLayer()) {
                 setEnabled(false);
                 return;
             }

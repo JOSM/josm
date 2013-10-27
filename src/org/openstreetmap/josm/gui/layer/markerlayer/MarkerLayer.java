@@ -431,7 +431,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
     private static void playAdjacentMarker(Marker startMarker, boolean next) {
         Marker m = null;
-        if (Main.map == null || Main.map.mapView == null)
+        if (!Main.isDisplayingMapView())
             return;
         Layer l = Main.map.mapView.getActiveLayer();
         if(l != null) {

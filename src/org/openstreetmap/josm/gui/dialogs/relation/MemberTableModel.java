@@ -654,7 +654,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * layer
      */
     protected boolean isActiveLayer() {
-        if (Main.map == null || Main.map.mapView == null) return false;
+        if (!Main.isDisplayingMapView()) return false;
         return Main.map.mapView.getActiveLayer() == layer;
     }
 

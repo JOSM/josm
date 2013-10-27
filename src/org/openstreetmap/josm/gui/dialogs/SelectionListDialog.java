@@ -167,9 +167,10 @@ public class SelectionListDialog extends ToggleDialog  {
         DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT);
         MapView.addEditLayerChangeListener(actSearch);
         // editLayerChanged also gets the selection history of the level
-        model.editLayerChanged(null, Main.map.mapView.getEditLayer());
-        if (Main.map.mapView.getEditLayer() != null) {
-            model.setJOSMSelection(Main.map.mapView.getEditLayer().data.getAllSelected());
+        OsmDataLayer editLayer = Main.main.getEditLayer();
+        model.editLayerChanged(null, editLayer);
+        if (editLayer != null) {
+            model.setJOSMSelection(editLayer.data.getAllSelected());
         }
         actSearch.updateEnabledState();
     }
@@ -284,7 +285,7 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         public void updateEnabledState() {
-            setEnabled(Main.main != null && Main.main.getEditLayer() != null);
+            setEnabled(Main.main != null && !Main.main.hasEditLayer());
         }
 
         @Override
@@ -309,8 +310,9 @@ public class SelectionListDialog extends ToggleDialog  {
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
             if (sel.isEmpty())return;
-            if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getEditLayer() == null) return;
-            Main.map.mapView.getEditLayer().data.setSelected(sel);
+            OsmDataLayer editLayer = Main.main.getEditLayer();
+            if (editLayer == null) return;
+            editLayer.data.setSelected(sel);
         }
 
         public void updateEnabledState() {

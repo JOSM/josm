@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetListModel;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetsInActiveDataLayerListModel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
@@ -119,10 +120,11 @@ public class ChangesetDialog extends ToggleDialog{
         // events and bootstrap it's content
         ChangesetCache.getInstance().addChangesetCacheListener(inActiveDataLayerModel);
         MapView.addEditLayerChangeListener(inActiveDataLayerModel);
-        if (Main.main.getEditLayer() != null) {
-            Main.main.getEditLayer().data.addDataSetListener(inActiveDataLayerModel);
-            inActiveDataLayerModel.initFromDataSet(Main.main.getEditLayer().data);
-            inSelectionModel.initFromPrimitives(Main.main.getEditLayer().data.getAllSelected());
+        OsmDataLayer editLayer = Main.main.getEditLayer();
+        if (editLayer != null) {
+            editLayer.data.addDataSetListener(inActiveDataLayerModel);
+            inActiveDataLayerModel.initFromDataSet(editLayer.data);
+            inSelectionModel.initFromPrimitives(editLayer.data.getAllSelected());
         }
     }
 
@@ -131,8 +133,9 @@ public class ChangesetDialog extends ToggleDialog{
         //
         ChangesetCache.getInstance().removeChangesetCacheListener(inActiveDataLayerModel);
         MapView.removeEditLayerChangeListener(inActiveDataLayerModel);
-        if (Main.main.getEditLayer() != null) {
-            Main.main.getEditLayer().data.removeDataSetListener(inActiveDataLayerModel);
+        OsmDataLayer editLayer = Main.main.getEditLayer();
+        if (editLayer != null) {
+            editLayer.data.removeDataSetListener(inActiveDataLayerModel);
         }
 
         // remove the list model for the changesets in the current selection as
@@ -232,9 +235,10 @@ public class ChangesetDialog extends ToggleDialog{
     }
 
     protected void initWithCurrentData() {
-        if (Main.main.getEditLayer() != null) {
-            inSelectionModel.initFromPrimitives(Main.main.getEditLayer().data.getAllSelected());
-            inActiveDataLayerModel.initFromDataSet(Main.main.getEditLayer().data);
+        OsmDataLayer editLayer = Main.main.getEditLayer();
+        if (editLayer != null) {
+            inSelectionModel.initFromPrimitives(editLayer.data.getAllSelected());
+            inActiveDataLayerModel.initFromDataSet(editLayer.data);
         }
     }
 
@@ -307,7 +311,7 @@ public class ChangesetDialog extends ToggleDialog{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (Main.main.getEditLayer() == null)
+            if (!Main.main.hasEditLayer())
                 return;
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();

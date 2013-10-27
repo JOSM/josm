@@ -1,4 +1,4 @@
-//License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
 import java.awt.event.ActionEvent;
@@ -16,6 +16,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class InfoAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code InfoAction}.
+     */
     public InfoAction() {
         super(tr("Advanced info"), "about",
             tr("Display advanced object information about OSM nodes, ways, or relations."),
@@ -29,7 +32,7 @@ public class InfoAction extends JosmAction {
     public void actionPerformed(ActionEvent ae) {
         DataSet set = getCurrentDataSet();
         if (set != null) {
-            new InspectPrimitiveDialog(set.getAllSelected(), Main.map.mapView.getEditLayer()).showDialog();
+            new InspectPrimitiveDialog(set.getAllSelected(), Main.main.getEditLayer()).showDialog();
         }
     }
 

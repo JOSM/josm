@@ -47,7 +47,7 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     protected boolean confirmWayWithNodesOutsideBoundingBox(List<? extends OsmPrimitive> primitives) {
-        return DeleteCommand.checkAndConfirmOutlyingDelete(Main.map.mapView.getEditLayer(), primitives, null);
+        return DeleteCommand.checkAndConfirmOutlyingDelete(Main.main.getEditLayer(), primitives, null);
     }
 
     protected void alertSelectAtLeastOneWay() {

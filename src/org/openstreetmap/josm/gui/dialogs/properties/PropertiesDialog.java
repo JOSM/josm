@@ -483,7 +483,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Relation relation = (Relation)membershipData.getValueAt(row, 0);
         Main.map.relationListDialog.selectRelation(relation);
         RelationEditor.getEditor(
-                Main.map.mapView.getEditLayer(),
+                Main.main.getEditLayer(),
                 relation,
                 ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
     }

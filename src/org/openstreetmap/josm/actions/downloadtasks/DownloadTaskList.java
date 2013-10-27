@@ -290,7 +290,7 @@ public class DownloadTaskList {
                         return;
                 }
             }
-            final OsmDataLayer editLayer = Main.map.mapView.getEditLayer();
+            final OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer != null && osmData) {
                 final Set<OsmPrimitive> myPrimitives = getCompletePrimitives(editLayer.data);
                 for (DownloadTask task : tasks) {

@@ -33,8 +33,8 @@ public class DownloadMembersAction extends AbstractRelationAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty() || Main.map==null || Main.map.mapView==null) return;
-        Main.worker.submit(new DownloadRelationTask(relations, Main.map.mapView.getEditLayer()));
+        if (!isEnabled() || relations.isEmpty() || !Main.isDisplayingMapView()) return;
+        Main.worker.submit(new DownloadRelationTask(relations, Main.main.getEditLayer()));
     }
 
     @Override

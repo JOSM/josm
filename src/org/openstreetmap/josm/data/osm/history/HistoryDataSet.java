@@ -174,7 +174,7 @@ public class HistoryDataSet implements LayerChangeListener{
     public void layerAdded(Layer newLayer) {/* irrelevant in this context */}
     @Override
     public void layerRemoved(Layer oldLayer) {
-        if (Main.map == null || Main.map.mapView == null) return;
+        if (!Main.isDisplayingMapView()) return;
         if (Main.map.mapView.getNumLayers() == 0) {
             data.clear();
             fireCacheCleared();
