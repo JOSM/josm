@@ -1499,12 +1499,10 @@ public abstract class SourceEditor extends JPanel {
 
     abstract public static class SourcePrefHelper {
 
-        private final String prefOld;
         private final String pref;
 
         public SourcePrefHelper(String pref, String prefOld) {
             this.pref = pref;
-            this.prefOld = prefOld;
         }
 
         abstract public Collection<ExtendedSourceEntry> getDefault();
