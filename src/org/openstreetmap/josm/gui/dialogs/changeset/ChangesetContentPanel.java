@@ -324,7 +324,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
-            if (Main.main == null || Main.main.getEditLayer() == null) return;
+            if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<HistoryOsmPrimitive> selected = model.getSelectedPrimitives();
             Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
@@ -342,7 +342,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         public void updateEnabledState() {
-            if (Main.main == null || Main.main.getEditLayer() == null){
+            if (Main.main == null || !Main.main.hasEditLayer()) {
                 setEnabled(false);
                 return;
             }
@@ -389,7 +389,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
-            if (Main.main == null || Main.main.getEditLayer() == null) return;
+            if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<HistoryOsmPrimitive> selected = model.getSelectedPrimitives();
             Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
@@ -408,7 +408,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         public void updateEnabledState() {
-            if (Main.main == null || Main.main.getEditLayer() == null){
+            if (Main.main == null || !Main.main.hasEditLayer()) {
                 setEnabled(false);
                 return;
             }

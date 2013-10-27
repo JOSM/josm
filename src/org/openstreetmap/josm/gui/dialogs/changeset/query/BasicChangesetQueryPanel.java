@@ -157,7 +157,7 @@ public class BasicChangesetQueryPanel extends JPanel {
         // query for changesets in the current map view only if there *is* a current
         // map view
         lbl = lblQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW);
-        if (Main.map == null || Main.map.mapView == null) {
+        if (!Main.isDisplayingMapView()) {
             rbQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW).setEnabled(false);
             lbl.setText(tr("<html>Download changesets in the current map view.<br><em>Disabled. There is currently no map view active.</em></html>"));
         } else {

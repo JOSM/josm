@@ -518,7 +518,7 @@ public class JoinAreasAction extends JosmAction {
 
         // Delete the discarded inner ways
         if (!discardedWays.isEmpty()) {
-            Command deleteCmd = DeleteCommand.delete(Main.map.mapView.getEditLayer(), discardedWays, true);
+            Command deleteCmd = DeleteCommand.delete(Main.main.getEditLayer(), discardedWays, true);
             if (deleteCmd != null) {
                 cmds.add(deleteCmd);
                 commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
@@ -834,7 +834,7 @@ public class JoinAreasAction extends JosmAction {
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
 
         if (chunks.size() > 1) {
-            SplitWayResult split = SplitWayAction.splitWay(Main.map.mapView.getEditLayer(), way, chunks, Collections.<OsmPrimitive>emptyList());
+            SplitWayResult split = SplitWayAction.splitWay(Main.main.getEditLayer(), way, chunks, Collections.<OsmPrimitive>emptyList());
 
             //execute the command, we need the results
             cmds.add(split.getCommand());

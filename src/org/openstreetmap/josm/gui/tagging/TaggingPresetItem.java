@@ -27,7 +27,7 @@ public abstract class TaggingPresetItem {
             return;
         }
         AutoCompletionList list = new AutoCompletionList();
-        Main.main.getEditLayer().data.getAutoCompletionManager().populateWithTagValues(list, key);
+        layer.data.getAutoCompletionManager().populateWithTagValues(list, key);
         field.setAutoCompletionList(list);
     }
 

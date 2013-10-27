@@ -178,7 +178,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     }
 
     private JMenuItem getNewOffsetMenu(){
-        if (Main.map == null || Main.map.mapView == null) {
+        if (!Main.isDisplayingMapView()) {
             offsetAction.setEnabled(false);
             return singleOffset;
         }

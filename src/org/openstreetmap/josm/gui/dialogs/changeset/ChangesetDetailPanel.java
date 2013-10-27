@@ -385,7 +385,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
-            if (Main.main == null || Main.main.getEditLayer() == null) return;
+            if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
@@ -401,7 +401,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         }
 
         public void updateEnabledState() {
-            if (Main.main == null || Main.main.getEditLayer() == null){
+            if (Main.main == null || !Main.main.hasEditLayer()) {
                 setEnabled(false);
                 return;
             }
@@ -446,7 +446,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
-            if (Main.main == null || Main.main.getEditLayer() == null) return;
+            if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
@@ -463,7 +463,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         }
 
         public void updateEnabledState() {
-            if (Main.main == null || Main.main.getEditLayer() == null){
+            if (Main.main == null || !Main.main.hasEditLayer()) {
                 setEnabled(false);
                 return;
             }

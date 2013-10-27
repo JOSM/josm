@@ -1133,7 +1133,7 @@ public class SearchCompiler {
 
         @Override
         protected Bounds getBounds() {
-            if (Main.map == null || Main.map.mapView == null) {
+            if (!Main.isDisplayingMapView()) {
                 return null;
             }
             return Main.map.mapView.getRealBounds();
@@ -1149,8 +1149,7 @@ public class SearchCompiler {
         }
     }
 
-    public static Match compile(String searchStr, boolean caseSensitive, boolean regexSearch)
-            throws ParseError {
+    public static Match compile(String searchStr, boolean caseSensitive, boolean regexSearch) throws ParseError {
         return new SearchCompiler(caseSensitive, regexSearch,
                 new PushbackTokenizer(
                         new PushbackReader(new StringReader(searchStr))))

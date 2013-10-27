@@ -38,7 +38,7 @@ public class DeleteRelationsAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || Main.main.getEditLayer() == null)
+        if (!isEnabled() || !Main.main.hasEditLayer())
             return;
         for (Relation r : relations) {
             deleteRelation(r);

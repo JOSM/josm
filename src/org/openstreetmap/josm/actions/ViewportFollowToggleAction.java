@@ -41,6 +41,6 @@ public class ViewportFollowToggleAction extends ToggleAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.isDisplayingMapView() && Main.main.getEditLayer() != null);
+        setEnabled(Main.main.hasEditLayer());
     }
 }

@@ -80,9 +80,9 @@ public class DownloadReferrersAction extends JosmAction{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || ! Main.isDisplayingMapView())
+        if (!isEnabled())
             return;
-        OsmDataLayer layer = Main.map.mapView.getEditLayer();
+        OsmDataLayer layer = Main.main.getEditLayer();
         if (layer == null)
             return;
         Collection<OsmPrimitive> primitives = layer.data.getSelected();

@@ -66,7 +66,7 @@ public class CreateMultipolygonAction extends JosmAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (Main.main.getEditLayer() == null) {
+        if (!Main.main.hasEditLayer()) {
             new Notification(
                     tr("No data loaded."))
                     .setIcon(JOptionPane.WARNING_MESSAGE)

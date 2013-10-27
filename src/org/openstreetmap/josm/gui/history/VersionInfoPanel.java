@@ -72,23 +72,16 @@ public class VersionInfoPanel extends JPanel implements Observer{
         return model.getPointInTime(pointInTimeType);
     }
 
-    protected OsmDataLayer getEditLayer() {
-        try {
-            return Main.map.mapView.getEditLayer();
-        } catch(NullPointerException e) {
-            return null;
-        }
-    }
-
     protected String getInfoText() {
         HistoryOsmPrimitive primitive = getPrimitive();
         if (primitive == null)
             return "";
         String text;
         if (model.isLatest(primitive)) {
+            OsmDataLayer editLayer = Main.main.getEditLayer();
             text = tr("<html>Version <strong>{0}</strong> currently edited in layer ''{1}''</html>",
                     Long.toString(primitive.getVersion()),
-                    getEditLayer() == null ? tr("unknown") : getEditLayer().getName()
+                    editLayer == null ? tr("unknown") : editLayer.getName()
                     );
         } else {
             String date = "?";

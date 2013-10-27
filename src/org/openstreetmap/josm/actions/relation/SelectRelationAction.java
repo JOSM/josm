@@ -30,8 +30,8 @@ public class SelectRelationAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty() || Main.map==null || Main.map.mapView==null) return;
-        OsmDataLayer editLayer = Main.map.mapView.getEditLayer();
+        if (!isEnabled() || relations.isEmpty()) return;
+        OsmDataLayer editLayer = Main.main.getEditLayer();
         if (editLayer==null || editLayer.data==null) return;
         if (add) {
             editLayer.data.addSelected(relations);

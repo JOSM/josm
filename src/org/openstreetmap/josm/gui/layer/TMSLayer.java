@@ -438,7 +438,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * Returns average number of screen pixels per tile pixel for current mapview
      */
     private double getScaleFactor(int zoom) {
-        if (Main.map == null || Main.map.mapView == null) return 1;
+        if (!Main.isDisplayingMapView()) return 1;
         MapView mv = Main.map.mapView;
         LatLon topLeft = mv.getLatLon(0, 0);
         LatLon botRight = mv.getLatLon(mv.getWidth(), mv.getHeight());

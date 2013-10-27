@@ -155,7 +155,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     private final AWTEventListener altKeyListener = new AWTEventListener() {
         @Override
         public void eventDispatched(AWTEvent e) {
-            if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isActiveLayerDrawable())
+            if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable())
                 return;
             InputEvent ie = (InputEvent) e;
             boolean alt = (ie.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;

@@ -268,6 +268,6 @@ public class UploadAction extends JosmAction{
             return;
         }
         APIDataSet apiData = new APIDataSet(Main.main.getCurrentDataSet());
-        uploadData(Main.map.mapView.getEditLayer(), apiData);
+        uploadData(Main.main.getEditLayer(), apiData);
     }
 }
