@@ -679,8 +679,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         protected boolean isActiveLayer(Layer layer) {
-            if (Main.map == null) return false;
-            if (Main.map.mapView == null) return false;
+            if (!Main.isDisplayingMapView()) return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
 
@@ -775,8 +774,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         protected boolean isActiveLayer(Layer layer) {
-            if (Main.map == null) return false;
-            if (Main.map.mapView == null) return false;
+            if (!Main.isDisplayingMapView()) return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
 
@@ -831,7 +829,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         private void duplicate(Layer layer) {
-            if (Main.map == null || Main.map.mapView == null)
+            if (!Main.isDisplayingMapView())
                 return;
 
             List<String> layerNames = new ArrayList<String>();
@@ -862,7 +860,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         protected boolean isActiveLayer(Layer layer) {
-            if (Main.map == null || Main.map.mapView == null)
+            if (!Main.isDisplayingMapView())
                 return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
@@ -973,8 +971,7 @@ public class LayerListDialog extends ToggleDialog {
     private class LayerNameCellRenderer extends DefaultTableCellRenderer {
 
         protected boolean isActiveLayer(Layer layer) {
-            if (Main.map == null) return false;
-            if (Main.map.mapView == null) return false;
+            if (!Main.isDisplayingMapView()) return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
 
@@ -1403,7 +1400,7 @@ public class LayerListDialog extends ToggleDialog {
          * Never null, but can be empty.
          */
         public List<Layer> getLayers() {
-            if (Main.map == null || Main.map.mapView == null)
+            if (!Main.isDisplayingMapView())
                 return Collections.<Layer>emptyList();
             return Main.map.mapView.getAllLayersAsList();
         }
@@ -1436,7 +1433,7 @@ public class LayerListDialog extends ToggleDialog {
          * @return the active layer. null, if no active layer is available
          */
         protected Layer getActiveLayer() {
-            if (Main.map == null || Main.map.mapView == null) return null;
+            if (!Main.isDisplayingMapView()) return null;
             return Main.map.mapView.getActiveLayer();
         }
 

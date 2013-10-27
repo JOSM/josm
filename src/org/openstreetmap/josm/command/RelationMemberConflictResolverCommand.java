@@ -67,7 +67,7 @@ public class RelationMemberConflictResolverCommand extends Command {
         my.setMembers(mergedMembers);
 
         // remember the layer
-        layer = Main.map.mapView.getEditLayer();
+        layer = Main.main.getEditLayer();
         return true;
     }
 
@@ -88,7 +88,7 @@ public class RelationMemberConflictResolverCommand extends Command {
         }
 
         Main.map.mapView.setActiveLayer(layer);
-        OsmDataLayer editLayer = Main.map.mapView.getEditLayer();
+        OsmDataLayer editLayer = Main.main.getEditLayer();
 
         // restore the former state
         //

@@ -39,7 +39,7 @@ public class UpdateSelectionAction extends JosmAction {
         reader.append(getCurrentDataSet(),id, type);
         try {
             DataSet ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
-            Main.map.mapView.getEditLayer().mergeFrom(ds);
+            Main.main.getEditLayer().mergeFrom(ds);
         } catch(Exception e) {
             ExceptionDialogUtil.explainException(e);
         }

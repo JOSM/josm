@@ -33,16 +33,16 @@ public class SelectMembersAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty() || Main.map==null || Main.map.mapView==null) return;
+        if (!isEnabled() || relations.isEmpty() || !Main.isDisplayingMapView()) return;
         
         HashSet<OsmPrimitive> members = new HashSet<OsmPrimitive>();
         for (Relation r: relations) {
             members.addAll(r.getMemberPrimitives());
         }
         if (add) {
-            Main.map.mapView.getEditLayer().data.addSelected(members);
+            Main.main.getEditLayer().data.addSelected(members);
         } else {
-            Main.map.mapView.getEditLayer().data.setSelected(members);
+            Main.main.getEditLayer().data.setSelected(members);
         }
     }
 }

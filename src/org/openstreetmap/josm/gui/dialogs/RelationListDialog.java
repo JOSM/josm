@@ -323,7 +323,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         @Override public void mouseClicked(MouseEvent e) {
-            if (Main.main.getEditLayer() == null) return;
+            if (!Main.main.hasEditLayer()) return;
             if (isDoubleClick(e)) {
                 if (e.isControlDown()) {
                     editCurrentRelation();
@@ -356,7 +356,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         protected void updateEnabledState() {
-            setEnabled(Main.main != null && Main.main.getEditLayer() != null);
+            setEnabled(Main.main != null && Main.main.hasEditLayer());
         }
 
         @Override

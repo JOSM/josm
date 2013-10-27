@@ -103,8 +103,9 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         currentRelationMemberTableModel = new DiffTableModel();
         referenceRelationMemberTableModel = new DiffTableModel();
 
-        if (getEditLayer() != null) {
-            getEditLayer().data.addDataSetListener(this);
+        OsmDataLayer editLayer = Main.main.getEditLayer();
+        if (editLayer != null) {
+            editLayer.data.addDataSetListener(this);
         }
         MapView.addLayerChangeListener(this);
     }
@@ -119,20 +120,6 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         this();
         CheckParameterUtil.ensureParameterNotNull(history, "history");
         setHistory(history);
-    }
-
-    /**
-     * Replies the current edit layer; null, if there isn't a current edit layer
-     * of type {@link OsmDataLayer}.
-     *
-     * @return the current edit layer
-     */
-    protected OsmDataLayer getEditLayer() {
-        try {
-            return Main.map.mapView.getEditLayer();
-        } catch(NullPointerException e) {
-            return null;
-        }
     }
 
     /**
@@ -186,8 +173,9 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         this.history = history;
         if (history.getNumVersions() > 0) {
             HistoryOsmPrimitive newLatest = null;
-            if (getEditLayer() != null) {
-                OsmPrimitive p = getEditLayer().data.getPrimitiveById(history.getId(), history.getType());
+            OsmDataLayer editLayer = Main.main.getEditLayer();
+            if (editLayer != null) {
+                OsmPrimitive p = editLayer.data.getPrimitiveById(history.getId(), history.getType());
                 if (canShowAsLatest(p)) {
                     newLatest = new HistoryPrimitiveBuilder().build(p);
                 }
@@ -535,8 +523,9 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
         public OsmPrimitive getLatest() {
             if (latest == null) return null;
-            if (getEditLayer() == null) return null;
-            OsmPrimitive p = getEditLayer().data.getPrimitiveById(latest.getId(), latest.getType());
+            OsmDataLayer editLayer = Main.main.getEditLayer();
+            if (editLayer == null) return null;
+            OsmPrimitive p = editLayer.data.getPrimitiveById(latest.getId(), latest.getType());
             return p;
         }
 
@@ -673,8 +662,9 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      *
      */
     public void unlinkAsListener() {
-        if (getEditLayer() != null) {
-            getEditLayer().data.removeDataSetListener(this);
+        OsmDataLayer editLayer = Main.main.getEditLayer();
+        if (editLayer != null) {
+            editLayer.data.removeDataSetListener(this);
         }
         MapView.removeLayerChangeListener(this);
     }

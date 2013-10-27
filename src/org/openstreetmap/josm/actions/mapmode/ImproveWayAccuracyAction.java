@@ -322,8 +322,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     // -------------------------------------------------------------------------
     @Override
     public void eventDispatched(AWTEvent event) {
-        if (Main.map == null || Main.map.mapView == null
-                || !Main.map.mapView.isActiveLayerDrawable()) {
+        if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable()) {
             return;
         }
         updateKeyModifiers((InputEvent) event);

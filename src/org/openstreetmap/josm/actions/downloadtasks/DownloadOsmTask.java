@@ -222,7 +222,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
 
         protected OsmDataLayer getEditLayer() {
             if (!Main.isDisplayingMapView()) return null;
-            return Main.map.mapView.getEditLayer();
+            return Main.main.getEditLayer();
         }
 
         protected int getNumDataLayers() {

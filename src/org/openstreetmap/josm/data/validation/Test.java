@@ -239,7 +239,7 @@ public class Test extends AbstractVisitor
             }
         }
         if (!primitivesToDelete.isEmpty()) {
-            return DeleteCommand.delete(Main.map.mapView.getEditLayer(), primitivesToDelete);
+            return DeleteCommand.delete(Main.main.getEditLayer(), primitivesToDelete);
         } else {
             return null;
         }

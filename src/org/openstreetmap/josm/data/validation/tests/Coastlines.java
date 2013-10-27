@@ -51,7 +51,7 @@ public class Coastlines extends Test {
 
         super.startTest(monitor);
 
-        OsmDataLayer layer = Main.map.mapView.getEditLayer();
+        OsmDataLayer layer = Main.main.getEditLayer();
 
         if (layer != null) {
             downloadedArea = layer.data.getDataSourceArea();

@@ -282,7 +282,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     @Override
     public void eventDispatched(AWTEvent event) {
-        if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isActiveLayerDrawable())
+        if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable())
             return;
         if (event instanceof KeyEvent) {
             KeyEvent e = (KeyEvent) event;

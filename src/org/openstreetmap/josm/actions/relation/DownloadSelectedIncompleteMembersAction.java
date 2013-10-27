@@ -46,11 +46,11 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty() || Main.map==null || Main.map.mapView==null) return;
+        if (!isEnabled() || relations.isEmpty() || !Main.isDisplayingMapView()) return;
         Main.worker.submit(new DownloadRelationMemberTask(
                 relations,
                 buildSetOfIncompleteMembers(relations),
-                Main.map.mapView.getEditLayer()));
+                Main.main.getEditLayer()));
     }
 
     @Override

@@ -242,7 +242,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      */
     private void buildTrees() {
         setTitle(tr("Command Stack"));
-        if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getEditLayer() == null)
+        if (!Main.main.hasEditLayer())
             return;
 
         List<Command> undoCommands = Main.main.undoRedo.commands;
@@ -316,7 +316,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      */
     protected static FilteredCollection<OsmPrimitive> getAffectedPrimitives(TreePath path) {
         PseudoCommand c = ((CommandListMutableTreeNode) path.getLastPathComponent()).getCommand();
-        final OsmDataLayer currentLayer = Main.map.mapView.getEditLayer();
+        final OsmDataLayer currentLayer = Main.main.getEditLayer();
         FilteredCollection<OsmPrimitive> prims = new FilteredCollection<OsmPrimitive>(
                 c.getParticipatingPrimitives(),
                 new Predicate<OsmPrimitive>(){
@@ -358,20 +358,22 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             } else
                 throw new IllegalStateException();
 
-            if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getEditLayer() == null) return;
-            Main.map.mapView.getEditLayer().data.setSelected( getAffectedPrimitives(path));
+            OsmDataLayer editLayer = Main.main.getEditLayer();
+            if (editLayer == null) return;
+            editLayer.data.setSelected( getAffectedPrimitives(path));
         }
 
         @Override
         public void updateEnabledState() {
             setEnabled(!undoTree.isSelectionEmpty() || !redoTree.isSelectionEmpty());
         }
-
     }
 
     public class SelectAndZoomAction extends SelectAction {
+        /**
+         * Constructs a new {@code SelectAndZoomAction}.
+         */
         public SelectAndZoomAction() {
-            super();
             putValue(NAME,tr("Select and zoom"));
             putValue(SHORT_DESCRIPTION, tr("Selects the objects that take part in this command (unless currently deleted), then and zooms to it"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale","selection"));
@@ -380,7 +382,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         @Override
         public void actionPerformed(ActionEvent e) {
             super.actionPerformed(e);
-            if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getEditLayer() == null) return;
+            if (!Main.main.hasEditLayer()) return;
             AutoScaleAction.autoScale("selection");
         }
     }

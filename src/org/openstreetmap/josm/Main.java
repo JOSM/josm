@@ -543,8 +543,7 @@ abstract public class Main {
      * @return the current edit layer. <code>null</code>, if no current edit layer exists
      */
     public OsmDataLayer getEditLayer() {
-        if (map == null) return null;
-        if (map.mapView == null) return null;
+        if (!isDisplayingMapView()) return null;
         return map.mapView.getEditLayer();
     }
 
@@ -564,8 +563,7 @@ abstract public class Main {
      * @return the currently active layer. <code>null</code>, if currently no active layer exists
      */
     public Layer getActiveLayer() {
-        if (map == null) return null;
-        if (map.mapView == null) return null;
+        if (!isDisplayingMapView()) return null;
         return map.mapView.getActiveLayer();
     }
 
@@ -761,7 +759,7 @@ abstract public class Main {
      * @since 2025
      */
     public static boolean saveUnsavedModifications() {
-        if (map == null || map.mapView == null) return true;
+        if (!isDisplayingMapView()) return true;
         return saveUnsavedModifications(map.mapView.getLayersOfType(OsmDataLayer.class), true);
     }
 
