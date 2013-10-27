@@ -1318,7 +1318,7 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=toll_booth"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=toll_booth"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=toll_booth"
-                  zh-hans.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:barrier=toll_booth" />
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:barrier=toll_booth" />
             <label text="Edit Toll Booth" />
             <key key="barrier" value="toll_booth" />
             <optional>
@@ -1389,7 +1389,7 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=wall"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=wall"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=wall"
-                  zh-hans.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:barrier=wall" />
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:barrier=wall" />
             <label text="Edit Wall" />
             <key key="barrier" value="wall" />
             <optional>
@@ -2522,7 +2522,7 @@ Note that for a match, at least one positive and no negative is required.
                   no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=fuel"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=fuel"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=fuel"
-                  zh-hant.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=fuel" />
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=fuel" />
             <label text="Edit Fuel" />
             <space />
             <key key="amenity" value="fuel" />
@@ -3000,7 +3000,7 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=bus_stop"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=bus_stop"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=bus_stop"
-                  zh-hant.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:highway=bus_stop" />
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:highway=bus_stop" />
             <label text="Edit Bus Stop" />
             <key key="highway" value="bus_stop" />
             <optional>
@@ -3256,7 +3256,7 @@ Note that for a match, at least one positive and no negative is required.
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:tourism=alpine_hut"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=alpine_hut"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=alpine_hut"
-                  zh-hant.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:tourism=alpine_hut" />
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:tourism=alpine_hut" />
             <label text="Edit Alpine Hut" />
             <space />
             <key key="tourism" value="alpine_hut" />
@@ -3413,7 +3413,7 @@ Note that for a match, at least one positive and no negative is required.
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:amenity=cafe"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=cafe"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=cafe"
-                  zh-hans.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:amenity=cafe" />
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:amenity=cafe" />
             <label text="Edit Cafe" />
             <space />
             <key key="amenity" value="cafe" />
@@ -3488,7 +3488,7 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=bar"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=bar"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=bar"
-                  zh-hans.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:amenity=bar" />
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:amenity=bar" />
             <label text="Edit Bar" />
             <space />
             <key key="amenity" value="bar" />
@@ -3962,7 +3962,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
                   sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
-                  zh-hant.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
             <label text="Edit Place of Worship" />
             <space />
             <key key="amenity" value="place_of_worship" />
@@ -4317,7 +4317,7 @@ Note that for a match, at least one positive and no negative is required.
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:amenity=toilets"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=toilets"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=toilets"
-                  zh-hant.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=toilets" />
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=toilets" />
             <label text="Edit Toilets" />
             <space />
             <key key="amenity" value="toilets" />
@@ -4463,7 +4463,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=bench"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=bench"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:amenity=bench"
-                  zh-hant.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=bench" />
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=bench" />
             <label text="Edit Bench" />
             <space />
             <key key="amenity" value="bench" />
@@ -6419,7 +6419,7 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=peak"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=peak"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=peak"
-                  zh-hant.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:natural=peak" />
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:natural=peak" />
             <label text="Edit Peak" />
             <space />
             <key key="natural" value="peak" />
@@ -6740,7 +6740,7 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=cemetery"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=cemetery"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=cemetery"
-                  zh-hant.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:landuse=cemetery" />
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:landuse=cemetery" />
             <label text="Edit Cemetery Landuse" />
             <space />
             <key key="landuse" value="cemetery" />
