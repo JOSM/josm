@@ -118,6 +118,16 @@ public abstract class RequestHandler {
     }
 
     /**
+     * Returns usage examples for the given command. To be overriden only my handlers that define several commands.
+     * @param cmd The command asked
+     * @return Usage examples for the given command
+     * @since 6332
+     */
+    public String[] getUsageExamples(String cmd) {
+        return getUsageExamples();
+    }
+
+    /**
      * Check permissions in preferences and display error message
      * or ask for permission.
      *

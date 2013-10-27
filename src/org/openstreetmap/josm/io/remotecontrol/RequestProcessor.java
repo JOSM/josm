@@ -372,14 +372,14 @@ public class RequestProcessor extends Thread {
             } else {
                 r.append(", ");
             }
-            r.append(getHanldlerInfoAsJSON(p.getKey()));
+            r.append(getHandlerInfoAsJSON(p.getKey()));
         }
         r.append("]");
 
         return r.toString();
     }
 
-    public static String getHanldlerInfoAsJSON(String cmd) {
+    public static String getHandlerInfoAsJSON(String cmd) {
         StringWriter w = new StringWriter();
         PrintWriter r = new PrintWriter(w);
         RequestHandler handler = null;
@@ -420,7 +420,7 @@ public class RequestProcessor extends Thread {
         }
         
         r.append("], \"examples\" : [");
-        String examples[] = handler.getUsageExamples();
+        String examples[] = handler.getUsageExamples(cmd.substring(1));
         if (examples != null) {
             for (int i = 0; i < examples.length; i++) {
                 if (i == 0) {
@@ -442,7 +442,6 @@ public class RequestProcessor extends Thread {
         }
     }
 
-
     /**
      * Reports HTML message with the description of all available commands
      * @return HTML message with the description of all available commands
@@ -450,13 +449,12 @@ public class RequestProcessor extends Thread {
      * @throws InstantiationException 
      */
     public static String getUsageAsHtml() throws IllegalAccessException, InstantiationException {
-        // no handler found
         StringBuilder usage = new StringBuilder(1024);
         for (Entry<String, Class<? extends RequestHandler>> handler : handlers.entrySet()) {
             RequestHandler sample = handler.getValue().newInstance();
             String[] mandatory = sample.getMandatoryParams();
             String[] optional = sample.getOptionalParams();
-            String[] examples = sample.getUsageExamples();
+            String[] examples = sample.getUsageExamples(handler.getKey().substring(1));
             usage.append("<li>");
             usage.append(handler.getKey());
             if (mandatory != null) {

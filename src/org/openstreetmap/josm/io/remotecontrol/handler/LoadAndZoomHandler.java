@@ -79,16 +79,21 @@ public class LoadAndZoomHandler extends RequestHandler
 
     @Override
     public String[] getUsageExamples() {
-        if (command.equals(myCommand)) {
-            return new String[] { 
-                "/load_and_zoom?addtags=wikipedia:de=Wei%C3%9Fe_Gasse|maxspeed=5&select=way23071688,way23076176,way23076177,&left=13.740&right=13.741&top=51.05&bottom=51.049",
-                "/load_and_zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&select=node413602999&new_layer=true"};
-        } else {
-            return new String[] { 
-                "/zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&select=node413602999"};
-        }
+        return getUsageExamples(myCommand);
     }
     
+    @Override
+    public String[] getUsageExamples(String cmd) {
+        if (command.equals(cmd)) {
+            return new String[] { 
+                    "/load_and_zoom?addtags=wikipedia:de=Wei%C3%9Fe_Gasse|maxspeed=5&select=way23071688,way23076176,way23076177,&left=13.740&right=13.741&top=51.05&bottom=51.049",
+                    "/load_and_zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&select=node413602999&new_layer=true"};
+        } else {
+            return new String[] { 
+            "/zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&select=node413602999"};
+        }
+    }
+
     @Override
     protected void handleRequest() throws RequestHandlerErrorException
     {
