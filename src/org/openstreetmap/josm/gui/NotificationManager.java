@@ -119,7 +119,7 @@ class NotificationManager {
             y = mapViewPos.y + mv.getHeight() - size.height - MARGIN;
         } else {
             x = MARGIN;
-            y = parentWindow.getHeight() - size.height - MARGIN;
+            y = parentWindow.getHeight() - Main.toolbar.control.getSize().height - size.height - MARGIN;
         }
         parentWindow.getLayeredPane().add(currentNotificationPanel, JLayeredPane.POPUP_LAYER, 0);
 
