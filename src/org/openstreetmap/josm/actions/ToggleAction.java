@@ -13,6 +13,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToggleButton;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -40,6 +41,8 @@ public abstract class ToggleAction extends JosmAction {
      */
     public ToggleAction(String name, Icon icon, String tooltip, Shortcut shortcut, boolean registerInToolbar, String toolbarId, boolean installAdapters) {
         super(name, icon, tooltip, shortcut, registerInToolbar, toolbarId, installAdapters);
+        // It is required to set the SELECTED_KEY to a non-null value in order to let Swing components update it
+        setSelected(false);
     }
 
     /**
@@ -57,6 +60,8 @@ public abstract class ToggleAction extends JosmAction {
      */
     public ToggleAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
         super(name, iconName, tooltip, shortcut, registerInToolbar);
+        // It is required to set the SELECTED_KEY to a non-null value in order to let Swing components update it
+        setSelected(false);
     }
 
     protected final void setSelected(boolean selected) {
@@ -72,6 +77,7 @@ public abstract class ToggleAction extends JosmAction {
         if (selected instanceof Boolean) {
             return (Boolean) selected;
         } else {
+            Main.warn(getClass().getName()+" does not define a boolean for SELECTED_KEY but "+selected+". You should report it to JOSM developers.");
             return false;
         }
     }
