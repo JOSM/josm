@@ -23,8 +23,9 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.plugins.PluginHandler;
 
 /**

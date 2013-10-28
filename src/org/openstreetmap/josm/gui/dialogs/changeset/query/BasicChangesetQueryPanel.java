@@ -20,9 +20,9 @@ import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.ChangesetQuery;
 
 /**

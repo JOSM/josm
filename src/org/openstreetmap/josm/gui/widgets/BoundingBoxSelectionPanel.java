@@ -18,7 +18,6 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 

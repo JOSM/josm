@@ -29,9 +29,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**

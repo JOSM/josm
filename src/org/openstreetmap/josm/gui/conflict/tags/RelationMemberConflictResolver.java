@@ -31,9 +31,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class RelationMemberConflictResolver extends JPanel {

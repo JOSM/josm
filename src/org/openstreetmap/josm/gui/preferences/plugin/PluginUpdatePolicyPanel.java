@@ -18,7 +18,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
