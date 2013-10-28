@@ -9,11 +9,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.openstreetmap.josm.gui.MultiSplitLayout.Divider;
-import org.openstreetmap.josm.gui.MultiSplitLayout.Leaf;
-import org.openstreetmap.josm.gui.MultiSplitLayout.Node;
-import org.openstreetmap.josm.gui.MultiSplitLayout.Split;
-import org.openstreetmap.josm.gui.MultiSplitPane;
+import org.openstreetmap.josm.gui.widgets.MultiSplitPane;
+import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Divider;
+import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Leaf;
+import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Node;
+import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Split;
 import org.openstreetmap.josm.tools.Destroyable;
 
 public class DialogsPanel extends JPanel implements Destroyable {

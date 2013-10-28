@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 

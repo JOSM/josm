@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.openstreetmap.josm.gui;
+package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -28,13 +28,14 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+
 import javax.accessibility.AccessibleContext;
 import javax.accessibility.AccessibleRole;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
 
-import org.openstreetmap.josm.gui.MultiSplitLayout.Divider;
-import org.openstreetmap.josm.gui.MultiSplitLayout.Node;
+import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Divider;
+import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Node;
 
 /**
  *

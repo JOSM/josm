@@ -1,11 +1,16 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+
+import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.Utils;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
