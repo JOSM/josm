@@ -92,6 +92,9 @@ Build-Date: ${build.tstamp}
                 <attribute name="Main-class" value="JOSM"/>
                 <attribute name="Main-Version" value="${version.entry.commit.revision} SVN"/>
                 <attribute name="Main-Date" value="${version.entry.commit.date}"/>
+                <attribute name="Permissions" value="all-permissions"/>
+                <attribute name="Codebase" value="josm.openstreetmap.de"/>
+                <attribute name="Application-Name" value="JOSM - Java OpenStreetMap Editor"/>
             </manifest>
             <zipfileset dir="images" prefix="images"/>
             <zipfileset dir="data" prefix="data"/>
