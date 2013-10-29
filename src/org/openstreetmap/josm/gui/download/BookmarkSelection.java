@@ -22,9 +22,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.gui.BookmarkList;
-import org.openstreetmap.josm.gui.BookmarkList.Bookmark;
-import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.download.BookmarkList.Bookmark;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.ImageProvider;
 

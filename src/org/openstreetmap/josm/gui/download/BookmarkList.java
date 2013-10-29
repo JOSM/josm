@@ -1,5 +1,5 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.gui;
+package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -54,6 +54,9 @@ public class BookmarkList extends JList {
                               Double.parseDouble(array.get(3)), Double.parseDouble(array.get(4)));
         }
 
+        /**
+         * Constructs a new {@code Bookmark}.
+         */
         public Bookmark() {
             area = null;
             name = null;

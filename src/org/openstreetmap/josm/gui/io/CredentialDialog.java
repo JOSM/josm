@@ -29,11 +29,11 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;

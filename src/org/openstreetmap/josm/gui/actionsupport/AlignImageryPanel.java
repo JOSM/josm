@@ -18,9 +18,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.UrlLabel;
 
 /**
  * The panel to nag a user ONCE that he/she has to align imagery.

@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 
 /**
  * A Notification Message similar to a popup window, but without disrupting the

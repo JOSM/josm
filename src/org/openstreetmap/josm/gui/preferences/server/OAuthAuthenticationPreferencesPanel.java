@@ -25,13 +25,13 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
-import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.oauth.AdvancedOAuthPropertiesPanel;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
