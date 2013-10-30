@@ -13,7 +13,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 public class RemoteControl
 {
     /**
-     * If the remote cotrol feature is enabled or disabled. If disabled,
+     * If the remote control feature is enabled or disabled. If disabled,
      * it should not start the server.
      */
     public static final BooleanProperty PROP_REMOTECONTROL_ENABLED = new BooleanProperty("remotecontrol.enabled", false);
@@ -48,8 +48,7 @@ public class RemoteControl
      * @param command The command name.
      * @param handlerClass The additional request handler.
      */
-    public void addRequestHandler(String command, Class<? extends RequestHandler> handlerClass)
-    {
+    public void addRequestHandler(String command, Class<? extends RequestHandler> handlerClass) {
         RequestProcessor.addRequestHandlerClass(command, handlerClass);
     }
 }

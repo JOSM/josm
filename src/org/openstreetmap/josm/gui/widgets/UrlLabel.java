@@ -40,7 +40,7 @@ public class UrlLabel extends JLabel implements MouseListener {
     }
 
     public UrlLabel(String url, String description) {
-        this (url, url, 0);
+        this (url, description, 0);
     }
 
     public UrlLabel(String url, String description, int fontPlus) {
