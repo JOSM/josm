@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.preferences.server.AuthenticationPreferencesPa
 import org.openstreetmap.josm.gui.preferences.server.OsmApiUrlInputPanel;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
+
 public class ServerAccessPreference extends DefaultTabPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
@@ -37,7 +38,6 @@ public class ServerAccessPreference extends DefaultTabPreferenceSetting {
     private AuthenticationPreferencesPanel pnlAuthPreferences;
     /** panel for configuring proxy preferences */
     private ProxyPreferencesPanel pnlProxyPreferences;
-    /** panel for backup preferences */
 
     /**
      * Embeds a vertically scrollable panel in a {@link JScrollPane}

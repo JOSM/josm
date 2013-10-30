@@ -803,7 +803,8 @@ abstract public class Main {
 
     /**
      * Closes JOSM and optionally terminates the Java Virtual Machine (JVM). If there are some unsaved data layers, asks first for user confirmation.
-     * @param exit If {@code true}, the JVM is terminated by running {@link System#exit} with a return code of 0.
+     * @param exit If {@code true}, the JVM is terminated by running {@link System#exit} with a given return code.
+     * @param exitCode The return code
      * @return {@code true} if JOSM has been closed, {@code false} if the user has cancelled the operation.
      * @since 3378
      */
