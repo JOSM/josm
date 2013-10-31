@@ -21,7 +21,12 @@ public class UserInfo {
     private String description;
     /** the list of preferred languages */
     private List<String> languages;
+    /** the number of unread messages */
+    private int unreadMessages;
 
+    /**
+     * Constructs a new {@code UserInfo}.
+     */
     public UserInfo() {
         id = 0;
     }
@@ -69,5 +74,23 @@ public class UserInfo {
 
     public void setHomeZoom(int homeZoom) {
         this.homeZoom = homeZoom;
+    }
+
+    /**
+     * Replies the number of unread messages
+     * @return the number of unread messages
+     * @since 6349
+     */
+    public final int getUnreadMessages() {
+        return unreadMessages;
+    }
+
+    /**
+     * Sets the number of unread messages
+     * @param unreadMessages the number of unread messages
+     * @since 6349
+     */
+    public final void setUnreadMessages(int unreadMessages) {
+        this.unreadMessages = unreadMessages;
     }
 }

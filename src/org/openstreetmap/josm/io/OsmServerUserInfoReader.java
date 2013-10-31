@@ -28,7 +28,13 @@ public class OsmServerUserInfoReader extends OsmServerReader {
         return node.getAttributes().getNamedItem(name).getNodeValue();
     }
 
-    static public  UserInfo buildFromXML(Document document) throws OsmDataParsingException{
+    /**
+     * Parses the given XML data and returns the associated user info.
+     * @param document The XML contents
+     * @return The user info
+     * @throws OsmDataParsingException if parsing goes wrong
+     */
+    static public UserInfo buildFromXML(Document document) throws OsmDataParsingException {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xpath = factory.newXPath();
@@ -104,12 +110,29 @@ public class OsmServerUserInfoReader extends OsmServerReader {
                 }
                 userInfo.setLanguages(languages);
             }
+            
+            // -- messages
+            xmlNode = (Node)xpath.compile("/osm/user[1]/messages/received").evaluate(document, XPathConstants.NODE);
+            if (xmlNode != null) {
+                v = getAttribute(xmlNode, "unread");
+                if (v == null)
+                    throw new OsmDataParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "unread", "received"));
+                try {
+                    userInfo.setUnreadMessages(Integer.parseInt(v));
+                } catch(NumberFormatException e) {
+                    throw new OsmDataParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "unread", "received", v));
+                }
+            }
+            
             return userInfo;
         } catch(XPathException e) {
             throw new OsmDataParsingException(e);
         }
     }
 
+    /**
+     * Constructs a new {@code OsmServerUserInfoReader}.
+     */
     public OsmServerUserInfoReader() {
         setDoAuthenticate(true);
     }

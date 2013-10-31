@@ -8,13 +8,14 @@ import java.net.PasswordAuthentication;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
  * CredentialManager is a factory for the single credential agent used.
  *
  * Currently, it defaults to replying an instance of {@link JosmPreferencesCredentialAgent}.
- *
+ * @since 2641
  */
 public class CredentialsManager implements CredentialsAgent {
 
@@ -55,20 +56,43 @@ public class CredentialsManager implements CredentialsAgent {
         CredentialsManager.instance = null;
     }
 
-    /*****
-     * non-static fields and methods
-     */
+    /* non-static fields and methods */
 
+    /**
+     * The credentials agent doing the real stuff
+     */
     private CredentialsAgent delegate;
 
+    /**
+     * Constructs a new {@code CredentialsManager}.
+     * @param delegate The credentials agent backing this credential manager. Must not be {@code null}
+     */
     public CredentialsManager(CredentialsAgent delegate) {
+        CheckParameterUtil.ensureParameterNotNull(delegate, "delegate");
         this.delegate = delegate;
     }
+    
+    /**
+     * Returns type of credentials agent backing this credentials manager.
+     * @return The type of credentials agent
+     */
+    public final Class<? extends CredentialsAgent> getCredentialsAgentClass () {
+        return delegate.getClass();
+    }
 
+    /**
+     * Returns the username for OSM API
+     * @return the username for OSM API
+     */
     public String getUsername() {
         return getUsername(OsmApi.getOsmApi().getHost());
     }
 
+    /**
+     * Returns the username for a given host
+     * @param host The host for which username is wanted
+     * @return The username for {@code host}
+     */
     public String getUsername(String host) {
         String username = null;
         try {

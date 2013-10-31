@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -243,10 +244,6 @@ public class ExceptionDialogUtil {
         );
     }
 
-    private static boolean isOAuth() {
-        return Main.pref.get("osm-server.auth-method", "basic").equals("oauth");
-    }
-
     /**
      * Explains a {@link OsmApiException} which was thrown because the authentication at
      * the OSM server failed
@@ -255,7 +252,7 @@ public class ExceptionDialogUtil {
      */
     public static void explainAuthenticationFailed(OsmApiException e) {
         String msg;
-        if (isOAuth()) {
+        if (OsmApi.isUsingOAuth()) {
             msg = ExceptionUtil.explainFailedOAuthAuthentication(e);
         } else {
             msg = ExceptionUtil.explainFailedBasicAuthentication(e);
@@ -292,7 +289,7 @@ public class ExceptionDialogUtil {
             // {1} is the translation of "node", "way" or "relation"
             msg = tr("Access to redacted version ''{0}'' of {1} {2} is forbidden.",
                     version, tr(type), id);
-        } else if (isOAuth()) {
+        } else if (OsmApi.isUsingOAuth()) {
             msg = ExceptionUtil.explainFailedOAuthAuthorisation(e);
         } else {
             msg = ExceptionUtil.explainFailedAuthorisation(e);
