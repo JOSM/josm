@@ -40,6 +40,8 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     private BasicAuthenticationPreferencesPanel pnlBasicAuthPreferences;
     /** the panel for the OAuth authentication parameters */
     private OAuthAuthenticationPreferencesPanel pnlOAuthPreferences;
+    /** the panel for messages notifier preferences */
+    private MessagesNotifierPanel pnlMessagesPreferences;
 
     /**
      * builds the UI
@@ -73,7 +75,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         bg.add(rbBasicAuthentication);
         bg.add(rbOAuth);
 
-        //-- add the panel which will hld the authentication parameters
+        //-- add the panel which will hold the authentication parameters
         gc.gridx = 0;
         gc.gridy = 1;
         gc.gridwidth = 2;
@@ -83,19 +85,30 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         add(pnlAuthenticationParameteters = new JPanel(), gc);
         pnlAuthenticationParameteters.setLayout(new BorderLayout());
 
-        //-- the two panel for authentication parameters
+        //-- the two panels for authentication parameters
         pnlBasicAuthPreferences = new BasicAuthenticationPreferencesPanel();
         pnlOAuthPreferences = new OAuthAuthenticationPreferencesPanel();
 
         rbBasicAuthentication.setSelected(true);
         pnlAuthenticationParameteters.add(pnlBasicAuthPreferences, BorderLayout.CENTER);
+        
+        //-- the panel for messages preferences
+        gc.gridy = 2;
+        gc.fill = GridBagConstraints.NONE;
+        add(pnlMessagesPreferences = new MessagesNotifierPanel(), gc);
     }
 
+    /**
+     * Constructs a new {@code AuthenticationPreferencesPanel}.
+     */
     public AuthenticationPreferencesPanel() {
         build();
         HelpUtil.setHelpContext(this, HelpUtil.ht("/Preferences/Connection#AuthenticationSettings"));
     }
 
+    /**
+     * Initializes the panel from preferences
+     */
     public void initFromPreferences() {
         String authMethod = Main.pref.get("osm-server.auth-method", "basic");
         if (authMethod.equals("basic")) {
@@ -108,8 +121,12 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         }
         pnlBasicAuthPreferences.initFromPreferences();
         pnlOAuthPreferences.initFromPreferences();
+        pnlMessagesPreferences.initFromPreferences();
     }
 
+    /**
+     * Saves the current values to preferences
+     */
     public void saveToPreferences() {
         // save the authentication method
         String authMethod;
@@ -130,6 +147,8 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             pnlBasicAuthPreferences.saveToPreferences();
             pnlOAuthPreferences.saveToPreferences();
         }
+        // save message notifications preferences. To be done after authentication preferences.
+        pnlMessagesPreferences.saveToPreferences();
     }
 
     /**

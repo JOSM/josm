@@ -563,9 +563,13 @@ public class OsmApi extends OsmConnection {
         return Math.max(ret,0);
     }
 
-    protected boolean isUsingOAuth() {
-        String authMethod = Main.pref.get("osm-server.auth-method", "basic");
-        return authMethod.equals("oauth");
+    /**
+     * Determines if JOSM is configured to access OSM API via OAuth
+     * @return {@code true} if JOSM is configured to access OSM API via OAuth, {@code false} otherwise
+     * @since 6349
+     */
+    public static final boolean isUsingOAuth() {
+        return "oauth".equals(Main.pref.get("osm-server.auth-method", "basic"));
     }
 
     private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
