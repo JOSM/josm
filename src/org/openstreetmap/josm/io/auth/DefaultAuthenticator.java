@@ -6,7 +6,7 @@ import java.net.PasswordAuthentication;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.OsmApi;
 
 /**
  * This is the default authenticator used in JOSM. It delegates lookup of credentials
@@ -42,9 +42,7 @@ public  class DefaultAuthenticator extends Authenticator {
         try {
             if (getRequestorType().equals(Authenticator.RequestorType.SERVER)) {
                 // if we are working with OAuth we don't prompt for a password
-                //
-                String authMethod = Main.pref.get("osm-server.auth-method", "basic");
-                if (authMethod.equals("oauth"))
+                if (OsmApi.isUsingOAuth())
                     return null;
             }
             boolean tried = credentialsTried.get(getRequestorType()) != null;
