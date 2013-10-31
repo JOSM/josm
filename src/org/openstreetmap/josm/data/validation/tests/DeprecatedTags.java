@@ -124,6 +124,10 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2123).
                 test("building", "entrance").
                 alternative("entrance"));
+        // Useless tag proposed in internal preset for years
+        // see #9213
+        checks.add(new DeprecationCheck(2124).
+                testAndRemove("board_type", "board"));
     }
 
     /**
