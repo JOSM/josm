@@ -99,7 +99,7 @@ public class DefaultProxySelector extends ProxySelector {
         if (value.length() == 0) {
             proxyPolicy = ProxyPolicy.NO_PROXY;
         } else {
-            proxyPolicy= ProxyPolicy.fromName(value);
+            proxyPolicy = ProxyPolicy.fromName(value);
             if (proxyPolicy == null) {
                 Main.warn(tr("Unexpected value for preference ''{0}'' found. Got ''{1}''. Will use no proxy.", ProxyPreferencesPanel.PROXY_POLICY, value));
                 proxyPolicy = ProxyPolicy.NO_PROXY;
@@ -107,11 +107,11 @@ public class DefaultProxySelector extends ProxySelector {
         }
         String host = Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_HOST, null);
         int port = parseProxyPortValue(ProxyPreferencesPanel.PROXY_HTTP_PORT, Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_PORT, null));
-        if (host != null && !host.trim().isEmpty() && port > 0) {
-            httpProxySocketAddress = new InetSocketAddress(host,port);
-        } else {
-            httpProxySocketAddress = null;
-            if (proxyPolicy.equals(ProxyPolicy.USE_HTTP_PROXY)) {
+        httpProxySocketAddress = null;
+        if (proxyPolicy.equals(ProxyPolicy.USE_HTTP_PROXY)) {
+            if (host != null && !host.trim().isEmpty() && port > 0) {
+                httpProxySocketAddress = new InetSocketAddress(host, port);
+            } else {
                 Main.warn(tr("Unexpected parameters for HTTP proxy. Got host ''{0}'' and port ''{1}''.", host, port));
                 Main.warn(tr("The proxy will not be used."));
             }
@@ -119,11 +119,11 @@ public class DefaultProxySelector extends ProxySelector {
 
         host = Main.pref.get(ProxyPreferencesPanel.PROXY_SOCKS_HOST, null);
         port = parseProxyPortValue(ProxyPreferencesPanel.PROXY_SOCKS_PORT, Main.pref.get(ProxyPreferencesPanel.PROXY_SOCKS_PORT, null));
-        if (host != null && !host.trim().isEmpty() && port > 0) {
-            socksProxySocketAddress = new InetSocketAddress(host,port);
-        } else {
-            socksProxySocketAddress = null;
-            if (proxyPolicy.equals(ProxyPolicy.USE_SOCKS_PROXY)) {
+        socksProxySocketAddress = null;
+        if (proxyPolicy.equals(ProxyPolicy.USE_SOCKS_PROXY)) {
+            if (host != null && !host.trim().isEmpty() && port > 0) {
+                socksProxySocketAddress = new InetSocketAddress(host,port);
+            } else {
                 Main.warn(tr("Unexpected parameters for SOCKS proxy. Got host ''{0}'' and port ''{1}''.", host, port));
                 Main.warn(tr("The proxy will not be used."));
             }
