@@ -3119,6 +3119,8 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="aeroway" value="terminal" />
             <text key="name" text="Name" />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
         </item>
         <item name="Gate" name_context="airport" icon="presets/aeroway_gate.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=gate"
@@ -3591,6 +3593,8 @@ Note that for a match, at least one positive and no negative is required.
             <key key="information" value="office" />
             <text key="name" text="Name" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
         </item>
         <item name="Map" icon="presets/map.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information" />
@@ -3599,7 +3603,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="tourism" value="information" />
             <key key="information" value="map" />
             <text key="name" text="Name" />
-            <combo key="map_type" text="Detail Grade" values="topo,street,scheme" />
+            <combo key="map_type" text="Detail Grade" values="topo,street,scheme,toposcope" />
             <combo key="map_size" text="Shown Area" values="site,city,region" />
             <text key="description" text="Closer Description" />
             <optional text="Routes shown for:">
@@ -3621,7 +3625,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="tourism" value="information" />
             <key key="information" value="board" />
             <text key="name" text="Name" />
-            <combo key="board_type" text="Board Content" values="notice,history,nature,wildlife,plants" default="board" />
+            <combo key="board_type" text="Board Content" values="notice,history,nature,wildlife,plants" />
             <text key="description" text="Closer Description" />
         </item>
         <item name="Guidepost" icon="presets/guidepost.png" type="node">
@@ -3656,6 +3660,8 @@ Note that for a match, at least one positive and no negative is required.
             <text key="operator" text="Operator" />
             <text key="ref" text="Reference number" />
             <combo key="fee" text="Fee" values="yes,no" />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
         </item>
         <item name="Audioguide" icon="presets/information.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information" />
@@ -4372,6 +4378,18 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=phone"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=phone" />
             <key key="emergency" value="phone" />
+        </item>
+        <item name="Internet Access" icon="presets/network-wireless.svg" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:internet_access" 
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:internet_access"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:internet_access"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:internet_access"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:internet_access"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:internet_access" />
+            <label text="Edit Internet Access" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" match="key" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" match="key" />
         </item>
         <item name="Automated Defibrillator" icon="presets/aed.svg" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=aed"
