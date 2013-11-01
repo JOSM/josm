@@ -29,10 +29,11 @@ import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Handler for load_and_zoom request.
+ * Handler for {@code load_and_zoom} and {@code zoom} requests.
+ * @since 3707
  */
-public class LoadAndZoomHandler extends RequestHandler
-{
+public class LoadAndZoomHandler extends RequestHandler {
+    
     /**
      * The remote control command name used to load data and zoom.
      */
@@ -55,8 +56,7 @@ public class LoadAndZoomHandler extends RequestHandler
     private final Set<Long> relations = new HashSet<Long>();
 
     @Override
-    public String getPermissionMessage()
-    {
+    public String getPermissionMessage() {
         String msg = tr("Remote Control has been asked to load data from the API.") +
                 "<br>" + tr("Bounding box: ") + new BBox(minlon, minlat, maxlon, maxlat).toStringCSV(", ");
         if (args.containsKey("select") && ways.size()+nodes.size()+relations.size() > 0) {
@@ -66,14 +66,12 @@ public class LoadAndZoomHandler extends RequestHandler
     }
 
     @Override
-    public String[] getMandatoryParams()
-    {
+    public String[] getMandatoryParams() {
         return new String[] { "bottom", "top", "left", "right" };
     }
 
     @Override
-    public String[] getOptionalParams()
-    {
+    public String[] getOptionalParams() {
         return new String[] {"new_layer", "addtags", "select", "zoom_mode"};
     }
 
@@ -95,8 +93,7 @@ public class LoadAndZoomHandler extends RequestHandler
     }
 
     @Override
-    protected void handleRequest() throws RequestHandlerErrorException
-    {
+    protected void handleRequest() throws RequestHandlerErrorException {
         DownloadTask osmTask = new DownloadOsmTask();
         try {
             boolean newLayer = isLoadInNewLayer();
@@ -240,6 +237,19 @@ public class LoadAndZoomHandler extends RequestHandler
             maxlon = LatLon.roundToOsmPrecision(Double.parseDouble(args.get("right")));
         } catch (NumberFormatException e) {
             throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+")");
+        }
+        
+        // Current API 0.6 check: "The latitudes must be between -90 and 90"
+        if (!LatLon.isValidLat(minlat) || !LatLon.isValidLat(maxlat)) {
+            throw new RequestHandlerBadRequestException(tr("The latitudes must be between {0} and {1}", -90d, 90d));
+        }
+        // Current API 0.6 check: "longitudes between -180 and 180"
+        if (!LatLon.isValidLon(minlon) || !LatLon.isValidLon(maxlon)) {
+            throw new RequestHandlerBadRequestException(tr("The longitudes must be between {0} and {1}", -180d, 180d));
+        }
+        // Current API 0.6 check: "the minima must be less than the maxima"
+        if (minlat > maxlat || minlon > maxlon) {
+            throw new RequestHandlerBadRequestException(tr("The minima must be less than the maxima"));
         }
 
         // Process optional argument 'select'
