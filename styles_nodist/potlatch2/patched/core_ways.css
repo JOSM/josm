@@ -60,8 +60,8 @@ way[railway=subway]::dashes  { z-index: 7; color: white; width: 3; dashes: 8,8; 
 way[construction=subway] { z-index: 6; color: #444444; width: 5; dashes: 4, 4; }
 way[construction=subway]::dashes  { z-index: 7; color: white; width: 3; dashes: 4,12;}
 
-way[railway=disused],way[railway=abandoned] { z-index: 6; color: #444400; width: 3; dashes: 17, 2, 5, 0; }
-way[railway=disused]::dashes,way[railway=abandoned]::dashes { z-index: 7; color: #999999; width: 2; dashes: 12,12; }
+way[railway=disused][!highway],way[railway=abandoned][!highway] { z-index: 6; color: #444400; width: 3; dashes: 17, 2, 5, 0; }
+way[railway=disused][!highway]::dashes,way[railway=abandoned][!highway]::dashes { z-index: 7; color: #999999; width: 2; dashes: 12,12; }
 
 way[railway=tram]      { z-index: 11; color: #999999; width: 2; casing-color: black; casing-width: 2; }
 way[construction=tram] { z-index: 11; color: #999999; width: 2; casing-color: black; casing-width: 2; dashes: 6, 6; casing-dashes: 6, 6; }
@@ -72,39 +72,28 @@ way[railway=light_rail]::dashes { z-index: 7; color: #999999; width: 2; dashes: 
 way[construction=light_rail] { z-index: 6; color: black; width: 4; dashes: 8, 4, 4, 4; }
 way[construction=light_rail]::dashes { z-index: 7; color: #999999; width: 2; dashes: 8,12; }
 
-/* Waterways */	
+/* Waterways */ 
 
 way[waterway=river], 
 way[waterway=canal], 
 way[waterway=stream]   { z-index: 5; color: #3434ff; width: 2; text:auto; text-color: #3434ff; font-size:9; text-position: line; text-offset: 7;}
-way[waterway=drain] 			 {z-index: 5; color: #3434ff; width: 1; text:auto; text-color: #3434ff; text-position: line; text-offset: 3;}
+way[waterway=drain]              {z-index: 5; color: #3434ff; width: 1; text:auto; text-color: #3434ff; text-position: line; text-offset: 3;}
 way[waterway][tunnel=yes]                {z-index: 5; dashes: 8,4;}
 
 /* Aeroways */
 
 way[aeroway=aerodrome]:closed
     { z-index: 3; color: #bb44bb; width: 3; casing-color: #66066;  casing-width: 1;  }
-way|z-15[aeroway=aerodrome]:closed
-    { z-index: 3; fill-color: #bb99bb;  fill-opacity: 0.5;}
 way[aeroway=taxiway]!:closed { z-index: 8; color: #999999; width: 3; casing-color: #aa66aa; casing-width: 2; }
-area[aeroway=taxiway]:closed { z-index: 8; color: #bb99bb; width: 3; fill-color: #ccaacc; }
+area[aeroway=taxiway]:closed { z-index: 8; color: #bb99bb; width: 3; fill-color: #ccaacc; } 
 
-way|z17-[aeroway=runway]!:closed { z-index: 9; color: black; width: 11; casing-color: #aa66aa; casing-width: 1; }
-way|z17-[aeroway=runway]!:closed::aa { z-index: 10; color: white; width: 9;  dashes: 0, 20, 4, 76; }
-way|z17-[aeroway=runway]!:closed::bb { z-index: 11; color: black; width: 7; }
-way|z17-[aeroway=runway]!:closed::cc { z-index: 12; color: white; width: 5;  dashes: 0, 20, 4, 76; }
-way|z17-[aeroway=runway]!:closed::dd { z-index: 13; color: black; width: 3; }
-way|z17-[aeroway=runway]!:closed::ee { z-index: 14; color: white; width: 1;  dashes: 4, 16; }
+way[aeroway=runway]!:closed { z-index: 9; color: black; width: 5;  }
+way[aeroway=runway]!:closed::aa { z-index: 12; color: white; width: 5;  dashes: 0, 20, 4, 76; }
+way[aeroway=runway]!:closed::bb { z-index: 13; color: black; width: 3; }
+way[aeroway=runway]!:closed::cc { z-index: 14; color: white; width: 1;  dashes: 4, 16; }
 
-way|z15-16[aeroway=runway]!:closed { z-index: 9; color: black; width: 5;  }
-way|z15-16[aeroway=runway]!:closed::aa { z-index: 12; color: white; width: 5;  dashes: 0, 20, 4, 76; }
-way|z15-16[aeroway=runway]!:closed::bb { z-index: 13; color: black; width: 3; }
-way|z15-16[aeroway=runway]!:closed::cc { z-index: 14; color: white; width: 1;  dashes: 4, 16; }
-
-way|z-14[aeroway=runway]!:closed { z-index: 9; color: #444444; width: 3;  }
-
-area[aeroway=runway]:closed { z-index: 9; color: black; width: 3; fill-color: #775577; }
-area[aeroway=apron]:closed { z-index: 4; color: #cc66cc; width: 1; fill-color: #ddaadd; fill-opacity: 0.5;}
+area[aeroway=runway]:closed { z-index: 9; color: black; width: 3; fill-color: #775577; } 
+area[aeroway=apron]:closed { z-index: 4; color: #cc66cc; width: 1; fill-color: #ddaadd; fill-opacity: 0.5;} 
 
 /* Barriers */
 
