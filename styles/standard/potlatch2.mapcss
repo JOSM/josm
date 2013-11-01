@@ -109,8 +109,8 @@ way[railway=subway]::dashes  { z-index: 7; color: white; width: 3; dashes: 8,8; 
 way[construction=subway] { z-index: 6; color: #444444; width: 5; dashes: 4, 4; }
 way[construction=subway]::dashes  { z-index: 7; color: white; width: 3; dashes: 4,12;}
 
-way[railway=disused],way[railway=abandoned] { z-index: 6; color: #444400; width: 3; dashes: 17, 2, 5, 0; }
-way[railway=disused]::dashes,way[railway=abandoned]::dashes { z-index: 7; color: #999999; width: 2; dashes: 12,12; }
+way[railway=disused][!highway],way[railway=abandoned][!highway] { z-index: 6; color: #444400; width: 3; dashes: 17, 2, 5, 0; }
+way[railway=disused][!highway]::dashes,way[railway=abandoned][!highway]::dashes { z-index: 7; color: #999999; width: 2; dashes: 12,12; }
 
 way[railway=tram]      { z-index: 11; color: #999999; width: 2; casing-color: black; casing-width: 2; }
 way[construction=tram] { z-index: 11; color: #999999; width: 2; casing-color: black; casing-width: 2; dashes: 6, 6; casing-dashes: 6, 6; }
@@ -121,39 +121,28 @@ way[railway=light_rail]::dashes { z-index: 7; color: #999999; width: 2; dashes: 
 way[construction=light_rail] { z-index: 6; color: black; width: 4; dashes: 8, 4, 4, 4; }
 way[construction=light_rail]::dashes { z-index: 7; color: #999999; width: 2; dashes: 8,12; }
 
-/* Waterways */	
+/* Waterways */ 
 
 way[waterway=river], 
 way[waterway=canal], 
 way[waterway=stream]   { z-index: 5; color: #3434ff; width: 2; text:auto; text-color: #3434ff; font-size:9; text-position: line; text-offset: 7;}
-way[waterway=drain] 			 {z-index: 5; color: #3434ff; width: 1; text:auto; text-color: #3434ff; text-position: line; text-offset: 3;}
+way[waterway=drain]              {z-index: 5; color: #3434ff; width: 1; text:auto; text-color: #3434ff; text-position: line; text-offset: 3;}
 way[waterway][tunnel=yes]                {z-index: 5; dashes: 8,4;}
 
 /* Aeroways */
 
 way[aeroway=aerodrome]:closed
     { z-index: 3; color: #bb44bb; width: 3; casing-color: #66066;  casing-width: 1;  }
-way|z-15[aeroway=aerodrome]:closed
-    { z-index: 3; fill-color: #bb99bb;  fill-opacity: 0.5;}
 way[aeroway=taxiway]!:closed { z-index: 8; color: #999999; width: 3; casing-color: #aa66aa; casing-width: 2; }
-area[aeroway=taxiway]:closed { z-index: 8; color: #bb99bb; width: 3; fill-color: #ccaacc; }
+area[aeroway=taxiway]:closed { z-index: 8; color: #bb99bb; width: 3; fill-color: #ccaacc; } 
 
-way|z17-[aeroway=runway]!:closed { z-index: 9; color: black; width: 11; casing-color: #aa66aa; casing-width: 1; }
-way|z17-[aeroway=runway]!:closed::aa { z-index: 10; color: white; width: 9;  dashes: 0, 20, 4, 76; }
-way|z17-[aeroway=runway]!:closed::bb { z-index: 11; color: black; width: 7; }
-way|z17-[aeroway=runway]!:closed::cc { z-index: 12; color: white; width: 5;  dashes: 0, 20, 4, 76; }
-way|z17-[aeroway=runway]!:closed::dd { z-index: 13; color: black; width: 3; }
-way|z17-[aeroway=runway]!:closed::ee { z-index: 14; color: white; width: 1;  dashes: 4, 16; }
+way[aeroway=runway]!:closed { z-index: 9; color: black; width: 5;  }
+way[aeroway=runway]!:closed::aa { z-index: 12; color: white; width: 5;  dashes: 0, 20, 4, 76; }
+way[aeroway=runway]!:closed::bb { z-index: 13; color: black; width: 3; }
+way[aeroway=runway]!:closed::cc { z-index: 14; color: white; width: 1;  dashes: 4, 16; }
 
-way|z15-16[aeroway=runway]!:closed { z-index: 9; color: black; width: 5;  }
-way|z15-16[aeroway=runway]!:closed::aa { z-index: 12; color: white; width: 5;  dashes: 0, 20, 4, 76; }
-way|z15-16[aeroway=runway]!:closed::bb { z-index: 13; color: black; width: 3; }
-way|z15-16[aeroway=runway]!:closed::cc { z-index: 14; color: white; width: 1;  dashes: 4, 16; }
-
-way|z-14[aeroway=runway]!:closed { z-index: 9; color: #444444; width: 3;  }
-
-area[aeroway=runway]:closed { z-index: 9; color: black; width: 3; fill-color: #775577; }
-area[aeroway=apron]:closed { z-index: 4; color: #cc66cc; width: 1; fill-color: #ddaadd; fill-opacity: 0.5;}
+area[aeroway=runway]:closed { z-index: 9; color: black; width: 3; fill-color: #775577; } 
+area[aeroway=apron]:closed { z-index: 4; color: #cc66cc; width: 1; fill-color: #ddaadd; fill-opacity: 0.5;} 
 
 /* Barriers */
 
@@ -217,10 +206,11 @@ node[barrier=cycle_barrier] { icon-image: icons/barrier_cycle_barrier.16.png; z-
 node[barrier=block] { icon-image: icons/barrier_blocks.16.png; z-index: 20; }
 node[barrier=cattle_grid] { icon-image: icons/barrier_cattle_grid.16.png; z-index: 20; }
 node[amenity=school] { icon-image: icons/education_school.n.16.png; text-offset:0; text: auto; font-size: 10; z-index: 20; }
-aera[amenity=school]:closed { color: yellow; fill-color: yellow; fill-opacity: 0.1; prop_area_small_name : 1; }
+area[amenity=school]:closed { color: yellow; fill-color: yellow; fill-opacity: 0.1; prop_area_small_name : 1; }
 node[amenity=bar] { icon-image: icons/food_bar.n.16.png; text-offset:0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=cafe] { icon-image: icons/food_cafe.n.16.png; text-offset:0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=fast_food] { icon-image: icons/food_fastfood.n.16.png; z-index: 20; }
+node[amenity=nightclub] { icon-image: icons/food_nightclub.n.16.png; text-offset: 0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=pub] { icon-image: icons/food_pub.n.16.png; text-offset: 0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=restaurant] { icon-image: icons/food_restaurant.n.16.png; text-offset:0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=hospital] { icon-image: icons/health_hospital.n.16.png; z-index: 20; }
@@ -234,6 +224,7 @@ node[amenity=emergency_phone] { icon-image: icons/emergency-telephone-16.png; z-
 node[amenity=fountain] { icon-image: icons/amenity_fountain2.n.16.png; z-index: 20; }
 node[amenity=hunting_stand] { icon-image: icons/sport_shooting.n.16.png; z-index: 20; }
 node[amenity=kindergarten] { icon-image: icons/education_nursery3.n.16.png; z-index: 20; text-offset:0; text: auto; font-size: 10; z-index: 20; }
+node[amenity=library] { icon-image: icons/amenity_library.n.16.png; text-offset:0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=place_of_worship]  { icon-image: icons/place_of_worship_unknown.n.16.png; text-offset:0; text: auto; font-size: 10; z-index: 20; }
 node[amenity=post_office] { icon-image: icons/amenity_post_office.n.16.png; z-index: 20; }
 node[amenity=shelter] { icon-image: icons/accommodation_shelter2.n.16.png; z-index: 20; }
@@ -243,6 +234,8 @@ node[amenity=toilets] { icon-image: icons/amenity_toilets.n.16.png; z-index: 20;
 node[amenity=vending_machine] { icon-image: icons/shopping_vending_machine.n.16.png; z-index: 20; }
 node[amenity=veterinary] { icon-image: icons/health_veterinary.n.8E7409.16.png; z-index: 20; }
 node[amenity=waste_basket] { icon-image: icons/amenity_waste_bin.n.16.png; z-index: 20; }
+node[amenity=fire_hydrant] { icon-image: icons/emergency_hydrant.n.16.png; z-index: 20; }
+node[emergency=fire_hydrant] { icon-image: icons/emergency_hydrant.n.16.png; z-index: 20; }
 /* Shops */
 node[shop=alcohol] { icon-image: icons/shopping_alcohol.n.16.png; z-index: 20; }
 node[shop=bakery] { icon-image: icons/shopping_bakery.n.16.png; z-index: 20; }
@@ -254,6 +247,7 @@ node[shop=car] { icon-image: icons/shopping_car.n.16.png; z-index: 20; }
 node[shop=clothes] { icon-image: icons/shopping_clothes.n.16.png; z-index: 20; }
 node[shop=confectionery] { icon-image: icons/shopping_confectionery.n.16.png; z-index: 20; }
 node[shop=convenience] { icon-image: icons/shopping_convenience.n.16.png; z-index: 20; }
+node[shop=department_store] { icon-image: icons/shopping_department_store.n.16.png; z-index: 20; }
 node[shop=doityourself] { icon-image: icons/shopping_diy.n.16.png; z-index: 20; }
 node[shop=fishmonger] { icon-image: icons/shopping_fish.n.16.png; z-index: 20; }
 node[shop=florist] { icon-image: icons/shopping_florist.n.16.png; z-index: 20; }
@@ -315,6 +309,7 @@ node[man_made=tower] { icon-image: icons/manmade_tower.png; z-index: 20; }
 /* Yes these power stations seem a little backward - but that's seemingly what the side menu uses ATM */
 node[power=station] { icon-image: icons/power_substation.n.16.png; z-index: 20; }
 node[power=generator] { icon-image: icons/power_station.png; z-index: 20; text-offset:0; text: auto; font-size: 10; z-index: 20; }
+/* P2 previously had these icons instead of "icon-image: cross" which is not standard MapCSS but a P2 keyword we won't implement, so keep the old icons */
 node[power=tower] { icon-image: icons/power_tower_high2.n.16.png; z-index: 20; }
 node[power=pole] { icon-image: icons/power_tower_low.n.16.png; z-index: 20; }
 node[waterway=weir] { icon-image: icons/transport_weir.n.16.png; z-index: 20; }
@@ -326,7 +321,7 @@ node[addr:housename] { symbol-shape: circle; symbol-size: 8; symbol-fill-color: 
 node[addr:housenumber]::hn_casing,
 node[addr:housename]::hn_casing { z-index: -100; symbol-shape: circle; symbol-size: 10; symbol-fill-color: blue; }
 
-way[addr:interpolation] { z-index: 5; color: #B0E0E6; width: 3; dashes: 3,3;}
+way[addr:interpolation] { color: #B0E0E6; width: 3; dashes: 3,3;}
 /****************
  * core_landuse.css
  ****************/

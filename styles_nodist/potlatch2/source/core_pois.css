@@ -28,6 +28,7 @@ way[amenity=school] :area { color: yellow; fill-color: yellow; fill-opacity: 0.1
 node[amenity=bar] { icon-image: icons/food_bar.n.16.png; text-offset:15; text: name; font-size: 10; z-index: 20; }
 node[amenity=cafe] { icon-image: icons/food_cafe.n.16.png; text-offset:15; text: name; font-size: 10; z-index: 20; }
 node[amenity=fast_food] { icon-image: icons/food_fastfood.n.16.png; z-index: 20; }
+node[amenity=nightclub] { icon-image: icons/food_nightclub.n.16.png; text-offset: 15; text: name; font-size: 10; z-index: 20; }
 node[amenity=pub] { icon-image: icons/food_pub.n.16.png; text-offset: 15; text: name; font-size: 10; z-index: 20; }
 node[amenity=restaurant] { icon-image: icons/food_restaurant.n.16.png; text-offset:15; text: name; font-size: 10; z-index: 20; }
 node[amenity=hospital] { icon-image: icons/health_hospital.n.16.png; z-index: 20; }
@@ -41,6 +42,7 @@ node[amenity=emergency_phone] { icon-image: icons/emergency-telephone-16.png; z-
 node[amenity=fountain] { icon-image: icons/amenity_fountain2.n.16.png; z-index: 20; }
 node[amenity=hunting_stand] { icon-image: icons/sport_shooting.n.16.png; z-index: 20; }
 node[amenity=kindergarten] { icon-image: icons/education_nursery3.n.16.png; z-index: 20; text-offset:15; text: name; font-size: 10; z-index: 20; }
+node[amenity=library] { icon-image: icons/amenity_library.n.16.png; text-offset:15; text: name; font-size: 10; z-index: 20; }
 node[amenity=place_of_worship]  { icon-image: icons/place_of_worship_unknown.n.16.png; text-offset:15; text: name; font-size: 10; z-index: 20; }
 node[amenity=post_office] { icon-image: icons/amenity_post_office.n.16.png; z-index: 20; }
 node[amenity=shelter] { icon-image: icons/accommodation_shelter2.n.16.png; z-index: 20; }
@@ -50,6 +52,8 @@ node[amenity=toilets] { icon-image: icons/amenity_toilets.n.16.png; z-index: 20;
 node[amenity=vending_machine] { icon-image: icons/shopping_vending_machine.n.16.png; z-index: 20; }
 node[amenity=veterinary] { icon-image: icons/health_veterinary.n.8E7409.16.png; z-index: 20; }
 node[amenity=waste_basket] { icon-image: icons/amenity_waste_bin.n.16.png; z-index: 20; }
+node[amenity=fire_hydrant] { icon-image: icons/emergency_hydrant.n.16.png; z-index: 20; }
+node[emergency=fire_hydrant] { icon-image: icons/emergency_hydrant.n.16.png; z-index: 20; }
 /* Shops */
 node[shop=alcohol] { icon-image: icons/shopping_alcohol.n.16.png; z-index: 20; }
 node[shop=bakery] { icon-image: icons/shopping_bakery.n.16.png; z-index: 20; }
@@ -61,6 +65,7 @@ node[shop=car] { icon-image: icons/shopping_car.n.16.png; z-index: 20; }
 node[shop=clothes] { icon-image: icons/shopping_clothes.n.16.png; z-index: 20; }
 node[shop=confectionery] { icon-image: icons/shopping_confectionery.n.16.png; z-index: 20; }
 node[shop=convenience] { icon-image: icons/shopping_convenience.n.16.png; z-index: 20; }
+node[shop=department_store] { icon-image: icons/shopping_department_store.n.16.png; z-index: 20; }
 node[shop=doityourself] { icon-image: icons/shopping_diy.n.16.png; z-index: 20; }
 node[shop=fishmonger] { icon-image: icons/shopping_fish.n.16.png; z-index: 20; }
 node[shop=florist] { icon-image: icons/shopping_florist.n.16.png; z-index: 20; }
@@ -122,8 +127,8 @@ node[man_made=tower] { icon-image: icons/manmade_tower.png; z-index: 20; }
 /* Yes these power stations seem a little backward - but that's seemingly what the side menu uses ATM */
 node[power=station] { icon-image: icons/power_substation.n.16.png; z-index: 20; }
 node[power=generator] { icon-image: icons/power_station.png; z-index: 20; text-offset:15; text: name; font-size: 10; z-index: 20; }
-node[power=tower] { icon-image: icons/power_tower_high2.n.16.png; z-index: 20; }
-node[power=pole] { icon-image: icons/power_tower_low.n.16.png; z-index: 20; }
+node[power=tower] { icon-image: cross; icon-width: 7; width: 3; color: #F44; z-index: 20; }
+node[power=pole] { icon-image: cross; icon-width: 7; width: 3; color: #444; z-index: 20; }
 node[waterway=weir] { icon-image: icons/transport_weir.n.16.png; z-index: 20; }
 
 /* Addressing */
