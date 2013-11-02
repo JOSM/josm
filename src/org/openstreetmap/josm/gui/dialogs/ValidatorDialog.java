@@ -125,7 +125,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             }
             @Override
             public void actionPerformed(ActionEvent e) {
-                fixErrors(e);
+                fixErrors();
             }
         });
         fixButton.setEnabled(false);
@@ -140,7 +140,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 }
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    ignoreErrors(e);
+                    ignoreErrors();
                 }
             });
             ignoreButton.setEnabled(false);
@@ -182,11 +182,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
     /**
      * Fix selected errors
-     *
-     * @param e
      */
     @SuppressWarnings("unchecked")
-    private void fixErrors(ActionEvent e) {
+    private void fixErrors() {
         TreePath[] selectionPaths = tree.getSelectionPaths();
         if (selectionPaths == null)
             return;
@@ -223,11 +221,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
     /**
      * Set selected errors to ignore state
-     *
-     * @param e
      */
     @SuppressWarnings("unchecked")
-    private void ignoreErrors(ActionEvent e) {
+    private void ignoreErrors() {
         int asked = JOptionPane.DEFAULT_OPTION;
         boolean changed = false;
         TreePath[] selectionPaths = tree.getSelectionPaths();

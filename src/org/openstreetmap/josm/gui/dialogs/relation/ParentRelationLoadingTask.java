@@ -80,6 +80,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
         this.layer = layer;
         parents = new ArrayList<Relation>();
         this.child = child;
+        this.full = full;
     }
 
     /**

@@ -56,7 +56,6 @@ import javax.swing.event.TableModelListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.actions.PasteTagsAction.TagPaster;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -79,7 +78,6 @@ import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
-import org.openstreetmap.josm.gui.tagging.TagModel;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
@@ -181,7 +179,7 @@ public class GenericRelationEditor extends RelationEditor  {
         getContentPane().setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add(tr("Tags and Members"), pnl);
-        referrerBrowser = new ReferringRelationsBrowser(getLayer(), referrerModel, this);
+        referrerBrowser = new ReferringRelationsBrowser(getLayer(), referrerModel);
         tabbedPane.add(tr("Parent Relations"), referrerBrowser);
         tabbedPane.add(tr("Child Relations"), new ChildRelationBrowser(getLayer(), relation));
         tabbedPane.addChangeListener(
