@@ -73,6 +73,10 @@ public class ExpressionFactory {
             throw new RuntimeException(ex);
         }
     }
+    
+    private ExpressionFactory() {
+        // Hide default constructor for utils classes
+    }
 
     public static class Functions {
 

@@ -40,6 +40,10 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class Projections {
 
+    private Projections() {
+        // Hide default constructor for utils classes
+    }
+    
     public static EastNorth project(LatLon ll) {
         if (ll == null) return null;
         return Main.getProjection().latlon2eastNorth(ll);

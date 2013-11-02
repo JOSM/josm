@@ -46,6 +46,10 @@ import org.openstreetmap.josm.data.Version;
  */
 public class Utils {
 
+    private Utils() {
+        // Hide default constructor for utils classes
+    }
+
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
             if (predicate.evaluate(item))

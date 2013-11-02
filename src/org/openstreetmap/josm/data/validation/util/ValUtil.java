@@ -18,8 +18,12 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
  *
  * @author frsantos
  */
-public class ValUtil
-{
+public class ValUtil {
+    
+    private ValUtil() {
+        // Hide default constructor for utils classes
+    }
+    
     /**
      * Returns the start and end cells of a way.
      * @param w The way

@@ -30,10 +30,8 @@ import org.xml.sax.SAXException;
  */
 public final class TaggingPresetReader {
 
-    /**
-     * Constructs a new {@code TaggingPresetReader}.
-     */
-    public TaggingPresetReader() {
+    private TaggingPresetReader() {
+        // Hide default constructor for utils classes
     }
     
     private static File zipIcons = null;

@@ -31,6 +31,11 @@ import org.openstreetmap.josm.Main;
  * @author Immanuel.Scholz
  */
 public class I18n {
+    
+    private I18n() {
+        // Hide default constructor for utils classes
+    }
+    
     private enum PluralMode { MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
         MODE_CS/*, MODE_AR*/, MODE_PL/*, MODE_RO*/, MODE_RU, MODE_SK/*, MODE_SL*/}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */

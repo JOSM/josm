@@ -35,6 +35,10 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HelpAwareOptionPane {
 
+    private HelpAwareOptionPane() {
+        // Hide default constructor for utils classes
+    }
+    
     public static class ButtonSpec {
         public final String text;
         public final Icon icon;
