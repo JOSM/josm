@@ -57,10 +57,17 @@ public class Notification {
     private Icon icon;
     private String helpTopic;
 
+    /**
+     * Constructs a new {@code Notification} without content.
+     */
     public Notification() {
         duration = NotificationManager.defaultNotificationTime;
     }
 
+    /**
+     * Constructs a new {@code Notification} with the given textual content.
+     * @param msg The text to display
+     */
     public Notification(String msg) {
         this();
         setContent(msg);
