@@ -162,7 +162,16 @@ public class CSSColors {
         }
     }
 
+    /**
+     * Returns the CSS color for the given key
+     * @param key The key to find
+     * @return The color for {@code key}
+     */
     public static Color get(String key) {
         return CSS_COLORS.get(key);
+    }
+    
+    private CSSColors() {
+        // Hide default constructor for utils classes
     }
 }

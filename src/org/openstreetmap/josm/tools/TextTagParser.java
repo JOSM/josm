@@ -34,6 +34,10 @@ public class TextTagParser {
     protected static final String KEY_PATTERN = Main.pref.get("tags.paste.tag-pattern", "[0-9a-zA-Z:_]*");
     protected static final int MAX_VALUE_LENGTH = 255;
     
+    private TextTagParser() {
+        // Hide default constructor for utils classes
+    }
+    
     public static class TextAnalyzer {
         boolean quotesStarted = false;
         boolean esc = false;

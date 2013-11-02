@@ -4,6 +4,11 @@ package org.openstreetmap.josm.tools;
 import java.util.Locale;
 
 public class LanguageInfo {
+    
+    private LanguageInfo() {
+        // Hide default constructor for utils classes
+    }
+    
     /**
      * Type of the locale to use
      * @since 5915
@@ -85,10 +90,10 @@ public class LanguageInfo {
             return "he";
         else if (full.equals("in"))
             return "id";
-        else if (I18n.hasCode(full)) /* catch all non-single codes */
+        else if (I18n.hasCode(full)) // catch all non-single codes
             return full;
 
-        /* return single code */
+        // return single code
         return locale.getLanguage();
     }
 
@@ -117,12 +122,11 @@ public class LanguageInfo {
         return l;
     }
 
-    static public String getLanguageCodeXML()
-    {
+    static public String getLanguageCodeXML() {
         return getJOSMLocaleCode()+".";
     }
-    static public String getLanguageCodeManifest()
-    {
+    
+    static public String getLanguageCodeManifest() {
         return getJOSMLocaleCode()+"_";
     }
 }

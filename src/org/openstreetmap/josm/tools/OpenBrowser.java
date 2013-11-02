@@ -21,6 +21,10 @@ import org.openstreetmap.josm.Main;
  */
 public class OpenBrowser {
 
+    private OpenBrowser() {
+        // Hide default constructor for utils classes
+    }
+    
     private static void displayUrlFallback(URI uri) throws IOException {
         if (Main.platform == null)
             throw new IllegalStateException(tr("Failed to open URL. There is currently no platform set. Please set a platform first."));

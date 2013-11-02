@@ -12,6 +12,10 @@ import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direct
 
 class RelationSortUtils {
 
+    private RelationSortUtils() {
+        // Hide default constructor for utils classes
+    }
+    
     /**
      * determine, if the way i is a roundabout and if yes, what type of roundabout
      */

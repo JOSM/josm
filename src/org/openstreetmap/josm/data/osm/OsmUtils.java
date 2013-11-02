@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class OsmUtils {
+    
+    private OsmUtils() {
+        // Hide default constructor for utils classes
+    }
 
     static List<String> TRUE_VALUES = new ArrayList<String>(Arrays
             .asList(new String[] { "true", "yes", "1", "on" }));

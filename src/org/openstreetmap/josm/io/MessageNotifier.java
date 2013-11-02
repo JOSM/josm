@@ -36,6 +36,10 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public final class MessageNotifier {
 
+    private MessageNotifier() {
+        // Hide default constructor for utils classes
+    }
+    
     /** Property defining if this task is enabled or not */
     public static final BooleanProperty PROP_NOTIFIER_ENABLED = new BooleanProperty("message.notifier.enabled", true);
     /** Property defining the update interval in minutes */

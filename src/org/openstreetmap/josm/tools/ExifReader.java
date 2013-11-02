@@ -26,6 +26,10 @@ import com.drew.metadata.exif.GpsDirectory;
  */
 public class ExifReader {
 
+    private ExifReader() {
+        // Hide default constructor for utils classes
+    }
+    
     /**
      * Returns the date/time from the given JPEG file.
      * @param filename The JPEG file to read

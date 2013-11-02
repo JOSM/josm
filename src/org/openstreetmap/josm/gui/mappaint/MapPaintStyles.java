@@ -44,6 +44,10 @@ public class MapPaintStyles {
     public static ElemStyles getStyles() {
         return styles;
     }
+    
+    private MapPaintStyles() {
+        // Hide default constructor for utils classes
+    }
 
     /**
      * Value holder for a reference to a tag name. A style instruction

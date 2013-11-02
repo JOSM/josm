@@ -117,6 +117,10 @@ public class PluginHandler {
             new DeprecatedPlugin("restart", IN_CORE)
         });
     }
+    
+    private PluginHandler() {
+        // Hide default constructor for utils classes
+    }
 
     /**
      * Description of a deprecated plugin
