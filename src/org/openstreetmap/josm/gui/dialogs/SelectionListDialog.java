@@ -76,7 +76,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * A small tool dialog for displaying the current selection.
- *
+ * @since 8
  */
 public class SelectionListDialog extends ToggleDialog  {
     private JList lstPrimitives;
@@ -285,7 +285,7 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         public void updateEnabledState() {
-            setEnabled(Main.main != null && !Main.main.hasEditLayer());
+            setEnabled(Main.main != null && Main.main.hasEditLayer());
         }
 
         @Override
