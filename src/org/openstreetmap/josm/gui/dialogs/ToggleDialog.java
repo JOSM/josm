@@ -194,7 +194,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         /** Override any minimum sizes of child elements so the user can resize freely */
         setMinimumSize(new Dimension(0,0));
         this.preferredHeight = preferredHeight;
-        toggleAction = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut, iconName);
+        toggleAction = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut);
         String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
         toggleAction.putValue("help", helpId.substring(0, helpId.length()-6));
 
@@ -228,7 +228,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      */
     public final class ToggleDialogAction extends JosmAction {
 
-        private ToggleDialogAction(String name, String iconName, String tooltip, Shortcut shortcut, String prefname) {
+        private ToggleDialogAction(String name, String iconName, String tooltip, Shortcut shortcut) {
             super(name, iconName, tooltip, shortcut, false);
         }
 

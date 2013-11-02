@@ -219,16 +219,16 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         // toolBarToggles, toggle dialog buttons
         LayerListDialog.createInstance(this);
         addToggleDialog(LayerListDialog.getInstance());
-        addToggleDialog(propertiesDialog = new PropertiesDialog(this));
+        addToggleDialog(propertiesDialog = new PropertiesDialog());
         addToggleDialog(selectionListDialog = new SelectionListDialog());
         addToggleDialog(relationListDialog = new RelationListDialog());
-        addToggleDialog(new CommandStackDialog(this));
+        addToggleDialog(new CommandStackDialog());
         addToggleDialog(new UserListDialog());
         addToggleDialog(new HistoryDialog(), true);
         addToggleDialog(conflictDialog = new ConflictDialog());
         addToggleDialog(validatorDialog = new ValidatorDialog());
         addToggleDialog(filterDialog = new FilterDialog());
-        addToggleDialog(new ChangesetDialog(this), true);
+        addToggleDialog(new ChangesetDialog(), true);
         addToggleDialog(new MapPaintDialog());
         toolBarToggle.setFloatable(false);
 

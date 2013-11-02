@@ -102,7 +102,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      */
     public OsmServerBackreferenceReader(long id, OsmPrimitiveType type, boolean readFull) throws IllegalArgumentException  {
         this(id, type);
-        this.readFull = false;
+        this.readFull = readFull;
     }
 
     /**

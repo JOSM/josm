@@ -162,9 +162,9 @@ public class LatLonDialog extends ExtendedDialog {
     }
 
     public LatLonDialog(Component parent, String title, String help) {
-        super(Main.parent, tr("Add Node..."), new String[] { tr("Ok"), tr("Cancel") });
+        super(parent, title, new String[] { tr("Ok"), tr("Cancel") });
         setButtonIcons(new String[] { "ok", "cancel" });
-        configureContextsensitiveHelp("/Action/AddNode", true);
+        configureContextsensitiveHelp(help, true);
 
         build();
         setCoordinates(null);

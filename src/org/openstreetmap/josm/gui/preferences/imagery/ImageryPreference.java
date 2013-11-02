@@ -96,7 +96,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         p.add(section, gbc.insets(20,5,0,10));
     }
 
-    private Component buildSettingsPanel(final PreferenceTabbedPane gui) {
+    private Component buildSettingsPanel() {
         final JPanel p = new JPanel(new GridBagLayout());
         p.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
@@ -117,7 +117,7 @@ public class ImageryPreference extends DefaultTabPreferenceSetting {
         layerInfo = new ImageryLayerInfo(ImageryLayerInfo.instance);
         imageryProviders = new ImageryProvidersPanel(gui, layerInfo);
         pane.addTab(tr("Imagery providers"), imageryProviders);
-        pane.addTab(tr("Settings"), buildSettingsPanel(gui));
+        pane.addTab(tr("Settings"), buildSettingsPanel());
         pane.addTab(tr("Offset bookmarks"), new OffsetBookmarksPanel(gui));
         loadSettings();
         p.add(pane,GBC.std().fill(GBC.BOTH));

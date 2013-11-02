@@ -222,6 +222,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         setExtendedUrl(url);
         ImageryType t = ImageryType.fromUrlString(type);
         this.cookies=cookies;
+        this.eulaAcceptanceRequired = eulaAcceptanceRequired;
         if (t != null) {
             this.imageryType = t;
         }
