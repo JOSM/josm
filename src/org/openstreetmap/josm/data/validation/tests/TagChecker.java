@@ -150,7 +150,7 @@ public class TagChecker extends Test
      * Constructor
      */
     public TagChecker() {
-        super(tr("Tag checker :"), tr("This test checks for errors in tag keys and values."));
+        super(tr("Tag checker"), tr("This test checks for errors in tag keys and values."));
     }
 
     @Override
@@ -510,7 +510,7 @@ public class TagChecker extends Test
         GBC a = GBC.eol();
         a.anchor = GridBagConstraints.EAST;
 
-        testPanel.add(new JLabel(name), GBC.eol().insets(3,0,0,0));
+        testPanel.add(new JLabel(name+" :"), GBC.eol().insets(3,0,0,0));
 
         prefCheckKeys = new JCheckBox(tr("Check property keys."), Main.pref.getBoolean(PREF_CHECK_KEYS, true));
         prefCheckKeys.setToolTipText(tr("Validate that property keys are valid checking against list of words."));
