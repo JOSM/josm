@@ -768,7 +768,9 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     private void updateTagged() {
         if (keys != null) {
             for (String key: keySet()) {
-                if (!isUninterestingKey(key)) {
+                // 'area' is not really uninteresting (putting it in that list may have unpredictable side effects)
+                // but it's clearly not enough to consider an object as tagged (see #9261)
+                if (!isUninterestingKey(key) && !"area".equals(key)) {
                     updateFlagsNoLock(FLAG_TAGGED, true);
                     return;
                 }
