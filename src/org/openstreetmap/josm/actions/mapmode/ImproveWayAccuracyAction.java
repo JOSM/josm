@@ -19,7 +19,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -444,17 +443,6 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
             } else if (alt && !ctrl && candidateNode != null) {
                 // Deleting the highlighted node
 
-                //check to see if node has interesting keys
-                Iterator<String> keyIterator = candidateNode.getKeys().keySet().iterator();
-                boolean hasTags = false;
-                while (keyIterator.hasNext()) {
-                    String key = keyIterator.next();
-                    if (!OsmPrimitive.isUninterestingKey(key)) {
-                        hasTags = true;
-                        break;
-                    }
-                }
-
                 //check to see if node is in use by more than one object
                 List<OsmPrimitive> referrers = candidateNode.getReferrers();
                 List<Way> ways = OsmPrimitive.getFilteredList(referrers, Way.class);
@@ -462,7 +450,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("Cannot delete node that is referenced by multiple objects"),
                             tr("Error"), JOptionPane.ERROR_MESSAGE);
-                } else if (hasTags) {
+                } else if (candidateNode.isTagged()) {
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("Cannot delete node that has tags"),
                             tr("Error"), JOptionPane.ERROR_MESSAGE);
