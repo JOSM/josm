@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Parent class for all validation tests.
@@ -63,6 +64,10 @@ public class Test extends AbstractVisitor
 
     /** the progress monitor to use */
     protected ProgressMonitor progressMonitor;
+    
+    /** the start time to compute elapsed time when test finishes */
+    protected long startTime;
+    
     /**
      * Constructor
      * @param name Name of the test
@@ -86,6 +91,7 @@ public class Test extends AbstractVisitor
      * @throws Exception When cannot initialize the test
      */
     public void initialize() throws Exception {
+        this.startTime = -1;
     }
 
     /**
@@ -99,8 +105,11 @@ public class Test extends AbstractVisitor
         } else {
             this.progressMonitor = progressMonitor;
         }
-        this.progressMonitor.beginTask(tr("Running test {0}", name));
-        errors = new ArrayList<TestError>(30);
+        String startMessage = tr("Running test {0}", name);
+        this.progressMonitor.beginTask(startMessage);
+        Main.debug(startMessage);
+        this.errors = new ArrayList<TestError>(30);
+        this.startTime = System.currentTimeMillis();
     }
 
     /**
@@ -129,6 +138,10 @@ public class Test extends AbstractVisitor
     public void endTest() {
         progressMonitor.finishTask();
         progressMonitor = null;
+        if (startTime > 0) {
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            Main.info(tr("Test ''{0}'' completed in {1}", getName(), Utils.getDurationString(elapsedTime)));
+        }
     }
 
     /**

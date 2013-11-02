@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
+
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -752,5 +755,36 @@ public class Utils {
             }
         }
         return josmTmpDir;
+    }
+
+    /**
+     * Returns a simple human readable (hours, minutes, seconds) string for a given duration in milliseconds.
+     * @param elapsedTime The duration in milliseconds
+     * @return A human redable string for the given duration
+     * @throws IllegalArgumentException if elapsedTime is < 0
+     * @since 6354
+     */
+    public static String getDurationString(long elapsedTime) throws IllegalArgumentException {
+        if (elapsedTime < 0) {
+            throw new IllegalArgumentException("elapsedTime must be > 0");
+        }
+        // Is it less than 1 second ?
+        if (elapsedTime < 1000) {
+            return String.format("%d %s", elapsedTime, tr("ms"));
+        }
+        // Is it less than 1 minute ?
+        if (elapsedTime < 60*1000) {
+            return String.format("%.1f %s", elapsedTime/1000f, tr("s"));
+        }
+        // Is it less than 1 hour ?
+        if (elapsedTime < 60*60*1000) {
+            return String.format("%d %s %d %s", elapsedTime/60000, tr("min"), elapsedTime/1000, tr("s"));
+        }
+        // Is it less than 1 day ?
+        if (elapsedTime < 24*60*60*1000) {
+            return String.format("%d %s %d %s", elapsedTime/3600000, tr("h"), elapsedTime/60000, tr("min"));
+        }
+        long days = elapsedTime/86400000;
+        return String.format("%d %s %d %s", days, trn("day", "days", days), elapsedTime/3600000, tr("h"));
     }
 }
