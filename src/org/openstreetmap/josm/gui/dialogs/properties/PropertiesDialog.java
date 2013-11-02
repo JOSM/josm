@@ -76,7 +76,6 @@ import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
@@ -221,9 +220,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     /**
      * Create a new PropertiesDialog
-     * @param mapFrame The parent map fram
      */
-    public PropertiesDialog(MapFrame mapFrame) {
+    public PropertiesDialog() {
         super(tr("Tags/Memberships"), "propertiesdialog", tr("Tags for selected objects."),
                 Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Tags/Memberships")), KeyEvent.VK_P,
                         Shortcut.ALT_SHIFT), 150, true);

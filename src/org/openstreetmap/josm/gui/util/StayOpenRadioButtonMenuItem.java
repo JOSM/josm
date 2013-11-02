@@ -41,7 +41,7 @@ public class StayOpenRadioButtonMenuItem extends JRadioButtonMenuItem {
    * @see JRadioButtonMenuItem#JRadioButtonMenuItem(Action)
    */
   public StayOpenRadioButtonMenuItem(Action a) {
-    super();
+    super(a);
   }
 
   /**

@@ -39,7 +39,6 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
@@ -75,7 +74,10 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     private SelectAction selectAction = new SelectAction();
     private SelectAndZoomAction selectAndZoomAction = new SelectAndZoomAction();
 
-    public CommandStackDialog(final MapFrame mapFrame) {
+    /**
+     * Constructs a new {@code CommandStackDialog}.
+     */
+    public CommandStackDialog() {
         super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."),
                 Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}",
                 tr("Command Stack")), KeyEvent.VK_O, Shortcut.ALT_SHIFT), 100, true);
@@ -339,12 +341,13 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
     public class SelectAction extends AbstractAction implements IEnabledStateUpdating {
 
+        /**
+         * Constructs a new {@code SelectAction}.
+         */
         public SelectAction() {
-            super();
             putValue(NAME,tr("Select"));
             putValue(SHORT_DESCRIPTION, tr("Selects the objects that take part in this command (unless currently deleted)"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
-
         }
 
         @Override

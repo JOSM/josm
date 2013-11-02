@@ -67,7 +67,7 @@ public class ReferringRelationsBrowser extends JPanel {
         add(pnl, BorderLayout.SOUTH);
     }
 
-    public ReferringRelationsBrowser(OsmDataLayer layer, ReferringRelationsBrowserModel model, GenericRelationEditor relationEditor) {
+    public ReferringRelationsBrowser(OsmDataLayer layer, ReferringRelationsBrowserModel model) {
         this.model = model;
         this.layer = layer;
         build();

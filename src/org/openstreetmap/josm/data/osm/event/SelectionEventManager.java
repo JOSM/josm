@@ -28,7 +28,7 @@ public class SelectionEventManager implements SelectionChangedListener {
     private static class ListenerInfo {
         final SelectionChangedListener listener;
 
-        public ListenerInfo(SelectionChangedListener listener, boolean consolidate) {
+        public ListenerInfo(SelectionChangedListener listener) {
             this.listener = listener;
         }
 
@@ -47,6 +47,9 @@ public class SelectionEventManager implements SelectionChangedListener {
     private final CopyOnWriteArrayList<ListenerInfo> inEDTListeners = new CopyOnWriteArrayList<ListenerInfo>();
     private final CopyOnWriteArrayList<ListenerInfo> normalListeners = new CopyOnWriteArrayList<ListenerInfo>();
 
+    /**
+     * Constructs a new {@code SelectionEventManager}.
+     */
     public SelectionEventManager() {
         DataSet.addSelectionListener(this);
     }
@@ -55,14 +58,14 @@ public class SelectionEventManager implements SelectionChangedListener {
         if (fireMode == FireMode.IN_EDT)
             throw new UnsupportedOperationException("IN_EDT mode not supported, you probably want to use IN_EDT_CONSOLIDATED.");
         if (fireMode == FireMode.IN_EDT || fireMode == FireMode.IN_EDT_CONSOLIDATED) {
-            inEDTListeners.addIfAbsent(new ListenerInfo(listener, fireMode == FireMode.IN_EDT_CONSOLIDATED));
+            inEDTListeners.addIfAbsent(new ListenerInfo(listener));
         } else {
-            normalListeners.addIfAbsent(new ListenerInfo(listener, false));
+            normalListeners.addIfAbsent(new ListenerInfo(listener));
         }
     }
 
     public void removeSelectionListener(SelectionChangedListener listener) {
-        ListenerInfo searchListener = new ListenerInfo(listener, false);
+        ListenerInfo searchListener = new ListenerInfo(listener);
         inEDTListeners.remove(searchListener);
         normalListeners.remove(searchListener);
     }

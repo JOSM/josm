@@ -40,7 +40,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
@@ -242,7 +241,10 @@ public class ChangesetDialog extends ToggleDialog{
         }
     }
 
-    public ChangesetDialog(MapFrame mapFrame) {
+    /**
+     * Constructs a new {@code ChangesetDialog}.
+     */
+    public ChangesetDialog() {
         super(
                 tr("Changesets"),
                 "changesetdialog",
