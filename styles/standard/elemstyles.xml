@@ -2971,10 +2971,10 @@ For external files the <rules> should have following elements:
 		<area colour="light_water#00005f"/>
 	</rule>
 
-    <rule>
-        <condition k="natural" v="saddle"/>
-        <icon annotate="true" src="presets/saddle.svg"/>
-    </rule>
+	<rule>
+		<condition k="natural" v="saddle"/>
+		<icon annotate="true" src="presets/saddle.svg"/>
+	</rule>
 
 	<rule>
 		<condition k="natural" v="peak"/>
