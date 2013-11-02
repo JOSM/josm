@@ -33,8 +33,10 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmExporter;
 import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.tools.Utils;
@@ -66,6 +68,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     public static final IntegerProperty PROP_DELETED_LAYERS = new IntegerProperty("autosave.deletedLayersBackupCount", 5);
     public static final IntegerProperty PROP_INTERVAL = new IntegerProperty("autosave.interval", 5 * 60);
     public static final IntegerProperty PROP_INDEX_LIMIT = new IntegerProperty("autosave.index-limit", 1000);
+    /** Defines if a notification should be displayed after each autosave */
+    public static final BooleanProperty PROP_NOTIFICATION = new BooleanProperty("autosave.notification", false);
 
     private static class AutosaveLayerInfo {
         OsmDataLayer layer;
@@ -204,6 +208,9 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                     savelayer(info);
                 }
                 changedDatasets.clear();
+                if (PROP_NOTIFICATION.get() && !layersInfo.isEmpty()) {
+                    displayNotification();
+                }
             } catch (Throwable t) {
                 // Don't let exception stop time thread
                 Main.error("Autosave failed:");
@@ -211,6 +218,17 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 t.printStackTrace();
             }
         }
+    }
+
+    protected void displayNotification() {
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                new Notification(tr("Your work has been saved automatically."))
+                .setDuration(Notification.TIME_SHORT)
+                .show();
+            }
+        });
     }
 
     @Override

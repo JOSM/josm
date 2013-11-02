@@ -22,9 +22,9 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class BackupPreference implements SubPreferenceSetting {
 
@@ -35,6 +35,7 @@ public class BackupPreference implements SubPreferenceSetting {
         }
     }
     private static final BooleanProperty PROP_KEEP_BACKUP = new BooleanProperty("save.keepbackup", false);
+    private JCheckBox notification;
     private JCheckBox keepBackup;
     private JCheckBox autosave;
     private final JosmTextField autosaveInterval = new JosmTextField(8);
@@ -83,6 +84,13 @@ public class BackupPreference implements SubPreferenceSetting {
                 "It appends ''~'' to the file name and saves it in the same folder.)</i>")),
             GBC.eop().fill(GBC.HORIZONTAL).insets(5,0,0,0));
 
+        panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
+
+        notification = new JCheckBox(tr("Notification at each save"));
+        notification.setSelected(AutosaveTask.PROP_NOTIFICATION.get());
+        notification.setToolTipText(tr("When saving, display a small notification"));
+        panel.add(notification, GBC.eop());
+        
         ActionListener autosaveEnabled = new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -112,6 +120,7 @@ public class BackupPreference implements SubPreferenceSetting {
         restartRequired |= AutosaveTask.PROP_AUTOSAVE_ENABLED.put(autosave.isSelected());
         restartRequired |= AutosaveTask.PROP_INTERVAL.parseAndPut(autosaveInterval.getText());
         AutosaveTask.PROP_FILES_PER_LAYER.parseAndPut(backupPerLayer.getText());
+        AutosaveTask.PROP_NOTIFICATION.put(notification.isSelected());
         return restartRequired;
     }
 
