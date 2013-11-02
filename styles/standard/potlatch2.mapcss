@@ -345,7 +345,8 @@ area[military]:closed                         { color: #D6D6D6; width: 1; fill-c
 area[building]:closed                         { color: #bca9a9; width: 1; fill-color: #ff6ec7; fill-opacity: 0.2; }
 area[natural=water]:closed,
 area[waterway][waterway!=dam]:closed          { color: #3434ff;    width: 2; fill-color: #3434ff;    fill-opacity: 0.2; prop_area_small_name : 1;}
-way[waterway=dam]							{ z-index: 5; color: black; width: 1; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1;}
+way[waterway=dam]!:closed                   { z-index: 5; color: black; width: 3; }
+area[waterway=dam]:closed                   { z-index: 5; color: black; width: 1; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1;}
 area[man_made]:closed							{ color: black; width: 2; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1; }
 area[man_made=reservoir_covered]:closed       { color: #3434ff; width: 2; dashes: 4, 2; fill-color: #222222; fill-opacity: 0.1; prop_area_small_name : 1; }
 area[landuse=reservoir]:closed                { color: #3434ff;    width: 2; fill-color: #3434ff;    fill-opacity: 0.2; prop_area_small_name : 1;}
