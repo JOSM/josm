@@ -23,6 +23,10 @@ import org.openstreetmap.josm.tools.Pair;
  */
 class ImproveWayAccuracyHelper {
 
+    private ImproveWayAccuracyHelper() {
+        // Hide default constructor for utils classes
+    }
+    
     /**
      * Finds the way to work on. If the mouse is on the node, extracts one of
      * the ways containing it. If the mouse is on the way, simply returns it.

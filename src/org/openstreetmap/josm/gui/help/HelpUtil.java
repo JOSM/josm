@@ -17,6 +17,10 @@ import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 
 public class HelpUtil {
 
+    private HelpUtil() {
+        // Hide default constructor for utils classes
+    }
+    
     /**
      * Replies the base wiki URL.
      *

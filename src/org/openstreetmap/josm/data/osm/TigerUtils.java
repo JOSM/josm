@@ -8,12 +8,20 @@ import java.util.TreeSet;
  * A simple class to keep helper functions for merging TIGER data
  *
  * @author daveh
- *
+ * @since 529
  */
 public class TigerUtils {
+    
+    private TigerUtils() {
+        // Hide default constructor for utils classes
+    }
 
-    public static boolean isTigerTag(String tag)
-    {
+    /**
+     * Determines if the given tag is a TIGER one
+     * @param tag The tag to check
+     * @return {@code true} if {@code tag} starts with {@code tiger:} namespace
+     */
+    public static boolean isTigerTag(String tag) {
         if (tag.indexOf("tiger:") == -1)
             return false;
         return true;

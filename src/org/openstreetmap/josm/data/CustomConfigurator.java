@@ -55,6 +55,11 @@ import org.w3c.dom.NodeList;
  * can be used to modify preferences, store/delete files in .josm folders etc
  */
 public class CustomConfigurator {
+    
+    private CustomConfigurator() {
+        // Hide default constructor for utils classes
+    }
+    
     private static StringBuilder summary = new StringBuilder();
 
     public static void log(String fmt, Object... vars) {

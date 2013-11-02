@@ -1,8 +1,12 @@
 // License: GPL. Copyright 2009 by Dave Hansen, others
 package org.openstreetmap.josm.data.coor;
 
-public class QuadTiling
-{
+public class QuadTiling {
+    
+    private QuadTiling() {
+        // Hide default constructor for utils classes
+    }
+    
     public static final int NR_LEVELS = 24;
     public static final double WORLD_PARTS = (1 << NR_LEVELS);
 

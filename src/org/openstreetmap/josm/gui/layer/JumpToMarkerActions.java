@@ -21,6 +21,10 @@ public class JumpToMarkerActions {
         void jumpToNextMarker();
         void jumpToPreviousMarker();
     }
+    
+    private JumpToMarkerActions() {
+        // Hide default constructor for utils classes
+    }
 
     private static JumpToNextMarker jumpToNextMarkerAction;
     private static JumpToPreviousMarker jumpToPreviousMarkerAction;

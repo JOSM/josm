@@ -24,6 +24,10 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
  */
 public class ReverseWayNoTagCorrector {
 
+    private ReverseWayNoTagCorrector() {
+        // Hide default constructor for utils classes
+    }
+    
     /**
      * Tags that imply a semantic meaning from the way direction and cannot be changed. 
      */
