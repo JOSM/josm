@@ -2972,9 +2972,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="natural" v="saddle"/>
+		<icon annotate="true" src="presets/saddle.svg"/>
+	</rule>
+
+	<rule>
 		<condition k="natural" v="peak"/>
 		<area colour="peak#663300"/>
-		<icon annotate="true" src="misc/landmark/peak_small.png"/>
+		<icon annotate="true" src="presets/peak.svg"/>
 	</rule>
 
 	<rule>
