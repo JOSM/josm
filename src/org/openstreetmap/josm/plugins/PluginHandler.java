@@ -69,7 +69,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * and manage the loaded plugins.
  * @since 1326
  */
-public class PluginHandler {
+public final class PluginHandler {
 
     /**
      * Deprecated plugins that are removed on start

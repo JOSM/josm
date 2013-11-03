@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.osm.TigerUtils;
  * Collection of utility methods for tag conflict resolution
  *
  */
-public class TagConflictResolutionUtil {
+public final class TagConflictResolutionUtil {
 
     /** no constructor, just static utility methods */
     private TagConflictResolutionUtil() {}

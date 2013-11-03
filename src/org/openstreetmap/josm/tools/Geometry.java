@@ -29,7 +29,12 @@ import org.openstreetmap.josm.data.osm.Way;
  *
  * @author viesturs
  */
-public class Geometry {
+public final class Geometry {
+    
+    private Geometry() {
+        // Hide default constructor for utils classes
+    }
+    
     public enum PolygonIntersection {FIRST_INSIDE_SECOND, SECOND_INSIDE_FIRST, OUTSIDE, CROSSING}
 
     /**

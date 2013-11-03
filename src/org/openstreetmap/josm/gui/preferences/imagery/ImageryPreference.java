@@ -65,7 +65,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
-public class ImageryPreference extends DefaultTabPreferenceSetting {
+public final class ImageryPreference extends DefaultTabPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

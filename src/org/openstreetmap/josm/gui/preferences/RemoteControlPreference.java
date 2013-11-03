@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.GBC;
  *
  * @author Frederik Ramm
  */
-public class RemoteControlPreference extends DefaultTabPreferenceSetting {
+public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
 
     /**
      * Factory used to build a new instance of this preference setting

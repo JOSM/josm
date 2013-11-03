@@ -12,8 +12,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 
-public class OsmUrlToBounds {
+public final class OsmUrlToBounds {
     private static final String SHORTLINK_PREFIX = "http://osm.org/go/";
+    
+    private OsmUrlToBounds() {
+        // Hide default constructor for utils classes
+    }
 
     public static Bounds parse(String url) {
         try {

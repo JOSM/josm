@@ -24,7 +24,7 @@ import com.drew.metadata.exif.GpsDirectory;
  * @author Imi
  * @since 99
  */
-public class ExifReader {
+public final class ExifReader {
 
     private ExifReader() {
         // Hide default constructor for utils classes

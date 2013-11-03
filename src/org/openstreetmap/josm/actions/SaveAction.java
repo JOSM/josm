@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class SaveAction extends SaveActionBase {
+public final class SaveAction extends SaveActionBase {
     private static SaveAction instance = new SaveAction();
 
     /**

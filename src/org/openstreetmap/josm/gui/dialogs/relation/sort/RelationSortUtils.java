@@ -10,7 +10,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
 
-class RelationSortUtils {
+final class RelationSortUtils {
 
     private RelationSortUtils() {
         // Hide default constructor for utils classes

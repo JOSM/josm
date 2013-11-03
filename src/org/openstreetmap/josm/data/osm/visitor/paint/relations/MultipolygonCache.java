@@ -37,7 +37,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * A memory cache for Multipolygon objects.
  * 
  */
-public class MultipolygonCache implements DataSetListener, LayerChangeListener, ProjectionChangeListener, SelectionChangedListener {
+public final class MultipolygonCache implements DataSetListener, LayerChangeListener, ProjectionChangeListener, SelectionChangedListener {
 
     private static final MultipolygonCache instance = new MultipolygonCache(); 
     

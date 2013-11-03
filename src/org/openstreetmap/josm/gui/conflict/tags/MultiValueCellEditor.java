@@ -73,7 +73,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
             public void processKeyEvent(KeyEvent e) {
                 if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_ENTER) {
                     fireGotoNextDecision();
-                } if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_TAB) {
+                } else if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_TAB) {
                     if (e.isShiftDown()) {
                         fireGotoPreviousDecision();
                     } else {

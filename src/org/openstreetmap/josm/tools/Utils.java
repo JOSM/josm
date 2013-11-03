@@ -44,7 +44,7 @@ import org.openstreetmap.josm.data.Version;
 /**
  * Basic utils, that can be useful in different parts of the program.
  */
-public class Utils {
+public final class Utils {
 
     private Utils() {
         // Hide default constructor for utils classes

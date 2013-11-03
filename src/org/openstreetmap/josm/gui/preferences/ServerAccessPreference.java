@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.preferences.server.OsmApiUrlInputPanel;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 
-public class ServerAccessPreference extends DefaultTabPreferenceSetting {
+public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         @Override

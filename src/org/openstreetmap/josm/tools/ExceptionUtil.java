@@ -36,8 +36,10 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 
 @SuppressWarnings("CallToThreadDumpStack")
-public class ExceptionUtil {
+public final class ExceptionUtil {
+    
     private ExceptionUtil() {
+        // Hide default constructor for utils classes
     }
 
     /**

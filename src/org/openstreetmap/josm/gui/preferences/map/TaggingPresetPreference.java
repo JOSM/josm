@@ -45,7 +45,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-public class TaggingPresetPreference implements SubPreferenceSetting {
+public final class TaggingPresetPreference implements SubPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         @Override

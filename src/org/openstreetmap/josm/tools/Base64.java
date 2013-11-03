@@ -3,8 +3,12 @@ package org.openstreetmap.josm.tools;
 
 import java.nio.ByteBuffer;
 
-public class Base64 {
+public final class Base64 {
 
+    private Base64() {
+        // Hide default constructor for utils classes
+    }
+    
     private static String encDefault = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     private static String encUrlSafe = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 

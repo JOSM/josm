@@ -15,7 +15,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class ShortcutPreference extends DefaultTabPreferenceSetting {
+public final class ShortcutPreference extends DefaultTabPreferenceSetting {
 
     private String defaultFilter;
 

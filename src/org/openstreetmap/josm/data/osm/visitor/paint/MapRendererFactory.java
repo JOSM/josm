@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * </pre>
  *
  */
-public class MapRendererFactory {
+public final class MapRendererFactory {
 
     /** preference key for the renderer class name. Default: class name for {@link StyledMapRenderer}
      *

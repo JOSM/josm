@@ -14,7 +14,7 @@ import org.openstreetmap.josm.io.OsmApi;
  * {@link CredentialsManager}.
  *
  */
-public  class DefaultAuthenticator extends Authenticator {
+public final class DefaultAuthenticator extends Authenticator {
     private static DefaultAuthenticator instance;
 
     public static DefaultAuthenticator getInstance() {

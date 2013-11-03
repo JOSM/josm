@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.MultikeyActionsHandler;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class JumpToMarkerActions {
+public final class JumpToMarkerActions {
 
     public interface JumpToMarkerLayer {
         void jumpToNextMarker();

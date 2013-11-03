@@ -18,7 +18,6 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * This is an abstract class for a validator on a text component.

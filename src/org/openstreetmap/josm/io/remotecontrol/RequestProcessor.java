@@ -395,7 +395,7 @@ public class RequestProcessor extends Thread {
         r.printf("{ \"request\" : \"%s\"", cmd);
         r.append(", \"parameters\" : [");
 
-        String params[] = handler.getMandatoryParams();
+        String[] params = handler.getMandatoryParams();
         if (params != null) {
             for (int i = 0; i < params.length; i++) {
                 if (i == 0) {
@@ -407,7 +407,7 @@ public class RequestProcessor extends Thread {
             }
         }
         r.append("], \"optional\" : [");
-        String optional[] = handler.getOptionalParams();
+        String[] optional = handler.getOptionalParams();
         if (optional != null) {
             for (int i = 0; i < optional.length; i++) {
                 if (i == 0) {
@@ -420,7 +420,7 @@ public class RequestProcessor extends Thread {
         }
         
         r.append("], \"examples\" : [");
-        String examples[] = handler.getUsageExamples(cmd.substring(1));
+        String[] examples = handler.getUsageExamples(cmd.substring(1));
         if (examples != null) {
             for (int i = 0; i < examples.length; i++) {
                 if (i == 0) {

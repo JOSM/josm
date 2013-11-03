@@ -1,8 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.proj;
 
-import static java.lang.Math.*;
-
+import static java.lang.Math.PI;
+import static java.lang.Math.atan;
+import static java.lang.Math.log;
+import static java.lang.Math.sinh;
+import static java.lang.Math.tan;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;

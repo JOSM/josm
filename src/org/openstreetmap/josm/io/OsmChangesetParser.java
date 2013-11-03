@@ -37,7 +37,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * </pre>
  *
  */
-public class OsmChangesetParser {
+public final class OsmChangesetParser {
     private List<Changeset> changesets;
 
     private OsmChangesetParser() {

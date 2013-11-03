@@ -26,7 +26,7 @@ import javax.swing.event.PopupMenuListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
 
-public class MultikeyActionsHandler {
+public final class MultikeyActionsHandler {
 
     private static final long DIALOG_DELAY = 1000;
     private static final String STATUS_BAR_ID = "multikeyShortcut";

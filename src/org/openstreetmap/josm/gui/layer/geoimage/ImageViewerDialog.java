@@ -22,12 +22,12 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
+import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class ImageViewerDialog extends ToggleDialog {
+public final class ImageViewerDialog extends ToggleDialog {
 
     private static final String COMMAND_ZOOM = "zoom";
     private static final String COMMAND_CENTERVIEW = "centre";

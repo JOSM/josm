@@ -9,12 +9,17 @@ import javax.swing.table.TableCellRenderer;
 /**
  * The class that provide common JTable customization methods
  */
-public class TableHelper {
+public final class TableHelper {
+    
+    private TableHelper() {
+        // Hide default constructor for utils classes
+    }
+    
     /**
-    * (originally from @class org.openstreetmap.josm.gui.preferences.SourceEditor)
-    * adjust the preferred width of column col to the maximum preferred width of the cells
-    * requires JTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-    */
+     * (originally from @class org.openstreetmap.josm.gui.preferences.SourceEditor)
+     * adjust the preferred width of column col to the maximum preferred width of the cells
+     * requires JTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+     */
     public static void adjustColumnWidth(JTable tbl, int col, int maxColumnWidth) {
         int maxwidth = 0;
         for (int row=0; row<tbl.getRowCount(); row++) {
@@ -25,5 +30,4 @@ public class TableHelper {
         }
         tbl.getColumnModel().getColumn(col).setPreferredWidth(Math.min(maxwidth+10, maxColumnWidth));
     }
-    
 }

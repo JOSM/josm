@@ -36,7 +36,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * basic gui utils
  */
-public class GuiHelper {
+public final class GuiHelper {
+    
+    private GuiHelper() {
+        // Hide default constructor for utils classes
+    }
+    
     /**
      * disable / enable a component and all its child components
      */

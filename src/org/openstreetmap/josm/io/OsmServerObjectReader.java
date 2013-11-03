@@ -3,7 +3,6 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 
@@ -15,7 +14,6 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
-import org.xml.sax.SAXException;
 
 /**
  * OsmServerObjectReader reads an individual object from the OSM server.
@@ -109,8 +107,7 @@ public class OsmServerObjectReader extends OsmServerReader {
      * @param progressMonitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if
      * null
      * @return the downloaded data
-     * @throws SAXException
-     * @throws IOException
+     * @throws OsmTransferException
      */
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {

@@ -220,7 +220,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         }
     }
 
-    public class EditTagDialog extends AbstractTagsDialog {
+    public final class EditTagDialog extends AbstractTagsDialog {
         final String key;
         final Map<String, Integer> m;
         final int row;

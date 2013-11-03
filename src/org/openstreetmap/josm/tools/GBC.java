@@ -14,7 +14,7 @@ import javax.swing.Box;
  *
  * @author imi
  */
-public class GBC extends GridBagConstraints {
+public final class GBC extends GridBagConstraints {
 
     /**
      * Use public static creator functions to create an GBC.

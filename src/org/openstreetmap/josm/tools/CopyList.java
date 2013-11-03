@@ -55,17 +55,20 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
     }
 
     // read-only access:
-    public @Override E get(int index) {
+    @Override
+    public E get(int index) {
         rangeCheck(index);
         return array[index];
     }
 
-    public @Override int size() {
+    @Override
+    public int size() {
         return size;
     }
 
     // modification:
-    public @Override E set(int index, E element) {
+    @Override
+    public E set(int index, E element) {
         rangeCheck(index);
         changeCheck();
 
@@ -75,7 +78,8 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
     }
 
     // full resizable semantics:
-    public @Override void add(int index, E element) {
+    @Override
+    public void add(int index, E element) {
         // range check
         ensureCapacity(size+1);
         changeCheck();
@@ -85,7 +89,8 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
         size++;
     }
 
-    public @Override E remove(int index) {
+    @Override
+    public E remove(int index) {
         rangeCheck(index);
         changeCheck();
 
@@ -101,14 +106,16 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
     }
 
     // speed optimizations:
-    public @Override boolean add(E element) {
+    @Override
+    public boolean add(E element) {
         ensureCapacity(size+1);
         changeCheck();
         array[size++] = element;
         return true;
     }
 
-    public @Override void clear() {
+    @Override
+    public void clear() {
         modCount++;
 
         // clean up the array
@@ -124,7 +131,8 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
      *
      * @return a clone of this <tt>CopyList</tt> instance
      */
-    public @Override Object clone() {
+    @Override
+    public Object clone() {
         return new CopyList<E>(array, size);
     }
 

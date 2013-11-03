@@ -7,7 +7,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 
-public class MapPaintSettings implements PreferenceChangedListener {
+public final class MapPaintSettings implements PreferenceChangedListener {
 
     public static final MapPaintSettings INSTANCE = new MapPaintSettings();
 

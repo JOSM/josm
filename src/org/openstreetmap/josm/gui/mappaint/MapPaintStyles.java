@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * On change, mapPaintSylesUpdated() is fired for all listeners.
  */
-public class MapPaintStyles {
+public final class MapPaintStyles {
 
     private static ElemStyles styles = new ElemStyles();
 

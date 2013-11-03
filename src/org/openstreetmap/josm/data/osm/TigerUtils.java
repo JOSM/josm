@@ -10,7 +10,7 @@ import java.util.TreeSet;
  * @author daveh
  * @since 529
  */
-public class TigerUtils {
+public final class TigerUtils {
     
     private TigerUtils() {
         // Hide default constructor for utils classes
