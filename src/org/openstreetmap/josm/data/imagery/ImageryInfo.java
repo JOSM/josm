@@ -146,6 +146,9 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         @pref String projections;
         @pref String icon;
 
+        /**
+         * Constructs a new {@code ImageryPreferenceEntry}.
+         */
         public ImageryPreferenceEntry() {
         }
 
@@ -190,8 +193,16 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
                 projections = val.toString();
             }
         }
+
+        @Override
+        public String toString() {
+            return "ImageryPreferenceEntry [name=" + name + "]";
+        }
     }
 
+    /**
+     * Constructs a new {@code ImageryInfo}.
+     */
     public ImageryInfo() {
     }
 
