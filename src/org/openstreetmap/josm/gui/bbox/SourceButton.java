@@ -7,11 +7,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.util.List;
+import java.util.Collection;
 
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class SourceButton {
@@ -22,7 +23,7 @@ public class SourceButton {
     private int barWidth;
     private int layerHeight;
 
-    private final TileSource[] sources;
+    private TileSource[] sources;
 
     private ImageIcon enlargeImage;
     private ImageIcon shrinkImage;
@@ -33,11 +34,21 @@ public class SourceButton {
 
     public static final int HIDE_OR_SHOW = 1;
 
-    public SourceButton(List<TileSource> sources) {
-        this.sources = sources.toArray(new TileSource[sources.size()]);
+    public SourceButton(Collection<TileSource> sources) {
+        setSources(sources);
         this.currentMap = 2;
         enlargeImage = ImageProvider.get("layer-switcher-maximize.png");
         shrinkImage = ImageProvider.get("layer-switcher-minimize.png");
+    }
+    
+    /**
+     * Set the tile sources.
+     * @param sources The tile sources to display
+     * @since 6364
+     */
+    public final void setSources(Collection<TileSource> sources) {
+        CheckParameterUtil.ensureParameterNotNull(sources, "sources");
+        this.sources = sources.toArray(new TileSource[sources.size()]);
     }
 
     public void paint(Graphics2D g) {

@@ -56,6 +56,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
+import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -140,6 +141,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         ImageryLayerInfo.instance.load();
         Main.main.menu.imageryMenu.refreshOffsetMenu();
         OffsetBookmark.saveBookmarks();
+        
+        DownloadDialog.getInstance().refreshTileSources();
 
         boolean commonRestartRequired = commonSettings.saveSettings();
         boolean wmsRestartRequired = wmsSettings.saveSettings();
