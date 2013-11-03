@@ -10,8 +10,15 @@ import java.awt.event.KeyEvent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Zoom out map.
+ * @since 770
+ */
 public final class ZoomOutAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code ZoomOutAction}.
+     */
     public ZoomOutAction() {
         super(tr("Zoom Out"), "dialogs/zoomout", tr("Zoom Out"),
                 Shortcut.registerShortcut("view:zoomout", tr("View: {0}", tr("Zoom Out")), KeyEvent.VK_MINUS, Shortcut.DIRECT), true);
