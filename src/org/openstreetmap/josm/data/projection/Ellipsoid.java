@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 /**
  * the reference ellipsoids
  */
-public class Ellipsoid {
+public final class Ellipsoid {
     /**
      * Clarke 1880 IGN (French national geographic institute)
      */

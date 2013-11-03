@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.GBC;
  * JOSM windows for detached dialogs, relation editors, history browser and the like.
  *
  */
-public class ConditionalOptionPaneUtil {
+public final class ConditionalOptionPaneUtil {
     static public final int DIALOG_DISABLED_OPTION = Integer.MIN_VALUE;
 
     /**

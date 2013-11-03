@@ -11,11 +11,13 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 /**
  * This utility class provides a collection of static helper methods for checking
  * parameters at run-time.
- * @ince 2711
+ * @since 2711
  */
-public class CheckParameterUtil {
+public final class CheckParameterUtil {
 
-    private CheckParameterUtil(){}
+    private CheckParameterUtil() {
+        // Hide default constructor for utils classes
+    }
 
     /**
      * Ensures an OSM primitive ID is valid

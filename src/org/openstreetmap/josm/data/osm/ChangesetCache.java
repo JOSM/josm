@@ -31,7 +31,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  * {@link ChangesetCacheEvent}s are delivered on the EDT.
  *
  */
-public class ChangesetCache implements PreferenceChangedListener{
+public final class ChangesetCache implements PreferenceChangedListener{
     /** the unique instance */
     static private final ChangesetCache instance = new ChangesetCache();
 

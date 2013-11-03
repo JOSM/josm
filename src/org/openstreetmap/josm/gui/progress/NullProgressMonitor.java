@@ -5,7 +5,7 @@ import java.awt.Component;
 
 import org.openstreetmap.josm.Main;
 
-public class NullProgressMonitor implements ProgressMonitor {
+public final class NullProgressMonitor implements ProgressMonitor {
 
     public static final ProgressMonitor INSTANCE = new NullProgressMonitor();
 

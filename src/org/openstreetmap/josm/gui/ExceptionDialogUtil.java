@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.ExceptionUtil;
  * This utility class provides static methods which explain various exceptions to the user.
  *
  */
-public class ExceptionDialogUtil {
+public final class ExceptionDialogUtil {
 
     /**
      * just static utility functions. no constructor

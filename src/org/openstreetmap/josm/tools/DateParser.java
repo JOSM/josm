@@ -9,7 +9,12 @@ import java.util.Date;
  *
  * @author Immanuel.Scholz
  */
-public class DateParser {
+public final class DateParser {
+    
+    private DateParser() {
+        // Hide default constructor for utils classes
+    }
+    
     public static Date parse(String d) throws ParseException {
         return new PrimaryDateParser().parse(d);
     }

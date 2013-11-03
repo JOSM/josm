@@ -15,7 +15,7 @@ import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 
-public class HelpUtil {
+public final class HelpUtil {
 
     private HelpUtil() {
         // Hide default constructor for utils classes

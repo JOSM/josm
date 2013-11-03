@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.tools.template_engine;
 
 
-public class CompoundTemplateEntry implements TemplateEntry {
+public final class CompoundTemplateEntry implements TemplateEntry {
 
     public static TemplateEntry fromArray(TemplateEntry... entry) {
         if (entry.length == 0)

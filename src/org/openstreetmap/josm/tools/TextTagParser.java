@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 /**
  * Class that helps to parse tags from arbitrary text
  */
-public class TextTagParser {
+public final class TextTagParser {
     
     // properties need JOSM restart to apply, modified rarely enough
     protected static final int MAX_KEY_LENGTH = Main.pref.getInteger("tags.paste.max-key-length", 50);

@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  *
  */
-public class User {
+public final class User {
 
     static private AtomicLong uidCounter = new AtomicLong();
 

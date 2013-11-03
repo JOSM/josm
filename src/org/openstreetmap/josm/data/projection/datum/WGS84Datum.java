@@ -8,7 +8,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 /**
  * WGS84 datum. Transformation from and to WGS84 datum is a no-op.
  */
-public class WGS84Datum extends NullDatum {
+public final class WGS84Datum extends NullDatum {
 
     public static final WGS84Datum INSTANCE = new WGS84Datum();
 

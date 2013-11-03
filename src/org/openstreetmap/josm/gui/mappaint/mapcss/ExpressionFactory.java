@@ -28,7 +28,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * See {@link #createFunctionExpression}.
  */
-public class ExpressionFactory {
+public final class ExpressionFactory {
 
     private static final List<Method> arrayFunctions;
     private static final List<Method> parameterFunctions;

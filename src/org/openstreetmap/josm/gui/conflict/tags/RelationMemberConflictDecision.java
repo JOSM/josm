@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.tags;
 
+import static org.openstreetmap.josm.gui.conflict.tags.RelationMemberConflictDecisionType.UNDECIDED;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.gui.conflict.tags.RelationMemberConflictDecisionType.*;
 
 public class RelationMemberConflictDecision {
 

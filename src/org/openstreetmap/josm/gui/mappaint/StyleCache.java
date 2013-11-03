@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Immutable class, equals & hashCode is required (the same for StyleList, ElemStyle
  * and its subclasses).
  */
-public class StyleCache {
+public final class StyleCache {
     /* list of boundaries for the scale ranges */
     private final List<Double> bd;
     /* styles for each scale range */

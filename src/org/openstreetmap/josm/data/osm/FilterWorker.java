@@ -11,7 +11,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author Petr_Dlouhý
  */
-public class FilterWorker {
+public final class FilterWorker {
     
     private FilterWorker() {
         // Hide default constructor for utils classes

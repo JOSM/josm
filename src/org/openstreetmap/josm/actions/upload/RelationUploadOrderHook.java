@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.upload;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Iterator;
@@ -18,10 +20,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.tools.WindowGeometry;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import org.openstreetmap.josm.actions.upload.UploadHook;
 
 /**
  * This upload hook reorders the list of new relations to upload such that child

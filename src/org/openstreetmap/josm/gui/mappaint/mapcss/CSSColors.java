@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CSSColors {
+public final class CSSColors {
     private final static Map<String, Color> CSS_COLORS = new HashMap<String, Color>();
     static {
         Object[][] CSSCOLORS_INIT = new Object[][] {

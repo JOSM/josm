@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.GBC;
  *
  * @author frsantos
  */
-public class ValidatorPreference extends DefaultTabPreferenceSetting {
+public final class ValidatorPreference extends DefaultTabPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         @Override

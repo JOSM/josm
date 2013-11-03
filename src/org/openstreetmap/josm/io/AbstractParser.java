@@ -136,7 +136,7 @@ public abstract class AbstractParser extends DefaultHandler {
             primitive = new HistoryWay(
                     id,version,visible,user,changesetId,timestamp
             );
-        }if (type.equals(OsmPrimitiveType.RELATION)) {
+        } else if (type.equals(OsmPrimitiveType.RELATION)) {
             primitive = new HistoryRelation(
                     id,version,visible,user,changesetId,timestamp
             );

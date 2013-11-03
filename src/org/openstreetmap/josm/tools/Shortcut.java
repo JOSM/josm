@@ -33,7 +33,7 @@ import org.openstreetmap.josm.Main;
  *      public so the shortcut preferences can use them.
  *
  */
-public class Shortcut {
+public final class Shortcut {
     private String shortText;        // the unique ID of the shortcut
     private String longText;         // a human readable description that will be shown in the preferences
     private int requestedKey;        // the key, the caller requested

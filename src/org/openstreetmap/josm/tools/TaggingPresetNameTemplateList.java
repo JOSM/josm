@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 /**
  * List of tagging presets with name templates, allows to find appropriate template based on existing primitive
  */
-public class TaggingPresetNameTemplateList {
+public final class TaggingPresetNameTemplateList {
 
     private static TaggingPresetNameTemplateList instance;
 

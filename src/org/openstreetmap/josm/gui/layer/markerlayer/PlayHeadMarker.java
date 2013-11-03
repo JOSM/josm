@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.AudioPlayer;
  * @author David Earl<david@frankieandshadow.com>
  * @since 572
  */
-public class PlayHeadMarker extends Marker {
+public final class PlayHeadMarker extends Marker {
 
     private Timer timer = null;
     private double animationInterval = 0.0; // seconds

@@ -402,7 +402,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * The table model for the list of versions in the current history
      *
      */
-    public class VersionTableModel extends AbstractTableModel {
+    public final class VersionTableModel extends AbstractTableModel {
 
         private VersionTableModel() {
         }

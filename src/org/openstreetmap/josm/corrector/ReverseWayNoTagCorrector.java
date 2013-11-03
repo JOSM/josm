@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
  * @see ReverseWayTagCorrector for handling of tags that can be modified (oneway=yes, etc.)
  * @since 5724
  */
-public class ReverseWayNoTagCorrector {
+public final class ReverseWayNoTagCorrector {
 
     private ReverseWayNoTagCorrector() {
         // Hide default constructor for utils classes
