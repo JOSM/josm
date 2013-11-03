@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
  * @author Tim Haussmann
  *
  */
-public class SlippyMapChooser extends JPanel implements DownloadSelection, PropertyChangeListener{
+public class SlippyMapChooser extends JPanel implements DownloadSelection, PropertyChangeListener {
 
     private DownloadDialog iGui;
     private SlippyMapBBoxChooser pnlSlippyMapBBoxChooser;
@@ -78,6 +78,16 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
             // resize and center the DownloadDialog
             iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
             repaint();
+        }
+    }
+    
+    /**
+     * Refreshes the tile sources
+     * @since 6364
+     */
+    public final void refreshTileSources() {
+        if (pnlSlippyMapBBoxChooser != null) {
+            pnlSlippyMapBBoxChooser.refreshTileSources();
         }
     }
 }

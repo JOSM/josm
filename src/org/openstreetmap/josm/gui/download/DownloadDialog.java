@@ -65,6 +65,7 @@ public class DownloadDialog extends JDialog  {
         return instance;
     }
 
+    protected SlippyMapChooser slippyMapChooser;
     protected final List<DownloadSelection> downloadSelections = new ArrayList<DownloadSelection>();
     protected final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
     protected JCheckBox cbNewLayer;
@@ -101,7 +102,7 @@ public class DownloadDialog extends JDialog  {
         buildMainPanelAboveDownloadSelections(pnl);
 
         // predefined download selections
-        downloadSelections.add(new SlippyMapChooser());
+        downloadSelections.add(slippyMapChooser = new SlippyMapChooser());
         downloadSelections.add(new BookmarkSelection());
         downloadSelections.add(new BoundingBoxSelection());
         downloadSelections.add(new PlaceSelection());
@@ -292,6 +293,16 @@ public class DownloadDialog extends JDialog  {
         tpDownloadAreaSelectors.add(displayName, selector);
     }
 
+    /**
+     * Refreshes the tile sources
+     * @since 6364
+     */
+    public final void refreshTileSources() {
+        if (slippyMapChooser != null) {
+            slippyMapChooser.refreshTileSources();
+        }
+    }
+    
     /**
      * Remembers the current settings in the download dialog
      *

@@ -41,7 +41,7 @@ import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 
-public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
+public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
 
     public interface TileSourceProvider {
         List<TileSource> getTileSources();
@@ -138,7 +138,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         }
     }
 
-
     /**
      * Plugins that wish to add custom tile sources to slippy map choose should call this method
      * @param tileSourceProvider
@@ -174,13 +173,14 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
     private final SourceButton iSourceButton;
     private Bounds bbox;
 
-    // upper left and lower right corners of the selection rectangle (x/y on
-    // ZOOM_MAX)
+    // upper left and lower right corners of the selection rectangle (x/y on ZOOM_MAX)
     Point iSelectionRectStart;
     Point iSelectionRectEnd;
 
+    /**
+     * Constructs a new {@code SlippyMapBBoxChooser}.
+     */
     public SlippyMapBBoxChooser() {
-        super();
         TMSLayer.setMaxWorkers();
         cachedLoader = TMSLayer.loaderFactory.makeTileLoader(this);
 
@@ -190,8 +190,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         setMapMarkerVisible(false);
         setMinimumSize(new Dimension(350, 350 / 2));
         // We need to set an initial size - this prevents a wrong zoom selection
-        // for
-        // the area before the component has been displayed the first time
+        // for the area before the component has been displayed the first time
         setBounds(new Rectangle(getMinimumSize()));
         if (cachedLoader == null) {
             setFileCacheEnabled(false);
@@ -200,10 +199,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         }
         setMaxTilesInMemory(Main.pref.getInteger("slippy_map_chooser.max_tiles", 1000));
 
-        List<TileSource> tileSources = new ArrayList<TileSource>();
-        for (TileSourceProvider provider: providers) {
-            tileSources.addAll(provider.getTileSources());
-        }
+        List<TileSource> tileSources = getTileSources();
 
         iSourceButton = new SourceButton(tileSources);
 
@@ -223,6 +219,14 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         }
 
         new SlippyMapControler(this, this, iSizeButton, iSourceButton);
+    }
+    
+    private List<TileSource> getTileSources() {
+        List<TileSource> tileSources = new ArrayList<TileSource>();
+        for (TileSourceProvider provider: providers) {
+            tileSources.addAll(provider.getTileSources());
+        }
+        return tileSources;
     }
 
     public boolean handleAttribution(Point p, boolean click) {
@@ -388,5 +392,13 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         setDisplayToFitMapMarkers();
         zoomOut();
         repaint();
+    }
+    
+    /**
+     * Refreshes the tile sources
+     * @since 6364
+     */
+    public final void refreshTileSources() {
+        iSourceButton.setSources(getTileSources());
     }
 }
