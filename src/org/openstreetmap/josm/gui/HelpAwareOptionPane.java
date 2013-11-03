@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-public class HelpAwareOptionPane {
+public final class HelpAwareOptionPane {
 
     private HelpAwareOptionPane() {
         // Hide default constructor for utils classes

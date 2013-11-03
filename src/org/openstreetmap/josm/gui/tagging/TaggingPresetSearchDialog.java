@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
  * The tagging presets search dialog (F3).
  * @since 3388
  */
-public class TaggingPresetSearchDialog extends ExtendedDialog {
+public final class TaggingPresetSearchDialog extends ExtendedDialog {
 
     private TaggingPresetSelector selector;
 

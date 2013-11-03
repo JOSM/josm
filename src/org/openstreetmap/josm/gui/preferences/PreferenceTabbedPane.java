@@ -28,8 +28,8 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
-import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
+import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference;
@@ -58,7 +58,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener, ExpertModeChangeListener, ChangeListener {
+public final class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener, ExpertModeChangeListener, ChangeListener {
+    
     /**
      * Allows PreferenceSettings to do validation of entered values when ok was pressed.
      * If data is invalid then event can return false to cancel closing of preferences dialog.
@@ -77,7 +78,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         public Component getComponent();
     }
 
-    public static class PreferencePanel extends JPanel implements PreferenceTab {
+    public static final class PreferencePanel extends JPanel implements PreferenceTab {
         private final TabPreferenceSetting preferenceSetting;
 
         private PreferencePanel(TabPreferenceSetting preferenceSetting) {
@@ -107,7 +108,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         }
     }
 
-    public static class PreferenceScrollPane extends JScrollPane implements PreferenceTab {
+    public static final class PreferenceScrollPane extends JScrollPane implements PreferenceTab {
         private final TabPreferenceSetting preferenceSetting;
 
         private PreferenceScrollPane(Component view, TabPreferenceSetting preferenceSetting) {

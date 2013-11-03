@@ -1,7 +1,7 @@
 // License: GPL. Copyright 2009 by Dave Hansen, others
 package org.openstreetmap.josm.data.coor;
 
-public class QuadTiling {
+public final class QuadTiling {
     
     private QuadTiling() {
         // Hide default constructor for utils classes

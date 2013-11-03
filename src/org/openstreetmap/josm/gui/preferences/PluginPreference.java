@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.preferences.plugin.PluginListPanel;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferencesModel;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginUpdatePolicyPanel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -51,9 +52,8 @@ import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
-public class PluginPreference extends DefaultTabPreferenceSetting {
+public final class PluginPreference extends DefaultTabPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

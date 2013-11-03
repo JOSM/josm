@@ -1103,7 +1103,7 @@ public class LayerListDialog extends ToggleDialog {
      * It also listens to {@link PropertyChangeEvent}s of every {@link Layer} it manages, in particular to
      * the properties {@link Layer#VISIBLE_PROP} and {@link Layer#NAME_PROP}.
      */
-    public class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
+    public final class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
         /** manages list selection state*/
         private DefaultListSelectionModel selectionModel;
         private CopyOnWriteArrayList<LayerListModelListener> listeners;

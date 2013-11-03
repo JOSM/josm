@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.Pair;
  *
  * @author Alexander Kachkaev <alexander@kachkaev.ru>, 2011
  */
-class ImproveWayAccuracyHelper {
+final class ImproveWayAccuracyHelper {
 
     private ImproveWayAccuracyHelper() {
         // Hide default constructor for utils classes

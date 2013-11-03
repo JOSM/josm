@@ -11,8 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.GBC;
 
 /*
  * marker.audiosampleminsecs
@@ -26,7 +26,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
  * audio.toolbar ??
  */
 
-public class AudioPreference extends DefaultTabPreferenceSetting {
+public final class AudioPreference extends DefaultTabPreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
         @Override

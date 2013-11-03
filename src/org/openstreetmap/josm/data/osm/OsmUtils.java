@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class OsmUtils {
+public final class OsmUtils {
     
     private OsmUtils() {
         // Hide default constructor for utils classes

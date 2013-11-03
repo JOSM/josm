@@ -3,7 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import java.util.Locale;
 
-public class LanguageInfo {
+public final class LanguageInfo {
     
     private LanguageInfo() {
         // Hide default constructor for utils classes

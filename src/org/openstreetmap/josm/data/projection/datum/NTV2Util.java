@@ -26,7 +26,7 @@ import org.openstreetmap.josm.Main;
  *
  * @author Peter Yuill
  */
-public class NTV2Util {
+public final class NTV2Util {
 
     private NTV2Util() {
     }

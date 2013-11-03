@@ -260,7 +260,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             if (e.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                 alertInternalError();
                 return;
-            } if (e.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+            } else if (e.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 alertFailedAuthentication();
                 return;
             } else if (e.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {

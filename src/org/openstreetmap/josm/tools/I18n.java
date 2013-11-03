@@ -30,7 +30,7 @@ import org.openstreetmap.josm.Main;
  *
  * @author Immanuel.Scholz
  */
-public class I18n {
+public final class I18n {
     
     private I18n() {
         // Hide default constructor for utils classes

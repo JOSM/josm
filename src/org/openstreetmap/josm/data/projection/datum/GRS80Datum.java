@@ -9,7 +9,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  * This datum indicates, that GRS80 ellipsoid is used and no conversion
  * is necessary to get from or to the WGS84 datum.
  */
-public class GRS80Datum extends NullDatum {
+public final class GRS80Datum extends NullDatum {
 
     public final static GRS80Datum INSTANCE = new GRS80Datum();
 

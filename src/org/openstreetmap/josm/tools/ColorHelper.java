@@ -6,7 +6,7 @@ import java.awt.Color;
 /**
  * Helper to convert from color to html string and back
  */
-public class ColorHelper {
+public final class ColorHelper {
 
     private ColorHelper() {
         // Hide default constructor for utils classes

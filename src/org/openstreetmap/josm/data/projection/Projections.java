@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Class to handle projections
  *
  */
-public class Projections {
+public final class Projections {
 
     private Projections() {
         // Hide default constructor for utils classes

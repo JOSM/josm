@@ -21,7 +21,7 @@ import org.openstreetmap.josm.Main;
  * @author David Earl <david@frankieandshadow.com>
  * @since 547
  */
-public class AudioPlayer extends Thread {
+public final class AudioPlayer extends Thread {
 
     private static AudioPlayer audioPlayer = null;
 

@@ -80,7 +80,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateParser;
  */
 public class Marker implements TemplateEngineDataProvider {
 
-    public static class TemplateEntryProperty extends CachedProperty<TemplateEntry> {
+    public static final class TemplateEntryProperty extends CachedProperty<TemplateEntry> {
         // This class is a bit complicated because it supports both global and per layer settings. I've added per layer settings because
         // GPXSettingsPanel had possibility to set waypoint label but then I've realized that markers use different layer then gpx data
         // so per layer settings is useless. Anyway it's possible to specify marker layer pattern in Einstein preferences and maybe somebody

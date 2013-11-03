@@ -10,7 +10,8 @@ import java.io.UnsupportedEncodingException;
 /**
  * Detects the different UTF encodings from byte order mark
  */
-public class UTFInputStreamReader extends InputStreamReader {
+public final class UTFInputStreamReader extends InputStreamReader {
+    
     /**
      * converts input stream to reader
      * @param defaultEncoding Used, when no BOM was recognized. Can be null.

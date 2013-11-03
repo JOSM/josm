@@ -19,7 +19,7 @@ import org.openstreetmap.josm.Main;
  *
  * @author Imi
  */
-public class OpenBrowser {
+public final class OpenBrowser {
 
     private OpenBrowser() {
         // Hide default constructor for utils classes

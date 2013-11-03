@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
  *
  * @author frsantos
  */
-public class ValUtil {
+public final class ValUtil {
     
     private ValUtil() {
         // Hide default constructor for utils classes

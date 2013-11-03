@@ -391,7 +391,7 @@ public class Storage<T> extends AbstractSet<T> {
     }
      */
 
-    private class FMap<K> implements Map<K,T> {
+    private final class FMap<K> implements Map<K,T> {
         Hash<K,? super T> fHash;
 
         private FMap(Hash<K,? super T> h) {

@@ -11,7 +11,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.tools.GBC;
 
-public class MapPreference extends DefaultTabPreferenceSetting {
+public final class MapPreference extends DefaultTabPreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

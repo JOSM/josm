@@ -54,7 +54,7 @@ import org.w3c.dom.NodeList;
  * Class to process configuration changes stored in XML
  * can be used to modify preferences, store/delete files in .josm folders etc
  */
-public class CustomConfigurator {
+public final class CustomConfigurator {
     
     private CustomConfigurator() {
         // Hide default constructor for utils classes
