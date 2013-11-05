@@ -465,16 +465,6 @@ public class Preferences {
         return all;
     }
 
-    synchronized private Map<String, String> getAllPrefixDefault(final String prefix) {
-        final Map<String,String> all = new TreeMap<String,String>();
-        for (final Entry<String,String> e : defaults.entrySet()) {
-            if (e.getKey().startsWith(prefix)) {
-                all.put(e.getKey(), e.getValue());
-            }
-        }
-        return all;
-    }
-
     synchronized public Map<String, String> getAllColors() {
         final Map<String,String> all = new TreeMap<String,String>();
         for (final Entry<String,String> e : defaults.entrySet()) {

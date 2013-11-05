@@ -36,8 +36,8 @@ import org.openstreetmap.josm.Main;
 public final class Shortcut {
     private String shortText;        // the unique ID of the shortcut
     private String longText;         // a human readable description that will be shown in the preferences
-    private int requestedKey;        // the key, the caller requested
-    private int requestedGroup;      // the group, the caller requested
+    private final int requestedKey;  // the key, the caller requested
+    private final int requestedGroup;// the group, the caller requested
     private int assignedKey;         // the key that actually is used
     private int assignedModifier;    // the modifiers that are used
     private boolean assignedDefault; // true if it got assigned what was requested. (Note: modifiers will be ignored in favour of group when loading it from the preferences then.)
@@ -71,14 +71,6 @@ public final class Shortcut {
     // may be a dummy
     private void setLongText(String longText) {
         this.longText = longText;
-    }
-
-    private int getRequestedKey() {
-        return requestedKey;
-    }
-
-    public int getRequestedGroup() {
-        return requestedGroup;
     }
 
     public int getAssignedKey() {
