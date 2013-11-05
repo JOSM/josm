@@ -1,5 +1,4 @@
 // License: GPL. For details, see LICENSE file.
-
 package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.Dimension;
@@ -16,6 +15,8 @@ import javax.swing.text.View;
  *
  * Note that this won't work if JMultilineLabel is put into a JScrollBox or
  * similar as the bounds will never change. Instead scrollbars will be displayed.
+ * 
+ * @since 6340
  */
 public class JMultilineLabel extends JLabel {
     private int maxWidth = Integer.MAX_VALUE;
@@ -28,16 +29,15 @@ public class JMultilineLabel extends JLabel {
      * <code>&lt;br&gt;</code> to insert new lines.
      *
      * Use setMaxWidth to limit the width of the label.
-     * @param text
+     * @param text The text to display
      */
-    public JMultilineLabel(String text)
-    {
+    public JMultilineLabel(String text) {
         super();
-        text = text.trim().replaceAll("\n", "<br>");
-        if(!text.startsWith("<html>")) {
-            text = "<html>" + text + "</html>";
+        String html = text.trim().replaceAll("\n", "<br>");
+        if (!html.startsWith("<html>")) {
+            html = "<html>" + html + "</html>";
         }
-        super.setText(text);
+        super.setText(html);
     }
 
     /**
