@@ -101,8 +101,10 @@ public class DownloadDialog extends JDialog  {
         // hook for subclasses
         buildMainPanelAboveDownloadSelections(pnl);
 
+        slippyMapChooser = new SlippyMapChooser();
+        
         // predefined download selections
-        downloadSelections.add(slippyMapChooser = new SlippyMapChooser());
+        downloadSelections.add(slippyMapChooser);
         downloadSelections.add(new BookmarkSelection());
         downloadSelections.add(new BoundingBoxSelection());
         downloadSelections.add(new PlaceSelection());

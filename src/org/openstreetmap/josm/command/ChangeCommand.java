@@ -17,10 +17,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Command that basically replaces one OSM primitive by another of the
- * same type.
+ * Command that basically replaces one OSM primitive by another of the same type.
  *
- * @author Imi
+ * @since 93
  */
 public class ChangeCommand extends Command {
 
@@ -44,22 +43,22 @@ public class ChangeCommand extends Command {
     private void sanityChecks() {
         CheckParameterUtil.ensureParameterNotNull(osm, "osm");
         CheckParameterUtil.ensureParameterNotNull(newOsm, "newOsm");
-        if (newOsm instanceof Way) {
+        if (newOsm instanceof Way && ((Way)newOsm).getNodesCount() == 0) {
             // Do not allow to create empty ways (see #7465)
-            if (((Way)newOsm).getNodesCount() == 0) {
-                throw new IllegalArgumentException(tr("New way {0} has 0 nodes", newOsm));
-            }
+            throw new IllegalArgumentException(tr("New way {0} has 0 nodes", newOsm));
         }
     }
 
-    @Override public boolean executeCommand() {
+    @Override
+    public boolean executeCommand() {
         super.executeCommand();
         osm.cloneFrom(newOsm);
         osm.setModified(true);
         return true;
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         modified.add(osm);
     }
 

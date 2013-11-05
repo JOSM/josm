@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  */
 public class PropertiesCellRenderer extends DefaultTableCellRenderer {
 
-    private void setColors(Component c, String key, boolean isSelected, boolean hasFocus) {
+    private void setColors(Component c, String key, boolean isSelected) {
         UIDefaults defaults = javax.swing.UIManager.getDefaults();
         if (OsmPrimitive.getDiscardableKeys().contains(key)) {
             if (isSelected) {
@@ -70,7 +70,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                         key = (String) value0;
                     }
                 }
-                setColors(c, key, isSelected, hasFocus);
+                setColors(c, key, isSelected);
             }
         }
         return c;

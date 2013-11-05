@@ -33,18 +33,23 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * List class that read and save its content from the bookmark file.
- * @author imi
+ * @since 6340
  */
 public class BookmarkList extends JList {
 
     /**
      * Class holding one bookmarkentry.
-     * @author imi
      */
     public static class Bookmark implements Comparable<Bookmark> {
         private String name;
         private Bounds area;
 
+        /**
+         * Constructs a new {@code Bookmark} with the given contents.
+         * @param list Bookmark contents as a list of 5 elements. First item is the name, then come bounds arguments (minlat, minlon, maxlat, maxlon)
+         * @throws NumberFormatException If the bounds arguments are not numbers
+         * @throws IllegalArgumentException If list contain less than 5 elements
+         */
         public Bookmark(Collection<String> list) throws NumberFormatException, IllegalArgumentException {
             List<String> array = new ArrayList<String>(list);
             if(array.size() < 5)
@@ -55,13 +60,17 @@ public class BookmarkList extends JList {
         }
 
         /**
-         * Constructs a new {@code Bookmark}.
+         * Constructs a new empty {@code Bookmark}.
          */
         public Bookmark() {
             area = null;
             name = null;
         }
 
+        /**
+         * Constructs a new unamed {@code Bookmark} for the given area.
+         * @param area The bookmark area
+         */
         public Bookmark(Bounds area) {
             this.area = area;
         }
@@ -74,26 +83,73 @@ public class BookmarkList extends JList {
         public int compareTo(Bookmark b) {
             return name.toLowerCase().compareTo(b.name.toLowerCase());
         }
+        
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((area == null) ? 0 : area.hashCode());
+            result = prime * result + ((name == null) ? 0 : name.hashCode());
+            return result;
+        }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Bookmark other = (Bookmark) obj;
+            if (area == null) {
+                if (other.area != null)
+                    return false;
+            } else if (!area.equals(other.area))
+                return false;
+            if (name == null) {
+                if (other.name != null)
+                    return false;
+            } else if (!name.equals(other.name))
+                return false;
+            return true;
+        }
+
+        /**
+         * Returns the bookmark area
+         * @return The bookmark area
+         */
         public Bounds getArea() {
             return area;
         }
 
+        /**
+         * Returns the bookmark name
+         * @return The bookmark name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Sets the bookmark name
+         * @param name The bookmark name
+         */
         public void setName(String name) {
             this.name = name;
         }
 
+        /**
+         * Sets the bookmark area
+         * @param area The bookmark area
+         */
         public void setArea(Bounds area) {
             this.area = area;
         }
     }
 
     /**
-     * Create a bookmark list as well as the Buttons add and remove.
+     * Creates a bookmark list as well as the Buttons add and remove.
      */
     public BookmarkList() {
         setModel(new DefaultListModel());
@@ -105,7 +161,7 @@ public class BookmarkList extends JList {
     /**
      * Loads the bookmarks from file.
      */
-    public void load() {
+    public final void load() {
         DefaultListModel model = (DefaultListModel)getModel();
         model.removeAllElements();
         Collection<Collection<String>> args = Main.pref.getArray("bookmarks", null);
@@ -160,10 +216,12 @@ public class BookmarkList extends JList {
                     }
                     save();
                     Main.info("Removing obsolete bookmarks file");
-                    bookmarkFile.delete();
+                    if (!bookmarkFile.delete()) {
+                        bookmarkFile.deleteOnExit();
+                    }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Main.error(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("<html>Could not read bookmarks from<br>''{0}''<br>Error was: {1}</html>",
@@ -178,7 +236,7 @@ public class BookmarkList extends JList {
     }
 
     /**
-     * Save all bookmarks to the preferences file
+     * Saves all bookmarks to the preferences file
      */
     public void save() {
         LinkedList<Collection<String>> coll = new LinkedList<Collection<String>>();

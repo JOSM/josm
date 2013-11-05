@@ -66,7 +66,7 @@ public class MessagesNotifierPanel extends JPanel {
     /**
      * Initializes the panel from preferences
      */
-    public void initFromPreferences() {
+    public final void initFromPreferences() {
         notifier.setSelected(MessageNotifier.PROP_NOTIFIER_ENABLED.get());
         notifierInterval.setText(Integer.toString(MessageNotifier.PROP_INTERVAL.get()));
     }
