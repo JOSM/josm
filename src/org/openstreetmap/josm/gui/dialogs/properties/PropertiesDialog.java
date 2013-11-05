@@ -1240,11 +1240,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
-        if ("display.discardable-keys".equals(e.getKey())) {
-            if (Main.main.getCurrentDataSet() != null) {
-                // Re-load data when display preference change
-                selectionChanged(Main.main.getCurrentDataSet().getSelected());
-            }
+        if ("display.discardable-keys".equals(e.getKey()) && Main.main.getCurrentDataSet() != null) {
+            // Re-load data when display preference change
+            selectionChanged(Main.main.getCurrentDataSet().getSelected());
         }
     }
 }

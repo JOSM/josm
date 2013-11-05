@@ -45,9 +45,9 @@ public final class MessageNotifier {
     /** Property defining the update interval in minutes */
     public static final IntegerProperty PROP_INTERVAL = new IntegerProperty("message.notifier.interval", 5);
     
-    private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor();
     
-    private static final Runnable worker = new Worker();
+    private static final Runnable WORKER = new Worker();
     
     private static ScheduledFuture<?> task = null;
         
@@ -88,7 +88,7 @@ public final class MessageNotifier {
     public static void start() {
         int interval = PROP_INTERVAL.get();
         if (!isRunning() && interval > 0 && isUserEnoughIdentified()) {
-            task = executor.scheduleAtFixedRate(worker, 0, interval * 60, TimeUnit.SECONDS);
+            task = EXECUTOR.scheduleAtFixedRate(WORKER, 0, interval * 60, TimeUnit.SECONDS);
             Main.info("Message notifier active (checks every "+interval+" minute"+(interval>1?"s":"")+")");
         }
     }

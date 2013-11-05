@@ -50,7 +50,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
-        AuthenticationMethodChangeListener  authChangeListener = new AuthenticationMethodChangeListener();
+        AuthenticationMethodChangeListener authChangeListener = new AuthenticationMethodChangeListener();
 
         // -- radio button for basic authentication
         gc.anchor = GridBagConstraints.NORTHWEST;
@@ -82,7 +82,8 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        add(pnlAuthenticationParameteters = new JPanel(), gc);
+        pnlAuthenticationParameteters = new JPanel();
+        add(pnlAuthenticationParameteters, gc);
         pnlAuthenticationParameteters.setLayout(new BorderLayout());
 
         //-- the two panels for authentication parameters
@@ -95,7 +96,8 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         //-- the panel for messages preferences
         gc.gridy = 2;
         gc.fill = GridBagConstraints.NONE;
-        add(pnlMessagesPreferences = new MessagesNotifierPanel(), gc);
+        pnlMessagesPreferences = new MessagesNotifierPanel();
+        add(pnlMessagesPreferences, gc);
     }
 
     /**

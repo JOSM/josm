@@ -10,17 +10,23 @@ import org.openstreetmap.josm.io.OsmApi;
 
 /**
  * This is the default authenticator used in JOSM. It delegates lookup of credentials
- * for the OSM API and an optional proxy server to the currently configured
- * {@link CredentialsManager}.
- *
+ * for the OSM API and an optional proxy server to the currently configured {@link CredentialsManager}.
+ * @since 2641
  */
 public final class DefaultAuthenticator extends Authenticator {
     private static DefaultAuthenticator instance;
 
+    /**
+     * Returns the unique instance
+     * @return The unique instance
+     */
     public static DefaultAuthenticator getInstance() {
         return instance;
     }
 
+    /**
+     * Creates the unique instance
+     */
     public static void createInstance() {
         instance = new DefaultAuthenticator();
     }
@@ -32,18 +38,16 @@ public final class DefaultAuthenticator extends Authenticator {
     }
 
     /**
-     * Called by the Java http stack when either the OSM API server or a proxy requires
-     * authentication.
-     *
+     * Called by the Java HTTP stack when either the OSM API server or a proxy requires authentication.
      */
-    @Override protected PasswordAuthentication getPasswordAuthentication() {
+    @Override
+    protected PasswordAuthentication getPasswordAuthentication() {
         if (!enabled)
             return null;
         try {
-            if (getRequestorType().equals(Authenticator.RequestorType.SERVER)) {
+            if (getRequestorType().equals(Authenticator.RequestorType.SERVER) && OsmApi.isUsingOAuth()) {
                 // if we are working with OAuth we don't prompt for a password
-                if (OsmApi.isUsingOAuth())
-                    return null;
+                return null;
             }
             boolean tried = credentialsTried.get(getRequestorType()) != null;
             CredentialsAgentResponse response = CredentialsManager.getInstance().getCredentials(getRequestorType(), getRequestingHost(), tried);
