@@ -410,14 +410,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return relationComparator;
     }
 
-    private String getLeadingNumber(String s) {
-        int i = 0;
-        while (i < s.length() && Character.isDigit(s.charAt(i))) {
-            i++;
-        }
-        return s.substring(0, i);
-    }
-
     private String getRelationTypeName(IRelation relation) {
         String name = trc("Relation type", relation.get("type"));
         if (name == null) {

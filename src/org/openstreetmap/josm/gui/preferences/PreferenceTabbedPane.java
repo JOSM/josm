@@ -117,8 +117,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         }
 
         private PreferenceScrollPane(PreferencePanel preferencePanel) {
-            super(preferencePanel.getComponent());
-            this.preferenceSetting = preferencePanel.getTabPreferenceSetting();
+            this(preferencePanel.getComponent(), preferencePanel.getTabPreferenceSetting());
         }
 
         @Override

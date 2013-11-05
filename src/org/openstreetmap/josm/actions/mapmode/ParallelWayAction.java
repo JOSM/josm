@@ -288,11 +288,6 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         updateStatusLine();
     }
 
-    private boolean isValidModifierCombination() {
-        // TODO: implement to give feedback on invalid modifier combination
-        return true;
-    }
-
     private boolean sanityCheck() {
         // @formatter:off
         boolean areWeSane =
