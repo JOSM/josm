@@ -79,17 +79,7 @@ public class SideButton extends JButton implements Destroyable {
         return getScaledImage(im);
     }
 
-    private void setup(String name, String property, String tooltip, ActionListener actionListener)
-    {
-        doStyle();
-        setActionCommand(name);
-        addActionListener(actionListener);
-        setToolTipText(tooltip);
-        putClientProperty("help", "Dialog/"+property+"/"+name);
-    }
-
-    private void doStyle()
-    {
+    private void doStyle() {
         setLayout(new BorderLayout());
         setIconTextGap(2);
         setMargin(new Insets(-1,0,-1,0));

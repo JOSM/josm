@@ -1295,29 +1295,6 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * This method filters the list of relations that form the multipolygons.
-     * @param relations all relations
-     * @param polygons polygons for filtering
-     * @return relations which don't form the polygons
-     */
-    private List<Relation> filterOwnMultipolygonRelations(Collection<Relation> relations, List<Multipolygon> polygons) {
-
-        List<Relation> relationsToRemove = new ArrayList<Relation>();
-
-        for (Multipolygon m : polygons) {
-            if (m.relation != null) {
-                relationsToRemove.add(m.relation);
-            }
-        }
-
-        List<Relation> result = new ArrayList<Relation>();
-
-        result.addAll(relations);
-        result.removeAll(relationsToRemove);
-        return result;
-    }
-
-    /**
      * Will add own multipolygon relation to the "previously existing" relations. Fixup is done by fixRelations
      * @param inner List of already closed inner ways
      * @param outer The outer way
