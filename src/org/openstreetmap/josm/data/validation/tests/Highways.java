@@ -127,7 +127,10 @@ public class Highways extends Test {
                     if (w.hasTag("foot", "yes", "designated")) {
                         handlePedestrianWay(n, w);
                     }
-                } else if (CLASSIFIED_HIGHWAYS.contains(highway) || highway.equals("service") || highway.equals("road")) {
+                } else if (CLASSIFIED_HIGHWAYS.contains(highway)) {
+                    // Only look at classified highways for now:
+                    // - service highways support is TBD (see #9141 comments)
+                    // - roads should be determined first. Another warning is raised anyway
                     handleCarWay(n, w);
                 }
                 if ((leftByPedestrians || leftByCyclists) && leftByCars) {
