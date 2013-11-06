@@ -38,6 +38,7 @@ import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.data.validation.tests.NameMismatch;
 import org.openstreetmap.josm.data.validation.tests.NodesDuplicatingWayTags;
 import org.openstreetmap.josm.data.validation.tests.NodesWithSameName;
+import org.openstreetmap.josm.data.validation.tests.OpeningHourTest;
 import org.openstreetmap.josm.data.validation.tests.OverlappingAreas;
 import org.openstreetmap.josm.data.validation.tests.OverlappingWays;
 import org.openstreetmap.josm.data.validation.tests.PowerLines;
@@ -113,6 +114,7 @@ public class OsmValidator implements LayerChangeListener {
         Addresses.class, // ID 2601 .. 2699
         Highways.class, // ID 2701 .. 2799
         BarriersEntrances.class, // ID 2801 .. 2899
+        OpeningHourTest.class // 2901 .. 2999
     };
 
     /**
