@@ -42,3 +42,7 @@ with Apache license version 2.0.
 
 The signpost code (http://code.google.com/p/oauth-signpost/)
 is from Matthias Käppler and licensed with the Apache License 2.0.
+
+The opening hour validation uses code from opening_hour.js
+(https://github.com/ypid/opening_hours.js) which is licensed
+with the New (2-clause) BSD license.
