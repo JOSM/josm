@@ -45,7 +45,7 @@ import java.util.TreeSet;
  * Ported from phoneticengine.php
  *
  * @since 1.6
- * @version $Id: PhoneticEngine.java 1539783 2013-11-07 19:54:07Z ggregory $
+ * @version $Id: PhoneticEngine.java 1539798 2013-11-07 20:22:06Z ggregory $
  */
 public class PhoneticEngine {
 
@@ -66,12 +66,17 @@ public class PhoneticEngine {
          * @return  a new, empty phoneme builder
          */
         public static PhonemeBuilder empty(final Languages.LanguageSet languages) {
-            return new PhonemeBuilder(Collections.singleton(new Rule.Phoneme("", languages)));
+            return new PhonemeBuilder(new Rule.Phoneme("", languages));
         }
 
         private final Set<Rule.Phoneme> phonemes;
 
-        private PhonemeBuilder(final Set<Rule.Phoneme> phonemes) {
+        private PhonemeBuilder(Rule.Phoneme phoneme) {
+            this.phonemes = new LinkedHashSet<Rule.Phoneme>();
+            this.phonemes.add(phoneme);
+        }
+        
+        private PhonemeBuilder(Set<Rule.Phoneme> phonemes) {
             this.phonemes = phonemes;
         }
 
@@ -79,16 +84,11 @@ public class PhoneticEngine {
          * Creates a new phoneme builder containing all phonemes in this one extended by <code>str</code>.
          *
          * @param str   the characters to append to the phonemes
-         * @return  a new phoneme builder lenghtened by <code>str</code>
          */
-        public PhonemeBuilder append(final CharSequence str) {
-            final Set<Rule.Phoneme> newPhonemes = new LinkedHashSet<Rule.Phoneme>();
-
+        public void append(final CharSequence str) {
             for (final Rule.Phoneme ph : this.phonemes) {
-                newPhonemes.add(ph.append(str));
+            	ph.append(str);
             }
-
-            return new PhonemeBuilder(newPhonemes);
         }
 
         /**
@@ -380,7 +380,7 @@ public class PhoneticEngine {
 
                 if (!found) {
                     // not found, appending as-is
-                    subBuilder = subBuilder.append(phonemeText.subSequence(i, i + 1));
+                    subBuilder.append(phonemeText.subSequence(i, i + 1));
                 }
 
                 i = rulesApplication.getI();
