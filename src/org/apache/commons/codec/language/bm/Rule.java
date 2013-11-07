@@ -75,7 +75,7 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1539788 2013-11-07 20:11:23Z ggregory $
+ * @version $Id: Rule.java 1539804 2013-11-07 20:36:20Z ggregory $
  */
 public class Rule {
 
@@ -396,7 +396,7 @@ public class Rule {
                                         return sb.toString();
                                     }
                                 };
-                                String patternKey = r.pattern.substring(0,1);
+                                final String patternKey = r.pattern.substring(0,1);
                                 List<Rule> rules = lines.get(patternKey);
                                 if (rules == null) {
                                 	rules = new ArrayList<Rule>();

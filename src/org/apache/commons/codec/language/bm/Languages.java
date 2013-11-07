@@ -48,7 +48,7 @@ import java.util.Set;
  * This class is immutable and thread-safe.
  *
  * @since 1.6
- * @version $Id: Languages.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: Languages.java 1539802 2013-11-07 20:33:55Z ggregory $
  */
 public class Languages {
     // Iimplementation note: This class is divided into two sections. The first part is a static factory interface that
@@ -158,20 +158,24 @@ public class Languages {
         }
 
         final Scanner lsScanner = new Scanner(langIS, ResourceConstants.ENCODING);
-        boolean inExtendedComment = false;
-        while (lsScanner.hasNextLine()) {
-            final String line = lsScanner.nextLine().trim();
-            if (inExtendedComment) {
-                if (line.endsWith(ResourceConstants.EXT_CMT_END)) {
-                    inExtendedComment = false;
-                }
-            } else {
-                if (line.startsWith(ResourceConstants.EXT_CMT_START)) {
-                    inExtendedComment = true;
-                } else if (line.length() > 0) {
-                    ls.add(line);
+        try {
+            boolean inExtendedComment = false;
+            while (lsScanner.hasNextLine()) {
+                final String line = lsScanner.nextLine().trim();
+                if (inExtendedComment) {
+                    if (line.endsWith(ResourceConstants.EXT_CMT_END)) {
+                        inExtendedComment = false;
+                    }
+                } else {
+                    if (line.startsWith(ResourceConstants.EXT_CMT_START)) {
+                        inExtendedComment = true;
+                    } else if (line.length() > 0) {
+                        ls.add(line);
+                    }
                 }
             }
+        } finally {
+            lsScanner.close();
         }
 
         return new Languages(Collections.unmodifiableSet(ls));

@@ -66,7 +66,7 @@ import java.util.regex.Pattern;
  * Port of lang.php
  *
  * @since 1.6
- * @version $Id: Lang.java 1539800 2013-11-07 20:25:05Z ggregory $
+ * @version $Id: Lang.java 1539801 2013-11-07 20:33:05Z ggregory $
  */
 public class Lang {
     // Implementation note: This class is divided into two sections. The first part is a static factory interface that
@@ -135,47 +135,51 @@ public class Lang {
         }
 
         final Scanner scanner = new Scanner(lRulesIS, ResourceConstants.ENCODING);
-        boolean inExtendedComment = false;
-        while (scanner.hasNextLine()) {
-            final String rawLine = scanner.nextLine();
-            String line = rawLine;
-            if (inExtendedComment) {
-                // check for closing comment marker, otherwise discard doc comment line
-                if (line.endsWith(ResourceConstants.EXT_CMT_END)) {
-                    inExtendedComment = false;
-                }
-            } else {
-                if (line.startsWith(ResourceConstants.EXT_CMT_START)) {
-                    inExtendedComment = true;
+        try {
+            boolean inExtendedComment = false;
+            while (scanner.hasNextLine()) {
+                final String rawLine = scanner.nextLine();
+                String line = rawLine;
+                if (inExtendedComment) {
+                    // check for closing comment marker, otherwise discard doc comment line
+                    if (line.endsWith(ResourceConstants.EXT_CMT_END)) {
+                        inExtendedComment = false;
+                    }
                 } else {
-                    // discard comments
-                    final int cmtI = line.indexOf(ResourceConstants.CMT);
-                    if (cmtI >= 0) {
-                        line = line.substring(0, cmtI);
+                    if (line.startsWith(ResourceConstants.EXT_CMT_START)) {
+                        inExtendedComment = true;
+                    } else {
+                        // discard comments
+                        final int cmtI = line.indexOf(ResourceConstants.CMT);
+                        if (cmtI >= 0) {
+                            line = line.substring(0, cmtI);
+                        }
+
+                        // trim leading-trailing whitespace
+                        line = line.trim();
+
+                        if (line.length() == 0) {
+                            continue; // empty lines can be safely skipped
+                        }
+
+                        // split it up
+                        final String[] parts = line.split("\\s+");
+
+                        if (parts.length != 3) {
+                            throw new IllegalArgumentException("Malformed line '" + rawLine
+                                    + "' in language resource '" + languageRulesResourceName + "'");
+                        }
+
+                        final Pattern pattern = Pattern.compile(parts[0]);
+                        final String[] langs = parts[1].split("\\+");
+                        final boolean accept = parts[2].equals("true");
+
+                        rules.add(new LangRule(pattern, new HashSet<String>(Arrays.asList(langs)), accept));
                     }
-
-                    // trim leading-trailing whitespace
-                    line = line.trim();
-
-                    if (line.length() == 0) {
-                        continue; // empty lines can be safely skipped
-                    }
-
-                    // split it up
-                    final String[] parts = line.split("\\s+");
-
-                    if (parts.length != 3) {
-                        throw new IllegalArgumentException("Malformed line '" + rawLine + "' in language resource '" +
-                                                           languageRulesResourceName + "'");
-                    }
-
-                    final Pattern pattern = Pattern.compile(parts[0]);
-                    final String[] langs = parts[1].split("\\+");
-                    final boolean accept = parts[2].equals("true");
-
-                    rules.add(new LangRule(pattern, new HashSet<String>(Arrays.asList(langs)), accept));
                 }
             }
+        } finally {
+            scanner.close();
         }
         return new Lang(rules, languages);
     }
