@@ -47,7 +47,7 @@ public class OpeningHourTest extends Test {
     @Override
     public void initialize() throws Exception {
         super.initialize();
-        ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/opening_hours.js")));
+        ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/opening_hours.js"), "UTF-8"));
         ENGINE.eval("var oh = function (x, y) {return new opening_hours(x, y);};");
     }
 
@@ -61,7 +61,8 @@ public class OpeningHourTest extends Test {
         if (obj == null || "".equals(obj)) {
             return Arrays.asList();
         } else if (obj instanceof String) {
-            return Arrays.<Object>asList(((String) obj).split("\\n"));
+            final Object[] strings = ((String) obj).split("\\n");
+            return Arrays.asList(strings);
         } else if (obj instanceof List) {
             return (List) obj;
         } else {
