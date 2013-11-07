@@ -60,6 +60,30 @@ public class OpeningHourTestTest {
     public void testCheckOpeningHourSyntax5() throws Exception {
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("badtext").size(), is(1));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("badtext").get(0).getMessage(),
-                is("ba <--- (Unexpected token: \"b\" This means that the syntax is not valid at that point or it is currently not supported.)"));
+                is("opening_hours - ba <--- (Unexpected token: \"b\" This means that the syntax is not valid at that point or it is currently not supported.)"));
+    }
+
+    @Test
+    public void testCheckOpeningHourSyntax6() throws Exception {
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("PH open \"always open on public holidays\"").isEmpty(), is(true));
+    }
+
+    @Test
+    public void testCheckServiceTimeSyntax1() throws Exception {
+        // frequently used tags according to http://taginfo.openstreetmap.org/keys/service_times#values
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("Su 10:00", OpeningHourTest.CheckMode.BOTH).isEmpty(), is(true));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("automatic", OpeningHourTest.CheckMode.BOTH).isEmpty(), is(false));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("Mo-Sa 09:00-18:00", OpeningHourTest.CheckMode.BOTH).isEmpty(), is(true));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("Su 09:30; We 19:30", OpeningHourTest.CheckMode.BOTH).isEmpty(), is(true));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00", OpeningHourTest.CheckMode.BOTH).isEmpty(), is(true));
+    }
+
+    @Test
+    public void testCheckCollectionTimeSyntax1() throws Exception {
+        // frequently used tags according to http://taginfo.openstreetmap.org/keys/collection_times#values
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("Mo-Sa 09:00", OpeningHourTest.CheckMode.BOTH).isEmpty(), is(true));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("fixme", OpeningHourTest.CheckMode.BOTH).isEmpty(), is(false));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("daily", OpeningHourTest.CheckMode.BOTH).isEmpty(), is(false));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00", OpeningHourTest.CheckMode.BOTH).isEmpty(), is(true));
     }
 }

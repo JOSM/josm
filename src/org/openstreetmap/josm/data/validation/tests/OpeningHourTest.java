@@ -53,14 +53,25 @@ public class OpeningHourTest extends Test {
         super.initialize();
         if (ENGINE != null) {
             ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/opening_hours.js"), "UTF-8"));
-            ENGINE.eval("var oh = function (x, y) {return new opening_hours(x, y);};");
+            // fake country/state to not get errors on holidays
+            ENGINE.eval("var nominatiomJSON = {address: {state: 'Bayern', country_code: 'de'}};");
+            ENGINE.eval("var oh = function (value, mode) {return new opening_hours(value, nominatiomJSON, mode);};");
         } else {
             Main.warn("Unable to initialize OpeningHourTest because no JavaScript engine has been found");
         }
     }
 
-    protected Object parse(String value) throws ScriptException, NoSuchMethodException {
-        return ((Invocable) ENGINE).invokeFunction("oh", value);
+    static enum CheckMode {
+        TIME_RANGE(0), POINTS_IN_TIME(1), BOTH(2);
+        final int code;
+
+        CheckMode(int code) {
+            this.code = code;
+        }
+    }
+
+    protected Object parse(String value, CheckMode mode) throws ScriptException, NoSuchMethodException {
+        return ((Invocable) ENGINE).invokeFunction("oh", value, mode.code);
     }
 
     @SuppressWarnings("unchecked")
@@ -103,12 +114,12 @@ public class OpeningHourTest extends Test {
      * @param value the opening hour value to be checked.
      * @return a list of {@link TestError} or an empty list
      */
-    public List<TestError> checkOpeningHourSyntax(final String value) {
+    public List<TestError> checkOpeningHourSyntax(final String value, CheckMode mode) {
         if (ENGINE == null || value == null || value.trim().isEmpty()) {
             return Collections.emptyList();
         }
         try {
-            final Object r = parse(value);
+            final Object r = parse(value, mode);
             final List<TestError> errors = new ArrayList<TestError>();
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"))) {
                 errors.add(new TestError(this, Severity.WARNING, i.toString(), 2901, Collections.<OsmPrimitive>emptyList()));
@@ -116,7 +127,7 @@ public class OpeningHourTest extends Test {
             return errors;
         } catch (ScriptException ex) {
             final String message = ex.getMessage()
-                    .replace("sun.org.mozilla.javascript.internal.JavaScriptException: ", "opening_hours - ")
+                    .replaceAll("[^:]*Exception: ", "opening_hours - ")
                     .replaceAll("\\(<Unknown source.*", "")
                     .trim();
             return Arrays.asList(new TestError(this, Severity.ERROR, message, 2901, Collections.<OsmPrimitive>emptyList()));
@@ -125,18 +136,21 @@ public class OpeningHourTest extends Test {
         }
     }
 
-    protected void check(final OsmPrimitive p, final String tagValue) {
-        for (TestError e : checkOpeningHourSyntax(tagValue)) {
+    public List<TestError> checkOpeningHourSyntax(final String value) {
+        return checkOpeningHourSyntax(value, CheckMode.TIME_RANGE);
+    }
+
+    protected void check(final OsmPrimitive p, final String tagValue, CheckMode mode) {
+        for (TestError e : checkOpeningHourSyntax(tagValue, mode)) {
             e.setPrimitives(Collections.singletonList(p));
             errors.add(e);
         }
     }
 
     protected void check(final OsmPrimitive p) {
-        check(p, p.get("opening_hours"));
-        // unsupported, cf. https://github.com/AMDmi3/opening_hours.js/issues/12
-        //check(p, p.get("collection_times"));
-        //check(p, p.get("service_times"));
+        check(p, p.get("opening_hours"), CheckMode.TIME_RANGE);
+        check(p, p.get("collection_times"), CheckMode.BOTH);
+        check(p, p.get("service_times"), CheckMode.BOTH);
     }
 
     @Override
