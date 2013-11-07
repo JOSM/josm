@@ -21,7 +21,7 @@ package org.apache.commons.codec.language.bm;
  * Types of rule.
  *
  * @since 1.6
- * @version $Id: RuleType.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: RuleType.java 1539823 2013-11-07 21:10:15Z ggregory $
  */
 public enum RuleType {
 
@@ -38,6 +38,11 @@ public enum RuleType {
         this.name = name;
     }
 
+    /**
+     * Gets the rule name.
+     * 
+     * @return the rule name.
+     */
     public String getName() {
         return this.name;
     }
