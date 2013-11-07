@@ -17,10 +17,12 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -107,22 +109,64 @@ public class OpeningHourTest extends Test {
         }
     }
 
+    public class OpeningHoursTestError {
+        final Severity severity;
+        final String message, prettifiedValue;
+
+        public OpeningHoursTestError(String message, Severity severity, String prettifiedValue) {
+            this.message = message;
+            this.severity = severity;
+            this.prettifiedValue = prettifiedValue;
+        }
+
+        public OpeningHoursTestError(String message, Severity severity) {
+            this(message, severity, null);
+        }
+
+        public TestError getTestError(final OsmPrimitive p, final String key) {
+            if (prettifiedValue == null) {
+                return new TestError(OpeningHourTest.this, severity, message, 2901, p);
+            } else {
+                return new FixableTestError(OpeningHourTest.this, severity, message, 2901, p,
+                        new ChangePropertyCommand(p, key, prettifiedValue));
+            }
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public String getPrettifiedValue() {
+            return prettifiedValue;
+        }
+
+        public Severity getSeverity() {
+            return severity;
+        }
+    }
+
     /**
      * Checks for a correct usage of the opening hour syntax of the {@code value} given according to
      * <a href="https://github.com/ypid/opening_hours.js">opening_hours.js</a> and returns a list containing
      * validation errors or an empty list. Null values result in an empty list.
      * @param value the opening hour value to be checked.
+     * @param mode whether to validate {@code value} as a time range, or points in time, or both.
      * @return a list of {@link TestError} or an empty list
      */
-    public List<TestError> checkOpeningHourSyntax(final String value, CheckMode mode) {
+    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String value, CheckMode mode) {
         if (ENGINE == null || value == null || value.trim().isEmpty()) {
             return Collections.emptyList();
         }
         try {
             final Object r = parse(value, mode);
-            final List<TestError> errors = new ArrayList<TestError>();
+            final List<OpeningHoursTestError> errors = new ArrayList<OpeningHoursTestError>();
+            String prettifiedValue = null;
+            try {
+                prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
+            } catch (Exception ignore) {
+            }
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"))) {
-                errors.add(new TestError(this, Severity.WARNING, i.toString(), 2901, Collections.<OsmPrimitive>emptyList()));
+                errors.add(new OpeningHoursTestError(i.toString(), Severity.WARNING, prettifiedValue));
             }
             return errors;
         } catch (ScriptException ex) {
@@ -130,27 +174,26 @@ public class OpeningHourTest extends Test {
                     .replaceAll("[^:]*Exception: ", "opening_hours - ")
                     .replaceAll("\\(<Unknown source.*", "")
                     .trim();
-            return Arrays.asList(new TestError(this, Severity.ERROR, message, 2901, Collections.<OsmPrimitive>emptyList()));
+            return Arrays.asList(new OpeningHoursTestError(message, Severity.ERROR));
         } catch (final Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public List<TestError> checkOpeningHourSyntax(final String value) {
+    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String value) {
         return checkOpeningHourSyntax(value, CheckMode.TIME_RANGE);
     }
 
-    protected void check(final OsmPrimitive p, final String tagValue, CheckMode mode) {
-        for (TestError e : checkOpeningHourSyntax(tagValue, mode)) {
-            e.setPrimitives(Collections.singletonList(p));
-            errors.add(e);
+    protected void check(final OsmPrimitive p, final String key, CheckMode mode) {
+        for (OpeningHoursTestError e : checkOpeningHourSyntax(p.get(key), mode)) {
+            errors.add(e.getTestError(p, key));
         }
     }
 
     protected void check(final OsmPrimitive p) {
-        check(p, p.get("opening_hours"), CheckMode.TIME_RANGE);
-        check(p, p.get("collection_times"), CheckMode.BOTH);
-        check(p, p.get("service_times"), CheckMode.BOTH);
+        check(p, "opening_hours", CheckMode.TIME_RANGE);
+        check(p, "collection_times", CheckMode.BOTH);
+        check(p, "service_times", CheckMode.BOTH);
     }
 
     @Override

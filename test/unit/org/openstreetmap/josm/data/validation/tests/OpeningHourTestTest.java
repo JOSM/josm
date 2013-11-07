@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.validation.Severity;
-import org.openstreetmap.josm.data.validation.TestError;
 
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class OpeningHourTestTest {
 
     @Test
     public void testCheckOpeningHourSyntax2() throws Exception {
-        final List<TestError> errors = OPENING_HOUR_TEST.checkOpeningHourSyntax("Mo-Tue");
+        final List<OpeningHourTest.OpeningHoursTestError> errors = OPENING_HOUR_TEST.checkOpeningHourSyntax("Mo-Tue");
         assertThat(errors.size(), is(1));
         assertThat(errors.get(0).getMessage(), is("Mo-Tue <--- (Please use the abbreviation \"Tu\" for \"tue\".)"));
         assertThat(errors.get(0).getSeverity(), is(Severity.WARNING));
@@ -41,10 +40,11 @@ public class OpeningHourTestTest {
 
     @Test
     public void testCheckOpeningHourSyntax3() throws Exception {
-        final List<TestError> errors = OPENING_HOUR_TEST.checkOpeningHourSyntax("Sa-Su 10.00-20.00");
+        final List<OpeningHourTest.OpeningHoursTestError> errors = OPENING_HOUR_TEST.checkOpeningHourSyntax("Sa-Su 10.00-20.00");
         assertThat(errors.size(), is(2));
         assertThat(errors.get(0).getMessage(), is("Sa-Su 10. <--- (Please use \":\" as hour/minute-separator)"));
         assertThat(errors.get(0).getSeverity(), is(Severity.WARNING));
+        assertThat(errors.get(0).getPrettifiedValue(), is("Sa-Su 10:00-20:00"));
         assertThat(errors.get(1).getMessage(), is("Sa-Su 10.00-20. <--- (Please use \":\" as hour/minute-separator)"));
         assertThat(errors.get(1).getSeverity(), is(Severity.WARNING));
     }
@@ -61,6 +61,9 @@ public class OpeningHourTestTest {
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("badtext").size(), is(1));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("badtext").get(0).getMessage(),
                 is("opening_hours - ba <--- (Unexpected token: \"b\" This means that the syntax is not valid at that point or it is currently not supported.)"));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("5.00 p.m-11.00 p.m").size(), is(1));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax("5.00 p.m-11.00 p.m").get(0).getMessage(),
+                is("opening_hours - 5.00 p <--- (hyphen (-) or open end (+) in time range expected. For working with points in time, the mode for opening_hours.js has to be altered. Maybe wrong tag?)"));
     }
 
     @Test
