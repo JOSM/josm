@@ -18,6 +18,9 @@ import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
 import org.openstreetmap.josm.tools.Utils;
 
 public class MapImage {
+    
+    private static final int MAX_SIZE = 48;
+    
     /**
      * ImageIcon can change while the image is loading.
      */
@@ -116,6 +119,9 @@ public class MapImage {
 
         private Rectangle box() {
             int w = getWidth(), h = getHeight();
+            if (mustRescale(getImage())) {
+                w = h = 16;
+            }
             return new Rectangle(-w/2, -h/2, w, h);
         }
 
@@ -157,15 +163,18 @@ public class MapImage {
      * @since 6174
      */
     public Image getDisplayedNodeIcon(boolean disabled) {
-        final int maxSize = 48;
         final Image image = disabled ? getDisabled() : getImage();
         // Scale down large (.svg) images to 16x16 pixels if no size is explicitely specified
-        if ((width  == -1 && image.getWidth(null) > maxSize) 
-         && (height == -1 && image.getHeight(null) > maxSize)) {
+        if (mustRescale(image)) {
             return ImageProvider.createBoundedImage(image, 16);
         } else {
             return image;
         }
+    }
+    
+    private boolean mustRescale(Image image) {
+        return ((width  == -1 && image.getWidth(null) > MAX_SIZE) 
+             && (height == -1 && image.getHeight(null) > MAX_SIZE));
     }
 
     @Override
