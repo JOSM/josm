@@ -1,5 +1,18 @@
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -8,22 +21,6 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.io.MirroredInputStream;
-import sun.org.mozilla.javascript.NativeArray;
-
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Tests the correct usage of the opening hour syntax of the tags
@@ -34,6 +31,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  */
 public class OpeningHourTest extends Test {
 
+    /**
+     * Javascript Rhino engine
+     */
     public static final ScriptEngine ENGINE = new ScriptEngineManager().getEngineByName("rhino");
 
     /**
@@ -51,7 +51,6 @@ public class OpeningHourTest extends Test {
         ENGINE.eval("var oh = function (x, y) {return new opening_hours(x, y);};");
     }
 
-    @SuppressWarnings("unchecked")
     protected Object parse(String value) throws ScriptException, NoSuchMethodException {
         return ((Invocable) ENGINE).invokeFunction("oh", value);
     }
@@ -64,7 +63,7 @@ public class OpeningHourTest extends Test {
             final Object[] strings = ((String) obj).split("\\n");
             return Arrays.asList(strings);
         } else if (obj instanceof List) {
-            return (List) obj;
+            return (List<Object>) obj;
         } else {
             throw new IllegalArgumentException("Not expecting class " + obj.getClass());
         }
