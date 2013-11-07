@@ -1,8 +1,11 @@
+// License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +16,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -27,14 +31,14 @@ import org.openstreetmap.josm.io.MirroredInputStream;
  * {@code opening_hours}, {@code collection_times}, {@code service_times} according to
  * <a href="https://github.com/ypid/opening_hours.js">opening_hours.js</a>.
  *
- * @author frsantos
+ * @since 6370
  */
 public class OpeningHourTest extends Test {
 
     /**
-     * Javascript Rhino engine
+     * Javascript engine
      */
-    public static final ScriptEngine ENGINE = new ScriptEngineManager().getEngineByName("rhino");
+    public static final ScriptEngine ENGINE = new ScriptEngineManager().getEngineByName("JavaScript");
 
     /**
      * Constructs a new {@code OpeningHourTest}.
@@ -47,8 +51,12 @@ public class OpeningHourTest extends Test {
     @Override
     public void initialize() throws Exception {
         super.initialize();
-        ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/opening_hours.js"), "UTF-8"));
-        ENGINE.eval("var oh = function (x, y) {return new opening_hours(x, y);};");
+        if (ENGINE != null) {
+            ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/opening_hours.js"), "UTF-8"));
+            ENGINE.eval("var oh = function (x, y) {return new opening_hours(x, y);};");
+        } else {
+            Main.warn("Unable to initialize OpeningHourTest because no JavaScript engine has been found");
+        }
     }
 
     protected Object parse(String value) throws ScriptException, NoSuchMethodException {
@@ -64,6 +72,25 @@ public class OpeningHourTest extends Test {
             return Arrays.asList(strings);
         } else if (obj instanceof List) {
             return (List<Object>) obj;
+        } else if ("sun.org.mozilla.javascript.internal.NativeArray".equals(obj.getClass().getName())) {
+            List<Object> list = new ArrayList<Object>();
+            try {
+                Method getIds = obj.getClass().getMethod("getIds");
+                Method get = obj.getClass().getMethod("get", long.class);
+                Object[] ids = (Object[]) getIds.invoke(obj);
+                for (Object id : ids) {
+                    list.add(get.invoke(obj, id));
+                }
+            } catch (NoSuchMethodException e) {
+                Main.error("Unable to run OpeningHourTest because of NoSuchMethodException by reflection: "+e.getMessage());
+            } catch (IllegalArgumentException e) {
+                Main.error("Unable to run OpeningHourTest because of IllegalArgumentException by reflection: "+e.getMessage());
+            } catch (IllegalAccessException e) {
+                Main.error("Unable to run OpeningHourTest because of IllegalAccessException by reflection: "+e.getMessage());
+            } catch (InvocationTargetException e) {
+                Main.error("Unable to run OpeningHourTest because of InvocationTargetException by reflection: "+e.getMessage());
+            }
+            return list;
         } else {
             throw new IllegalArgumentException("Not expecting class " + obj.getClass());
         }
@@ -77,7 +104,7 @@ public class OpeningHourTest extends Test {
      * @return a list of {@link TestError} or an empty list
      */
     public List<TestError> checkOpeningHourSyntax(final String value) {
-        if (value == null || value.trim().isEmpty()) {
+        if (ENGINE == null || value == null || value.trim().isEmpty()) {
             return Collections.emptyList();
         }
         try {
@@ -89,7 +116,7 @@ public class OpeningHourTest extends Test {
             return errors;
         } catch (ScriptException ex) {
             final String message = ex.getMessage()
-                    .replace("sun.org.mozilla.javascript.JavaScriptException: ", "")
+                    .replace("sun.org.mozilla.javascript.internal.JavaScriptException: ", "opening_hours - ")
                     .replaceAll("\\(<Unknown source.*", "")
                     .trim();
             return Arrays.asList(new TestError(this, Severity.ERROR, message, 2901, Collections.<OsmPrimitive>emptyList()));
