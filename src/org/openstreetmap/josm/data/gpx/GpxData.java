@@ -1,5 +1,4 @@
-//License: GPLv2 or later. Copyright 2007 by Raphael Mack and others
-
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
 import java.io.File;
@@ -7,8 +6,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import org.openstreetmap.josm.Main;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 

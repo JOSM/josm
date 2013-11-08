@@ -43,6 +43,18 @@ with Apache license version 2.0.
 The signpost code (http://code.google.com/p/oauth-signpost/)
 is from Matthias Käppler and licensed with the Apache License 2.0.
 
+The NTv2 transformation code (http://jgridshift.sourceforge.net/)
+is from Peter Yuill and licensed with LGPL.
+
+The MultiSplitPane is from Hans Muller and licensed with LGPL
+(https://today.java.net/pub/a/today/2006/03/23/multi-split-pane.html).
+
+The Diff code (http://www.bmsi.com/java/#diff) 
+is from Stuart D. Gathman and licensed with GPL.
+
+The Ellipsoid code (http://www.i3s.unice.fr/~johan/gps/)
+is from Johan Montagnat and licensed with GPL.
+
 The opening hour validation uses code from opening_hour.js
 (https://github.com/ypid/opening_hours.js) which is licensed
 with the New (2-clause) BSD license.

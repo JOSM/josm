@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2009 by David Earl and others
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
 import java.io.File;

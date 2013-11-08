@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2008 by Frederik Ramm and others
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;

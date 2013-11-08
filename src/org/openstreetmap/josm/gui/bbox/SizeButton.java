@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Tim Haussmann
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.bbox;
 
 import java.awt.Graphics;

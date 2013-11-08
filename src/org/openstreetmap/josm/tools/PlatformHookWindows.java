@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
 import static java.awt.event.InputEvent.ALT_DOWN_MASK;

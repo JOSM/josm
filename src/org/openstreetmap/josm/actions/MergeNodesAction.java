@@ -1,4 +1,4 @@
-//License: GPL. Copyright 2007 by Immanuel Scholz and others. See LICENSE file for details.
+//License: GPL. For details, see LICENSE file.. See LICENSE file for details.
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
