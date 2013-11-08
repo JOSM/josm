@@ -169,8 +169,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         if (reload) {
             MapPaintStyles.readFromPreferences();
         }
-        if (Main.isDisplayingMapView())
-        {
+        if (Main.isDisplayingMapView()) {
             MapPaintStyles.getStyles().clearCached();
         }
         return false;
@@ -185,10 +184,16 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
     public static class MapPaintPrefHelper extends SourceEditor.SourcePrefHelper {
 
+        /**
+         * The unique instance.
+         */
         public final static MapPaintPrefHelper INSTANCE = new MapPaintPrefHelper();
 
+        /**
+         * Constructs a new {@code MapPaintPrefHelper}.
+         */
         public MapPaintPrefHelper() {
-            super("mappaint.style.entries", "mappaint.style.sources-list");
+            super("mappaint.style.entries");
         }
 
         @Override

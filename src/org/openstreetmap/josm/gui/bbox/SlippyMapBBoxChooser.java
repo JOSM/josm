@@ -199,7 +199,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         }
         setMaxTilesInMemory(Main.pref.getInteger("slippy_map_chooser.max_tiles", 1000));
 
-        List<TileSource> tileSources = getTileSources();
+        List<TileSource> tileSources = getAllTileSources();
 
         iSourceButton = new SourceButton(tileSources);
 
@@ -221,7 +221,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         new SlippyMapControler(this, this, iSizeButton, iSourceButton);
     }
     
-    private final List<TileSource> getTileSources() {
+    private List<TileSource> getAllTileSources() {
         List<TileSource> tileSources = new ArrayList<TileSource>();
         for (TileSourceProvider provider: providers) {
             tileSources.addAll(provider.getTileSources());
@@ -399,6 +399,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
      * @since 6364
      */
     public final void refreshTileSources() {
-        iSourceButton.setSources(getTileSources());
+        iSourceButton.setSources(getAllTileSources());
     }
 }

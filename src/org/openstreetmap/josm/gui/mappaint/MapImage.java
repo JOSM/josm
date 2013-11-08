@@ -120,7 +120,8 @@ public class MapImage {
         private Rectangle box() {
             int w = getWidth(), h = getHeight();
             if (mustRescale(getImage())) {
-                w = h = 16;
+                w = 16;
+                h = 16;
             }
             return new Rectangle(-w/2, -h/2, w, h);
         }

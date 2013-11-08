@@ -71,8 +71,6 @@ public class JoinAreasAction extends JosmAction {
         public Way outerWay;
         public List<Way> innerWays;
 
-        public Relation relation;
-
         public Multipolygon(Way way) {
             outerWay = way;
             innerWays = new ArrayList<Way>();
@@ -1277,7 +1275,6 @@ public class JoinAreasAction extends JosmAction {
 
             Multipolygon pol = new Multipolygon(outerWay);
             pol.innerWays.addAll(innerWays);
-            pol.relation = r;
 
             result.add(pol);
         }
