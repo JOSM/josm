@@ -1501,7 +1501,7 @@ public abstract class SourceEditor extends JPanel {
 
         private final String pref;
 
-        public SourcePrefHelper(String pref, String prefOld) {
+        public SourcePrefHelper(String pref) {
             this.pref = pref;
         }
 

@@ -238,7 +238,7 @@ public class BookmarkList extends JList {
     /**
      * Saves all bookmarks to the preferences file
      */
-    public void save() {
+    public final void save() {
         LinkedList<Collection<String>> coll = new LinkedList<Collection<String>>();
         for (Object o : ((DefaultListModel)getModel()).toArray()) {
             String[] array = new String[5];

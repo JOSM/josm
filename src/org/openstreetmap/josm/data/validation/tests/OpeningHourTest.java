@@ -163,7 +163,8 @@ public class OpeningHourTest extends Test {
             String prettifiedValue = null;
             try {
                 prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
-            } catch (Exception ignore) {
+            } catch (Exception e) {
+                Main.debug(e.getMessage());
             }
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"))) {
                 errors.add(new OpeningHoursTestError(i.toString(), Severity.WARNING, prettifiedValue));

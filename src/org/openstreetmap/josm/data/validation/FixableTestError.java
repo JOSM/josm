@@ -1,3 +1,4 @@
+// License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.data.validation;
 
 import org.openstreetmap.josm.command.Command;
@@ -5,6 +6,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 import java.util.Collection;
 
+/**
+ * Validation error easily fixable right at its detection. The fix can be given when constructing the error.
+ * @since 6377
+ */
 public class FixableTestError extends TestError {
     protected final Command fix;
 
