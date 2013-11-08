@@ -127,6 +127,7 @@ public class CrossingWays extends Test {
                     }
 
                     if ("proposed".equals(es1.highway) || "proposed".equals(highway2)
+                     || "proposed".equals(es1.railway) || "proposed".equals(railway2)
                      || "abandoned".equals(es1.railway) || "abandoned".equals(railway2)) {
                         continue;
                     }
