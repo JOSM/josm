@@ -1,4 +1,4 @@
-//License: GPL. Copyright 2007 by Immanuel Scholz and others
+//License: GPL. For details, see LICENSE file.
 
 //TODO: this is far from complete, but can emulate old RawGps behaviour
 package org.openstreetmap.josm.io;

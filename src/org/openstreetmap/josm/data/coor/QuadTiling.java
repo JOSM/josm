@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2009 by Dave Hansen, others
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
 public final class QuadTiling {

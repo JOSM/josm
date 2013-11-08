@@ -1,5 +1,4 @@
-// This code has been adapted and copied from code that has been written by Immanuel Scholz and others for JOSM.
-// License: GPL. Copyright 2007 by Tim Haussmann
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.bbox;
 
 import java.awt.Point;
@@ -19,7 +18,6 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-
 
 /**
  * This class controls the user input by listening to mouse and key events.
