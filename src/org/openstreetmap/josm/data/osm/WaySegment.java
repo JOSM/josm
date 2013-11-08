@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Gabriel Ebner
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
 /**

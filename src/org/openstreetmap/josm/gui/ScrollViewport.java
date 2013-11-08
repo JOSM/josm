@@ -1,5 +1,4 @@
-// License: GPL. Copyright 2007 by Christian Gallioz (aka khris78)
-
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
 import java.awt.BorderLayout;

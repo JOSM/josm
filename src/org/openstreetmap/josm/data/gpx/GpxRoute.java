@@ -1,6 +1,4 @@
-//License: GPLv2 or later
-//Copyright 2007 by Raphael Mack and others
-
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
 import java.util.Collection;

@@ -1,4 +1,4 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
+// License: GPL. For details, see LICENSE file.
 // Author: David Earl
 package org.openstreetmap.josm.actions;
 
