@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
 import org.junit.Before;
@@ -11,6 +12,9 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+/**
+ * JUnit Test of "Opening hours" validation test. 
+ */
 public class OpeningHourTestTest {
 
     private static final OpeningHourTest OPENING_HOUR_TEST = new OpeningHourTest();

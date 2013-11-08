@@ -282,43 +282,43 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         }
         if (taggingPresets.isEmpty()) {
             Main.main.menu.presetsMenu.setVisible(false);
-        }
-        else
-        {
+        } else {
             AutoCompletionManager.cachePresets(taggingPresets);
             HashMap<TaggingPresetMenu,JMenu> submenus = new HashMap<TaggingPresetMenu,JMenu>();
-            for (final TaggingPreset p : taggingPresets)
-            {
+            for (final TaggingPreset p : taggingPresets) {
                 JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
                 if (p instanceof TaggingPresetSeparator) {
                     m.add(new JSeparator());
-                } else if (p instanceof TaggingPresetMenu)
-                {
+                } else if (p instanceof TaggingPresetMenu) {
                     JMenu submenu = new JMenu(p);
                     submenu.setText(p.getLocaleName());
                     ((TaggingPresetMenu)p).menu = submenu;
                     submenus.put((TaggingPresetMenu)p, submenu);
                     m.add(submenu);
-                }
-                else
-                {
+                } else {
                     JMenuItem mi = new JMenuItem(p);
                     mi.setText(p.getLocaleName());
                     m.add(mi);
                 }
             }
         }
-        if(Main.pref.getBoolean("taggingpreset.sortmenu")) {
+        if (Main.pref.getBoolean("taggingpreset.sortmenu")) {
             TaggingPresetMenu.sortMenu(Main.main.menu.presetsMenu);
         }
     }
 
     public static class PresetPrefHelper extends SourceEditor.SourcePrefHelper {
 
+        /**
+         * The unique instance.
+         */
         public final static PresetPrefHelper INSTANCE = new PresetPrefHelper();
 
+        /**
+         * Constructs a new {@code PresetPrefHelper}.
+         */
         public PresetPrefHelper() {
-            super("taggingpreset.entries", "taggingpreset.sources-list");
+            super("taggingpreset.entries");
         }
 
         @Override

@@ -27,7 +27,7 @@ import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 
 /**
  * Validation error
- * @author frsantos
+ * @since 3669
  */
 public class TestError implements Comparable<TestError>, DataSetListener {
     /** is this error on the ignore list */
@@ -51,7 +51,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     private boolean selected;
 
     /**
-     * Constructors
+     * Constructs a new {@code TestError}.
      * @param tester The tester
      * @param severity The severity of this error
      * @param message The error message
