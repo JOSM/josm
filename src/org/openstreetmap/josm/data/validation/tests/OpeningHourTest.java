@@ -47,7 +47,7 @@ public class OpeningHourTest extends Test {
      */
     public OpeningHourTest() {
         super(tr("Opening hours syntax"),
-                tr("This plugin checks for correct usage of opening hours syntax."));
+                tr("This test checks the correct usage of the opening hours syntax."));
     }
 
     @Override
