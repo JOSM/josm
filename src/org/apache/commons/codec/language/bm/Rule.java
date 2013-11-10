@@ -75,7 +75,7 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1540225 2013-11-09 00:06:53Z sebb $
+ * @version $Id: Rule.java 1540434 2013-11-10 02:17:23Z ggregory $
  */
 public class Rule {
 
@@ -115,8 +115,9 @@ public class Rule {
             this.languages = phonemeLeft.languages;
         }
 
-        public void append(final CharSequence str) {
+        public Phoneme  append(final CharSequence str) {
             this.phonemeText.append(str);
+            return this;
         }
 
         public Languages.LanguageSet getLanguages() {
