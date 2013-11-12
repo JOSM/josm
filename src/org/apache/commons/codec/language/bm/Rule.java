@@ -75,7 +75,7 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1540434 2013-11-10 02:17:23Z ggregory $
+ * @version $Id: Rule.java 1541234 2013-11-12 21:06:11Z ggregory $
  */
 public class Rule {
 
@@ -110,9 +110,13 @@ public class Rule {
         }
         
         public Phoneme(final Phoneme phonemeLeft, final Phoneme phonemeRight) {
-            this.phonemeText = new StringBuilder(phonemeLeft.phonemeText);
+            this(phonemeLeft.phonemeText, phonemeLeft.languages);
             this.phonemeText.append(phonemeRight.phonemeText);
-            this.languages = phonemeLeft.languages;
+        }
+
+        public Phoneme(final Phoneme phonemeLeft, final Phoneme phonemeRight, final Languages.LanguageSet languages) {
+            this(phonemeLeft.phonemeText, languages);
+            this.phonemeText.append(phonemeRight.phonemeText);
         }
 
         public Phoneme  append(final CharSequence str) {
@@ -131,11 +135,6 @@ public class Rule {
 
         public CharSequence getPhonemeText() {
             return this.phonemeText;
-        }
-
-        public Phoneme join(final Phoneme right) {
-            return new Phoneme(this.phonemeText.toString() + right.phonemeText.toString(),
-                               this.languages.restrictTo(right.languages));
         }
     }
 
