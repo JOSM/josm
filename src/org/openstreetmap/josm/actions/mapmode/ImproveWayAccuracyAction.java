@@ -434,8 +434,8 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                 }
 
                 // Finishing the sequence command
-                String text = trn("Add and a new node to way",
-                        "Add and a new node to {0} ways",
+                String text = trn("Add a new node to way",
+                        "Add a new node to {0} ways",
                         virtualSegments.size(), virtualSegments.size());
 
                 Main.main.undoRedo.add(new SequenceCommand(text, virtualCmds));
