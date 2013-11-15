@@ -277,7 +277,7 @@ public class CustomProjection extends AbstractProjection {
             return datum;
         }
         if (parameters.containsKey(Param.no_defs.key))
-            throw new ProjectionConfigurationException(tr("Datum required (+datum=*, +towgs84=* or +nadgirds=*)"));
+            throw new ProjectionConfigurationException(tr("Datum required (+datum=*, +towgs84=* or +nadgrids=*)"));
         return new CentricDatum(null, null, ellps);
     }
 
