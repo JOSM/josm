@@ -1415,7 +1415,7 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="man_made" v="measurement_station"/>
+		<condition k="man_made" v="monitoring_station"/>
 		<icon annotate="true" src="misc/landmark/measurement_station.png"/>
 		<area colour="manmade#d8d8d8"/>
 	</rule>

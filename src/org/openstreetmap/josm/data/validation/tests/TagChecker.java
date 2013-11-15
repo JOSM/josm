@@ -56,6 +56,8 @@ import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Check;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
@@ -67,8 +69,8 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author frsantos
  */
-public class TagChecker extends Test
-{
+public class TagChecker extends Test {
+    
     /** The default data files */
     public static final String DATA_FILE = "resource://data/tagchecker.cfg";
     public static final String IGNORE_FILE = "resource://data/ignoretags.cfg";
@@ -306,16 +308,23 @@ public class TagChecker extends Test
             for (TaggingPreset p : presets) {
                 for (TaggingPresetItem i : p.data) {
                     if (i instanceof KeyedItem) {
-                        KeyedItem ky = (KeyedItem) i;
-                        if (ky.key != null && ky.getValues() != null) {
-                            try {
-                                presetsValueData.putAll(ky.key, ky.getValues());
-                            } catch (NullPointerException e) {
-                                Main.error(p+": Unable to initialize "+ky);
-                            }
+                        addPresetValue(p, (KeyedItem) i);
+                    } else if (i instanceof CheckGroup) {
+                        for (Check c : ((CheckGroup) i).checks) {
+                            addPresetValue(p, c);
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private static void addPresetValue(TaggingPreset p, KeyedItem ky) {
+        if (ky.key != null && ky.getValues() != null) {
+            try {
+                presetsValueData.putAll(ky.key, ky.getValues());
+            } catch (NullPointerException e) {
+                Main.error(p+": Unable to initialize "+ky);
             }
         }
     }
