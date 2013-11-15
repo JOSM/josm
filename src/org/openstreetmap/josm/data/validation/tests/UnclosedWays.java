@@ -67,7 +67,7 @@ public class UnclosedWays extends Test {
             set(1103, marktr("amenities type {0}"), test);
         }
         test = w.get("sport");
-        if (test != null && !test.equals("water_slide")) {
+        if (test != null && !test.equals("water_slide") && !test.equals("climbing")) {
             set(1104, marktr("sport type {0}"), test);
         }
         test = w.get("tourism");

@@ -123,8 +123,11 @@ public class MultipolygonTest extends Test {
         if (!w.isArea() && ElemStyles.hasAreaElemStyle(w, false)) {
             List<Node> nodes = w.getNodes();
             if (nodes.size()<1) return; // fix zero nodes bug
-            errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,
-                    Collections.singletonList(w), Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1))));
+            // Fix #9291 - Do not raise warning for sport=climbing + natural=cliff
+            if (!(w.hasTag("sport", "climbing") && w.hasTag("natural", "cliff"))) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,
+                        Collections.singletonList(w), Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1))));
+            }
         }
     }
 

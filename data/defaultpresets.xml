@@ -5243,14 +5243,29 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="street_lamp" />
             <combo key="opening_hours" text="Operation times" values="Mo-Fr 22:00-05:00" />                                                                                        
         </item> 
-        <item name="Measurement Station" icon="presets/measurement_station.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/measurement_station" />
-            <label text="Edit Measurement Station" />
+        <item name="Monitoring Station" icon="presets/monitoring_station.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=monitoring_station" 
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=monitoring_station"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=monitoring_station" />
+            <label text="Edit Monitoring Station" />
             <space />            
-            <key key="man_made" value="measurement_station" />
+            <key key="man_made" value="monitoring_station" />
             <text key="name" text="Name" />
             <text key="operator" text="Operator" />             
-            <combo key="measurement" text="Measurement" values="particulate_matter,seismic,water_level,weather" />
+            <label text="Monitoring:" />
+            <checkgroup columns="3">
+                <check key="monitoring:weather"          text="Weather" />
+                <check key="monitoring:water_level"      text="Water level" />
+                <check key="monitoring:tide_gauge"       text="Tide Level" />
+                <check key="monitoring:traffic"          text="Traffic" />
+                <check key="monitoring:air_quality"      text="Air Quality" />
+                <check key="monitoring:noise"            text="Noise" />
+                <check key="monitoring:gps"              text="GPS Signals" />
+                <check key="monitoring:glonass"          text="GLONASS Signals" />
+                <check key="monitoring:galileo"          text="Galileo Signals" />
+                <check key="monitoring:radiation"        text="Radiation" />
+                <check key="monitoring:seismic_activity" text="Seismic Activity" />
+            </checkgroup>
             <combo key="recording" text="Recording" values="manually,automated,remote,no" />  
             <combo key="display" text="Display" values="analog,digital,no" />
         </item>

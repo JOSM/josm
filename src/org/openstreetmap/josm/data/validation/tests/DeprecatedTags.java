@@ -93,13 +93,11 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2116).
                 testAndRemove("amenity", "emergency_phone").
                 add("emergency", "phone"));
-        // http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_football
-        // fix #8132
+        // fix #8132 - http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_football
         checks.add(new DeprecationCheck(2117).
                 testAndRemove("sport", "gaelic_football").
                 add("sport", "gaelic_games"));
-        // http://wiki.openstreetmap.org/wiki/Tag:power=station
-        // see #8847 / #8961
+        // see #8847 / #8961 - http://wiki.openstreetmap.org/wiki/Tag:power=station
         checks.add(new DeprecationCheck(2118).
                 test("power", "station").
                 alternative("power", "plant").
@@ -113,21 +111,34 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2121).
                 testAndRemove("generator:method", "pumping").
                 add("generator:method", "water-pumped-storage"));
-        // http://wiki.openstreetmap.org/wiki/Key:fence_type
-        // see #8962
+        // see #8962 - http://wiki.openstreetmap.org/wiki/Key:fence_type
         checks.add(new DeprecationCheck(2122).
                 test("fence_type", "chain").
                 alternative("barrier", "chain").
                 alternative("fence_type", "chain_link"));
-        // http://wiki.openstreetmap.org/wiki/Key:entrance
-        // see #9000
+        // see #9000 - http://wiki.openstreetmap.org/wiki/Key:entrance
         checks.add(new DeprecationCheck(2123).
                 test("building", "entrance").
                 alternative("entrance"));
-        // Useless tag proposed in internal preset for years
-        // see #9213
+        // see #9213 - Useless tag proposed in internal preset for years
         checks.add(new DeprecationCheck(2124).
                 testAndRemove("board_type", "board"));
+        // see #8434 - http://wiki.openstreetmap.org/wiki/Proposed_features/monitoring_station
+        checks.add(new DeprecationCheck(2125).
+                testAndRemove("man_made", "measurement_station").
+                add("man_made", "monitoring_station"));
+        checks.add(new DeprecationCheck(2126).
+                testAndRemove("measurement", "water_level").
+                add("monitoring:water_level", "yes"));
+        checks.add(new DeprecationCheck(2127).
+                testAndRemove("measurement", "weather").
+                add("monitoring:weather", "yes"));
+        checks.add(new DeprecationCheck(2128).
+                testAndRemove("measurement", "seismic").
+                add("monitoring:seismic_activity", "yes"));
+        checks.add(new DeprecationCheck(2129).
+                test("monitoring:river_level").
+                alternative("monitoring:water_level"));
     }
 
     /**
