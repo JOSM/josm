@@ -684,7 +684,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
             if (icon == null) {
                 putValue(Action.NAME, tr("Up"));
             }
-            putValue(Action.SHORT_DESCRIPTION, tr("Move up the selected elements by one position."));
+            putValue(Action.SHORT_DESCRIPTION, tr("Move up the selected entries by one position."));
             setEnabled(false);
         }
 

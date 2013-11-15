@@ -104,10 +104,10 @@ public class RelationMemberConflictResolver extends JPanel {
         pnl.add(cbTagRelations);
         pnl.add(new JLabel(trc("tag", "Key:")));
         pnl.add(tfKey = new AutoCompletingTextField(10));
-        tfKey.setToolTipText(tr("<html>Enter a tag key, i.e. <strong><tt>fixme</tt></strong></html>"));
+        tfKey.setToolTipText(tr("<html>Enter a tag key, e.g. <strong><tt>fixme</tt></strong></html>"));
         pnl.add(new JLabel(tr("Value:")));
         pnl.add(tfValue = new AutoCompletingTextField(10));
-        tfValue.setToolTipText(tr("<html>Enter a tag value, i.e. <strong><tt>check members</tt></strong></html>"));
+        tfValue.setToolTipText(tr("<html>Enter a tag value, e.g. <strong><tt>check members</tt></strong></html>"));
         cbTagRelations.setSelected(false);
         tfKey.setEnabled(false);
         tfValue.setEnabled(false);
