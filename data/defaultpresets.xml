@@ -5266,8 +5266,14 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="monitoring:radiation"        text="Radiation" />
                 <check key="monitoring:seismic_activity" text="Seismic Activity" />
             </checkgroup>
-            <combo key="recording" text="Recording" values="manually,automated,remote,no" />  
-            <combo key="display" text="Display" values="analog,digital,no" />
+            <label text="Additional information" />
+            <checkgroup columns="1">
+                <check key="recording:manually"          text="Recording: manually" />
+                <check key="recording:automated"         text="Recording: automated" />
+                <check key="recording:remote"            text="Recording: remote" />
+                <check key="display:analog"              text="Display: analog" />
+                <check key="display:digital"             text="Display: digital" />
+            </checkgroup>
         </item>
         <item name="Survey Point" icon="presets/survey_point.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=survey_point"
