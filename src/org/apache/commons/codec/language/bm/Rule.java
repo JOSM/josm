@@ -75,7 +75,7 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1541234 2013-11-12 21:06:11Z ggregory $
+ * @version $Id: Rule.java 1542815 2013-11-17 20:57:03Z tn $
  */
 public class Rule {
 
@@ -108,7 +108,7 @@ public class Rule {
             this.phonemeText = new StringBuilder(phonemeText);
             this.languages = languages;
         }
-        
+
         public Phoneme(final Phoneme phonemeLeft, final Phoneme phonemeRight) {
             this(phonemeLeft.phonemeText, phonemeLeft.languages);
             this.phonemeText.append(phonemeRight.phonemeText);
@@ -119,7 +119,7 @@ public class Rule {
             this.phonemeText.append(phonemeRight.phonemeText);
         }
 
-        public Phoneme  append(final CharSequence str) {
+        public Phoneme append(final CharSequence str) {
             this.phonemeText.append(str);
             return this;
         }
@@ -135,6 +135,15 @@ public class Rule {
 
         public CharSequence getPhonemeText() {
             return this.phonemeText;
+        }
+
+        /**
+         * @deprecated since 1.9
+         */
+        @Deprecated
+        public Phoneme join(final Phoneme right) {
+            return new Phoneme(this.phonemeText.toString() + right.phonemeText.toString(),
+                               this.languages.restrictTo(right.languages));
         }
     }
 

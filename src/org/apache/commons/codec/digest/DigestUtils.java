@@ -29,7 +29,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * Operations to simplify common {@link java.security.MessageDigest} tasks.
  * This class is immutable and thread-safe.
  *
- * @version $Id: DigestUtils.java 1493418 2013-06-15 20:56:28Z sebb $
+ * @version $Id: DigestUtils.java 1542813 2013-11-17 20:52:32Z tn $
  */
 public class DigestUtils {
 
@@ -807,7 +807,8 @@ public class DigestUtils {
      * @param messageDigest
      *            the {@link MessageDigest} to update
      * @param valueToDigest
-     *            the value to update the {@link MessageDigest} with; converted to bytes using {@link StringUtils#getBytesUtf8(String)}
+     *            the value to update the {@link MessageDigest} with;
+     *            converted to bytes using {@link StringUtils#getBytesUtf8(String)}
      * @return the updated {@link MessageDigest}
      * @since 1.7
      */

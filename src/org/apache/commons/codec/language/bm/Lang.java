@@ -66,7 +66,7 @@ import java.util.regex.Pattern;
  * Port of lang.php
  *
  * @since 1.6
- * @version $Id: Lang.java 1539801 2013-11-07 20:33:05Z ggregory $
+ * @version $Id: Lang.java 1542813 2013-11-17 20:52:32Z tn $
  */
 public class Lang {
     // Implementation note: This class is divided into two sections. The first part is a static factory interface that
@@ -166,8 +166,8 @@ public class Lang {
                         final String[] parts = line.split("\\s+");
 
                         if (parts.length != 3) {
-                            throw new IllegalArgumentException("Malformed line '" + rawLine
-                                    + "' in language resource '" + languageRulesResourceName + "'");
+                            throw new IllegalArgumentException("Malformed line '" + rawLine +
+                                    "' in language resource '" + languageRulesResourceName + "'");
                         }
 
                         final Pattern pattern = Pattern.compile(parts[0]);

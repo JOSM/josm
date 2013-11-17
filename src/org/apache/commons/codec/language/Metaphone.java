@@ -32,8 +32,10 @@ import org.apache.commons.codec.StringEncoder;
  * Note, that this does not match the algorithm that ships with PHP, or the algorithm found in the Perl implementations:
  * </p>
  * <ul>
- * <li><a href="http://search.cpan.org/~mschwern/Text-Metaphone-1.96/Metaphone.pm">Text:Metaphone-1.96</a> (broken link 4/30/2013) </li>
- * <li><a href="https://metacpan.org/source/MSCHWERN/Text-Metaphone-1.96//Metaphone.pm">Text:Metaphone-1.96</a> (link checked 4/30/2013) </li>
+ * <li><a href="http://search.cpan.org/~mschwern/Text-Metaphone-1.96/Metaphone.pm">Text:Metaphone-1.96</a>
+ *  (broken link 4/30/2013) </li>
+ * <li><a href="https://metacpan.org/source/MSCHWERN/Text-Metaphone-1.96//Metaphone.pm">Text:Metaphone-1.96</a>
+ *  (link checked 4/30/2013) </li>
  * </ul>
  * <p>
  * They have had undocumented changes from the originally published algorithm.
@@ -46,7 +48,7 @@ import org.apache.commons.codec.StringEncoder;
  * is used to ensure safe publication of the value between threads, and must not invoke {@link #setMaxCodeLen(int)}
  * after initial setup.
  *
- * @version $Id: Metaphone.java 1477596 2013-04-30 12:42:29Z ggregory $
+ * @version $Id: Metaphone.java 1542813 2013-11-17 20:52:32Z tn $
  */
 public class Metaphone implements StringEncoder {
 
