@@ -77,7 +77,7 @@ import org.apache.commons.codec.language.bm.Languages.LanguageSet;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1542823 2013-11-17 21:14:50Z tn $
+ * @version $Id: Rule.java 1542832 2013-11-17 21:37:24Z tn $
  */
 public class Rule {
 
@@ -310,6 +310,7 @@ public class Rule {
      * @param langs
      *            the set of languages to consider
      * @return a map containing all Rules that apply, grouped by the first character of the rule pattern
+     * @since 1.9
      */
     public static Map<String, List<Rule>> getInstanceMap(final NameType nameType, final RuleType rt,
                                                          final Languages.LanguageSet langs) {
@@ -327,6 +328,7 @@ public class Rule {
      * @param lang
      *            the language to consider
      * @return a map containing all Rules that apply, grouped by the first character of the rule pattern
+     * @since 1.9
      */
     public static Map<String, List<Rule>> getInstanceMap(final NameType nameType, final RuleType rt,
                                                          final String lang) {

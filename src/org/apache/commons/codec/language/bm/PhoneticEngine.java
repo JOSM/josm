@@ -48,7 +48,7 @@ import org.apache.commons.codec.language.bm.Rule.Phoneme;
  * Ported from phoneticengine.php
  *
  * @since 1.6
- * @version $Id: PhoneticEngine.java 1542823 2013-11-17 21:14:50Z tn $
+ * @version $Id: PhoneticEngine.java 1542831 2013-11-17 21:34:44Z tn $
  */
 public class PhoneticEngine {
 
@@ -95,34 +95,34 @@ public class PhoneticEngine {
         }
 
         /**
-         * Creates a new phoneme builder containing the application of the expression to all phonemes in this builder.
+         * Applies the given phoneme expression to all phonemes in this phoneme builder.
          * <p>
          * This will lengthen phonemes that have compatible language sets to the expression, and drop those that are
          * incompatible.
          *
          * @param phonemeExpr   the expression to apply
          * @param maxPhonemes   the maximum number of phonemes to build up
-         * @return  a new phoneme builder containing the results of <code>phonemeExpr</code> applied to each phoneme
-         *      in turn
          */
-        public PhonemeBuilder apply(final Rule.PhonemeExpr phonemeExpr, final int maxPhonemes) {
-            final Set<Rule.Phoneme> newPhonemes = new LinkedHashSet<Rule.Phoneme>();
+        public void apply(final Rule.PhonemeExpr phonemeExpr, final int maxPhonemes) {
+            final List<Rule.Phoneme> newPhonemes = new ArrayList<Rule.Phoneme>(maxPhonemes);
 
             EXPR: for (final Rule.Phoneme left : this.phonemes) {
                 for (final Rule.Phoneme right : phonemeExpr.getPhonemes()) {
-                    LanguageSet languages = left.getLanguages().restrictTo(right.getLanguages());
+                    final LanguageSet languages = left.getLanguages().restrictTo(right.getLanguages());
                     if (!languages.isEmpty()) {
                         final Rule.Phoneme join = new Phoneme(left, right, languages);
                         if (newPhonemes.size() < maxPhonemes) {
                             newPhonemes.add(join);
-                        } else {
-                            break EXPR;
+                            if (newPhonemes.size() >= maxPhonemes) {
+                                break EXPR;
+                            }
                         }
                     }
                 }
             }
 
-            return new PhonemeBuilder(newPhonemes);
+            this.phonemes.clear();
+            this.phonemes.addAll(newPhonemes);
         }
 
         /**
@@ -212,7 +212,7 @@ public class PhoneticEngine {
                     final String pattern = rule.getPattern();
                     patternLength = pattern.length();
                     if (rule.patternAndContextMatches(this.input, this.i)) {
-                        this.phonemeBuilder = this.phonemeBuilder.apply(rule.getPhoneme(), maxPhonemes);
+                        this.phonemeBuilder.apply(rule.getPhoneme(), maxPhonemes);
                         this.found = true;
                         break;
                     }
