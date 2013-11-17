@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.language.bm.Languages.LanguageSet;
+
 /**
  * A phoneme rule.
  * <p>
@@ -75,7 +77,7 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1542815 2013-11-17 20:57:03Z tn $
+ * @version $Id: Rule.java 1542823 2013-11-17 21:14:50Z tn $
  */
 public class Rule {
 
@@ -273,10 +275,14 @@ public class Rule {
      *            the set of languages to consider
      * @return a list of Rules that apply
      */
-    public static Map<String, List<Rule>> getInstance(final NameType nameType, final RuleType rt,
+    public static List<Rule> getInstance(final NameType nameType, final RuleType rt,
                                          final Languages.LanguageSet langs) {
-        return langs.isSingleton() ? getInstance(nameType, rt, langs.getAny()) :
-                                     getInstance(nameType, rt, Languages.ANY);
+        final Map<String, List<Rule>> ruleMap = getInstanceMap(nameType, rt, langs);
+        final List<Rule> allRules = new ArrayList<Rule>();
+        for (final List<Rule> rules : ruleMap.values()) {
+            allRules.addAll(rules);
+        }
+        return allRules;
     }
 
     /**
@@ -288,9 +294,42 @@ public class Rule {
      *            the RuleType to consider
      * @param lang
      *            the language to consider
-     * @return a list rules for a combination of name type, rule type and a single language.
+     * @return a list of Rules that apply
      */
-    public static Map<String, List<Rule>> getInstance(final NameType nameType, final RuleType rt, final String lang) {
+    public static List<Rule> getInstance(final NameType nameType, final RuleType rt, final String lang) {
+        return getInstance(nameType, rt, LanguageSet.from(new HashSet<String>(Arrays.asList(lang))));
+    }
+
+    /**
+     * Gets rules for a combination of name type, rule type and languages.
+     *
+     * @param nameType
+     *            the NameType to consider
+     * @param rt
+     *            the RuleType to consider
+     * @param langs
+     *            the set of languages to consider
+     * @return a map containing all Rules that apply, grouped by the first character of the rule pattern
+     */
+    public static Map<String, List<Rule>> getInstanceMap(final NameType nameType, final RuleType rt,
+                                                         final Languages.LanguageSet langs) {
+        return langs.isSingleton() ? getInstanceMap(nameType, rt, langs.getAny()) :
+                                     getInstanceMap(nameType, rt, Languages.ANY);
+    }
+
+    /**
+     * Gets rules for a combination of name type, rule type and a single language.
+     *
+     * @param nameType
+     *            the NameType to consider
+     * @param rt
+     *            the RuleType to consider
+     * @param lang
+     *            the language to consider
+     * @return a map containing all Rules that apply, grouped by the first character of the rule pattern
+     */
+    public static Map<String, List<Rule>> getInstanceMap(final NameType nameType, final RuleType rt,
+                                                         final String lang) {
         final Map<String, List<Rule>> rules = RULES.get(nameType).get(rt).get(lang);
 
         if (rules == null) {

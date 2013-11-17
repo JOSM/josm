@@ -48,7 +48,7 @@ import org.apache.commons.codec.language.bm.Rule.Phoneme;
  * Ported from phoneticengine.php
  *
  * @since 1.6
- * @version $Id: PhoneticEngine.java 1542813 2013-11-17 20:52:32Z tn $
+ * @version $Id: PhoneticEngine.java 1542823 2013-11-17 21:14:50Z tn $
  */
 public class PhoneticEngine {
 
@@ -383,11 +383,11 @@ public class PhoneticEngine {
      *   of the input
      */
     public String encode(String input, final Languages.LanguageSet languageSet) {
-        final Map<String, List<Rule>> rules = Rule.getInstance(this.nameType, RuleType.RULES, languageSet);
+        final Map<String, List<Rule>> rules = Rule.getInstanceMap(this.nameType, RuleType.RULES, languageSet);
         // rules common across many (all) languages
-        final Map<String, List<Rule>> finalRules1 = Rule.getInstance(this.nameType, this.ruleType, "common");
+        final Map<String, List<Rule>> finalRules1 = Rule.getInstanceMap(this.nameType, this.ruleType, "common");
         // rules that apply to a specific language that may be ambiguous or wrong if applied to other languages
-        final Map<String, List<Rule>> finalRules2 = Rule.getInstance(this.nameType, this.ruleType, languageSet);
+        final Map<String, List<Rule>> finalRules2 = Rule.getInstanceMap(this.nameType, this.ruleType, languageSet);
 
         // tidy the input
         // lower case is a locale-dependent operation
