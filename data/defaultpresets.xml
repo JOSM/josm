@@ -1888,6 +1888,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="natural" value="water" />
             <text key="name" text="Name" />
+            <combo key="water" text="Water Body" values="lake,lagoon,pond,reservoir" match="key" />
         </item>
         <item name="Land" icon="presets/landuse.png" type="node,closedway,relation">
             <label text="Edit Land" />
