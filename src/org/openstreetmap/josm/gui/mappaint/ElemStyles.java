@@ -449,7 +449,7 @@ public class ElemStyles {
      * @param pretendWayIsClosed For styles that require the way to be closed,
      * we pretend it is. This is useful for generating area styles from the (segmented)
      * outer ways of a multipolygon.
-     * @return {@code true} iff primitive has an AreaElemStyle
+     * @return {@code true} if primitive has an AreaElemStyle
      */
     public static boolean hasAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
         return getAreaElemStyle(p, pretendWayIsClosed) != null;

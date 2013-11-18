@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -21,12 +23,14 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.JoinedWay;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Checks if multipolygons are valid
@@ -49,6 +53,7 @@ public class MultipolygonTest extends Test {
     private static ElemStyles styles;
 
     private final List<List<Node>> nonClosedWays = new ArrayList<List<Node>>();
+    private final Set<String> keysCheckedByAnotherTest = new HashSet<String>();
 
     /**
      * Constructs a new {@code MultipolygonTest}.
@@ -61,6 +66,18 @@ public class MultipolygonTest extends Test {
     @Override
     public void initialize() {
         styles = MapPaintStyles.getStyles();
+    }
+    
+    @Override
+    public void startTest(ProgressMonitor progressMonitor) {
+        super.startTest(progressMonitor);
+        keysCheckedByAnotherTest.clear();
+        for (Test t : OsmValidator.getEnabledTests(false)) {
+            if (t instanceof UnclosedWays) {
+                keysCheckedByAnotherTest.addAll(((UnclosedWays)t).getCheckedKeys());
+                break;
+            }
+        }
     }
 
     private List<List<Node>> joinWays(Collection<Way> ways) {
@@ -123,11 +140,13 @@ public class MultipolygonTest extends Test {
         if (!w.isArea() && ElemStyles.hasAreaElemStyle(w, false)) {
             List<Node> nodes = w.getNodes();
             if (nodes.size()<1) return; // fix zero nodes bug
-            // Fix #9291 - Do not raise warning for sport=climbing + natural=cliff
-            if (!(w.hasTag("sport", "climbing") && w.hasTag("natural", "cliff"))) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,
-                        Collections.singletonList(w), Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1))));
+            for (String key : keysCheckedByAnotherTest) {
+                if (w.hasKey(key)) {
+                    return;
+                }
             }
+            errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,
+                    Collections.singletonList(w), Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1))));
         }
     }
 
