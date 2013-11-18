@@ -213,8 +213,12 @@ public final class ImageViewerDialog extends ToggleDialog {
     private ImageEntry currentEntry = null;
 
     public void displayImage(GeoImageLayer layer, ImageEntry entry) {
+        boolean imageChanged;
+
         synchronized(this) {
             // TODO: pop up image dialog but don't load image again
+
+            imageChanged = currentEntry != entry;
 
             if (centerView && Main.isDisplayingMapView() && entry != null && entry.getPos() != null) {
                 Main.map.mapView.zoomTo(entry.getPos());
@@ -225,7 +229,11 @@ public final class ImageViewerDialog extends ToggleDialog {
         }
 
         if (entry != null) {
-            imgDisplay.setImage(entry.getFile(), entry.getExifOrientation());
+            if (imageChanged) {
+                // Set only if the image is new to preserve zoom and position if the same image is redisplayed 
+                // (e.g. to update the OSD).
+                imgDisplay.setImage(entry.getFile(), entry.getExifOrientation());
+            }
             setTitle("Geotagged Images" + (entry.getFile() != null ? " - " + entry.getFile().getName() : ""));
             StringBuffer osd = new StringBuffer(entry.getFile() != null ? entry.getFile().getName() : "");
             if (entry.getElevation() != null) {
@@ -300,5 +308,23 @@ public final class ImageViewerDialog extends ToggleDialog {
      */
     public boolean hasImage() {
         return currentEntry != null;
+    }
+
+    /**
+     * Returns the currently displayed image.
+     * @return Currently displayed image or {@code null}
+     * @since 6392
+     */
+    public static ImageEntry getCurrentImage() {
+        return getInstance().currentEntry;
+    }
+
+    /**
+     * Returns the layer associated with the image.
+     * @return Layer associated with the image
+     * @since 6392
+     */
+    public static GeoImageLayer getCurrentLayer() {
+        return getInstance().currentLayer;
     }
 }

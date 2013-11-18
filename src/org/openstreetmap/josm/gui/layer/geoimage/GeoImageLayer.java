@@ -22,13 +22,17 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -269,11 +273,45 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
      * @param gpxLayer The associated GPX layer
      */
     public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer) {
-        super(tr("Geotagged Images"));
+        this(data, gpxLayer, null, false);
+    }
 
+    /**
+     * Constructs a new {@code GeoImageLayer}.
+     * @param data The list of images to display
+     * @param gpxLayer The associated GPX layer
+     * @param name Layer name
+     * @since 6392
+     */
+    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, final String name) {
+        this(data, gpxLayer, name, false);
+    }
+
+    /**
+     * Constructs a new {@code GeoImageLayer}.
+     * @param data The list of images to display
+     * @param gpxLayer The associated GPX layer
+     * @param useThumbs Thumbnail display flag
+     * @since 6392
+     */
+    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, boolean useThumbs) {
+        this(data, gpxLayer, null, useThumbs);
+    }
+
+    /**
+     * Constructs a new {@code GeoImageLayer}.
+     * @param data The list of images to display
+     * @param gpxLayer The associated GPX layer
+     * @param name Layer name
+     * @param useThumbs Thumbnail display flag
+     * @since 6392
+     */
+    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, final String name, boolean useThumbs) {
+        super(name != null ? name : tr("Geotagged Images"));
         Collections.sort(data);
         this.data = data;
         this.gpxLayer = gpxLayer;
+        this.useThumbs = useThumbs;
     }
 
     @Override
@@ -402,6 +440,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         int height = mv.getHeight();
         Rectangle clip = g.getClipBounds();
         if (useThumbs) {
+            if (!thumbsLoaded) {
+                loadThumbs();
+            }
+
             if (null == offscreenBuffer || offscreenBuffer.getWidth() != width  // reuse the old buffer if possible
                     || offscreenBuffer.getHeight() != height) {
                 offscreenBuffer = new BufferedImage(width, height,
@@ -457,7 +499,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             if (e.getPos() != null) {
                 Point p = mv.getPoint(e.getPos());
 
-                if (e.thumbnail != null) {
+                if (useThumbs && e.thumbnail != null) {
                     Dimension d = scaledDimension(e.thumbnail);
                     g.setColor(new Color(128, 0, 0, 122));
                     g.fillRect(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
@@ -571,6 +613,43 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         } catch (Exception ex) { // (CompoundException and other exceptions, e.g. #5271)
             // Do nothing
         }
+
+        // Time and date. We can have these cases:
+        // 1) GPS_TIME_STAMP not set -> date/time will be null
+        // 2) GPS_DATE_STAMP not set -> use EXIF date or set to default
+        // 3) GPS_TIME_STAMP and GPS_DATE_STAMP are set
+        int[] timeStampComps = dirGps.getIntArray(GpsDirectory.TAG_GPS_TIME_STAMP);
+        if (timeStampComps != null) {
+            int gpsHour = timeStampComps[0];
+            int gpsMin = timeStampComps[1];
+            int gpsSec = timeStampComps[2];
+            Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+
+            // We have the time. Next step is to check if the GPS date stamp is set.
+            // dirGps.getString() always succeeds, but the return value might be null.
+            String dateStampStr = dirGps.getString(GpsDirectory.TAG_GPS_DATE_STAMP);
+            if (dateStampStr != null && dateStampStr.matches("^\\d+:\\d+:\\d+$")) {
+                String[] dateStampComps = dateStampStr.split(":");
+                cal.set(Calendar.YEAR, Integer.parseInt(dateStampComps[0]));
+                cal.set(Calendar.MONTH, Integer.parseInt(dateStampComps[1]) - 1);
+                cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateStampComps[2]));
+            }
+            else {
+                // No GPS date stamp in EXIF data.  Copy it from EXIF time.
+                // Date is not set if EXIF time is not available.
+                Date exifTime = e.getExifTime();
+                if (exifTime != null) {
+                    // Time not set yet, so we can copy everything, not just date.
+                    cal.setTime(exifTime);
+                }
+            }
+
+            cal.set(Calendar.HOUR_OF_DAY, gpsHour);
+            cal.set(Calendar.MINUTE, gpsMin);
+            cal.set(Calendar.SECOND, gpsSec);
+
+            e.setExifGpsTime(cal.getTime());
+        }
     }
 
     public void showNextPhoto() {
@@ -667,6 +746,107 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
     }
 
+    /**
+     * Removes a photo from the list of images by index.
+     * @param idx Image index
+     * @since 6392
+     */
+    public void removePhotoByIdx(int idx) {
+        if (idx >= 0 && data != null && idx < data.size()) {
+            data.remove(idx);
+        }
+    }
+
+    /**
+     * Returns the image that matches the position of the mouse event.
+     * @param evt Mouse event
+     * @return Image at mouse position, or {@code null} if there is no image at the mouse position
+     * @since 6392
+     */
+    public ImageEntry getPhotoUnderMouse(MouseEvent evt) {
+        if (data != null) {
+            for (int idx = data.size() - 1; idx >= 0; --idx) {
+                ImageEntry img = data.get(idx);
+                if (img.getPos() == null) {
+                    continue;
+                }
+                Point p = Main.map.mapView.getPoint(img.getPos());
+                Rectangle r;
+                if (useThumbs && img.thumbnail != null) {
+                    Dimension d = scaledDimension(img.thumbnail);
+                    r = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
+                } else {
+                    r = new Rectangle(p.x - icon.getIconWidth() / 2,
+                                      p.y - icon.getIconHeight() / 2,
+                                      icon.getIconWidth(),
+                                      icon.getIconHeight());
+                }
+                if (r.contains(evt.getPoint())) {
+                    return img;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Clears the currentPhoto, i.e. remove select marker, and optionally repaint.
+     * @param repaint Repaint flag
+     * @since 6392
+     */
+    public void clearCurrentPhoto(boolean repaint) {
+        currentPhoto = -1;
+        if (repaint) {
+            updateBufferAndRepaint();
+        }
+    }
+
+    /**
+     * Clears the currentPhoto of the other GeoImageLayer's. Otherwise there could be multiple selected photos.
+     */
+    private void clearOtherCurrentPhotos() {
+        for (GeoImageLayer layer:
+                 Main.map.mapView.getLayersOfType(GeoImageLayer.class)) {
+            if (layer != this) {
+                layer.clearCurrentPhoto(false);
+            }
+        }
+    }
+
+    private static List<MapMode> supportedMapModes = null;
+
+    /**
+     * Registers a map mode for which the functionality of this layer should be available.
+     * @param mapMode Map mode to be registered
+     * @since 6392
+     */
+    public static void registerSupportedMapMode(MapMode mapMode) {
+        if (supportedMapModes == null) {
+            supportedMapModes = new ArrayList<MapMode>();
+        }
+        supportedMapModes.add(mapMode);
+    }
+
+    /**
+     * Determines if the functionality of this layer is available in
+     * the specified map mode.  SelectAction is supported by default,
+     * other map modes can be registered.
+     * @param mapMode Map mode to be checked
+     * @return {@code true} if the map mode is supported,
+     *         {@code false} otherwise
+     */
+    private static final boolean isSupportedMapMode(MapMode mapMode) {
+        if (mapMode instanceof SelectAction) return true;
+        if (supportedMapModes != null) {
+            for (MapMode supmmode: supportedMapModes) {
+                if (mapMode == supmmode) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private MouseAdapter mouseAdapter = null;
     private MapModeChangeListener mapModeListener = null;
 
@@ -674,7 +854,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     public void hookUpMapView() {
         mouseAdapter = new MouseAdapter() {
             private final boolean isMapModeOk() {
-                return Main.map.mapMode == null || Main.map.mapMode instanceof SelectAction;
+                return Main.map.mapMode == null || isSupportedMapMode(Main.map.mapMode);
             }
             @Override public void mousePressed(MouseEvent e) {
 
@@ -698,7 +878,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     }
                     Point p = Main.map.mapView.getPoint(e.getPos());
                     Rectangle r;
-                    if (e.thumbnail != null) {
+                    if (useThumbs && e.thumbnail != null) {
                         Dimension d = scaledDimension(e.thumbnail);
                         r = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
                     } else {
@@ -708,6 +888,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                                 icon.getIconHeight());
                     }
                     if (r.contains(ev.getPoint())) {
+                        clearOtherCurrentPhotos();
                         currentPhoto = i;
                         ImageViewerDialog.showImage(GeoImageLayer.this, e);
                         Main.map.repaint();
@@ -720,7 +901,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         mapModeListener = new MapModeChangeListener() {
             @Override
             public void mapModeChange(MapMode oldMapMode, MapMode newMapMode) {
-                if (newMapMode == null || (newMapMode instanceof org.openstreetmap.josm.actions.mapmode.SelectAction)) {
+                if (newMapMode == null || isSupportedMapMode(newMapMode)) {
                     Main.map.mapView.addMouseListener(mouseAdapter);
                 } else {
                     Main.map.mapView.removeMouseListener(mouseAdapter);
@@ -814,5 +995,27 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     @Override
     public void jumpToPreviousMarker() {
         showPreviousPhoto();
+    }
+
+    /**
+     * Returns the current thumbnail display status.
+     * {@code true}: thumbnails are displayed, {@code false}: an icon is displayed instead of thumbnails.
+     * @return Current thumbnail display status
+     * @since 6392
+     */
+    public boolean isUseThumbs() {
+        return useThumbs;
+    }
+
+    /**
+     * Enables or disables the display of thumbnails.  Does not update the display.
+     * @param useThumbs New thumbnail display status
+     * @since 6392
+     */
+    public void setUseThumbs(boolean useThumbs) {
+        this.useThumbs = useThumbs;
+        if (useThumbs && !thumbsLoaded) {
+            loadThumbs();
+        }
     }
 }

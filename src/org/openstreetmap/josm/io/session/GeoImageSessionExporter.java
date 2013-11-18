@@ -65,6 +65,7 @@ public class GeoImageSessionExporter implements SessionLayerExporter {
         Element layerElem = support.createElement("layer");
         layerElem.setAttribute("type", "geoimage");
         layerElem.setAttribute("version", "0.1");
+        addAttr("show-thumbnails", Boolean.toString(layer.isUseThumbs()), layerElem, support);
 
         for (ImageEntry entry : layer.getImages()) {
 
@@ -100,6 +101,9 @@ public class GeoImageSessionExporter implements SessionLayerExporter {
             if (entry.getExifTime() != null) {
                 addAttr("exif-time", Long.toString(entry.getExifTime().getTime()), imgElem, support);
             }
+            if (entry.getExifGpsTime() != null) {
+                addAttr("exif-gps-time", Long.toString(entry.getExifGpsTime().getTime()), imgElem, support);
+            }
             if (entry.getExifCoor() != null) {
                 Element posElem = support.createElement("exif-coordinates");
                 posElem.setAttribute("lat", Double.toString(entry.getExifCoor().lat()));
@@ -108,6 +112,9 @@ public class GeoImageSessionExporter implements SessionLayerExporter {
             }
             if (entry.getExifImgDir() != null) {
                 addAttr("exif-image-direction", entry.getExifImgDir().toString(), imgElem, support);
+            }
+            if (entry.hasNewGpsData()) {
+                addAttr("is-new-gps-data", Boolean.toString(entry.hasNewGpsData()), imgElem, support);
             }
 
             layerElem.appendChild(imgElem);
