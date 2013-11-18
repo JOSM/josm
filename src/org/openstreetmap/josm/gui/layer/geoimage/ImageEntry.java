@@ -17,9 +17,20 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     private LatLon exifCoor;
     private Double exifImgDir;
     private Date exifTime;
+    /**
+     * Flag isNewGpsData indicates that the GPS data of the image is new or has changed.
+     * GPS data includes the position, speed, elevation, time (e.g. as extracted from the GPS track).
+     * The flag can used to decide for which image file the EXIF GPS data is (re-)written.
+     */
+    private boolean isNewGpsData = false;
+    /** Temporary source of GPS time if not correlated with GPX track. */
+    private Date exifGpsTime = null;
     Image thumbnail;
 
-    /** The following values are computed from the correlation with the gpx track */
+    /**
+     * The following values are computed from the correlation with the gpx track
+     * or extracted from the image EXIF data.
+     */
     private CachedLatLon pos;
     /** Speed in kilometer per second */
     private Double speed;
@@ -74,6 +85,16 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public Date getExifTime() {
         return exifTime;
     }
+    
+    /**
+     * Returns the EXIF GPS time.
+     * @return the EXIF GPS time
+     * @since 6392
+     */
+    public final Date getExifGpsTime() {
+        return exifGpsTime;
+    }
+    
     public LatLon getExifCoor() {
         return exifCoor;
     }
@@ -109,6 +130,16 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public void setExifTime(Date exifTime) {
         this.exifTime = exifTime;
     }
+    
+    /**
+     * Sets the EXIF GPS time.
+     * @param exifGpsTime the EXIF GPS time
+     * @since 6392
+     */
+    public final void setExifGpsTime(Date exifGpsTime) {
+        this.exifGpsTime = exifGpsTime;
+    }
+    
     public void setGpsTime(Date gpsTime) {
         this.gpsTime = gpsTime;
     }
@@ -182,5 +213,42 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         (tmp == null ? " tmp==null" :
             " [tmp] pos = "+tmp.pos+"");
         return result;
+    }
+
+    /**
+     * Indicates that the image has new GPS data. 
+     * That flag is used e.g. by the photo_geotagging plugin to decide for which image
+     * file the EXIF GPS data needs to be (re-)written.
+     * @since 6392
+     */
+    public void flagNewGpsData() {
+        isNewGpsData = true;
+        // We need to set the GPS time to tell the system (mainly the photo_geotagging plug-in) 
+        // that the GPS data has changed. Check for existing GPS time and take EXIF time otherwise.
+        // This can be removed once isNewGpsData is used instead of the GPS time.
+        if (gpsTime == null) {
+            Date gpsTime = getExifGpsTime();
+            if (gpsTime == null) {
+                gpsTime = getExifTime();
+                if (gpsTime == null) {
+                    // Time still not set, take the current time.
+                    gpsTime = new Date();
+                }
+            }
+            setGpsTime(gpsTime);
+        }
+        if (tmp != null && tmp.getGpsTime() == null) {
+            // tmp.gpsTime overrides gpsTime, so we set it too.
+            tmp.setGpsTime(getGpsTime());
+        }
+    }
+
+    /**
+     * Queries whether the GPS data changed.
+     * @return {@code true} if GPS data changed, {@code false} otherwise
+     * @since 6392
+     */
+    public boolean hasNewGpsData() {
+        return isNewGpsData;
     }
 }
