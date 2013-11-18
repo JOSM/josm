@@ -31,6 +31,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
 
         List<ImageEntry> entries = new ArrayList<ImageEntry>();
         NodeList imgNodes = elem.getChildNodes();
+        boolean useThumbs = false;
         for (int i=0; i<imgNodes.getLength(); ++i) {
             Node imgNode = imgNodes.item(i);
             if (imgNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -55,16 +56,22 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                                     entry.setElevation(Double.parseDouble(attrElem.getTextContent()));
                                 } else if (attrElem.getTagName().equals("gps-time")) {
                                     entry.setGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if (attrElem.getTagName().equals("gps-orientation")) {
+                                } else if (attrElem.getTagName().equals("exif-orientation")) {
                                     entry.setExifOrientation(Integer.parseInt(attrElem.getTextContent()));
                                 } else if (attrElem.getTagName().equals("exif-time")) {
                                     entry.setExifTime(new Date(Long.parseLong(attrElem.getTextContent())));
+                                } else if (attrElem.getTagName().equals("exif-gps-time")) {
+                                    entry.setExifGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
                                 } else if (attrElem.getTagName().equals("exif-coordinates")) {
                                     double lat = Double.parseDouble(attrElem.getAttribute("lat"));
                                     double lon = Double.parseDouble(attrElem.getAttribute("lon"));
                                     entry.setExifCoor(new LatLon(lat, lon));
                                 } else if (attrElem.getTagName().equals("exif-image-direction")) {
                                     entry.setExifImgDir(Double.parseDouble(attrElem.getTextContent()));
+                                } else if (attrElem.getTagName().equals("is-new-gps-data")) {
+                                    if (Boolean.parseBoolean(attrElem.getTextContent())) {
+                                        entry.flagNewGpsData();
+                                    }
                                 }
                                 // TODO: handle thumbnail loading
                             } catch (NumberFormatException e) {
@@ -73,6 +80,8 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                         }
                     }
                     entries.add(entry);
+                } else if (imgElem.getTagName().equals("show-thumbnails")) {
+                    useThumbs = Boolean.parseBoolean(imgElem.getTextContent());
                 }
             }
         }
@@ -86,7 +95,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
             }
         }
 
-        return new GeoImageLayer(entries, gpxLayer);
+        return new GeoImageLayer(entries, gpxLayer, useThumbs);
     }
 
 }
