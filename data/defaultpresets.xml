@@ -6971,11 +6971,24 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item>
         <item name="Address Interpolation" icon="presets/interpolation.png" type="way">
-           <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema"
-                 de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
+           <link href="http://wiki.openstreetmap.org/wiki/Key:addr"
+                 de.href="http://wiki.openstreetmap.org/wiki/DE:Key:addr"
+                 es.href="http://wiki.openstreetmap.org/wiki/ES:Key:addr"
+                 et.href="http://wiki.openstreetmap.org/wiki/Et:Key:addr"
+                 fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:addr"
+                 hr.href="http://wiki.openstreetmap.org/wiki/Hr:Key:addr"
+                 it.href="http://wiki.openstreetmap.org/wiki/IT:Key:addr"
+                 ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:addr"
+                 nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:addr"
+                 pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:addr"
+                 pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:addr"
+                 ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:addr" />
             <label text="Edit Address Interpolation" />
             <space />
             <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all,alphabetic" default="odd" match="key" />
+            <optional>
+                <combo key="addr:inclusion" text="Accuracy" values="actual,estimate,potential" match="key" />
+            </optional>
         </item>
         <item name="Contact (common schema)" icon="presets/contact.png" type="node,way,closedway,relation">
             <label text="Edit Contact information" />
