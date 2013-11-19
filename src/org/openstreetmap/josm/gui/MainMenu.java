@@ -207,6 +207,8 @@ public class MainMenu extends JMenuBar {
     public final HistoryInfoWebAction historyinfoweb = new HistoryInfoWebAction();
     /** View -> "Zoom to"... actions */
     public final Map<String, AutoScaleAction> autoScaleActions = new HashMap<String, AutoScaleAction>();
+    /** View -> Jump to position */
+    public final JumpToAction jumpToAct = new JumpToAction();
 
     /* Tools menu */
     public final JosmAction splitWay = new SplitWayAction();
@@ -336,7 +338,6 @@ public class MainMenu extends JMenuBar {
     public final JosmAction moveDownAction = new MoveAction(MoveAction.Direction.DOWN);
     public final JosmAction moveLeftAction = new MoveAction(MoveAction.Direction.LEFT);
     public final JosmAction moveRightAction = new MoveAction(MoveAction.Direction.RIGHT);
-    public final JumpToAction jumpToAct = new JumpToAction();
 
     public final TaggingPresetSearchAction presetSearchAction = new TaggingPresetSearchAction();
     public final DialogsToggleAction dialogsToggleAction = new DialogsToggleAction();
@@ -648,6 +649,8 @@ public class MainMenu extends JMenuBar {
         dialogsToggleAction.addButtonModel(dialogsToggle.getModel());
         viewMenu.add(dialogsToggle);
 
+        viewMenu.addSeparator();
+        add(viewMenu, jumpToAct);
         viewMenu.addSeparator();
         add(viewMenu, info);
         add(viewMenu, infoweb);
