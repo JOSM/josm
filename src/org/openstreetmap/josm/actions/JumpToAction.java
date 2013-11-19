@@ -25,7 +25,12 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
+/**
+ * Allows to jump to a specific location.
+ * @since 2575
+ */
 public class JumpToAction extends JosmAction {
+    
     /**
      * Constructs a new {@code JumpToAction}.
      */
@@ -34,23 +39,27 @@ public class JumpToAction extends JosmAction {
         KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", false);
     }
 
-    private JosmTextField url = new JosmTextField();
-    private JosmTextField lat = new JosmTextField();
-    private JosmTextField lon = new JosmTextField();
-    private JosmTextField zm = new JosmTextField();
+    private final JosmTextField url = new JosmTextField();
+    private final JosmTextField lat = new JosmTextField();
+    private final JosmTextField lon = new JosmTextField();
+    private final JosmTextField zm = new JosmTextField();
 
+    /**
+     * Displays the "Jump to" dialog.
+     */
     public void showJumpToDialog() {
-        MapView mv = Main.map.mapView;
-        if(mv == null)
+        if (!Main.isDisplayingMapView()) {
             return;
-        LatLon curPos=mv.getProjection().eastNorth2latlon(mv.getCenter());
-        lat.setText(java.lang.Double.toString(curPos.lat()));
-        lon.setText(java.lang.Double.toString(curPos.lon()));
+        }
+        MapView mv = Main.map.mapView;
+        LatLon curPos = mv.getProjection().eastNorth2latlon(mv.getCenter());
+        lat.setText(Double.toString(curPos.lat()));
+        lon.setText(Double.toString(curPos.lon()));
 
         double dist = mv.getDist100Pixel();
         double zoomFactor = 1/dist;
 
-        zm.setText(java.lang.Long.toString(Math.round(dist*100)/100));
+        zm.setText(Long.toString(Math.round(dist*100)/100));
         updateUrl(true);
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -122,20 +131,26 @@ public class JumpToAction extends JosmAction {
     }
 
     private void parseURL() {
-        if(!url.hasFocus()) return;
-        Bounds b = OsmUrlToBounds.parse(url.getText());
+        if (!url.hasFocus()) return;
+        String urlText = url.getText();
+        Bounds b = OsmUrlToBounds.parse(urlText);
         if (b != null) {
             lat.setText(Double.toString((b.getMinLat() + b.getMaxLat())/2));
             lon.setText(Double.toString((b.getMinLon() + b.getMaxLon())/2));
 
             int zoomLvl = 16;
-            String[] args = url.getText().substring(url.getText().indexOf('?')+1).split("&");
-            for (String arg : args) {
-                int eq = arg.indexOf('=');
-                if (eq == -1 || !arg.substring(0, eq).equalsIgnoreCase("zoom")) continue;
-
-                zoomLvl = Integer.parseInt(arg.substring(eq + 1));
-                break;
+            int hashIndex = urlText.indexOf("#map");
+            if (hashIndex >= 0) {
+                zoomLvl = Integer.parseInt(urlText.substring(hashIndex+5, urlText.indexOf('/', hashIndex)));
+            } else {
+                String[] args = urlText.substring(urlText.indexOf('?')+1).split("&");
+                for (String arg : args) {
+                    int eq = arg.indexOf('=');
+                    if (eq == -1 || !arg.substring(0, eq).equalsIgnoreCase("zoom")) continue;
+    
+                    zoomLvl = Integer.parseInt(arg.substring(eq + 1));
+                    break;
+                }
             }
 
             // 10 000 000 = 10 000 * 1000 = World * (km -> m)
@@ -161,7 +176,7 @@ public class JumpToAction extends JosmAction {
             dlat /= decimals;
             dlon = Math.round(dlon * decimals);
             dlon /= decimals;
-            url.setText("http://www.openstreetmap.org/?lat="+dlat+"&lon="+dlon+"&zoom="+zoomLvl);
+            url.setText("http://www.openstreetmap.org/#map="+zoomLvl+"/"+dlat+"/"+dlon);
         } catch (NumberFormatException x) {}
     }
 
