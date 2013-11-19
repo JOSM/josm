@@ -91,17 +91,15 @@ public final class OsmUrlToBounds {
         if (startIndex == -1) return null;
         int endIndex = url.indexOf('&', startIndex);
         if (endIndex == -1) endIndex = url.length();
-        try
-        {
+        try {
             String coordPart = url.substring(startIndex+5, endIndex);
             String[] parts = coordPart.split("/");
             Bounds b = positionToBounds(Double.parseDouble(parts[1]),
                     Double.parseDouble(parts[2]),
                     Integer.parseInt(parts[0]));
             return b;
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception ex) {
+            Main.debug(ex.getMessage());
             return null;
         }
     }
