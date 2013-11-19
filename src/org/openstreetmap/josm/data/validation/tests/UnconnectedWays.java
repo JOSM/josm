@@ -332,7 +332,9 @@ public class UnconnectedWays extends Test {
 
     @Override
     public void visit(Way w) {
-        if (w.getNodesCount() > 0) {
+        // Do not consider empty ways and addr:interpolation ways as they are not physical features and most of the time
+        // very near the associated highway, which is perfectly normal, see #9332
+        if (w.getNodesCount() > 0 && !w.hasKey("addr:interpolation")) {
             ways.addAll(getWaySegments(w));
             QuadBuckets<Node> set = endnodes;
             if (w.hasKey("highway") || w.hasKey("railway")) {
