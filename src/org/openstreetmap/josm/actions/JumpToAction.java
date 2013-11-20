@@ -7,8 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.Icon;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,12 +18,13 @@ import javax.swing.event.DocumentListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
-
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * Allows to jump to a specific location.
@@ -35,8 +36,9 @@ public class JumpToAction extends JosmAction {
      * Constructs a new {@code JumpToAction}.
      */
     public JumpToAction() {
-        super(tr("Jump To Position"), (Icon) null, tr("Opens a dialog that allows to jump to a specific location"), Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump To Position")),
-        KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", false);
+        super(tr("Jump To Position"), (Icon) null, tr("Opens a dialog that allows to jump to a specific location"), 
+                Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump To Position")),
+                        KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", true);
     }
 
     private final JosmTextField url = new JosmTextField();
@@ -183,5 +185,22 @@ public class JumpToAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         showJumpToDialog();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(Main.isDisplayingMapView());
+    }
+
+    @Override
+    protected void installAdapters() {
+        super.installAdapters();
+        // make this action listen to mapframe change events
+        Main.addMapFrameListener(new MapFrameListener() {
+            @Override
+            public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
+                updateEnabledState();
+            }
+        });
     }
 }
