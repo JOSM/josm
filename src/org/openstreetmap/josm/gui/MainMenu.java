@@ -211,25 +211,45 @@ public class MainMenu extends JMenuBar {
     public final JumpToAction jumpToAct = new JumpToAction();
 
     /* Tools menu */
+    /** Tools -> Split Way */
     public final JosmAction splitWay = new SplitWayAction();
+    /** Tools -> Combine Way */
     public final JosmAction combineWay = new CombineWayAction();
+    /** Tools -> Reverse Ways */
     public final JosmAction reverseWay = new ReverseWayAction();
+    /** Tools -> Simplify Way */
     public final JosmAction simplifyWay = new SimplifyWayAction();
+    /** Tools -> Align Nodes in Circle */
     public final JosmAction alignInCircle = new AlignInCircleAction();
+    /** Tools -> Align Nodes in Line */
     public final JosmAction alignInLine = new AlignInLineAction();
+    /** Tools -> Distribute Nodes */
     public final JosmAction distribute = new DistributeAction();
+    /** Tools -> Orthogonalize Shape */
     public final OrthogonalizeAction ortho = new OrthogonalizeAction();
-    public final JosmAction orthoUndo = new Undo();  // action is not shown in the menu. Only triggered by shortcut
+    /** Orthogonalize undo. Action is not shown in the menu. Only triggered by shortcut */
+    public final JosmAction orthoUndo = new Undo();
+    /** Tools -> Mirror */
     public final JosmAction mirror = new MirrorAction();
+    /** Tools -> Follow line */
     public final JosmAction followLine = new FollowLineAction();
+    /** Tools -> Add Node... */
     public final AddNodeAction addnode = new AddNodeAction();
+    /** Tools -> Move Node... */
     public final MoveNodeAction movenode = new MoveNodeAction();
+    /** Tools -> Create Circle */
     public final JosmAction createCircle = new CreateCircleAction();
+    /** Tools -> Merge Nodes */
     public final JosmAction mergeNodes = new MergeNodesAction();
+    /** Tools -> Join Node to Way */
     public final JosmAction joinNodeWay = new JoinNodeWayAction();
+    /** Tools -> Disconnect Node from Way */
     public final JosmAction unJoinNodeWay = new UnJoinNodeWayAction();
+    /** Tools -> Unglue Ways */
     public final JosmAction unglueNodes = new UnGlueAction();
+    /** Tools -> Join overlapping Areas */
     public final JosmAction joinAreas = new JoinAreasAction();
+    /** Tools -> Create multipolygon */
     public final JosmAction createMultipolygon = new CreateMultipolygonAction();
 
     /* Selection menu */
@@ -239,12 +259,19 @@ public class MainMenu extends JMenuBar {
     public final UnselectAllAction unselectAll = new UnselectAllAction();
 
     /* Audio menu */
+    /** Audio -> Play/Pause */
     public final JosmAction audioPlayPause = new AudioPlayPauseAction();
+    /** Audio -> Next marker */
     public final JosmAction audioNext = new AudioNextAction();
+    /** Audio -> Previous Marker */
     public final JosmAction audioPrev = new AudioPrevAction();
+    /** Audio -> Forward */
     public final JosmAction audioFwd = new AudioFwdAction();
+    /** Audio -> Back */
     public final JosmAction audioBack = new AudioBackAction();
+    /** Audio -> Faster */
     public final JosmAction audioFaster = new AudioFasterAction();
+    /** Audio -> Slower */
     public final JosmAction audioSlower = new AudioSlowerAction();
 
     /* Windows Menu */
@@ -649,8 +676,7 @@ public class MainMenu extends JMenuBar {
         dialogsToggleAction.addButtonModel(dialogsToggle.getModel());
         viewMenu.add(dialogsToggle);
 
-        viewMenu.addSeparator();
-        add(viewMenu, jumpToAct);
+        add(viewMenu, jumpToAct, true);
         viewMenu.addSeparator();
         add(viewMenu, info);
         add(viewMenu, infoweb);
