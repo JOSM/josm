@@ -16,30 +16,32 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * A command consisting of a sequence of other commands. Executes the other commands
  * and undo them in reverse order.
  * @author imi
+ * @since 31
  */
 public class SequenceCommand extends Command {
 
-    /**
-     * The command sequenz to be executed.
-     */
+    /** The command sequence to be executed. */
     private Command[] sequence;
-    private boolean sequence_complete;
+    private boolean sequenceComplete;
     private final String name;
+    /** Determines if the sequence execution should continue after one of its commands fails. */
     public boolean continueOnError = false;
 
     /**
      * Create the command by specifying the list of commands to execute.
+     * @param name The description text
      * @param sequenz The sequence that should be executed.
      */
     public SequenceCommand(String name, Collection<Command> sequenz) {
         super();
         this.name = name;
-        this.sequence = new Command[sequenz.size()];
-        this.sequence = sequenz.toArray(this.sequence);
+        this.sequence = sequenz.toArray(new Command[sequenz.size()]);
     }
 
     /**
      * Convenient constructor, if the commands are known at compile time.
+     * @param name The description text
+     * @param sequenz The sequence that should be executed.
      */
     public SequenceCommand(String name, Command... sequenz) {
         this(name, Arrays.asList(sequenz));
@@ -47,27 +49,31 @@ public class SequenceCommand extends Command {
 
     @Override public boolean executeCommand() {
         for (int i=0; i < sequence.length; i++) {
-            Command c = sequence[i];
-            boolean result = c.executeCommand();
+            boolean result = sequence[i].executeCommand();
             if (!result && !continueOnError) {
                 this.undoCommands(i-1);
                 return false;
             }
         }
-        sequence_complete = true;
+        sequenceComplete = true;
         return true;
     }
 
+    /**
+     * Returns the last command.
+     * @return The last command, or {@code null} if the sequence is empty.
+     */
     public Command getLastCommand() {
-        if(sequence.length == 0)
+        if (sequence.length == 0)
             return null;
         return sequence[sequence.length-1];
     }
+    
     private void undoCommands(int start) {
         // We probably aborted this halfway though the
         // execution sequence because of a sub-command
         // error.  We already undid the sub-commands.
-        if (!sequence_complete)
+        if (!sequenceComplete)
             return;
         for (int i = start; i >= 0; --i) {
             sequence[i].undoCommand();
@@ -106,5 +112,9 @@ public class SequenceCommand extends Command {
             prims.addAll(c.getParticipatingPrimitives());
         }
         return prims;
+    }
+    
+    protected final void setSequence(Command[] sequence) {
+        this.sequence = sequence;
     }
 }
