@@ -51,7 +51,7 @@ public class SequenceCommand extends Command {
         for (int i=0; i < sequence.length; i++) {
             boolean result = sequence[i].executeCommand();
             if (!result && !continueOnError) {
-                this.undoCommands(i-1);
+                undoCommands(i-1);
                 return false;
             }
         }
@@ -69,7 +69,7 @@ public class SequenceCommand extends Command {
         return sequence[sequence.length-1];
     }
     
-    private void undoCommands(int start) {
+    protected final void undoCommands(int start) {
         // We probably aborted this halfway though the
         // execution sequence because of a sub-command
         // error.  We already undid the sub-commands.
@@ -81,7 +81,7 @@ public class SequenceCommand extends Command {
     }
 
     @Override public void undoCommand() {
-        this.undoCommands(sequence.length-1);
+        undoCommands(sequence.length-1);
     }
 
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
@@ -116,5 +116,9 @@ public class SequenceCommand extends Command {
     
     protected final void setSequence(Command[] sequence) {
         this.sequence = sequence;
+    }
+    
+    protected final void setSequenceComplete(boolean sequenceComplete) {
+        this.sequenceComplete = sequenceComplete;
     }
 }
