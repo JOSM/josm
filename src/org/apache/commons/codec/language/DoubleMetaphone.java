@@ -32,7 +32,7 @@ import org.apache.commons.codec.StringEncoder;
  * @see <a href="http://drdobbs.com/184401251?pgno=2">Original Article</a>
  * @see <a href="http://en.wikipedia.org/wiki/Metaphone">http://en.wikipedia.org/wiki/Metaphone</a>
  *
- * @version $Id: DoubleMetaphone.java 1435550 2013-01-19 14:09:52Z tn $
+ * @version $Id: DoubleMetaphone.java 1544347 2013-11-21 22:30:31Z ggregory $
  */
 public class DoubleMetaphone implements StringEncoder {
 
@@ -622,7 +622,7 @@ public class DoubleMetaphone implements StringEncoder {
                    contains(value, index + 1, 1, "Z")) {
             //-- german & anglicisations, e.g. "smith" match "schmidt" //
             // "snider" match "schneider" --//
-            //-- also, -sz- in slavic language altho in hungarian it //
+            //-- also, -sz- in slavic language although in hungarian it //
             //   is pronounced "s" --//
             result.append('S', 'X');
             index = contains(value, index + 1, 1, "Z") ? index + 2 : index + 1;
@@ -850,7 +850,7 @@ public class DoubleMetaphone implements StringEncoder {
     //-- BEGIN HELPER FUNCTIONS --//
 
     /**
-     * Determines whether or not a value is of slavo-germanic orgin. A value is
+     * Determines whether or not a value is of slavo-germanic origin. A value is
      * of slavo-germanic origin if it contians any of 'W', 'K', 'CZ', or 'WITZ'.
      */
     private boolean isSlavoGermanic(final String value) {
