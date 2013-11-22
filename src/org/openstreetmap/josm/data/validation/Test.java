@@ -153,11 +153,15 @@ public class Test extends AbstractVisitor
     public void visit(Collection<OsmPrimitive> selection) {
         progressMonitor.setTicksCount(selection.size());
         for (OsmPrimitive p : selection) {
-            if (p.isUsable()) {
+            if (isPrimitiveUsable(p)) {
                 p.accept(this);
             }
             progressMonitor.worked(1);
         }
+    }
+
+    public boolean isPrimitiveUsable(OsmPrimitive p) {
+        return p.isUsable() && (!(p instanceof Way) || (((Way) p).getNodesCount() > 1)); // test only Ways with at least 2 nodes
     }
 
     @Override

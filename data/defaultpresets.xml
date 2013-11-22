@@ -5255,25 +5255,28 @@ Note that for a match, at least one positive and no negative is required.
             <text key="operator" text="Operator" />             
             <label text="Monitoring:" />
             <checkgroup columns="3">
-                <check key="monitoring:weather"          text="Weather" />
-                <check key="monitoring:water_level"      text="Water level" />
-                <check key="monitoring:tide_gauge"       text="Tide Level" />
-                <check key="monitoring:traffic"          text="Traffic" />
-                <check key="monitoring:air_quality"      text="Air Quality" />
-                <check key="monitoring:noise"            text="Noise" />
-                <check key="monitoring:gps"              text="GPS Signals" />
-                <check key="monitoring:glonass"          text="GLONASS Signals" />
-                <check key="monitoring:galileo"          text="Galileo Signals" />
-                <check key="monitoring:radiation"        text="Radiation" />
+                <check key="monitoring:weather" text="Weather" />
+                <check key="monitoring:water_level" text="Water level" />
+                <check key="monitoring:tide_gauge" text="Tide Level" />
+                <check key="monitoring:traffic" text="Traffic" />
+                <check key="monitoring:air_quality" text="Air Quality" />
+                <check key="monitoring:noise" text="Noise" />
+                <check key="monitoring:gps" text="GPS Signals" />
+                <check key="monitoring:glonass" text="GLONASS Signals" />
+                <check key="monitoring:galileo" text="Galileo Signals" />
+                <check key="monitoring:radiation" text="Radiation" />
                 <check key="monitoring:seismic_activity" text="Seismic Activity" />
             </checkgroup>
-            <label text="Additional information" />
-            <checkgroup columns="1">
-                <check key="recording:manually"          text="Recording: manually" />
-                <check key="recording:automated"         text="Recording: automated" />
-                <check key="recording:remote"            text="Recording: remote" />
-                <check key="display:analog"              text="Display: analog" />
-                <check key="display:digital"             text="Display: digital" />
+            <label text="Recording:" />
+            <checkgroup columns="3">
+                <check key="recording:automated" text="Automated" />
+                <check key="recording:manually" text="Manually" />
+                <check key="recording:remote" text="Remote" />
+            </checkgroup>
+            <label text="Display:" />
+            <checkgroup columns="2">
+                <check key="display:analog" text="Analog" />
+                <check key="display:digital" text="Digital" />
             </checkgroup>
         </item>
         <item name="Survey Point" icon="presets/survey_point.png" type="node">
