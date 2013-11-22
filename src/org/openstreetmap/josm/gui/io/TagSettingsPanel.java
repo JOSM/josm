@@ -21,67 +21,75 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class TagSettingsPanel extends JPanel implements TableModelListener {
 
     /** checkbox for selecting whether an atomic upload is to be used  */
-    private TagEditorPanel pnlTagEditor;
+    private final TagEditorPanel pnlTagEditor = new TagEditorPanel(null);
     /** the model for the changeset comment */
-    private ChangesetCommentModel changesetCommentModel;
+    private final ChangesetCommentModel changesetCommentModel;
+    private final ChangesetCommentModel changesetSourceModel;
     /** tags that applied to uploaded changesets by default*/
-    private Map<String, String> defaultTags = new HashMap<String, String>();
+    private final Map<String, String> defaultTags = new HashMap<String, String>();
 
     protected void build() {
         setLayout(new BorderLayout());
-        add(pnlTagEditor = new TagEditorPanel(null), BorderLayout.CENTER);
+        add(pnlTagEditor, BorderLayout.CENTER);
     }
 
     /**
      * Creates a new panel
      *
      * @param changesetCommentModel the changeset comment model. Must not be null.
+     * @param changesetSourceModel the changeset source model. Must not be null.
      * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
      */
-    public TagSettingsPanel(ChangesetCommentModel changesetCommentModel) throws IllegalArgumentException{
+    public TagSettingsPanel(ChangesetCommentModel changesetCommentModel, ChangesetCommentModel changesetSourceModel) throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
+        CheckParameterUtil.ensureParameterNotNull(changesetSourceModel, "changesetSourceModel");
         this.changesetCommentModel = changesetCommentModel;
-        this.changesetCommentModel.addObserver(new ChangesetCommentObserver());
+        this.changesetSourceModel = changesetSourceModel;
+        this.changesetCommentModel.addObserver(new ChangesetCommentObserver("comment"));
+        this.changesetSourceModel.addObserver(new ChangesetCommentObserver("source"));
         build();
         pnlTagEditor.getModel().addTableModelListener(this);
     }
 
-    protected void setUploadComment(String comment) {
-        if (comment == null) {
-            comment = "";
+    protected void setProperty(String key, String value) {
+        if (value == null) {
+            value = "";
         }
-        comment  = comment.trim();
-        String commentInTag = getUploadComment();
-        if (comment.equals(commentInTag))
+        value = value.trim();
+        String commentInTag = getTagEditorValue(key);
+        if (value.equals(commentInTag))
             return;
 
-        if (comment.isEmpty()) {
-            pnlTagEditor.getModel().delete("comment");
+        if (value.isEmpty()) {
+            pnlTagEditor.getModel().delete(key);
             return;
         }
-        TagModel tag = pnlTagEditor.getModel().get("comment");
+        TagModel tag = pnlTagEditor.getModel().get(key);
         if (tag == null) {
-            tag = new TagModel("comment", comment);
+            tag = new TagModel(key, value);
             pnlTagEditor.getModel().add(tag);
         } else {
-            pnlTagEditor.getModel().updateTagValue(tag, comment);
+            pnlTagEditor.getModel().updateTagValue(tag, value);
         }
     }
 
-    protected String getUploadComment() {
-        TagModel tag = pnlTagEditor.getModel().get("comment");
+    protected String getTagEditorValue(String key) {
+        TagModel tag = pnlTagEditor.getModel().get(key);
         if (tag == null) return null;
         return tag.getValue();
     }
 
     public void initFromChangeset(Changeset cs) {
-        String currentComment = getUploadComment();
+        String currentComment = getTagEditorValue("comment");
         Map<String,String> tags = getDefaultTags();
         if (cs != null) {
             tags.putAll(cs.getKeys());
         }
         if (tags.get("comment") == null) {
             tags.put("comment", currentComment);
+        }
+        if (tags.get("source") == null) {
+            tags.put("source", "");
         }
         String agent = Version.getInstance().getAgentString(false);
         String created_by = tags.get("created_by");
@@ -122,8 +130,8 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     /* -------------------------------------------------------------------------- */
     @Override
     public void tableChanged(TableModelEvent e) {
-        String uploadComment = getUploadComment();
-        changesetCommentModel.setComment(uploadComment);
+        changesetCommentModel.setComment(getTagEditorValue("comment"));
+        changesetSourceModel.setComment(getTagEditorValue("source"));
     }
 
     /**
@@ -132,16 +140,23 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      *
      */
     class ChangesetCommentObserver implements Observer {
+
+        private final String key;
+
+        ChangesetCommentObserver(String key) {
+            this.key = key;
+        }
+
         @Override
         public void update(Observable o, Object arg) {
             if (!(o instanceof ChangesetCommentModel)) return;
             String newValue = (String)arg;
-            String oldValue = getUploadComment();
+            String oldValue = getTagEditorValue(key);
             if (oldValue == null) {
                 oldValue = "";
             }
             if (!oldValue.equals(newValue)) {
-                setUploadComment((String)arg);
+                setProperty(key, (String) arg);
             }
         }
     }

@@ -36,44 +36,41 @@ import org.openstreetmap.josm.tools.GBC;
 public class BasicUploadSettingsPanel extends JPanel {
     public static final String HISTORY_KEY = "upload.comment.history";
     public static final String HISTORY_LAST_USED_KEY = "upload.comment.last-used";
+    public static final String SOURCE_HISTORY_KEY = "upload.comment.source";
 
     /** the history combo box for the upload comment */
-    private HistoryComboBox hcbUploadComment;
+    private final HistoryComboBox hcbUploadComment = new HistoryComboBox();
+    private final HistoryComboBox hcbUploadSource = new HistoryComboBox();
     /** the panel with a summary of the upload parameters */
-    private UploadParameterSummaryPanel pnlUploadParameterSummary;
-    /** the changset comment model */
-    private ChangesetCommentModel changesetCommentModel;
+    private final UploadParameterSummaryPanel pnlUploadParameterSummary = new UploadParameterSummaryPanel();
+    /** the changeset comment model */
+    private final ChangesetCommentModel changesetCommentModel;
+    private final ChangesetCommentModel changesetSourceModel;
 
     protected JPanel buildUploadCommentPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
+
         pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
-        hcbUploadComment = new HistoryComboBox();
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
         hcbUploadComment.setMaxTextLength(Changeset.MAX_COMMENT_LENGTH);
         List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
-        // we have to reverse the history, because ComboBoxHistory will reverse it again
-        // in addElement()
-        //
-        Collections.reverse(cmtHistory);
+        Collections.reverse(cmtHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadComment.setPossibleItems(cmtHistory);
-        hcbUploadComment.getEditor().addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        changesetCommentModel.setComment(hcbUploadComment.getText());
-                    }
-                }
-        );
-        hcbUploadComment.getEditor().getEditorComponent().addFocusListener(
-                new FocusAdapter() {
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        changesetCommentModel.setComment(hcbUploadComment.getText());
-                    }
-                }
-        );
+        final CommentModelListener commentModelListener = new CommentModelListener(hcbUploadComment, changesetCommentModel);
+        hcbUploadComment.getEditor().addActionListener(commentModelListener);
+        hcbUploadComment.getEditor().getEditorComponent().addFocusListener(commentModelListener);
         pnl.add(hcbUploadComment, GBC.eol().fill(GBC.HORIZONTAL));
+
+        pnl.add(new JLabel(tr("Specify the data source for the changes:")), GBC.eol().insets(0, 8, 10, 3));
+        hcbUploadSource.setToolTipText(tr("Enter a source"));
+        List<String> sourceHistory = new LinkedList<String>(Main.pref.getCollection(SOURCE_HISTORY_KEY, new LinkedList<String>()));
+        Collections.reverse(sourceHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
+        hcbUploadComment.setPossibleItems(sourceHistory);
+        final CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);
+        hcbUploadSource.getEditor().addActionListener(sourceModelListener);
+        hcbUploadSource.getEditor().getEditorComponent().addFocusListener(sourceModelListener);
+        pnl.add(hcbUploadSource, GBC.eol().fill(GBC.HORIZONTAL));
         return pnl;
     }
 
@@ -81,19 +78,23 @@ public class BasicUploadSettingsPanel extends JPanel {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
         add(buildUploadCommentPanel(), BorderLayout.NORTH);
-        add(pnlUploadParameterSummary = new UploadParameterSummaryPanel(), BorderLayout.CENTER);
+        add(pnlUploadParameterSummary, BorderLayout.CENTER);
     }
 
     /**
      * Creates the panel
      *
      * @param changesetCommentModel the model for the changeset comment. Must not be null
+     * @param changesetSourceModel the model for the changeset source. Must not be null.
      * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
      */
-    public BasicUploadSettingsPanel(ChangesetCommentModel changesetCommentModel) {
+    public BasicUploadSettingsPanel(ChangesetCommentModel changesetCommentModel, ChangesetCommentModel changesetSourceModel) {
         CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
+        CheckParameterUtil.ensureParameterNotNull(changesetSourceModel, "changesetSourceModel");
         this.changesetCommentModel = changesetCommentModel;
-        changesetCommentModel.addObserver(new ChangesetCommentObserver());
+        this.changesetSourceModel = changesetSourceModel;
+        changesetCommentModel.addObserver(new ChangesetCommentObserver(hcbUploadComment));
+        changesetSourceModel.addObserver(new ChangesetCommentObserver(hcbUploadSource));
         build();
     }
 
@@ -124,6 +125,9 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.addCurrentItemToHistory();
         Main.pref.putCollection(HISTORY_KEY, hcbUploadComment.getHistory());
         Main.pref.putInteger(HISTORY_LAST_USED_KEY, (int) (System.currentTimeMillis() / 1000));
+        // store the history of sources
+        hcbUploadSource.addCurrentItemToHistory();
+        Main.pref.putCollection(SOURCE_HISTORY_KEY, hcbUploadSource.getHistory());
     }
 
     /**
@@ -150,16 +154,46 @@ public class BasicUploadSettingsPanel extends JPanel {
     }
 
     /**
+     * Updates the changeset comment model upon changes in the input field.
+     */
+    class CommentModelListener extends FocusAdapter implements ActionListener {
+
+        final HistoryComboBox source;
+        final ChangesetCommentModel destination;
+
+        CommentModelListener(HistoryComboBox source, ChangesetCommentModel destination) {
+            this.source = source;
+            this.destination = destination;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            destination.setComment(source.getText());
+        }
+        @Override
+        public void focusLost(FocusEvent e) {
+            destination.setComment(source.getText());
+        }
+    }
+
+    /**
      * Observes the changeset comment model and keeps the comment input field
      * in sync with the current changeset comment
      */
     class ChangesetCommentObserver implements Observer {
+
+        private final HistoryComboBox destination;
+
+        ChangesetCommentObserver(HistoryComboBox destination) {
+            this.destination = destination;
+        }
+
         @Override
         public void update(Observable o, Object arg) {
             if (!(o instanceof ChangesetCommentModel)) return;
             String newComment = (String)arg;
-            if (!hcbUploadComment.getText().equals(newComment)) {
-                hcbUploadComment.setText(newComment);
+            if (!destination.getText().equals(newComment)) {
+                destination.setText(newComment);
             }
         }
     }
