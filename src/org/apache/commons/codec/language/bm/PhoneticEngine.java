@@ -48,7 +48,7 @@ import org.apache.commons.codec.language.bm.Rule.Phoneme;
  * Ported from phoneticengine.php
  *
  * @since 1.6
- * @version $Id: PhoneticEngine.java 1542831 2013-11-17 21:34:44Z tn $
+ * @version $Id: PhoneticEngine.java 1544659 2013-11-22 19:35:23Z tn $
  */
 public class PhoneticEngine {
 
@@ -104,7 +104,7 @@ public class PhoneticEngine {
          * @param maxPhonemes   the maximum number of phonemes to build up
          */
         public void apply(final Rule.PhonemeExpr phonemeExpr, final int maxPhonemes) {
-            final List<Rule.Phoneme> newPhonemes = new ArrayList<Rule.Phoneme>(maxPhonemes);
+            final Set<Rule.Phoneme> newPhonemes = new LinkedHashSet<Rule.Phoneme>(maxPhonemes);
 
             EXPR: for (final Rule.Phoneme left : this.phonemes) {
                 for (final Rule.Phoneme right : phonemeExpr.getPhonemes()) {
