@@ -152,4 +152,9 @@ public class UntaggedWay extends Test
     public Command fixError(TestError testError) {
         return deletePrimitivesIfNeeded(testError.getPrimitives());
     }
+
+    @Override
+    public boolean isPrimitiveUsable(OsmPrimitive p) {
+        return p.isUsable();
+    }
 }
