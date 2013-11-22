@@ -99,7 +99,8 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     private boolean canceled = false;
 
     /** the changeset comment model keeping the state of the changeset comment */
-    private ChangesetCommentModel changesetCommentModel;
+    private final ChangesetCommentModel changesetCommentModel = new ChangesetCommentModel();
+    private final ChangesetCommentModel changesetSourceModel = new ChangesetCommentModel();
 
     /**
      * builds the content panel for the upload dialog
@@ -130,13 +131,11 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
             }
         };
 
-        changesetCommentModel = new ChangesetCommentModel();
-
-        tpConfigPanels.add(pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel));
+        tpConfigPanels.add(pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel, changesetSourceModel));
         tpConfigPanels.setTitleAt(0, tr("Settings"));
         tpConfigPanels.setToolTipTextAt(0, tr("Decide how to upload the data and which changeset to use"));
 
-        tpConfigPanels.add(pnlTagSettings = new TagSettingsPanel(changesetCommentModel));
+        tpConfigPanels.add(pnlTagSettings = new TagSettingsPanel(changesetCommentModel, changesetSourceModel));
         tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
         tpConfigPanels.setToolTipTextAt(1, tr("Apply tags to the changeset data is uploaded to"));
 
