@@ -77,7 +77,7 @@ import org.apache.commons.codec.language.bm.Languages.LanguageSet;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1542832 2013-11-17 21:37:24Z tn $
+ * @version $Id: Rule.java 1544532 2013-11-22 13:38:35Z ggregory $
  */
 public class Rule {
 
@@ -169,7 +169,7 @@ public class Rule {
     /**
      * A minimal wrapper around the functionality of Pattern that we use, to allow for alternate implementations.
      */
-    public static interface RPattern {
+    public interface RPattern {
         boolean isMatch(CharSequence input);
     }
 
