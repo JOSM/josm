@@ -142,11 +142,11 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             addHeadline(o);
 
             if (!(o.getDataSet() != null && o.getDataSet().getPrimitiveById(o) != null)) {
-                s.append(NL).append(INDENT).append(tr("not in data set"));
+                s.append(NL).append(INDENT).append(tr("not in data set")).append(NL);
                 return;
             }
             if (o.isIncomplete()) {
-                s.append(NL).append(INDENT).append(tr("incomplete"));
+                s.append(NL).append(INDENT).append(tr("incomplete")).append(NL);
                 return;
             }
             s.append(NL);
