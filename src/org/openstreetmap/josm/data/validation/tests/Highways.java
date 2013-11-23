@@ -30,8 +30,18 @@ public class Highways extends Test {
     protected static final int WRONG_ROUNDABOUT_HIGHWAY = 2701;
     protected static final int MISSING_PEDESTRIAN_CROSSING = 2702;
     
+    /**
+     * Classified highways in order of importance
+     */
     protected static final List<String> CLASSIFIED_HIGHWAYS = Arrays.asList(
-            "motorway", "trunk", "primary", "secondary", "tertiary", "living_street", "residential", "unclassified");
+            "motorway",  "motorway_link", 
+            "trunk",     "trunk_link", 
+            "primary",   "primary_link", 
+            "secondary", "secondary_link",
+            "tertiary",  "tertiary_link",
+            "living_street",
+            "residential",
+            "unclassified");
 
     boolean leftByPedestrians = false;
     boolean leftByCyclists = false;
@@ -98,7 +108,7 @@ public class Highways extends Test {
                 if (list.size() > 2 || oneway1 == null || oneway2 == null || !oneway1 || !oneway2) {
                     // Error when the highway tags do not match
                     if (!w.get("highway").equals(s)) {
-                        errors.add(new WrongRoundaboutHighway(w, tr("Incorrect roundabout (highway: {0} instead of {1})", w.get("highway"), s)));
+                        errors.add(new WrongRoundaboutHighway(w, s));
                     }
                     break;
                 }
