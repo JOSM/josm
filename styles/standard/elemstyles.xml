@@ -2866,13 +2866,13 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="landuse" v="retail"/>
-		<area colour="retail#dbdbdb"/>
+		<area colour="retail#ffc4ee"/>
 		<icon src="shop/mall.png"/>
 	</rule>
 
 	<rule>
 		<condition k="landuse" v="commercial"/>
-		<area colour="retail#dbdbdb"/>
+		<area colour="retail#ffc4ee"/>
 		<icon src="misc/landuse/commercial.png"/>
 	</rule>
 
