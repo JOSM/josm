@@ -122,8 +122,21 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String getRawName() {
         return group != null ? group.getRawName() + "/" + name : name;
     }
+    
+    /**
+     * Returns the preset icon.
+     * @return The preset icon, or {@code null} if none defined
+     * @since 6403
+     */
+    public final ImageIcon getIcon() {
+        Object icon = getValue(Action.SMALL_ICON);
+        if (icon instanceof ImageIcon) {
+            return (ImageIcon) icon;
+        }
+        return null;
+    }
 
-    /*
+    /**
      * Called from the XML parser to set the icon.
      * This task is performed in the background in order to speedup startup.
      *
@@ -155,7 +168,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         });
     }
 
-    /*
+    /**
      * Called from the XML parser to set the types this preset affects.
      */
     public void setType(String types) throws SAXException {

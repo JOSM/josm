@@ -67,6 +67,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
@@ -669,7 +670,19 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 // Find and display icon
                 ImageIcon icon = MapPaintStyles.getNodeIcon(t, false); // Filters deprecated icon
                 if (icon == null) {
-                    icon = new ImageIcon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB));
+                    // If no icon found in map style look at presets
+                    Map<String, String> map = new HashMap<String, String>();
+                    map.put(t.getKey(), t.getValue());
+                    for (TaggingPreset tp : TaggingPreset.getMatchingPresets(null, map, false)) {
+                        icon = tp.getIcon();
+                        if (icon != null) {
+                            break;
+                        }
+                    }
+                    // If still nothing display an empty icon
+                    if (icon == null) {
+                        icon = new ImageIcon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB));
+                    }
                 }
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.ipadx = 5;
@@ -721,7 +734,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 action.destroy();
             }
         }
-
 
         /**
          * Read tags from comboboxes and add it to all selected objects
