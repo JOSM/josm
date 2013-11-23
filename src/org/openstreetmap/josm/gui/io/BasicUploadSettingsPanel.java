@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class BasicUploadSettingsPanel extends JPanel {
     public static final String HISTORY_KEY = "upload.comment.history";
     public static final String HISTORY_LAST_USED_KEY = "upload.comment.last-used";
-    public static final String SOURCE_HISTORY_KEY = "upload.comment.source";
+    public static final String SOURCE_HISTORY_KEY = "upload.source.history";
 
     /** the history combo box for the upload comment */
     private final HistoryComboBox hcbUploadComment = new HistoryComboBox();
@@ -66,7 +66,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadSource.setToolTipText(tr("Enter a source"));
         List<String> sourceHistory = new LinkedList<String>(Main.pref.getCollection(SOURCE_HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(sourceHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        hcbUploadComment.setPossibleItems(sourceHistory);
+        hcbUploadSource.setPossibleItems(sourceHistory);
         final CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);
         hcbUploadSource.getEditor().addActionListener(sourceModelListener);
         hcbUploadSource.getEditor().getEditorComponent().addFocusListener(sourceModelListener);

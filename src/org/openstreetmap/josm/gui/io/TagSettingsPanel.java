@@ -80,16 +80,15 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     }
 
     public void initFromChangeset(Changeset cs) {
-        String currentComment = getTagEditorValue("comment");
         Map<String,String> tags = getDefaultTags();
         if (cs != null) {
             tags.putAll(cs.getKeys());
         }
         if (tags.get("comment") == null) {
-            tags.put("comment", currentComment);
+            tags.put("comment", getTagEditorValue("comment"));
         }
         if (tags.get("source") == null) {
-            tags.put("source", "");
+            tags.put("source", getTagEditorValue("source"));
         }
         String agent = Version.getInstance().getAgentString(false);
         String created_by = tags.get("created_by");
