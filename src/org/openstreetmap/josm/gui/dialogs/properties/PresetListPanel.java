@@ -91,7 +91,7 @@ public class PresetListPanel extends JPanel {
 
         for (TaggingPreset t : TaggingPreset.getMatchingPresets(types, tags, true)) {
             JLabel lbl = new JLabel(t.getName() + " …");
-            lbl.setIcon((Icon) t.getValue(Action.SMALL_ICON));
+            lbl.setIcon(t.getIcon());
             lbl.addMouseListener(new PresetLabelML(lbl, t, presetHandler));
             add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
         }
