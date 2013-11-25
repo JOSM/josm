@@ -30,6 +30,7 @@ public class UtilsTest {
             "\u2003"+ // EM SPACE
             "\u2007"+ // FIGURE SPACE
             "\u200B"+ // ZERO WIDTH SPACE
+            "\uFEFF"+ // ZERO WIDTH NO-BREAK SPACE
             "\u3000"; // IDEOGRAPHIC SPACE
         Assert.assertNull(Utils.strip(null));
         Assert.assertEquals("", Utils.strip(""));
