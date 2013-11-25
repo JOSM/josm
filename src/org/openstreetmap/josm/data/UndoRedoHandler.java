@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class UndoRedoHandler implements MapView.LayerChangeListener {
 
@@ -25,14 +26,19 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
 
     private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<CommandQueueListener>();
 
+    /**
+     * Constructs a new {@code UndoRedoHandler}.
+     */
     public UndoRedoHandler() {
         MapView.addLayerChangeListener(this);
     }
 
     /**
-     * Execute the command and add it to the intern command queue.
+     * Executes the command and add it to the intern command queue.
+     * @param c The command to execute. Must not be {@code null}.
      */
     public void addNoRedraw(final Command c) {
+        CheckParameterUtil.ensureParameterNotNull(c, "c");
         c.executeCommand();
         commands.add(c);
         // Limit the number of commands in the undo list.
@@ -52,7 +58,8 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     }
 
     /**
-     * Execute the command and add it to the intern command queue.
+     * Executes the command and add it to the intern command queue.
+     * @param c The command to execute. Must not be {@code null}.
      */
     synchronized public void add(final Command c) {
         addNoRedraw(c);
@@ -68,6 +75,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
 
     /**
      * Undoes multiple commands.
+     * @param num The number of commands to undo
      */
     synchronized public void undo(int num) {
         if (commands.isEmpty())
@@ -103,6 +111,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
 
     /**
      * Redoes multiple commands.
+     * @param num The number of commands to redo
      */
     public void redo(int num) {
         if (redoCommands.isEmpty())
@@ -166,10 +175,19 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {}
 
+    /**
+     * Removes a command queue listener.
+     * @param l The command queue listener to remove
+     */
     public void removeCommandQueueListener(CommandQueueListener l) {
         listenerCommands.remove(l);
     }
 
+    /**
+     * Adds a command queue listener.
+     * @param l The commands queue listener to add
+     * @return {@code true} if the listener has been added, {@code false} otherwise
+     */
     public boolean addCommandQueueListener(CommandQueueListener l) {
         return listenerCommands.add(l);
     }
