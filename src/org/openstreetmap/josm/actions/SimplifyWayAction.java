@@ -34,6 +34,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Delete unnecessary nodes from a way
+ * @since 2575
  */
 public class SimplifyWayAction extends JosmAction {
     
@@ -109,7 +110,7 @@ public class SimplifyWayAction extends JosmAction {
 
             Collection<Command> allCommands = new LinkedList<Command>();
             for (Way way: ways) {
-                SequenceCommand simplifyCommand = simplifyWay(way, ds);
+                SequenceCommand simplifyCommand = simplifyWay(way);
                 if (simplifyCommand == null) {
                     continue;
                 }
@@ -151,19 +152,30 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     /**
-     * Simplifies a way
+     * Simplifies a way with default threshold (read from preferences).
      *
      * @param w the way to simplify
+     * @return The sequence of commands to run
+     * @since 6411
      */
-    public SequenceCommand simplifyWay(Way w, DataSet ds) {
-        double threshold = Main.pref.getDouble("simplify-way.max-error", 3.0);
+    public final SequenceCommand simplifyWay(Way w) {
+        return simplifyWay(w, Main.pref.getDouble("simplify-way.max-error", 3.0));
+    }
+
+    /**
+     * Simplifies a way with a given threshold.
+     *
+     * @param w the way to simplify
+     * @return The sequence of commands to run
+     * @since 6411
+     */
+    public SequenceCommand simplifyWay(Way w, double threshold) {
         int lower = 0;
         int i = 0;
         List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
         while(i < w.getNodesCount()){
             if (isRequiredNode(w,w.getNode(i))) {
-                // copy a required node to the list of new nodes. Simplify not
-                // possible
+                // copy a required node to the list of new nodes. Simplify not possible
                 newNodes.add(w.getNode(i));
                 i++;
                 lower++;
@@ -191,7 +203,7 @@ public class SimplifyWayAction extends JosmAction {
         newWay.setNodes(newNodes);
         cmds.add(new ChangeCommand(w, newWay));
         cmds.add(new DeleteCommand(delNodes));
-        ds.clearSelection(delNodes);
+        w.getDataSet().clearSelection(delNodes);
         return new SequenceCommand(trn("Simplify Way (remove {0} node)", "Simplify Way (remove {0} nodes)", delNodes.size(), delNodes.size()), cmds);
     }
 

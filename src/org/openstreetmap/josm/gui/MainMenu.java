@@ -212,45 +212,45 @@ public class MainMenu extends JMenuBar {
 
     /* Tools menu */
     /** Tools -> Split Way */
-    public final JosmAction splitWay = new SplitWayAction();
+    public final SplitWayAction splitWay = new SplitWayAction();
     /** Tools -> Combine Way */
-    public final JosmAction combineWay = new CombineWayAction();
+    public final CombineWayAction combineWay = new CombineWayAction();
     /** Tools -> Reverse Ways */
-    public final JosmAction reverseWay = new ReverseWayAction();
+    public final ReverseWayAction reverseWay = new ReverseWayAction();
     /** Tools -> Simplify Way */
-    public final JosmAction simplifyWay = new SimplifyWayAction();
+    public final SimplifyWayAction simplifyWay = new SimplifyWayAction();
     /** Tools -> Align Nodes in Circle */
-    public final JosmAction alignInCircle = new AlignInCircleAction();
+    public final AlignInCircleAction alignInCircle = new AlignInCircleAction();
     /** Tools -> Align Nodes in Line */
-    public final JosmAction alignInLine = new AlignInLineAction();
+    public final AlignInLineAction alignInLine = new AlignInLineAction();
     /** Tools -> Distribute Nodes */
-    public final JosmAction distribute = new DistributeAction();
+    public final DistributeAction distribute = new DistributeAction();
     /** Tools -> Orthogonalize Shape */
     public final OrthogonalizeAction ortho = new OrthogonalizeAction();
     /** Orthogonalize undo. Action is not shown in the menu. Only triggered by shortcut */
-    public final JosmAction orthoUndo = new Undo();
+    public final Undo orthoUndo = new Undo();
     /** Tools -> Mirror */
-    public final JosmAction mirror = new MirrorAction();
+    public final MirrorAction mirror = new MirrorAction();
     /** Tools -> Follow line */
-    public final JosmAction followLine = new FollowLineAction();
+    public final FollowLineAction followLine = new FollowLineAction();
     /** Tools -> Add Node... */
-    public final AddNodeAction addnode = new AddNodeAction();
+    public final AddNodeAction addNode = new AddNodeAction();
     /** Tools -> Move Node... */
-    public final MoveNodeAction movenode = new MoveNodeAction();
+    public final MoveNodeAction moveNode = new MoveNodeAction();
     /** Tools -> Create Circle */
-    public final JosmAction createCircle = new CreateCircleAction();
+    public final CreateCircleAction createCircle = new CreateCircleAction();
     /** Tools -> Merge Nodes */
-    public final JosmAction mergeNodes = new MergeNodesAction();
+    public final MergeNodesAction mergeNodes = new MergeNodesAction();
     /** Tools -> Join Node to Way */
-    public final JosmAction joinNodeWay = new JoinNodeWayAction();
+    public final JoinNodeWayAction joinNodeWay = new JoinNodeWayAction();
     /** Tools -> Disconnect Node from Way */
-    public final JosmAction unJoinNodeWay = new UnJoinNodeWayAction();
+    public final UnJoinNodeWayAction unJoinNodeWay = new UnJoinNodeWayAction();
     /** Tools -> Unglue Ways */
-    public final JosmAction unglueNodes = new UnGlueAction();
+    public final UnGlueAction unglueNodes = new UnGlueAction();
     /** Tools -> Join overlapping Areas */
-    public final JosmAction joinAreas = new JoinAreasAction();
+    public final JoinAreasAction joinAreas = new JoinAreasAction();
     /** Tools -> Create multipolygon */
-    public final JosmAction createMultipolygon = new CreateMultipolygonAction();
+    public final CreateMultipolygonAction createMultipolygon = new CreateMultipolygonAction();
 
     /* Selection menu */
     /** Selection -> Select All */
@@ -710,8 +710,8 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, mirror, true);
         toolsMenu.addSeparator();
         add(toolsMenu, followLine, true);
-        add(toolsMenu, addnode, true);
-        add(toolsMenu, movenode, true);
+        add(toolsMenu, addNode, true);
+        add(toolsMenu, moveNode, true);
         add(toolsMenu, createCircle);
         toolsMenu.addSeparator();
         add(toolsMenu, mergeNodes);
