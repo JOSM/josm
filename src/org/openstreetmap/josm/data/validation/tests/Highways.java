@@ -39,9 +39,9 @@ public class Highways extends Test {
             "primary",   "primary_link", 
             "secondary", "secondary_link",
             "tertiary",  "tertiary_link",
-            "living_street",
+            "unclassified",
             "residential",
-            "unclassified");
+            "living_street");
 
     boolean leftByPedestrians = false;
     boolean leftByCyclists = false;
