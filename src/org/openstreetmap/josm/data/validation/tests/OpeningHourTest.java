@@ -149,11 +149,12 @@ public class OpeningHourTest extends Test {
      * Checks for a correct usage of the opening hour syntax of the {@code value} given according to
      * <a href="https://github.com/ypid/opening_hours.js">opening_hours.js</a> and returns a list containing
      * validation errors or an empty list. Null values result in an empty list.
+     * @param key the OSM key (should be "opening_hours", "collection_times" or "service_times"). Used in error message
      * @param value the opening hour value to be checked.
      * @param mode whether to validate {@code value} as a time range, or points in time, or both.
      * @return a list of {@link TestError} or an empty list
      */
-    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String value, CheckMode mode) {
+    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, CheckMode mode) {
         if (ENGINE == null || value == null || value.trim().isEmpty()) {
             return Collections.emptyList();
         }
@@ -172,7 +173,7 @@ public class OpeningHourTest extends Test {
             return errors;
         } catch (ScriptException ex) {
             final String message = ex.getMessage()
-                    .replaceAll("[^:]*Exception: ", "opening_hours - ")
+                    .replaceAll("[^:]*Exception: ", key+" - ")
                     .replaceAll("\\(<Unknown source.*", "")
                     .trim();
             return Arrays.asList(new OpeningHoursTestError(message, Severity.ERROR));
@@ -181,12 +182,12 @@ public class OpeningHourTest extends Test {
         }
     }
 
-    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String value) {
-        return checkOpeningHourSyntax(value, CheckMode.TIME_RANGE);
+    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value) {
+        return checkOpeningHourSyntax(key, value, CheckMode.TIME_RANGE);
     }
 
     protected void check(final OsmPrimitive p, final String key, CheckMode mode) {
-        for (OpeningHoursTestError e : checkOpeningHourSyntax(p.get(key), mode)) {
+        for (OpeningHoursTestError e : checkOpeningHourSyntax(key, p.get(key), mode)) {
             errors.add(e.getTestError(p, key));
         }
     }
