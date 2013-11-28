@@ -3,6 +3,11 @@ package org.openstreetmap.josm.tools;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
+
+import java.io.BufferedReader;
+import java.net.URL;
 
 /**
  * Unit tests of {@link Utils} class.
@@ -64,5 +69,21 @@ public class UtilsTest {
         Assert.assertEquals("12", Utils.toHexString(new byte[]{0x12}));
         Assert.assertEquals("127f", Utils.toHexString(new byte[]{0x12, 0x7f}));
         Assert.assertEquals("fedc", Utils.toHexString(new byte[]{(byte) 0xfe, (byte) 0xdc}));
+    }
+
+    @Test
+    public void testOpenUrlGzip() throws Exception {
+        Main.pref = new Preferences();
+        final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("http://www.openstreetmap.org/trace/1613906/data"), true);
+        Assert.assertTrue(x.readLine().startsWith("<?xml version="));
+        x.close();
+    }
+
+    @Test
+    public void testOpenUrlBzip() throws Exception {
+        Main.pref = new Preferences();
+        final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("http://www.openstreetmap.org/trace/785544/data"), true);
+        Assert.assertTrue(x.readLine().startsWith("<?xml version="));
+        x.close();
     }
 }

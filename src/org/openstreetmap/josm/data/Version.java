@@ -235,7 +235,7 @@ public class Version {
             s += " SVN";
         }
         String result = "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+")";
-        if (includeOsDetails) {
+        if (includeOsDetails && Main.platform != null) {
             result += " " + Main.platform.getOSDescription();
         }
         return result;

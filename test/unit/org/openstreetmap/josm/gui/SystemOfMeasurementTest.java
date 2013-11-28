@@ -8,6 +8,10 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.NavigatableComponent.SystemOfMeasurement;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 /**
  * Unit tests of {@link SystemOfMeasurement} class.
  */
@@ -60,6 +64,16 @@ public class SystemOfMeasurementTest {
         assertEquals("100.0 km", NavigatableComponent.METRIC_SOM.getDistText(99999.99));
         assertEquals("100.0 km", NavigatableComponent.METRIC_SOM.getDistText(100000.0));
         assertEquals("100.0 km", NavigatableComponent.METRIC_SOM.getDistText(100000.01));
+    }
+
+    @Test
+    public void testGetDistTextLocalized() {
+        final DecimalFormat format = new DecimalFormat("0.000", DecimalFormatSymbols.getInstance(Locale.GERMAN));
+        assertEquals("0,001 m", NavigatableComponent.METRIC_SOM.getDistText(0.001, format, 1e-6));
+        assertEquals("< 0,010 m", NavigatableComponent.METRIC_SOM.getDistText(0.001, format, 0.01));
+        assertEquals("10,051 m", NavigatableComponent.METRIC_SOM.getDistText(10.0514, format, 0.01));
+        assertEquals("10,052 m", NavigatableComponent.METRIC_SOM.getDistText(10.0515, format, 0.01));
+        assertEquals("100,000 km", NavigatableComponent.METRIC_SOM.getDistText(100000.0, format, 0.01));
     }
 
     /**
