@@ -341,6 +341,15 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     }
 
     /**
+     * Returns the current value for the changeset source
+     *
+     * @return the current value for the changeset source
+     */
+    protected String getUploadSource() {
+        return changesetSourceModel.getComment();
+    }
+
+    /**
      * Returns true if the dialog was canceled
      *
      * @return true if the dialog was canceled
@@ -401,21 +410,43 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         }
 
         /**
-         * returns true if the user wants to revisit, false if they
-         * want to continue
+         * Displays a warning message indicating that the upload comment is empty/short.
+         * @return true if the user wants to revisit, false if they want to continue
          */
         protected boolean warnUploadComment() {
-            ExtendedDialog dlg = new ExtendedDialog(UploadDialog.this,
+            return warnUploadTag(
                     tr("Please revise upload comment"),
-                    new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")});
-            dlg.setContent("<html>" +
                     tr("Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />" +
                             "This is technically allowed, but please consider that many users who are<br />" +
                             "watching changes in their area depend on meaningful changeset comments<br />" +
                             "to understand what is going on!<br /><br />" +
                             "If you spend a minute now to explain your change, you will make life<br />" +
-                    "easier for many other mappers.") +
-            "</html>");
+                            "easier for many other mappers."),
+                    "upload_comment_is_empty_or_very_short"
+            );
+        }
+
+        /**
+         * Displays a warning message indicating that no changeset source is given.
+         * @return true if the user wants to revisit, false if they want to continue
+         */
+        protected boolean warnUploadSource() {
+            return warnUploadTag(
+                    tr("Please revise specify a changeset source"),
+                    tr("You did not specify a source for your changes.<br />" +
+                            "This is technically allowed, but it assists other users <br />" +
+                            "to understand the origins of the data.<br /><br />" +
+                            "If you spend a minute now to explain your change, you will make life<br />" +
+                            "easier for many other mappers."),
+                    "upload_source_is_empty"
+            );
+        }
+
+        protected boolean warnUploadTag(final String title, final String message, final String togglePref) {
+            ExtendedDialog dlg = new ExtendedDialog(UploadDialog.this,
+                    title,
+                    new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")});
+            dlg.setContent("<html>" + message + "</html>");
             dlg.setButtonIcons(new Icon[] {
                     ImageProvider.get("ok"),
                     ImageProvider.get("cancel"),
@@ -428,7 +459,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                     tr("Cancel and return to the previous dialog"),
                     tr("Ignore this hint and upload anyway")});
             dlg.setIcon(JOptionPane.WARNING_MESSAGE);
-            dlg.toggleEnable("upload_comment_is_empty_or_very_short");
+            dlg.toggleEnable(togglePref);
             dlg.setToggleCheckboxText(tr("Do not show this message again"));
             dlg.setCancelButton(1, 2);
             return dlg.showDialog().getValue() != 3;
@@ -446,21 +477,22 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (getUploadComment().trim().length() < 10) {
-                if (warnUploadComment())
-                {
-                    tpConfigPanels.setSelectedIndex(0);
-                    pnlBasicUploadSettings.initEditingOfUploadComment();
-                    return;
-                }
+            if ((getUploadComment().trim().length() < 10 && warnUploadComment()) /* abort for missing comment */
+                    || (getUploadSource().trim().isEmpty() && warnUploadSource()) /* abort for missing changeset source */
+                    ) {
+                tpConfigPanels.setSelectedIndex(0);
+                pnlBasicUploadSettings.initEditingOfUploadComment();
+                return;
             }
 
             /* test for empty tags in the changeset metadata and proceed only after user's confirmation.
              * though, accept if key and value are empty (cf. xor). */
             List<String> emptyChangesetTags = new ArrayList<String>();
             for (final Entry<String, String> i : pnlTagSettings.getTags(true).entrySet()) {
-                if ((i.getKey() == null || i.getKey().trim().isEmpty())
-                        ^ (i.getValue() == null || i.getValue().trim().isEmpty())) {
+                final boolean isKeyEmpty = i.getKey() == null || i.getKey().trim().isEmpty();
+                final boolean isValueEmpty = i.getValue() == null || i.getValue().trim().isEmpty();
+                final boolean ignoreKey = "comment".equals(i.getKey()) || "source".equals(i.getKey());
+                if ((isKeyEmpty ^ isValueEmpty) && !ignoreKey) {
                     emptyChangesetTags.add(tr("{0}={1}", i.getKey(), i.getValue()));
                 }
             }
