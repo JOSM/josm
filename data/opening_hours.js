@@ -1101,11 +1101,14 @@
 				wd:       'Mo-Fr',
 				weekday:  'Mo-Fr',
 				weekdays: 'Mo-Fr',
-			}, 'Please ommit "<ko>".': {
+			}, 'Please ommit "<ko>" or use a colon instead: "12:00-14:00".': {
 				h: '',
+			}, 'Please ommit "<ko>".': {
 				season: '',
 			}, 'Please ommit "<ko>". You might want to express open end which can be specified as "12:00+" for example': {
 				from: '',
+			}, 'Please use notation "<ok>" for "<ko>". If the times are unsure or variate consider a comment e.g. 12:00-14:00 "only on sunshine".': {
+				'~':  '-',
 			}, 'Please use notation "<ok>" for "<ko>".': {
 				'–':  '-',
 				to:   '-',
@@ -1154,7 +1157,7 @@
 				oct:  9,
 				nov: 10,
 				dec: 11,
-			}, 'Please use the englisch abbreviation "<ok>" for "<ko>".': {
+			}, 'Please use the English abbreviation "<ok>" for "<ko>".': {
 				january:    0,
 				february:   1,
 				march:      2,
@@ -1214,49 +1217,58 @@
 				th: 4,
 				fr: 5,
 				sa: 6,
+			}, 'Assuming "<ok>" for "<ko>"': {
+				m:          1,
+				w:          3,
+				f:          5,
 			}, 'Please use the abbreviation "<ok>" for "<ko>".': {
 				sun:        0,
 				sunday:     0,
 				sundays:    0,
-				m:          1,
 				mon:        1,
 				monday:     1,
 				mondays:    1,
 				tue:        2,
 				tuesday:    2,
 				tuesdays:   2,
-				w:          3,
 				wed:        3,
 				wednesday:  3,
 				wednesdays: 3,
 				thu:        4,
 				thursday:   4,
 				thursdays:  4,
-				f:          5,
 				fri:        5,
 				friday:     5,
 				fridays:    5,
 				sat:        6,
 				saturday:   6,
 				saturdays:  6,
-			}, 'Bitte benutze die englische Abkürzung "<ok>" für "<ko>".': {
+			}, 'Bitte benutze die englische Abkürzung "<ok>" für "<ko>". Could also mean Saturday in Polish …': {
 				so:         0,
-				son:        0,
-				sonntag:    0,
-				montag:     1,
-				di:         2,
-				die:        2,
-				dienstag:   2,
-				mi:         3,
-				mit:        3,
-				mittwoch:   3,
-				'do':       4,
-				don:        4,
-				donnerstag: 4,
-				fre:        5,
-				freitag:    5,
-				sam:        6,
-				samstag:    6,
+			}, 'Bitte benutze die englische Abkürzung "<ok>" für "<ko>".': {
+				son:         0,
+				sonntag:     0,
+				sonntags:    0,
+				montag:      1,
+				montags:     1,
+				di:          2,
+				die:         2,
+				dienstag:    2,
+				dienstags:   2,
+				mi:          3,
+				mit:         3,
+				mittwoch:    3,
+				mittwochs:   3,
+				'do':        4,
+				don:         4,
+				donnerstag:  4,
+				donnerstags: 4,
+				fre:         5,
+				freitag:     5,
+				freitags:    5,
+				sam:         6,
+				samstag:     6,
+				samstags:    6,
 			}, 'S\'il vous plaît utiliser l\'abréviation "<ok>" pour "<ko>".': {
 				dim:      0,
 				dimanche: 0,
@@ -1290,7 +1302,7 @@
 				za:        6,
 				zat:       6,
 				zaterdag:  6,
-			}, 'Please use the englisch abbreviation "<ok>" for "<ko>".': { // FIXME: Translate to Czech.
+			}, 'Please use the English abbreviation "<ok>" for "<ko>".': { // FIXME: Translate to Czech.
 				'neděle':  0,
 				'ne':      0,
 				'pondělí': 1,
@@ -1304,7 +1316,7 @@
 				'pátek':   5,
 				'pá':      5,
 				'sobota':  6,
-			}, 'Please use the englisch abbreviation "<ok>" for "<ko>".': {
+			}, 'Please use the English abbreviation "<ok>" for "<ko>".': {
 				// Spanish.
 				'martes':    0,
 				'miércoles': 1,
@@ -1330,6 +1342,14 @@
 				'torsdag': 4,
 				'fredag':  5,
 				'lördag':  6,
+				// Polish
+				'niedziela': 0, 'niedz': 0, 'n': 0, 'ndz': 0,
+				'poniedziałek': 1, 'poniedzialek': 1, 'pon': 1, 'pn': 1,
+				'wtorek': 2, 'wt': 2,
+				'środa': 3, 'sroda': 3, 'śr': 3, 'sr': 3,
+				'czwartek': 4, 'czw': 4, 'cz': 4,
+				'piątek': 5, 'piatek': 5, 'pt': 5,
+				'sobota': 6, 'sob': 6, // 'so': 6 // abbreviation also used in German
 			},
 		},
 
@@ -1568,7 +1588,7 @@
 				} else if (tmp = value.match(/^days?/i)) {
 					curr_block_tokens.push([tmp[0].toLowerCase(), 'calcday', value.length ]);
 					value = value.substr(tmp[0].length);
-				} else if (tmp = value.match(/^(&|–|[a-zA-ZäÄàÀéÉ]+\b)\.?/i)) {
+				} else if (tmp = value.match(/^(&|–|~|[a-zA-ZäÄàÀéÉ]+\b)\.?/i)) {
 					// Handle all remaining words with error tolerance
 					var correct_val = returnCorrectWordOrToken(tmp[1].toLowerCase(), value.length);
 					if (typeof correct_val == 'object') {
@@ -1739,7 +1759,7 @@
 						|| matchTokens(tokens, at, 'year', 'month', 'number')
 						|| matchTokens(tokens, at, 'year', 'event')
 						|| matchTokens(tokens, at, 'event')) {
-					at = parseMonthdayRange(tokens, at);
+					at = parseMonthdayRange(tokens, at, nblock);
 					week_stable = false;
 				} else if (matchTokens(tokens, at, 'year')) {
 					at = parseYearRange(tokens, at);
@@ -1750,10 +1770,14 @@
 				} else if (matchTokens(tokens, at, 'week')) {
 					at = parseWeekRange(tokens, at + 1);
 					week_stable = false;
+
+					// if (prettified_group_value[-1] != ' ')
+					// 	prettified_group_value = prettified_group_value.substring(0, prettified_group_value.length - 1);
 				} else if (at != 0 && at != tokens.length - 1 && tokens[at][0] == ':') {
 					// Ignore colon if they appear somewhere else than as time separator.
+					// Except the start or end of the value.
 					// This provides compatibility with the syntax proposed by Netzwolf:
-					// http://www.netzwolf.info/en/cartography/osm/time_domain/specification
+					// http://wiki.openstreetmap.org/wiki/Key:opening_hours:specification
 					if (!done_with_warnings && matchTokens(tokens, at-1, 'weekday') || matchTokens(tokens, at-1, 'holiday'))
 						parsing_warnings.push([nblock, at, 'Please don’t use ":" after ' + tokens[at-1][1] + '.']);
 
@@ -1762,7 +1786,8 @@
 					at++;
 				} else if (matchTokens(tokens, at, 'number', 'timesep')
 						|| matchTokens(tokens, at, 'timevar')
-						|| matchTokens(tokens, at, '(', 'timevar')) {
+						|| matchTokens(tokens, at, '(', 'timevar')
+						|| matchTokens(tokens, at, 'number', '-')) {
 					at = parseTimeRange(tokens, at, selectors);
 
 					if (typeof used_subparsers['time ranges'] != 'number')
@@ -1832,6 +1857,17 @@
 				}
 
 				if (typeof conf != 'undefined') {
+
+					// 'Mo: 12:00-13:00' -> 'Mo 12:00-13:00'
+					if (used_subparsers['time ranges'] && old_at > 1 && tokens[old_at-1][0] == ':'
+							&& matchTokens(tokens, old_at - 2, 'weekday'))
+						prettified_group_value = prettified_group_value.substring(0, prettified_group_value.length - 2) + ' ';
+
+					// 'week 1, week 3' -> 'week 1,week 3'
+					if (prettified_group_value.substr(prettified_group_value.length -2, 2) == ', '
+							&& matchTokens(tokens, old_at, 'week'))
+						prettified_group_value = prettified_group_value.substring(0, prettified_group_value.length - 1);
+
 					prettified_group_value += prettifySelector(tokens, old_at, at, conf, used_subparsers['time ranges']);
 				}
 
@@ -2042,6 +2078,54 @@
 					at = at_end_time + (is_point_in_time ? -1 :
 							(has_normal_time[1] ? 3 : (has_time_var_calc[1] ? 7 : !has_open_end))
 							);
+				} else if (matchTokens(tokens, at, 'number', '-', 'number')) { // "Mo 09-18" -> "Mo 09:00-18:00". Please don’t use this
+					var minutes_from = tokens[at][0]   * 60;
+					var minutes_to   = tokens[at+2][0] * 60;
+					if (!done_with_warnings)
+						parsing_warnings.push([nblock, at + 2,
+							'Time range without minutes specified. Not very explicit! Please use this syntax instead e.g. "12:00-14:00".']);
+
+					if (minutes_from >= minutes_in_day)
+						throw formatWarnErrorMessage(nblock, at,
+							'Time range starts outside of the current day');
+					if (minutes_to < minutes_from)
+						minutes_to += minutes_in_day;
+					if (minutes_to > minutes_in_day * 2)
+						throw formatWarnErrorMessage(nblock, at + 2,
+							'Time spanning more than two midnights not supported');
+
+					if (minutes_to > minutes_in_day) {
+						selectors.time.push(function(minutes_from, minutes_to) { return function(date) {
+							var ourminutes = date.getHours() * 60 + date.getMinutes();
+
+							if (ourminutes < minutes_from)
+								return [false, dateAtDayMinutes(date, minutes_from)];
+							else
+								return [true, dateAtDayMinutes(date, minutes_to)];
+						}}(minutes_from, minutes_to));
+
+						selectors.wraptime.push(function(minutes_from, minutes_to) { return function(date) {
+							var ourminutes = date.getHours() * 60 + date.getMinutes();
+
+							if (ourminutes < minutes_to)
+								return [true, dateAtDayMinutes(date, minutes_to)];
+							else
+								return [false, undefined];
+						}}(minutes_from, minutes_to - minutes_in_day));
+					} else {
+						selectors.time.push(function(minutes_from, minutes_to) { return function(date) {
+							var ourminutes = date.getHours() * 60 + date.getMinutes();
+
+							if (ourminutes < minutes_from)
+								return [false, dateAtDayMinutes(date, minutes_from)];
+							else if (ourminutes < minutes_to)
+								return [true, dateAtDayMinutes(date, minutes_to), has_open_end];
+							else
+								return [false, dateAtDayMinutes(date, minutes_from + minutes_in_day)];
+						}}(minutes_from, minutes_to));
+					}
+
+					at += 3;
 				} else { // additional block
 					if (matchTokens(tokens, at, '('))
 						throw formatWarnErrorMessage(nblock, at+1, 'Missing variable time (e.g. sunrise) after: "' + tokens[at][1] + '"');
@@ -2632,7 +2716,7 @@
 					if (matchTokens(tokens, at+1, '-', 'year', '/', 'number')) {
 						var is_range   = true;
 						var has_period = true;
-						if (tokens[at+4][0] == 1 && !done_with_warnings)
+						if (!done_with_warnings && tokens[at+4][0] == 1)
 							parsing_warnings.push([nblock, at+1+3, 'Please don’t use year ranges with period equals one (see README)']);
 					} else {
 						var is_range   = matchTokens(tokens, at+1, '-', 'year');
@@ -2757,6 +2841,11 @@
 
 				if (!matchTokens(tokens, at, ','))
 					break;
+
+				if (!matchTokens(tokens, at+1, 'number')) {
+					at++; // we don‘t need the comma in parseGroup
+					break;
+				}
 			}
 
 			if (typeof used_subparsers['week ranges'] != 'number')
@@ -2888,7 +2977,7 @@
 		//======================================================================
 		// Month day range parser (Jan 26-31; Jan 26-Feb 26)
 		//======================================================================
-		function parseMonthdayRange(tokens, at) {
+		function parseMonthdayRange(tokens, at, nblock) {
 			for (; at < tokens.length; at++) {
 				var has_year = [], has_month = [], has_event = [], has_calc = [], has_constrained_weekday = [], has_calc = [];
 				has_year[0]  = matchTokens(tokens, at, 'year');
@@ -3054,7 +3143,9 @@
 						else if (!has_period)
 							return [true, to_date];
 
-						var period = tokens[at+5][0];
+						var period = tokens[at+has_year+5][0];
+						if (!done_with_warnings && period == 1)
+							parsing_warnings.push([nblock, at+has_year+5, 'Please don’t use day ranges with period equals one (see README)']);
 						var nday = Math.floor((date.getTime() - from_date.getTime()) / msec_in_day);
 						var in_period = nday % period;
 
@@ -3062,6 +3153,7 @@
 							return [true, new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1)];
 						else
 							return [false, new Date(date.getFullYear(), date.getMonth(), date.getDate() + period - in_period)];
+
 					}}(tokens, at, is_range, has_period, has_year[0]));
 
 					at += 2 + has_year[0] + (is_range ? 2 : 0) + (has_period ? 2 : 0);
@@ -3274,7 +3366,7 @@
 			var value = '';
 			var start_at = at;
 			while (at < last_at) {
-				if (matchTokens(tokens, at, 'weekday')) {
+				if (matchTokens(tokens, at, 'weekday')) { // FIXME
 					if (!conf.leave_weekday_sep_one_day_betw
 						&& at - start_at > 1 && (matchTokens(tokens, at-1, ',') || matchTokens(tokens, at-1, '-'))
 						&& matchTokens(tokens, at-2, 'weekday')
@@ -3283,11 +3375,21 @@
 					}
 					value += weekdays[tokens[at][0]];
 				} else if (at - start_at > 0 && used_parseTimeRange > 0 && matchTokens(tokens, at-1, 'timesep')
-						&& matchTokens(tokens, at, 'number')) {
+						&& matchTokens(tokens, at, 'number')) { // '09:0' -> '09:00'
 					value += (tokens[at][0] < 10 ? '0' : '') + tokens[at][0].toString();
 				} else if (used_parseTimeRange > 0 && conf.leading_zero_hour && at != tokens.length
-						&& matchTokens(tokens, at+1, 'timesep')) {
+						&& matchTokens(tokens, at, 'number')
+						&& matchTokens(tokens, at+1, 'timesep')) { // '9:00' -> '19:00'
 					value += (tokens[at][0] < 10 ? (tokens[at][0] == 0 && conf.one_zero_if_hour_zero ? '' : '0') : '') + tokens[at][0].toString();
+				} else if (used_parseTimeRange > 0 && at + 2 < last_at
+						&& matchTokens(tokens, at, 'number')
+						&& matchTokens(tokens, at+1, '-')
+						&& matchTokens(tokens, at+2, 'number')) { // '9-18' -> '09:00-18:00'
+					value += (tokens[at][0] < 10 ? (tokens[at][0] == 0 && conf.one_zero_if_hour_zero ? '' : '0') : '') + tokens[at][0].toString();
+					value += ':00-';
+					value += (tokens[at+2][0] < 10 ? '0' : '') + tokens[at+2][0].toString();
+					value += ':00';
+					at += 3;
 				} else if (matchTokens(tokens, at, 'comment')) {
 					value += '"' + tokens[at][0].toString() + '"';
 				} else if (matchTokens(tokens, at, 'closed')) {
@@ -3306,7 +3408,7 @@
 				} else if (matchTokens(tokens, at, 'month')) {
 					value += months[[tokens[at][0]]];
 					if (at + 1 < last_at && matchTokens(tokens, at+1, 'weekday'))
-					value += ' ';
+						value += ' ';
 				} else if (at + 2 < last_at
 						&& (matchTokens(tokens, at, '-') || matchTokens(tokens, at, '+'))
 						&& matchTokens(tokens, at+1, 'number', 'calcday')) {

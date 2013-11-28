@@ -81,6 +81,14 @@ public class OpeningHourTestTest {
     }
 
     @Test
+    public void testCheckOpeningHourSyntaxTicket9367() throws Exception {
+        final String key = "opening_hours";
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getSeverity(), is(Severity.WARNING));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getMessage(), is("Mo,Tu 04-17 <--- (Time range without minutes specified. Not very explicit! Please use this syntax instead e.g. \"12:00-14:00\".)"));
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getPrettifiedValue(), is("Mo,Tu 04:00-17:00"));
+    }
+
+    @Test
     public void testCheckServiceTimeSyntax1() throws Exception {
         final String key = "service_times";
         // frequently used tags according to http://taginfo.openstreetmap.org/keys/service_times#values
