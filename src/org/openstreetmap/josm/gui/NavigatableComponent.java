@@ -10,6 +10,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1461,13 +1462,25 @@ public class NavigatableComponent extends JComponent implements Helpful {
          * @return The text describing the given distance in this system of measurement.
          */
         public String getDistText(double dist) {
+            return getDistText(dist, null, 0.01);
+        }
+
+        /**
+         * Returns the text describing the given distance in this system of measurement.
+         * @param dist The distance in metres
+         * @param format A {@link NumberFormat} to format the area value
+         * @param threshold Values lower than this {@code threshold} are displayed as {@code "< [threshold]"}
+         * @return The text describing the given distance in this system of measurement.
+         * @since 6422
+         */
+        public String getDistText(final double dist, final NumberFormat format, final double threshold) {
             double a = dist / aValue;
             if (!Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false) && a > bValue / aValue)
-                return formatText(dist / bValue, bName);
-            else if (a < 0.01)
-                return "< 0.01 " + aName;
+                return formatText(dist / bValue, bName, format);
+            else if (a < threshold)
+                return "< " + formatText(threshold, aName, format);
             else
-                return formatText(a, aName);
+                return formatText(a, aName, format);
         }
 
         /**
@@ -1477,20 +1490,35 @@ public class NavigatableComponent extends JComponent implements Helpful {
          * @since 5560
          */
         public String getAreaText(double area) {
+            return getAreaText(area, null, 0.01);
+        }
+
+        /**
+         * Returns the text describing the given area in this system of measurement.
+         * @param area The area in square metres
+         * @param format A {@link NumberFormat} to format the area value
+         * @param threshold Values lower than this {@code threshold} are displayed as {@code "< [threshold]"}
+         * @return The text describing the given area in this system of measurement.
+         * @since 6422
+         */
+        public String getAreaText(final double area, final NumberFormat format, final double threshold) {
             double a = area / (aValue*aValue);
             boolean lowerOnly = Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false);
             boolean customAreaOnly = Main.pref.getBoolean("system_of_measurement.use_only_custom_area_unit", false);
             if ((!lowerOnly && areaCustomValue > 0 && a > areaCustomValue / (aValue*aValue) && a < (bValue*bValue) / (aValue*aValue)) || customAreaOnly)
-                return formatText(area / areaCustomValue, areaCustomName);
+                return formatText(area / areaCustomValue, areaCustomName, format);
             else if (!lowerOnly && a >= (bValue*bValue) / (aValue*aValue))
-                return formatText(area / (bValue*bValue), bName+"\u00b2");
-            else if (a < 0.01)
-                return "< 0.01 " + aName+"\u00b2";
+                return formatText(area / (bValue * bValue), bName + "\u00b2", format);
+            else if (a < threshold)
+                return "< " + formatText(threshold, aName + "\u00b2", format);
             else
-                return formatText(a, aName+"\u00b2");
+                return formatText(a, aName + "\u00b2", format);
         }
 
-        private static String formatText(double v, String unit) {
+        private static String formatText(double v, String unit, NumberFormat format) {
+            if (format != null) {
+                return format.format(v) + " " + unit;
+            }
             return String.format(Locale.US, "%." + (v<9.999999 ? 2 : 1) + "f %s", v, unit);
         }
     }
