@@ -12,6 +12,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -36,10 +37,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipFile;
 
+import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.io.FileImporter;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -637,7 +641,27 @@ public final class Utils {
      * @since 5867
      */
     public static InputStream openURL(URL url) throws IOException {
-        return setupURLConnection(url.openConnection()).getInputStream();
+        return openURLAndDecompress(url, false);
+    }
+
+    /**
+     * Opens a connection to the given URL, sets the User-Agent property to JOSM's one, and decompresses stream if necessary.
+     * @param url The url to open
+     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link CBZip2InputStream}
+     *                   if the {@code Content-Type} header is set accordingly.
+     * @return An stream for the given URL
+     * @throws IOException if an I/O exception occurs.
+     * @since 6421
+     */
+    public static InputStream openURLAndDecompress(final URL url, final boolean decompress) throws IOException {
+        final URLConnection connection = setupURLConnection(url.openConnection());
+        if (decompress && "application/x-gzip".equals(connection.getHeaderField("Content-Type"))) {
+            return new GZIPInputStream(connection.getInputStream());
+        } else if (decompress && "application/x-bzip2".equals(connection.getHeaderField("Content-Type"))) {
+            return FileImporter.getBZip2InputStream(new BufferedInputStream(connection.getInputStream()));
+        } else {
+            return connection.getInputStream();
+        }
     }
 
     /***
@@ -663,13 +687,26 @@ public final class Utils {
      * @since 5868
      */
     public static BufferedReader openURLReader(URL url) throws IOException {
-        return new BufferedReader(new InputStreamReader(openURL(url), "utf-8"));
+        return openURLReaderAndDecompress(url, false);
+    }
+
+    /**
+     * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
+     * @param url The url to open
+     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link CBZip2InputStream}
+     *                   if the {@code Content-Type} header is set accordingly.
+     * @return An buffered stream reader for the given URL (using UTF-8)
+     * @throws IOException if an I/O exception occurs.
+     * @since 6421
+     */
+    public static BufferedReader openURLReaderAndDecompress(final URL url, final boolean decompress) throws IOException {
+        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), "utf-8"));
     }
 
     /**
      * Opens a HTTP connection to the given URL, sets the User-Agent property to JOSM's one and optionnaly disables Keep-Alive.
      * @param httpURL The HTTP url to open (must use http:// or https://)
-     * @param keepAlive
+     * @param keepAlive whether not to set header {@code Connection=close}
      * @return An open HTTP connection to the given URL
      * @throws IOException if an I/O exception occurs.
      * @since 5587
