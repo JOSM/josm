@@ -57,6 +57,8 @@ import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
@@ -65,8 +67,8 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
@@ -89,6 +91,9 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     protected MoveUpDownAction upAction;
     protected MoveUpDownAction downAction;
     protected JCheckBox cbWireframe;
+
+    public static final JosmAction PREFERENCE_ACTION = PreferencesAction.forPreferenceSubTab(
+            tr("Map paint preferences"), null, MapPaintPreference.class);
 
     /**
      * Constructs a new {@code MapPaintDialog}.
@@ -157,12 +162,12 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
         InputMapUtils.addEnterAction(tblStyles, onoffAction);
         InputMapUtils.addSpacebarAction(tblStyles, onoffAction);
 
-        createLayout(p, true, Arrays.asList(new SideButton[] {
+        createLayout(p, true, Arrays.asList(
                 new SideButton(onoffAction, false),
                 new SideButton(upAction, false),
                 new SideButton(downAction, false),
-                new SideButton(new LaunchMapPaintPreferencesAction(), false)
-        }));
+                new SideButton(PREFERENCE_ACTION, false)
+        ));
     }
 
     protected static class StylesTable extends JTable {
@@ -404,26 +409,6 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
         @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
-        }
-    }
-
-    /**
-     * Opens preferences window and selects the mappaint tab.
-     */
-    public static class LaunchMapPaintPreferencesAction extends AbstractAction {
-        /**
-         * Constructs a new {@code LaunchMapPaintPreferencesAction}.
-         */
-        public LaunchMapPaintPreferencesAction() {
-            putValue(NAME, tr("Preferences"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "mappaintpreference"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            final PreferenceDialog p =new PreferenceDialog(Main.parent);
-            p.selectMapPaintPreferenceTab();
-            p.setVisible(true);
         }
     }
 

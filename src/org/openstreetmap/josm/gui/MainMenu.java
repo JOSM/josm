@@ -109,6 +109,8 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
+import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
+import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -692,7 +694,12 @@ public class MainMenu extends JMenuBar {
         ExpertToggleAction.getInstance().addButtonModel(expertItem.getModel());
 
         add(presetsMenu, presetSearchAction);
+        add(presetsMenu, PreferencesAction.forPreferenceSubTab(tr("Preset preferences"),
+                tr("Click to open the tagging presets tab in the preferences"), TaggingPresetPreference.class));
         presetsMenu.addSeparator();
+
+        add(imageryMenu, PreferencesAction.forPreferenceTab(tr("Imagery preferences"),
+                tr("Click to open the imagery tab in the preferences"), ImageryPreference.class));
         
         add(selectionMenu, selectAll);
         add(selectionMenu, unselectAll);
