@@ -864,6 +864,8 @@ public final class TaggingPresetItems {
         public String default_;
         public String delimiter = ";";
         public String use_last_as_default = "false";
+        /** whether to use values for search via {@link TaggingPresetSelector} */
+        public String values_searchable = "false";
 
         protected JComponent component;
         protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<String, PresetListEntry>();

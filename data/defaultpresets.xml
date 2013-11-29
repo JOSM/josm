@@ -698,7 +698,7 @@ Note that for a match, at least one positive and no negative is required.
             <check key="noexit" text="No exit (cul-de-sac)" default="off"  />
             <label text="Transport mode restrictions" />
             <space />
-            <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" match="key" />
+            <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" match="key" values_searchable="true" />
             <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
             <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
             <label text="Vehicles per type" />
@@ -854,7 +854,7 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="embankment" text="Embankment" default="off" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="lit" text="Lit" default="off" /> 
-                <combo key="sac_scale" text="SAC Scale">
+                <combo key="sac_scale" text="SAC Scale" values_searchable="true">
                     <list_entry value="hiking" display_value="T1 - hiking trail" short_description="Trail well cleared. Area flat or slightly sloped, no fall hazard" />
                     <list_entry value="mountain_hiking" display_value="T2 - mountain hiking trail" short_description="Trail with continuous line and balanced ascent. Terrain partially steep, fall hazard possible" />
                     <list_entry value="demanding_mountain_hiking" display_value="T3 - difficult, exposed hiking trail" short_description="exposed sites may be secured with ropes or chains, possible need to use hands for balance. Partly exposed sites with fall hazard, scree, pathless jagged rocks" />
@@ -1142,7 +1142,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="highway" value="crossing" />
             <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
-            <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
+            <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
             <check key="supervised" text="Crossing attendant" default="off" />
             <check key="bicycle" text="Cross by bicycle" default="off" />
             <check key="horse" text="Cross on horseback" default="off" />
@@ -1159,7 +1159,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
             <label text="Edit Traffic Calming" />
             <space />
-            <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,island,rumble_strip,table" match="key" />
+            <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,island,rumble_strip,table" match="key" values_searchable="true" />
         </item>
         <item name="Passing Place" icon="presets/passingplace.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=passing_place"
@@ -1888,7 +1888,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="natural" value="water" />
             <text key="name" text="Name" />
-            <combo key="water" text="Water Body" values="lake,lagoon,pond,reservoir" match="key" />
+            <combo key="water" text="Water Body" values="lake,lagoon,pond,reservoir" match="key" values_searchable="true" />
         </item>
         <item name="Land" icon="presets/landuse.png" type="node,closedway,relation">
             <label text="Edit Land" />
@@ -1935,7 +1935,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="natural" value="wetland" />
             <text key="name" text="Name" />
-            <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" />
+            <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" values_searchable="true" />
         </item>
         <item name="Mud" icon="presets/mud.png" type="node,closedway,relation">
             <label text="Edit Mud" />
@@ -2527,7 +2527,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Fuel" />
             <space />
             <key key="amenity" value="fuel" />
-            <combo key="brand" text="Brand" values="Agip,Aral,Avia,BP,Chevron,Citgo,Esso,Exxon,Gulf,Mobil,OMV,Petro-Canada,Pioneer,Q8,Repsol,Shell,Sunoco,Statoil,Tamoil,Texaco,Total,Independent" />
+            <combo key="brand" text="Brand" values="Agip,Aral,Avia,BP,Chevron,Citgo,Esso,Exxon,Gulf,Mobil,OMV,Petro-Canada,Pioneer,Q8,Repsol,Shell,Sunoco,Statoil,Tamoil,Texaco,Total,Independent" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
                 <text key="operator" text="Operator" />
@@ -2764,7 +2764,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Route" />
             <space />
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" />
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" values_searchable="true" />
             <text key="name" text="Name" />
             <text key="ref" text="Reference" />
             <optional>
@@ -3346,7 +3346,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="restaurant" />
             <text key="name" text="Name" />
             <text key="operator" text="Operator" />
-            <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;sushi" />
+            <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;sushi" values_searchable="true" />
             <check key="microbrewery" text="Microbrewery" default="off" />
             <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
@@ -3974,9 +3974,9 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="place_of_worship" />
             <text key="name" text="Name" />
-            <combo key="building" text="Building type" values="cathedral,chapel,church,mosque,synagogue,temple" match="keyvalue" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" match="key" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,shia,sunni" match="key" />
+            <combo key="building" text="Building type" values="cathedral,chapel,church,mosque,synagogue,temple" match="keyvalue" values_searchable="true" />
+            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" match="key" values_searchable="true" />
+            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,shia,sunni" match="key" values_searchable="true" />
             <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
             <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
         </item>
@@ -4497,7 +4497,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="shelter" />
             <text key="name" text="Name" />
             <check key="fireplace" text="Fireplace" default="off" />
-            <combo key="shelter_type" text="Type of shelter" values="weather_shelter,public_transport,picnic_shelter,wildlife_hide" values_context="shelter" />
+            <combo key="shelter_type" text="Type of shelter" values="weather_shelter,public_transport,picnic_shelter,wildlife_hide" values_context="shelter" values_searchable="true" />
         </item>
         <item name="Hunting Stand" icon="presets/hunting_stand.png" type="node">
             <label text="Edit Hunting Stand" />
@@ -4728,7 +4728,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="sport" value="swimming" />
             <text key="name" text="Name" />
-            <combo key="leisure" text="Type" values="sports_centre,stadium,swimming_pool,water_park" default="swimming_pool" />
+            <combo key="leisure" text="Type" values="sports_centre,stadium,swimming_pool,water_park" default="swimming_pool" values_searchable="true" />
         </item>
         <item name="Skiing" icon="presets/skiing_downhill.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps" />
@@ -4737,7 +4737,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="sport" value="skiing" />
             <text key="name" text="Name" />
             <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,snow_park" />
-            <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" values_context="piste:difficulty" />
+            <combo key="piste:difficulty" text="Difficulty" values="novice,easy,intermediate,advanced,expert,freeride" values_context="piste:difficulty" values_searchable="true" />
             <combo key="piste:grooming" text="Grooming" values="classic,mogul,skating,classic;skating,scooter,backcountry" values_context="piste:grooming" />
         </item>
         <item name="Shooting" icon="presets/range.png" type="node,closedway">
@@ -5012,7 +5012,7 @@ Note that for a match, at least one positive and no negative is required.
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <label text="Edit Building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed" values_context="building" default="yes" match="keyvalue" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed" values_context="building" default="yes" match="keyvalue" values_searchable="true" />
             <text key="name" text="Name" />
         </item>
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation">
@@ -5027,7 +5027,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building" />
             <label text="Edit Residential Building" />
             <space />
-            <combo key="building" text="Building" values="residential,apartments,house,hut,dormitory,terrace,detached,roof" default="residential" match="keyvalue" values_context="building" />
+            <combo key="building" text="Building" values="residential,apartments,house,hut,dormitory,terrace,detached,roof" default="residential" match="keyvalue" values_context="building" values_searchable="true" />
             <text key="name" text="Name" />
         </item>
         <item name="Entrance" icon="styles/standard/misc/entrance-yes.png" type="node">
@@ -5341,7 +5341,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="operator" text="Operator" />
             <text key="ref" text="Reference" />
             <text key="start_date" text="Start date" />
-            <combo key="generator:source" text="Source">
+            <combo key="generator:source" text="Source" values_searchable="true">
                 <list_entry value="biofuel" icon="http://wiki.openstreetmap.org/w/images/6/6b/Bahnpirat-power_source-biofuel.svg" />
                 <list_entry value="biogas" icon="http://wiki.openstreetmap.org/w/images/6/6b/Bahnpirat-power_source-biofuel.svg" />
                 <list_entry value="biomass" icon="http://wiki.openstreetmap.org/w/images/6/6b/Bahnpirat-power_source-biofuel.svg" />
@@ -5360,7 +5360,7 @@ Note that for a match, at least one positive and no negative is required.
                 <list_entry value="wave" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
                 <list_entry value="wind" icon="http://wiki.openstreetmap.org/w/images/0/03/2020_stBN_powergensource_wind.svg" />
             </combo>
-            <combo key="generator:method" text="Method" values_context="generator method">
+            <combo key="generator:method" text="Method" values_context="generator method" values_searchable="true">
                 <list_entry value="anaerobic_digestion" short_description="" /> <!-- Recheck -->
                 <list_entry value="barrage" short_description="tidal" />
                 <list_entry value="combustion" short_description="bio / coal / diesel / gas / gasoline / oil / waste" />
@@ -5375,7 +5375,7 @@ Note that for a match, at least one positive and no negative is required.
                 <list_entry value="water-pumped-storage" short_description="hydro" />
                 <list_entry value="water-storage" short_description="hydro" />
             </combo>
-            <combo key="generator:type" text="Generator Type"> 
+            <combo key="generator:type" text="Generator Type" values_searchable="true">
                 <list_entry value="combined_cycle" short_description="gas combustion" />
                 <list_entry value="francis_turbine" short_description="hydro" />
                 <list_entry value="gas_turbine" short_description="biogas, biomass, gas, waste combustion" />
@@ -6344,7 +6344,7 @@ Note that for a match, at least one positive and no negative is required.
         <label text="Edit Vending machine" />
         <space />            
         <key key="amenity" value="vending_machine" />
-        <multiselect key="vending" text="Vending products" values="animal_food;bicycle_tube;cigarettes;condoms;drinks;excrement_bags;food;news_papers;parking_tickets;photos;public_transport_plans;public_transport_tickets;SIM-cards;stamps;sweets;tampons;telephone_vouchers;toys;vouchers" />
+        <multiselect key="vending" text="Vending products" values="animal_food;bicycle_tube;cigarettes;condoms;drinks;excrement_bags;food;news_papers;parking_tickets;photos;public_transport_plans;public_transport_tickets;SIM-cards;stamps;sweets;tampons;telephone_vouchers;toys;vouchers" values_searchable="true" />
         <text key="operator" text="Operator" />
         <text key="ref" text="Reference number" />
         <text key="note" text="Note" />
@@ -7050,7 +7050,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="type" value="boundary" />
             <text key="name" text="Name" />
             <optional>
-                <combo key="boundary" text="Boundary type" values="administrative,national,civil,political" />
+                <combo key="boundary" text="Boundary type" values="administrative,national,civil,political" values_searchable="true" />
                 <combo key="admin_level" text="Administrative level" values="1,2,3,4,5,6,7,8,9,10" />
             </optional>
             <roles>
@@ -7088,7 +7088,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Turn Restriction" />
             <space />
             <key key="type" value="restriction" />
-            <combo key="restriction" text="Restriction" values="no_left_turn,no_right_turn,no_straight_on,no_u_turn,only_right_turn,only_left_turn,only_straight_on" />
+            <combo key="restriction" text="Restriction" values="no_left_turn,no_right_turn,no_straight_on,no_u_turn,only_right_turn,only_left_turn,only_straight_on" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
             </optional>
@@ -7132,7 +7132,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit general route" />
             <space />
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" values_context="route type" />
+            <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" values_context="route type" values_searchable="true" />
             <text key="name" text="Name" />
             <text key="ref" text="Reference" />
             <text key="symbol" text="Symbol description" />
@@ -7230,7 +7230,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Waterway" />
             <space />
             <key key="type" value="waterway" />
-            <combo key="waterway" text="Subtype of waterway (largest one of members)" values="river,stream,canal,drain,ditch" />
+            <combo key="waterway" text="Subtype of waterway (largest one of members)" values="river,stream,canal,drain,ditch" values_searchable="true" />
             <text key="name" text="Name" />
             <optional>
                 <text key="destination" text="Name of river/sea/ocean" />
