@@ -13,7 +13,6 @@ import javax.swing.JMenu;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.dialogs.MapPaintDialog;
-import org.openstreetmap.josm.gui.dialogs.MapPaintDialog.LaunchMapPaintPreferencesAction;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -77,12 +76,6 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
         }
     }
     private final Map<String, MapPaintAction> actions = new HashMap<String, MapPaintAction>();
-    private final LaunchMapPaintPreferencesAction mapPaintPreferencesAction = new MapPaintDialog.LaunchMapPaintPreferencesAction() {
-
-        {
-            putValue("toolbar", "mappaintpreference");
-        }
-    };
 
     /**
      * Constructs a new {@code MapPaintMenu}
@@ -109,7 +102,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
             }
         }
         addSeparator();
-        add(mapPaintPreferencesAction);
+        add(MapPaintDialog.PREFERENCE_ACTION);
     }
 
     @Override
