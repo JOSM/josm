@@ -98,14 +98,19 @@ public class BasicUploadSettingsPanel extends JPanel {
         build();
     }
 
-    public void setUploadCommentDownFocusTraversalHandler(final Action handler) {
-        hcbUploadComment.getEditor().addActionListener(handler);
-        hcbUploadComment.getEditor().getEditorComponent().addKeyListener(
+    public void setUploadTagDownFocusTraversalHandlers(final Action handler) {
+        setHistoryComboBoxDownFocusTraversalHandler(handler, hcbUploadComment);
+        setHistoryComboBoxDownFocusTraversalHandler(handler, hcbUploadSource);
+    }
+
+    public void setHistoryComboBoxDownFocusTraversalHandler(final Action handler, final HistoryComboBox hcb) {
+        hcb.getEditor().addActionListener(handler);
+        hcb.getEditor().getEditorComponent().addKeyListener(
                 new KeyListener() {
                     @Override
                     public void keyTyped(KeyEvent e) {
                         if (e.getKeyCode() == KeyEvent.VK_TAB) {
-                            handler.actionPerformed(new ActionEvent(hcbUploadComment,0, "focusDown"));
+                            handler.actionPerformed(new ActionEvent(hcb, 0, "focusDown"));
                         }
                     }
                     @Override

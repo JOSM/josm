@@ -226,7 +226,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                 }
         );
 
-        pnlBasicUploadSettings.setUploadCommentDownFocusTraversalHandler(
+        pnlBasicUploadSettings.setUploadTagDownFocusTraversalHandlers(
                 new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
