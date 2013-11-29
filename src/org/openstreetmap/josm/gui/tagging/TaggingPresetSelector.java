@@ -122,18 +122,19 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             this.preset = preset;
             TaggingPreset group = preset.group;
             while (group != null) {
-                for (String word: group.getLocaleName().toLowerCase().split("\\s")) {
-                    groups.add(word);
-                }
+                Collections.addAll(groups, group.getLocaleName().toLowerCase().split("\\s"));
                 group = group.group;
             }
-            for (String word: preset.getLocaleName().toLowerCase().split("\\s")) {
-                names.add(word);
-            }
+            Collections.addAll(names, preset.getLocaleName().toLowerCase().split("\\s"));
             for (TaggingPresetItem item: preset.data) {
                 if (item instanceof KeyedItem) {
                     tags.add(((KeyedItem) item).key);
-                    // Should combo values also be added?
+                    if (item instanceof TaggingPresetItems.ComboMultiSelect) {
+                        final TaggingPresetItems.ComboMultiSelect cms = (TaggingPresetItems.ComboMultiSelect) item;
+                        if (Boolean.parseBoolean(cms.values_searchable)) {
+                            tags.addAll(cms.getDisplayValues());
+                        }
+                    }
                     if (item instanceof Key && ((Key) item).value != null) {
                         tags.add(((Key) item).value);
                     }
@@ -151,7 +152,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
                 boolean found = false;
                 boolean foundFirst = false;
                 for (String value: values) {
-                    int index = value.indexOf(word);
+                    int index = value.toLowerCase().indexOf(word);
                     if (index == 0) {
                         foundFirst = true;
                         break;
