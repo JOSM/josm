@@ -8,7 +8,16 @@
 		errors, elements have specified prohibited attributes -->
 
 	<element name="annotations" type="tns:root" />
-	<element name="presets" type="tns:root" />
+	<element name="presets" type="tns:root">
+		<unique name="chunk_id">
+			<selector xpath=".//tns:chunk"/>
+			<field xpath="@id"/>
+		</unique>
+		<keyref name="chunk_ref" refer="tns:chunk_id">
+			<selector xpath=".//tns:reference"/>
+			<field xpath="@ref"/>
+		</keyref>
+	</element>
 
 	<complexType name="root">
 		<complexContent>
@@ -27,6 +36,7 @@
 	<complexType name="group-parent">
 		<sequence>
 			<choice minOccurs="1" maxOccurs="unbounded">
+				<element name="chunk" type="tns:chunk"/>
 				<element name="group" type="tns:group" />
 				<element name="item" type="tns:item" />
 				<element name="separator" type="tns:separator" />
@@ -74,6 +84,21 @@
 		<attribute name="text_context" type="string" />
 	</complexType>
 
+    <complexType name="chunk">
+        <sequence>
+            <choice minOccurs="1" maxOccurs="unbounded">
+                <group ref="tns:optional_elements" />
+                <element name="key" type="tns:key" />
+                <element name="optional" type="tns:optional" minOccurs="0" />
+            </choice>
+        </sequence>
+        <attribute name="id" type="ID" use="required" />
+    </complexType>
+
+    <complexType name="reference">
+        <attribute name="ref" type="IDREF" use="required" />
+    </complexType>
+
 	<group name="optional_elements">
 		<choice>
 			<element name="label" type="tns:label" />
@@ -85,6 +110,7 @@
 			<element name="checkgroup" type="tns:checkgroup" />
 			<element name="check" type="tns:check" />
 			<element name="item_separator" type="tns:separator" />
+			<element name="reference" type="tns:reference" />
 		</choice>
 	</group>
 
@@ -153,6 +179,7 @@
 		<attribute name="values_from" type="string" />
 		<attribute name="values_context" type="string" />
 		<attribute name="display_values" type="string" />
+		<attribute name="values_searchable" type="boolean" />
 		<attribute name="default" type="string" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="delimiter" type="string" />
@@ -180,6 +207,7 @@
 		<attribute name="values_from" type="string" />
 		<attribute name="values_context" type="string" />
 		<attribute name="display_values" type="string" />
+        <attribute name="values_searchable" type="boolean" />
 		<attribute name="default" type="string" />
 		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="delimiter" type="string" />
