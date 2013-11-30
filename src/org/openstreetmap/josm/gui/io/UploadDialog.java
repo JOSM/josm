@@ -432,7 +432,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
          */
         protected boolean warnUploadSource() {
             return warnUploadTag(
-                    tr("Please revise specify a changeset source"),
+                    tr("Please specify a changeset source"),
                     tr("You did not specify a source for your changes.<br />" +
                             "This is technically allowed, but it assists other users <br />" +
                             "to understand the origins of the data.<br /><br />" +
