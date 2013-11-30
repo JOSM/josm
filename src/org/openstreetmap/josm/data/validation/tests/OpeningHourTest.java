@@ -4,8 +4,6 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,7 +55,19 @@ public class OpeningHourTest extends Test {
             ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/opening_hours.js"), "UTF-8"));
             // fake country/state to not get errors on holidays
             ENGINE.eval("var nominatiomJSON = {address: {state: 'Bayern', country_code: 'de'}};");
-            ENGINE.eval("var oh = function (value, mode) {return new opening_hours(value, nominatiomJSON, mode);};");
+            ENGINE.eval("" +
+                    "var oh = function (value, mode) {" +
+                    " try {" +
+                    "    var r= new opening_hours(value, nominatiomJSON, mode);" +
+                    "    r.getErrors = function() {return [];};" +
+                    "    return r;" +
+                    "  } catch(err) {" +
+                    "    return {" +
+                    "      getWarnings: function() {return [];}," +
+                    "      getErrors: function() {return [err.toString()]}" +
+                    "    };" +
+                    "  }" +
+                    "};");
         } else {
             Main.warn("Unable to initialize OpeningHourTest because no JavaScript engine has been found");
         }
@@ -77,35 +87,17 @@ public class OpeningHourTest extends Test {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<Object> getList(Object obj) {
+    protected List<Object> getList(Object obj) throws ScriptException, NoSuchMethodException {
         if (obj == null || "".equals(obj)) {
             return Arrays.asList();
         } else if (obj instanceof String) {
-            final Object[] strings = ((String) obj).split("\\n");
+            final Object[] strings = ((String) obj).split("\\\\n");
             return Arrays.asList(strings);
         } else if (obj instanceof List) {
             return (List<Object>) obj;
-        } else if ("sun.org.mozilla.javascript.internal.NativeArray".equals(obj.getClass().getName())) {
-            List<Object> list = new ArrayList<Object>();
-            try {
-                Method getIds = obj.getClass().getMethod("getIds");
-                Method get = obj.getClass().getMethod("get", long.class);
-                Object[] ids = (Object[]) getIds.invoke(obj);
-                for (Object id : ids) {
-                    list.add(get.invoke(obj, id));
-                }
-            } catch (NoSuchMethodException e) {
-                Main.error("Unable to run OpeningHourTest because of NoSuchMethodException by reflection: "+e.getMessage());
-            } catch (IllegalArgumentException e) {
-                Main.error("Unable to run OpeningHourTest because of IllegalArgumentException by reflection: "+e.getMessage());
-            } catch (IllegalAccessException e) {
-                Main.error("Unable to run OpeningHourTest because of IllegalAccessException by reflection: "+e.getMessage());
-            } catch (InvocationTargetException e) {
-                Main.error("Unable to run OpeningHourTest because of InvocationTargetException by reflection: "+e.getMessage());
-            }
-            return list;
         } else {
-            throw new IllegalArgumentException("Not expecting class " + obj.getClass());
+            // recursively call getList() with argument converted to newline-separated string
+            return getList(((Invocable) ENGINE).invokeMethod(obj, "join", "\\n"));
         }
     }
 
@@ -167,16 +159,13 @@ public class OpeningHourTest extends Test {
             } catch (Exception e) {
                 Main.debug(e.getMessage());
             }
+            for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getErrors"))) {
+                errors.add(new OpeningHoursTestError(key + " - " + i.toString().trim(), Severity.ERROR, prettifiedValue));
+            }
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"))) {
-                errors.add(new OpeningHoursTestError(i.toString(), Severity.WARNING, prettifiedValue));
+                errors.add(new OpeningHoursTestError(i.toString().trim(), Severity.WARNING, prettifiedValue));
             }
             return errors;
-        } catch (ScriptException ex) {
-            final String message = ex.getMessage()
-                    .replaceAll("[^:]*Exception: ", key+" - ")
-                    .replaceAll("\\(<Unknown source.*", "")
-                    .trim();
-            return Arrays.asList(new OpeningHoursTestError(message, Severity.ERROR));
         } catch (final Exception ex) {
             throw new RuntimeException(ex);
         }
