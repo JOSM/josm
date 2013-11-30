@@ -58,7 +58,7 @@ public class PushbackTokenizer {
         NOT(marktr("<not>")), OR(marktr("<or>")), XOR(marktr("<xor>")), LEFT_PARENT(marktr("<left parent>")),
         RIGHT_PARENT(marktr("<right parent>")), COLON(marktr("<colon>")), EQUALS(marktr("<equals>")),
         KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")),
-        EOF(marktr("<end-of-file>"));
+        EOF(marktr("<end-of-file>")), LESS_THAN("<less-than>"), GREATER_THAN("<greater-than>");
 
         private Token(String name) {
             this.name = name;
@@ -81,8 +81,8 @@ public class PushbackTokenizer {
         }
     }
 
-    private static final List<Character> specialChars = Arrays.asList(new Character[] {'"', ':', '(', ')', '|', '^', '=', '?'});
-    private static final List<Character> specialCharsQuoted = Arrays.asList(new Character[] {'"'});
+    private static final List<Character> specialChars = Arrays.asList('"', ':', '(', ')', '|', '^', '=', '?', '<', '>');
+    private static final List<Character> specialCharsQuoted = Arrays.asList('"');
 
     private String getString(boolean quoted) {
         List<Character> sChars = quoted ? specialCharsQuoted : specialChars;
@@ -133,6 +133,12 @@ public class PushbackTokenizer {
         case '=':
             getChar();
             return Token.EQUALS;
+        case '<':
+            getChar();
+            return Token.LESS_THAN;
+        case '>':
+            getChar();
+            return Token.GREATER_THAN;
         case '(':
             getChar();
             return Token.LEFT_PARENT;
