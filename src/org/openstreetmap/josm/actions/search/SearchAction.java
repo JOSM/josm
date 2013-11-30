@@ -394,6 +394,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))
                 .addKeyword("*=<i>value</i>", null, tr("''value'' in any key"))
                 .addKeyword("<i>key</i>=", null, tr("matches if ''key'' exists"))
+                .addKeyword("<i>key</i>><i>value</i>", null, tr("matches if ''key'' is greater than ''value'' (analogously, less than)"))
                 , GBC.eol());
         right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("combinators"))

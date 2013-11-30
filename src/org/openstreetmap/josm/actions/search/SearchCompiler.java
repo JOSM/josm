@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Predicate;
 
 /**
  Implements a google-like search.
@@ -206,7 +207,7 @@ public class SearchCompiler {
     /**
      * Base class for all search operators.
      */
-    abstract public static class Match {
+    abstract public static class Match implements Predicate<OsmPrimitive> {
 
         abstract public boolean match(OsmPrimitive osm);
 
@@ -230,6 +231,11 @@ public class SearchCompiler {
                     return false;
             }
             return true;
+        }
+
+        @Override
+        public final boolean evaluate(OsmPrimitive object) {
+            return match(object);
         }
     }
 
@@ -514,6 +520,32 @@ public class SearchCompiler {
             return false;
         }
         @Override public String toString() {return key+"="+value;}
+    }
+
+    public static class ValueComparison extends Match {
+        private final String key;
+        private final String referenceValue;
+        private final int compareMode;
+
+        public ValueComparison(String key, String referenceValue, int compareMode) {
+            this.key = key;
+            this.referenceValue = referenceValue;
+            this.compareMode = compareMode;
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            int compareResult;
+            try {
+                compareResult = Double.compare(
+                        Double.parseDouble(osm.get(key)),
+                        Double.parseDouble(referenceValue)
+                );
+            } catch (Exception ignore) {
+                compareResult = osm.get(key).compareTo(referenceValue);
+            }
+            return compareMode < 0 ? compareResult < 0 : compareMode > 0 ? compareResult > 0 : compareResult == 0;
+        }
     }
 
     /**
@@ -1230,9 +1262,13 @@ public class SearchCompiler {
         } else if (tokenizer.readIfEqual(Token.KEY)) {
             // factor consists of key:value or key=value
             String key = tokenizer.getText();
-            if (tokenizer.readIfEqual(Token.EQUALS))
+            if (tokenizer.readIfEqual(Token.EQUALS)) {
                 return new ExactKeyValue(regexSearch, key, tokenizer.readTextOrNumber());
-            else if (tokenizer.readIfEqual(Token.COLON)) {
+            } else if (tokenizer.readIfEqual(Token.LESS_THAN)) {
+                return new ValueComparison(key, tokenizer.readTextOrNumber(), -1);
+            } else if (tokenizer.readIfEqual(Token.GREATER_THAN)) {
+                return new ValueComparison(key, tokenizer.readTextOrNumber(), +1);
+            } else if (tokenizer.readIfEqual(Token.COLON)) {
                 // see if we have a Match that takes a data parameter
                 SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
                 if (factory != null)
