@@ -70,6 +70,5 @@ public class PreferencesAction extends JosmAction implements Runnable {
             p.selectSubPreferencesTabByClass(subTab);
         }
         p.setVisible(true);
-        new PreferenceDialog(Main.parent).setVisible(true);
     }
 }
