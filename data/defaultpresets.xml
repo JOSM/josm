@@ -3748,7 +3748,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=theme_park"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:tourism=theme_park"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:tourism=theme_park"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:tourism=theme_park" />	
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:tourism=theme_park" />
             <label text="Edit Theme Park" />
             <space />
             <key key="tourism" value="theme_park" />
@@ -3768,7 +3768,7 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=water_park"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=water_park"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=water_park"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:leisure=water_park" />	
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:leisure=water_park" />
             <label text="Edit Water Park" />
             <space />
             <key key="leisure" value="water_park" />
@@ -3872,7 +3872,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="covered" text="Covered" values="yes,no" />                               
             <combo key="fuel" text="Fuel" text_context="grill" values="charcoal,electric,wood" />                               
-        </item>     	
+        </item>
         <item name="Fishing" icon="presets/fishing.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=fishing"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:leisure=fishing"
@@ -3956,30 +3956,6 @@ Note that for a match, at least one positive and no negative is required.
             <key key="tourism" value="artwork" />
             <text key="name" text="Name" />
         </item>
-        <item name="Place of Worship" icon="presets/church.png" type="node,closedway,relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
-                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=place_of_worship"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=place_of_worship"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=place_of_worship"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
-                  no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
-                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
-                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
-            <label text="Edit Place of Worship" />
-            <space />
-            <key key="amenity" value="place_of_worship" />
-            <text key="name" text="Name" />
-            <combo key="building" text="Building type" values="cathedral,chapel,church,mosque,synagogue,temple" match="keyvalue" values_searchable="true" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" match="key" values_searchable="true" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,shia,sunni" match="key" values_searchable="true" />
-            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
-            <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
-        </item>
         <item name="Recording Studio" icon="presets/studio.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=studio"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=studio"
@@ -3994,6 +3970,170 @@ Note that for a match, at least one positive and no negative is required.
             <text key="website" text="Website" />                          
         </item>
     </group> <!-- Culture -->
+    <group name="Place of Worship" icon="styles/standard/religion.png">
+        <item name="Church" icon="styles/standard/religion/church.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
+                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=place_of_worship"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=place_of_worship"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=place_of_worship"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
+                  no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
+            <label text="Edit Church" />
+            <space />
+            <key key="amenity" value="place_of_worship" />
+            <key key="religion" value="christian" />
+            <text key="name" text="Name" />
+            <combo key="building" text="Building type" values="basilica,cathedral,chapel,church,temple" match="keyvalue" values_searchable="true" />
+            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,greek_orthodox,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,russian_orthodox,seventh_day_adventist" match="keyvalue" values_searchable="true" />
+            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+        </item>
+        <item name="Mosque" icon="styles/standard/religion/muslim.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
+                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=place_of_worship"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=place_of_worship"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=place_of_worship"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
+                  no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
+            <label text="Edit Mosque" />
+            <space />
+            <key key="amenity" value="place_of_worship" />
+            <key key="religion" value="muslim" />
+            <text key="name" text="Name" />
+            <combo key="building" text="Building type" values="mosque" match="keyvalue" values_searchable="true" />
+            <combo key="denomination" text="Denomination" values="ibadi,shia,sunni" match="keyvalue" values_searchable="true" />
+            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+        </item>
+        <item name="Synagogue" icon="styles/standard/religion/jewish.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
+                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=place_of_worship"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=place_of_worship"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=place_of_worship"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
+                  no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
+            <label text="Edit Synagogue" />
+            <space />
+            <key key="amenity" value="place_of_worship" />
+            <key key="religion" value="jewish" />
+            <text key="name" text="Name" />
+            <combo key="building" text="Building type" values="synagogue" match="keyvalue" values_searchable="true" />
+            <combo key="denomination" text="Denomination" values="orthodox,conservative,reform" match="keyvalue" values_searchable="true" />
+            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+        </item>
+        <item name="Buddhist Temple" icon="styles/standard/religion/buddhism.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
+                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=place_of_worship"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=place_of_worship"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=place_of_worship"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
+                  no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
+            <label text="Edit Buddhist Temple" />
+            <space />
+            <key key="amenity" value="place_of_worship" />
+            <key key="religion" value="buddhist" />
+            <text key="name" text="Name" />
+            <combo key="denomination" text="Denomination" values="theravada,mahayana,vajrayana" match="keyvalue" values_searchable="true" />
+            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+        </item>
+        <item name="Hindu Temple" icon="styles/standard/religion/hinduism.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
+                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=place_of_worship"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=place_of_worship"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=place_of_worship"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
+                  no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
+            <label text="Edit Hindu Temple" />
+            <space />
+            <key key="amenity" value="place_of_worship" />
+            <key key="religion" value="hindu" />
+            <text key="name" text="Name" />
+            <combo key="denomination" text="Denomination" values="vaishnavism,shaivism,shaktism,smartism" match="keyvalue" values_searchable="true" />
+            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+        </item>
+        <item name="Shinto Shrine" icon="styles/standard/religion/shinto.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
+                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=place_of_worship"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=place_of_worship"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=place_of_worship"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
+                  no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
+            <label text="Edit Shinto Shrine" />
+            <space />
+            <key key="amenity" value="place_of_worship" />
+            <key key="religion" value="shinto" />
+            <text key="name" text="Name" />
+            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+        </item>
+        <item name="Other Place of Worship" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
+                  da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=place_of_worship"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=place_of_worship"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=place_of_worship"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=place_of_worship"
+                  no.href="http://wiki.openstreetmap.org/wiki/No:Tag:amenity=place_of_worship"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=place_of_worship"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=place_of_worship"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=place_of_worship"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=place_of_worship"
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=place_of_worship" />
+            <label text="Edit other Place of Worship" />
+            <space />
+            <key key="amenity" value="place_of_worship" />
+            <text key="name" text="Name" />
+            <combo key="religion" text="Religion" values="bahai,jain,sikh,spiritualist,taoist,unitarian,zoroastrian" match="keyvalue" values_searchable="true" />
+            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+        </item>
+    </group> <!-- Place of Worship -->
     <group name="Public Building" icon="presets/townhall.png">
         <item name="Public Building" icon="styles/standard/service.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=public_building"
@@ -4018,7 +4158,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="townhall" />
             <text key="name" text="Name" />
         </item>
-        <item name="Community Centre" icon="presets/community_centre.png" type="node,closedway">      	
+        <item name="Community Centre" icon="presets/community_centre.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=community_centre"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=community_centre"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=community_centre"
@@ -4031,7 +4171,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <text key="operator" text="Operator" /> 
             <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
-        </item>       	
+        </item>
         <item name="Embassy" icon="presets/embassy.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=embassy"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=embassy"
@@ -4837,7 +4977,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
         </item>
-        <item name="Volleyball" icon="styles/standard/sport/volleyball.png" type="node,closedway">         	
+        <item name="Volleyball" icon="styles/standard/sport/volleyball.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=volleyball" />
             <label text="Edit Volleyball" />
             <space />            
@@ -5234,7 +5374,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="man_made" value="beacon" />
             <text key="name" text="Name" />
         </item>
-        <item name="Street Lamp" icon="styles/standard/misc/streetlamp.png" type="node">         	
+        <item name="Street Lamp" icon="styles/standard/misc/streetlamp.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=street_lamp"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=street_lamp"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=street_lamp"
@@ -5718,7 +5858,7 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
             <text key="website" text="Website" />
             <combo key="organic" text="Organic" values="only,yes,no" />
-        </item>     	
+        </item>
         <item name="Greengrocer" icon="presets/greengrocer.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=greengrocer"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=greengrocer"
@@ -5910,7 +6050,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=electronics"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=electronics"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=electronics"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=electronics" />	
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=electronics" />
             <label text="Edit Electronics Shop" />
             <space />
             <key key="shop" value="electronics" />
@@ -5954,7 +6094,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=video"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=video"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=video"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=video" />	
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=video" />
             <label text="Edit Video Shop" />
             <space />
             <key key="shop" value="video" />
@@ -6058,7 +6198,7 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=chemist"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=chemist"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=chemist"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=chemist" />	
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=chemist" />
             <label text="Edit Chemist" />
             <space />
             <key key="shop" value="chemist" />
@@ -6071,7 +6211,7 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=hairdresser"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=hairdresser"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=hairdresser"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=hairdresser" />	
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=hairdresser" />
             <label text="Edit Hairdresser" />
             <space />
             <key key="shop" value="hairdresser" />
@@ -6317,7 +6457,7 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Toys" icon="styles/standard/shop/toys.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=toy"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=toy"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=toy" />	
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=toy" />
             <label text="Edit Toy Shop" />
             <space />            
             <key key="shop" value="toys" />
@@ -6858,7 +6998,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="grave_yard" />
             <text key="name" text="Name" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" />
+            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,unitarian,zoroastrian" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
         </item>
         <item name="Cemetery" icon="presets/cemetery.png" type="node,closedway,relation">
@@ -6875,7 +7015,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="landuse" value="cemetery" />
             <text key="name" text="Name" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" />
+            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,unitarian,zoroastrian" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
         </item>
         <item name="Retail" icon="styles/standard/shop/supermarket.png" type="node,closedway,relation">
