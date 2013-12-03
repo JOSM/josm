@@ -3991,7 +3991,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="religion" value="christian" />
             <text key="name" text="Name" />
             <combo key="building" text="Building type" values="basilica,cathedral,chapel,church,temple" match="keyvalue" values_searchable="true" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,greek_orthodox,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,russian_orthodox,seventh_day_adventist" match="keyvalue" values_searchable="true" />
+            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,greek_catholic,greek_orthodox,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,russian_orthodox,seventh_day_adventist" match="keyvalue" values_searchable="true" />
             <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
             <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
         </item>
