@@ -144,7 +144,7 @@ public class Highways extends Test {
                     handleCarWay(n, w);
                 }
                 if ((leftByPedestrians || leftByCyclists) && leftByCars) {
-                    errors.add(new TestError(this, Severity.WARNING, tr("Missing crossing information"), MISSING_PEDESTRIAN_CROSSING, n));
+                    errors.add(new TestError(this, Severity.OTHER, tr("Missing pedestrian crossing information"), MISSING_PEDESTRIAN_CROSSING, n));
                     return;
                 }
             }
