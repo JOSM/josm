@@ -134,7 +134,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * @param values a list of strings to add
      * @param priority the priority to use
      */
-    public void add(Collection<String> values, AutoCompletionItemPritority priority) {
+    public void add(Collection<String> values, AutoCompletionItemPriority priority) {
         if (values == null) return;
         for (String value: values) {
             if (value == null) {
