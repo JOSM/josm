@@ -9,7 +9,7 @@ package org.openstreetmap.josm.gui.tagging.ac;
  *  The priority helps to sort the auto completion items according to their importance. For instance,
  *  in an auto completion list for tag names, standard tag names would be assigned a higher
  *  priority than arbitrary tag names present in the current data set. There are three priority levels,
- *  {@link AutoCompletionItemPritority}.
+ *  {@link AutoCompletionItemPriority}.
  *
  * The value is a string which will be displayed in the auto completion list.
  *
@@ -17,47 +17,55 @@ package org.openstreetmap.josm.gui.tagging.ac;
 public class AutoCompletionListItem implements Comparable<AutoCompletionListItem>{
 
     /** the pritority of this item */
-    private  AutoCompletionItemPritority priority;
+    private  AutoCompletionItemPriority priority;
     /** the value of this item */
     private String value;
 
     /**
-     * constructor
+     * Constructs a new {@code AutoCompletionListItem} with the given value and priority.
+     * @param value The value
+     * @param priority The priority
      */
-    public AutoCompletionListItem(String value, AutoCompletionItemPritority priority) {
+    public AutoCompletionListItem(String value, AutoCompletionItemPriority priority) {
         this.value = value;
         this.priority = priority;
     }
 
+    /**
+     * Constructs a new {@code AutoCompletionListItem} with the given value and unknown priority.
+     * @param value The value
+     */
     public AutoCompletionListItem(String value) {
         this.value = value;
-        priority = AutoCompletionItemPritority.UNKNOWN;
+        priority = AutoCompletionItemPriority.UNKNOWN;
     }
-
-    public AutoCompletionListItem() {
-        value = "";
-        priority = AutoCompletionItemPritority.UNKNOWN;
-    }
-
 
     /**
-     *
+     * Constructs a new {@code AutoCompletionListItem}.
+     */
+    public AutoCompletionListItem() {
+        value = "";
+        priority = AutoCompletionItemPriority.UNKNOWN;
+    }
+
+    /**
+     * Returns the priority.
      * @return the priority
      */
-    public AutoCompletionItemPritority getPriority() {
+    public AutoCompletionItemPriority getPriority() {
         return priority;
     }
 
     /**
-     * sets the priority
+     * Sets the priority.
      * @param priority  the priority
      */
-    public void setPriority(AutoCompletionItemPritority priority) {
+    public void setPriority(AutoCompletionItemPriority priority) {
         this.priority = priority;
     }
 
     /**
-     *
+     * Returns the value.
      * @return the value
      */
     public String getValue() {

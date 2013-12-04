@@ -229,7 +229,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
                     return;
                 }
             }
-            super.setSelectedItem(new AutoCompletionListItem(s, AutoCompletionItemPritority.UNKNOWN));
+            super.setSelectedItem(new AutoCompletionListItem(s, AutoCompletionItemPriority.UNKNOWN));
         } else
             throw new IllegalArgumentException();
     }
@@ -242,7 +242,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
         Object oldValue = this.getEditor().getItem(); // Do not use getSelectedItem(); (fix #8013)
         model.removeAllElements();
         for (String elem : elems) {
-            model.addElement(new AutoCompletionListItem(elem, AutoCompletionItemPritority.UNKNOWN));
+            model.addElement(new AutoCompletionListItem(elem, AutoCompletionItemPriority.UNKNOWN));
         }
         // disable autocomplete to prevent unnecessary actions in
         // AutoCompletingComboBoxDocument#insertString
