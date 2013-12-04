@@ -98,7 +98,11 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     private boolean isChanged = true;
     private int highlightUpdateCount;
 
-    public List<TestError> validationErrors = new ArrayList<TestError>();
+    /**
+     * List of validation errors in this layer.
+     * @since 3669
+     */
+    public final List<TestError> validationErrors = new ArrayList<TestError>();
 
     protected void setRequiresSaveToFile(boolean newValue) {
         boolean oldValue = requiresSaveToFile;
