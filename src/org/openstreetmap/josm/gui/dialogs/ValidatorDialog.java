@@ -373,7 +373,6 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
                 hasFixes = hasFixes || error.isFixable();
                 if (addSelected) {
-                    //                    sel.addAll(error.getPrimitives()); // was selecting already deleted primitives! see #6640
                     sel.addAll(error.getSelectablePrimitives());
                 }
             }
