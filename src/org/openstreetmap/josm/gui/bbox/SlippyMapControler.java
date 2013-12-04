@@ -48,7 +48,6 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
     private Point iStartSelectionPoint;
     private Point iEndSelectionPoint;
 
-    // the SlippyMapChooserComponent
     private final SlippyMapBBoxChooser iSlippyMapChooser;
 
     private SizeButton iSizeButton = null;
@@ -57,10 +56,10 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
     private boolean isSelecting;
 
     /**
-     * Create a new OsmMapControl
+     * Constructs a new {@code SlippyMapControler}.
      */
     public SlippyMapControler(SlippyMapBBoxChooser navComp, JPanel contentPane, SizeButton sizeButton, SourceButton sourceButton) {
-        this.iSlippyMapChooser = navComp;
+        iSlippyMapChooser = navComp;
         iSlippyMapChooser.addMouseListener(this);
         iSlippyMapChooser.addMouseMotionListener(this);
 
@@ -98,10 +97,13 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.META_DOWN_MASK, false), "ZOOM_IN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_DOWN_MASK, false), "ZOOM_IN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0, false), "ZOOM_IN");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0, false), "ZOOM_IN");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, InputEvent.SHIFT_DOWN_MASK, false), "ZOOM_IN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK, false), "ZOOM_OUT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.META_DOWN_MASK, false), "ZOOM_OUT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_DOWN_MASK, false), "ZOOM_OUT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0, false), "ZOOM_OUT");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0, false), "ZOOM_OUT");
 
         // action mapping
         actionMap.put("MOVE_RIGHT", new MoveXAction(1));
