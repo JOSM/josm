@@ -215,19 +215,19 @@ public class AutoCompletionManager implements DataSetListener {
      * @param list the list to populate
      */
     public void populateWithMemberRoles(AutoCompletionList list) {
-        list.add(presetRoleCache, AutoCompletionItemPritority.IS_IN_STANDARD);
-        list.add(getRoleCache(), AutoCompletionItemPritority.IS_IN_DATASET);
+        list.add(presetRoleCache, AutoCompletionItemPriority.IS_IN_STANDARD);
+        list.add(getRoleCache(), AutoCompletionItemPriority.IS_IN_DATASET);
     }
 
     /**
-     * Populates the an {@link AutoCompletionList} with the currently cached
-     * tag keys
+     * Populates the an {@link AutoCompletionList} with the currently cached tag keys
      *
      * @param list the list to populate
      */
     public void populateWithKeys(AutoCompletionList list) {
-        list.add(getPresetKeys(), AutoCompletionItemPritority.IS_IN_STANDARD);
-        list.add(getDataKeys(), AutoCompletionItemPritority.IS_IN_DATASET);
+        list.add(getPresetKeys(), AutoCompletionItemPriority.IS_IN_STANDARD);
+        list.add(new AutoCompletionListItem("source", AutoCompletionItemPriority.IS_IN_STANDARD));
+        list.add(getDataKeys(), AutoCompletionItemPriority.IS_IN_DATASET);
     }
 
     /**
@@ -250,8 +250,8 @@ public class AutoCompletionManager implements DataSetListener {
      */
     public void populateWithTagValues(AutoCompletionList list, List<String> keys) {
         for (String key : keys) {
-            list.add(getPresetValues(key), AutoCompletionItemPritority.IS_IN_STANDARD);
-            list.add(getDataValues(key), AutoCompletionItemPritority.IS_IN_DATASET);
+            list.add(getPresetValues(key), AutoCompletionItemPriority.IS_IN_STANDARD);
+            list.add(getDataValues(key), AutoCompletionItemPriority.IS_IN_DATASET);
         }
     }
 

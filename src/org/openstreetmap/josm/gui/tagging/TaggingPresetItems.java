@@ -48,7 +48,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPriority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -1168,7 +1168,7 @@ public final class TaggingPresetItems {
             }
             AutoCompletionList acList = tf.getAutoCompletionList();
             if (acList != null) {
-                acList.add(getDisplayValues(), AutoCompletionItemPritority.IS_IN_STANDARD);
+                acList.add(getDisplayValues(), AutoCompletionItemPriority.IS_IN_STANDARD);
             }
             combo.setEditor(tf);
 
