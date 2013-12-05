@@ -75,6 +75,7 @@ combo: combo box, with multiple choices and possible to enter free form text
   use_last_as_default: true/false/force (default is "false")
   editable: allow to add other values as text (default is "true")
   match: none/key/key!/keyvalue (default is none, see below for more information)
+  values_searchable: true/false (whether to search in combo (display_)values when searching for presets)
   length: length of input box (number of characters allowed)
 
 multiselect: list of values from which zero or more can be selected
@@ -99,6 +100,7 @@ multiselect: list of values from which zero or more can be selected
   default: default string to display (defaults to "")
   use_last_as_default: true/false/force (default is "false")
   match: none/key/key!/keyvalue (default is "none", see below for more information)
+  values_searchable: true/false (whether to search in multiselect (display_)values when searching for presets)
 
 checkgroup: group of checks
   columns: number of columns
