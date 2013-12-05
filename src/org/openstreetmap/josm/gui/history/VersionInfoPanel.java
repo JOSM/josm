@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -15,6 +16,7 @@ import java.util.Observer;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
@@ -38,6 +40,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
     private JMultilineLabel lblInfo;
     private UrlLabel lblUser;
     private UrlLabel lblChangeset;
+    private JTextArea lblChangesetComment;
 
     protected void build() {
         JPanel pnl1 = new JPanel();
@@ -54,6 +57,11 @@ public class VersionInfoPanel extends JPanel implements Observer{
         lblChangeset = new UrlLabel("", 2);
         pnlUserAndChangeset.add(lblChangeset);
 
+        lblChangesetComment = new JTextArea();
+        lblChangesetComment.setLineWrap(true);
+        lblChangesetComment.setEditable(false);
+        lblChangesetComment.setBackground(new Color(0, 0, 0, 0));
+
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;
@@ -64,6 +72,8 @@ public class VersionInfoPanel extends JPanel implements Observer{
         gc.gridy = 1;
         gc.weighty = 0.0;
         add(pnlUserAndChangeset, gc);
+        gc.gridy = 2;
+        add(lblChangesetComment, gc);
     }
 
     protected HistoryOsmPrimitive getPrimitive() {
@@ -131,6 +141,9 @@ public class VersionInfoPanel extends JPanel implements Observer{
             String url = AbstractInfoAction.getBaseBrowseUrl() + "/changeset/" + getPrimitive().getChangesetId();
             lblChangeset.setUrl(url);
             lblChangeset.setDescription(Long.toString(getPrimitive().getChangesetId()));
+            final String comment = getPrimitive().getChangeset() != null ? getPrimitive().getChangeset().get("comment") : null;
+            lblChangesetComment.setText(comment);
+            lblChangesetComment.setToolTipText(tr("Changeset comment"));
 
             try {
                 if (getPrimitive().getUser() != null && getPrimitive().getUser() != User.getAnonymous()) {
