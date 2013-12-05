@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -31,6 +32,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     private boolean visible;
     private User user;
     private long changesetId;
+    private Changeset changeset;
     private Date timestamp;
     private long version;
     private Map<String, String> tags;
@@ -170,6 +172,14 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     public Map<String,String> getTags() {
         return Collections.unmodifiableMap(tags);
+    }
+
+    public Changeset getChangeset() {
+        return changeset;
+    }
+
+    public void setChangeset(Changeset changeset) {
+        this.changeset = changeset;
     }
 
     /**

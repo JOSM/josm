@@ -9,14 +9,19 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 public class ChangesetQuery {
 
@@ -46,6 +51,8 @@ public class ChangesetQuery {
     private Boolean open = null;
     /** indicates whether only closed changesets are queried. null, if no restrictions regarding open changesets apply */
     private Boolean closed = null;
+    /** a collection of changeset ids to query for */
+    private Collection<Long> changesetIds = null;
 
     public ChangesetQuery() {}
 
@@ -226,6 +233,19 @@ public class ChangesetQuery {
     }
 
     /**
+     * Restricts the query to the given changeset ids (which are added to previously added ones).
+     *
+     * @param changesetIds the changeset ids
+     * @return the query object with the applied restriction
+     * @throws IllegalArgumentException thrown if changesetIds is null.
+     */
+    public ChangesetQuery forChangesetIds(Collection<Long> changesetIds) {
+        CheckParameterUtil.ensureParameterNotNull(changesetIds, "changesetIds");
+        this.changesetIds = changesetIds;
+        return this;
+    }
+
+    /**
      * Replies the query string to be used in a query URL for the OSM API.
      *
      * @return the query string
@@ -272,6 +292,12 @@ public class ChangesetQuery {
                 sb.append("&");
             }
             sb.append("closed=").append(Boolean.toString(closed));
+        } else if (changesetIds != null) {
+            // since 2013-12-05, see https://github.com/openstreetmap/openstreetmap-website/commit/1d1f194d598e54a5d6fb4f38fb569d4138af0dc8
+            if (sb.length() > 0) {
+                sb.append("&");
+            }
+            sb.append("changesets=").append(Utils.join(",", changesetIds));
         }
         return sb.toString();
     }
@@ -365,7 +391,18 @@ public class ChangesetQuery {
             return null;
         }
 
-        protected ChangesetQuery crateFromMap(Map<String,String> queryParams) throws ChangesetQueryUrlException {
+        protected Collection<Long> parseLongs(String value) {
+            return value == null || value.isEmpty()
+                    ? Collections.<Long>emptySet() :
+                    new HashSet<Long>(Utils.transform(Arrays.asList(value.split(",")), new Utils.Function<String, Long>() {
+                        @Override
+                        public Long apply(String x) {
+                            return Long.valueOf(x);
+                        }
+                    }));
+        }
+
+        protected ChangesetQuery createFromMap(Map<String, String> queryParams) throws ChangesetQueryUrlException {
             ChangesetQuery csQuery = new ChangesetQuery();
 
             for (Entry<String, String> entry: queryParams.entrySet()) {
@@ -400,6 +437,12 @@ public class ChangesetQuery {
                     } catch(IllegalArgumentException e) {
                         throw new ChangesetQueryUrlException(e);
                     }
+                } else if (k.equals("changesets")) {
+                    try {
+                        csQuery.forChangesetIds(parseLongs(entry.getValue()));
+                    } catch (NumberFormatException e) {
+                        throw new ChangesetQueryUrlException(e);
+                    }
                 } else
                     throw new ChangesetQueryUrlException(tr("Unsupported parameter ''{0}'' in changeset query string", k));
             }
@@ -411,7 +454,7 @@ public class ChangesetQuery {
             String[] keyValuePairs = query.split("&");
             for (String keyValuePair: keyValuePairs) {
                 String[] kv = keyValuePair.split("=");
-                queryParams.put(kv[0], kv[1]);
+                queryParams.put(kv[0], kv.length > 1 ? kv[1] : "");
             }
             return queryParams;
         }
@@ -440,7 +483,7 @@ public class ChangesetQuery {
             if (query.isEmpty())
                 return new ChangesetQuery();
             Map<String,String> queryParams  = createMapFromQueryString(query);
-            return crateFromMap(queryParams);
+            return createFromMap(queryParams);
         }
     }
 }

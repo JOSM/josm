@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -20,6 +22,8 @@ import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -200,6 +204,11 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
                 try {
                     reader = new OsmServerHistoryReader(pid.getType(), pid.getUniqueId());
                     ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
+                    // load corresponding changesets (mostly for changeset comment)
+                    for (final Changeset i : new OsmServerChangesetReader().queryChangesets(
+                            new ChangesetQuery().forChangesetIds(ds.getChangesetIds()), progressMonitor.createSubTaskMonitor(1, false))) {
+                        ds.putChangeset(i);
+                    }
                 } catch(OsmTransferException e) {
                     if (canceled)
                         return;
