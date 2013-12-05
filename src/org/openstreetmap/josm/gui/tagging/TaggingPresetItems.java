@@ -612,6 +612,7 @@ public final class TaggingPresetItems {
                     JToggleButton aibutton = new JToggleButton(ai);
                     aibutton.setToolTipText(tr("Select auto-increment of {0} for this field", ai));
                     aibutton.setMargin(new java.awt.Insets(0,0,0,0));
+                    aibutton.setFocusable(false);
                     bg.add(aibutton);
                     try {
                         // TODO there must be a better way to parse a number like "+3" than this.
@@ -632,6 +633,7 @@ public final class TaggingPresetItems {
                 // an invisible toggle button for "release" of the button group
                 final JToggleButton clearbutton = new JToggleButton("X");
                 clearbutton.setVisible(false);
+                clearbutton.setFocusable(false);
                 bg.add(clearbutton);
                 // and its visible counterpart. - this mechanism allows us to 
                 // have *no* button selected after the X is clicked, instead 
@@ -639,6 +641,7 @@ public final class TaggingPresetItems {
                 JButton releasebutton = new JButton("X");
                 releasebutton.setToolTipText(tr("Cancel auto-increment for this field"));
                 releasebutton.setMargin(new java.awt.Insets(0,0,0,0));
+                releasebutton.setFocusable(false);
                 releasebutton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
