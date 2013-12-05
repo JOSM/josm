@@ -188,4 +188,32 @@ class ChangesetQueryUrlParserTest {
 			q = parser.parse("bbox=-1,-1,1")               
 		}  
 	}
+
+    @Test
+    public void test_changeset_ids() {
+        ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
+        def ChangesetQuery q
+
+        // OK
+        q = parser.parse("changesets=1,2,3")
+        assert q != null
+        assert q.@changesetIds.containsAll(Arrays.asList(1L, 2L, 3L))
+        assert q.@changesetIds.size() == 3
+
+        // OK
+        q = parser.parse("changesets=1,2,3,4,1")
+        assert q != null
+        assert q.@changesetIds.containsAll(Arrays.asList(1L, 2L, 3L, 4L))
+        assert q.@changesetIds.size() == 4
+
+        // OK
+        q = parser.parse("changesets=")
+        assert q != null
+        assert q.@changesetIds.size() == 0
+
+        // should fail
+        shouldFail(ChangesetQueryUrlException) {
+            q = parser.parse("changesets=foo")
+        }
+    }
 }

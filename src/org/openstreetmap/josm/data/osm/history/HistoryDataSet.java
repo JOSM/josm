@@ -3,12 +3,15 @@ package org.openstreetmap.josm.data.osm.history;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
@@ -16,6 +19,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A data set holding histories of OSM primitives.
@@ -42,6 +46,7 @@ public class HistoryDataSet implements LayerChangeListener{
     /** the history data */
     private Map<PrimitiveId, ArrayList<HistoryOsmPrimitive>> data;
     private CopyOnWriteArrayList<HistoryDataSetListener> listeners;
+    private Map<Long, Changeset> changesets;
 
     /**
      * Constructs a new {@code HistoryDataSet}.
@@ -49,6 +54,7 @@ public class HistoryDataSet implements LayerChangeListener{
     public HistoryDataSet() {
         data = new HashMap<PrimitiveId, ArrayList<HistoryOsmPrimitive>>();
         listeners = new CopyOnWriteArrayList<HistoryDataSetListener>();
+        changesets = new HashMap<Long, Changeset>();
     }
 
     public void addHistoryDataSetListener(HistoryDataSetListener listener) {
@@ -116,6 +122,16 @@ public class HistoryDataSet implements LayerChangeListener{
     }
 
     /**
+     * Adds a changeset to the data set
+     *
+     * @param changeset the changeset to add
+     */
+    public void putChangeset(Changeset changeset) {
+        changesets.put((long) changeset.getId(), changeset);
+        fireHistoryUpdated(null);
+    }
+
+    /**
      * Replies the history for a given primitive with id <code>id</code>
      * and type <code>type</code>.
      *
@@ -148,6 +164,9 @@ public class HistoryDataSet implements LayerChangeListener{
         List<HistoryOsmPrimitive> versions = data.get(pid);
         if (versions == null)
             return null;
+        for (HistoryOsmPrimitive i : versions) {
+            i.setChangeset(changesets.get(i.getChangesetId()));
+        }
         return new History(pid.getUniqueId(), pid.getType(), versions);
     }
 
@@ -159,10 +178,19 @@ public class HistoryDataSet implements LayerChangeListener{
     public void mergeInto(HistoryDataSet other) {
         if (other == null)
             return;
-        for (PrimitiveId id : other.data.keySet()) {
-            this.data.put(id, other.data.get(id));
-        }
+        this.data.putAll(other.data);
+        this.changesets.putAll(other.changesets);
         fireHistoryUpdated(null);
+    }
+
+    public Collection<Long> getChangesetIds() {
+        final HashSet<Long> ids = new HashSet<Long>();
+        for (Collection<HistoryOsmPrimitive> i : data.values()) {
+            for (HistoryOsmPrimitive j : i) {
+                ids.add(j.getChangesetId());
+            }
+        }
+        return ids;
     }
 
     /* ------------------------------------------------------------------------------ */
