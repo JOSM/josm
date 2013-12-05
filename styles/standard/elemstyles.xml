@@ -3102,6 +3102,24 @@ For external files the <rules> should have following elements:
 		<icon src="misc/landmark/trees.png"/>
 	</rule>
 
+    <rule>
+        <condition k="natural" v="tree"/>
+        <condition k="type" v="conifer"/>
+        <icon src="misc/landmark/trees_conifer.png" priority="10"/>
+    </rule>
+
+    <rule>
+        <condition k="natural" v="tree"/>
+        <condition k="type" v="broad_leaved"/>
+        <icon src="misc/landmark/trees_broad_leaved.png" priority="10"/>
+    </rule>
+
+    <rule>
+        <condition k="natural" v="tree"/>
+        <condition k="type" v="palm"/>
+        <icon src="misc/landmark/trees_palm.png" priority="10"/>
+    </rule>
+
 <!--route tags -->
 
 	<rule>
