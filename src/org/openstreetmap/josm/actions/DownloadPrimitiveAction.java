@@ -55,7 +55,7 @@ public class DownloadPrimitiveAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
 
         DownloadObjectDialog dialog = new DownloadObjectDialog();
-        if (dialog.showDialog().getValue() != 1) return;
+        if (dialog.showDialog().getValue() != dialog.getContinueButtonIndex()) return;
 
         processItems(dialog.isNewLayerRequested(), dialog.getOsmIds(), dialog.isReferrersRequested(), dialog.isFullRelationRequested());
     }

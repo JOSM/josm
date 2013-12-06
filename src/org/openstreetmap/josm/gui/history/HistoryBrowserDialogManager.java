@@ -16,6 +16,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.MapView;
@@ -138,8 +139,8 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         }
     }
 
-    public void showHistory(final Collection<OsmPrimitive> primitives) {
-        final Collection<OsmPrimitive> notNewPrimitives = Utils.filter(primitives, notNewPredicate);
+    public void showHistory(final Collection<? extends PrimitiveId> primitives) {
+        final Collection<? extends PrimitiveId> notNewPrimitives = Utils.filter(primitives, notNewPredicate);
         if (notNewPrimitives.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -149,10 +150,12 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
             return;
         }
 
-        Collection<OsmPrimitive> toLoad = Utils.filter(primitives, unloadedHistoryPredicate);
+        Collection<PrimitiveId> toLoad = Utils.filter(primitives, unloadedHistoryPredicate);
         if (!toLoad.isEmpty()) {
             HistoryLoadTask task = new HistoryLoadTask();
-            task.add(notNewPrimitives);
+            for (PrimitiveId p : notNewPrimitives) {
+                task.add(p);
+            }
             Main.worker.submit(task);
         }
 
@@ -161,8 +164,8 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
             @Override
             public void run() {
                 try {
-                    for (OsmPrimitive p : notNewPrimitives) {
-                        final History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
+                    for (PrimitiveId p : notNewPrimitives) {
+                        final History h = HistoryDataSet.getInstance().getHistory(p);
                         if (h == null) {
                             continue;
                         }
@@ -182,13 +185,13 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         Main.worker.submit(r);
     }
 
-    private final Predicate<OsmPrimitive> unloadedHistoryPredicate = new Predicate<OsmPrimitive>() {
+    private final Predicate<PrimitiveId> unloadedHistoryPredicate = new Predicate<PrimitiveId>() {
 
         HistoryDataSet hds = HistoryDataSet.getInstance();
 
         @Override
-        public boolean evaluate(OsmPrimitive p) {
-            History h = hds.getHistory(p.getPrimitiveId());
+        public boolean evaluate(PrimitiveId p) {
+            History h = hds.getHistory(p);
             if (h == null)
                 // reload if the history is not in the cache yet
                 return true;
@@ -200,10 +203,10 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         }
     };
 
-    private final Predicate<OsmPrimitive> notNewPredicate = new Predicate<OsmPrimitive>() {
+    private final Predicate<PrimitiveId> notNewPredicate = new Predicate<PrimitiveId>() {
 
         @Override
-        public boolean evaluate(OsmPrimitive p) {
+        public boolean evaluate(PrimitiveId p) {
             return !p.isNew();
         }
     };
