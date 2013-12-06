@@ -14,18 +14,22 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.Main;
 
 /**
- * @see PlatformHook
+ * {@code PlatformHook} implementation for Apple Mac OS X systems.
+ * @since 1023
  */
 public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook, InvocationHandler {
+    
     private static PlatformHookOsx ivhandler = new PlatformHookOsx();
+    
     @Override
-    public void preStartupHook(){
+    public void preStartupHook() {
         // This will merge our MenuBar into the system menu.
         // MUST be set before Swing is initialized!
-        // And will not work when one of the system independet LAFs is used.
+        // And will not work when one of the system independent LAFs is used.
         // They just insist on painting themselves...
         System.setProperty("apple.laf.useScreenMenuBar", "true");
     }
+    
     @Override
     public void startupHook() {
         // Here we register callbacks for the menu entries in the system menu
@@ -43,6 +47,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Main.warn("Failed to register with OSX: " + ex);
         }
     }
+    
     @Override
     public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {
         Boolean handled = Boolean.TRUE;
@@ -63,6 +68,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         }
         return null;
     }
+    
     @Override
     public void openUrl(String url) throws IOException {
         Runtime.getRuntime().exec("open " + url);
@@ -70,7 +76,6 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
 
     @Override
     public void initSystemShortcuts() {
-        // Yeah, it's a long, long list. And people always complain that OSX has no shortcuts.
         Shortcut.registerSystemShortcut("apple-reserved-01", tr("reserved"), KeyEvent.VK_SPACE, KeyEvent.META_DOWN_MASK).setAutomatic(); // Show or hide the Spotlight search field (when multiple languages are installed, may rotate through enabled script systems).
         Shortcut.registerSystemShortcut("apple-reserved-02", tr("reserved"), KeyEvent.VK_SPACE, KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK).setAutomatic(); // Apple reserved.
         Shortcut.registerSystemShortcut("apple-reserved-03", tr("reserved"), KeyEvent.VK_SPACE, KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic(); // Show the Spotlight search results window (when multiple languages are installed, may rotate through keyboard layouts and input methods within a script).
@@ -206,6 +211,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         Shortcut.registerSystemShortcut("view:zoomin", tr("reserved"), KeyEvent.VK_ADD, KeyEvent.META_DOWN_MASK); // Zoom in
         Shortcut.registerSystemShortcut("view:zoomout", tr("reserved"), KeyEvent.VK_SUBTRACT, KeyEvent.META_DOWN_MASK); // Zoom out
     }
+    
     @Override
     public String makeTooltip(String name, Shortcut sc) {
         String lafid = UIManager.getLookAndFeel().getID();
@@ -236,20 +242,15 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     }
 
     @Override
-    public String getDefaultStyle()
-    {
+    public String getDefaultStyle() {
         return "javax.swing.plaf.metal.MetalLookAndFeel";
     }
 
     @Override
-    public boolean canFullscreen()
-    {
+    public boolean canFullscreen() {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.tools.PlatformHookUnixoid#getOSDescription()
-     */
     @Override
     public String getOSDescription() {
         return System.getProperty("os.name") + " " + System.getProperty("os.version");

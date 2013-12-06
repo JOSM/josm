@@ -271,7 +271,7 @@ public class ExtendedDialog extends JDialog {
      */
     public ExtendedDialog showDialog() {
         // Check if the user has set the dialog to not be shown again
-        if (toggleCheckState(togglePref)) {
+        if (toggleCheckState()) {
             result = toggleValue;
             return this;
         }
@@ -594,14 +594,13 @@ public class ExtendedDialog extends JDialog {
      * This function returns true if the dialog has been set to "do not show again"
      * @return true if dialog should not be shown again
      */
-    private boolean toggleCheckState(String togglePref) {
+    public final boolean toggleCheckState() {
         toggleable = togglePref != null && !togglePref.isEmpty();
 
         toggleValue = Main.pref.getInteger("message."+togglePref+".value", -1);
         // No identifier given, so return false (= show the dialog)
-        if(!toggleable || toggleValue == -1)
+        if (!toggleable || toggleValue == -1)
             return false;
-        this.togglePref = togglePref;
         // The pref is true, if the dialog should be shown.
         return !(Main.pref.getBoolean("message."+ togglePref, true));
     }

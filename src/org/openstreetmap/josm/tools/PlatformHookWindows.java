@@ -31,9 +31,22 @@ import java.io.File;
 import java.io.IOException;
 
 /**
-  * see PlatformHook.java
+  * {@code PlatformHook} implementation for Microsoft Windows systems.
+  * @since 1023
   */
 public class PlatformHookWindows extends PlatformHookUnixoid implements PlatformHook {
+    
+    @Override
+    public void startupHook() {
+        super.startupHook();
+        // Invite users to install Oracle Java 7 if they are still with Sun/Oracle Java 6
+        String vendor = System.getProperty("java.vendor");
+        String version = System.getProperty("java.version");
+        if ("Sun Microsystems Inc.".equals(vendor) && version != null && version.startsWith("1.6")) {
+            askUpdateJava(version);
+        }
+    }
+
     @Override
     public void openUrl(String url) throws IOException {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
@@ -110,22 +123,17 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     }
 
     @Override
-    public String getDefaultStyle()
-    {
+    public String getDefaultStyle() {
         return "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
     }
 
     @Override
-    public boolean rename(File from, File to)
-    {
-        if(to.exists())
+    public boolean rename(File from, File to) {
+        if (to.exists())
             to.delete();
         return from.renameTo(to);
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.tools.PlatformHookUnixoid#getOSDescription()
-     */
     @Override
     public String getOSDescription() {
         return Utils.strip(System.getProperty("os.name")) + " " +

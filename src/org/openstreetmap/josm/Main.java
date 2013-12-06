@@ -974,7 +974,8 @@ abstract public class Main {
         if (version != null) {
             if (version.startsWith("1.6") || version.startsWith("6") ||
                     version.startsWith("1.7") || version.startsWith("7") ||
-                    version.startsWith("1.8") || version.startsWith("8"))
+                    version.startsWith("1.8") || version.startsWith("8") ||
+                    version.startsWith("1.9") || version.startsWith("9"))
                 return;
             if (version.startsWith("1.5") || version.startsWith("5")) {
                 JLabel ho = new JLabel("<html>"+
