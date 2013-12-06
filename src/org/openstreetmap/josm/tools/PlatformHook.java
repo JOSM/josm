@@ -5,34 +5,18 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * This interface allows platfrom (operating system) dependent code
+ * This interface allows platform (operating system) dependent code
  * to be bundled into self-contained classes.
- *
- * For plugin authors:
- * To implement your own PlatformHook class, implement this interface,
- * then create the class when your plugin is loaded and store it in
- * Main.platform. Please not that the two "startup" hooks will be
- * called _before_ your plugin is loaded. If you need to hook there,
- * split your class into two (one containing only the startup hooks,
- * and one with the remainder) and send the startup class, together
- * with propper OS detection code (see Main) for inclusion with
- * JOSM to the JOSM team.
- *
- * Also, it might be a good idea to extend PlatformHookUnixoid.
- * That class has a more or less neutral behaviour, that should
- * work on all platforms supported by J2SE.
- *
- * Attention: At this time this interface is not to be considered
- * complete.
+ * @since 1023
  */
 public interface PlatformHook {
+    
     /**
       * The preStartupHook will be called extremly early. It is
       * guaranteed to be called before the GUI setup has started.
       *
       * Reason: On OSX we need to inform the Swing libraries
-      * that we want to be integrated with the OS before we setup
-      * our GUI.
+      * that we want to be integrated with the OS before we setup our GUI.
       */
     public void preStartupHook();
 
@@ -47,7 +31,9 @@ public interface PlatformHook {
 
     /**
       * The openURL hook will be used to open an URL in the
-      * default webbrowser.
+      * default web browser.
+     * @param url The URL to open
+     * @throws IOException if any I/O error occurs
       */
     public void openUrl(String url) throws IOException;
 
@@ -78,18 +64,35 @@ public interface PlatformHook {
       * a menu or button is created.
       *
       * Tooltips are usually not system dependent, unless the
-      * JVM is to dumb to provide correct names for all the keys.
+      * JVM is too dumb to provide correct names for all the keys.
       *
       * Another reason not to use the implementation in the *nix
-      * hook are LAFs that don't understand HTML, such as the OSX
-      * LAFs.
+      * hook are LAFs that don't understand HTML, such as the OSX LAFs.
+      * 
+     * @param name Tooltip text to display 
+     * @param sc Shortcut associated (to display accelerator between parenthesis)
+     * @return Full tooltip text (name + accelerator)
       */
     public String makeTooltip(String name, Shortcut sc);
 
+    /**
+     * Returns the default LAF to be used on this platform to look almost as a native application.
+     * @return The default native LAF for this platform
+     */
     public String getDefaultStyle();
 
+    /**
+     * Determines if the platform allows full-screen.
+     * @return {@code true} if full screen is allowed, {@code false} otherwise
+     */
     public boolean canFullscreen();
 
+    /**
+     * Renames a file.
+     * @param from Source file
+     * @param to Target file
+     * @return {@code true} if the file has been renamed, {@code false} otherwise
+     */
     public boolean rename(File from, File to);
 
     /**

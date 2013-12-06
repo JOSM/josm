@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -12,7 +13,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 
 /**
  * see PlatformHook.java
@@ -27,7 +31,7 @@ public class PlatformHookUnixoid implements PlatformHook {
     private String osDescription;
 
     @Override
-    public void preStartupHook(){
+    public void preStartupHook() {
     }
 
     @Override
@@ -55,6 +59,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         Shortcut.registerSystemShortcut("system:reset", tr("reserved"), KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
         Shortcut.registerSystemShortcut("system:resetX", tr("reserved"), KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
     }
+    
     /**
      * This should work for all platforms. Yeah, should.
      * See PlatformHook.java for a list of reasons why
@@ -81,15 +86,13 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     @Override
-    public boolean canFullscreen()
-    {
+    public boolean canFullscreen() {
         return GraphicsEnvironment.getLocalGraphicsEnvironment()
         .getDefaultScreenDevice().isFullScreenSupported();
     }
 
     @Override
-    public boolean rename(File from, File to)
-    {
+    public boolean rename(File from, File to) {
         return from.renameTo(to);
     }
 
@@ -260,6 +263,31 @@ public class PlatformHookUnixoid implements PlatformHook {
             if(result != null)
                 result = result.replaceAll("\"+","");
             return result;
+        }
+    }
+    
+    protected void askUpdateJava(String version) {
+        try {
+            ExtendedDialog ed = new ExtendedDialog(
+                    Main.parent,
+                    tr("Outdated Java version"),
+                    new String[]{tr("Update Java"), tr("Cancel")});
+            // Check if the dialog has not already been permanently hidden by user
+            if (!ed.toggleEnable("askUpdateJava7").toggleCheckState()) {
+                ed.setButtonIcons(new String[]{"java.png", "cancel.png"}).setCancelButton(2);
+                ed.setMinimumSize(new Dimension(460, 260));
+                ed.setIcon(JOptionPane.WARNING_MESSAGE);
+                ed.setContent(tr("You are running version {0} of Java.", "<b>"+version+"</b>")+"<br><br>"+
+                        "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.", "Oracle", tr("February 2013"))+"</b><br><br>"+
+                        "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "7")+"</b><br><br>"+
+                        tr("Would you like to update now ?"));
+   
+                if (ed.showDialog().getValue() == 1) {
+                    openUrl("http://www.java.com/download");
+                }
+            }
+        } catch (IOException e) {
+            Main.warn(e);
         }
     }
 }
