@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Checks and corrects deprecated tags.
+ * Checks and corrects deprecated and unnecessary tags.
  * @since 4442
  */
 public class DeprecatedTags extends Test {
@@ -139,6 +139,9 @@ public class DeprecatedTags extends Test {
         checks.add(new DeprecationCheck(2129).
                 test("monitoring:river_level").
                 alternative("monitoring:water_level"));
+        // see #9365 - Useless tag layer=0
+        checks.add(new UnnecessaryTagCheck(2130).
+                testAndRemove("layer", "0"));
     }
 
     /**
@@ -171,9 +174,9 @@ public class DeprecatedTags extends Test {
     private static class DeprecationCheck {
 
         private int code;
-        private final List<Tag> test = new LinkedList<Tag>();
-        private final List<Tag> change = new LinkedList<Tag>();
-        private final List<Tag> alternatives = new LinkedList<Tag>();
+        protected final List<Tag> test = new LinkedList<Tag>();
+        protected final List<Tag> change = new LinkedList<Tag>();
+        protected final List<Tag> alternatives = new LinkedList<Tag>();
 
         public DeprecationCheck(int code) {
             this.code = code;
@@ -239,6 +242,18 @@ public class DeprecatedTags extends Test {
                 return tr("{0} is deprecated", Utils.join(", ", test));
             else
                 return tr("{0} is deprecated, use {1} instead", Utils.join(", ", test), Utils.join(tr(" or "), alternatives));
+        }
+    }
+    
+    private static class UnnecessaryTagCheck extends DeprecationCheck {
+
+        public UnnecessaryTagCheck(int code) {
+            super(code);
+        }
+
+        @Override
+        String getDescription() {
+            return tr("{0} is unnecessary", Utils.join(", ", test));
         }
     }
 
