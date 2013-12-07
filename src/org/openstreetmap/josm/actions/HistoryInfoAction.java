@@ -1,4 +1,4 @@
-//License: GPL. For details, see LICENSE file.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
 import java.awt.event.ActionEvent;
@@ -13,8 +13,15 @@ import org.openstreetmap.josm.tools.Shortcut;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
+/**
+ * Display history information about OSM ways, nodes, or relations.
+ * @since 968
+ */
 public class HistoryInfoAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code HistoryInfoAction}.
+     */
     public HistoryInfoAction() {
         super(tr("History"), "about",
                 tr("Display history information about OSM ways, nodes, or relations."),
@@ -39,13 +46,19 @@ public class HistoryInfoAction extends JosmAction {
         }
     }
 
+    /**
+     * Dialog allowing to choose object id if no one is selected.
+     * @since 6448
+     */
     public static class HistoryObjectIDDialog extends OsmIdSelectionDialog {
 
+        /**
+         * Constructs a new {@code HistoryObjectIDDialog}.
+         */
         public HistoryObjectIDDialog() {
             super(Main.parent, tr("Show history"), new String[]{tr("Show history"), tr("Cancel")});
             setButtonIcons(new String[]{"dialogs/history.png", "cancel.png"});
             init();
         }
     }
-
 }

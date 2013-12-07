@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
@@ -19,12 +20,10 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A data set holding histories of OSM primitives.
- *
- *
+ * @since 1670
  */
 public class HistoryDataSet implements LayerChangeListener{
     /** the unique instance */
@@ -162,6 +161,9 @@ public class HistoryDataSet implements LayerChangeListener{
     public History getHistory(PrimitiveId pid) throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(pid, "pid");
         List<HistoryOsmPrimitive> versions = data.get(pid);
+        if (versions == null && pid instanceof IPrimitive) {
+            versions = data.get(((IPrimitive) pid).getPrimitiveId());
+        }
         if (versions == null)
             return null;
         for (HistoryOsmPrimitive i : versions) {
