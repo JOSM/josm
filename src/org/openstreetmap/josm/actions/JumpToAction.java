@@ -173,13 +173,10 @@ public class JumpToAction extends JosmAction {
             if(m > 0)
                 zoomLvl = (int)Math.round((-1) * Math.log(m/10000000)/Math.log(2));
 
-            int decimals = (int) Math.pow(10, (zoomLvl / 3));
-            dlat = Math.round(dlat * decimals);
-            dlat /= decimals;
-            dlon = Math.round(dlon * decimals);
-            dlon /= decimals;
-            url.setText("http://www.openstreetmap.org/#map="+zoomLvl+"/"+dlat+"/"+dlon);
-        } catch (NumberFormatException x) {}
+            url.setText(OsmUrlToBounds.getURL(dlat, dlon, zoomLvl));
+        } catch (NumberFormatException x) {
+            Main.debug(x.getMessage());
+        }
     }
 
     @Override

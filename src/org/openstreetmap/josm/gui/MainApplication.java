@@ -50,6 +50,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -121,11 +122,11 @@ public class MainApplication extends Main {
                         "\t-Xmx...m\n\n"+
                         tr("examples")+":\n"+
                         "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
-                        "\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
+                        "\tjava -jar josm.jar "+OsmUrlToBounds.getURL(43.2, 11.1, 13)+"\n"+
                         "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
                         "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
                         "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
-                        "\tjava -Xmx400m -jar josm.jar\n\n"+
+                        "\tjava -Xmx1024m -jar josm.jar\n\n"+
                         tr("Parameters --download, --downloadgps, and --selection are processed in this order.")+"\n"+
                         tr("Make sure you load some data if you use --selection.")+"\n"
                 );
