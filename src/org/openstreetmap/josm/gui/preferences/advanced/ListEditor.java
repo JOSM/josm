@@ -20,6 +20,8 @@ import org.openstreetmap.josm.data.Preferences.ListSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class ListEditor extends ExtendedDialog {
@@ -27,6 +29,9 @@ public class ListEditor extends ExtendedDialog {
     List<String> data;
     PrefEntry entry;
 
+    /**
+     * Constructs a new {@code ListEditor}.
+     */
     public ListEditor(final JComponent gui, PrefEntry entry, ListSetting setting) {
         super(gui, tr("Change list setting"), new String[] {tr("OK"), tr("Cancel")});
         this.entry = entry;
@@ -41,8 +46,17 @@ public class ListEditor extends ExtendedDialog {
         setContent(build(), false);
     }
 
+    /**
+     * Returns the list of values.
+     * @return The list of values.
+     */
     public List<String> getData() {
-        return data;
+        return new ArrayList<String>(Utils.filter(data, new Predicate<String>() {
+            @Override
+            public boolean evaluate(String object) {
+                return object != null && !object.isEmpty();
+            }
+        }));
     }
 
     protected JPanel build() {
@@ -100,5 +114,4 @@ public class ListEditor extends ExtendedDialog {
             return true;
         }
     }
-
 }
