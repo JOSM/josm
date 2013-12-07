@@ -63,7 +63,7 @@ abstract public class Condition {
 
     public static enum Op {
         EQ, NEQ, GREATER_OR_EQUAL, GREATER, LESS_OR_EQUAL, LESS,
-        REGEX, ONE_OF, BEGINS_WITH, ENDS_WITH, CONTAINS;
+        REGEX, NREGEX, ONE_OF, BEGINS_WITH, ENDS_WITH, CONTAINS;
 
         public boolean eval(String testString, String prototypeString) {
             if (testString == null && this != NEQ)
@@ -74,9 +74,10 @@ abstract public class Condition {
             case NEQ:
                 return !equal(testString, prototypeString);
             case REGEX:
+            case NREGEX:
                 Pattern p = Pattern.compile(prototypeString);
                 Matcher m = p.matcher(testString);
-                return m.find();
+                return REGEX.equals(this) ? m.find() : !m.find();
             case ONE_OF:
                 String[] parts = testString.split(";");
                 for (String part : parts) {
