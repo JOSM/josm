@@ -246,10 +246,10 @@ public final class ImageViewerDialog extends ToggleDialog {
                 osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
             }
             DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-            if (entry.getExifTime() != null) {
+            if (entry.hasExifTime()) {
                 osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifTime())));
             }
-            if (entry.getGpsTime() != null) {
+            if (entry.hasGpsTime()) {
                 osd.append(tr("\nGPS time: {0}", dtf.format(entry.getGpsTime())));
             }
 

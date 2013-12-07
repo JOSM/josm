@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -153,7 +152,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
                 try {
                     e.setExifTime(ExifReader.readTime(f));
-                } catch (ParseException e1) {
+                } catch (ParseException ex) {
                     e.setExifTime(null);
                 }
                 e.setFile(f);
@@ -635,12 +634,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateStampComps[2]));
             }
             else {
-                // No GPS date stamp in EXIF data.  Copy it from EXIF time.
+                // No GPS date stamp in EXIF data. Copy it from EXIF time.
                 // Date is not set if EXIF time is not available.
-                Date exifTime = e.getExifTime();
-                if (exifTime != null) {
+                if (e.hasExifTime()) {
                     // Time not set yet, so we can copy everything, not just date.
-                    cal.setTime(exifTime);
+                    cal.setTime(e.getExifTime());
                 }
             }
 

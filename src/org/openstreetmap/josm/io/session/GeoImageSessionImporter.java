@@ -68,10 +68,8 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                                     entry.setExifCoor(new LatLon(lat, lon));
                                 } else if (attrElem.getTagName().equals("exif-image-direction")) {
                                     entry.setExifImgDir(Double.parseDouble(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("is-new-gps-data")) {
-                                    if (Boolean.parseBoolean(attrElem.getTextContent())) {
-                                        entry.flagNewGpsData();
-                                    }
+                                } else if (attrElem.getTagName().equals("is-new-gps-data") && Boolean.parseBoolean(attrElem.getTextContent())) {
+                                    entry.flagNewGpsData();
                                 }
                                 // TODO: handle thumbnail loading
                             } catch (NumberFormatException e) {
