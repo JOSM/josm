@@ -11,6 +11,7 @@ import org.junit.runners.Suite
     KeyValueConditionTest.class,
     ParsingLinkSelectorTest.class,
     KeyConditionTest.class,
+    MapCSSParserTest.class,
     ChildOrParentSelectorTest
 ])
 public class AllMapCSSTests extends TestCase{}
