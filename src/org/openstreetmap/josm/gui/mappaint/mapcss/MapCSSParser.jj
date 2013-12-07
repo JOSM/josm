@@ -367,6 +367,9 @@ Condition simple_key_value_condition(Context context) :
         LOOKAHEAD(2)
             <EQUAL> <TILDE> { op=Condition.Op.REGEX; } s() val=regex()
         |
+        LOOKAHEAD(2)
+            <EXCLAMATION> <TILDE> { op=Condition.Op.NREGEX; } s() val=regex()
+        |
             (
                     <EXCLAMATION> <EQUAL> { op=Condition.Op.NEQ; }
                 |
