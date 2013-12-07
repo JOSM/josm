@@ -9,6 +9,7 @@ import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthProvider;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -30,15 +31,15 @@ public class OAuthParameters {
     /**
      * The default OSM OAuth request token URL.
      */
-    static public final String DEFAULT_REQUEST_TOKEN_URL = "http://www.openstreetmap.org/oauth/request_token";
+    static public final String DEFAULT_REQUEST_TOKEN_URL = Main.OSM_WEBSITE + "/oauth/request_token";
     /**
      * The default OSM OAuth access token URL.
      */
-    static public final String DEFAULT_ACCESS_TOKEN_URL = "http://www.openstreetmap.org/oauth/access_token";
+    static public final String DEFAULT_ACCESS_TOKEN_URL = Main.OSM_WEBSITE + "/oauth/access_token";
     /**
      * The default OSM OAuth authorize URL.
      */
-    static public final String DEFAULT_AUTHORISE_URL = "http://www.openstreetmap.org/oauth/authorize";
+    static public final String DEFAULT_AUTHORISE_URL = Main.OSM_WEBSITE + "/oauth/authorize";
 
 
     /**

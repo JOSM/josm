@@ -104,10 +104,16 @@ abstract public class Main {
 
     /**
      * The JOSM website URL.
-     * @since 6143 
+     * @since 6143
      */
     public static final String JOSM_WEBSITE = "http://josm.openstreetmap.de";
-    
+
+    /**
+     * The OSM website URL.
+     * @since 6453
+     */
+    public static final String OSM_WEBSITE = "http://www.openstreetmap.org";
+
     /**
      * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
      * it only shows the MOTD panel.
