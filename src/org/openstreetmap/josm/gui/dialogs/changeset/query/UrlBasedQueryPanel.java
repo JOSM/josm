@@ -20,6 +20,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OsmApi;
@@ -70,7 +71,7 @@ public class UrlBasedQueryPanel extends JPanel {
                 + tr("Please enter or paste an URL to retrieve changesets from the OSM API.")
                 + "<p><strong>" + tr("Examples") + "</strong></p>"
                 + "<ul>"
-                + "<li><a href=\"http://www.openstreetmap.org/browse/changesets?open=true\">http://www.openstreetmap.org/browse/changesets?open=true</a></li>"
+                + "<li><a href=\""+Main.OSM_WEBSITE+"/browse/changesets?open=true\">"+Main.OSM_WEBSITE+"/browse/changesets?open=true</a></li>"
                 + "<li><a href=\"http://api.openstreetmap.org/api/0.6/changesets?open=true\">http://api.openstreetmap.org/api/0.6/changesets?open=true</a></li>"
                 + "</ul>"
                 + tr("Note that changeset queries are currently always submitted to ''{0}'', regardless of the "

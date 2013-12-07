@@ -47,7 +47,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         }
         if (ret.startsWith("http://api.openstreetmap.org/")) {
             ret = ret.substring("http://api.openstreetmap.org/".length());
-            ret = "http://www.openstreetmap.org/" + ret;
+            ret = Main.OSM_WEBSITE + "/" + ret;
         }
         return ret;
     }
@@ -66,7 +66,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         }
         if (ret.startsWith("http://api.openstreetmap.org/")) {
             ret = ret.substring("http://api.openstreetmap.org/".length());
-            ret = "http://www.openstreetmap.org/" + ret;
+            ret = Main.OSM_WEBSITE + "/" + ret;
         }
         return ret;
     }

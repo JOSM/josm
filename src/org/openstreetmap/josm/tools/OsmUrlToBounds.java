@@ -248,29 +248,43 @@ public final class OsmUrlToBounds {
     }
 
     /**
-     * Return OSM URL for given area
+     * Return OSM URL for given area.
      *
      * @param b bounds of the area
      * @return link to display that area in OSM map
      */
-    static public String getURL(Bounds b) {
+    public static String getURL(Bounds b) {
         return getURL(b.getCenter(), getZoom(b));
     }
 
     /**
-     * Return OSM URL for given position and zoom
+     * Return OSM URL for given position and zoom.
      *
      * @param pos center position of area
      * @param zoom zoom depth of display
      * @return link to display that area in OSM map
      */
-    static public String getURL(LatLon pos, int zoom) {
+    public static String getURL(LatLon pos, int zoom) {
+        return getURL(pos.lat(), pos.lon(), zoom);
+    }
+
+    /**
+     * Return OSM URL for given lat/lon and zoom.
+     *
+     * @param dlat center latitude of area
+     * @param dlon center longitude of area
+     * @param zoom zoom depth of display
+     * @return link to display that area in OSM map
+     * 
+     * @since 6453
+     */
+    public static String getURL(double dlat, double dlon, int zoom) {
         // Truncate lat and lon to something more sensible
         int decimals = (int) Math.pow(10, (zoom / 3));
-        double lat = (Math.round(pos.lat() * decimals));
+        double lat = (Math.round(dlat * decimals));
         lat /= decimals;
-        double lon = (Math.round(pos.lon() * decimals));
+        double lon = (Math.round(dlon * decimals));
         lon /= decimals;
-        return "http://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom;
+        return Main.OSM_WEBSITE + "/#map="+zoom+"/"+lat+"/"+lon;
     }
 }
