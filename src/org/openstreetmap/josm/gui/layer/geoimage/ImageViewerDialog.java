@@ -36,6 +36,8 @@ public final class ImageViewerDialog extends ToggleDialog {
     private static final String COMMAND_REMOVE_FROM_DISK = "removefromdisk";
     private static final String COMMAND_PREVIOUS = "previous";
     private static final String COMMAND_COLLAPSE = "collapse";
+    private static final String COMMAND_FIRST = "first";
+    private static final String COMMAND_LAST = "last";
 
     private ImageDisplay imgDisplay = new ImageDisplay();
     private boolean centerView = false;
@@ -115,6 +117,17 @@ public final class ImageViewerDialog extends ToggleDialog {
         btnNext.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scNext.getKeyStroke(), ANEXT);
         btnNext.getActionMap().put(ANEXT, nextAction);
 
+        Main.registerActionShortcut(
+                new ImageAction(COMMAND_FIRST, null, null),
+                Shortcut.registerShortcut(
+                        "geoimage:first", tr("Geoimage: {0}", tr("Show first Image")), KeyEvent.VK_HOME, Shortcut.DIRECT)
+        );
+        Main.registerActionShortcut(
+                new ImageAction(COMMAND_LAST, null, null),
+                Shortcut.registerShortcut(
+                        "geoimage:last", tr("Geoimage: {0}", tr("Show last Image")), KeyEvent.VK_END, Shortcut.DIRECT)
+        );
+
         JToggleButton tbCentre = new JToggleButton(new ImageAction(COMMAND_CENTERVIEW, ImageProvider.get("dialogs", "centreview"), tr("Center view")));
         tbCentre.setPreferredSize(buttonDim);
 
@@ -173,6 +186,10 @@ public final class ImageViewerDialog extends ToggleDialog {
                 if (currentLayer != null) {
                     currentLayer.showPreviousPhoto();
                 }
+            } else if (COMMAND_FIRST.equals(action) && currentLayer != null) {
+                currentLayer.showFirstPhoto();
+            } else if (COMMAND_LAST.equals(action) && currentLayer != null) {
+                currentLayer.showLastPhoto();
 
             } else if (COMMAND_CENTERVIEW.equals(action)) {
                 centerView = ((JToggleButton) e.getSource()).isSelected();
