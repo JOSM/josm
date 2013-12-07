@@ -676,6 +676,26 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Main.map.repaint();
     }
 
+    public void showFirstPhoto() {
+        if (data != null && data.size() > 0) {
+            currentPhoto = 0;
+            ImageViewerDialog.showImage(this, data.get(currentPhoto));
+        } else {
+            currentPhoto = -1;
+        }
+        Main.map.repaint();
+    }
+
+    public void showLastPhoto() {
+        if (data != null && data.size() > 0) {
+            currentPhoto = data.size() - 1;
+            ImageViewerDialog.showImage(this, data.get(currentPhoto));
+        } else {
+            currentPhoto = -1;
+        }
+        Main.map.repaint();
+    }
+
     public void checkPreviousNextButtons() {
         ImageViewerDialog.setNextEnabled(currentPhoto < data.size() - 1);
         ImageViewerDialog.setPreviousEnabled(currentPhoto > 0);
