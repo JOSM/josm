@@ -92,16 +92,16 @@ public class GeoImageSessionExporter implements SessionLayerExporter {
             if (entry.getElevation() != null) {
                 addAttr("elevation", entry.getElevation().toString(), imgElem, support);
             }
-            if (entry.getGpsTime() != null) {
+            if (entry.hasGpsTime()) {
                 addAttr("gps-time", Long.toString(entry.getGpsTime().getTime()), imgElem, support);
             }
             if (entry.getExifOrientation() != null) {
                 addAttr("exif-orientation", Integer.toString(entry.getExifOrientation()), imgElem, support);
             }
-            if (entry.getExifTime() != null) {
+            if (entry.hasExifTime()) {
                 addAttr("exif-time", Long.toString(entry.getExifTime().getTime()), imgElem, support);
             }
-            if (entry.getExifGpsTime() != null) {
+            if (entry.hasExifGpsTime()) {
                 addAttr("exif-gps-time", Long.toString(entry.getExifGpsTime().getTime()), imgElem, support);
             }
             if (entry.getExifCoor() != null) {

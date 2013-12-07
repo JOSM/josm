@@ -115,7 +115,7 @@ public class SequenceCommand extends Command {
     }
     
     protected final void setSequence(Command[] sequence) {
-        this.sequence = sequence;
+        this.sequence = Arrays.copyOf(sequence, sequence.length);
     }
     
     protected final void setSequenceComplete(boolean sequenceComplete) {

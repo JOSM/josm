@@ -40,7 +40,7 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     private Date gpsTime;
 
     /**
-     * When the corralation dialog is open, we like to show the image position
+     * When the correlation dialog is open, we like to show the image position
      * for the current time offset on the map in real time.
      * On the other hand, when the user aborts this operation, the old values
      * should be restored. We have a temprary copy, that overrides
@@ -67,10 +67,20 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             return tmp.elevation;
         return elevation;
     }
+
     public Date getGpsTime() {
         if (tmp != null)
-            return tmp.gpsTime;
-        return gpsTime;
+            return getDefensiveDate(tmp.gpsTime);
+        return getDefensiveDate(gpsTime);
+    }
+
+    /**
+     * Convenient way to determine if this entry has a GPS time, without the cost of building a defensive copy.
+     * @return {@code true} if this entry has a GPS time
+     * @since 6450
+     */
+    public final boolean hasGpsTime() {
+        return (tmp != null && tmp.gpsTime != null) || gpsTime != null; 
     }
 
     /**
@@ -83,7 +93,16 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         return exifOrientation;
     }
     public Date getExifTime() {
-        return exifTime;
+        return getDefensiveDate(exifTime);
+    }
+    
+    /**
+     * Convenient way to determine if this entry has a EXIF time, without the cost of building a defensive copy.
+     * @return {@code true} if this entry has a EXIF time
+     * @since 6450
+     */
+    public final boolean hasExifTime() {
+        return exifTime != null; 
     }
     
     /**
@@ -92,7 +111,22 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @since 6392
      */
     public final Date getExifGpsTime() {
-        return exifGpsTime;
+        return getDefensiveDate(exifGpsTime);
+    }
+    
+    /**
+     * Convenient way to determine if this entry has a EXIF GPS time, without the cost of building a defensive copy.
+     * @return {@code true} if this entry has a EXIF GPS time
+     * @since 6450
+     */
+    public final boolean hasExifGpsTime() {
+        return exifGpsTime != null; 
+    }
+    
+    private static Date getDefensiveDate(Date date) {
+        if (date == null)
+            return null;
+        return new Date(date.getTime());
     }
     
     public LatLon getExifCoor() {
@@ -128,7 +162,7 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         this.exifOrientation = exifOrientation;
     }
     public void setExifTime(Date exifTime) {
-        this.exifTime = exifTime;
+        this.exifTime = getDefensiveDate(exifTime);
     }
     
     /**
@@ -137,11 +171,11 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @since 6392
      */
     public final void setExifGpsTime(Date exifGpsTime) {
-        this.exifGpsTime = exifGpsTime;
+        this.exifGpsTime = getDefensiveDate(exifGpsTime);
     }
     
     public void setGpsTime(Date gpsTime) {
-        this.gpsTime = gpsTime;
+        this.gpsTime = getDefensiveDate(gpsTime);
     }
     public void setExifCoor(LatLon exifCoor) {
         this.exifCoor = exifCoor;
@@ -227,19 +261,19 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         // that the GPS data has changed. Check for existing GPS time and take EXIF time otherwise.
         // This can be removed once isNewGpsData is used instead of the GPS time.
         if (gpsTime == null) {
-            Date gpsTime = getExifGpsTime();
-            if (gpsTime == null) {
-                gpsTime = getExifTime();
-                if (gpsTime == null) {
+            Date time = getExifGpsTime();
+            if (time == null) {
+                time = getExifTime();
+                if (time == null) {
                     // Time still not set, take the current time.
-                    gpsTime = new Date();
+                    time = new Date();
                 }
             }
-            setGpsTime(gpsTime);
+            gpsTime = time;
         }
-        if (tmp != null && tmp.getGpsTime() == null) {
+        if (tmp != null && !tmp.hasGpsTime()) {
             // tmp.gpsTime overrides gpsTime, so we set it too.
-            tmp.setGpsTime(getGpsTime());
+            tmp.gpsTime = gpsTime;
         }
     }
 
