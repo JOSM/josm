@@ -1073,7 +1073,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
         List<ImageEntry> dateImgLst = new ArrayList<ImageEntry>(yLayer.data.size());
         for (ImageEntry e : yLayer.data) {
-            if (e.getExifTime() == null) {
+            if (!e.hasExifTime()) {
                 continue;
             }
 
@@ -1158,6 +1158,18 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return ret;
     }
 
+    private static Double getElevation(WayPoint wp) {
+        String value = (String) wp.attr.get("ele");
+        if (value != null) {
+            try {
+                return new Double(value);
+            } catch (NumberFormatException e) {
+                Main.warn(e);
+            }
+        }
+        return null;
+    }
+    
     private int matchPoints(List<ImageEntry> images, WayPoint prevWp, long prevWpTime,
             WayPoint curWp, long curWpTime, long offset) {
         // Time between the track point and the previous one, 5 sec if first point, i.e. photos take
@@ -1174,7 +1186,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         Double speed = null;
         Double prevElevation = null;
-        Double curElevation = null;
 
         if (prevWp != null) {
             double distance = prevWp.getCoor().greatCircleDistance(curWp.getCoor());
@@ -1182,28 +1193,24 @@ public class CorrelateGpxWithImages extends AbstractAction {
             if (curWpTime > prevWpTime) {
                 speed = 3600 * distance / (curWpTime - prevWpTime);
             }
-            try {
-                prevElevation = new Double((String) prevWp.attr.get("ele"));
-            } catch(Exception e) {}
+            prevElevation = getElevation(prevWp);
         }
 
-        try {
-            curElevation = new Double((String) curWp.attr.get("ele"));
-        } catch (Exception e) {}
+        Double curElevation = getElevation(curWp);
 
         // First trackpoint, then interval is set to five seconds, i.e. photos up to five seconds
         // before the first point will be geotagged with the starting point
-        if(prevWpTime == 0 || curWpTime <= prevWpTime) {
+        if (prevWpTime == 0 || curWpTime <= prevWpTime) {
             while (true) {
                 if (i < 0) {
                     break;
                 }
                 final ImageEntry curImg = images.get(i);
-                if (curImg.getExifTime().getTime() > curWpTime
-                        || curImg.getExifTime().getTime() < curWpTime - interval) {
+                long time = curImg.getExifTime().getTime();
+                if (time > curWpTime || time < curWpTime - interval) {
                     break;
                 }
-                if(curImg.tmp.getPos() == null) {
+                if (curImg.tmp.getPos() == null) {
                     curImg.tmp.setPos(curWp.getCoor());
                     curImg.tmp.setSpeed(speed);
                     curImg.tmp.setElevation(curElevation);
@@ -1228,9 +1235,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 break;
             }
 
-            if(curImg.tmp.getPos() == null) {
-                // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless
-                // variable
+            if (curImg.tmp.getPos() == null) {
+                // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless variable
                 double timeDiff = (double)(imgTime - prevWpTime) / interval;
                 curImg.tmp.setPos(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));
                 curImg.tmp.setSpeed(speed);

@@ -161,7 +161,7 @@ public class BasicUploadSettingsPanel extends JPanel {
     /**
      * Updates the changeset comment model upon changes in the input field.
      */
-    class CommentModelListener extends FocusAdapter implements ActionListener {
+    static class CommentModelListener extends FocusAdapter implements ActionListener {
 
         final HistoryComboBox source;
         final ChangesetCommentModel destination;
@@ -185,7 +185,7 @@ public class BasicUploadSettingsPanel extends JPanel {
      * Observes the changeset comment model and keeps the comment input field
      * in sync with the current changeset comment
      */
-    class ChangesetCommentObserver implements Observer {
+    static class ChangesetCommentObserver implements Observer {
 
         private final HistoryComboBox destination;
 
