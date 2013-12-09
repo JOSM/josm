@@ -25,6 +25,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class WMSSettingsPanel extends JPanel {
 
     // WMS Settings
+    private final JCheckBox autozoomActive;
     private final JosmComboBox browser;
     private final JCheckBox overlapCheckBox;
     private final JSpinner spinEast;
@@ -36,7 +37,13 @@ public class WMSSettingsPanel extends JPanel {
      */
     public WMSSettingsPanel() {
         super(new GridBagLayout());
-        
+
+        // Auto zoom
+        autozoomActive = new JCheckBox();
+        add(new JLabel(tr("Auto zoom by default: ")), GBC.std());
+        add(GBC.glue(5, 0), GBC.std());
+        add(autozoomActive, GBC.eol().fill(GBC.HORIZONTAL));
+
         // Downloader
         browser = new JosmComboBox(new String[] {
                 "webkit-image {0}",
@@ -79,6 +86,7 @@ public class WMSSettingsPanel extends JPanel {
      * Loads the WMS settings.
      */
     public void loadSettings() {
+        this.autozoomActive.setSelected(WMSLayer.PROP_DEFAULT_AUTOZOOM.get());
         this.browser.setSelectedItem(HTMLGrabber.PROP_BROWSER.get());
         this.overlapCheckBox.setSelected(WMSLayer.PROP_OVERLAP.get());
         this.spinEast.setValue(WMSLayer.PROP_OVERLAP_EAST.get());
@@ -91,6 +99,7 @@ public class WMSSettingsPanel extends JPanel {
      * @return true when restart is required
      */
     public boolean saveSettings() {
+        WMSLayer.PROP_DEFAULT_AUTOZOOM.put(this.autozoomActive.isSelected());
         WMSLayer.PROP_OVERLAP.put(overlapCheckBox.getModel().isSelected());
         WMSLayer.PROP_OVERLAP_EAST.put((Integer) spinEast.getModel().getValue());
         WMSLayer.PROP_OVERLAP_NORTH.put((Integer) spinNorth.getModel().getValue());
