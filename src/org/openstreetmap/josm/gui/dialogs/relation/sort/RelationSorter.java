@@ -5,13 +5,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 
 public class RelationSorter {
 
@@ -23,19 +25,39 @@ public class RelationSorter {
     private static final Collection<AdditionalSorter> additionalSorters = new ArrayList<AdditionalSorter>();
 
     static {
-        additionalSorters.add(new AssociatedStreetSorter());
+        // first adequate sorter is used, so order matters
+        additionalSorters.add(new AssociatedStreetRoleStreetSorter());
+        additionalSorters.add(new AssociatedStreetRoleAddressHouseSorter());
     }
 
     /**
-     * Class that sorts type=associatedStreet relation's houses.
+     * Class that sorts the {@code street} members of
+     * {@code type=associatedStreet} and {@code type=street} relations.
      */
-    private static class AssociatedStreetSorter implements AdditionalSorter {
+    private static class AssociatedStreetRoleStreetSorter implements AdditionalSorter {
 
         @Override
         public boolean acceptsMember(RelationMember m) {
-            return m != null
-                    && m.getRole() != null && m.getRole().equals("house")
-                    && m.getMember() != null && m.getMember().get("addr:housenumber") != null;
+            return "street".equals(m.getRole());
+        }
+
+        @Override
+        public List<RelationMember> sortMembers(List<RelationMember> list) {
+            return sortMembersByConnectivity(list);
+        }
+    }
+
+    /**
+     * Class that sorts the {@code address} and {@code house} members of
+     * {@code type=associatedStreet} and {@code type=street} relations.
+     */
+    private static class AssociatedStreetRoleAddressHouseSorter implements AdditionalSorter {
+
+        public static final AlphanumComparator ALPHANUM_COMPARATOR = new AlphanumComparator();
+
+        @Override
+        public boolean acceptsMember(RelationMember m) {
+            return "address".equals(m.getRole()) || "house".equals(m.getRole());
         }
 
         @Override
@@ -43,22 +65,15 @@ public class RelationSorter {
             Collections.sort(list, new Comparator<RelationMember>() {
                 @Override
                 public int compare(RelationMember a, RelationMember b) {
-                    if (a == b || a.getMember() == b.getMember()) return 0;
-                    String addrA = a.getMember().get("addr:housenumber").trim();
-                    String addrB = b.getMember().get("addr:housenumber").trim();
-                    if (addrA.equals(addrB)) return 0;
-                    // Strip non-digits (from "1B" addresses for example)
-                    String addrAnum = addrA.replaceAll("\\D+", "");
-                    String addrBnum = addrB.replaceAll("\\D+", "");
-                    // Compare only numbers
-                    try {
-                        Integer res = Integer.parseInt(addrAnum) - Integer.parseInt(addrBnum);
-                        if (res != 0) return res;
-                    } catch (NumberFormatException e) {
-                        // Ignore NumberFormatException. If the number is not composed of digits, strings are compared next
+                    final int houseNumber = ALPHANUM_COMPARATOR.compare(
+                            a.getMember().get("addr:housenumber"),
+                            b.getMember().get("addr:housenumber"));
+                    if (houseNumber != 0) {
+                        return houseNumber;
                     }
-                    // Same number ? Compare full strings
-                    return addrA.compareTo(addrB);
+                    final String aDisplayName = a.getMember().getDisplayName(DefaultNameFormatter.getInstance());
+                    final String bDisplayName = b.getMember().getDisplayName(DefaultNameFormatter.getInstance());
+                    return ALPHANUM_COMPARATOR.compare(aDisplayName, bDisplayName);
                 }
             });
             return list;
@@ -76,19 +91,26 @@ public class RelationSorter {
 
         // Sort members with custom mechanisms (relation-dependent)
         List<RelationMember> defaultMembers = new ArrayList<RelationMember>(relationMembers.size());
-        Map<AdditionalSorter, List<RelationMember>> customMap = new HashMap<AdditionalSorter, List<RelationMember>>();
+        // Maps sorter to assigned members for sorting. Use LinkedHashMap to retain order.
+        Map<AdditionalSorter, List<RelationMember>> customMap = new LinkedHashMap<AdditionalSorter, List<RelationMember>>();
 
-        // Dispatch members to correct sorters
+        // Dispatch members to the first adequate sorter
         for (RelationMember m : relationMembers) {
+            boolean wasAdded = false;
             for (AdditionalSorter sorter : additionalSorters) {
-                List<RelationMember> list = defaultMembers;
                 if (sorter.acceptsMember(m)) {
+                    List<RelationMember> list;
                     list = customMap.get(sorter);
                     if (list == null) {
                         customMap.put(sorter, list = new LinkedList<RelationMember>());
                     }
+                    list.add(m);
+                    wasAdded = true;
+                    break;
                 }
-                list.add(m);
+            }
+            if (!wasAdded) {
+                defaultMembers.add(m);
             }
         }
 
@@ -96,6 +118,13 @@ public class RelationSorter {
         for (Entry<AdditionalSorter, List<RelationMember>> entry : customMap.entrySet()) {
             newMembers.addAll(entry.getKey().sortMembers(entry.getValue()));
         }
+        newMembers.addAll(sortMembersByConnectivity(defaultMembers));
+        return newMembers;
+    }
+
+    public static List<RelationMember> sortMembersByConnectivity(List<RelationMember> defaultMembers) {
+
+        List<RelationMember> newMembers = new ArrayList<RelationMember>();
 
         RelationNodeMap map = new RelationNodeMap(defaultMembers);
         // List of groups of linked members
