@@ -82,15 +82,16 @@ public class CrossingWays extends Test {
                 && !isCoastline1 && !isBuilding)
             return;
 
+        String level1 = w.get("level");
         String layer1 = w.get("layer");
         if ("0".equals(layer1)) {
-            layer1 = null; //0 is default value
+            layer1 = null; // 0 is default value for layer. Don't assume the same for levels
         }
 
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
             WaySegment ws = new WaySegment(w, i);
-            ExtendedSegment es1 = new ExtendedSegment(ws, layer1, highway1, railway1, isCoastline1, waterway1);
+            ExtendedSegment es1 = new ExtendedSegment(ws, layer1, highway1, railway1, isCoastline1, waterway1, level1);
             for (List<ExtendedSegment> segments : getSegments(es1.n1, es1.n2)) {
                 for (ExtendedSegment es2 : segments) {
                     List<Way> prims;
@@ -100,11 +101,16 @@ public class CrossingWays extends Test {
                         continue;
                     }
 
+                    String level2 = es2.level;
                     String layer2 = es2.layer;
                     String highway2 = es2.highway;
                     String railway2 = es2.railway;
                     boolean isCoastline2 = es2.coastline;
                     if (layer1 == null ? layer2 != null : !layer1.equals(layer2)) {
+                        continue;
+                    }
+                    // Ignore indoor highways on different levels
+                    if (highway1 != null && highway2 != null && level1 != null && level2 != null && !level1.equals(level2)) {
                         continue;
                     }
 
@@ -211,6 +217,9 @@ public class CrossingWays extends Test {
         /** The coastline type */
         private final boolean coastline;
 
+        /** The level, only considered for indoor highways */
+        private final String level;
+
         /**
          * Constructor
          * @param ws The way segment
@@ -219,8 +228,9 @@ public class CrossingWays extends Test {
          * @param railway The railway type of the way this segment is in
          * @param coastline The coastline flag of the way the segment is in
          * @param waterway The waterway type of the way this segment is in
+         * @param level The level of the way this segment is in
          */
-        public ExtendedSegment(WaySegment ws, String layer, String highway, String railway, boolean coastline, String waterway) {
+        public ExtendedSegment(WaySegment ws, String layer, String highway, String railway, boolean coastline, String waterway, String level) {
             this.ws = ws;
             this.n1 = ws.way.getNodes().get(ws.lowerIndex);
             this.n2 = ws.way.getNodes().get(ws.lowerIndex + 1);
@@ -229,6 +239,7 @@ public class CrossingWays extends Test {
             this.railway = railway;
             this.coastline = coastline;
             this.waterway = waterway;
+            this.level = level;
         }
 
         /**
