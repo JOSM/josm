@@ -54,11 +54,9 @@ public class DeprecatedTags extends Test {
                 add("barrier", "stile"));
         checks.add(new DeprecationCheck(2106).
                 testAndRemove("highway", "incline").
-                add("highway", "road").
                 add("incline", "up"));
         checks.add(new DeprecationCheck(2107).
                 testAndRemove("highway", "incline_steep").
-                add("highway", "road").
                 add("incline", "up"));
         checks.add(new DeprecationCheck(2108).
                 testAndRemove("highway", "unsurfaced").
