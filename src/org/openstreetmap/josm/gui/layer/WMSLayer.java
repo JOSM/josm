@@ -110,6 +110,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public static final IntegerProperty PROP_OVERLAP_EAST = new IntegerProperty("imagery.wms.overlapEast", 14);
     public static final IntegerProperty PROP_OVERLAP_NORTH = new IntegerProperty("imagery.wms.overlapNorth", 4);
     public static final IntegerProperty PROP_IMAGE_SIZE = new IntegerProperty("imagery.wms.imageSize", 500);
+    public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty("imagery.wms.default_autozoom", true);
 
     public int messageNum = 5; //limit for messages per layer
     protected double resolution;
@@ -123,7 +124,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     protected GeorefImage[][] images;
     protected static final int serializeFormatVersion = 5;
     protected boolean autoDownloadEnabled = true;
-    protected boolean autoResolutionEnabled = true;
+    protected boolean autoResolutionEnabled = PROP_DEFAULT_AUTOZOOM.get();
     protected boolean settingsChanged;
     public WmsCache cache;
     private AttributionSupport attribution = new AttributionSupport();
