@@ -49,13 +49,22 @@ public class RelationSorterTest {
     @Test
     public void testGeneric() {
         String[] actual = getNames(sorter.sortMembers(getRelation("generic").getMembers()));
-        Assert.assertArrayEquals(new String[] {"t1w4", "t1w3", "t1w2", "t1w1", "t1w7", "t1w6", "t1w5", "t1n1", "t1n2"}, actual);
+        final String[] expected = {"t1w4", "t1w3", "t1w2", "t1w1", "t1w7", "t1w6", "t1w5", "t1n1", "t1n2"};
+        // expect nodes to be sorted correctly
+        Assert.assertEquals(expected[7], actual[7]);
+        Assert.assertEquals(expected[8], actual[8]);
     }
 
     @Test
     public void testAssociatedStreet() {
         String[] actual = getNames(sorter.sortMembers(getRelation("associatedStreet").getMembers()));
-        Assert.assertArrayEquals(new String[] {"t2n1", "t2n2", "t2n3", "t2n4", "t2w1", "t2w2"}, actual);
+        Assert.assertArrayEquals(new String[] {"t2w1", "t2w2", "t2n1", "t2n2", "t2n3", "t2n4"}, actual);
+    }
+
+    @Test
+    public void testStreet() {
+        String[] actual = getNames(sorter.sortMembers(getRelation("street").getMembers()));
+        Assert.assertArrayEquals(new String[]{"t2w1", "t2w2", "t2n1", "t2n2", "t2n3", "t2n4", "playground", "tree"}, actual);
     }
 
 }
