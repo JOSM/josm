@@ -4,8 +4,10 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
@@ -136,7 +138,7 @@ public class DeprecatedTags extends Test {
                 add("monitoring:seismic_activity", "yes"));
         checks.add(new DeprecationCheck(2129).
                 test("monitoring:river_level").
-                alternative("monitoring:water_level"));
+                changeKey("monitoring:river_level", "monitoring:water_level"));
         // see #9365 - Useless tag layer=0
         checks.add(new UnnecessaryTagCheck(2130).
                 testAndRemove("layer", "0"));
@@ -169,49 +171,107 @@ public class DeprecatedTags extends Test {
         visit((OsmPrimitive) r);
     }
 
+    /**
+     * Represents on deprecation check consisting of a series of {@code test}s,
+     * automatic {@code change}s/{@code keyChange}s (fixes for the deprecated tag),
+     * or a suggestion of tagging {@code alternatives}.
+     */
     private static class DeprecationCheck {
 
         private int code;
         protected final List<Tag> test = new LinkedList<Tag>();
         protected final List<Tag> change = new LinkedList<Tag>();
+        protected final Map<String, String> keyChange = new LinkedHashMap<String, String>();
         protected final List<Tag> alternatives = new LinkedList<Tag>();
 
+        /**
+         * Creates a new {@code DeprecationCheck}.
+         * @param code {@link TestError#code}
+         */
         public DeprecationCheck(int code) {
             this.code = code;
         }
 
+        /**
+         * Adds a test criterion which matches primitives with tag {@code key=value}.
+         * @return {@code this}
+         */
         DeprecationCheck test(String key, String value) {
             test.add(new Tag(key, value));
             return this;
         }
 
+        /**
+         * Adds a test criterion which matches primitives with key {@code key}.
+         * @return {@code this}
+         */
         DeprecationCheck test(String key) {
             return test(key, null);
         }
 
+        /**
+         * Adds an automatic fix which sets/adds the tag {@code key=value}.
+         * @return {@code this}
+         * @see #alternative(String, String)
+         * @see #alternative(String)
+         */
         DeprecationCheck add(String key, String value) {
             change.add(new Tag(key, value));
             return this;
         }
 
+        /**
+         * Adds an automatic fix which removes the key {@code key}.
+         * @return {@code this}
+         */
         DeprecationCheck remove(String key) {
             change.add(new Tag(key));
             return this;
         }
 
+        /**
+         * Adds an automatic fix which changes the key {@code oldKey} to {@code newKey}.
+         * @return {@code this}
+         */
+        DeprecationCheck changeKey(String oldKey, String newKey) {
+            keyChange.put(oldKey, newKey);
+            return this;
+        }
+
+        /**
+         * Adds a test criterion which matches primitives with tag {@code key=value},
+         * and an automatic fix which removes the key {@code key}.
+         * Equivalent to {@link #test(String, String)} plus {@link #remove(String)}.
+         * @return {@code this}
+         */
         DeprecationCheck testAndRemove(String key, String value) {
             return test(key, value).remove(key);
         }
 
+        /**
+         * Adds a suggestion to use an alternative tag {@code key=value} instead of the deprecated tag.
+         * This is used for cases where no automatic fix is sensible.
+         * @return {@code this}
+         */
         DeprecationCheck alternative(String key, String value) {
             alternatives.add(new Tag(key, value));
             return this;
         }
 
+        /**
+         * Adds a suggestion to use an alternative key {@code key} instead of the deprecated tag.
+         * This is used for cases where no automatic fix is sensible.
+         * @return {@code this}
+         */
         DeprecationCheck alternative(String key) {
             return alternative(key, null);
         }
 
+        /**
+         * Tests whether the {@link OsmPrimitive} contains a deprecated tag which is represented by this {@code DeprecationCheck}.
+         * @param p the primitive to test
+         * @return true when the primitive contains a deprecated tag
+         */
         boolean matchesPrimitive(OsmPrimitive p) {
             for (Tag tag : test) {
                 String key = tag.getKey();
@@ -224,17 +284,26 @@ public class DeprecatedTags extends Test {
             return true;
         }
 
+        /**
+         * Constructs a fix in terms of a {@link Command} for the {@link OsmPrimitive}.
+         * @param p the primitive to construct the fix for
+         * @return the fix
+         */
         Command fixPrimitive(OsmPrimitive p) {
             Collection<Command> cmds = new LinkedList<Command>();
             for (Tag tag : change) {
                 cmds.add(new ChangePropertyCommand(p, tag.getKey(), tag.getValue()));
             }
-            if (test.size() == 1 && alternatives.size() == 1) {
-                cmds.add(new ChangePropertyKeyCommand(p, test.get(0).getKey(), alternatives.get(0).getKey())); 
+            for (Map.Entry<String, String> i : keyChange.entrySet()) {
+                cmds.add(new ChangePropertyKeyCommand(p, i.getKey(), i.getValue()));
             }
             return new SequenceCommand(tr("Deprecation fix of {0}", Utils.join(", ", test)), cmds);
         }
 
+        /**
+         * Constructs a localized description for this deprecation check.
+         * @return a localized description
+         */
         String getDescription() {
             if (alternatives.isEmpty())
                 return tr("{0} is deprecated", Utils.join(", ", test));
@@ -268,7 +337,7 @@ public class DeprecatedTags extends Test {
 
         @Override
         public boolean isFixable() {
-            return !check.change.isEmpty() || (check.test.size() == 1 && check.alternatives.size() == 1);
+            return !check.change.isEmpty() || !check.keyChange.isEmpty();
         }
 
         @Override
