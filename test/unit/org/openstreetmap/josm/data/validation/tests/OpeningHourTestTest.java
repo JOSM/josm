@@ -21,7 +21,7 @@ public class OpeningHourTestTest {
 
     @Before
     public void setUp() throws Exception {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
         OPENING_HOUR_TEST.initialize();
     }
 

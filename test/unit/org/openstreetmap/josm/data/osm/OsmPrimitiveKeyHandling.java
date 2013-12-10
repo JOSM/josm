@@ -18,7 +18,7 @@ public class OsmPrimitiveKeyHandling {
 
     @BeforeClass
     public static void init() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     /**

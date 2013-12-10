@@ -272,7 +272,7 @@ public class MainApplication extends Main {
             I18n.set(args.get(Option.LANGUAGE).iterator().next());
         }
 
-        Main.pref = new Preferences();
+        initApplicationPreferences();
 
         Policy.setPolicy(new Policy() {
             // Permissions for plug-ins loaded when josm is started via webstart

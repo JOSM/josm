@@ -22,7 +22,7 @@ public class SystemOfMeasurementTest {
      */
     @BeforeClass
     public static void setUp() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
     
     /**

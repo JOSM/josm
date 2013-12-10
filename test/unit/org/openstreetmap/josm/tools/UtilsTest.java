@@ -73,7 +73,7 @@ public class UtilsTest {
 
     @Test
     public void testOpenUrlGzip() throws Exception {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
         final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("http://www.openstreetmap.org/trace/1613906/data"), true);
         Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         x.close();
@@ -81,7 +81,7 @@ public class UtilsTest {
 
     @Test
     public void testOpenUrlBzip() throws Exception {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
         final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("http://www.openstreetmap.org/trace/785544/data"), true);
         Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         x.close();

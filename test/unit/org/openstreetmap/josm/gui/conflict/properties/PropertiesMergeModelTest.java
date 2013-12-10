@@ -47,7 +47,7 @@ public class PropertiesMergeModelTest {
     @BeforeClass
     public static void init() {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     @Before

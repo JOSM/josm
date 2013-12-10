@@ -100,7 +100,7 @@ public class MainApplet extends JApplet {
         // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
-        Main.pref = new ServerSidePreferences(getCodeBase());
+        Main.initAppletPreferences(getCodeBase());
 
         String lang = getParameter("language");
         I18n.set(lang != null ? lang : Main.pref.get("language", null));
@@ -165,7 +165,7 @@ public class MainApplet extends JApplet {
     public static void main(String[] args) {
         Main.applet = true;
         MainApplet applet = new MainApplet();
-        Main.pref = new ServerSidePreferences(applet.getCodeBase());
+        Main.initAppletPreferences(applet.getCodeBase());
         applet.setStub(new AppletStub() {
             @Override
             public void appletResize(int w, int h) {

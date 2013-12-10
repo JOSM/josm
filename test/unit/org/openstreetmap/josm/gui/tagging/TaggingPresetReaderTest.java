@@ -22,7 +22,7 @@ public class TaggingPresetReaderTest {
     
     @BeforeClass
     public static void setUpClass() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
         testdataroot = System.getProperty("josm.test.data");
         if (testdataroot == null || testdataroot.isEmpty()) {
             testdataroot = "test/data";

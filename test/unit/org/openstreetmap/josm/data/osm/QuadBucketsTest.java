@@ -23,7 +23,7 @@ public class QuadBucketsTest {
 
     @BeforeClass
     public static void init() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     private void removeAllTest(DataSet ds) {

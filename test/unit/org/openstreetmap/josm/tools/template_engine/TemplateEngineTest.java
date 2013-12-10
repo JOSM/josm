@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.template_engine;
 
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DatasetFactory;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -22,7 +20,7 @@ public class TemplateEngineTest {
 
     @BeforeClass
     public static void before() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     @Test
