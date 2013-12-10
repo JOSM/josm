@@ -23,6 +23,10 @@ public final class Ellipsoid {
      */
     public static final Ellipsoid hayford = Ellipsoid.create_a_rf(6378388.0, 297.0);
     /**
+     * GRS67 ellipsoid
+     */
+    public static final Ellipsoid GRS67 = Ellipsoid.create_a_rf(6378160.0, 298.247167);
+    /**
      * GRS80 ellipsoid
      */
     public static final Ellipsoid GRS80 = Ellipsoid.create_a_rf(6378137.0, 298.257222101);
