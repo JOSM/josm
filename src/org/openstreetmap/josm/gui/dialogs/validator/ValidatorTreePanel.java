@@ -1,6 +1,8 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.dialogs.validator;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -212,7 +214,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             for (Entry<String, Set<TestError>> msgErrors : severityErrors.entrySet()) {
                 // Message node
                 Set<TestError> errs = msgErrors.getValue();
-                String msg = msgErrors.getKey() + " (" + errs.size() + ")";
+                String msg = tr("{0} ({1})", msgErrors.getKey(), errs.size());
                 DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
                 severityNode.add(messageNode);
 
@@ -231,7 +233,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                 MultiMap<String, TestError> errorlist = bag.getValue();
                 DefaultMutableTreeNode groupNode = null;
                 if (errorlist.size() > 1) {
-                    String nmsg = bag.getKey() + " (" + errorlist.size() + ")";
+                    String nmsg = tr("{0} ({1})", bag.getKey(), errorlist.size());
                     groupNode = new DefaultMutableTreeNode(nmsg);
                     severityNode.add(groupNode);
                     if (oldSelectedRows.contains(bag.getKey())) {
@@ -244,9 +246,9 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                     Set<TestError> errs = msgErrors.getValue();
                     String msg;
                     if (groupNode != null) {
-                        msg = msgErrors.getKey() + " (" + errs.size() + ")";
+                        msg = tr("{0} ({1})", msgErrors.getKey(), errs.size());
                     } else {
-                        msg = msgErrors.getKey() + " - " + bag.getKey() + " (" + errs.size() + ")";
+                        msg = tr("{0} - {1} ({2})", msgErrors.getKey(), bag.getKey(), errs.size());
                     }
                     DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
                     if (groupNode != null) {
