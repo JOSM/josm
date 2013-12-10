@@ -130,6 +130,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             valTreeModel.setRoot(rootNode);
             return;
         }
+        // Sort validation errors - #8517
+        Collections.sort(errors);
 
         // Remember the currently expanded rows
         Set<Object> oldSelectedRows = new HashSet<Object>();
