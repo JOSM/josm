@@ -24,7 +24,7 @@ public class DuplicateNodeTest {
     @BeforeClass
     public static void setUp() {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     /**

@@ -17,6 +17,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +54,7 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.ServerSidePreferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -332,6 +334,23 @@ abstract public class Main {
      * We use this to work around openjdk bugs
      */
     public static boolean isOpenjdk;
+
+    /**
+     * Initializes {@code Main.pref} in applet context.
+     * @param serverURL The server URL hosting the user preferences.
+     * @since 6471
+     */
+    public static void initAppletPreferences(URL serverURL) {
+        Main.pref = new ServerSidePreferences(serverURL);
+    }
+
+    /**
+     * Initializes {@code Main.pref} in normal application context.
+     * @since 6471
+     */
+    public static void initApplicationPreferences() {
+        Main.pref = new Preferences();
+    }
 
     /**
      * Set or clear (if passed <code>null</code>) the map.

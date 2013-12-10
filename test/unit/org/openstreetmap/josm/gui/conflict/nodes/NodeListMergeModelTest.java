@@ -31,7 +31,7 @@ public class NodeListMergeModelTest {
 
     @BeforeClass
     public static void init() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     @SuppressWarnings("unchecked")

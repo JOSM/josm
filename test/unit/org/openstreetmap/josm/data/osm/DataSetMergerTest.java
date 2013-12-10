@@ -62,7 +62,7 @@ public class DataSetMergerTest {
 
     @BeforeClass
     public static void init() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     private DataSet my;

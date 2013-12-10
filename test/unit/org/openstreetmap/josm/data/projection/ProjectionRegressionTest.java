@@ -148,7 +148,7 @@ public class ProjectionRegressionTest {
 
     @BeforeClass
     public static void setUp() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     @Test

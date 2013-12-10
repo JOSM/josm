@@ -23,7 +23,7 @@ public class TagMergeModelTest {
 
     @BeforeClass
     public static void init() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     @Test

@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.Preferences;
 public class TextTagParserTest {
     @BeforeClass
     public static void before() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     @Test

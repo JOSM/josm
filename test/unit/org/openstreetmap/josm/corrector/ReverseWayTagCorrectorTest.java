@@ -18,7 +18,7 @@ public class ReverseWayTagCorrectorTest {
      */
     @BeforeClass
     public static void setUp() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
     
     /**
