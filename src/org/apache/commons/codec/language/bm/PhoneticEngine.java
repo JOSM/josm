@@ -38,7 +38,7 @@ import org.apache.commons.codec.language.bm.Rule.Phoneme;
  * <p>
  * This is a two-stage process. Firstly, the word is converted into a phonetic representation that takes
  * into account the likely source language. Next, this phonetic representation is converted into a
- * pan-european 'average' representation, allowing comparison between different versions of essentially
+ * pan-European 'average' representation, allowing comparison between different versions of essentially
  * the same word from different languages.
  * <p>
  * This class is intentionally immutable and thread-safe.
@@ -48,7 +48,7 @@ import org.apache.commons.codec.language.bm.Rule.Phoneme;
  * Ported from phoneticengine.php
  *
  * @since 1.6
- * @version $Id: PhoneticEngine.java 1544659 2013-11-22 19:35:23Z tn $
+ * @version $Id: PhoneticEngine.java 1549875 2013-12-10 15:54:15Z ggregory $
  */
 public class PhoneticEngine {
 
