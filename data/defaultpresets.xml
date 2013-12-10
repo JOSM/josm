@@ -7148,7 +7148,7 @@ Note that for a match, at least one positive and no negative is required.
     </group> <!-- Landuse -->
   </group>
     <group name="Annotation" icon="presets/addresses.png">
-        <item name="Name" icon="presets/font.svg" type="node,way,closedway,relation">
+        <item name="Name" icon="presets/message.png" type="node,way,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Key:name"
                   ar.href="http://wiki.openstreetmap.org/wiki/Ar:Key:name"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:name"
