@@ -7021,18 +7021,35 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
         </item>
         <item name="Retail" icon="styles/standard/shop/supermarket.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=retail"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=retail"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=retail"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=retail"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=retail" />
             <label text="Edit Retail Landuse" />
             <space />
             <key key="landuse" value="retail" />
             <text key="name" text="Name" />
         </item>
         <item name="Commercial" icon="presets/empty.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=commercial"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=commercial"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=commercial"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=commercial"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=commercial" />
             <label text="Edit Commercial Landuse" />
             <space />
             <key key="landuse" value="commercial" />
             <text key="name" text="Name" />
         </item>
         <item name="Industrial" icon="presets/works.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=industrial"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=industrial"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:landuse=industrial"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=industrial"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:landuse=industrial"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=industrial"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=industrial" />
             <label text="Edit Industrial Landuse" />
             <space />
             <key key="landuse" value="industrial" />
@@ -7062,6 +7079,10 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
         </item>
         <item name="Military" icon="presets/military.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=military"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=military"
+                  pt-br.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=military"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=military" />
             <label text="Edit Military Landuse" />
             <space />
             <key key="landuse" value="military" />
@@ -7069,41 +7090,107 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <separator/>
         <item name="Construction area" icon="presets/construction.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=construction"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=construction"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:landuse=construction"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=construction"
+                  pt-BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=construction"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=construction" />
             <label text="Edit Construction Landuse" />
             <space />
             <key key="landuse" value="construction" />
             <text key="name" text="Name" />
         </item>
         <item name="Brownfield" icon="presets/landuse.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=brownfield"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=brownfield"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=brownfield"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=brownfield"
+                  pt-BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=brownfield" />
             <label text="Edit Brownfield Landuse" />
             <space />
             <key key="landuse" value="brownfield" />
             <text key="name" text="Name" />
         </item>
         <item name="Greenfield" icon="presets/landuse.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=greenfield"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=greenfield"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=greenfield"
+                  pt-BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=greenfield" />
             <label text="Edit Greenfield Landuse" />
             <space />
             <key key="landuse" value="greenfield" />
             <text key="name" text="Name" />
         </item>
         <item name="Landfill" icon="presets/landuse.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=landfill"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=landfill"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=landfill"
+                  pt-BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=landfill"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=landfill" />
             <label text="Edit Landfill Landuse" />
             <space />
             <key key="landuse" value="landfill" />
             <text key="name" text="Name" />
         </item>
         <item name="Quarry" icon="presets/mine.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=quarry"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=quarry"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=quarry"
+                  pt-BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=quarry"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=quarry" />
             <label text="Edit Quarry Landuse" />
             <space />
             <key key="landuse" value="quarry" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
         </item>
     </group> <!-- Landuse -->
   </group>
     <group name="Annotation" icon="presets/addresses.png">
-        <item name="Addresses" icon="presets/addresses.png" type="node,way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema"
-                  de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
+        <item name="Name" icon="presets/font.svg" type="node,way,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:name"
+                  ar.href="http://wiki.openstreetmap.org/wiki/Ar:Key:name"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:name"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Key:name"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:name"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:name"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:name"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:name"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:name"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:name"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:name"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:name"
+                  sv.href="http://wiki.openstreetmap.org/wiki/Sv:Key:name"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:name"
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Key:name" />
+            <label text="Edit Name Information" />
+            <space />
+            <text key="name" text="Name" />
+            <optional>
+                <text key="alt_name" text="Alternative name" match="key" />
+                <text key="old_name" text="Historical name" match="key" />
+                <text key="loc_name" text="Local name" match="key" />
+                <text key="reg_name" text="Regional name" match="key" />
+                <text key="nat_name" text="National name" match="key" />
+                <text key="int_name" text="International name" match="key" />
+                <text key="official_name" text="Official name" match="key" />
+                <text key="short_name" text="Common name abbreviation" match="key" />
+            </optional>
+        </item>
+        <item name="Addresses" icon="presets/addresses.png" type="node,way,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:addr"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:addr"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Key:addr"
+                  et.href="http://wiki.openstreetmap.org/wiki/Et:Key:addr"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:addr"
+                  hr.href="http://wiki.openstreetmap.org/wiki/Hr:Key:addr"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:addr"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:addr"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:addr"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:addr"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:addr"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:addr" />
             <label text="Edit Address Information" />
             <space />
             <text key="addr:housenumber" text="House number" match="key" auto_increment="-2,-1,+1,+2" />
@@ -7148,6 +7235,12 @@ Note that for a match, at least one positive and no negative is required.
             <text key="image" text="Image" />
         </item>
         <item name="Contact (schema with 'contact:*' prefix)" icon="presets/contact.png" type="node,way,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:contact"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:contact"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:contact"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:contact"
+                  pt-BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:contact"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:contact" />
             <label text="Edit Contact information (new schema)" />
             <space />
             <text key="contact:phone" text="Phone Number" match="key" />
@@ -7204,7 +7297,8 @@ Note that for a match, at least one positive and no negative is required.
             </roles>
         </item>
         <item name="Site" type="relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Site" />
+            <link href="http://wiki.openstreetmap.org/wiki/Relations=Site"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Relations=Site" />
             <label text="Edit Site" />
             <space />
             <key key="type" value="site" />
