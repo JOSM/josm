@@ -16,7 +16,7 @@ public class OsmPrimitiveTest {
 
     @BeforeClass
     public static void init() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     private void compareReferrers(OsmPrimitive actual, OsmPrimitive... expected) {

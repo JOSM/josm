@@ -26,7 +26,7 @@ public class WayConnectionTypeCalculatorTest {
 
     @BeforeClass
     public static void loadData() throws FileNotFoundException, IllegalDataException {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         testDataset = OsmReader.parseDataSet(new FileInputStream("data_nodist/relation_sort.osm"), NullProgressMonitor.INSTANCE);
     }

@@ -17,7 +17,7 @@ public class TagMergeItemTest {
 
     @BeforeClass
     public static void init() {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     @Test

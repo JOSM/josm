@@ -12,7 +12,7 @@ public class SearchCompilerTest {
 
     @Before
     public void setUp() throws Exception {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     protected OsmPrimitive newPrimitive(String key, String value) {
