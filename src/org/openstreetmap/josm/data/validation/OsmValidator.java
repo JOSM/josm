@@ -62,8 +62,7 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- *
- * A OSM data validator
+ * A OSM data validator.
  *
  * @author Francisco R. Santos <frsantos@gmail.com>
  */
@@ -116,6 +115,19 @@ public class OsmValidator implements LayerChangeListener {
         BarriersEntrances.class, // ID 2801 .. 2899
         OpeningHourTest.class // 2901 .. 2999
     };
+    
+    private static Map<String, Test> allTestsMap;
+    static {
+        allTestsMap = new HashMap<String, Test>();
+        for (Class<Test> testClass : allAvailableTests) {
+            try {
+                allTestsMap.put(testClass.getSimpleName(), testClass.newInstance());
+            } catch (Exception e) {
+                Main.error(e);
+                continue;
+            }
+        }
+    }
 
     /**
      * Constructs a new {@code OsmValidator}.
@@ -132,8 +144,7 @@ public class OsmValidator implements LayerChangeListener {
      *
      * @return The directory of the plugin
      */
-    public static String getValidatorDir()
-    {
+    public static String getValidatorDir() {
         return Main.pref.getPreferencesDir() + "validator/";
     }
 
@@ -201,21 +212,14 @@ public class OsmValidator implements LayerChangeListener {
         }
     }
 
-    /** Gets a map from simple names to all tests. */
+    /** 
+     * Gets a map from simple names to all tests. 
+     * @return A map of all tests, indexed by the simple name of their Java class 
+     */
     public static Map<String, Test> getAllTestsMap() {
-        Map<String, Test> tests = new HashMap<String, Test>();
-        for (Class<Test> testClass : allAvailableTests) {
-            try {
-                Test test = testClass.newInstance();
-                tests.put(testClass.getSimpleName(), test);
-            } catch (Exception e) {
-                e.printStackTrace();
-                continue;
-            }
-        }
-        applyPrefs(tests, false);
-        applyPrefs(tests, true);
-        return tests;
+        applyPrefs(allTestsMap, false);
+        applyPrefs(allTestsMap, true);
+        return new HashMap<String, Test>(allTestsMap);
     }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
