@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -17,7 +18,7 @@ import org.openstreetmap.josm.data.osm.Relation;
  */
 public class HighlightHelper {
     Set<OsmPrimitive> highlightedPrimitives = new HashSet<OsmPrimitive>();
-    
+
     /**
      * Highlight and remember given primitives
      * @param prims - primitives to highlight/unhighlight
@@ -25,7 +26,7 @@ public class HighlightHelper {
     public boolean highlight(Collection <? extends OsmPrimitive> prims) {
         return highlight(prims, false);
     }
-    
+
     /**
      * Highlight and remember given primitives
      * @param prims - primitives to highlight/unhighlight
@@ -50,7 +51,7 @@ public class HighlightHelper {
 
         return needsRepaint;
     }
-    
+
     /**
      * Highlight and remember given primitives, forgetting previously highlighted by this instance
      * @param prims - primitives to highlight/unhighlight
@@ -58,7 +59,7 @@ public class HighlightHelper {
     public boolean highlightOnly(Collection <? extends OsmPrimitive> prims) {
         return highlight(prims, true);
     }
-    
+
     /**
      * Highlight and remember given primitive, forgetting previously highlighted by this instance
      * @param p - primitives to highlight/unhighlight
@@ -66,21 +67,28 @@ public class HighlightHelper {
     public boolean highlightOnly(OsmPrimitive p) {
         return highlight(Collections.singleton(p), true);
     }
-    
+
     /**
      * Highlight and remember given primitive
      * @param prims - primitives to highlight/unhighlight
      * @param flag - true to highlight
      */
     public boolean setHighlight(OsmPrimitive p, boolean flag) {
+        return setHighlight(p, flag, new HashSet<Relation>());
+    }
+
+    private boolean setHighlight(OsmPrimitive p, boolean flag, Set<Relation> seenRelations) {
         if (p instanceof Relation) {
+            Relation r = (Relation) p;
+            seenRelations.add(r);
             boolean needRepaint = false;
-            for (OsmPrimitive m: ((Relation) p).getMemberPrimitives()) {
-                needRepaint |= setHighlight(m, flag);
+            for (OsmPrimitive m : r.getMemberPrimitives()) {
+                if (!(m instanceof Relation) || !seenRelations.contains(m)) {
+                    needRepaint |= setHighlight(m, flag, seenRelations);
+                }
             }
             return needRepaint;
-        } else
-        if (flag) {
+        } else if (flag) {
             if (highlightedPrimitives.add(p)) {
                 p.setHighlighted(true);
                 return true;
@@ -93,7 +101,7 @@ public class HighlightHelper {
         }
         return false;
     }
-    
+
     /**
      * Clear highlighting of all remembered primitives
      */
@@ -103,7 +111,7 @@ public class HighlightHelper {
         }
         highlightedPrimitives.clear();
     }
-    
+
     /**
      * Slow method to import all currently highlighted primitives into this instance
      */
@@ -113,7 +121,7 @@ public class HighlightHelper {
             highlightedPrimitives.addAll( ds.allNonDeletedPrimitives() );
         }
     }
-    
+
     /**
      * Slow method to remove highlights from all primitives
      */
