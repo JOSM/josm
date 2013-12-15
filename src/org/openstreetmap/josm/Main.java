@@ -211,7 +211,7 @@ abstract public class Main {
      * @since 6248
      */
     public static int logLevel = 3;
-    
+
     /**
      * Prints an error message if logging is on.
      * @param msg The message to print.
@@ -222,7 +222,7 @@ abstract public class Main {
             return;
         System.err.println(tr("ERROR: {0}", msg));
     }
-    
+
     /**
      * Prints a warning message if logging is on.
      * @param msg The message to print.
@@ -232,7 +232,7 @@ abstract public class Main {
             return;
         System.err.println(tr("WARNING: {0}", msg));
     }
-    
+
     /**
      * Prints an informational message if logging is on.
      * @param msg The message to print.
@@ -242,7 +242,7 @@ abstract public class Main {
             return;
         System.out.println(tr("INFO: {0}", msg));
     }
-    
+
     /**
      * Prints a debug message if logging is on.
      * @param msg The message to print.
@@ -252,7 +252,7 @@ abstract public class Main {
             return;
         System.out.println(tr("DEBUG: {0}", msg));
     }
-    
+
     /**
      * Prints a formated error message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
@@ -263,7 +263,7 @@ abstract public class Main {
     public static void error(String msg, Object... objects) {
         error(MessageFormat.format(msg, objects));
     }
-    
+
     /**
      * Prints a formated warning message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
@@ -273,7 +273,7 @@ abstract public class Main {
     public static void warn(String msg, Object... objects) {
         warn(MessageFormat.format(msg, objects));
     }
-    
+
     /**
      * Prints a formated informational message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
@@ -283,7 +283,7 @@ abstract public class Main {
     public static void info(String msg, Object... objects) {
         info(MessageFormat.format(msg, objects));
     }
-    
+
     /**
      * Prints a formated debug message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
@@ -293,7 +293,7 @@ abstract public class Main {
     public static void debug(String msg, Object... objects) {
         debug(MessageFormat.format(msg, objects));
     }
-    
+
     /**
      * Prints an error message for the given Throwable.
      * @param t The throwable object causing the error
@@ -302,7 +302,7 @@ abstract public class Main {
     public static void error(Throwable t) {
         error(getErrorMessage(t));
     }
-    
+
     /**
      * Prints a warning message for the given Throwable.
      * @param t The throwable object causing the error
@@ -311,12 +311,16 @@ abstract public class Main {
     public static void warn(Throwable t) {
         warn(getErrorMessage(t));
     }
-    
+
     private static String getErrorMessage(Throwable t) {
         StringBuilder sb = new StringBuilder(t.getClass().getName());
         String msg = t.getMessage();
         if (msg != null) {
             sb.append(": ").append(msg.trim());
+        }
+        Throwable cause = t.getCause();
+        if (cause != null && !cause.equals(t)) {
+            sb.append(". ").append(tr("Cause: ")).append(getErrorMessage(cause));
         }
         return sb.toString();
     }
