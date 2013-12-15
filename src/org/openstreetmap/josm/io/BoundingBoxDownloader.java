@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -33,6 +34,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
      * @param downloadArea The area to download
      */
     public BoundingBoxDownloader(Bounds downloadArea) {
+        CheckParameterUtil.ensureParameterNotNull(downloadArea, "downloadArea");
         this.lat1 = downloadArea.getMinLat();
         this.lon1 = downloadArea.getMinLon();
         this.lat2 = downloadArea.getMaxLat();

@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.UnsupportedEncodingException;
@@ -14,12 +16,12 @@ import org.openstreetmap.josm.data.coor.LatLon;
 
 public final class OsmUrlToBounds {
     private static final String SHORTLINK_PREFIX = "http://osm.org/go/";
-    
+
     private OsmUrlToBounds() {
         // Hide default constructor for utils classes
     }
 
-    public static Bounds parse(String url) {
+    public static Bounds parse(String url) throws IllegalArgumentException {
         try {
             // a percent sign indicates an encoded URL (RFC 1738).
             if (url.contains("%")) {
@@ -85,23 +87,36 @@ public final class OsmUrlToBounds {
      * the new URLs follow the scheme http://www.openstreetmap.org/#map=18/51.71873/8.76164&layers=CN
      * @param url string for parsing
      * @return Bounds if hashurl, {@code null} otherwise
+     * @throws IllegalArgumentException if URL is invalid
      */
-    private static Bounds parseHashURLs(String url) {
+    private static Bounds parseHashURLs(String url) throws IllegalArgumentException {
         int startIndex = url.indexOf("#map=");
         if (startIndex == -1) return null;
         int endIndex = url.indexOf('&', startIndex);
         if (endIndex == -1) endIndex = url.length();
-        try {
-            String coordPart = url.substring(startIndex+5, endIndex);
-            String[] parts = coordPart.split("/");
-            Bounds b = positionToBounds(Double.parseDouble(parts[1]),
-                    Double.parseDouble(parts[2]),
-                    Integer.parseInt(parts[0]));
-            return b;
-        } catch (Exception ex) {
-            Main.debug(ex.getMessage());
-            return null;
+        String coordPart = url.substring(startIndex+5, endIndex);
+        String[] parts = coordPart.split("/");
+        if (parts.length < 3) {
+            throw new IllegalArgumentException(tr("URL does not contain {0}/{1}/{2}", tr("zoom"), tr("latitude"), tr("longitude")));
         }
+        int zoom;
+        double lat, lon;
+        try {
+            zoom = Integer.parseInt(parts[0]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(tr("URL does not contain valid {0}", tr("zoom")), e);
+        }
+        try {
+            lat = Double.parseDouble(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(tr("URL does not contain valid {0}", tr("latitude")), e);
+        }
+        try {
+            lon = Double.parseDouble(parts[2]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(tr("URL does not contain valid {0}", tr("longitude")), e);
+        }
+        return positionToBounds(lat, lon, zoom);
     }
 
     private static double parseDouble(Map<String, String> map, String key) {
