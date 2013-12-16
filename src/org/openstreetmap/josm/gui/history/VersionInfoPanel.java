@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -60,7 +59,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         lblChangesetComment = new JTextArea();
         lblChangesetComment.setLineWrap(true);
         lblChangesetComment.setEditable(false);
-        lblChangesetComment.setBackground(new Color(0, 0, 0, 0));
+        lblChangesetComment.setOpaque(false);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
