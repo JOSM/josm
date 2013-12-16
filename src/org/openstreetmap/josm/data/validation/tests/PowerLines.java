@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +31,9 @@ import org.openstreetmap.josm.tools.Geometry;
  * See #7812 for discussions about this test.
  */
 public class PowerLines extends Test {
-    
+
     protected static final int POWER_LINES = 2501;
-    
+
     /** Values for {@code power} key interpreted as power lines */
     public static final Collection<String> POWER_LINE_TAGS = Arrays.asList("line", "minor_line");
     /** Values for {@code power} key interpreted as power towers */
@@ -41,9 +42,9 @@ public class PowerLines extends Test {
     public static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "plant", "generator");
     /** Values for {@code power} key interpreted as allowed power items */
     public static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator");
-    
+
     private final Map<Way, String> towerPoleTagMap = new HashMap<Way, String>();
-    
+
     private final List<PowerLineError> potentialErrors = new ArrayList<PowerLineError>();
 
     private final List<OsmPrimitive> powerStations = new ArrayList<OsmPrimitive>();
@@ -54,7 +55,7 @@ public class PowerLines extends Test {
     public PowerLines() {
         super(tr("Power lines"), tr("Checks for nodes in power lines that do not have a power=tower/pole tag."));
     }
-    
+
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
@@ -85,24 +86,25 @@ public class PowerLines extends Test {
             }
         }
     }
-    
+
     @Override
     public void visit(Relation r) {
         if (r.isMultipolygon() && isPowerStation(r)) {
             powerStations.add(r);
         }
-    }    
+    }
 
     @Override
     public void endTest() {
         for (PowerLineError e : potentialErrors) {
-            if (!isInPowerStation(e.getNode())) {
+            Node n = e.getNode();
+            if (n != null && !isInPowerStation(n)) {
                 errors.add(e);
             }
         }
         super.endTest();
     }
-    
+
     protected final boolean isInPowerStation(Node n) {
         for (OsmPrimitive station : powerStations) {
             List<List<Node>> nodesLists = new ArrayList<List<Node>>();
@@ -128,9 +130,12 @@ public class PowerLines extends Test {
     @Override
     public Command fixError(TestError testError) {
         if (testError instanceof PowerLineError && isFixable(testError)) {
-            return new ChangePropertyCommand(
-                    testError.getPrimitives().iterator().next(), 
-                    "power", towerPoleTagMap.get(((PowerLineError)testError).line));
+            // primitives list can be empty if all primitives have been purged
+            Iterator<? extends OsmPrimitive> it = testError.getPrimitives().iterator();
+            if (it.hasNext()) {
+                return new ChangePropertyCommand(it.next(),
+                        "power", towerPoleTagMap.get(((PowerLineError)testError).line));
+            }
         }
         return null;
     }
@@ -139,7 +144,7 @@ public class PowerLines extends Test {
     public boolean isFixable(TestError testError) {
         return testError instanceof PowerLineError && towerPoleTagMap.containsKey(((PowerLineError)testError).line);
     }
-    
+
     /**
      * Determines if the specified way denotes a power line.
      * @param w The way to be tested
@@ -166,7 +171,7 @@ public class PowerLines extends Test {
     protected static final boolean isPowerTower(Node n) {
         return isPowerIn(n, POWER_TOWER_TAGS);
     }
-    
+
     /**
      * Determines if the specified node denotes a power infrastructure allowed on a power line.
      * @param n The node to be tested
@@ -175,7 +180,7 @@ public class PowerLines extends Test {
     protected static final boolean isPowerAllowed(Node n) {
         return isPowerIn(n, POWER_ALLOWED_TAGS);
     }
-    
+
     /**
      * Helper function to check if power tags is a certain value.
      * @param p The primitive to be tested
@@ -186,16 +191,18 @@ public class PowerLines extends Test {
         String v = p.get("power");
         return v != null && values != null && values.contains(v);
     }
-    
+
     protected class PowerLineError extends TestError {
         private final Way line;
         public PowerLineError(Node n, Way line) {
-            super(PowerLines.this, Severity.WARNING, 
+            super(PowerLines.this, Severity.WARNING,
                     tr("Missing power tower/pole within power line"), POWER_LINES, n);
             this.line = line;
         }
         public final Node getNode() {
-            return (Node) getPrimitives().iterator().next();
+            // primitives list can be empty if all primitives have been purged
+            Iterator<? extends OsmPrimitive> it = getPrimitives().iterator();
+            return it.hasNext() ? (Node) it.next() : null;
         }
     }
 }

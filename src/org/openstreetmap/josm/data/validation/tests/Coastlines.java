@@ -7,6 +7,7 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -217,14 +218,18 @@ public class Coastlines extends Test {
     @Override
     public Command fixError(TestError testError) {
         if (isFixable(testError)) {
-            Way way = (Way) testError.getPrimitives().iterator().next();
-            Way newWay = new Way(way);
+            // primitives list can be empty if all primitives have been purged
+            Iterator<? extends OsmPrimitive> it = testError.getPrimitives().iterator();
+            if (it.hasNext()) {
+                Way way = (Way) it.next();
+                Way newWay = new Way(way);
 
-            List<Node> nodesCopy = newWay.getNodes();
-            Collections.reverse(nodesCopy);
-            newWay.setNodes(nodesCopy);
+                List<Node> nodesCopy = newWay.getNodes();
+                Collections.reverse(nodesCopy);
+                newWay.setNodes(nodesCopy);
 
-            return new ChangeCommand(way, newWay);
+                return new ChangeCommand(way, newWay);
+            }
         }
         return null;
     }

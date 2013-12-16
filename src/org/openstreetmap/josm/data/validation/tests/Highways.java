@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,14 +30,14 @@ public class Highways extends Test {
 
     protected static final int WRONG_ROUNDABOUT_HIGHWAY = 2701;
     protected static final int MISSING_PEDESTRIAN_CROSSING = 2702;
-    
+
     /**
      * Classified highways in order of importance
      */
     protected static final List<String> CLASSIFIED_HIGHWAYS = Arrays.asList(
-            "motorway",  "motorway_link", 
-            "trunk",     "trunk_link", 
-            "primary",   "primary_link", 
+            "motorway",  "motorway_link",
+            "trunk",     "trunk_link",
+            "primary",   "primary_link",
             "secondary", "secondary_link",
             "tertiary",  "tertiary_link",
             "unclassified",
@@ -49,7 +50,7 @@ public class Highways extends Test {
     int pedestrianWays = 0;
     int cyclistWays = 0;
     int carsWays = 0;
-    
+
     /**
      * Constructs a new {@code Highways} test.
      */
@@ -60,15 +61,15 @@ public class Highways extends Test {
     protected class WrongRoundaboutHighway extends TestError {
 
         public final String correctValue;
-        
+
         public WrongRoundaboutHighway(Way w, String key) {
-            super(Highways.this, Severity.WARNING, 
-                    tr("Incorrect roundabout (highway: {0} instead of {1})", w.get("highway"), key), 
+            super(Highways.this, Severity.WARNING,
+                    tr("Incorrect roundabout (highway: {0} instead of {1})", w.get("highway"), key),
                     WRONG_ROUNDABOUT_HIGHWAY, w);
             this.correctValue = key;
         }
     }
-    
+
     @Override
     public void visit(Node n) {
         if (n.isUsable() && !n.hasTag("highway", "crossing") && !n.hasTag("crossing", "no") && n.isReferredByWays(2)) {
@@ -115,7 +116,7 @@ public class Highways extends Test {
             }
         }
     }
-    
+
     private void testMissingPedestrianCrossing(Node n) {
         leftByPedestrians = false;
         leftByCyclists = false;
@@ -123,7 +124,7 @@ public class Highways extends Test {
         pedestrianWays = 0;
         cyclistWays = 0;
         carsWays = 0;
-        
+
         for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
             String highway = w.get("highway");
             if (highway != null) {
@@ -171,7 +172,7 @@ public class Highways extends Test {
             leftByPedestrians = true;
         }
     }
-    
+
     @Override
     public boolean isFixable(TestError testError) {
         return testError instanceof WrongRoundaboutHighway;
@@ -180,8 +181,12 @@ public class Highways extends Test {
     @Override
     public Command fixError(TestError testError) {
         if (testError instanceof WrongRoundaboutHighway) {
-            return new ChangePropertyCommand(testError.getPrimitives().iterator().next(), 
-                    "highway", ((WrongRoundaboutHighway) testError).correctValue);
+            // primitives list can be empty if all primitives have been purged
+            Iterator<? extends OsmPrimitive> it = testError.getPrimitives().iterator();
+            if (it.hasNext()) {
+                return new ChangePropertyCommand(it.next(),
+                        "highway", ((WrongRoundaboutHighway) testError).correctValue);
+            }
         }
         return null;
     }
