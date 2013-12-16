@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * This is the {@link TableCellRenderer} used in {@link SelectionTable}.
  *
  */
-public  class SelectionTableCellRenderer extends JLabel implements TableCellRenderer {
+public class SelectionTableCellRenderer extends JLabel implements TableCellRenderer {
     public final static Color BGCOLOR_DOUBLE_ENTRY = new Color(254,226,214);
     public final static Color BGCOLOR_SINGLE_ENTRY = new Color(235,255,177);
 
@@ -58,7 +58,7 @@ public  class SelectionTableCellRenderer extends JLabel implements TableCellRend
     }
 
     protected void renderPrimitive(OsmPrimitive primitive) {
-        setIcon(ImageProvider.get(primitive.getPrimitiveId().getType()));
+        setIcon(ImageProvider.get(primitive.getDisplayType()));
         setText(primitive.getDisplayName(DefaultNameFormatter.getInstance()));
         setToolTipText(DefaultNameFormatter.getInstance().buildDefaultToolTip(primitive));
     }
