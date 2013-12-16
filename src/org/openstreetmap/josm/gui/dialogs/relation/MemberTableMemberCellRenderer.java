@@ -16,7 +16,7 @@ public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
     }
 
     protected void renderPrimitive(OsmPrimitive primitive) {
-        setIcon(ImageProvider.get(primitive.getPrimitiveId().getType()));
+        setIcon(ImageProvider.get(primitive.getDisplayType()));
         setText(primitive.getDisplayName(DefaultNameFormatter.getInstance()));
         setToolTipText(DefaultNameFormatter.getInstance().buildDefaultToolTip(primitive));
     }
