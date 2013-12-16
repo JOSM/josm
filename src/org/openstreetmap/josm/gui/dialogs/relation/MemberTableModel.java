@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultListSelectionModel;
@@ -401,7 +402,15 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             return;
         int idx = index;
         for (OsmPrimitive primitive : primitives) {
-            final String role = presets.isEmpty() ? null : presets.iterator().next().suggestRoleForOsmPrimitive(primitive);
+            Set<String> potentialRoles = new TreeSet<String>();
+            for (TaggingPreset tp : presets) {
+                String suggestedRole = tp.suggestRoleForOsmPrimitive(primitive);
+                if (suggestedRole != null) {
+                    potentialRoles.add(suggestedRole);
+                }
+            }
+            // TODO: propose user to choose role among potential ones instead of picking first one
+            final String role = potentialRoles.isEmpty() ? null : potentialRoles.iterator().next();
             RelationMember member = new RelationMember(role == null ? "" : role, primitive);
             members.add(idx++, member);
         }
