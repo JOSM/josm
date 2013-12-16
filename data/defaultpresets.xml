@@ -1198,6 +1198,9 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=speed_camera"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=speed_camera" />
             <key key="highway" value="speed_camera" />
+            <optional>
+                <text key="maxspeed" text="Max. speed (km/h)" />
+            </optional>
         </item>
         <separator/>
         <item name="Grit Bin" icon="styles/standard/misc/grit_bin.png" type="node">
