@@ -1,10 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.json.JSONStringer;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
@@ -27,6 +29,8 @@ public class GeoJSONWriter implements Visitor {
     public String write() {
         out = new JSONStringer();
         out.object().key("type").value("FeatureCollection");
+        out.key("generator").value("JOSM");
+        appendLayerBounds();
         out.key("features").array();
         for (Node n : layer.data.getNodes()) {
             appendPrimitive(n);
@@ -61,10 +65,6 @@ public class GeoJSONWriter implements Visitor {
     public void visit(Changeset cs) {
     }
 
-    protected String escape(String s) {
-        return s.replace("\"", "\\\"").replace("\\", "\\\\").replace("\n", "\\n");
-    }
-
     protected void appendPrimitive(OsmPrimitive p) {
         if (p.isIncomplete()) {
             return;
@@ -88,6 +88,25 @@ public class GeoJSONWriter implements Visitor {
     protected void appendCoord(LatLon c) {
         if (c != null) {
             out.array().value(c.lon()).value(c.lat()).endArray();
+        }
+    }
+
+    protected void appendLayerBounds() {
+        Iterator<Bounds> it = layer.data.getDataSourceBounds().iterator();
+        if (it.hasNext()) {
+            Bounds b = new Bounds(it.next());
+            while (it.hasNext()) {
+                b.extend(it.next());
+            }
+            appendBounds(b);
+        }
+    }
+
+    protected void appendBounds(Bounds b) {
+        if (b != null) {
+            out.key("bbox").array()
+            .value(b.getMinLon()).value(b.getMinLat())
+            .value(b.getMaxLon()).value(b.getMaxLat()).endArray();
         }
     }
 }
