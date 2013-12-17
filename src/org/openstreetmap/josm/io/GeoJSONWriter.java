@@ -3,6 +3,8 @@ package org.openstreetmap.josm.io;
 
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.json.JSONStringer;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
@@ -15,46 +17,40 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 public class GeoJSONWriter implements Visitor {
 
     private OsmDataLayer layer;
-    private StringBuilder out;
+    private JSONStringer out;
     private static final boolean skipEmptyNodes = true;
-    private boolean insertComma = false;
 
     public GeoJSONWriter(OsmDataLayer layer) {
         this.layer = layer;
     }
 
     public String write() {
-        out = new StringBuilder(1 << 12);
-        out.append("{\"type\": \"FeatureCollection\",\n");
-        out.append("\"features\": [\n");
+        out = new JSONStringer();
+        out.object().key("type").value("FeatureCollection");
+        out.key("features").array();
         for (Node n : layer.data.getNodes()) {
             appendPrimitive(n);
         }
         for (Way w : layer.data.getWays()) {
             appendPrimitive(w);
         }
-        out.append("\n]\n}");
+        out.endArray().endObject();
         return out.toString();
     }
 
     @Override
     public void visit(Node n) {
-        out.append("\"type\": \"Point\", \"coordinates\": ");
+        out.key("type").value("Point").key("coordinates");
         appendCoord(n.getCoor());
     }
 
     @Override
     public void visit(Way w) {
-        out.append("\"type\": \"LineString\", \"coordinates\": [");
-        boolean insertCommaCoords = false;
+        out.key("type").value("LineString").key("coordinates").array();
         for (Node n : w.getNodes()) {
-            if (insertCommaCoords) {
-                out.append(", ");
-            }
-            insertCommaCoords = true;
             appendCoord(n.getCoor());
         }
-        out.append("]");
+        out.endArray();
     }
 
     @Override
@@ -75,38 +71,23 @@ public class GeoJSONWriter implements Visitor {
         } else if (skipEmptyNodes && p instanceof Node && p.getKeys().isEmpty()) {
             return;
         }
-        if (insertComma) {
-            out.append(",\n");
-        }
-        insertComma = true;
-        out.append("{\"type\": \"Feature\",\n");
+        out.object().key("type").value("Feature");
         Map<String, String> tags = p.getKeys();
-        if (!tags.isEmpty()) {
-            out.append("\t\"properties\": {\n");
-            boolean insertCommaTags = false;
-            for (Entry<String, String> t : tags.entrySet()) {
-                if (insertCommaTags) {
-                    out.append(",\n");
-                }
-                insertCommaTags = true;
-                out.append("\t\t\"").append(escape(t.getKey())).append("\": ");
-                out.append("\"").append(escape(t.getValue())).append("\"");
-            }
-            out.append("\n\t},\n");
-        } else {
-            out.append("\t\"properties\": {},\n");
+        out.key("properties").object();
+        for (Entry<String, String> t : tags.entrySet()) {
+            out.key(t.getKey()).value(t.getValue());
         }
-        { // append primitive specific
-            out.append("\t\"geometry\": {");
-            p.accept(this);
-            out.append("}");
-        }
-        out.append("}");
+        out.endObject();
+        // append primitive specific
+        out.key("geometry").object();
+        p.accept(this);
+        out.endObject();
+        out.endObject();
     }
 
     protected void appendCoord(LatLon c) {
         if (c != null) {
-            out.append("[").append(c.lon()).append(", ").append(c.lat()).append("]");
+            out.array().value(c.lon()).value(c.lat()).endArray();
         }
     }
 }
