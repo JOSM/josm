@@ -50,7 +50,12 @@ public class OsmUrlToBoundsTest {
     @Test
     public void testParse() {
         for (ParseTestItem item : parseTestData) {
-            Bounds bounds = OsmUrlToBounds.parse(item.url);
+            Bounds bounds = null;
+            try {
+                bounds = OsmUrlToBounds.parse(item.url);
+            } catch (IllegalArgumentException e) {
+                // Ignore. check if bounds is null after
+            }
             Assert.assertEquals(item.url, item.bounds, bounds);
         }
     }
