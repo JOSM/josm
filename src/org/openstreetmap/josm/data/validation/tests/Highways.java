@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -30,6 +31,10 @@ public class Highways extends Test {
 
     protected static final int WRONG_ROUNDABOUT_HIGHWAY = 2701;
     protected static final int MISSING_PEDESTRIAN_CROSSING = 2702;
+    protected static final int SOURCE_MAXSPEED_UNKNOWN_COUNTRY_CODE = 2703;
+    protected static final int SOURCE_MAXSPEED_UNKNOWN_CONTEXT = 2704;
+    protected static final int SOURCE_MAXSPEED_CONTEXT_MISMATCH_VS_MAXSPEED = 2705;
+    protected static final int SOURCE_MAXSPEED_CONTEXT_MISMATCH_VS_HIGHWAY = 2706;
 
     /**
      * Classified highways in order of importance
@@ -43,6 +48,11 @@ public class Highways extends Test {
             "unclassified",
             "residential",
             "living_street");
+
+    protected static final List<String> KNOWN_SOURCE_MAXSPEED_CONTEXTS = Arrays.asList(
+            "urban", "rural", "zone", "zone30", "zone:30", "nsl_single", "nsl_dual", "motorway", "trunk", "living_street");
+
+    protected static final List<String> ISO_COUNTRIES = Arrays.asList(Locale.getISOCountries());
 
     boolean leftByPedestrians = false;
     boolean leftByCyclists = false;
@@ -72,15 +82,27 @@ public class Highways extends Test {
 
     @Override
     public void visit(Node n) {
-        if (n.isUsable() && !n.hasTag("highway", "crossing") && !n.hasTag("crossing", "no") && n.isReferredByWays(2)) {
-            testMissingPedestrianCrossing(n);
+        if (n.isUsable()) {
+            if (!n.hasTag("highway", "crossing") && !n.hasTag("crossing", "no") && n.isReferredByWays(2)) {
+                testMissingPedestrianCrossing(n);
+            }
+            if (n.hasKey("source:maxspeed")) {
+                // Check maxspeed but not context against highway for nodes as maxspeed is not set on highways here but on signs, speed cameras, etc.
+                testSourceMaxspeed(n, false);
+            }
         }
     }
 
     @Override
     public void visit(Way w) {
-        if (w.isUsable() && w.hasKey("highway") && w.hasKey("junction") && w.get("junction").equals("roundabout")) {
-            testWrongRoundabout(w);
+        if (w.isUsable()) {
+            if (w.hasKey("highway") && w.hasKey("junction") && w.get("junction").equals("roundabout")) {
+                testWrongRoundabout(w);
+            }
+            if (w.hasKey("source:maxspeed")) {
+                // Check maxspeed, including context against highway
+                testSourceMaxspeed(w, true);
+            }
         }
     }
 
@@ -170,6 +192,25 @@ public class Highways extends Test {
         pedestrianWays++;
         if (!w.isFirstLastNode(n) || pedestrianWays > 1) {
             leftByPedestrians = true;
+        }
+    }
+    
+    private void testSourceMaxspeed(OsmPrimitive p, boolean testContextHighway) {
+        String value = p.get("source:maxspeed");
+        if (value.matches("[A-Z]{2}:.+")) {
+            int index = value.indexOf(':');
+            // Check country
+            String country = value.substring(0, index);
+            if (!ISO_COUNTRIES.contains(country)) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Unknown country code: {0}", country), SOURCE_MAXSPEED_UNKNOWN_COUNTRY_CODE, p));
+            }
+            // Check context
+            String context = value.substring(index+1);
+            if (!KNOWN_SOURCE_MAXSPEED_CONTEXTS.contains(context)) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Unknown source:maxspeed context: {0}", context), SOURCE_MAXSPEED_UNKNOWN_CONTEXT, p));
+            }
+            // TODO: Check coherence of context against maxspeed
+            // TODO: Check coherence of context against highway
         }
     }
 
