@@ -52,13 +52,13 @@ public class OpeningHourTest extends Test {
     public void initialize() throws Exception {
         super.initialize();
         if (ENGINE != null) {
-            ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/opening_hours.js"), "UTF-8"));
+            ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/validator/opening_hours.js"), "UTF-8"));
             // fake country/state to not get errors on holidays
-            ENGINE.eval("var nominatiomJSON = {address: {state: 'Bayern', country_code: 'de'}};");
+            ENGINE.eval("var nominatimJSON = {address: {state: 'Bayern', country_code: 'de'}};");
             ENGINE.eval("" +
                     "var oh = function (value, mode) {" +
                     " try {" +
-                    "    var r= new opening_hours(value, nominatiomJSON, mode);" +
+                    "    var r= new opening_hours(value, nominatimJSON, mode);" +
                     "    r.getErrors = function() {return [];};" +
                     "    return r;" +
                     "  } catch(err) {" +

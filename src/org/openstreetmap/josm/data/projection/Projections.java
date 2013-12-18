@@ -43,7 +43,7 @@ public final class Projections {
     private Projections() {
         // Hide default constructor for utils classes
     }
-    
+
     public static EastNorth project(LatLon ll) {
         if (ll == null) return null;
         return Main.getProjection().latlon2eastNorth(ll);
@@ -133,7 +133,7 @@ public final class Projections {
         Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
         BufferedReader r = null;
         try {
-            InputStream in = new MirroredInputStream("resource://data/epsg");
+            InputStream in = new MirroredInputStream("resource://data/projection/epsg");
             r = new BufferedReader(new InputStreamReader(in));
             String line, lastline = "";
             while ((line = r.readLine()) != null) {

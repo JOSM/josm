@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.GBC;
  * How to add new Projections:
  *  - Find EPSG code for the projection.
  *  - Look up the parameter string for Proj4, e.g. on http://spatialreference.org/
- *      and add it to the file 'data/epsg' in JOSM trunk
+ *      and add it to the file 'data/projection/epsg' in JOSM trunk
  *  - Search for official references and verify the parameter values. These
  *      documents are often available in the local language only.
  *  - Use {@link #registerProjectionChoice}, to make the entry known to JOSM.
