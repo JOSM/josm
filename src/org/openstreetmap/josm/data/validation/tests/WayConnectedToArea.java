@@ -42,8 +42,7 @@ public class WayConnectedToArea extends Test {
                 break;
             }
         }
-        if(!hasway)
-        {
+        if (!hasway) {
             for (OsmPrimitive p : r) {
                 testForError(w, w.firstNode(), p);
             }
@@ -56,7 +55,7 @@ public class WayConnectedToArea extends Test {
                 break;
             }
         }
-        if(!hasway) {
+        if (!hasway) {
             for (OsmPrimitive p : r) {
                 testForError(w, w.lastNode(), p);
             }

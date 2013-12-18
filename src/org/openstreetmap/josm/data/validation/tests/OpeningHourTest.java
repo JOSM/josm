@@ -101,20 +101,40 @@ public class OpeningHourTest extends Test {
         }
     }
 
+    /**
+     * An error concerning invalid syntax for an "opening_hours"-like tag.
+     */
     public class OpeningHoursTestError {
         final Severity severity;
         final String message, prettifiedValue;
 
+        /**
+         * Constructs a new {@code OpeningHoursTestError} with a known pretiffied value.
+         * @param message The error message
+         * @param severity The error severity
+         * @param prettifiedValue The prettified value
+         */
         public OpeningHoursTestError(String message, Severity severity, String prettifiedValue) {
             this.message = message;
             this.severity = severity;
             this.prettifiedValue = prettifiedValue;
         }
 
+        /**
+         * Constructs a new {@code OpeningHoursTestError}.
+         * @param message The error message
+         * @param severity The error severity
+         */
         public OpeningHoursTestError(String message, Severity severity) {
             this(message, severity, null);
         }
 
+        /**
+         * Returns the real test error given to JOSM validator.
+         * @param p The incriminated OSM primitive.
+         * @param key The incriminated key, used for display.
+         * @return The real test error given to JOSM validator. Can be fixable or not if a prettified values has been determined.
+         */
         public TestError getTestError(final OsmPrimitive p, final String key) {
             if (prettifiedValue == null) {
                 return new TestError(OpeningHourTest.this, severity, message, 2901, p);
@@ -124,14 +144,26 @@ public class OpeningHourTest extends Test {
             }
         }
 
+        /**
+         * Returns the error message.
+         * @return The error message.
+         */
         public String getMessage() {
             return message;
         }
 
+        /**
+         * Returns the prettified value.
+         * @return The prettified value.
+         */
         public String getPrettifiedValue() {
             return prettifiedValue;
         }
 
+        /**
+         * Returns the error severity.
+         * @return The error severity.
+         */
         public Severity getSeverity() {
             return severity;
         }
@@ -171,6 +203,14 @@ public class OpeningHourTest extends Test {
         }
     }
 
+    /**
+     * Checks for a correct usage of the opening hour syntax of the {@code value} given, in time range mode, according to
+     * <a href="https://github.com/ypid/opening_hours.js">opening_hours.js</a> and returns a list containing
+     * validation errors or an empty list. Null values result in an empty list.
+     * @param key the OSM key (should be "opening_hours", "collection_times" or "service_times"). Used in error message
+     * @param value the opening hour value to be checked.
+     * @return a list of {@link TestError} or an empty list
+     */
     public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value) {
         return checkOpeningHourSyntax(key, value, CheckMode.TIME_RANGE);
     }

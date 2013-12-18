@@ -171,7 +171,7 @@ public class DuplicateRelation extends Test {
     private MultiMap<List<RelationMember>, OsmPrimitive> relations_nokeys;
 
     /** List of keys without useful information */
-    private Collection<String> ignoreKeys = new HashSet<String>(OsmPrimitive.getUninterestingKeys());
+    private final Set<String> ignoreKeys = new HashSet<String>(OsmPrimitive.getUninterestingKeys());
 
     /**
      * Default constructor
