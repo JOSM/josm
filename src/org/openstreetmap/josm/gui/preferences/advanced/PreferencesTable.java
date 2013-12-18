@@ -297,7 +297,7 @@ public class PreferencesTable extends JTable {
                          new Color(200,255,200));
         private Color foregroundColor = Main.pref.getUIColor("Table.foreground");
         private Color nonDefaultColor = Main.pref.getColor(
-                            marktr("Advanced Background: NonDefalut"),
+                            marktr("Advanced Background: NonDefault"),
                             new Color(255,255,200));
         
         @Override
