@@ -23,8 +23,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  *
  * @author frsantos
  */
-public class UntaggedWay extends Test
-{
+public class UntaggedWay extends Test {
+    
     /** Empty way error */
     protected static final int EMPTY_WAY    = 301;
     /** Untagged way error */

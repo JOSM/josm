@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class OverlappingAreas extends Test {
 
     protected static final int OVERLAPPING_AREAS = 2201;
-    protected QuadBuckets<Way> index = new QuadBuckets<Way>();
+    protected final QuadBuckets<Way> index = new QuadBuckets<Way>();
 
     /**
      * Constructs a new {@code OverlappingAreas} test.
@@ -92,6 +92,8 @@ public class OverlappingAreas extends Test {
                 }
             }
         }
+        
+        index.clear();
 
         super.endTest();
     }

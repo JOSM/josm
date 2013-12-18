@@ -187,6 +187,9 @@ public class BuildingInBuilding extends Test {
                         tr("Building inside building"), BUILDING_INSIDE_BUILDING, p));
             }
         }
+        
+        primitivesToCheck.clear();
+        index.clear();
 
         super.endTest();
     }

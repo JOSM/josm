@@ -32,12 +32,14 @@ public class NodesWithSameName extends Test {
                 tr("This test finds nodes that have the same name (might be duplicates)."));
     }
 
-    @Override public void startTest(ProgressMonitor monitor) {
+    @Override
+    public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         namesToNodes = new HashMap<String, List<Node>>();
     }
 
-    @Override public void visit(Node n) {
+    @Override
+    public void visit(Node n) {
         if (!n.isUsable()) return;
 
         String name = n.get("name");
@@ -54,7 +56,8 @@ public class NodesWithSameName extends Test {
         nodes.add(n);
     }
 
-    @Override public void endTest() {
+    @Override
+    public void endTest() {
         for (List<Node> nodes : namesToNodes.values()) {
             if (nodes.size() > 1) {
                 // Report the same-name nodes, unless each has a unique ref=*.
