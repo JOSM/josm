@@ -968,7 +968,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
 
     @Override
     public void preferenceChanged(PreferenceChangeEvent event) {
-        if (event.getKey().equals(PROP_SIMULTANEOUS_CONNECTIONS.getKey())) {
+        if (event.getKey().equals(PROP_SIMULTANEOUS_CONNECTIONS.getKey()) && info.getUrl() != null) {
             cancelGrabberThreads(true);
             startGrabberThreads();
         } else if (
