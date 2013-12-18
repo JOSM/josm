@@ -1311,4 +1311,27 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
         return ret;
     }
+
+    /**
+     * Determines if this primitive has tags denoting an area.
+     * @return {@code true} if this primitive has tags denoting an area, {@code false} otherwise.
+     * @since 6491
+     */
+    public final boolean hasAreaTags() {
+        return hasKey("landuse")
+                || "yes".equals(get("area"))
+                || "riverbank".equals(get("waterway"))
+                || hasKey("natural")
+                || hasKey("amenity")
+                || hasKey("leisure")
+                || hasKey("building")
+                || hasKey("building:part");
+    }
+
+    /**
+     * Determines if this primitive semantically concerns an area.
+     * @return {@code true} if this primitive semantically concerns an area, according to its type, geometry and tags, {@code false} otherwise.
+     * @since 6491
+     */
+    public abstract boolean concernsArea();
 }

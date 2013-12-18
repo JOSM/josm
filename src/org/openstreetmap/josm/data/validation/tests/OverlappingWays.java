@@ -54,25 +54,16 @@ public class OverlappingWays extends Test {
         nodePairs = new MultiMap<Pair<Node,Node>, WaySegment>(1000);
     }
 
-    private boolean concernsArea(OsmPrimitive p) {
-        return p.get("landuse") != null
-                || "riverbank".equals(p.get("waterway"))
-                || p.get("natural") != null
-                || p.get("amenity") != null
-                || p.get("leisure") != null
-                || p.get("building") != null
-                || p.get("building:part") != null;
-    }
-    
     private boolean parentMultipolygonConcernsArea(OsmPrimitive p) {
         for (Relation r : OsmPrimitive.getFilteredList(p.getReferrers(), Relation.class)) {
-            if (r.isMultipolygon() && concernsArea(r) ) {
+            if (r.concernsArea() ) {
                 return true;
             }
         }
         return false;
     }
-    
+
+    @SuppressWarnings("null")
     @Override
     public void endTest() {
         Map<List<Way>, Set<WaySegment>> seenWays = new HashMap<List<Way>, Set<WaySegment>>(500);
@@ -98,7 +89,7 @@ public class OverlappingWays extends Test {
                     if (ar != null && ar) {
                         area++;
                     }
-                    if (concernsArea(ws.way) || parentMultipolygonConcernsArea(ws.way)) {
+                    if (ws.way.concernsArea() || parentMultipolygonConcernsArea(ws.way)) {
                         area++;
                         ways--;
                     }
