@@ -14,20 +14,20 @@ import org.openstreetmap.josm.io.MirroredInputStream;
 public class NTV2GridShiftFileWrapper {
 
     /**
-     * Used in Germany to convert coordinates between the DHDN (<i>Deutsches Hauptdreiecksnetz</i>) 
+     * Used in Germany to convert coordinates between the DHDN (<i>Deutsches Hauptdreiecksnetz</i>)
      * and ETRS89 (<i>European Terrestrial Reference System 1989</i>) datums.
      * @see <a href="http://crs.bkg.bund.de/crseu/crs/descrtrans/eu-descrtrans.php?crs_id=REVfREhETiAvIEdLXzM=&op_id=REVfREhETiAoQmVUQSwgMjAwNykgdG8gRVRSUzg5">
      * Description of Transformation - DE_DHDN (BeTA, 2007) to ETRS89</a>
      */
-    public final static NTV2GridShiftFileWrapper BETA2007 = new NTV2GridShiftFileWrapper("resource://data/BETA2007.gsb");
-    
+    public final static NTV2GridShiftFileWrapper BETA2007 = new NTV2GridShiftFileWrapper("resource://data/projection/BETA2007.gsb");
+
     /**
-     * Used in France to convert coordinates between the NTF (<i>Nouvelle triangulation de la France</i>) 
+     * Used in France to convert coordinates between the NTF (<i>Nouvelle triangulation de la France</i>)
      * and RGF93 (<i>Réseau géodésique français 1993</i>) datums.
      * @see <a href="http://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NT111_V1_HARMEL_TransfoNTF-RGF93_FormatGrilleNTV2.pdf">
      * [French] Transformation de coordonnées NTF – RGF93 / Format de grille NTv2</a>
      */
-    public final static NTV2GridShiftFileWrapper ntf_rgf93 = new NTV2GridShiftFileWrapper("resource://data/ntf_r93_b.gsb");
+    public final static NTV2GridShiftFileWrapper ntf_rgf93 = new NTV2GridShiftFileWrapper("resource://data/projection/ntf_r93_b.gsb");
 
 
     private NTV2GridShiftFile instance = null;

@@ -1,0 +1,234 @@
+{
+    "AT" : {
+        "ref": [
+            "http://ec.europa.eu/transport/road_safety/going_abroad/austria/speed_limits_en.htm",
+            "http://www.bmvit.gv.at/en/service/publications/downloads/folder_austria.pdf"
+        ],
+        "speeds" : {
+	        "urban": "50",
+	        "rural": "100",
+	        "motorway": "130"
+	    }
+    },
+    "AU" : {
+        "ref": ["http://www.ntc.gov.au/filemedia/Reports/ARRFeb12.pdf"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "100"
+        }
+    },
+    "BE" : {
+        "ref": [
+            "http://ec.europa.eu/transport/road_safety/going_abroad/belgium/speed_limits_en.htm",
+            "http://www.code-de-la-route.be/textes-legaux/sections/ar/code-de-la-route/170-art11-v15-170",
+            "http://www.code-de-la-route.be/textes-legaux/sections/ar/code-de-la-route/182-art22bis"
+        ],
+        "speeds" : {
+            "living_street": "20",
+            "urban": "50",
+            "rural": "90",
+            "motorway": "120"
+        }
+    },
+    "BG" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/bulgaria/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "trunk" : "120",
+            "motorway": "140"
+        }
+    },
+    "CH" : {
+        "ref": ["http://www.ch.ch/en/driving-over-speed-limit"],
+        "speeds" : {
+            "living_street": "20",
+            "urban": "50",
+            "rural": "80",
+            "trunk": "100",
+            "motorway": "120"
+        }
+    },
+    "CZ" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/czech_republic/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "motorway": "130"
+        }
+    },
+    "DE" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/germany/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "100"
+        }
+    },
+    "DK" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/denmark/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "motorway": "130"
+        }
+    },
+    "EE" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/estonia/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "motorway": "90"
+        }
+    },
+    "ES" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/spain/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "rural_shoulder": "100",
+            "motorway": "120"
+        }
+    },
+    "FI" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/finland/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "80"
+        }
+    },
+    "FR" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/france/speed_limits_en.htm"],
+        "speeds" : {
+            "living_street" : "20",
+            "urban": "50",
+            "rural": "90",
+            "trunk": "110",
+            "motorway": "130"
+        }
+    },
+    "GB" : {
+        "ref": [
+            "http://www.gov.uk/speed-limits",
+            "http://ec.europa.eu/transport/road_safety/going_abroad/united_kingdom/speed_limits_en.htm"
+        ],
+        "speeds" : {
+            "urban": "30 mph",
+            "nsl_single": "60 mph",
+            "nsl_dual": "70 mph",
+            "motorway": "70 mph"
+        }
+    },
+    "HU" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/hungary/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "trunk": "110",
+            "motorway": "130"
+        }
+    },
+    "IT" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/italy/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "motorway": "130"
+        }
+    },
+    "LT" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/lithuania/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "unpaved": "70",
+            "rural": "90",
+            "motorway": "120"
+        }
+    },
+    "NL" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/netherlands/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "80",
+            "trunk": "100",
+            "motorway": "130"
+        }
+    },
+    "NO" : {
+        "ref": ["http://www.visitnorway.com/en/About-Norway/Safety-first/Driving-in-Norway/"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "80",
+            "trunk": "90",
+            "motorway": "100"
+        }
+    },
+    "PL" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/poland/speed_limits_en.htm"],
+        "speeds" : {
+            "living_street": "20",
+            "urban": "50",
+            "rural": "90",
+            "rural_dual": "100",
+            "trunk_single": "100",
+            "trunk": "120",
+            "motorway": "140"
+        }
+    },
+    "RO" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/romania/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "trunk": "100",
+            "motorway": "130"
+        }
+    },
+    "RU" : {
+        "speeds" : {
+            "urban": "60",
+            "rural": "90",
+            "motorway": "110"
+        }
+    },
+    "SE" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/sweden/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "70",
+            "motorway": "110"
+        }
+    },
+    "SI" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/slovenia/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "trunk": "110",
+            "motorway": "130"
+        }
+    },
+    "SK" : {
+        "ref": ["http://ec.europa.eu/transport/road_safety/going_abroad/slovakia/speed_limits_en.htm"],
+        "speeds" : {
+            "urban": "50",
+            "rural": "90",
+            "motorway": "130"
+        }
+    },
+    "UA" : {
+        "speeds" : {
+            "urban": "60",
+            "rural": "90",
+            "trunk": "110",
+            "motorway": "130"
+        }
+    },
+    "ZA" : {
+        "ref": ["http://www.southafrica.info/travel/advice/driving.htm"],
+        "speeds" : {
+            "urban": "60",
+            "rural": "100",
+            "motorway": "120"
+        }
+    }
+}
