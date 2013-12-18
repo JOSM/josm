@@ -5435,7 +5435,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="man_made" value="survey_point" />
             <text key="name" text="Name" />
         </item>
-        <item name="Surveillance" icon="presets/surveillance.png" type="node,closedway">
+        <item name="Surveillance Camera" icon="presets/surveillance.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=surveillance"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=surveillance"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=surveillance"
@@ -5443,8 +5443,21 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Surveillance Camera" />
             <space />
             <key key="man_made" value="surveillance" />
+            <key key="surveillance:type" value="camera" />
             <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
             <combo key="surveillance" text="Type" values="indoor,outdoor,public" />
+            <combo key="surveillance:zone" text="Zone" values="town,parking,traffic,shop,bank,building" />
+            <space />
+            <label text="Camera" />
+            <space />
+            <combo key="camera:type" text="Type" values="fixed,panning,dome" match="key" />
+            <combo key="camera:mount" text="Mounted on" values="wall,pole,ceiling" match="key" />
+            <optional>
+	            <text key="camera:direction" text="Direction in degrees" match="key" />
+	            <text key="camera:angle" text="Inclination in degrees" match="key" />
+                <text key="height" text="Height in meter (m)" />
+            </optional>
         </item>
     </group> <!-- Man Made -->
     <group name="Power" icon="presets/power.png">
