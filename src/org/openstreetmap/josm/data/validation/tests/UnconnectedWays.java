@@ -111,9 +111,9 @@ public class UnconnectedWays extends Test {
             if(isCanceled())
                 return;
             for (Node en : s.nearbyNodes(mindist)) {
-                if (endnodes_highway.contains(en) && !s.highway && !s.isArea()) {
+                if (endnodes_highway.contains(en) && !s.highway && !s.w.concernsArea()) {
                     map.put(en, s.w);
-                } else if (endnodes.contains(en) && !s.isArea()) {
+                } else if (endnodes.contains(en) && !s.w.concernsArea()) {
                     map.put(en, s.w);
                 }
             }
@@ -293,13 +293,6 @@ public class UnconnectedWays extends Test {
                 nearbyNodeCache = Collections.emptySet();
             }
             return nearbyNodeCache;
-        }
-
-        public boolean isArea() {
-            return w.hasKey("landuse")
-                    || w.hasKey("leisure")
-                    || w.hasKey("amenity")
-                    || w.hasKey("building");
         }
     }
 

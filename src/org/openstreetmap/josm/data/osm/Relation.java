@@ -547,4 +547,9 @@ public final class Relation extends OsmPrimitive implements IRelation {
             }
         }
     }
+
+    @Override
+    public boolean concernsArea() {
+        return isMultipolygon() && hasAreaTags();
+    }
 }
