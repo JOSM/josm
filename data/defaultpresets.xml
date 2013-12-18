@@ -5454,8 +5454,8 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="camera:type" text="Type" values="fixed,panning,dome" match="key" />
             <combo key="camera:mount" text="Mounted on" values="wall,pole,ceiling" match="key" />
             <optional>
-	            <text key="camera:direction" text="Direction in degrees" match="key" />
-	            <text key="camera:angle" text="Inclination in degrees" match="key" />
+                <text key="camera:direction" text="Direction in degrees" match="key" />
+                <text key="camera:angle" text="Inclination in degrees" match="key" />
                 <text key="height" text="Height in meter (m)" />
             </optional>
         </item>
