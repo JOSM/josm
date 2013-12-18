@@ -330,4 +330,10 @@ public final class Node extends OsmPrimitive implements INode {
         this.east = Double.NaN;
         this.north = Double.NaN;
     }
+
+    @Override
+    public boolean concernsArea() {
+        // A node cannot be an area
+        return false;
+    }
 }

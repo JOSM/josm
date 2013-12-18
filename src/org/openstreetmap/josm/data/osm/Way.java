@@ -5,9 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -719,5 +719,10 @@ public final class Way extends OsmPrimitive implements IWay {
      */
     public Node lastNode(boolean respectOneway) {
         return !respectOneway || isOneway() != -1 ? lastNode() : firstNode();
+    }
+
+    @Override
+    public boolean concernsArea() {
+        return hasAreaTags();
     }
 }
