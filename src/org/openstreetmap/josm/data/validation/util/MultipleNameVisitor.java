@@ -22,7 +22,7 @@ public class MultipleNameVisitor extends NameVisitor
 
     /** The class name of the combined primitives */
     private String multipleClassname;
-    /* name to be displayed */
+    /** Name to be displayed */
     private String displayName;
     /** Size of the collection */
     private int size;

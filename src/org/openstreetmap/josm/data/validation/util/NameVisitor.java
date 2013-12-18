@@ -29,7 +29,7 @@ public class NameVisitor extends AbstractVisitor {
     /**
      * The name of this item.
      */
-    public String name;
+    public String name = "";
     /**
      * The icon of this item.
      */
@@ -59,8 +59,6 @@ public class NameVisitor extends AbstractVisitor {
         classNamePlural = trn("way", "ways", 2);
     }
 
-    /**
-     */
     @Override
     public void visit(Relation e) {
         name = e.getDisplayName(DefaultNameFormatter.getInstance());
