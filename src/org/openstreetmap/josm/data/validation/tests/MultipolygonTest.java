@@ -79,6 +79,12 @@ public class MultipolygonTest extends Test {
             }
         }
     }
+    
+    @Override
+    public void endTest() {
+        keysCheckedByAnotherTest.clear();
+        super.endTest();
+    }
 
     private List<List<Node>> joinWays(Collection<Way> ways) {
         List<List<Node>> result = new ArrayList<List<Node>>();

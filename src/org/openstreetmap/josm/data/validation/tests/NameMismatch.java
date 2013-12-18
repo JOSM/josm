@@ -105,10 +105,12 @@ public class NameMismatch extends Test {
      *
      * @param selection The primitives to be tested
      */
-    @Override public void visit(Collection<OsmPrimitive> selection) {
-        for (OsmPrimitive p : selection)
+    @Override
+    public void visit(Collection<OsmPrimitive> selection) {
+        for (OsmPrimitive p : selection) {
             if (!p.isDeleted() && !p.isIncomplete()) {
                 check(p);
             }
+        }
     }
 }

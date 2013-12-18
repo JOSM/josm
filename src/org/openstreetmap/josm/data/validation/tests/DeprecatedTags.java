@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class DeprecatedTags extends Test {
 
-    private List<DeprecationCheck> checks = new LinkedList<DeprecationCheck>();
+    private final List<DeprecationCheck> checks = new LinkedList<DeprecationCheck>();
 
     /**
      * Constructs a new {@code DeprecatedTags} test.

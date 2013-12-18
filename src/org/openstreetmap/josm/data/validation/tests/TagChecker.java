@@ -71,9 +71,11 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class TagChecker extends Test {
     
-    /** The default data files */
+    /** The default data file of tagchecker rules */
     public static final String DATA_FILE = "resource://data/validator/tagchecker.cfg";
+    /** The config file of ignored tags */
     public static final String IGNORE_FILE = "resource://data/validator/ignoretags.cfg";
+    /** The config file of dictionary words */
     public static final String SPELL_FILE = "resource://data/validator/words.cfg";
 
     /** The spell check key substitutions: the key should be substituted by the value */

@@ -63,7 +63,6 @@ public class OverlappingWays extends Test {
         return false;
     }
 
-    @SuppressWarnings("null")
     @Override
     public void endTest() {
         Map<List<Way>, Set<WaySegment>> seenWays = new HashMap<List<Way>, Set<WaySegment>>(500);

@@ -121,13 +121,13 @@ public class DuplicateWay extends Test {
             }
         }
 
-        for(Set<OsmPrimitive> sameway : waysNoTags.values()) {
-            if( sameway.size() > 1) {
+        for (Set<OsmPrimitive> sameway : waysNoTags.values()) {
+            if (sameway.size() > 1) {
                 //Report error only if at least some tags are different, as otherwise the error was already reported as duplicated ways
                 Map<String, String> tags0=null;
                 boolean skip=true;
 
-                for(OsmPrimitive o : sameway) {
+                for (OsmPrimitive o : sameway) {
                     if (tags0==null) {
                         tags0=o.getKeys();
                         removeUninterestingKeys(tags0);

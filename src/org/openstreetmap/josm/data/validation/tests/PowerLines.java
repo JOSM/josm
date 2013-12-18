@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Geometry;
 
 /**
@@ -95,6 +96,14 @@ public class PowerLines extends Test {
     }
 
     @Override
+    public void startTest(ProgressMonitor progressMonitor) {
+        super.startTest(progressMonitor);
+        towerPoleTagMap.clear();
+        powerStations.clear();
+        potentialErrors.clear();
+    }
+
+    @Override
     public void endTest() {
         for (PowerLineError e : potentialErrors) {
             Node n = e.getNode();
@@ -102,6 +111,7 @@ public class PowerLines extends Test {
                 errors.add(e);
             }
         }
+        potentialErrors.clear();
         super.endTest();
     }
 
