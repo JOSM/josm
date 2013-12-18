@@ -55,6 +55,10 @@ is from Stuart D. Gathman and licensed with GPL.
 The Ellipsoid code (http://www.i3s.unice.fr/~johan/gps/)
 is from Johan Montagnat and licensed with GPL.
 
+The JSON code (https://github.com/douglascrockford/JSON-java)
+is from Douglas Crockford and licensed as follows:
+"The Software shall be used for Good, not Evil."
+
 The opening hour validation uses code from opening_hour.js
 (https://github.com/ypid/opening_hours.js) which is licensed
 with the New (2-clause) BSD license.
