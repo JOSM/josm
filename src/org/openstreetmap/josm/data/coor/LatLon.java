@@ -20,7 +20,15 @@ import org.openstreetmap.josm.data.Bounds;
 
 /**
  * LatLon are unprojected latitude / longitude coordinates.
- *
+ * <br>
+ * <b>Latitude</b> specifies the north-south position in degrees
+ * where valid values are in the [-90,90] and positive values specify positions north of the equator.
+ * <br>
+ * <b>Longitude</b> specifies the east-west position in degrees
+ * where valid values are in the [-180,180] and positive values specify positions east of the prime meridian.
+ * <br>
+ * <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Latitude_and_Longitude_of_the_Earth.svg/500px-Latitude_and_Longitude_of_the_Earth.svg.png">
+ * <br>
  * This class is immutable.
  *
  * @author Imi
@@ -40,7 +48,7 @@ public class LatLon extends Coordinate {
      * @since 6178
      */
     public static final LatLon ZERO = new LatLon(0, 0);
-    
+
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
     private static DecimalFormat cDmMinuteFormatter = new DecimalFormat("00.000");
@@ -159,6 +167,11 @@ public class LatLon extends Coordinate {
         return sDegrees + "\u00B0" + sMinutes + "\'";
     }
 
+    /**
+     * Constructs a new {@link LatLon}
+     * @param lat the latitude, i.e., the north-south position in degrees
+     * @param lon the longitude, i.e., the east-west position in degrees
+     */
     public LatLon(double lat, double lon) {
         super(lon, lat);
     }
@@ -167,6 +180,10 @@ public class LatLon extends Coordinate {
         super(coor.lon(), coor.lat());
     }
 
+    /**
+     * Returns the latitude, i.e., the north-south position in degrees.
+     * @return the latitude
+     */
     public double lat() {
         return y;
     }
@@ -183,6 +200,10 @@ public class LatLon extends Coordinate {
         }
     }
 
+    /**
+     * Returns the longitude, i.e., the east-west position in degrees.
+     * @return the longitude
+     */
     public double lon() {
         return x;
     }
@@ -228,7 +249,7 @@ public class LatLon extends Coordinate {
 
     /**
      * Check if this is contained in given area or area is null.
-     * 
+     *
      * @param a Area
      * @return <code>true</code> if this is contained in given area or area is null.
      */
@@ -303,7 +324,7 @@ public class LatLon extends Coordinate {
 
     /**
      * Returns the euclidean distance from this {@code LatLon} to a specified {@code LatLon}.
-     * 
+     *
      * @param ll the specified coordinate to be measured against this {@code LatLon}
      * @return the euclidean distance from this {@code LatLon} to a specified {@code LatLon}
      * @since 6166
@@ -314,7 +335,7 @@ public class LatLon extends Coordinate {
 
     /**
      * Returns the square of the euclidean distance from this {@code LatLon} to a specified {@code LatLon}.
-     * 
+     *
      * @param ll the specified coordinate to be measured against this {@code LatLon}
      * @return the square of the euclidean distance from this {@code LatLon} to a specified {@code LatLon}
      * @since 6166
