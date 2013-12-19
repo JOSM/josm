@@ -40,13 +40,18 @@
     -->
     <target name="create-revision">
         <property name="revision.dir" value="${build.dir}"/>
-        <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false">
-            <env key="LANG" value="C"/>
-            <arg value="info"/>
-            <arg value="--xml"/>
-            <arg value="http://josm.openstreetmap.de/svn/trunk"/>
+        <exec append="false" output="REVISION.TMP" executable="git" failifexecutionfails="false">
+            <arg value="log"/>
+            <arg value="-1"/>
+            <arg value="--grep=git-svn-id"/>
+            <arg value="--pretty=format:%ai%n%B"/>
+            <arg value="HEAD"/>
+        </exec>
+        <exec append="false" input="REVISION.TMP" output="REVISION.XML" executable="perl" failifexecutionfails="false" error="REVISION.ERR">
+            <arg value="tools/commit2xml.pl"/>
         </exec>
         <xmlproperty file="REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
+        <delete file="REVISION.TMP"/>
         <delete file="REVISION.XML"/>
         <tstamp>
             <format property="build.tstamp" pattern="yyyy-MM-dd HH:mm:ss"/>
@@ -70,14 +75,19 @@ Build-Date: ${build.tstamp}
         </schemavalidate>
     </target>
     <target name="dist" depends="compile,create-revision,check-schemas">
-        <exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
-            <env key="LANG" value="C"/>
-            <arg value="info"/>
-            <arg value="--xml"/>
-            <arg value="http://josm.openstreetmap.de/svn/trunk"/>
+        <exec append="false" output="REVISION.TMP" executable="git" failifexecutionfails="false">
+            <arg value="log"/>
+            <arg value="-1"/>
+            <arg value="--grep=git-svn-id"/>
+            <arg value="--pretty=format:%ai%n%B"/>
+            <arg value="HEAD"/>
         </exec>
-        <xmlproperty file="REVISION" prefix="version" keepRoot="false" collapseAttributes="true"/>
-        <delete file="REVISION"/>
+        <exec append="false" input="REVISION.TMP" output="REVISION.XML" executable="perl" failifexecutionfails="false" error="REVISION.ERR">
+            <arg value="tools/commit2xml.pl"/>
+        </exec>
+        <xmlproperty file="REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
+        <delete file="REVISION.TMP"/>
+        <delete file="REVISION.XML"/>
         <property name="version.entry.commit.revision" value="UNKNOWN"/>
         <property name="version.entry.commit.date" value="UNKNOWN"/>
         <echo>Revision ${version.entry.commit.revision}</echo>
