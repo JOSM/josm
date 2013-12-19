@@ -4526,7 +4526,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=phone" />
             <key key="emergency" value="phone" />
         </item>
-        <item name="Internet Access" icon="presets/network-wireless.svg" type="node,closedway">
+        <item name="Internet Access" icon="presets/network-wireless.svg" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Key:internet_access" 
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:internet_access"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Key:internet_access"
