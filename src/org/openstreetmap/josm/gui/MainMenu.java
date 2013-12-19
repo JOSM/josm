@@ -46,6 +46,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.FollowLineAction;
 import org.openstreetmap.josm.actions.FullscreenToggleAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
+import org.openstreetmap.josm.actions.HatchAreaOutsideDownloadAction;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.HistoryInfoWebAction;
@@ -198,6 +199,7 @@ public class MainMenu extends JMenuBar {
     /* View menu */
     /** View -> Wireframe View */
     public final WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
+    public final HatchAreaOutsideDownloadAction hatchAreaOutsideDownloadAction = new HatchAreaOutsideDownloadAction();
     public final JosmAction toggleGPXLines = new ToggleGPXLinesAction();
     /** View -> Advanced info */
     public final InfoAction info = new InfoAction();
@@ -642,6 +644,9 @@ public class MainMenu extends JMenuBar {
         viewMenu.add(wireframe);
         wireframe.setAccelerator(wireFrameToggleAction.getShortcut().getKeyStroke());
         wireFrameToggleAction.addButtonModel(wireframe.getModel());
+        final JCheckBoxMenuItem hatchAreaOutsideDownloadMenuItem = hatchAreaOutsideDownloadAction.getCheckbox();
+        viewMenu.add(hatchAreaOutsideDownloadMenuItem);
+        ExpertToggleAction.addVisibilitySwitcher(hatchAreaOutsideDownloadMenuItem);
 
         viewMenu.add(new MapPaintMenu());
         viewMenu.addSeparator();
