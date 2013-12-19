@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.HatchAreaOutsideDownloadAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
@@ -316,8 +317,10 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             }
 
             // paint remainder
-            g.setPaint(hatched);
-            g.fill(a);
+            if (HatchAreaOutsideDownloadAction.isHatchEnabled()) {
+                g.setPaint(hatched);
+                g.fill(a);
+            }
         }
 
         Rendering painter = MapRendererFactory.getInstance().createActiveRenderer(g, mv, inactive);
