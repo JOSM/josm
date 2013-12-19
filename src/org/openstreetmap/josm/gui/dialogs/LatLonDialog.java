@@ -339,7 +339,7 @@ public class LatLonDialog extends ExtendedDialog {
         public void focusLost(FocusEvent e) {}
     }
 
-    private static LatLon parseLatLon(final String coord) {
+    public static LatLon parseLatLon(final String coord) {
         final Matcher m = p.matcher(coord);
 
         final StringBuilder sb = new StringBuilder();
@@ -422,7 +422,7 @@ public class LatLonDialog extends ExtendedDialog {
         return new LatLon(latLon.lat, latLon.lon);
     }
 
-    private static EastNorth parseEastNorth(String s) {
+    public static EastNorth parseEastNorth(String s) {
         String[] en = s.split("[;, ]+");
         if (en.length != 2) return null;
         try {

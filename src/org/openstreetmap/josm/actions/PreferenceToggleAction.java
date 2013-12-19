@@ -6,26 +6,31 @@ import javax.swing.JCheckBoxMenuItem;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class PreferenceToggleAction extends JosmAction implements PreferenceChangedListener {
 
-    private final JCheckBoxMenuItem checkbox;
-    private final String prefKey;
-    private final boolean prefDefault;
+    protected final JCheckBoxMenuItem checkbox;
+    protected final BooleanProperty property;
 
     public PreferenceToggleAction(String name, String tooltip, String prefKey, boolean prefDefault) {
+        this(name, tooltip, new BooleanProperty(prefKey, prefDefault));
+    }
+
+    public PreferenceToggleAction(String name, String tooltip, BooleanProperty property) {
         super(name, null, tooltip, null, false);
-        putValue("toolbar", "toggle-" + prefKey);
-        this.prefKey = prefKey;
-        this.prefDefault = prefDefault;
+        CheckParameterUtil.ensureParameterNotNull(property, "property");
+        putValue("toolbar", "toggle-" + property.getKey());
+        this.property = property;
         this.checkbox = new JCheckBoxMenuItem(this);
-        this.checkbox.setSelected(Main.pref.getBoolean(prefKey, prefDefault));
+        this.checkbox.setSelected(property.get());
         Main.pref.addPreferenceChangeListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Main.pref.put(prefKey, checkbox.isSelected());
+        property.put(checkbox.isSelected());
     }
 
     public JCheckBoxMenuItem getCheckbox() {
@@ -34,8 +39,8 @@ public class PreferenceToggleAction extends JosmAction implements PreferenceChan
 
     @Override
     public void preferenceChanged(Preferences.PreferenceChangeEvent e) {
-        if (prefKey.equals(e.getKey())) {
-            checkbox.setSelected(Main.pref.getBoolean(prefKey, prefDefault));
+        if (property.getKey().equals(e.getKey())) {
+            checkbox.setSelected(property.get());
         }
     }
 }
