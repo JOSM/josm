@@ -1,0 +1,193 @@
+*[barrier=wire_fence] {
+  throwWarning: tr("{0}={1} is deprecated", "barrier", "wire_fence");
+  fixRemove: "barrier";
+  fixAdd: "barrier=fence";
+  fixAdd: "fence_type=chain_link";
+}
+  
+*[barrier=wood_fence] {
+  throwWarning: tr("{0}={1} is deprecated", "barrier", "wood_fence");
+  fixRemove: "barrier";
+  fixAdd: "barrier=fence";
+  fixAdd: "fence_type=wood";
+}
+  
+*[highway=ford] {
+  throwWarning: tr("{0}={1} is deprecated", "highway", "ford");
+  fixRemove: "highway";
+  fixAdd: "ford=yes";
+}
+  
+*[class] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0} is deprecated", "class");
+  suggestAlternative: "highway";
+}
+  
+*[highway=stile] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0}={1} is deprecated", "highway", "stile");
+  fixRemove: "highway";
+  fixAdd: "barrier=stile";
+}
+  
+*[highway=incline] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0}={1} is deprecated", "highway", "incline");
+  suggestAlternative: "incline";
+}
+  
+*[highway=incline_steep] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0}={1} is deprecated", "highway", "incline");
+  suggestAlternative: "incline";
+}
+  
+*[highway=unsurfaced] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0}={1} is deprecated", "highway", "unsurfaced");
+  fixRemove: "highway";
+  fixAdd: "highway=road";
+  fixAdd: "incline=unpaved";
+}
+  
+*[landuse=wood] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0}={1} is deprecated", "landuse", "wood");
+  suggestAlternative: "landuse=forest";
+  suggestAlternative: "natural=wood";
+}
+  
+*[natural=marsh] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0}={1} is deprecated", "natural", "marsh");
+  fixRemove: "natural";
+  fixAdd: "natural=wetland";
+  fixAdd: "wetland=marsh";
+}
+  
+*[highway=byway] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0}={1} is deprecated", "highway", "byway");
+}
+  
+*[power_source] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0} is deprecated", "power_source");
+  suggestAlternative: "generator:source";
+}
+  
+*[power_rating] {
+  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
+  throwWarning: tr("{0} is deprecated", "power_rating");
+  suggestAlternative: "generator:output";
+}
+  
+*[shop=organic] {
+  /* from http://wiki.openstreetmap.org/wiki/Tag:shop=organic */
+  throwWarning: tr("{0}={1} is deprecated", "shop", "organic");
+  fixRemove: "shop";
+  fixAdd: "shop=supermarket";
+  fixAdd: "organic=only";
+}
+  
+*[bicycle_parking=sheffield] {
+  /* from http://wiki.openstreetmap.org/wiki/Key:bicycle_parking */
+  throwWarning: tr("{0}={1} is deprecated", "bicycle_parking", "sheffield");
+  fixRemove: "bicycle_parking";
+  fixAdd: "bicycle_parking=stands";
+}
+  
+*[amenity=emergency_phone] {
+  /* http://wiki.openstreetmap.org/wiki/Tag:emergency=phone */
+  throwWarning: tr("{0}={1} is deprecated", "amenity", "emergency_phone");
+  fixRemove: "amenity";
+  fixAdd: "emergency=phone";
+}
+  
+*[sport=gaelic_football] {
+  /* fix #8132 - http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_football */
+  throwWarning: tr("{0}={1} is deprecated", "sport", "gaelic_football");
+  fixRemove: "sport";
+  fixAdd: "sport=gaelic_games";
+}
+  
+*[power=station] {
+  /* see #8847 / #8961 - http://wiki.openstreetmap.org/wiki/Tag:power=station */
+  throwWarning: tr("{0}={1} is deprecated", "power", "station");
+  suggestAlternative: "power=plant";
+  suggestAlternative: "power=sub_station";
+}
+  
+*[generator:method=dam] {
+  throwWarning: tr("{0}={1} is deprecated", "generator:method", "dam");
+  fixRemove: "generator:method";
+  fixAdd: "generator:method=water-storage";
+}
+  
+*[generator:method=pumped-storage] {
+  throwWarning: tr("{0}={1} is deprecated", "generator:method", "pumped-storage");
+  fixRemove: "generator:method";
+  fixAdd: "generator:method=water-pumped-storage";
+}
+  
+*[generator:method=pumping] {
+  throwWarning: tr("{0}={1} is deprecated", "generator:method", "pumping");
+  fixRemove: "generator:method";
+  fixAdd: "generator:method=water-pumped-storage";
+}
+  
+*[fence_type=chain] {
+  /* see #8962 - http://wiki.openstreetmap.org/wiki/Key:fence_type */
+  throwWarning: tr("{0}={1} is deprecated", "fence_type", "chain");
+  suggestAlternative: "barrier=chain";
+  suggestAlternative: "fence_type=chain_link";
+}
+
+*[building=entrance] {
+  /* see #9000 - http://wiki.openstreetmap.org/wiki/Key:entrance */
+  throwWarning: tr("{0}={1} is deprecated", "building", "entrance");
+  suggestAlternative: "entrance";
+}
+  
+*[board_type=board] {
+  /* see #9213 - Useless tag proposed in internal preset for years */
+  throwWarning: tr("{0}={1} is deprecated", "board_type", "board");
+  fixRemove: "board_type";
+}
+  
+*[man_made=measurement_station] {
+  /* see #8434 - http://wiki.openstreetmap.org/wiki/Proposed_features/monitoring_station */
+  throwWarning: tr("{0}={1} is deprecated", "man_made", "measurement_station");
+  fixRemove: "man_made";
+  fixAdd: "man_made=monitoring_station";
+}
+  
+*[measurement=water_level] {
+  throwWarning: tr("{0}={1} is deprecated", "measurement", "water_level");
+  fixRemove: "measurement";
+  fixAdd: "monitoring:water_level=yes";
+}
+  
+*[measurement=weather] {
+  throwWarning: tr("{0}={1} is deprecated", "measurement", "weather");
+  fixRemove: "measurement";
+  fixAdd: "monitoring:weather=yes";
+}
+  
+*[measurement=seismic] {
+  throwWarning: tr("{0}={1} is deprecated", "measurement", "seismic");
+  fixRemove: "measurement";
+  fixAdd: "monitoring:seismic_activity=yes";
+}
+
+*[monitoring:river_level] {
+  throwWarning: tr("{0} is deprecated", "monitoring:river_level");
+  fixChangeKey: "monitoring:river_level => monitoring:water_level";
+}
+
+*[layer=0] {
+  /* see #9365 - Useless tag layer=0 */
+  throwWarning: tr("{0}={1} is unnecessary", "layer", "0");
+  fixRemove: "layer";
+}

@@ -358,6 +358,12 @@ public final class ExpressionFactory {
         public long osm_id() {
             return env.osm.getUniqueId();
         }
+
+        public static String tr(String... args) {
+            final String text = args[0];
+            System.arraycopy(args, 1, args, 0, args.length - 1);
+            return org.openstreetmap.josm.tools.I18n.tr(text, args);
+        }
     }
 
     /**
