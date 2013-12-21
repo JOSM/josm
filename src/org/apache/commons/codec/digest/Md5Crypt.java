@@ -42,7 +42,7 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * This class is immutable and thread-safe.
  *
- * @version $Id: Md5Crypt.java 1552861 2013-12-21 02:03:17Z ggregory $
+ * @version $Id: Md5Crypt.java 1552918 2013-12-21 16:26:59Z ggregory $
  * @since 1.7
  */
 public class Md5Crypt {
@@ -165,7 +165,7 @@ public class Md5Crypt {
      * Generates a libc6 crypt() "$1$" or Apache htpasswd "$apr1$" hash value.
      * <p>
      * See {@link Crypt#crypt(String, String)} or {@link #apr1Crypt(String, String)} for details.
-     * 
+     *
      * @param keyBytes
      *            plaintext string to hash.
      * @param salt May be null.
