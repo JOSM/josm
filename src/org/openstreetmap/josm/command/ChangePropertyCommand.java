@@ -3,6 +3,7 @@ package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -164,10 +165,13 @@ public class ChangePropertyCommand extends Command {
             }
         } else if (objects.size() > 1 && tags.size() == 1) {
             Map.Entry<String, String> entry = tags.entrySet().iterator().next();
-            if (entry.getValue() == null)
-                text = tr("Remove \"{0}\" for {1} objects", entry.getKey(), objects.size());
-            else
-                text = tr("Set {0}={1} for {2} objects", entry.getKey(), entry.getValue(), objects.size());
+            if (entry.getValue() == null) {
+                /* for correct i18n of plural forms - see #9110 */
+                text = trn("Remove \"{0}\" for {1} objects", "Remove \"{0}\" for {1} objects", objects.size(), entry.getKey(), objects.size());
+            } else {
+                /* for correct i18n of plural forms - see #9110 */
+                text = trn("Set {0}={1} for {2} objects", "Set {0}={1} for {2} objects", objects.size(), entry.getKey(), entry.getValue(), objects.size());
+            }
         }
         else {
             boolean allnull = true;
@@ -179,9 +183,12 @@ public class ChangePropertyCommand extends Command {
             }
 
             if (allnull) {
-                text = tr("Deleted {0} tags for {1} objects", tags.size(), objects.size());
-            } else
-                text = tr("Set {0} tags for {1} objects", tags.size(), objects.size());
+                /* for correct i18n of plural forms - see #9110 */
+                text = trn("Deleted {0} tags for {1} objects", "Deleted {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
+            } else {
+                /* for correct i18n of plural forms - see #9110 */
+                text = trn("Set {0} tags for {1} objects", "Set {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
+            }
         }
         return text;
     }

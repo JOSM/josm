@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.net.URL;
@@ -84,16 +85,19 @@ public abstract class AbstractInfoAction extends JosmAction {
     }
 
     public static boolean confirmLaunchMultiple(int numBrowsers) {
-        String msg  = tr(
+        String msg  = /* for correct i18n of plural forms - see #9110 */ trn(
                 "You are about to launch {0} browser windows.<br>"
-                + "This may both clutter your screen with browser windows<br>"
-                + "and take some time to finish.", numBrowsers);
+                        + "This may both clutter your screen with browser windows<br>"
+                        + "and take some time to finish.",
+                "You are about to launch {0} browser windows.<br>"
+                        + "This may both clutter your screen with browser windows<br>"
+                        + "and take some time to finish.", numBrowsers, numBrowsers);
         msg = "<html>" + msg + "</html>";
         ButtonSpec[] spec = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Continue"),
                         ImageProvider.get("ok"),
-                        tr("Click to continue and to open {0} browsers", numBrowsers),
+                        trn("Click to continue and to open {0} browsers", "Click to continue and to open {0} browsers", numBrowsers, numBrowsers),
                         null // no specific help topic
                 ),
                 new ButtonSpec(

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
 import java.util.List;
@@ -55,13 +56,18 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public String getDescriptionText() {
-        String msg = "";
-        switch(OsmPrimitiveType.from(conflict.getMy())) {
-        case NODE: msg = marktr("Resolve {0} tag conflicts in node {1}"); break;
-        case WAY: msg = marktr("Resolve {0} tag conflicts in way {1}"); break;
-        case RELATION: msg = marktr("Resolve {0} tag conflicts in relation {1}"); break;
+        switch (OsmPrimitiveType.from(conflict.getMy())) {
+            case NODE:
+                /* for correct i18n of plural forms - see #9110 */
+                return trn("Resolve {0} tag conflicts in node {1}", "Resolve {0} tag conflicts in node {1}", getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
+            case WAY:
+                /* for correct i18n of plural forms - see #9110 */
+                return trn("Resolve {0} tag conflicts in way {1}", "Resolve {0} tag conflicts in way {1}", getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
+            case RELATION:
+                /* for correct i18n of plural forms - see #9110 */
+                return trn("Resolve {0} tag conflicts in relation {1}", "Resolve {0} tag conflicts in relation {1}", getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
         }
-        return tr(msg,getNumDecidedConflicts(), conflict.getMy().getId());
+        return "";
     }
 
     @Override
