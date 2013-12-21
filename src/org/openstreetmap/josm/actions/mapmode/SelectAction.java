@@ -805,7 +805,12 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                     tr("Move elements"),
                     new String[]{tr("Move them"), tr("Undo move")});
             ed.setButtonIcons(new String[]{"reorder.png", "cancel.png"});
-            ed.setContent(tr("You moved more than {0} elements. " + "Moving a large number of elements is often an error.\n" + "Really move them?", max));
+            ed.setContent(
+                    /* for correct i18n of plural forms - see #9110 */
+                    trn(
+                            "You moved more than {0} elements. " + "Moving a large number of elements is often an error.\n" + "Really move them?",
+                            "You moved more than {0} elements. " + "Moving a large number of elements is often an error.\n" + "Really move them?",
+                            max, max));
             ed.setCancelButton(2);
             ed.toggleEnable("movedManyElements");
             ed.showDialog();
