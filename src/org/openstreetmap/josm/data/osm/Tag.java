@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 /**
  * Tag represents an immutable key/value-pair. Both the key and the value may
  * be empty, but not null.
@@ -94,6 +96,16 @@ public class Tag {
             return key.equals(other.getKey()) && value.equals(other.getValue());
         } else
             return false;
+    }
+
+    public static Tag ofString(String s) {
+        CheckParameterUtil.ensureParameterNotNull(s, "s");
+        final String[] x = s.split("=", 2);
+        if (x.length == 2) {
+            return new Tag(x[0], x[1]);
+        } else {
+            throw new IllegalArgumentException("String does not contain '='");
+        }
     }
 
     @Override
