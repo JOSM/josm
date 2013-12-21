@@ -91,6 +91,16 @@ public final class CheckParameterUtil {
     }
 
     /**
+     * Ensures that the condition {@code condition} holds.
+     * @param condition The condition to check
+     * @throws IllegalArgumentException if the condition does not hold
+     */
+    public static void ensureThat(boolean condition, String message) throws IllegalArgumentException {
+        if (!condition)
+            throw new IllegalArgumentException(message);
+    }
+
+    /**
      * Ensures that <code>id</code> is non-null primitive id of type {@link OsmPrimitiveType#NODE}
      *
      * @param id  the primitive  id
