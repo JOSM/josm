@@ -42,7 +42,7 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * This class is immutable and thread-safe.
  *
- * @version $Id: Md5Crypt.java 1552821 2013-12-20 22:07:51Z ggregory $
+ * @version $Id: Md5Crypt.java 1552861 2013-12-21 02:03:17Z ggregory $
  * @since 1.7
  */
 public class Md5Crypt {
@@ -77,6 +77,7 @@ public class Md5Crypt {
      *
      * @param keyBytes
      *            plaintext string to hash.
+     * @param salt An APR1 salt.
      * @return the hash value
      * @throws IllegalArgumentException
      *             if the salt does not match the allowed pattern
@@ -167,6 +168,8 @@ public class Md5Crypt {
      * 
      * @param keyBytes
      *            plaintext string to hash.
+     * @param salt May be null.
+     * @param prefix salt prefix
      * @return the hash value
      * @throws IllegalArgumentException
      *             if the salt does not match the allowed pattern
