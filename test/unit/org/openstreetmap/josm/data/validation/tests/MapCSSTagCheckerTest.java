@@ -5,10 +5,15 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Way;
 
 import java.io.StringReader;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -48,9 +53,55 @@ public class MapCSSTagCheckerTest {
         assertFalse(check.matchesPrimitive(n2));
     }
 
+    OsmPrimitive createPrimitiveForAssertion(String assertion) {
+        final String[] x = assertion.split("\\s+");
+        final OsmPrimitive p = "n".equals(x[0]) || "node".equals(x[0])
+                ? new Node()
+                : "w".equals(x[0]) || "way".equals(x[0])
+                ? new Way()
+                : "r".equals(x[0]) || "relation".equals(x[0])
+                ? new Relation()
+                : null;
+        if (p == null) {
+            throw new IllegalArgumentException("Expecting n/node/w/way/r/relation, but got " + x[0]);
+        }
+        for (int i = 1; i < x.length; i++) {
+            final Tag tag = Tag.ofString(x[i]);
+            p.put(tag.getKey(), tag.getValue());
+        }
+        return p;
+    }
+
+    @Test
+    public void testCreatePrimitiveForAssertion() throws Exception {
+        final OsmPrimitive p = createPrimitiveForAssertion("way name=Foo railway=rail");
+        assertTrue(p instanceof Way);
+        assertThat(p.keySet().size(), is(2));
+        assertThat(p.get("name"), is("Foo"));
+        assertThat(p.get("railway"), is("rail"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreatePrimitiveForAssertionFail() throws Exception {
+        final OsmPrimitive p = createPrimitiveForAssertion("noway name=Foo");
+    }
+
     @Test
     public void testInit() throws Exception {
         final MapCSSTagChecker c = new MapCSSTagChecker();
         c.initialize();
+
+        LinkedHashSet<String> assertionErrors = new LinkedHashSet<String>();
+        for (final MapCSSTagChecker.TagCheck check : c.checks) {
+            for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
+                if (check.matchesPrimitive(createPrimitiveForAssertion(i.getKey())) != i.getValue()) {
+                    final String error = "Expecting test '" + check.getMessage() + "' to " + (i.getValue() ? "" : "not ") + "match " + i.getKey();
+                    System.err.println(error);
+                    assertionErrors.add(error);
+                }
+            }
+        }
+        assertTrue("not all assertions included in the tests are met", assertionErrors.isEmpty());
+
     }
 }

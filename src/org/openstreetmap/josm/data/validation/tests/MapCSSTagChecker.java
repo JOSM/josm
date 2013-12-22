@@ -52,6 +52,7 @@ public class MapCSSTagChecker extends Test {
         protected final Map<String, String> keyChange = new LinkedHashMap<String, String>();
         protected final List<Tag> alternatives = new ArrayList<Tag>();
         protected final Map<String, Severity> errors = new HashMap<String, Severity>();
+        protected final Map<String, Boolean> assertions = new HashMap<String, Boolean>();
 
         TagCheck(List<Selector> selector) {
             this.selector = selector;
@@ -81,6 +82,10 @@ public class MapCSSTagChecker extends Test {
                         check.keyChange.put(x[0].trim(), x[1].trim());
                     } else if ("suggestAlternative".equals(ai.key) && val != null) {
                         check.alternatives.add(val.contains("=") ? Tag.ofString(val) : new Tag(val));
+                    } else if ("assertMatch".equals(ai.key) && val != null) {
+                        check.assertions.put(val, true);
+                    } else if ("assertNoMatch".equals(ai.key) && val != null) {
+                        check.assertions.put(val, false);
                     } else {
                         throw new RuntimeException("Cannot add instruction " + ai.key + ": " + ai.val + "!");
                     }
