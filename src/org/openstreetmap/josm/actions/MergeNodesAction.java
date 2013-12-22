@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -353,8 +354,8 @@ public class MergeNodesAction extends JosmAction {
             if (!waysToDelete.isEmpty()) {
                 cmds.add(new DeleteCommand(waysToDelete));
             }
-            Command cmd = new SequenceCommand(tr("Merge {0} nodes", nodes.size()), cmds);
-            return cmd;
+            return new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
+                    trn("Merge {0} nodes", "Merge {0} nodes", nodes.size(), nodes.size()), cmds);
         } catch (UserCancelException ex) {
             return null;
         }

@@ -3,6 +3,8 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -187,7 +189,8 @@ public class CombineWayAction extends JosmAction {
         cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
         cmds.addAll(resolution);
         cmds.add(new DeleteCommand(deletedWays));
-        final SequenceCommand sequenceCommand = new SequenceCommand(tr("Combine {0} ways", ways.size()), cmds);
+        final SequenceCommand sequenceCommand = new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
+                trn("Combine {0} ways", "Combine {0} ways", ways.size(), ways.size()), cmds);
 
         return new Pair<Way, Command>(targetWay, sequenceCommand);
     }

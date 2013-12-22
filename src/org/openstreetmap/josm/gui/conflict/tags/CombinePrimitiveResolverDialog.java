@@ -595,12 +595,16 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 })));
             }
         }));
-        String msg = tr("You are about to combine {0} objects, "
+        String msg = /* for correct i18n of plural forms - see #9110 */ trn("You are about to combine {0} objects, "
+                + "but the following tags are used conflictingly:<br/>{1}"
+                + "If these objects are combined, the resulting object may have unwanted tags.<br/>"
+                + "If you want to continue, you are shown a dialog to fix the conflicting tags.<br/><br/>"
+                + "Do you want to continue?", "You are about to combine {0} objects, "
                 + "but the following tags are used conflictingly:<br/>{1}"
                 + "If these objects are combined, the resulting object may have unwanted tags.<br/>"
                 + "If you want to continue, you are shown a dialog to fix the conflicting tags.<br/><br/>"
                 + "Do you want to continue?",
-                primitives.size(), conflicts);
+                primitives.size(), primitives.size(), conflicts);
 
         if (!ConditionalOptionPaneUtil.showConfirmationDialog(
                 "combine_tags",
