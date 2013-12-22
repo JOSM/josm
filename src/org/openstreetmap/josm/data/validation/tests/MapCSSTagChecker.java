@@ -228,5 +228,6 @@ public class MapCSSTagChecker extends Test {
     @Override
     public void initialize() throws Exception {
         addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/deprecated.mapcss"), "UTF-8"));
+        addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/highway.mapcss"), "UTF-8"));
     }
 }
