@@ -155,12 +155,26 @@ public class MapCSSTagChecker extends Test {
         }
 
         /**
+         * Constructs a (localized) message for this deprecation check.
+         *
+         * @return a message
+         */
+        String getMessage() {
+            return errors.keySet().iterator().next();
+        }
+
+        /**
          * Constructs a (localized) description for this deprecation check.
          *
-         * @return a description
+         * @return a description (possibly with alternative suggestions)
          */
         String getDescription() {
-            return errors.keySet().iterator().next();
+            if (alternatives.isEmpty()) {
+                return getMessage();
+            } else {
+                /* I18N: {0} is the test error message and {1} is an alternative */
+                return tr("{0}, use {1} instead", getMessage(), Utils.join(tr(" or "), alternatives));
+            }
         }
 
         Severity getSeverity() {
