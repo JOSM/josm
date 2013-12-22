@@ -275,8 +275,7 @@ public class Bounds {
     /**
      * @return Center of the bounding box.
      */
-    public LatLon getCenter()
-    {
+    public LatLon getCenter() {
         if (crosses180thMeridian()) {            
             double lat = (minLat + maxLat) / 2;
             double lon = (minLon + maxLon - 360.0) / 2;

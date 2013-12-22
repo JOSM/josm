@@ -25,6 +25,10 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class DownloadAction extends JosmAction {
+    
+    /**
+     * Constructs a new {@code DownloadAction}.
+     */
     public DownloadAction() {
         super(tr("Download from OSM..."), "download", tr("Download map data from the OSM server."),
                 Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_DOWN, Shortcut.CTRL_SHIFT), true);
