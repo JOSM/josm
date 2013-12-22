@@ -37,12 +37,12 @@ abstract public class Condition {
         }
     }
 
-    public static Condition create(String k, boolean not, boolean yes, Context context) {
+    public static Condition create(String k, boolean not, boolean yes, boolean no, Context context) {
         switch (context) {
         case PRIMITIVE:
-            return new KeyCondition(k, not, yes);
+            return new KeyCondition(k, not, yes, no);
         case LINK:
-            if (yes)
+            if (yes || no)
                 throw new MapCSSException("Question mark operator ''?'' not supported in LINK context");
             if (not)
                 return new RoleCondition(k, Op.NEQ);
@@ -215,34 +215,35 @@ abstract public class Condition {
      *
      *     ["a label"?]  PRIMITIVE:  the primitive has a tag "a label" whose value evaluates to a true-value
      *                   LINK:       not supported
+     *
+     *     ["a label"?!] PRIMITIVE:  the primitive has a tag "a label" whose value evaluates to a false-value
+     *                   LINK:       not supported
      * </pre>
      */
     public static class KeyCondition extends Condition {
 
         private String label;
-        private boolean exclamationMarkPresent;
-        private boolean questionMarkPresent;
+        private boolean negateResult;
+        private boolean testForTrueValues;
+        private boolean testForFalseValues;
 
-        /**
-         *
-         * @param label
-         * @param exclamationMarkPresent
-         * @param questionMarkPresent
-         */
-        public KeyCondition(String label, boolean exclamationMarkPresent, boolean questionMarkPresent){
+        public KeyCondition(String label, boolean negateResult, boolean testForTrueValues, boolean testForFalseValues){
             this.label = label;
-            this.exclamationMarkPresent = exclamationMarkPresent;
-            this.questionMarkPresent = questionMarkPresent;
+            this.negateResult = negateResult;
+            this.testForTrueValues = testForTrueValues;
+            this.testForFalseValues = testForFalseValues;
         }
 
         @Override
         public boolean applies(Environment e) {
             switch(e.getContext()) {
             case PRIMITIVE:
-                if (questionMarkPresent)
-                    return OsmUtils.isTrue(e.osm.get(label)) ^ exclamationMarkPresent;
+                if (testForTrueValues)
+                    return OsmUtils.isTrue(e.osm.get(label)) ^ negateResult;
+                else if (testForFalseValues)
+                    return OsmUtils.isFalse(e.osm.get(label)) ^ negateResult;
                 else
-                    return e.osm.hasKey(label) ^ exclamationMarkPresent;
+                    return e.osm.hasKey(label) ^ negateResult;
             case LINK:
                 Utils.ensure(false, "Illegal state: KeyCondition not supported in LINK context");
                 return false;
@@ -252,7 +253,7 @@ abstract public class Condition {
 
         @Override
         public String toString() {
-            return "[" + (exclamationMarkPresent ? "!" : "") + label + "]";
+            return "[" + (negateResult ? "!" : "") + label + "]";
         }
     }
 

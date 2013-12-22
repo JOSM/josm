@@ -9,6 +9,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.TextTagParser;
 
 import java.io.StringReader;
 import java.util.LinkedHashSet;
@@ -54,7 +55,7 @@ public class MapCSSTagCheckerTest {
     }
 
     OsmPrimitive createPrimitiveForAssertion(String assertion) {
-        final String[] x = assertion.split("\\s+");
+        final String[] x = assertion.split("\\s+", 2);
         final OsmPrimitive p = "n".equals(x[0]) || "node".equals(x[0])
                 ? new Node()
                 : "w".equals(x[0]) || "way".equals(x[0])
@@ -65,9 +66,8 @@ public class MapCSSTagCheckerTest {
         if (p == null) {
             throw new IllegalArgumentException("Expecting n/node/w/way/r/relation, but got " + x[0]);
         }
-        for (int i = 1; i < x.length; i++) {
-            final Tag tag = Tag.ofString(x[i]);
-            p.put(tag.getKey(), tag.getValue());
+        for (final Map.Entry<String, String> i : TextTagParser.getValidatedTagsFromText(x[1]).entrySet()) {
+            p.put(i.getKey(), i.getValue());
         }
         return p;
     }
@@ -94,8 +94,9 @@ public class MapCSSTagCheckerTest {
         LinkedHashSet<String> assertionErrors = new LinkedHashSet<String>();
         for (final MapCSSTagChecker.TagCheck check : c.checks) {
             for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
-                if (check.matchesPrimitive(createPrimitiveForAssertion(i.getKey())) != i.getValue()) {
-                    final String error = "Expecting test '" + check.getMessage() + "' to " + (i.getValue() ? "" : "not ") + "match " + i.getKey();
+                final OsmPrimitive p = createPrimitiveForAssertion(i.getKey());
+                if (check.matchesPrimitive(p) != i.getValue()) {
+                    final String error = "Expecting test '" + check.getMessage() + "' to " + (i.getValue() ? "" : "not ") + "match " + i.getKey() + ", i.e., " + p.getKeys();
                     System.err.println(error);
                     assertionErrors.add(error);
                 }
