@@ -3,6 +3,8 @@
   fixRemove: "barrier";
   fixAdd: "barrier=fence";
   fixAdd: "fence_type=chain_link";
+  assertMatch: "way barrier=wire_fence";
+  assertNoMatch: "way barrier=fence";
 }
   
 *[barrier=wood_fence] {
