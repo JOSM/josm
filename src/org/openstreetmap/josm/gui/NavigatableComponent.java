@@ -46,6 +46,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Predicate;
@@ -192,6 +193,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
     private Rectangle paintRect = null;
     private Polygon paintPoly = null;
 
+    /**
+     * Constructs a new {@code NavigatableComponent}.
+     */
     public NavigatableComponent() {
         setLayout(null);
     }
@@ -201,11 +205,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private EastNorth calculateDefaultCenter() {
-        Bounds b = Main.getProjection().getWorldBoundsLatLon();
-        double lat = (b.getMaxLat() + b.getMinLat())/2;
-        double lon = (b.getMaxLon() + b.getMinLon())/2;
-        // FIXME is it correct? b.getCenter() makes some adjustments... 
-        return Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
+        Bounds b = DownloadDialog.getSavedDownloadBounds();
+        if (b == null) {
+            b = Main.getProjection().getWorldBoundsLatLon();
+        }
+        return Main.getProjection().latlon2eastNorth(b.getCenter());
     }
 
     /**
@@ -411,6 +415,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
         int width = getWidth()/2;
         int height = getHeight()/2;
+        if (width == 0 || height == 0) {
+            throw new IllegalStateException("Cannot zoom into undimensioned NavigatableComponent");
+        }
         LatLon l1 = new LatLon(b.getMinLat(), lon);
         LatLon l2 = new LatLon(b.getMaxLat(), lon);
         EastNorth e1 = getProjection().latlon2eastNorth(l1);

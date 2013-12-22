@@ -306,8 +306,7 @@ public class DownloadDialog extends JDialog  {
     }
     
     /**
-     * Remembers the current settings in the download dialog
-     *
+     * Remembers the current settings in the download dialog.
      */
     public void rememberSettings() {
         Main.pref.put("download.tab", Integer.toString(tpDownloadAreaSelectors.getSelectedIndex()));
@@ -319,6 +318,9 @@ public class DownloadDialog extends JDialog  {
         }
     }
 
+    /**
+     * Restores the previous settings in the download dialog.
+     */
     public void restoreSettings() {
         cbDownloadOsmData.setSelected(Main.pref.getBoolean("download.osm", true));
         cbDownloadGpxData.setSelected(Main.pref.getBoolean("download.gps", false));
@@ -338,18 +340,36 @@ public class DownloadDialog extends JDialog  {
             );
             boundingBoxChanged(currentBounds,null);
         }
-        else if (!Main.pref.get("osm-download.bounds").isEmpty()) {
-            // read the bounding box from the preferences
-            try {
-                currentBounds = new Bounds(Main.pref.get("osm-download.bounds"), ";");
-                boundingBoxChanged(currentBounds,null);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
+        else {
+            Bounds bounds = getSavedDownloadBounds();
+            if (bounds != null) {
+                currentBounds = bounds;
+                boundingBoxChanged(currentBounds, null);
             }
         }
     }
+    
+    /**
+     * Returns the previously saved bounding box from preferences.
+     * @return The bounding box saved in preferences if any, {@code null} otherwise
+     * @since 6509
+     */
+    public static Bounds getSavedDownloadBounds() {
+        String value = Main.pref.get("osm-download.bounds");
+        if (!value.isEmpty()) {
+            try {
+                return new Bounds(value, ";");
+            } catch (IllegalArgumentException e) {
+                Main.warn(e);
+            }
+        }
+        return null;
+    }
 
+    /**
+     * Determines if the dialog autorun is enabled in preferences.
+     * @return {@code true} if the download dialog must be open at startup, {@code false} otherwise
+     */
     public static boolean isAutorunEnabled() {
         return Main.pref.getBoolean("download.autorun",false);
     }
@@ -361,7 +381,8 @@ public class DownloadDialog extends JDialog  {
     }
 
     /**
-     * Replies the currently selected download area. May be null, if no download area is selected yet.
+     * Replies the currently selected download area.
+     * @return the currently selected download area. May be {@code null}, if no download area is selected yet.
      */
     public Bounds getSelectedDownloadArea() {
         return currentBounds;

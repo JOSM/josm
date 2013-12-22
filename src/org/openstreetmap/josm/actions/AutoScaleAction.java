@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVisitor;
+import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -243,11 +244,12 @@ public class AutoScaleAction extends JosmAction {
             v.enlargeBoundingBox();
         }
         else if (mode.equals("download")) {
-            if (!Main.pref.get("osm-download.bounds").isEmpty()) {
+            Bounds bounds = DownloadDialog.getSavedDownloadBounds();
+            if (bounds != null) {
                 try {
-                    v.visit(new Bounds(Main.pref.get("osm-download.bounds"), ";"));
+                    v.visit(bounds);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Main.warn(e);
                 }
             }
         }
