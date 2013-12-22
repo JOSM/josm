@@ -1,0 +1,98 @@
+way[highway][name =~ /(?i).* (Ave|Blvd|Br|Brg|Cct|Cir|Cl|Cr|Crct|Cres|Crt|Ct|Dr|Drv|Esp|Espl|Hwy|Ln|Mw|Mwy|Pl|Rd|Qy|Qys|Sq|St|Str|Ter|Tce|Tr|Wy)[.]?$/] {
+  throwWarning: tr("abbreviated street name");
+  assertMatch: "way highway=unclassified name=\"Foo Ave\"";
+  assertMatch: "way highway=unclassified name=\"Foo Ave.\"";
+  assertMatch: "way highway=unclassified name=\"Bou Blvd.\"";
+  assertMatch: "way highway=unclassified name=\"Bou blvd.\"";
+}
+
+node[oneway] {
+  throwWarning: tr("oneway tag on a node");
+  assertMatch: "node oneway=-1";
+  assertNoMatch: "way oneway=-1";
+}
+
+node[bridge?] {
+  throwWarning: tr("bridge tag on a node");
+  assertMatch: "node bridge=yes";
+  assertNoMatch: "node bridge=13";
+}
+
+node[highway =~ /motorway*|trunk*|primary*|secondary*|tertiary*|unclassified|residential|service|living_street|pedestrian|track|path|footway/] {
+  throwWarning: tr("wrong highway tag on a node");
+  assertMatch: "node highway=primary";
+  assertMatch: "node highway=primary_link";
+  assertNoMatch: "node highway=crossing";
+}
+
+way[highway=crossing], way[railway=crossing] {
+  throwWarning: tr("wrong crossing tag on a way");
+  assertMatch: "way highway=crossing";
+  assertNoMatch: "node highway=crossing";
+}
+
+way[highway=unclassified][!name] {
+  throwOther: tr("Unnamed unclassified highway");
+  assertMatch: "way highway=unclassified";
+  assertNoMatch: "way highway=unclassified name=Foo";
+}
+
+way[highway =~ /motorway|trunk|primary|secondary|tertiary/][!ref] {
+  throwOther: tr("highway without a reference");
+  assertMatch: "way highway=primary";
+  assertNoMatch: "way highway=primary ref=123";
+}
+
+way[highway=road] {
+  throwWarning: tr("temporary highway type");
+  assertMatch: "way highway=road";
+  assertNoMatch: "way highway=residential";
+}
+
+way[highway=cycleway][bicycle?!] {
+  throwWarning: tr("cycleway with tag bicycle");
+  assertMatch: "way highway=cycleway bicycle=false";
+  assertMatch: "way highway=cycleway bicycle=0";
+  assertNoMatch: "way highway=cycleway bicycle=yes";
+  assertNoMatch: "way highway=cycleway";
+}
+
+way[highway=footway][foot?!] {
+  throwWarning: tr("footway with tag foot");
+  assertMatch: "way highway=footway foot=false";
+  assertMatch: "way highway=footway foot=0";
+  assertNoMatch: "way highway=footway foot=yes";
+  assertNoMatch: "way highway=footway";
+}
+
+way[highway=cycleway][cycleway=lane] {
+  throwWarning: tr("separate cycleway as lane on a cycleway");
+  assertMatch: "way highway=cycleway cycleway=lane";
+  assertNoMatch: "way highway=cycleway";
+  assertNoMatch: "way highway=residential cycleway=lane";
+}
+
+way[highway][barrier] {
+  throwWarning: tr("barrier used on a way");
+  assertMatch: "way highway=residential barrier=hedge";
+  assertNoMatch: "way highway=residential";
+  assertNoMatch: "way barrier=hedge";
+}
+
+way[highway=footway][maxspeed], way[highway=steps][maxspeed] {
+  throwWarning: tr("maxspeed used for footway");
+  assertMatch: "way highway=footway maxspeed=20";
+  assertNoMatch: "way highway=residential maxspeed=20";
+  assertNoMatch: "way highway=footway";
+}
+
+*[name =~ /(?i).*Strasse.*/] {
+  throwWarning: tr("street name contains ss");
+  assertMatch: "way name=Foobarstrasse";
+  assertMatch: "way name=Foobar-Strassenweg";
+  assertNoMatch: "way name=Foobarstraße";
+}
+
+/*
+TODO: * : W : / *name * /i == * && name != * # misspelled key name
+*/

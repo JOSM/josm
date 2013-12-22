@@ -344,13 +344,15 @@ Condition simple_key_condition(Context context) :
 {
     boolean not = false;
     boolean yes = false;
+    boolean no = false;
     String key;
 }
 {
     ( <EXCLAMATION> { not = true; } )?
     key=tag_key()
+    ( LOOKAHEAD(2) <QUESTION> <EXCLAMATION> { no = true; } )?
     ( <QUESTION> { yes = true; } )?
-    { return Condition.create(key, not, yes, context); }
+    { return Condition.create(key, not, yes, no, context); }
 }
 
 Condition simple_key_value_condition(Context context) :
