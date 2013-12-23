@@ -98,7 +98,11 @@ public class OsmValidator implements LayerChangeListener {
         WronglyOrderedWays.class, // ID 1001 .. 1099
         UnclosedWays.class, // ID 1101 .. 1199
         TagChecker.class, // ID 1201 .. 1299
-        UnconnectedWays.class, // ID 1301 .. 1399
+        UnconnectedWays.UnconnectedHighways.class, // ID 1301 .. 1399
+        UnconnectedWays.UnconnectedRailways.class, // ID 1301 .. 1399
+        UnconnectedWays.UnconnectedWaterways.class, // ID 1301 .. 1399
+        UnconnectedWays.UnconnectedNaturalOrLanduse.class, // ID 1301 .. 1399
+        UnconnectedWays.UnconnectedPower.class, // ID 1301 .. 1399
         DuplicateWay.class, // ID 1401 .. 1499
         NameMismatch.class, // ID  1501 ..  1599
         MultipolygonTest.class, // ID  1601 ..  1699
