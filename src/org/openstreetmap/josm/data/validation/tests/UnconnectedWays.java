@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
@@ -31,11 +32,55 @@ import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
- * Tests if there are segments that crosses in the same layer
+ * Tests if there are segments that crosses in the same layer.
+ * <br/>
+ * This class is abstract since highway/railway/waterway/… ways must be handled separately.
+ * An actual implementation must override {@link #isPrimitiveUsable(OsmPrimitive)}
+ * to denote which kind of primitives can be handled.
  *
  * @author frsantos
  */
-public class UnconnectedWays extends Test {
+public abstract class UnconnectedWays extends Test {
+
+    public static class UnconnectedHighways extends UnconnectedWays {
+
+        @Override
+        public boolean isPrimitiveUsable(OsmPrimitive p) {
+            return super.isPrimitiveUsable(p) && p.hasKey("highway");
+        }
+    }
+
+    public static class UnconnectedRailways extends UnconnectedWays {
+
+        @Override
+        public boolean isPrimitiveUsable(OsmPrimitive p) {
+            return super.isPrimitiveUsable(p) && p.hasKey("railway");
+        }
+    }
+
+    public static class UnconnectedWaterways extends UnconnectedWays {
+
+        @Override
+        public boolean isPrimitiveUsable(OsmPrimitive p) {
+            return super.isPrimitiveUsable(p) && p.hasKey("waterway");
+        }
+    }
+
+    public static class UnconnectedNaturalOrLanduse extends UnconnectedWays {
+
+        @Override
+        public boolean isPrimitiveUsable(OsmPrimitive p) {
+            return super.isPrimitiveUsable(p) && (p.hasKey("natural") || p.hasKey("landuse"));
+        }
+    }
+
+    public static class UnconnectedPower extends UnconnectedWays {
+
+        @Override
+        public boolean isPrimitiveUsable(OsmPrimitive p) {
+            return super.isPrimitiveUsable(p) && p.hasKey("power");
+        }
+    }
 
     protected static final int UNCONNECTED_WAYS = 1301;
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + UnconnectedWays.class.getSimpleName();
@@ -340,10 +385,6 @@ public class UnconnectedWays extends Test {
             addNode(w.firstNode(), set);
             addNode(w.lastNode(), set);
         }
-    }
-
-    @Override
-    public void visit(Node n) {
     }
 
     private void addNode(Node n, QuadBuckets<Node> s) {
