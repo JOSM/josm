@@ -87,7 +87,6 @@ public final class OsmUrlToBounds {
      * the new URLs follow the scheme http://www.openstreetmap.org/#map=18/51.71873/8.76164&layers=CN
      * @param url string for parsing
      * @return Bounds if hashurl, {@code null} otherwise
-     * @throws IllegalArgumentException if URL is invalid
      */
     private static Bounds parseHashURLs(String url) throws IllegalArgumentException {
         int startIndex = url.indexOf("#map=");
@@ -97,24 +96,28 @@ public final class OsmUrlToBounds {
         String coordPart = url.substring(startIndex+5, endIndex);
         String[] parts = coordPart.split("/");
         if (parts.length < 3) {
-            throw new IllegalArgumentException(tr("URL does not contain {0}/{1}/{2}", tr("zoom"), tr("latitude"), tr("longitude")));
+            Main.warn(tr("URL does not contain {0}/{1}/{2}", tr("zoom"), tr("latitude"), tr("longitude")));
+            return null;
         }
         int zoom;
         double lat, lon;
         try {
             zoom = Integer.parseInt(parts[0]);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(tr("URL does not contain valid {0}", tr("zoom")), e);
+            Main.warn(tr("URL does not contain valid {0}", tr("zoom")), e);
+            return null;
         }
         try {
             lat = Double.parseDouble(parts[1]);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(tr("URL does not contain valid {0}", tr("latitude")), e);
+            Main.warn(tr("URL does not contain valid {0}", tr("latitude")), e);
+            return null;
         }
         try {
             lon = Double.parseDouble(parts[2]);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(tr("URL does not contain valid {0}", tr("longitude")), e);
+            Main.warn(tr("URL does not contain valid {0}", tr("longitude")), e);
+            return null;
         }
         return positionToBounds(lat, lon, zoom);
     }
