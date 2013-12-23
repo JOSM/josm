@@ -72,7 +72,7 @@ public class LoadAndZoomHandler extends RequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"new_layer", "addtags", "select", "zoom_mode"};
+        return new String[] {"new_layer", "addtags", "select", "zoom_mode", "changeset_comment", "changeset_source"};
     }
 
     @Override
@@ -199,6 +199,23 @@ public class LoadAndZoomHandler extends RequestHandler {
         } else if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             // after downloading, zoom to downloaded area.
             zoom(bbox);
+        }
+
+        // add changeset tags after download if necessary
+        if (args.containsKey("changeset_comment") || args.containsKey("changeset_source")) {
+            Main.worker.submit(new Runnable() {
+                @Override
+                public void run() {
+                    if (Main.main.getCurrentDataSet() != null) {
+                        if (args.containsKey("changeset_comment")) {
+                            Main.main.getCurrentDataSet().addChangeSetTag("comment", args.get("changeset_comment"));
+                        }
+                        if (args.containsKey("changeset_source")) {
+                            Main.main.getCurrentDataSet().addChangeSetTag("source", args.get("changeset_source"));
+                        }
+                    }
+                }
+            });
         }
 
         AddTagsDialog.addTags(args, sender);

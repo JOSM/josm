@@ -18,11 +18,25 @@ node[bridge?] {
   assertNoMatch: "node bridge=13";
 }
 
-node[highway =~ /motorway*|trunk*|primary*|secondary*|tertiary*|unclassified|residential|service|living_street|pedestrian|track|path|footway/] {
+node[highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|pedestrian|track|path|footway/][highway!=motorway_junction][highway!=services] {
   throwWarning: tr("wrong highway tag on a node");
   assertMatch: "node highway=primary";
   assertMatch: "node highway=primary_link";
+  assertNoMatch: "node highway=traffic_calming";
+  assertNoMatch: "node highway=bus_stop";
   assertNoMatch: "node highway=crossing";
+  assertNoMatch: "node highway=emergency_access_point";
+  assertNoMatch: "node highway=give_way";
+  assertNoMatch: "node highway=mini_roundabout";
+  assertNoMatch: "node highway=motorway_junction";
+  assertNoMatch: "node highway=passing_place";
+  assertNoMatch: "node highway=rest_area";
+  assertNoMatch: "node highway=speed_camera";
+  assertNoMatch: "node highway=street_lamp";
+  assertNoMatch: "node highway=services";
+  assertNoMatch: "node highway=stop";
+  assertNoMatch: "node highway=traffic_signals";
+  assertNoMatch: "node highway=turning_circle";
 }
 
 way[highway=crossing], way[railway=crossing] {
