@@ -188,7 +188,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             if (description != null || examples.length > 0) {
                 label.setToolTipText("<html>"
                         + description
-                        + (examples.length > 0 ? ("<ul><li>" + Utils.join("</li><li>", Arrays.asList(examples)) + "</li></ul>") : "")
+                        + (examples.length > 0 ? Utils.joinAsHtmlUnorderedList(Arrays.asList(examples)) : "")
                         + "</html>");
             }
             if (insertText != null) {

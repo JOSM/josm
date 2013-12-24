@@ -14,10 +14,11 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A ReverseWayNoTagCorrector warns about ways that should not be reversed
- * because their semantic meaning cannot be preserved in that case. 
+ * because their semantic meaning cannot be preserved in that case.
  * E.g. natural=coastline, natural=cliff, barrier=retaining_wall cannot be changed.
  * @see ReverseWayTagCorrector for handling of tags that can be modified (oneway=yes, etc.)
  * @since 5724
@@ -29,7 +30,7 @@ public final class ReverseWayNoTagCorrector {
     }
     
     /**
-     * Tags that imply a semantic meaning from the way direction and cannot be changed. 
+     * Tags that imply a semantic meaning from the way direction and cannot be changed.
      */
     public static final TagCollection directionalTags = new TagCollection(Arrays.asList(new Tag[]{
             new Tag("natural", "coastline"),
@@ -45,7 +46,7 @@ public final class ReverseWayNoTagCorrector {
     }));
     
     /**
-     * Replies the tags that imply a semantic meaning from <code>way</code> direction and cannot be changed. 
+     * Replies the tags that imply a semantic meaning from <code>way</code> direction and cannot be changed.
      * @param way The way to look for
      * @return tags that imply a semantic meaning from <code>way</code> direction and cannot be changed
      */
@@ -67,12 +68,7 @@ public final class ReverseWayNoTagCorrector {
         if (tags.size() == 1) {
             return tags.iterator().next().toString();
         } else if (tags.size() > 1) {
-            StringBuilder s = new StringBuilder("<ul>");
-            for (Tag t : tags) {
-                s.append("<li>").append(t).append("</li>");
-            }
-            s.append("</ul>");
-            return s.toString();
+            return Utils.joinAsHtmlUnorderedList(tags);
         } else {
             return "";
         }

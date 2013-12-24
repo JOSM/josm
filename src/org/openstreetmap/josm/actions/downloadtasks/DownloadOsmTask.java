@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
@@ -28,6 +29,7 @@ import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -321,13 +323,13 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             String urlString = url.toExternalForm();
             if (urlString.matches(PATTERN_OSM_API_URL)) {
                 // TODO: proper i18n after stabilization
-                String message = "<ul><li>"+tr("OSM Server URL:") + " " + url.getHost() + "</li><li>" +
-                        tr("Command")+": "+url.getPath()+"</li>";
+                Collection<String> items = new ArrayList<String>();
+                items.add(tr("OSM Server URL:") + " " + url.getHost());
+                items.add(tr("Command")+": "+url.getPath());
                 if (url.getQuery() != null) {
-                    message += "<li>" + tr("Request details: {0}", url.getQuery().replaceAll(",\\s*", ", ")) + "</li>";
+                    items.add(tr("Request details: {0}", url.getQuery().replaceAll(",\\s*", ", ")));
                 }
-                message += "</ul>";
-                return message;
+                return Utils.joinAsHtmlUnorderedList(items);
             }
             // TODO: other APIs
         }

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -14,6 +15,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.tools.ExceptionUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 public class PostDownloadHandler implements Runnable {
     private DownloadTask task;
@@ -103,23 +105,21 @@ public class PostDownloadHandler implements Runnable {
         // multiple error object? prepare a HTML list
         //
         if (!errors.isEmpty()) {
-            final StringBuffer sb = new StringBuffer();
+            final Collection<String> items = new ArrayList<String>();
             for (Object error:errors) {
                 if (error instanceof String) {
-                    sb.append("<li>").append(error).append("</li>").append("<br>");
+                    items.add((String) error);
                 } else if (error instanceof Exception) {
-                    sb.append("<li>").append(ExceptionUtil.explainException((Exception)error)).append("</li>").append("<br>");
+                    items.add(ExceptionUtil.explainException((Exception)error));
                 }
             }
-            sb.insert(0, "<html><ul>");
-            sb.append("</ul></html>");
 
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
                     JOptionPane.showMessageDialog(
                             Main.parent,
-                            sb.toString(),
+                            "<html>"+Utils.joinAsHtmlUnorderedList(items)+"</html>",
                             tr("Errors during download"),
                             JOptionPane.ERROR_MESSAGE);
                 }
