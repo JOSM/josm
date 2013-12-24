@@ -44,6 +44,8 @@ import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.gui.preferences.server.AuthenticationPreference;
+import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.preferences.shortcut.ShortcutPreference;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -228,26 +230,58 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         return false;
     }
 
+    /**
+     * Returns the {@code DisplayPreference} object.
+     * @return the {@code DisplayPreference} object.
+     */
     public final DisplayPreference getDisplayPreference() {
         return getSetting(DisplayPreference.class);
     }
 
+    /**
+     * Returns the {@code MapPreference} object.
+     * @return the {@code MapPreference} object.
+     */
     public final MapPreference getMapPreference() {
         return getSetting(MapPreference.class);
     }
 
+    /**
+     * Returns the {@code PluginPreference} object.
+     * @return the {@code PluginPreference} object.
+     */
     public final PluginPreference getPluginPreference() {
         return getSetting(PluginPreference.class);
     }
 
+    /**
+     * Returns the {@code ImageryPreference} object.
+     * @return the {@code ImageryPreference} object.
+     */
     public final ImageryPreference getImageryPreference() {
         return getSetting(ImageryPreference.class);
     }
 
+    /**
+     * Returns the {@code ShortcutPreference} object.
+     * @return the {@code ShortcutPreference} object.
+     */
     public final ShortcutPreference getShortcutPreference() {
         return getSetting(ShortcutPreference.class);
     }
 
+    /**
+     * Returns the {@code ServerAccessPreference} object.
+     * @return the {@code ServerAccessPreference} object.
+     * @since 6523
+     */
+    public final ServerAccessPreference getServerPreference() {
+        return getSetting(ServerAccessPreference.class);
+    }
+
+    /**
+     * Saves preferences.
+     */
     public void savePreferences() {
         if(Main.applet)
             return;
@@ -449,6 +483,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         settingsFactory.add(new LafPreference.Factory());
         settingsFactory.add(new LanguagePreference.Factory());
         settingsFactory.add(new ServerAccessPreference.Factory());
+        settingsFactory.add(new AuthenticationPreference.Factory());
+        settingsFactory.add(new ProxyPreference.Factory());
         settingsFactory.add(new MapPreference.Factory());
         settingsFactory.add(new ProjectionPreference.Factory());
         settingsFactory.add(new MapPaintPreference.Factory());

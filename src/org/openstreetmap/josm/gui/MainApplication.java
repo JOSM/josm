@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
@@ -27,17 +28,19 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.CustomConfigurator;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
+import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.DefaultProxySelector;
@@ -339,7 +342,8 @@ public class MainApplication extends Main {
 
         DefaultAuthenticator.createInstance();
         Authenticator.setDefault(DefaultAuthenticator.getInstance());
-        ProxySelector.setDefault(new DefaultProxySelector(ProxySelector.getDefault()));
+        DefaultProxySelector proxySelector = new DefaultProxySelector(ProxySelector.getDefault());
+        ProxySelector.setDefault(proxySelector);
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
 
         // asking for help? show help and exit
@@ -406,40 +410,7 @@ public class MainApplication extends Main {
             main.menu.fullscreenToggleAction.initial();
         }
 
-        final Map<Option, Collection<String>> args_final = args;
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (AutosaveTask.PROP_AUTOSAVE_ENABLED.get()) {
-                    AutosaveTask autosaveTask = new AutosaveTask();
-                    List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
-                    if (!unsavedLayerFiles.isEmpty()) {
-                        ExtendedDialog dialog = new ExtendedDialog(
-                                Main.parent,
-                                tr("Unsaved osm data"),
-                                new String[] {tr("Restore"), tr("Cancel"), tr("Discard")}
-                                );
-                        dialog.setContent(
-                                trn("JOSM found {0} unsaved osm data layer. ",
-                                        "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
-                                        tr("It looks like JOSM crashed last time. Would you like to restore the data?"));
-                        dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/delete"});
-                        int selection = dialog.showDialog().getValue();
-                        if (selection == 1) {
-                            autosaveTask.recoverUnsavedLayers();
-                        } else if (selection == 3) {
-                            autosaveTask.dicardUnsavedLayers();
-                        }
-                    }
-                    autosaveTask.schedule();
-                }
-
-                postConstructorProcessCmdLine(args_final);
-
-                DownloadDialog.autostartIfNeeded();
-            }
-        });
+        SwingUtilities.invokeLater(new GuiFinalizationWorker(args, proxySelector));
 
         if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
             RemoteControl.start();
@@ -453,6 +424,88 @@ public class MainApplication extends Main {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process but they don't seem to break anything and are difficult to fix
             info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
+        }
+    }
+
+    private static class GuiFinalizationWorker implements Runnable {
+
+        private final Map<Option, Collection<String>> args;
+        private final DefaultProxySelector proxySelector;
+
+        public GuiFinalizationWorker(Map<Option, Collection<String>> args, DefaultProxySelector proxySelector) {
+            this.args = args;
+            this.proxySelector = proxySelector;
+        }
+
+        @Override
+        public void run() {
+
+            // Handle proxy errors early to inform user he should change settings to be able to use JOSM correctly
+            handleProxyErrors();
+
+            // Restore autosave layers after crash and start autosave thread
+            handleAutosave();
+
+            // Handle command line instructions
+            postConstructorProcessCmdLine(args);
+
+            // Show download dialog if autostart is enabled
+            DownloadDialog.autostartIfNeeded();
+        }
+
+        private void handleAutosave() {
+            if (AutosaveTask.PROP_AUTOSAVE_ENABLED.get()) {
+                AutosaveTask autosaveTask = new AutosaveTask();
+                List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
+                if (!unsavedLayerFiles.isEmpty()) {
+                    ExtendedDialog dialog = new ExtendedDialog(
+                            Main.parent,
+                            tr("Unsaved osm data"),
+                            new String[] {tr("Restore"), tr("Cancel"), tr("Discard")}
+                            );
+                    dialog.setContent(
+                            trn("JOSM found {0} unsaved osm data layer. ",
+                                    "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
+                                    tr("It looks like JOSM crashed last time. Would you like to restore the data?"));
+                    dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/delete"});
+                    int selection = dialog.showDialog().getValue();
+                    if (selection == 1) {
+                        autosaveTask.recoverUnsavedLayers();
+                    } else if (selection == 3) {
+                        autosaveTask.dicardUnsavedLayers();
+                    }
+                }
+                autosaveTask.schedule();
+            }
+        }
+
+        private static String getHtmlList(Collection<String> set) {
+            StringBuilder sb = new StringBuilder("<ul>");
+            for (String s : set) {
+                sb.append("<li>"+s+"</li>");
+            }
+            return sb.append("</ul>").toString();
+        }
+
+        private void handleProxyErrors() {
+            if (proxySelector.hasErrors()) {
+                ExtendedDialog ed = new ExtendedDialog(
+                        Main.parent, tr("Proxy errors occured"),
+                        new String[]{tr("Change proxy settings"), tr("Cancel")});
+                ed.setButtonIcons(new String[]{"dialogs/settings.png", "cancel.png"}).setCancelButton(2);
+                ed.setMinimumSize(new Dimension(460, 260));
+                ed.setIcon(JOptionPane.WARNING_MESSAGE);
+                ed.setContent(tr("JOSM tried to access the following resources:")+
+                        "<br>"+getHtmlList(proxySelector.getErrorResources())+
+                        tr("but <b>failed</b> to do so, because of the following proxy errors:")+
+                        "<br>"+getHtmlList(proxySelector.getErrorMessages())+
+                        tr("Would you like to change your proxy settings now ?")
+                        );
+
+                if (ed.showDialog().getValue() == 1) {
+                    PreferencesAction.forPreferenceSubTab(null, null, ProxyPreference.class).run();
+                }
+            }
         }
     }
 }
