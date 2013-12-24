@@ -11,7 +11,10 @@ import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
@@ -55,6 +58,9 @@ public class DefaultProxySelector extends ProxySelector {
     private InetSocketAddress httpProxySocketAddress;
     private InetSocketAddress socksProxySocketAddress;
     private ProxySelector delegate;
+
+    private final Set<String> errorResources = new HashSet<String>();
+    private final Set<String> errorMessages = new HashSet<String>();
 
     /**
      * A typical example is:
@@ -133,8 +139,46 @@ public class DefaultProxySelector extends ProxySelector {
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
         // Just log something. The network stack will also throw an exception which will be caught somewhere else
-        //
         Main.error(tr("Connection to proxy ''{0}'' for URI ''{1}'' failed. Exception was: {2}", sa.toString(), uri.toString(), ioe.toString()));
+        // Remember errors to give a friendly user message asking to review proxy configuration
+        errorResources.add(uri.toString());
+        errorMessages.add(ioe.toString());
+    }
+
+    /**
+     * Returns the set of current proxy resources that failed to be retrieved.
+     * @return the set of current proxy resources that failed to be retrieved
+     * @since 6523
+     */
+    public final Set<String> getErrorResources() {
+        return new TreeSet<String>(errorResources);
+    }
+
+    /**
+     * Returns the set of current proxy error messages.
+     * @return the set of current proxy error messages
+     * @since 6523
+     */
+    public final Set<String> getErrorMessages() {
+        return new TreeSet<String>(errorMessages);
+    }
+
+    /**
+     * Clear the sets of failed resources and error messages.
+     * @since 6523
+     */
+    public final void clearErrors() {
+        errorResources.clear();
+        errorMessages.clear();
+    }
+
+    /**
+     * Determines if proxy errors have occured.
+     * @return {@code true} if errors have occured, {@code false} otherwise.
+     * @since 6523
+     */
+    public final boolean hasErrors() {
+        return !errorResources.isEmpty();
     }
 
     @Override

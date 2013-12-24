@@ -408,6 +408,9 @@ abstract public class Main {
         initListener = listener;
     }
 
+    /**
+     * Constructs new {@code Main} object. A lot of global variables are initialized here.
+     */
     public Main() {
         main = this;
         isOpenjdk = System.getProperty("java.vm.name").toUpperCase().indexOf("OPENJDK") != -1;
