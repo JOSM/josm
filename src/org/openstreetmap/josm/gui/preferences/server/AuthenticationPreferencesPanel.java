@@ -105,6 +105,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
      */
     public AuthenticationPreferencesPanel() {
         build();
+        initFromPreferences();
         HelpUtil.setHelpContext(this, HelpUtil.ht("/Preferences/Connection#AuthenticationSettings"));
     }
 
