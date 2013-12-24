@@ -359,6 +359,9 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         }
     }
 
+    /**
+     * Constructs a new {@code ProxyPreferencesPanel}.
+     */
     public ProxyPreferencesPanel() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));

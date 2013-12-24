@@ -44,7 +44,7 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
      * @param panel the panel
      * @return the scroll pane
      */
-    protected JScrollPane wrapVerticallyScrollablePanel(VerticallyScrollablePanel panel) {
+    public static JScrollPane wrapVerticallyScrollablePanel(VerticallyScrollablePanel panel) {
         JScrollPane sp = new JScrollPane(panel);
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -108,13 +108,6 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gui.createPreferenceTab(this).add(buildContentPanel(), gc);
 
-        initFromPreferences();
-    }
-
-    /**
-     * Initializes the configuration panel with values from the preferences
-     */
-    public void initFromPreferences() {
         pnlApiUrlPreferences.initFromPreferences();
     }
 
