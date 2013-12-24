@@ -126,9 +126,8 @@ public abstract class UnconnectedWays extends Test {
                     if (en == null || !s.highway || !endnodes_highway.contains(en)) {
                         continue;
                     }
-                    if ("turning_circle".equals(en.get("highway"))
-                            || "bus_stop".equals(en.get("highway"))
-                            || "buffer_stop".equals(en.get("railway"))
+                    if (en.hasTag("highway", "turning_circle", "bus_stop")
+                            || en.hasTag("railway", "buffer_stop")
                             || OsmUtils.isTrue(en.get("noexit"))
                             || en.hasKey("barrier")) {
                         continue;
@@ -349,7 +348,7 @@ public abstract class UnconnectedWays extends Test {
         List<MyWaySegment> ret = new ArrayList<MyWaySegment>();
         if (!w.isUsable()
                 || w.hasKey("barrier")
-                || "cliff".equals(w.get("natural")))
+                || w.hasTag("natural", "cliff"))
             return ret;
 
         int size = w.getNodesCount();
@@ -374,9 +373,10 @@ public abstract class UnconnectedWays extends Test {
 
     @Override
     public void visit(Way w) {
-        // Do not consider empty ways and addr:interpolation ways as they are not physical features and most of the time
-        // very near the associated highway, which is perfectly normal, see #9332
-        if (w.getNodesCount() > 0 && !w.hasKey("addr:interpolation")) {
+        if (w.getNodesCount() > 0 // do not consider empty ways
+                && !w.hasKey("addr:interpolation") // ignore addr:interpolation ways as they are not physical features and most of the time very near the associated highway, which is perfectly normal, see #9332
+                && !w.hasTag("highway", "platform") && !w.hasTag("railway", "platform") // similarly for public transport platforms
+                ) {
             ways.addAll(getWaySegments(w));
             QuadBuckets<Node> set = endnodes;
             if (w.hasKey("highway") || w.hasKey("railway")) {
