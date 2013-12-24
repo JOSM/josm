@@ -58,6 +58,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
 
         lblChangesetComment = new JTextArea();
         lblChangesetComment.setLineWrap(true);
+        lblChangesetComment.setWrapStyleWord(true);
         lblChangesetComment.setEditable(false);
         lblChangesetComment.setOpaque(false);
 
