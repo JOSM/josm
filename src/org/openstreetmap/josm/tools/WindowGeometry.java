@@ -290,31 +290,66 @@ public class WindowGeometry {
      */
     public void applySafe(Window window) {
         Point p = new Point(topLeft);
+        Dimension size = new Dimension(extent);
 
-        Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs = ge.getScreenDevices();
-        for (GraphicsDevice gd : gs) {
-            if (gd.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
-                virtualBounds = virtualBounds.union(gd.getDefaultConfiguration().getBounds());
-            }
-        }
+        Rectangle virtualBounds = getVirtualScreenBounds();
+
+        // Ensure window fit on screen
 
         if (p.x < virtualBounds.x) {
             p.x = virtualBounds.x;
-        } else if (p.x > virtualBounds.x + virtualBounds.width - extent.width) {
-            p.x = virtualBounds.x + virtualBounds.width - extent.width;
+        } else if (p.x > virtualBounds.x + virtualBounds.width - size.width) {
+            p.x = virtualBounds.x + virtualBounds.width - size.width;
         }
 
         if (p.y < virtualBounds.y) {
             p.y = virtualBounds.y;
-        } else if (p.y > virtualBounds.y + virtualBounds.height - extent.height) {
-            p.y = virtualBounds.y + virtualBounds.height - extent.height;
+        } else if (p.y > virtualBounds.y + virtualBounds.height - size.height) {
+            p.y = virtualBounds.y + virtualBounds.height - size.height;
+        }
+
+        int deltax = (p.x + size.width) - (virtualBounds.x + virtualBounds.width);
+        if (deltax > 0) {
+            size.width -= deltax;
+        }
+
+        int deltay = (p.x + size.height) - (virtualBounds.y + virtualBounds.height);
+        if (deltay > 0) {
+            size.height -= deltay;
+        }
+
+        // Ensure window does not hide taskbar
+
+        Rectangle maxbounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+
+        deltax = size.width - maxbounds.width;
+        if (deltax > 0) {
+            size.width -= deltax;
+        }
+
+        deltay = size.height - maxbounds.height;
+        if (deltay > 0) {
+            size.height -= deltay;
         }
 
         window.setLocation(p);
-        window.setSize(extent);
+        window.setSize(size);
+    }
+
+    /**
+     * Computes the virtual bounds of graphics environment, as an union of all screen bounds.
+     * @return The virtual bounds of graphics environment, as an union of all screen bounds.
+     * @since 6522
+     */
+    public Rectangle getVirtualScreenBounds() {
+        Rectangle virtualBounds = new Rectangle();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        for (GraphicsDevice gd : ge.getScreenDevices()) {
+            if (gd.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
+                virtualBounds = virtualBounds.union(gd.getDefaultConfiguration().getBounds());
+            }
+        }
+        return virtualBounds;
     }
 
     /**
@@ -384,6 +419,7 @@ public class WindowGeometry {
         return new Rectangle(new Point(0,0), Toolkit.getDefaultToolkit().getScreenSize());
     }
 
+    @Override
     public String toString() {
         return "WindowGeometry{topLeft="+topLeft+",extent="+extent+"}";
     }
