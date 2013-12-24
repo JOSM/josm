@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * ListMergeModel is a model for interactively comparing and merging two list of entries
@@ -357,11 +358,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         StringBuffer sb = new StringBuffer();
         sb.append("<html>");
         sb.append(tr("The following objects could not be copied to the target object<br>because they are deleted in the target dataset:"));
-        sb.append("<ul>");
-        for (String item: items) {
-            sb.append("<li>").append(item).append("</li>");
-        }
-        sb.append("</ul>");
+        sb.append(Utils.joinAsHtmlUnorderedList(items));
         sb.append("</html>");
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,

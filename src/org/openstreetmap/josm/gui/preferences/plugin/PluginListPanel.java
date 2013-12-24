@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.Utils;
 
 public class PluginListPanel extends VerticallyScrollablePanel{
     private PluginPreferencesModel model;
@@ -169,11 +170,8 @@ public class PluginListPanel extends VerticallyScrollablePanel{
                 plugin,
                 otherPlugins.size()
         ));
-        sb.append("<ul>");
-        for (String p: otherPlugins) {
-            sb.append("<li>").append(p).append("</li>");
-        }
-        sb.append("</ul>").append("</html>");
+        sb.append(Utils.joinAsHtmlUnorderedList(otherPlugins));
+        sb.append("</html>");
         JOptionPane.showMessageDialog(
                 parent,
                 sb.toString(),

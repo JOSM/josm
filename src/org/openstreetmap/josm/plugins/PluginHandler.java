@@ -63,6 +63,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * PluginHandler is basically a collection of static utility functions used to bootstrap
@@ -410,11 +411,8 @@ public final class PluginHandler {
                 plugin,
                 missingRequiredPlugin.size()
         ));
-        sb.append("<ul>");
-        for (String p: missingRequiredPlugin) {
-            sb.append("<li>").append(p).append("</li>");
-        }
-        sb.append("</ul>").append("</html>");
+        sb.append(Utils.joinAsHtmlUnorderedList(missingRequiredPlugin));
+        sb.append("</html>");
         JOptionPane.showMessageDialog(
                 parent,
                 sb.toString(),
@@ -709,11 +707,7 @@ public final class PluginHandler {
         sb.append(trn("JOSM could not find information about the following plugin:",
                 "JOSM could not find information about the following plugins:",
                 plugins.size()));
-        sb.append("<ul>");
-        for (String plugin: plugins) {
-            sb.append("<li>").append(plugin).append("</li>");
-        }
-        sb.append("</ul>");
+        sb.append(Utils.joinAsHtmlUnorderedList(plugins));
         sb.append(trn("The plugin is not going to be loaded.",
                 "The plugins are not going to be loaded.",
                 plugins.size()));

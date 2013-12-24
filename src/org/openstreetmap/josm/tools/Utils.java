@@ -200,7 +200,12 @@ public final class Utils {
         return s.toString();
     }
 
-    public static String joinAsHtmlUnorderedList(Collection<?> values) {
+    /**
+     * Converts the given iterable collection as an unordered HTML list.
+     * @param values The iterable collection
+     * @return An unordered HTML list
+     */
+    public static String joinAsHtmlUnorderedList(Iterable<?> values) {
         StringBuilder sb = new StringBuilder(1024);
         sb.append("<ul>");
         for (Object i : values) {

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.applet.Applet;
@@ -44,7 +45,6 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -102,7 +102,7 @@ public class TagTable extends JTable  {
      *   <li>it jumps over cells in the first column</li>
      *   <li>it automatically add a new empty row when the user leaves the
      *   last cell in the table</li>
-     * <ul>
+     * </ul>
      *
      */
     class SelectNextColumnCellAction extends AbstractAction  {

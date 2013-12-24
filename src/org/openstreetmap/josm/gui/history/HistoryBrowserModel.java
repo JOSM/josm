@@ -55,7 +55,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *   <li>the {@link History} of a specific {@link OsmPrimitive}</li>
  *   <li>a dedicated version in this {@link History} called the {@link PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
  *   <li>another version in this {@link History} called the {@link PointInTimeType#CURRENT_POINT_IN_TIME}</li>
- * <ul>
+ * </ul>
  * {@link HistoryBrowser} always compares the {@link PointInTimeType#REFERENCE_POINT_IN_TIME} with the
  * {@link PointInTimeType#CURRENT_POINT_IN_TIME}.
 
