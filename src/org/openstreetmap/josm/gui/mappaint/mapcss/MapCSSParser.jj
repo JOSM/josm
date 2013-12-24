@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 options {
   STATIC = false;
+  OUTPUT_DIRECTORY = "parsergen";
 }
 
 PARSER_BEGIN(MapCSSParser)
