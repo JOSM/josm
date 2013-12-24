@@ -62,6 +62,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.CompoundException;
@@ -220,11 +221,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             if (errorMessages.size() == 1) {
                 sb.append(errorMessages.iterator().next());
             } else {
-                sb.append("<ul>");
-                for (String msg: errorMessages) {
-                    sb.append("<li>").append(msg).append("</li>");
-                }
-                sb.append("/ul>");
+                sb.append(Utils.joinAsHtmlUnorderedList(errorMessages));
             }
             sb.append("</html>");
             return sb.toString();

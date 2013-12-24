@@ -155,7 +155,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
      * Action to be run when the user navigates to the next cell in the table, for instance by
      * pressing TAB or ENTER. The action alters the standard navigation path from cell to cell: <ul>
      * <li>it jumps over cells in the first column</li> <li>it automatically add a new empty row
-     * when the user leaves the last cell in the table</li> <ul>
+     * when the user leaves the last cell in the table</li></ul>
      *
      *
      */

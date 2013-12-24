@@ -16,8 +16,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -271,7 +271,7 @@ public class DeleteCommand extends Command {
      * <ul>
      *    <li>it is untagged (see {@link Node#isTagged()}</li>
      *    <li>it is not referred to by other non-deleted primitives outside of  <code>primitivesToDelete</code></li>
-     * <ul>
+     * </ul>
      * @param layer  the layer in whose context primitives are deleted
      * @param primitivesToDelete  the primitives to delete
      * @return the collection of nodes referred to by primitives in <code>primitivesToDelete</code> which

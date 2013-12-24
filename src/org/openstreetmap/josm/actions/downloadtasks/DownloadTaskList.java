@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class encapsulates the downloading of several bounding boxes that would otherwise be too
@@ -256,23 +257,21 @@ public class DownloadTaskList {
                 errors.addAll(dt.getErrorObjects());
             }
             if (!errors.isEmpty()) {
-                final StringBuilder sb = new StringBuilder();
+                final Collection<String> items = new ArrayList<String>();
                 for (Object error : errors) {
                     if (error instanceof String) {
-                        sb.append("<li>").append(error).append("</li>").append("<br>");
+                        items.add((String) error);
                     } else if (error instanceof Exception) {
-                        sb.append("<li>").append(ExceptionUtil.explainException((Exception) error)).append("</li>")
-                        .append("<br>");
+                        items.add(ExceptionUtil.explainException((Exception) error));
                     }
                 }
-                sb.insert(0, "<ul>");
-                sb.append("</ul>");
 
                 GuiHelper.runInEDT(new Runnable() {
                     @Override
                     public void run() {
                         JOptionPane.showMessageDialog(Main.parent, "<html>"
-                                + tr("The following errors occurred during mass download: {0}", sb.toString()) + "</html>",
+                                + tr("The following errors occurred during mass download: {0}",
+                                        Utils.joinAsHtmlUnorderedList(items)) + "</html>",
                                 tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
                     }
                 });

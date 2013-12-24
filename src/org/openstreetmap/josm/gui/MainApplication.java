@@ -479,14 +479,6 @@ public class MainApplication extends Main {
             }
         }
 
-        private static String getHtmlList(Collection<String> set) {
-            StringBuilder sb = new StringBuilder("<ul>");
-            for (String s : set) {
-                sb.append("<li>"+s+"</li>");
-            }
-            return sb.append("</ul>").toString();
-        }
-
         private void handleProxyErrors() {
             if (proxySelector.hasErrors()) {
                 ExtendedDialog ed = new ExtendedDialog(
@@ -496,9 +488,9 @@ public class MainApplication extends Main {
                 ed.setMinimumSize(new Dimension(460, 260));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
                 ed.setContent(tr("JOSM tried to access the following resources:")+
-                        "<br>"+getHtmlList(proxySelector.getErrorResources())+
+                        "<br>"+Utils.joinAsHtmlUnorderedList(proxySelector.getErrorResources())+
                         tr("but <b>failed</b> to do so, because of the following proxy errors:")+
-                        "<br>"+getHtmlList(proxySelector.getErrorMessages())+
+                        "<br>"+Utils.joinAsHtmlUnorderedList(proxySelector.getErrorMessages())+
                         tr("Would you like to change your proxy settings now ?")
                         );
 
