@@ -10,6 +10,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Observable;
 import java.util.Observer;
@@ -51,6 +53,31 @@ public class VersionTable extends JTable implements Observer{
         putClientProperty("terminateEditOnFocusLost", true);
         popupMenu = new VersionTablePopupMenu();
         addMouseListener(new MouseListener());
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // navigate history down/up using the corresponding arrow keys.
+                try {
+                    final HistoryOsmPrimitive ref = model.getReferencePointInTime();
+                    final HistoryOsmPrimitive cur = model.getCurrentPointInTime();
+                    if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                        // compute both values first and set them afterwards such that nothing is changed in case of an exception (e.g., reached top/bottom)
+                        final HistoryOsmPrimitive refNext = model.getHistory().from(ref.getVersion()).sortAscending().get(1);
+                        final HistoryOsmPrimitive curNext = model.getHistory().from(cur.getVersion()).sortAscending().get(1);
+                        model.setReferencePointInTime(refNext);
+                        model.setCurrentPointInTime(curNext);
+                    } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                        // compute both values first and set them afterwards such that nothing is changed in case of an exception (e.g., reached top/bottom)
+                        final HistoryOsmPrimitive refNext = model.getHistory().until(ref.getVersion()).sortDescending().get(1);
+                        final HistoryOsmPrimitive curNext = model.getHistory().until(cur.getVersion()).sortDescending().get(1);
+                        model.setReferencePointInTime(refNext);
+                        model.setCurrentPointInTime(curNext);
+                    }
+                } catch (NullPointerException ignore) {
+                } catch (IndexOutOfBoundsException ignore) {
+                }
+            }
+        });
         getModel().addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
