@@ -24,14 +24,20 @@ import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
+import org.openstreetmap.josm.gui.preferences.server.ProxyPreferenceListener;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WikiReader;
 
-public final class GettingStarted extends JPanel {
+public final class GettingStarted extends JPanel implements ProxyPreferenceListener {
+
+    private final LinkGeneral lg;
     private String content = "";
+    private boolean contentInitialized = false;
+
     private static final String STYLE = "<style type=\"text/css\">\n"
             + "body {font-family: sans-serif; font-weight: bold; }\n"
             + "h1 {text-align: center; }\n"
@@ -112,7 +118,7 @@ public final class GettingStarted extends JPanel {
      */
     public GettingStarted() {
         super(new BorderLayout());
-        final LinkGeneral lg = new LinkGeneral("<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
+        lg = new LinkGeneral("<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
                 + "</h1><h2 align=\"center\">" + tr("Downloading \"Message of the day\"") + "</h2></html>");
         // clear the build-in command ctrl+shift+O, because it is used as shortcut in JOSM
         lg.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "none");
@@ -121,17 +127,27 @@ public final class GettingStarted extends JPanel {
         scroller.setViewportBorder(new EmptyBorder(10, 100, 10, 100));
         add(scroller, BorderLayout.CENTER);
 
+        getMOTD();
+
+        new FileDrop(scroller);
+    }
+
+    private void getMOTD() {
         // Asynchronously get MOTD to speed-up JOSM startup
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                if (content.isEmpty() && Main.pref.getBoolean("help.displaymotd", true)) {
+                if (!contentInitialized && Main.pref.getBoolean("help.displaymotd", true)) {
                     try {
                         content = new MotdContent().updateIfRequiredString();
+                        contentInitialized = true;
+                        ProxyPreference.removeProxyPreferenceListener(GettingStarted.this);
                     } catch (IOException ex) {
                         Main.warn(tr("Failed to read MOTD. Exception was: {0}", ex.toString()));
                         content = "<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
                                 + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
+                        // In case of MOTD not loaded because of proxy error, listen to preference changes to retry after update
+                        ProxyPreference.addProxyPreferenceListener(GettingStarted.this);
                     }
                 }
 
@@ -145,8 +161,6 @@ public final class GettingStarted extends JPanel {
         }, "MOTD-Loader");
         t.setDaemon(true);
         t.start();
-
-        new FileDrop(scroller);
     }
 
     private String fixImageLinks(String s) {
@@ -161,5 +175,10 @@ public final class GettingStarted extends JPanel {
         }
         m.appendTail(sb);
         return sb.toString();
+    }
+
+    @Override
+    public void proxyPreferenceChanged() {
+        getMOTD();
     }
 }
