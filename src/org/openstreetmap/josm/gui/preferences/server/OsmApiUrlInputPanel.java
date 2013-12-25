@@ -29,12 +29,19 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
+/**
+ * Component allowing input os OSM API URL.
+ */
 public class OsmApiUrlInputPanel extends JPanel {
+    
+    /**
+     * OSM API URL property key.
+     */
     static public final String API_URL_PROP = OsmApiUrlInputPanel.class.getName() + ".apiUrl";
 
     private JLabel lblValid;
@@ -224,6 +231,10 @@ public class OsmApiUrlInputPanel extends JPanel {
         }
     }
 
+    /**
+     * Enables or disables the API URL input.
+     * @param enabled {@code true} to enable input, {@code false} otherwise
+     */
     public void setApiUrlInputEnabled(boolean enabled) {
         lblApiUrl.setEnabled(enabled);
         tfOsmServerUrl.setEnabled(enabled);

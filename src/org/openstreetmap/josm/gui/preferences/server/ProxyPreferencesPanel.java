@@ -35,12 +35,22 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Component allowing input of proxy settings.
+ */
 public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
+    /**
+     * The proxy policy is how JOSM will use proxy information.
+     */
     public enum ProxyPolicy {
+        /** No proxy: JOSM will access Internet resources directly */
         NO_PROXY("no-proxy"),
+        /** Use system settings: JOSM will use system proxy settings */
         USE_SYSTEM_SETTINGS("use-system-settings"),
+        /** Use HTTP proxy: JOSM will use the given HTTP proxy, configured manually */
         USE_HTTP_PROXY("use-http-proxy"),
+        /** Use HTTP proxy: JOSM will use the given SOCKS proxy */
         USE_SOCKS_PROXY("use-socks-proxy");
 
         private String policyName;
@@ -48,10 +58,19 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
             this.policyName = policyName;
         }
 
+        /**
+         * Replies the policy name, to be stored in proxy preferences.
+         * @return the policy unique name
+         */
         public String getName() {
             return policyName;
         }
 
+        /**
+         * Retrieves a proxy policy from its name found in preferences.
+         * @param policyName The policy name
+         * @return The proxy policy matching the given name, or {@code null}
+         */
         static public ProxyPolicy fromName(String policyName) {
             if (policyName == null) return null;
             policyName = policyName.trim().toLowerCase();
@@ -63,12 +82,19 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         }
     }
 
+    /** Property key for proxy policy */
     public static final String PROXY_POLICY = "proxy.policy";
+    /** Property key for HTTP proxy host */
     public static final String PROXY_HTTP_HOST = "proxy.http.host";
+    /** Property key for HTTP proxy port */
     public static final String PROXY_HTTP_PORT = "proxy.http.port";
+    /** Property key for SOCKS proxy host */
     public static final String PROXY_SOCKS_HOST = "proxy.socks.host";
+    /** Property key for SOCKS proxy port */
     public static final String PROXY_SOCKS_PORT = "proxy.socks.port";
+    /** Property key for proxy username */
     public static final String PROXY_USER = "proxy.user";
+    /** Property key for proxy password */
     public static final String PROXY_PASS = "proxy.pass";
 
     private Map<ProxyPolicy, JRadioButton> rbProxyPolicy;

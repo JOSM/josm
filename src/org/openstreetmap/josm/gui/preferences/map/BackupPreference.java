@@ -28,6 +28,9 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class BackupPreference implements SubPreferenceSetting {
 
+    /**
+     * Factory used to create a new {@code BackupPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public BackupPreference createPreferenceSetting() {

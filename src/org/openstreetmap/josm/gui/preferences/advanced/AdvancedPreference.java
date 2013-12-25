@@ -49,6 +49,9 @@ import org.openstreetmap.josm.tools.GBC;
 
 public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
+    /**
+     * Factory used to create a new {@code AdvancedPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

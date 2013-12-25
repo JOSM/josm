@@ -1,5 +1,5 @@
 // License: GPL. See LICENSE file for details.
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.validator;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -16,6 +16,10 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Test;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -25,6 +29,9 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public final class ValidatorPreference extends DefaultTabPreferenceSetting {
 
+    /**
+     * Factory used to create a new {@code ValidatorPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

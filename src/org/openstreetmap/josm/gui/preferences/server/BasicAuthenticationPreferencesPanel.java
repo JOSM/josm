@@ -83,10 +83,16 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
         add(decorationPanel, gc);
     }
 
+    /**
+     * Constructs a new {@code BasicAuthenticationPreferencesPanel}.
+     */
     public BasicAuthenticationPreferencesPanel() {
         build();
     }
 
+    /**
+     * Inits contents from preferences.
+     */
     public void initFromPreferences() {
         CredentialsAgent cm = CredentialsManager.getInstance();
         try {
@@ -109,6 +115,9 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
         }
     }
 
+    /**
+     * Saves contents to preferences.
+     */
     public void saveToPreferences() {
         CredentialsAgent cm = CredentialsManager.getInstance();
         try {
@@ -124,6 +133,9 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
         }
     }
 
+    /**
+     * Clears the password field.
+     */
     public void clearPassword() {
         tfOsmPassword.setText("");
     }
