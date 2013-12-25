@@ -294,7 +294,7 @@ public abstract class UnconnectedWays extends Test {
                 nearbyNodeCache = null;
             }
             if (nearbyNodeCache != null) {
-                // If we've cached an aread greater than the
+                // If we've cached an area greater than the
                 // one now being asked for...
                 if (nearbyNodeCacheDist > dist) {
                     // Used the cached result and trim out
