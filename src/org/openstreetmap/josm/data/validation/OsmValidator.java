@@ -28,7 +28,6 @@ import org.openstreetmap.josm.data.validation.tests.BarriersEntrances;
 import org.openstreetmap.josm.data.validation.tests.BuildingInBuilding;
 import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
-import org.openstreetmap.josm.data.validation.tests.DeprecatedTags;
 import org.openstreetmap.josm.data.validation.tests.DuplicateNode;
 import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
@@ -58,8 +57,8 @@ import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
-import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -218,9 +217,9 @@ public class OsmValidator implements LayerChangeListener {
         }
     }
 
-    /** 
-     * Gets a map from simple names to all tests. 
-     * @return A map of all tests, indexed by the simple name of their Java class 
+    /**
+     * Gets a map from simple names to all tests.
+     * @return A map of all tests, indexed by the simple name of their Java class
      */
     public static Map<String, Test> getAllTestsMap() {
         applyPrefs(allTestsMap, false);

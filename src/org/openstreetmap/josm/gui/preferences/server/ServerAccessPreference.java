@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.server;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -14,7 +14,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.preferences.server.OsmApiUrlInputPanel;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 
 /**

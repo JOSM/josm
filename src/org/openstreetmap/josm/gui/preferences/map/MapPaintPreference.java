@@ -46,6 +46,9 @@ public class MapPaintPreference implements SubPreferenceSetting {
         return false;
     }
 
+    /**
+     * Factory used to create a new {@code MapPaintPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

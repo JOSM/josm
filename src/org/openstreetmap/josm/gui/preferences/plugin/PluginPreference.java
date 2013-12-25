@@ -1,5 +1,5 @@
 //License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.plugin;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -39,10 +39,11 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePanel;
-import org.openstreetmap.josm.gui.preferences.plugin.PluginListPanel;
-import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferencesModel;
-import org.openstreetmap.josm.gui.preferences.plugin.PluginUpdatePolicyPanel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
@@ -54,6 +55,10 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public final class PluginPreference extends DefaultTabPreferenceSetting {
+
+    /**
+     * Factory used to create a new {@code PluginPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

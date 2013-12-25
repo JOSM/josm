@@ -28,6 +28,10 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 
 public class LanguagePreference implements SubPreferenceSetting {
+
+    /**
+     * Factory used to create a new {@code LanguagePreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

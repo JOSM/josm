@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.gui.preferences.audio;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -11,6 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -28,6 +32,9 @@ import org.openstreetmap.josm.tools.GBC;
 
 public final class AudioPreference extends DefaultTabPreferenceSetting {
 
+    /**
+     * Factory used to create a new {@code AudioPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

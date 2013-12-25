@@ -7,8 +7,15 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 
+/**
+ * Validator for OSM username.
+ */
 public class UserNameValidator extends AbstractTextComponentValidator {
 
+    /**
+     * Constructs a new {@code UserNameValidator}.
+     * @param tc the text component used to enter username
+     */
     public UserNameValidator(JTextComponent tc) {
         super(tc);
     }

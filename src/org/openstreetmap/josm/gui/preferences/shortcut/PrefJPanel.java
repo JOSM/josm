@@ -50,7 +50,6 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This is the keyboard preferences content.
- * If someone wants to merge it with ShortcutPreference.java, feel free.
  */
 public class PrefJPanel extends JPanel {
 
@@ -60,8 +59,7 @@ public class PrefJPanel extends JPanel {
     // Ok, there's a real reason for this: The JVM should know best how the keys are labelled
     // on the physical keyboard. What language pack is installed in JOSM is completely
     // independent from the keyboard's labelling. But the operation system's locale
-    // usually matches the keyboard. This even works with my English Windows and my German
-    // keyboard.
+    // usually matches the keyboard. This even works with my English Windows and my German keyboard.
     private static String SHIFT = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.SHIFT_DOWN_MASK).getModifiers());
     private static String CTRL  = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK).getModifiers());
     private static String ALT   = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.ALT_DOWN_MASK).getModifiers());
@@ -105,16 +103,46 @@ public class PrefJPanel extends JPanel {
     private JosmTextField filterField = new JosmTextField();
 
     /** Creates new form prefJPanel */
-    public PrefJPanel(AbstractTableModel model) {
-        this.model = model;
+    public PrefJPanel() {
+        this.model = new ScListModel();
         initComponents();
     }
 
     /**
-     * Show only shortcuts with descriptions coontaing given substring
+     * Show only shortcuts with descriptions containing given substring
+     * @param substring The substring used to filter
      */
     public void filter(String substring) {
         filterField.setText(substring);
+    }
+    
+    private static class ScListModel extends AbstractTableModel {
+        private String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
+        private List<Shortcut> data;
+
+        public ScListModel() {
+            data = Shortcut.listAll();
+        }
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+        @Override
+        public int getRowCount() {
+            return data.size();
+        }
+        @Override
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+        @Override
+        public Object getValueAt(int row, int col) {
+            return (col==0)?  data.get(row).getLongText() : data.get(row);
+        }
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return false;
+        }
     }
 
     private class ShortcutTableCellRenderer extends DefaultTableCellRenderer {

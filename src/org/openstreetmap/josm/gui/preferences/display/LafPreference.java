@@ -30,6 +30,9 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class LafPreference implements SubPreferenceSetting {
 
+    /**
+     * Factory used to create a new {@code LafPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

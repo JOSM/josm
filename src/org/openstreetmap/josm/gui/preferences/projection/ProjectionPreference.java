@@ -55,6 +55,9 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class ProjectionPreference implements SubPreferenceSetting {
 
+    /**
+     * Factory used to create a new {@code ProjectionPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {
@@ -90,8 +93,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * initially EPSG used 3785 but that has been superseded by 3857,
          * see http://www.epsg-registry.org/
          */
-        mercator = registerProjectionChoice(tr("Mercator"), "core:mercator",
-                3857);
+        mercator = registerProjectionChoice(tr("Mercator"), "core:mercator", 3857);
 
         /**
          * UTM.

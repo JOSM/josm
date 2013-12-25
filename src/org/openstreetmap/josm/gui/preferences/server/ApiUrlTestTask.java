@@ -218,10 +218,18 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
         }
     }
 
+    /**
+     * Determines if the test has been canceled.
+     * @return {@code true} if canceled, {@code false} otherwise
+     */
     public boolean isCanceled() {
         return canceled;
     }
 
+    /**
+     * Determines if the test has succeeded.
+     * @return {@code true} if success, {@code false} otherwise
+     */
     public boolean isSuccess() {
         return success;
     }

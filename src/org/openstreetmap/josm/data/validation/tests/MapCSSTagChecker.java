@@ -1,6 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -26,20 +39,15 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-
+/**
+ * MapCSS-based tag checker/fixer.
+ * @since 6506
+ */
 public class MapCSSTagChecker extends Test {
 
+    /**
+     * Constructs a new {@code MapCSSTagChecker}.
+     */
     public MapCSSTagChecker() {
         super(tr("Tag checker (new)"), tr("This test checks for errors in tag keys and values."));
     }
@@ -221,13 +229,28 @@ public class MapCSSTagChecker extends Test {
         visit((OsmPrimitive) r);
     }
 
+    /**
+     * Adds a new MapCSS config file from the given {@code Reader}.
+     * @param css The reader
+     * @throws ParseException if the config file does not match MapCSS syntax
+     */
     public void addMapCSS(Reader css) throws ParseException {
         checks.addAll(TagCheck.readMapCSS(css));
     }
 
+    /**
+     * Adds a new MapCSS config file from the given internal filename.
+     * @param internalConfigFile the filename in data/validator
+     * @throws ParseException if the config file does not match MapCSS syntax
+     * @throws UnsupportedEncodingException if UTF-8 charset is not supported on the platform
+     */
+    private void addMapCSS(String internalConfigFile) throws ParseException, UnsupportedEncodingException {
+        addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/"+internalConfigFile), "UTF-8"));
+    }
+
     @Override
     public void initialize() throws Exception {
-        addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/deprecated.mapcss"), "UTF-8"));
-        addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/highway.mapcss"), "UTF-8"));
+        addMapCSS("deprecated.mapcss");
+        addMapCSS("highway.mapcss");
     }
 }
