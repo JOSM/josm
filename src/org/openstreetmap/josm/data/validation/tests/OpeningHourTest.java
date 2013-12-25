@@ -197,6 +197,9 @@ public class OpeningHourTest extends Test {
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"))) {
                 errors.add(new OpeningHoursTestError(i.toString().trim(), Severity.WARNING, prettifiedValue));
             }
+            if (errors.isEmpty() && prettifiedValue != null && !value.equals(prettifiedValue)) {
+                errors.add(new OpeningHoursTestError(tr("opening_hours value can be prettified"), Severity.OTHER, prettifiedValue));
+            }
             return errors;
         } catch (final Exception ex) {
             throw new RuntimeException(ex);
