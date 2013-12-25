@@ -1,6 +1,5 @@
 *[barrier=wire_fence] {
   throwWarning: tr("{0}={1} is deprecated", "barrier", "wire_fence");
-  fixRemove: "barrier";
   fixAdd: "barrier=fence";
   fixAdd: "fence_type=chain_link";
   assertMatch: "way barrier=wire_fence";
@@ -9,7 +8,6 @@
   
 *[barrier=wood_fence] {
   throwWarning: tr("{0}={1} is deprecated", "barrier", "wood_fence");
-  fixRemove: "barrier";
   fixAdd: "barrier=fence";
   fixAdd: "fence_type=wood";
 }
@@ -48,7 +46,6 @@
 *[highway=unsurfaced] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0}={1} is deprecated", "highway", "unsurfaced");
-  fixRemove: "highway";
   fixAdd: "highway=road";
   fixAdd: "incline=unpaved";
 }
@@ -63,7 +60,6 @@
 *[natural=marsh] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0}={1} is deprecated", "natural", "marsh");
-  fixRemove: "natural";
   fixAdd: "natural=wetland";
   fixAdd: "wetland=marsh";
 }
@@ -88,7 +84,6 @@
 *[shop=organic] {
   /* from http://wiki.openstreetmap.org/wiki/Tag:shop=organic */
   throwWarning: tr("{0}={1} is deprecated", "shop", "organic");
-  fixRemove: "shop";
   fixAdd: "shop=supermarket";
   fixAdd: "organic=only";
 }
@@ -96,7 +91,6 @@
 *[bicycle_parking=sheffield] {
   /* from http://wiki.openstreetmap.org/wiki/Key:bicycle_parking */
   throwWarning: tr("{0}={1} is deprecated", "bicycle_parking", "sheffield");
-  fixRemove: "bicycle_parking";
   fixAdd: "bicycle_parking=stands";
 }
   
@@ -110,7 +104,6 @@
 *[sport=gaelic_football] {
   /* fix #8132 - http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_football */
   throwWarning: tr("{0}={1} is deprecated", "sport", "gaelic_football");
-  fixRemove: "sport";
   fixAdd: "sport=gaelic_games";
 }
   
@@ -123,19 +116,16 @@
   
 *[generator:method=dam] {
   throwWarning: tr("{0}={1} is deprecated", "generator:method", "dam");
-  fixRemove: "generator:method";
   fixAdd: "generator:method=water-storage";
 }
   
 *[generator:method=pumped-storage] {
   throwWarning: tr("{0}={1} is deprecated", "generator:method", "pumped-storage");
-  fixRemove: "generator:method";
   fixAdd: "generator:method=water-pumped-storage";
 }
   
 *[generator:method=pumping] {
   throwWarning: tr("{0}={1} is deprecated", "generator:method", "pumping");
-  fixRemove: "generator:method";
   fixAdd: "generator:method=water-pumped-storage";
 }
   
@@ -161,7 +151,6 @@
 *[man_made=measurement_station] {
   /* see #8434 - http://wiki.openstreetmap.org/wiki/Proposed_features/monitoring_station */
   throwWarning: tr("{0}={1} is deprecated", "man_made", "measurement_station");
-  fixRemove: "man_made";
   fixAdd: "man_made=monitoring_station";
 }
   
@@ -192,4 +181,12 @@
   /* see #9365 - Useless tag layer=0 */
   throwWarning: tr("{0}={1} is unnecessary", "layer", "0");
   fixRemove: "layer";
+}
+
+*[emergency=permissive] {
+  /* see #9458 - emergency=permissive makes no sense */
+  throwWarning: tr("{0}={1} makes no sense", "emergency", "permissive");
+  fixAdd: "emergency=yes";
+  assertMatch: "way emergency=permissive";
+  assertNoMatch: "way emergency=designated";
 }
