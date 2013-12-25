@@ -10,10 +10,16 @@ import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-
+/**
+ * Class holding OAuth access token key and secret.
+ */
 public class OAuthAccessTokenHolder {
     private  static OAuthAccessTokenHolder instance;
 
+    /**
+     * Replies the unique instance.
+     * @return The unique instance of {@code OAuthAccessTokenHolder}
+     */
     public static OAuthAccessTokenHolder getInstance() {
         if (instance == null) {
             instance = new OAuthAccessTokenHolder();
@@ -86,6 +92,10 @@ public class OAuthAccessTokenHolder {
         this.accessTokenSecret = accessTokenSecret;
     }
 
+    /**
+     * Replies the access token.
+     * @return the access token, can be {@code null}
+     */
     public OAuthToken getAccessToken() {
         if (!containsAccessToken())
             return null;

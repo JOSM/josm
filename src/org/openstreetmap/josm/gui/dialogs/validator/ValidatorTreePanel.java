@@ -28,7 +28,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
-import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.MultiMap;
 

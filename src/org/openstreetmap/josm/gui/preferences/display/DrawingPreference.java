@@ -25,6 +25,9 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class DrawingPreference implements SubPreferenceSetting {
 
+    /**
+     * Factory used to create a new {@code DrawingPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

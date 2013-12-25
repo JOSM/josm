@@ -51,6 +51,9 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class ColorPreference implements SubPreferenceSetting {
 
+    /**
+     * Factory used to create a new {@code ColorPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {

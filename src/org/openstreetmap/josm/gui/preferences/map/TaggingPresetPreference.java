@@ -47,6 +47,9 @@ import org.xml.sax.SAXParseException;
 
 public final class TaggingPresetPreference implements SubPreferenceSetting {
 
+    /**
+     * Factory used to create a new {@code TaggingPresetPreference}.
+     */
     public static class Factory implements PreferenceSettingFactory {
         @Override
         public PreferenceSetting createPreferenceSetting() {
