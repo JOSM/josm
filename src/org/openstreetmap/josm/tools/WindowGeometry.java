@@ -313,7 +313,7 @@ public class WindowGeometry {
             size.width -= deltax;
         }
 
-        int deltay = (p.x + size.height) - (virtualBounds.y + virtualBounds.height);
+        int deltay = (p.y + size.height) - (virtualBounds.y + virtualBounds.height);
         if (deltay > 0) {
             size.height -= deltay;
         }
