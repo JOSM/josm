@@ -482,17 +482,19 @@ public class MainApplication extends Main {
         private void handleProxyErrors() {
             if (proxySelector.hasErrors()) {
                 ExtendedDialog ed = new ExtendedDialog(
-                        Main.parent, tr("Proxy errors occured"),
+                        Main.parent, tr("Proxy errors occurred"),
                         new String[]{tr("Change proxy settings"), tr("Cancel")});
                 ed.setButtonIcons(new String[]{"dialogs/settings.png", "cancel.png"}).setCancelButton(2);
                 ed.setMinimumSize(new Dimension(460, 260));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
-                ed.setContent(tr("JOSM tried to access the following resources:")+
-                        "<br>"+Utils.joinAsHtmlUnorderedList(proxySelector.getErrorResources())+
-                        tr("but <b>failed</b> to do so, because of the following proxy errors:")+
-                        "<br>"+Utils.joinAsHtmlUnorderedList(proxySelector.getErrorMessages())+
-                        tr("Would you like to change your proxy settings now ?")
-                        );
+                ed.setContent(tr("JOSM tried to access the following resources:<br>" +
+                        "{0}" +
+                        "but <b>failed</b> to do so, because of the following proxy errors:<br>" +
+                        "{1}" +
+                        "Would you like to change your proxy settings now?",
+                        Utils.joinAsHtmlUnorderedList(proxySelector.getErrorResources()),
+                        Utils.joinAsHtmlUnorderedList(proxySelector.getErrorMessages())
+                ));
 
                 if (ed.showDialog().getValue() == 1) {
                     PreferencesAction.forPreferenceSubTab(null, null, ProxyPreference.class).run();
