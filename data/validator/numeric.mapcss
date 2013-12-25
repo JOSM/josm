@@ -1,0 +1,129 @@
+/* measurement values and units warnings (ticket #8687) */
+
+*[layer =~ /\+.*/] {
+  throwWarning: tr("layer tag with + sign");
+  assertMatch: "node layer=+1";
+  assertNoMatch: "node layer=1";
+  assertNoMatch: "node layer=-1";
+}
+
+*[layer !~ /^0$|^(-|\+)?[1-5]$/] {
+  throwWarning: tr("layer should be between -5 and 5");
+  assertMatch: "node layer=-50";
+  assertMatch: "node layer=6";
+  assertMatch: "node layer=+100";
+  assertNoMatch: "node layer=-5";
+  assertNoMatch: "node layer=0";
+  assertNoMatch: "node layer=2";
+  assertNoMatch: "node layer=+5";
+}
+
+*[level !~ /^((([0-9]|-[1-9])|[1-9][0-9]*)(\.5)?)(;(([0-9]|-[1-9])|[1-9][0-9]*)(\.5)?)*$|^-0\.5$/] {
+  throwWarning: tr("level should be numbers with optional .5 increments");
+  assertMatch: "node level=one";
+  assertNoMatch: "node level=0";
+  assertNoMatch: "node level=1";
+  assertNoMatch: "node level=-1";
+  assertNoMatch: "node level=-0.5";
+  assertNoMatch: "node level=1.5";
+}
+
+*[height !~ /^(([0-9]+\.?[0-9]*( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/] {
+  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "height");
+  assertMatch: "node height=medium";
+  assertMatch: "node height=-5";
+  assertNoMatch: "node height=2 m";
+  assertNoMatch: "node height=5";
+  assertNoMatch: "node height=7.8";
+  assertNoMatch: "node height=20 ft";
+  assertNoMatch: "node height=22'";
+}
+
+*[maxheight !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?))$/] {
+  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "maxheight");
+  assertMatch: "node maxheight=something";
+  assertMatch: "node maxheight=-5";
+  assertMatch: "node maxheight=0";
+  assertNoMatch: "node maxheight=4";
+  assertNoMatch: "node maxheight=3.5";
+  assertNoMatch: "node maxheight=2 m";
+  assertNoMatch: "node maxheight=14 ft";
+  assertNoMatch: "node maxheight=10'";
+  assertNoMatch: "node maxheight=16'3\"";
+}
+
+way[width !~ /^(([0-9]+\.?[0-9]*( [a-z]+)?)|([0-9]+\'([0-9]+\.?[0-9]*\")?))$/] {
+  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "width");
+  assertMatch: "way width=something";
+  assertMatch: "way width=-5";
+  assertNoMatch: "way width=3";
+  assertNoMatch: "way width=0.5";
+  assertNoMatch: "way width=1 m";
+  assertNoMatch: "way width=10 ft";
+  assertNoMatch: "way width=1'";
+  assertNoMatch: "way width=10'5\"";
+}
+
+*[maxwidth !~ /^(([0-9]+\.?[0-9]*( (m|ft))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/] {
+  throwWarning: tr("{0}: meters is default; period is separator; if units, put space then unit", "maxwidth");
+  assertMatch: "way maxwidth=something";
+  assertMatch: "way maxwidth=-5";
+  assertNoMatch: "way maxwidth=2";
+  assertNoMatch: "way maxwidth=6'6\"";
+  assertNoMatch: "way maxwidth=2.5";
+  assertNoMatch: "way maxwidth=7 ft";
+}
+
+way[maxspeed !~ /^(signals|none|unposted|unknown|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/] {
+  throwWarning: tr("unusual {0} format", "maxspeed");
+  assertMatch: "way maxspeed=something";
+  assertMatch: "way maxspeed=-50";
+  assertMatch: "way maxspeed=0";
+  assertNoMatch: "way maxspeed=50";
+  assertNoMatch: "way maxspeed=30 mph";
+  assertNoMatch: "way maxspeed=RO:urban";
+  assertNoMatch: "way maxspeed=RU:rural";
+  assertNoMatch: "way maxspeed=RU:living_street";
+  assertNoMatch: "way maxspeed=DE:motorway";
+  assertNoMatch: "way maxspeed=signals";
+  assertNoMatch: "way maxspeed=none";
+  assertNoMatch: "way maxspeed=variable";
+}
+
+way[voltage =~ /(.*[A-Za-z].*)|.*,.*|.*( ).*/] {
+  throwWarning: tr("voltage should be in volts with no units/delimiter/spaces");
+  assertMatch: "way voltage=medium";
+  assertNoMatch: "way voltage=15000";
+}
+
+/* some users are using frequency for other purposes (not electromagnetic) 
+   with the values 'perennial' and 'intermittent'; the vast majority are 0, 16.7, 50 and 60 */
+way[frequency !~ /^(0|[1-9][0-9]*(\.[0-9]+)?)( (kHz|MHz|GHz|THz))?$/] {
+  throwWarning: tr("unusual {0} specification", "frequency");
+  assertMatch: "way frequency=something";
+  assertNoMatch: "way frequency=0"; /* DC */
+  assertNoMatch: "way frequency=16.7";
+  assertNoMatch: "way frequency=50";
+  assertNoMatch: "way frequency=680 kHz";
+  assertNoMatch: "way frequency=123.5 MHz";
+}
+
+way[gauge !~ /^([1-9][0-9]{1,3}(;[1-9][0-9]{1,3})*|broad|standard|narrow)$/] {
+  throwWarning: tr("unusual train track gauge; use mm with no separator");
+  assertMatch: "way gauge=something";
+  assertNoMatch: "way gauge=1435";
+  assertNoMatch: "way gauge=1000;1435";
+  assertNoMatch: "way gauge=standard";
+  assertNoMatch: "way gauge=narrow";
+}
+
+/* the numbers for percentage and degrees include could probably be bracketed a bit more precisely */
+way[incline !~ /^(up|down|-?([0-9]+?(\.[1-9]%)?|100)[%°]?)$/] {
+  throwWarning: tr("unusual incline; use percentages/degrees or up/down");
+  assertMatch: "way incline=extreme";
+  assertNoMatch: "way incline=up";
+  assertNoMatch: "way incline=down";
+  assertNoMatch: "way incline=10%";
+  assertNoMatch: "way incline=-5%";
+  assertNoMatch: "way incline=10°";
+}

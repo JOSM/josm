@@ -252,5 +252,6 @@ public class MapCSSTagChecker extends Test {
     public void initialize() throws Exception {
         addMapCSS("deprecated.mapcss");
         addMapCSS("highway.mapcss");
+        addMapCSS("numeric.mapcss");
     }
 }
