@@ -29,13 +29,11 @@ at http://josm.openstreetmap.de/svn/ for details. Use
 
 Copyright rests with the contributors.
 
+-------------------------------- EXTERNAL CODE --------------------------------
+
 The jpeg metadata extraction code is from Drew Noakes
 (http://code.google.com/p/metadata-extractor/) and licensed
 with Apache license version 2.0.
-
-Most icons have been nicked from GNOME and the GIMP, both
-under GPL. Some are originally LGPL but redistributed here under 
-GPL. The world image is from onearth.pl.
 
 The Bzip2 code is from Keiron Liddle (Apache project) and licensed
 with Apache license version 2.0.
@@ -62,3 +60,18 @@ is from Douglas Crockford and licensed as follows:
 The opening hour validation uses code from opening_hour.js
 (https://github.com/ypid/opening_hours.js) which is licensed
 with the New (2-clause) BSD license.
+
+------------------------------------ ICONS ------------------------------------
+
+Most icons have been nicked from GNOME and the GIMP, both under GPL. 
+Some are originally LGPL but redistributed here under GPL. 
+
+The world image is from onearth.pl.
+
+The keyboard icon comes fom:
+- source: http://www.iconfinder.net/index.php?q=key&page=icondetails&iconid=8553&size=128&q=key&s12=on&s16=on&s22=on&s32=on&s48=on&s64=on&s128=on
+- licence: GPL
+- designer: Paolino, http://www.paolinoland.it/
+- original filename: keyboard.png
+- original size: 128x128
+- modifications: icon was cropped, then resized
