@@ -31,6 +31,11 @@ public class OpenFileHandler extends RequestHandler {
     }
 
     @Override
+    public String getUsage() {
+        return "opens a local file in JOSM";
+    }
+
+    @Override
     public String[] getUsageExamples() {
         return new String[] {"/open_file?filename=/tmp/test.osm"};
     }

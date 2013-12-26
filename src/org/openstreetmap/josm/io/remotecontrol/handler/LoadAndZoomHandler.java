@@ -76,6 +76,11 @@ public class LoadAndZoomHandler extends RequestHandler {
     }
 
     @Override
+    public String getUsage() {
+        return "download a bounding box from the API, zoom to the downloaded area and optionally select one or more objects";
+    }
+
+    @Override
     public String[] getUsageExamples() {
         return getUsageExamples(myCommand);
     }

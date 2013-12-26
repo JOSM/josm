@@ -51,6 +51,11 @@ public class AddNodeHandler extends RequestHandler {
     }
 
     @Override
+    public String getUsage() {
+        return "adds a node (given by its latitude and longitude) to the current dataset";
+    }
+
+    @Override
     public String[] getUsageExamples() {
         return new String[] {
             "/add_node?lat=11&lon=22",
