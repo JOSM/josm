@@ -51,6 +51,11 @@ public class ImportHandler extends RequestHandler {
     }
 
     @Override
+    public String getUsage() {
+        return "downloads the specified OSM file and adds it to the current data set";
+    }
+
+    @Override
     public String[] getUsageExamples() {
         return new String[] { "/import?url="+Main.JOSM_WEBSITE+"/browser/josm/trunk/data_nodist/direction-arrows.osm" };
     }

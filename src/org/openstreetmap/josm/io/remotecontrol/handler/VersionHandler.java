@@ -52,6 +52,11 @@ public class VersionHandler extends RequestHandler {
     }
 
     @Override
+    public String getUsage() {
+        return "returns the current protocol version of the installed JOSM RemoteControl";
+    }
+
+    @Override
     public String[] getUsageExamples() {
         return new String[] { "/version", "/version?jsonp=test"};
     }

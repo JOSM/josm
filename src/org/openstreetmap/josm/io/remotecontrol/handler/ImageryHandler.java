@@ -113,6 +113,11 @@ public class ImageryHandler extends RequestHandler {
     }
 
     @Override
+    public String getUsage() {
+        return "adds an imagery layer (e.g. WMS, TMS))";
+    }
+
+    @Override
     public String[] getUsageExamples() {
         final String types = Utils.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()), new Utils.Function<ImageryInfo.ImageryType, String>() {
             @Override

@@ -40,6 +40,11 @@ public class LoadObjectHandler extends RequestHandler {
     }
 
     @Override
+    public String getUsage() {
+        return "downloads the specified objects from the server";
+    }
+
+    @Override
     public String[] getUsageExamples() {
         return new String[] {"/load_object?new_layer=true&objects=w106159509",
             "/load_object?new_layer=true&objects=r2263653&relation_members=true"
