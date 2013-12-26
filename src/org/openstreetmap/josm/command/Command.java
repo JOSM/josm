@@ -85,7 +85,7 @@ abstract public class Command extends PseudoCommand {
      * Creates a new command in the context of the current edit layer, if any
      */
     public Command() {
-        this.layer = Main.main.getEditLayer();
+        this.layer = Main.main == null ? null : Main.main.getEditLayer();
     }
 
     /**

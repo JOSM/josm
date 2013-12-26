@@ -430,15 +430,7 @@ public final class ExpressionFactory {
                 f |= Pattern.MULTILINE;
             }
             Matcher m = Pattern.compile(pattern, f).matcher(target);
-            if (m.matches()) {
-                List<String> result = new ArrayList<String>(m.groupCount() + 1);
-                for (int i = 0; i <= m.groupCount(); i++) {
-                    result.add(m.group(i));
-                }
-                return result;
-            } else {
-                return null;
-            }
+            return Utils.getMatches(m);
         }
 
         /**
@@ -449,15 +441,7 @@ public final class ExpressionFactory {
          */
         public static List<String> regexp_match(String pattern, String target) {
             Matcher m = Pattern.compile(pattern).matcher(target);
-            if (m.matches()) {
-                List<String> result = new ArrayList<String>(m.groupCount() + 1);
-                for (int i = 0; i <= m.groupCount(); i++) {
-                    result.add(m.group(i));
-                }
-                return result;
-            } else {
-                return null;
-            }
+            return Utils.getMatches(m);
         }
 
         /**

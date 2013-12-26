@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipFile;
 
@@ -833,5 +834,24 @@ public final class Utils {
         }
         long days = elapsedTime/86400000;
         return String.format("%d %s %d %s", days, trn("day", "days", days), elapsedTime/3600000, tr("h"));
+    }
+
+    /**
+     * Returns a list of capture groups if {@link Matcher#matches()}, or {@code null}.
+     * The first element (index 0) is the complete match.
+     * Further elements correspond to the parts in parentheses of the regular expression.
+     * @param m the matcher
+     * @return a list of capture groups if {@link Matcher#matches()}, or {@code null}.
+     */
+    public static List<String> getMatches(final Matcher m) {
+        if (m.matches()) {
+            List<String> result = new ArrayList<String>(m.groupCount() + 1);
+            for (int i = 0; i <= m.groupCount(); i++) {
+                result.add(m.group(i));
+            }
+            return result;
+        } else {
+            return null;
+        }
     }
 }
