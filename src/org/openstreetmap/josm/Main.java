@@ -254,9 +254,9 @@ abstract public class Main {
     }
 
     /**
-     * Prints a formated error message if logging is on. Calls {@link MessageFormat#format}
+     * Prints a formatted error message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
-     * @param msg The formated message to print.
+     * @param msg The formatted message to print.
      * @param objects The objects to insert into format string.
      * @since 6248
      */
@@ -265,9 +265,9 @@ abstract public class Main {
     }
 
     /**
-     * Prints a formated warning message if logging is on. Calls {@link MessageFormat#format}
+     * Prints a formatted warning message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
-     * @param msg The formated message to print.
+     * @param msg The formatted message to print.
      * @param objects The objects to insert into format string.
      */
     public static void warn(String msg, Object... objects) {
@@ -275,9 +275,9 @@ abstract public class Main {
     }
 
     /**
-     * Prints a formated informational message if logging is on. Calls {@link MessageFormat#format}
+     * Prints a formatted informational message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
-     * @param msg The formated message to print.
+     * @param msg The formatted message to print.
      * @param objects The objects to insert into format string.
      */
     public static void info(String msg, Object... objects) {
@@ -285,9 +285,9 @@ abstract public class Main {
     }
 
     /**
-     * Prints a formated debug message if logging is on. Calls {@link MessageFormat#format}
+     * Prints a formatted debug message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
-     * @param msg The formated message to print.
+     * @param msg The formatted message to print.
      * @param objects The objects to insert into format string.
      */
     public static void debug(String msg, Object... objects) {
@@ -301,6 +301,7 @@ abstract public class Main {
      */
     public static void error(Throwable t) {
         error(getErrorMessage(t));
+        t.printStackTrace();
     }
 
     /**
@@ -310,6 +311,7 @@ abstract public class Main {
      */
     public static void warn(Throwable t) {
         warn(getErrorMessage(t));
+        t.printStackTrace();
     }
 
     private static String getErrorMessage(Throwable t) {

@@ -78,6 +78,7 @@ public final class ExpressionFactory {
         // Hide default constructor for utils classes
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public static class Functions {
 
         Environment env;
@@ -269,7 +270,7 @@ public final class ExpressionFactory {
          * Gets the value of the key {@code key} from the object in question.
          */
         public String tag(String key) {
-            return env.osm.get(key);
+            return env.osm == null ? null : env.osm.get(key);
         }
 
         /**
@@ -277,11 +278,13 @@ public final class ExpressionFactory {
          */
         public String parent_tag(String key) {
             if (env.parent == null) {
-                // we don't have a matched parent, so just search all referrers
-                for (OsmPrimitive parent : env.osm.getReferrers()) {
-                    String value = parent.get(key);
-                    if (value != null) {
-                        return value;
+                if (env.osm != null) {
+                    // we don't have a matched parent, so just search all referrers
+                    for (OsmPrimitive parent : env.osm.getReferrers()) {
+                        String value = parent.get(key);
+                        if (value != null) {
+                            return value;
+                        }
                     }
                 }
                 return null;
