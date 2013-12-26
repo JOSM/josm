@@ -13,6 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
@@ -28,6 +30,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
@@ -172,13 +175,59 @@ public class MapCSSTagChecker extends Test {
          * @return true when the primitive contains a deprecated tag
          */
         boolean matchesPrimitive(OsmPrimitive primitive) {
+            return whichSelectorMatchesPrimitive(primitive) != null;
+        }
+
+        Selector whichSelectorMatchesPrimitive(OsmPrimitive primitive) {
             final Environment env = new Environment().withPrimitive(primitive);
             for (Selector i : selector) {
                 if (i.matches(env)) {
-                    return true;
+                    return i;
                 }
             }
-            return false;
+            return null;
+        }
+
+        /**
+         * Determines the {@code index}-th key/value/tag (depending on {@code type}) of the {@link Selector.GeneralSelector}.
+         */
+        static String determineArgument(Selector.GeneralSelector matchingSelector, int index, String type) {
+            try {
+                final Condition c = matchingSelector.getConditions().get(index);
+                final Tag tag = c instanceof Condition.KeyCondition
+                        ? ((Condition.KeyCondition) c).asTag()
+                        : c instanceof Condition.KeyValueCondition
+                        ? ((Condition.KeyValueCondition) c).asTag()
+                        : null;
+                if (tag == null) {
+                    return null;
+                } else if ("key".equals(type)) {
+                    return tag.getKey();
+                } else if ("value".equals(type)) {
+                    return tag.getValue();
+                } else if ("tag".equals(type)) {
+                    return tag.toString();
+                }
+            } catch (IndexOutOfBoundsException ignore) {
+            }
+            return null;
+        }
+
+        /**
+         * Replaces occurrences of {@code {i.key}}, {@code {i.value}}, {@code {i.tag}} in {@code s} by the corresponding
+         * key/value/tag of the {@code index}-th {@link Condition} of {@code matchingSelector}.
+         */
+        static String insertArguments(Selector matchingSelector, String s) {
+            if (!(matchingSelector instanceof Selector.GeneralSelector) || s == null) {
+                return s;
+            }
+            final Matcher m = Pattern.compile("\\{(\\d+)\\.(key|value|tag)\\}").matcher(s);
+            final StringBuffer sb = new StringBuffer();
+            while (m.find()) {
+                m.appendReplacement(sb, determineArgument((Selector.GeneralSelector) matchingSelector, Integer.parseInt(m.group(1)), m.group(2)));
+            }
+            m.appendTail(sb);
+            return sb.toString();
         }
 
         /**
@@ -192,13 +241,18 @@ public class MapCSSTagChecker extends Test {
             if (change.isEmpty() && keyChange.isEmpty()) {
                 return null;
             }
+            final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
             Collection<Command> cmds = new LinkedList<Command>();
             for (PrimitiveToTag toTag : change) {
                 final Tag tag = toTag.apply(p);
-                cmds.add(new ChangePropertyCommand(p, tag.getKey(), tag.getValue()));
+                final String key = insertArguments(matchingSelector, tag.getKey());
+                final String value = insertArguments(matchingSelector, tag.getValue());
+                cmds.add(new ChangePropertyCommand(p, key, value));
             }
             for (Map.Entry<String, String> i : keyChange.entrySet()) {
-                cmds.add(new ChangePropertyKeyCommand(p, i.getKey(), i.getValue()));
+                final String oldKey = insertArguments(matchingSelector, i.getKey());
+                final String newKey = insertArguments(matchingSelector, i.getValue());
+                cmds.add(new ChangePropertyKeyCommand(p, oldKey, newKey));
             }
             return new SequenceCommand(tr("Fix of {0}", getDescription()), cmds);
         }
@@ -230,6 +284,26 @@ public class MapCSSTagChecker extends Test {
             return errors.values().iterator().next();
         }
 
+        /**
+         * Constructs a {@link TestError} for the given primitive, or returns null if the primitive does not give rise to an error.
+         *
+         * @param p the primitive to construct the error for
+         * @return an instance of {@link TestError}, or returns null if the primitive does not give rise to an error.
+         */
+        TestError getErrorForPrimitive(OsmPrimitive p) {
+            final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
+            if (matchingSelector != null) {
+                final Command fix = fixPrimitive(p);
+                final String description = TagCheck.insertArguments(matchingSelector, getDescription());
+                if (fix != null) {
+                    return new FixableTestError(null, getSeverity(), description, 3000, p, fix);
+                } else {
+                    return new TestError(null, getSeverity(), description, 3000, p);
+                }
+            } else {
+                return null;
+            }
+        }
     }
 
     /**
@@ -239,13 +313,10 @@ public class MapCSSTagChecker extends Test {
      */
     public void visit(OsmPrimitive p) {
         for (TagCheck check : checks) {
-            if (check.matchesPrimitive(p)) {
-                final Command fix = check.fixPrimitive(p);
-                if (fix != null) {
-                    errors.add(new FixableTestError(this, check.getSeverity(), check.getDescription(), 3000, p, fix));
-                } else {
-                    errors.add(new TestError(this, check.getSeverity(), check.getDescription(), 3000, p));
-                }
+            final TestError error = check.getErrorForPrimitive(p);
+            if (error != null) {
+                error.setTester(this);
+                errors.add(error);
             }
         }
     }

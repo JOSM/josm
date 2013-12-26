@@ -220,4 +220,8 @@ public class ChangePropertyCommand extends Command {
         }
         return children;
     }
+
+    public Map<String, String> getTags() {
+        return Collections.unmodifiableMap(tags);
+    }
 }
