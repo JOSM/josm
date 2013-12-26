@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -20,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.SpringLayout;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -169,7 +169,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     private OsmTileLoader cachedLoader;
     private OsmTileLoader uncachedLoader;
 
-    private final SizeButton iSizeButton = new SizeButton();
+    private final SizeButton iSizeButton;
     private final SourceButton iSourceButton;
     private Bounds bbox;
 
@@ -181,6 +181,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
      * Constructs a new {@code SlippyMapBBoxChooser}.
      */
     public SlippyMapBBoxChooser() {
+        SpringLayout springLayout = new SpringLayout();
+        setLayout(springLayout);
         TMSLayer.setMaxWorkers();
         cachedLoader = TMSLayer.loaderFactory.makeTileLoader(this);
 
@@ -201,7 +203,13 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
 
         List<TileSource> tileSources = getAllTileSources();
 
-        iSourceButton = new SourceButton(tileSources);
+        iSourceButton = new SourceButton(this, tileSources);
+        add(iSourceButton);
+        springLayout.putConstraint(SpringLayout.EAST, iSourceButton, 0, SpringLayout.EAST, this);
+        springLayout.putConstraint(SpringLayout.NORTH, iSourceButton, 30, SpringLayout.NORTH, this);
+
+        iSizeButton = new SizeButton(this);
+        add(iSizeButton);
 
         String mapStyle = PROP_MAPSTYLE.get();
         boolean foundSource = false;
@@ -218,9 +226,9 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
             iSourceButton.setCurrentMap(tileSources.get(0));
         }
 
-        new SlippyMapControler(this, this, iSizeButton, iSourceButton);
+        new SlippyMapControler(this, this);
     }
-    
+
     private List<TileSource> getAllTileSources() {
         List<TileSource> tileSources = new ArrayList<TileSource>();
         for (TileSourceProvider provider: providers) {
@@ -263,9 +271,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
                 g.setColor(Color.BLACK);
                 g.drawRect(x_min, y_min, w, h);
             }
-
-            iSizeButton.paint(g);
-            iSourceButton.paint((Graphics2D)g);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -393,7 +398,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         zoomOut();
         repaint();
     }
-    
+
     /**
      * Refreshes the tile sources
      * @since 6364
