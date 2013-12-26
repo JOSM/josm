@@ -393,6 +393,9 @@ public class RequestProcessor extends Thread {
         }
 
         r.printf("{ \"request\" : \"%s\"", cmd);
+        if (handler.getUsage() != null) {
+            r.printf(", \"usage\" : \"%s\"", handler.getUsage());
+        }
         r.append(", \"parameters\" : [");
 
         String[] params = handler.getMandatoryParams();
@@ -457,6 +460,9 @@ public class RequestProcessor extends Thread {
             String[] examples = sample.getUsageExamples(handler.getKey().substring(1));
             usage.append("<li>");
             usage.append(handler.getKey());
+            if (sample.getUsage() != null && !sample.getUsage().isEmpty()) {
+                usage.append(" &mdash; <i>").append(sample.getUsage()).append("</i>");
+            }
             if (mandatory != null) {
                 usage.append("<br/>mandatory parameters: ").append(Utils.join(", ", Arrays.asList(mandatory)));
             }

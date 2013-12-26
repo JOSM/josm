@@ -52,6 +52,11 @@ public class AddWayHandler extends RequestHandler {
     }
 
     @Override
+    public String getUsage() {
+        return "adds a way (given by a semicolon separated sequence of lat,lon pairs) to the current dataset";
+    }
+
+    @Override
     public String[] getUsageExamples() {
         return new String[] {
             "/add_way?way=53.2,13.3;53.3,13.3;53.3,13.2",

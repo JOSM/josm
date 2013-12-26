@@ -8,7 +8,7 @@ import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.RequestProcessor;
 
 /**
- * Reports avalable commands, their parameters and examples
+ * Reports available commands, their parameters and examples
  * @since 6091
  */
 public class FeaturesHandler extends RequestHandler {
@@ -74,6 +74,11 @@ public class FeaturesHandler extends RequestHandler {
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
         // Nothing to do
+    }
+
+    @Override
+    public String getUsage() {
+        return "reports available commands, their parameters and examples";
     }
 
     @Override

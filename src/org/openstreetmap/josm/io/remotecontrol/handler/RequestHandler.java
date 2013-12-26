@@ -112,7 +112,11 @@ public abstract class RequestHandler {
     public String[] getOptionalParams() {
         return null;
     }
-     
+
+    public String getUsage() {
+        return null;
+    }
+
     public String[] getUsageExamples() {
         return null;
     }
