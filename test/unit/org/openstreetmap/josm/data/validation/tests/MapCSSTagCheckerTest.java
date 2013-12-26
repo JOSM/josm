@@ -42,9 +42,9 @@ public class MapCSSTagCheckerTest {
         assertThat(checks.size(), is(1));
         final MapCSSTagChecker.TagCheck check = checks.get(0);
         assertThat(check, notNullValue());
-        assertThat(check.change.get(0), is(new Tag("natural")));
-        assertThat(check.change.get(1), is(new Tag("natural", "wetland")));
-        assertThat(check.change.get(2), is(new Tag("wetland", "marsh")));
+        assertThat(check.change.get(0).apply(null), is(new Tag("natural")));
+        assertThat(check.change.get(1).apply(null), is(new Tag("natural", "wetland")));
+        assertThat(check.change.get(2).apply(null), is(new Tag("wetland", "marsh")));
         assertThat(check.errors.keySet().iterator().next(), is("natural=marsh is deprecated"));
         final Node n1 = new Node();
         n1.put("natural", "marsh");

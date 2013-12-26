@@ -28,7 +28,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.Environment;
-import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -56,7 +56,7 @@ public class MapCSSTagChecker extends Test {
 
     static class TagCheck implements Predicate<OsmPrimitive> {
         protected final List<Selector> selector;
-        protected final List<Tag> change = new ArrayList<Tag>();
+        protected final List<PrimitiveToTag> change = new ArrayList<PrimitiveToTag>();
         protected final Map<String, String> keyChange = new LinkedHashMap<String, String>();
         protected final List<Tag> alternatives = new ArrayList<Tag>();
         protected final Map<String, Severity> errors = new HashMap<String, Severity>();
@@ -66,24 +66,59 @@ public class MapCSSTagChecker extends Test {
             this.selector = selector;
         }
 
+        /**
+         * A function mapping the matched {@link OsmPrimitive} to a {@link Tag}.
+         */
+        static abstract class PrimitiveToTag implements Utils.Function<OsmPrimitive, Tag> {
+
+            /**
+             * Creates a new mapping from an {@code MapCSS} object.
+             * In case of an {@link Expression}, that is evaluated on the matched {@link OsmPrimitive}.
+             * In case of a {@link String}, that is "compiled" to a {@link Tag} instance.
+             */
+            static PrimitiveToTag ofMapCSSObject(final Object obj, final boolean keyOnly) {
+                if (obj instanceof Expression) {
+                    return new PrimitiveToTag() {
+                        @Override
+                        public Tag apply(OsmPrimitive p) {
+                            final String s = (String) ((Expression) obj).evaluate(new Environment().withPrimitive(p));
+                            return keyOnly? new Tag(s) : Tag.ofString(s);
+                        }
+                    };
+                } else if (obj instanceof String) {
+                    final Tag tag = keyOnly ? new Tag((String) obj) : Tag.ofString((String) obj);
+                    return new PrimitiveToTag() {
+                        @Override
+                        public Tag apply(OsmPrimitive ignore) {
+                            return tag;
+                        }
+                    };
+                } else {
+                    return null;
+                }
+            }
+        }
+
         static TagCheck ofMapCSSRule(final MapCSSRule rule) {
             final TagCheck check = new TagCheck(rule.selectors);
             for (Instruction i : rule.declaration) {
                 if (i instanceof Instruction.AssignmentInstruction) {
                     final Instruction.AssignmentInstruction ai = (Instruction.AssignmentInstruction) i;
-                    final String val = ai.val instanceof ExpressionFactory.ArrayFunction
-                            ? (String) ((ExpressionFactory.ArrayFunction) ai.val).evaluate(new Environment())
+                    final String val = ai.val instanceof Expression
+                            ? (String) ((Expression) ai.val).evaluate(new Environment())
                             : ai.val instanceof String
                             ? (String) ai.val
                             : null;
                     if (ai.key.startsWith("throw")) {
                         final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase());
                         check.errors.put(val, severity);
-                    } else if ("fixAdd".equals(ai.key) && val != null) {
-                        check.change.add(Tag.ofString(val));
-                    } else if ("fixRemove".equals(ai.key) && val != null) {
-                        CheckParameterUtil.ensureThat(!val.contains("="), "Unexpected '='. Please only specify the key to remove!");
-                        check.change.add(new Tag(val));
+                    } else if ("fixAdd".equals(ai.key)) {
+                        final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, false);
+                        check.change.add(toTag);
+                    } else if ("fixRemove".equals(ai.key)) {
+                        CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !val.contains("="), "Unexpected '='. Please only specify the key to remove!");
+                        final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, true);
+                        check.change.add(toTag);
                     } else if ("fixChangeKey".equals(ai.key) && val != null) {
                         CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
                         final String[] x = val.split("=>", 2);
@@ -158,7 +193,8 @@ public class MapCSSTagChecker extends Test {
                 return null;
             }
             Collection<Command> cmds = new LinkedList<Command>();
-            for (Tag tag : change) {
+            for (PrimitiveToTag toTag : change) {
+                final Tag tag = toTag.apply(p);
                 cmds.add(new ChangePropertyCommand(p, tag.getKey(), tag.getValue()));
             }
             for (Map.Entry<String, String> i : keyChange.entrySet()) {
