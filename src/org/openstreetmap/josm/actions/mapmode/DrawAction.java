@@ -178,16 +178,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return false;
 
         // update selection to reflect which way being modified
-        if (currentBaseNode != null && getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty()) {
+        DataSet currentDataSet = getCurrentDataSet();
+        if (currentBaseNode != null && currentDataSet != null && !currentDataSet.getSelected().isEmpty()) {
             Way continueFrom = getWayForNode(currentBaseNode);
             if (alt && continueFrom != null && (!currentBaseNode.isSelected() || continueFrom.isSelected())) {
-                getCurrentDataSet().beginUpdate(); // to prevent the selection listener to screw around with the state
-                getCurrentDataSet().addSelected(currentBaseNode);
-                getCurrentDataSet().clearSelection(continueFrom);
-                getCurrentDataSet().endUpdate();
+                addRemoveSelection(currentDataSet, currentBaseNode, continueFrom);
                 needsRepaint = true;
             } else if (!alt && continueFrom != null && !continueFrom.isSelected()) {
-                getCurrentDataSet().addSelected(continueFrom);
+                addRemoveSelection(currentDataSet, continueFrom, currentBaseNode);
                 needsRepaint = true;
             }
         }
@@ -196,6 +194,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             Main.map.mapView.repaint();
         }
         return needsRepaint;
+    }
+
+    private static void addRemoveSelection(DataSet ds, OsmPrimitive toAdd, OsmPrimitive toRemove) {
+        ds.beginUpdate(); // to prevent the selection listener to screw around with the state
+        ds.addSelected(toAdd);
+        ds.clearSelection(toRemove);
+        ds.endUpdate();
     }
 
     @Override
