@@ -289,5 +289,7 @@ public class MapCSSTagChecker extends Test {
         addMapCSS("deprecated.mapcss");
         addMapCSS("highway.mapcss");
         addMapCSS("numeric.mapcss");
+        addMapCSS("religion.mapcss");
+        addMapCSS("relation.mapcss");
     }
 }

@@ -1,0 +1,57 @@
+/* relation types */
+
+relation[!type] {
+  throwError: tr("relation without type");
+  assertMatch: "relation name=Foo";
+  assertNoMatch: "relation type=route name=Foo";
+}
+
+/* from http://wiki.openstreetmap.org/wiki/Types_of_relation */
+relation[type=route][!route] {
+  throwWarning: tr("{0} relation without {0} tag", "route");
+  assertMatch: "relation type=route";
+  assertNoMatch: "relation type=route route=train";
+}
+
+relation[type=route_master][!route_master] {
+  /* see #9071 */
+  throwWarning: tr("{0} relation without {0} tag", "route_master");
+  assertMatch: "relation type=route_master";
+  assertNoMatch: "relation type=route_master route_master=train";
+}
+
+relation[type=restriction][!restriction] {
+  throwWarning: tr("{0} relation without {0} tag", "restriction");
+  assertMatch: "relation type=restriction";
+  assertNoMatch: "relation type=restriction restriction=no_left_turn";
+}
+
+relation[type=boundary][!boundary] {
+  throwWarning: tr("{0} relation without {0} tag", "boundary");
+  assertMatch: "relation type=boundary";
+  assertNoMatch: "relation type=boundary boundary=administrative";
+}
+
+relation[type=site][!site] {
+  throwWarning: tr("{0} relation without {0} tag", "site");
+  assertMatch: "relation type=site";
+  assertNoMatch: "relation type=site site=administrative";
+}
+
+relation[type=public_transport][!public_transport] {
+  throwWarning: tr("{0} relation without {0} tag", "public_transport");
+  assertMatch: "relation type=public_transport";
+  assertNoMatch: "relation type=public_transport public_transport=stop_area";
+}
+
+relation[type=waterway][!waterway] {
+  throwWarning: tr("{0} relation without {0} tag", "waterway");
+  assertMatch: "relation type=waterway";
+  assertNoMatch: "relation type=waterway waterway=river";
+}
+
+relation[type=enforcement][!enforcement] {
+  throwWarning: tr("{0} relation without {0} tag", "enforcement");
+  assertMatch: "relation type=enforcement";
+  assertNoMatch: "relation type=enforcement enforcement=maxspeed";
+}
