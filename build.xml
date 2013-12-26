@@ -36,22 +36,44 @@
         <antcall target="create-revision"/>
     </target>
     <!--
-      ** Creates the REVISION file to be included in the distribution
+      ** Initializes the REVISION.XML file from SVN information
     -->
-    <target name="create-revision">
-        <property name="revision.dir" value="${build.dir}"/>
+    <target name="init-svn-revision-xml" unless="git_revision">
         <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false">
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
             <arg value="."/>
         </exec>
+    </target>
+    <!--
+      ** Initializes the REVISION.XML file from git information
+    -->
+    <target name="init-git-revision-xml" if="git_revision">
+        <exec append="false" output="REVISION.TMP" executable="git" failifexecutionfails="false">
+            <arg value="log"/>
+            <arg value="-1"/>
+            <arg value="--grep=git-svn-id"/>
+            <arg value="--pretty=format:%ai%n%B"/>
+            <arg value="HEAD"/>
+        </exec>
+        <exec append="false" input="REVISION.TMP" output="REVISION.XML" executable="perl" failifexecutionfails="false">
+            <arg value="tools/gitcommit2xml.pl"/>
+        </exec>
+        <delete file="REVISION.TMP"/>
+    </target>
+    <!--
+      ** Creates the REVISION file to be included in the distribution
+    -->
+    <target name="create-revision" depends="init-svn-revision-xml, init-git-revision-xml">
+        <property name="revision.dir" value="${build.dir}"/>
         <xmlproperty file="REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
         <delete file="REVISION.XML"/>
         <tstamp>
             <format property="build.tstamp" pattern="yyyy-MM-dd HH:mm:ss"/>
         </tstamp>
         <property name="version.entry.commit.revision" value="UNKNOWN"/>
+        <property name="version.entry.commit.date" value="UNKNOWN"/>
         <mkdir dir="${revision.dir}"/>
         <!-- add Build-Name: ... when making special builds, e.g. DEBIAN -->
         <echo file="${revision.dir}/REVISION">
@@ -61,6 +83,9 @@ Is-Local-Build: true
 Build-Date: ${build.tstamp}
 </echo>
     </target>
+    <!--
+      ** Check internal XML files against their XSD
+    -->
     <target name="check-schemas">
         <schemavalidate file="data/defaultpresets.xml" >
             <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="data/tagging-preset.xsd" />
@@ -69,17 +94,10 @@ Build-Date: ${build.tstamp}
             <schema namespace="http://josm.openstreetmap.de/mappaint-style-1.0" file="data/mappaint-style.xsd" />
         </schemavalidate>
     </target>
+    <!--
+      ** Main target that builds JOSM and checks XML against schemas
+    -->
     <target name="dist" depends="compile,create-revision,check-schemas">
-        <exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
-            <env key="LANG" value="C"/>
-            <arg value="info"/>
-            <arg value="--xml"/>
-            <arg value="."/>
-        </exec>
-        <xmlproperty file="REVISION" prefix="version" keepRoot="false" collapseAttributes="true"/>
-        <delete file="REVISION"/>
-        <property name="version.entry.commit.revision" value="UNKNOWN"/>
-        <property name="version.entry.commit.date" value="UNKNOWN"/>
         <echo>Revision ${version.entry.commit.revision}</echo>
         <copy file="CONTRIBUTION" todir="build"/>
         <copy file="README" todir="build"/>
