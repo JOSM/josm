@@ -130,22 +130,39 @@ public final class ExpressionFactory {
             return res;
         }
 
+        /**
+         * Creates a list of values, e.g., for the {@code dashes} property.
+         * @see {@link Arrays#asList(Object[])}
+         */
         public static List list(Object... args) {
             return Arrays.asList(args);
         }
 
-        public static Object get(List<? extends Object> objects, float index) {
-            int idx = Math.round(index);
-            if (idx >= 0 && idx < objects.size()) {
-                return objects.get(idx);
+        /**
+         * Get the {@code n}th element of the list {@code lst} (counting starts at 0).
+         * @since 5699
+         */
+        public static Object get(List<?> lst, float n) {
+            int idx = Math.round(n);
+            if (idx >= 0 && idx < lst.size()) {
+                return lst.get(idx);
             }
             return null;
         }
 
+        /**
+         * Splits string {@code toSplit} at occurrences of the separator string {@code sep} and returns a list of matches.
+         * @see {@link String#split(String)}
+         * @since 5699
+         */
         public static List<String> split(String sep, String toSplit) {
             return Arrays.asList(toSplit.split(Pattern.quote(sep), -1));
         }
 
+        /**
+         * Creates a color value with the specified amounts of {@code r}ed, {@code g}reen, {@code b}lue (arguments from 0.0 to 1.0)
+         * @see {@link Color#Color(float, float, float)}
+         */
         public static Color rgb(float r, float g, float b) {
             Color c;
             try {
@@ -156,26 +173,47 @@ public final class ExpressionFactory {
             return c;
         }
 
+        /**
+         * Creates a color value from an HTML notation, i.e., {@code #rrggbb}.
+         */
         public static Color html2color(String html) {
             return ColorHelper.html2color(html);
         }
 
+        /**
+         * Computes the HTML notation ({@code #rrggbb}) for a color value).
+         */
         public static String color2html(Color c) {
             return ColorHelper.color2html(c);
         }
 
+        /**
+         * Get the value of the red color channel in the rgb color model
+         * @see {@link java.awt.Color#getRed()}
+         */
         public static float red(Color c) {
             return Utils.color_int2float(c.getRed());
         }
 
+        /**
+         * Get the value of the green color channel in the rgb color model
+         * @see {@link java.awt.Color#getGreen()}
+         */
         public static float green(Color c) {
             return Utils.color_int2float(c.getGreen());
         }
 
+        /**
+         * Get the value of the blue color channel in the rgb color model
+         * @see {@link java.awt.Color#getBlue()}
+         */
         public static float blue(Color c) {
             return Utils.color_int2float(c.getBlue());
         }
 
+        /**
+         * Assembles the strings to one.
+         */
         public static String concat(Object... args) {
             StringBuilder res = new StringBuilder();
             for (Object f : args) {
@@ -184,10 +222,16 @@ public final class ExpressionFactory {
             return res.toString();
         }
 
+        /**
+         * Returns the value of the property {@code key}, e.g., {@code prop("width")}.
+         */
         public Object prop(String key) {
             return prop(key, null);
         }
 
+        /**
+         * Returns the value of the property {@code key} from layer {@code layer}.
+         */
         public Object prop(String key, String layer) {
             Cascade c;
             if (layer == null) {
@@ -198,10 +242,16 @@ public final class ExpressionFactory {
             return c.get(key);
         }
 
+        /**
+         * Determines whether property {@code key} is set.
+         */
         public Boolean is_prop_set(String key) {
             return is_prop_set(key, null);
         }
 
+        /**
+         * Determines whether property {@code key} is set on layer {@code layer}.
+         */
         public Boolean is_prop_set(String key, String layer) {
             Cascade c;
             if (layer == null) {
@@ -215,10 +265,16 @@ public final class ExpressionFactory {
             return c.containsKey(key);
         }
 
+        /**
+         * Gets the value of the key {@code key} from the object in question.
+         */
         public String tag(String key) {
             return env.osm.get(key);
         }
 
+        /**
+         * Gets the first non-null value of the key {@code key} from the object's parent(s).
+         */
         public String parent_tag(String key) {
             if (env.parent == null) {
                 // we don't have a matched parent, so just search all referrers
@@ -233,10 +289,16 @@ public final class ExpressionFactory {
             return env.parent.get(key);
         }
 
+        /**
+         * Determines whether the object has a tag with the given key.
+         */
         public boolean has_tag_key(String key) {
             return env.osm.hasKey(key);
         }
 
+        /**
+         * Returns the index of node in parent way or member in parent relation.
+         */
         public Float index() {
             if (env.index == null) {
                 return null;
@@ -268,6 +330,10 @@ public final class ExpressionFactory {
             return a < b;
         }
 
+        /**
+         * Determines if the objects {@code a} and {@code b} are equal.
+         * @see {@link Object#equals(Object)}
+         */
         public static boolean equal(Object a, Object b) {
             // make sure the casts are done in a meaningful way, so
             // the 2 objects really can be considered equal
@@ -281,30 +347,53 @@ public final class ExpressionFactory {
             return false;
         }
 
-        public Boolean JOSM_search(String s) {
+        /**
+         * Determines whether the JOSM search with {@code searchStr} applies to the object.
+         */
+        public Boolean JOSM_search(String searchStr) {
             Match m;
             try {
-                m = SearchCompiler.compile(s, false, false);
+                m = SearchCompiler.compile(searchStr, false, false);
             } catch (ParseError ex) {
                 return null;
             }
             return m.match(env.osm);
         }
 
-        public static String JOSM_pref(String s, String def) {
-            String res = Main.pref.get(s, null);
+        /**
+         * Obtains the JOSM'key {@link org.openstreetmap.josm.data.Preferences} string for key {@code key},
+         * and defaults to {@code def} if that is null.
+         * @see {@link org.openstreetmap.josm.data.Preferences#get(String, String)}
+         */
+        public static String JOSM_pref(String key, String def) {
+            String res = Main.pref.get(key, null);
             return res != null ? res : def;
         }
 
-        public static Color JOSM_pref_color(String s, Color def) {
-            Color res = Main.pref.getColor(s, null);
+        /**
+         * Obtains the JOSM'key {@link org.openstreetmap.josm.data.Preferences} color for key {@code key},
+         * and defaults to {@code def} if that is null.
+         * @see {@link org.openstreetmap.josm.data.Preferences#getColor(String, java.awt.Color)}
+         */
+        public static Color JOSM_pref_color(String key, Color def) {
+            Color res = Main.pref.getColor(key, null);
             return res != null ? res : def;
         }
 
+        /**
+         * Tests if string {@code target} matches pattern {@code pattern}
+         * @see {@link Pattern#matches(String, CharSequence)}
+         * @since 5699
+         */
         public static boolean regexp_test(String pattern, String target) {
             return Pattern.matches(pattern, target);
         }
 
+        /**
+         * Tests if string {@code target} matches pattern {@code pattern}
+         * @param flags a string that may contain "i" (case insensitive), "m" (multiline) and "s" ("dot all")
+         * @since 5699
+         */
         public static boolean regexp_test(String pattern, String target, String flags) {
             int f = 0;
             if (flags.contains("i")) {
@@ -319,6 +408,13 @@ public final class ExpressionFactory {
             return Pattern.compile(pattern, f).matcher(target).matches();
         }
 
+        /**
+         * Tries to match string against pattern regexp and returns a list of capture groups in case of success.
+         * The first element (index 0) is the complete match (i.e. string).
+         * Further elements correspond to the bracketed parts of the regular expression.
+         * @param flags a string that may contain "i" (case insensitive), "m" (multiline) and "s" ("dot all")
+         * @since 5701
+         */
         public static List<String> regexp_match(String pattern, String target, String flags) {
             int f = 0;
             if (flags.contains("i")) {
@@ -342,6 +438,12 @@ public final class ExpressionFactory {
             }
         }
 
+        /**
+         * Tries to match string against pattern regexp and returns a list of capture groups in case of success.
+         * The first element (index 0) is the complete match (i.e. string).
+         * Further elements correspond to the bracketed parts of the regular expression.
+         * @since 5701
+         */
         public static List<String> regexp_match(String pattern, String target) {
             Matcher m = Pattern.compile(pattern).matcher(target);
             if (m.matches()) {
@@ -355,14 +457,47 @@ public final class ExpressionFactory {
             }
         }
 
+        /**
+         * Returns the OSM id of the current object.
+         * @see {@link org.openstreetmap.josm.data.osm.AbstractPrimitive#generateUniqueId()}
+         */
         public long osm_id() {
             return env.osm.getUniqueId();
         }
 
+        /**
+         * Translates some text for the current locale. The first argument is the text to translate,
+         * and the subsequent arguments are parameters for the string indicated by {@code {0}}, {@code {1}}, …
+         */
         public static String tr(String... args) {
             final String text = args[0];
             System.arraycopy(args, 1, args, 0, args.length - 1);
             return org.openstreetmap.josm.tools.I18n.tr(text, args);
+        }
+
+        /**
+         * Returns the substring of {@code s} starting at index {@code begin} (inclusive, 0-indexed).
+         * * @see {@link String#substring(int)}
+         */
+        public static String substring(String s, /* due to missing Cascade.convertTo for int*/ float begin) {
+            return s == null ? null : s.substring((int) begin);
+        }
+
+        /**
+         * Returns the substring of {@code s} starting at index {@code begin} (inclusive)
+         * and ending at index {@code end}, (exclusive, 0-indexed).
+         * @see {@link String#substring(int, int)}
+         */
+        public static String substring(String s, float begin, float end) {
+            return s == null ? null : s.substring((int) begin, (int) end);
+        }
+
+        /**
+         * Replaces in {@code s} every {@code} target} substring by {@code replacement}.
+         * * @see {@link String#replace(CharSequence, CharSequence)}
+         */
+        public static String replace(String s, String target, String replacement) {
+            return s == null ? null : s.replace(target, replacement);
         }
     }
 

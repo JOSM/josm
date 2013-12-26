@@ -114,12 +114,8 @@ public final class Cascade implements Cloneable {
     }
 
     private static Float toFloat(Object o) {
-        if (o instanceof Float)
-            return (Float) o;
-        if (o instanceof Double)
-            return new Float((Double) o);
-        if (o instanceof Integer)
-            return new Float((Integer) o);
+        if (o instanceof Number)
+            return ((Number) o).floatValue();
         if (o instanceof String && !((String) o).isEmpty()) {
             try {
                 return Float.parseFloat((String) o);

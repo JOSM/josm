@@ -2,6 +2,7 @@
 
 *[layer =~ /\+.*/] {
   throwWarning: tr("layer tag with + sign");
+  fixAdd: concat("layer=", replace(tag("layer"), "+", ""));
   assertMatch: "node layer=+1";
   assertNoMatch: "node layer=1";
   assertNoMatch: "node layer=-1";
