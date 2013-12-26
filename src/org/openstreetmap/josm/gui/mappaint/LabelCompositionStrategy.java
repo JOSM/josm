@@ -28,7 +28,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  *   of the configured "name tags". The list of relevant name tags can be configured
  *   in the JOSM preferences
  *   content of a tag whose name specified in the MapCSS style file, see the preference
- *   option <tt>mappaint.nameOrder</tt>.</li>
+ *   options <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.</li>
  * </ul>
  * </p>
  *
@@ -162,7 +162,16 @@ public abstract class LabelCompositionStrategy {
             "addr:housenumber"
         };
 
-        private  List<String> nameTags = new ArrayList<String>();
+        /**
+         * The list of default name complement tags from which a label candidate is derived.
+         * @since 6541
+         */
+        static public final String[] DEFAULT_NAME_COMPLEMENT_TAGS = {
+            "capacity"
+        };
+
+        private List<String> nameTags = new ArrayList<String>();
+        private List<String> nameComplementTags = new ArrayList<String>();
 
         /**
          * <p>Creates the strategy and initializes its name tags from the preferences.</p>
@@ -176,16 +185,11 @@ public abstract class LabelCompositionStrategy {
             initNameTagsFromPreferences();
         }
 
-        /**
-         * Sets the name tags to be looked up in order to build up the label
-         *
-         * @param nameTags the name tags. null values are ignore.
-         */
-        public void setNameTags(List<String> nameTags){
+        private static List<String> buildNameTags(List<String> nameTags) {
             if (nameTags == null) {
                 nameTags = Collections.emptyList();
             }
-            this.nameTags = new ArrayList<String>();
+            ArrayList<String> result = new ArrayList<String>();
             for(String tag: nameTags) {
                 if (tag == null) {
                     continue;
@@ -194,10 +198,30 @@ public abstract class LabelCompositionStrategy {
                 if (tag.isEmpty()) {
                     continue;
                 }
-                this.nameTags.add(tag);
+                result.add(tag);
             }
+            return result;
+        }
+        
+        /**
+         * Sets the name tags to be looked up in order to build up the label.
+         *
+         * @param nameTags the name tags. null values are ignored.
+         */
+        public void setNameTags(List<String> nameTags){
+            this.nameTags = buildNameTags(nameTags);
         }
 
+        /**
+         * Sets the name complement tags to be looked up in order to build up the label.
+         *
+         * @param nameComplementTags the name complement tags. null values are ignored.
+         * @since 6541
+         */
+        public void setNameComplementTags(List<String> nameComplementTags){
+            this.nameComplementTags = buildNameTags(nameComplementTags);
+        }
+        
         /**
          * Replies an unmodifiable list of the name tags used to compose the label.
          *
@@ -208,16 +232,31 @@ public abstract class LabelCompositionStrategy {
         }
 
         /**
+         * Replies an unmodifiable list of the name complement tags used to compose the label.
+         *
+         * @return the list of name complement tags
+         * @since 6541
+         */
+        public List<String> getNameComplementTags() {
+            return Collections.unmodifiableList(nameComplementTags);
+        }
+
+        /**
          * Initializes the name tags to use from a list of default name tags (see
-         * {@link #DEFAULT_NAME_TAGS}) and from name tags configured in the preferences
-         * using the preference key <tt>mappaint.nameOrder</tt>.
+         * {@link #DEFAULT_NAME_TAGS} and {@link #DEFAULT_NAME_COMPLEMENT_TAGS})
+         * and from name tags configured in the preferences using the keys
+         * <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.
          */
         public void initNameTagsFromPreferences() {
             if (Main.pref == null){
                 this.nameTags = new ArrayList<String>(Arrays.asList(DEFAULT_NAME_TAGS));
+                this.nameComplementTags = new ArrayList<String>(Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS));
             } else {
                 this.nameTags = new ArrayList<String>(
                         Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(DEFAULT_NAME_TAGS))
+                );
+                this.nameComplementTags = new ArrayList<String>(
+                        Main.pref.getCollection("mappaint.nameComplementOrder", Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS))
                 );
             }
         }
@@ -227,9 +266,22 @@ public abstract class LabelCompositionStrategy {
             if (!n.hasKeys()) return null;
             for (String rn : nameTags) {
                 name = n.get(rn);
-                if (name != null) return name;
+                if (name != null) {
+                    break;
+                }
             }
-            return null;
+            for (String rn : nameComplementTags) {
+                String comp = n.get(rn);
+                if (comp != null) {
+                    if (name == null) {
+                        name = comp;
+                    } else {
+                        name += " (" + comp + ")";
+                    }
+                    break;
+                }
+            }
+            return name;
         }
 
         @Override
