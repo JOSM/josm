@@ -1,0 +1,29 @@
+/* absent/unknown denomination (ticket #7811) */
+
+*[religion =~ /^(christian|jewish|muslim)$/][!denomination] {
+  throwOther: tr("religion without denomination");
+  assertMatch: "node religion=christian";
+  assertNoMatch: "node religion=christian denomination=catholic";
+  assertNoMatch: "node religion=foobar";
+}
+
+*[religion=christian][denomination][denomination !~ /^(anglican|apostolic|baptist|catholic|christian_community|christian_scientist|coptic_orthodox|czechoslovak_hussite|dutch_reformed|evangelical|foursquare|greek_catholic|greek_orthodox|jehovahs_witness|kabbalah|karaite|living_waters_church|lutheran|maronite|mennonite|methodist|mormon|new_apostolic|nondenominational|old_catholic|orthodox|pentecostal|presbyterian|protestant|quaker|roman_catholic|russian_orthodox|salvation_army|serbian_orthodox|seventh_day_adventist|united|united_reformed|uniting)$/] {
+  throwOther: tr("unknown christian denomination");
+  assertMatch: "node religion=christian denomination=foobar";
+  assertNoMatch: "node religion=christian denomination=catholic";
+  assertNoMatch: "node religion=christian";
+}
+
+*[religion=muslim][denomination][denomination !~ /^(alaouite|druze|ibadi|ismaili|nondenominational|shia|sunni)$/] {
+  throwOther: tr("unknown muslim denomination");
+  assertMatch: "node religion=muslim denomination=foobar";
+  assertNoMatch: "node religion=muslim denomination=alaouite";
+  assertNoMatch: "node religion=muslim";
+}
+
+*[religion=jewish][denomination][denomination !~ /^(alternative|ashkenazi|conservative|hasidic|humanistic|liberal|modern_orthodox|neo_orthodox|nondenominational|orthodox|progressive|reconstructionist|reform|renewal|samaritan|ultra_orthodox)$/] {
+  throwOther: tr("unknown jewish denomination");
+  assertMatch: "node religion=jewish denomination=foobar";
+  assertNoMatch: "node religion=jewish denomination=alternative";
+  assertNoMatch: "node religion=jewish";
+}
