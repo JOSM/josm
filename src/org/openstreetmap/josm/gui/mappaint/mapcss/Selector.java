@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
@@ -230,6 +231,10 @@ public interface Selector {
             }
             return true;
         }
+
+        public List<Condition> getConditions() {
+            return Collections.unmodifiableList(conds);
+        }
     }
 
     public static class LinkSelector extends AbstractSelector {
@@ -309,8 +314,7 @@ public interface Selector {
 
         @Override
         public boolean matches(Environment e) {
-            if (!matchesBase(e)) return false;
-            return matchesConditions(e);
+            return matchesBase(e) && matchesConditions(e);
         }
 
         public String getBase() {

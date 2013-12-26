@@ -218,6 +218,10 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         return tester;
     }
 
+    public void setTester(Test tester) {
+        this.tester = tester;
+    }
+
     /**
      * Gets the code
      * @return the code
