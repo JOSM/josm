@@ -57,6 +57,14 @@ way[highway =~ /motorway|trunk|primary|secondary|tertiary/][!ref] {
   assertNoMatch: "way highway=primary ref=123";
 }
 
+way[foot][highway =~ /motorway|trunk|primary|secondary|tertiary/] {
+  throwWarning: tr("{0} used with {1}", "{0.key}", "{1.tag}");
+  suggestAlternative: "sidewalk";
+  suggestAlternative: "separate footway";
+  assertMatch: "way highway=primary foot=yes";
+  assertNoMatch: "way highway=primary";
+}
+
 way[highway=road] {
   throwWarning: tr("temporary highway type");
   assertMatch: "way highway=road";
@@ -106,7 +114,3 @@ way[highway=footway][maxspeed], way[highway=steps][maxspeed] {
   assertMatch: "way name=Foobar-Strassenweg";
   assertNoMatch: "way name=Foobarstraße";
 }
-
-/*
-TODO: * : W : / *name * /i == * && name != * # misspelled key name
-*/

@@ -61,7 +61,7 @@ public class MapCSSTagChecker extends Test {
         protected final List<Selector> selector;
         protected final List<PrimitiveToTag> change = new ArrayList<PrimitiveToTag>();
         protected final Map<String, String> keyChange = new LinkedHashMap<String, String>();
-        protected final List<Tag> alternatives = new ArrayList<Tag>();
+        protected final List<String> alternatives = new ArrayList<String>();
         protected final Map<String, Severity> errors = new HashMap<String, Severity>();
         protected final Map<String, Boolean> assertions = new HashMap<String, Boolean>();
 
@@ -127,7 +127,7 @@ public class MapCSSTagChecker extends Test {
                         final String[] x = val.split("=>", 2);
                         check.keyChange.put(x[0].trim(), x[1].trim());
                     } else if ("suggestAlternative".equals(ai.key) && val != null) {
-                        check.alternatives.add(val.contains("=") ? Tag.ofString(val) : new Tag(val));
+                        check.alternatives.add(val);
                     } else if ("assertMatch".equals(ai.key) && val != null) {
                         check.assertions.put(val, true);
                     } else if ("assertNoMatch".equals(ai.key) && val != null) {
