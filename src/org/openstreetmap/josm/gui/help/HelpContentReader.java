@@ -49,7 +49,7 @@ public class HelpContentReader extends WikiReader {
             URL u = new URL(helpTopicUrl);
             con = Utils.openHttpConnection(u);
             con.connect();
-            in = new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
+            in = new BufferedReader(new InputStreamReader(con.getInputStream(), Utils.UTF_8));
             return prepareHelpContent(in, dotest, u);
         } catch(MalformedURLException e) {
             throw new HelpContentReaderException(e);

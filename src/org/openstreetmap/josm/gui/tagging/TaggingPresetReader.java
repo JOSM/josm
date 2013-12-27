@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -161,12 +160,7 @@ public final class TaggingPresetReader {
             if(zip != null) {
                 zipIcons = s.getFile();
             }
-            InputStreamReader r;
-            try {
-                r = new InputStreamReader(zip == null ? s : zip, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                r = new InputStreamReader(zip == null ? s: zip);
-            }
+            InputStreamReader r = new InputStreamReader(zip == null ? s : zip, Utils.UTF_8);
             try {
                 tp = readAll(new BufferedReader(r), validate);
             } finally {

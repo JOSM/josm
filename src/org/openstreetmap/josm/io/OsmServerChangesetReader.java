@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -184,8 +183,6 @@ public class OsmServerChangesetReader extends OsmServerReader {
             OsmChangesetContentParser parser = new OsmChangesetContentParser(in);
             ChangesetDataSet ds = parser.parse(monitor.createSubTaskMonitor(1, true));
             return ds;
-        } catch(UnsupportedEncodingException e) {
-            throw new OsmTransferException(e);
         } catch(OsmDataParsingException e) {
             throw new OsmTransferException(e);
         } finally {

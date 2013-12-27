@@ -23,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -1228,13 +1227,7 @@ public abstract class SourceEditor extends JPanel {
                 }
 
                 MirroredInputStream stream = new MirroredInputStream(url);
-                InputStreamReader r;
-                try {
-                    r = new InputStreamReader(stream, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    r = new InputStreamReader(stream);
-                }
-                reader = new BufferedReader(r);
+                reader = new BufferedReader(new InputStreamReader(stream, Utils.UTF_8));
 
                 String line;
                 ExtendedSourceEntry last = null;

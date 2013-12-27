@@ -369,7 +369,7 @@ public class PlaceSelection implements DownloadSelection {
                 }
                 connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
                 InputStream inputStream = connection.getInputStream();
-                InputSource inputSource = new InputSource(new InputStreamReader(inputStream, "UTF-8"));
+                InputSource inputSource = new InputSource(new InputStreamReader(inputStream, Utils.UTF_8));
                 NameFinderResultParser parser = new NameFinderResultParser();
                 SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
                 this.data = parser.getResult();

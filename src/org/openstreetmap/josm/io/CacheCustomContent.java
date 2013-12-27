@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
@@ -119,12 +118,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      */
     public String updateForceString() throws T {
         updateForce();
-        try {
-            return new String(data, "utf-8");
-        } catch (UnsupportedEncodingException e){
-            e.printStackTrace();
-            return "";
-        }
+        return new String(data, Utils.UTF_8);
     }
 
     /**
@@ -143,12 +137,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @return the data as String
      */
     public String getDataString() throws T {
-        try {
-            return new String(getData(), "utf-8");
-        } catch(UnsupportedEncodingException e){
-            e.printStackTrace();
-            return "";
-        }
+        return new String(getData(), Utils.UTF_8);
     }
 
     /**

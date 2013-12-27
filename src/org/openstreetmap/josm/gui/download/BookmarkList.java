@@ -187,7 +187,7 @@ public class BookmarkList extends JList {
                 if (bookmarkFile.exists()) {
                     Main.info("Try loading obsolete bookmarks file");
                     BufferedReader in = new BufferedReader(new InputStreamReader(
-                            new FileInputStream(bookmarkFile), "utf-8"));
+                            new FileInputStream(bookmarkFile), Utils.UTF_8));
 
                     for (String line = in.readLine(); line != null; line = in.readLine()) {
                         Matcher m = Pattern.compile("^(.+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)$").matcher(line);

@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 
 public class GpxTracksSessionExporter implements SessionLayerExporter {
@@ -179,12 +179,7 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
     }
 
     protected void addDataFile(OutputStream out) throws IOException {
-        Writer writer = null;
-        try {
-            writer = new OutputStreamWriter(out, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
         GpxWriter w = new GpxWriter(new PrintWriter(writer));
         w.write(layer.data);
         w.flush();
