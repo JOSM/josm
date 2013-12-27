@@ -42,6 +42,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
+import javax.swing.JPanel;
+
 /**
  * MapCSS-based tag checker/fixer.
  * @since 6506
@@ -52,7 +54,7 @@ public class MapCSSTagChecker extends Test {
      * Constructs a new {@code MapCSSTagChecker}.
      */
     public MapCSSTagChecker() {
-        super(tr("Tag checker (new)"), tr("This test checks for errors in tag keys and values."));
+        super(tr("Tag checker (MapCSS based)"), tr("This test checks for errors in tag keys and values."));
     }
 
     final List<TagCheck> checks = new ArrayList<TagCheck>();
@@ -383,5 +385,15 @@ public class MapCSSTagChecker extends Test {
         addMapCSS("wikipedia");
         addMapCSS("power");
         addMapCSS("geometry");
+    }
+
+    @Override
+    public void addGui(JPanel testPanel) {
+        super.addGui(testPanel);
+    }
+
+    @Override
+    public boolean ok() {
+        return super.ok();
     }
 }
