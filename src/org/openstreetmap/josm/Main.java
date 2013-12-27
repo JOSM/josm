@@ -50,6 +50,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
+import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -59,6 +60,7 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
@@ -589,6 +591,25 @@ abstract public class Main {
     public DataSet getCurrentDataSet() {
         if (!hasEditLayer()) return null;
         return getEditLayer().data;
+    }
+    
+    /**
+     * Replies the current selected primitives, from a end-user point of view.
+     * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
+     * Indeed, if the user is currently in drawing mode, only the way currently being drawn is returned,
+     * see {@link DrawAction#getInProgressSelection()}.
+     * 
+     * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
+     * @since 6546
+     */
+    public Collection<OsmPrimitive> getInProgressSelection() {
+        if (map != null && map.mapMode instanceof DrawAction) {
+            return ((DrawAction) map.mapMode).getInProgressSelection();
+        } else {
+            DataSet ds = getCurrentDataSet();
+            if (ds == null) return null;
+            return ds.getSelected();
+        }
     }
 
     /**

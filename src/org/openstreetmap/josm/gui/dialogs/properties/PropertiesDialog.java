@@ -211,8 +211,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         @Override public Collection<OsmPrimitive> getSelection() {
             if (Main.main == null) return null;
-            if (Main.main.getCurrentDataSet() == null) return null;
-            return Main.main.getCurrentDataSet().getSelected();
+            return Main.main.getInProgressSelection();
         }
     };
 
@@ -498,11 +497,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * Update selection status, call @{link #selectionChanged} function.
      */
     private void updateSelection() {
-        if (Main.main.getCurrentDataSet() == null) {
-            selectionChanged(Collections.<OsmPrimitive>emptyList());
-        } else {
-            selectionChanged(Main.main.getCurrentDataSet().getSelected());
-        }
+        // Parameter is ignored in this class
+        selectionChanged(null);
     }
 
    // </editor-fold>
@@ -534,7 +530,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public void setVisible(boolean b) {
         super.setVisible(b);
         if (b && Main.main.getCurrentDataSet() != null) {
-            selectionChanged(Main.main.getCurrentDataSet().getSelected());
+            updateSelection();
         }
     }
 
@@ -559,6 +555,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             return; // selection changed may be received in base class constructor before init
         if (tagTable.getCellEditor() != null) {
             tagTable.getCellEditor().cancelCellEditing();
+        }
+        
+        // Discard parameter as we do not want to operate always on real selection here, especially in draw mode
+        newSelection = Main.main.getInProgressSelection();
+        if (newSelection == null) {
+            newSelection = Collections.<OsmPrimitive>emptyList();
         }
 
         String selectedTag;
@@ -874,7 +876,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 nextKey = (String)tagData.getValueAt(nextKeyIndex, 0);
             }
 
-            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, tags));
 
             membershipTable.clearSelection();
@@ -904,8 +906,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 return;
 
             Relation rel = new Relation(cur);
-            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
-            for (OsmPrimitive primitive: sel) {
+            for (OsmPrimitive primitive: Main.main.getInProgressSelection()) {
                 rel.removeMembersFor(primitive);
             }
             Main.main.undoRedo.add(new ChangeCommand(cur, rel));
@@ -1107,7 +1108,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             if (tagTable.getSelectedRowCount() != 1)
                 return;
             String key = tagData.getValueAt(tagTable.getSelectedRow(), 0).toString();
-            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
             String clipboard = Utils.getClipboardContent();
             if (sel.isEmpty() || clipboard == null)
                 return;
@@ -1123,7 +1124,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public void actionPerformed(ActionEvent ae) {
             int[] rows = tagTable.getSelectedRows();
             Set<String> values = new TreeSet<String>();
-            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
             if (rows.length == 0 || sel.isEmpty()) return;
 
             for (int row: rows) {
@@ -1207,7 +1208,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             if (tagTable.getSelectedRowCount() != 1)
                 return;
             String key = tagData.getValueAt(tagTable.getSelectedRow(), 0).toString();
-            Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+            Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
             if (sel.isEmpty())
                 return;
             String sep = "";
@@ -1242,7 +1243,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public void preferenceChanged(PreferenceChangeEvent e) {
         if ("display.discardable-keys".equals(e.getKey()) && Main.main.getCurrentDataSet() != null) {
             // Re-load data when display preference change
-            selectionChanged(Main.main.getCurrentDataSet().getSelected());
+            updateSelection();
         }
     }
 }
