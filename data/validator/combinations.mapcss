@@ -110,12 +110,6 @@ way[junction                   ][!highway],
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
 }
 
-/* {0} on a node */
-node[source:geometry],
-node[source:outline] {
-  throwWarning: tr("{0} on a node", "{0.key}");
-}
-
 /* {0} on suspicious object */
 *[tunnel  ][!highway][!railway][!waterway][public_transport != platform][man_made != pipeline],
 *[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport != platform][man_made !~ /^(bridge|pipeline)$/][building != bridge],
@@ -132,6 +126,7 @@ node[amenity =~ /^(restaurant|cafe|fast_food)$/][!name] {
   assertNoMatch: "node amenity=restaurant name=Foobar";
 }
 
+way[highway][barrier],
 *[highway][waterway][waterway!=dam],
 *[highway][natural],
 *[landuse][building] {

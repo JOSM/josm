@@ -368,19 +368,20 @@ public class MapCSSTagChecker extends Test {
      * @throws UnsupportedEncodingException if UTF-8 charset is not supported on the platform
      */
     private void addMapCSS(String internalConfigFile) throws ParseException, UnsupportedEncodingException {
-        addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/"+internalConfigFile), "UTF-8"));
+        addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/" + internalConfigFile + ".mapcss"), "UTF-8"));
     }
 
     @Override
     public void initialize() throws Exception {
-        addMapCSS("deprecated.mapcss");
-        addMapCSS("highway.mapcss");
-        addMapCSS("numeric.mapcss");
-        addMapCSS("religion.mapcss");
-        addMapCSS("relation.mapcss");
-        addMapCSS("combinations.mapcss");
-        addMapCSS("unnecessary.mapcss");
-        addMapCSS("wikipedia.mapcss");
-        addMapCSS("power.mapcss");
+        addMapCSS("deprecated");
+        addMapCSS("highway");
+        addMapCSS("numeric");
+        addMapCSS("religion");
+        addMapCSS("relation");
+        addMapCSS("combinations");
+        addMapCSS("unnecessary");
+        addMapCSS("wikipedia");
+        addMapCSS("power");
+        addMapCSS("geometry");
     }
 }
