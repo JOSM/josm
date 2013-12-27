@@ -344,16 +344,19 @@ String tag_key() :
 Condition simple_key_condition(Context context) :
 {
     boolean not = false;
-    boolean yes = false;
-    boolean no = false;
+    Condition.KeyMatchType matchType = null;;
     String key;
 }
 {
     ( <EXCLAMATION> { not = true; } )?
-    key=tag_key()
-    ( LOOKAHEAD(2) <QUESTION> <EXCLAMATION> { no = true; } )?
-    ( <QUESTION> { yes = true; } )?
-    { return Condition.create(key, not, yes, no, context); }
+    (
+        { matchType = Condition.KeyMatchType.REGEX; } key = regex()
+    |
+        key = tag_key()
+    )
+    ( LOOKAHEAD(2) <QUESTION> <EXCLAMATION> { matchType = Condition.KeyMatchType.FALSE; } )?
+    (              <QUESTION>               { matchType = Condition.KeyMatchType.TRUE;  } )?
+    { return Condition.create(key, not, matchType, context); }
 }
 
 Condition simple_key_value_condition(Context context) :
