@@ -1,0 +1,11 @@
+/* {0} on a node */
+node[oneway],
+node[bridge?],
+node[source:geometry],
+node[source:outline] {
+  throwWarning: tr("{0} on a node", "{0.key}");
+  assertMatch: "node oneway=-1";
+  assertNoMatch: "way oneway=-1";
+  assertMatch: "node bridge=yes";
+  assertNoMatch: "node bridge=13";
+}

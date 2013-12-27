@@ -6,18 +6,6 @@ way[highway][name =~ /(?i).* (Ave|Blvd|Br|Brg|Cct|Cir|Cl|Cr|Crct|Cres|Crt|Ct|Dr|
   assertMatch: "way highway=unclassified name=\"Bou blvd.\"";
 }
 
-node[oneway] {
-  throwWarning: tr("oneway tag on a node");
-  assertMatch: "node oneway=-1";
-  assertNoMatch: "way oneway=-1";
-}
-
-node[bridge?] {
-  throwWarning: tr("bridge tag on a node");
-  assertMatch: "node bridge=yes";
-  assertNoMatch: "node bridge=13";
-}
-
 node[highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|pedestrian|track|path|footway/][highway!=motorway_junction][highway!=services] {
   throwWarning: tr("wrong highway tag on a node");
   assertMatch: "node highway=primary";
@@ -71,38 +59,23 @@ way[highway=road] {
   assertNoMatch: "way highway=residential";
 }
 
-way[highway=cycleway][bicycle?!] {
-  throwWarning: tr("cycleway with tag bicycle");
+way[highway=footway][maxspeed],
+way[highway=steps][maxspeed],
+way[highway=cycleway][bicycle?!],
+way[highway=footway][foot?!],
+way[highway=cycleway][cycleway=lane] {
+  throwWarning: tr("{0} used with {1}", "{0.value}", "{1.tag}");
   assertMatch: "way highway=cycleway bicycle=false";
   assertMatch: "way highway=cycleway bicycle=0";
   assertNoMatch: "way highway=cycleway bicycle=yes";
   assertNoMatch: "way highway=cycleway";
-}
-
-way[highway=footway][foot?!] {
-  throwWarning: tr("footway with tag foot");
   assertMatch: "way highway=footway foot=false";
   assertMatch: "way highway=footway foot=0";
   assertNoMatch: "way highway=footway foot=yes";
   assertNoMatch: "way highway=footway";
-}
-
-way[highway=cycleway][cycleway=lane] {
-  throwWarning: tr("separate cycleway as lane on a cycleway");
   assertMatch: "way highway=cycleway cycleway=lane";
   assertNoMatch: "way highway=cycleway";
   assertNoMatch: "way highway=residential cycleway=lane";
-}
-
-way[highway][barrier] {
-  throwWarning: tr("barrier used on a way");
-  assertMatch: "way highway=residential barrier=hedge";
-  assertNoMatch: "way highway=residential";
-  assertNoMatch: "way barrier=hedge";
-}
-
-way[highway=footway][maxspeed], way[highway=steps][maxspeed] {
-  throwWarning: tr("maxspeed used for footway");
   assertMatch: "way highway=footway maxspeed=20";
   assertNoMatch: "way highway=residential maxspeed=20";
   assertNoMatch: "way highway=footway";
