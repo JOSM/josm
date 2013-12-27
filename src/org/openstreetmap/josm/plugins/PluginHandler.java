@@ -115,7 +115,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("Curves", tr("replaced by new {0} plugin","utilsplugin2")),
             new DeprecatedPlugin("epsg31287", tr("replaced by new {0} plugin", "proj4j")),
             new DeprecatedPlugin("licensechange", tr("no longer required")),
-            new DeprecatedPlugin("restart", IN_CORE)
+            new DeprecatedPlugin("restart", IN_CORE),
+            new DeprecatedPlugin("wayselector", IN_CORE),
         });
     }
     
