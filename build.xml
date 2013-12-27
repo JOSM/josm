@@ -38,8 +38,8 @@
     <!--
       ** Initializes the REVISION.XML file from SVN information
     -->
-    <target name="init-svn-revision-xml" unless="git_revision">
-        <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false">
+    <target name="init-svn-revision-xml">
+        <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false" errorproperty="svn.info.failed">
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
@@ -49,18 +49,22 @@
     <!--
       ** Initializes the REVISION.XML file from git information
     -->
-    <target name="init-git-revision-xml" if="git_revision">
-        <exec append="false" output="REVISION.TMP" executable="git" failifexecutionfails="false">
+    <target name="init-git-revision-xml" if="svn.info.failed">
+        <exec append="false" output="REVISION.XML" executable="git" failifexecutionfails="false">
             <arg value="log"/>
             <arg value="-1"/>
             <arg value="--grep=git-svn-id"/>
-            <arg value="--pretty=format:%ai%n%B"/>
+            <!--
+            %B:  raw body (unwrapped subject and body)
+            %n:  new line
+            %ai: author date, ISO 8601 format
+            -->
+            <arg value="--pretty=format:%B%n%ai"/>
             <arg value="HEAD"/>
         </exec>
-        <exec append="false" input="REVISION.TMP" output="REVISION.XML" executable="perl" failifexecutionfails="false">
-            <arg value="tools/gitcommit2xml.pl"/>
-        </exec>
-        <delete file="REVISION.TMP"/>
+        <replaceregexp file="REVISION.XML" flags="s"
+                       match=".*git-svn-id: [^@]*@([0-9]+).*(\d{4}-\d{2}-\d{2}.\d{2}\:\d{2}\:\d{2}\s*[+-]\d{2}:?\d{2})\s*$"
+                       replace="&lt;info&gt;&lt;entry&gt;&lt;commit revision=&quot;\1&quot;&gt;&lt;date&gt;\2&lt;/date&gt;&lt;/commit&gt;&lt;/entry&gt;&lt;/info&gt;"/>
     </target>
     <!--
       ** Creates the REVISION file to be included in the distribution
