@@ -1,0 +1,145 @@
+/* Rules partially derived from Taginfo statistics - see ticket #5017
+ * Taginfo query: select keypairs.key1, keypairs.key2, keypairs.count_all, keys.count_all, cast(keypairs.count_all as real)/keys.count_all as from_fraction_all from keys, keypairs where key1='waterway' and keys.key=keypairs.key2 and (key1<>'highway' or keypairs.count_all>12000) and (key1<>'railway' or keypairs.count_all>3000) and (key1<>'waterway' or keypairs.count_all>800) and key2 not like '%:%' and from_fraction_all>0.97 and 1 union select keypairs.key2, keypairs.key1, keypairs.count_all, keys.count_all, cast(keypairs.count_all as real)/keys.count_all as from_fraction_all from keys, keypairs where key2='waterway' and keys.key=keypairs.key1 and (key2<>'highway' or keypairs.count_all>12000) and (key2<>'railway' or keypairs.count_all>3000) and (key2<>'waterway' or keypairs.count_all>800) and key1 not like '%:%' and from_fraction_all>0.97 and 1 order by keypairs.count_all desc limit 1000;
+ */
+
+/* {0.key} without {1.key} */
+way[junction                   ][!highway],
+*[lanes                        ][!highway],
+*[lcn                          ][!highway],
+*[living_street                ][!highway],
+*[maintenance                  ][!highway],
+*[median                       ][!highway],
+*[motorroad                    ][!highway],
+*[ntd_id                       ][!highway],
+*[sac_scale                    ][!highway],
+*[sidewalk                     ][!highway],
+*[smoothness                   ][!highway],
+*[snowplowing                  ][!highway],
+*[step_count                   ][!highway],
+*[tracktype                    ][!highway],
+*[trail_visibility             ][!highway],
+*[trolley_wire                 ][!highway],
+*[zip_left                     ][!highway],
+*[zip_right                    ][!highway],
+*[detail                       ][!railway],
+*[eddy_current_brake           ][!railway],
+*[electrified                  ][!railway],
+*[etcs                         ][!railway],
+*[gauge                        ][!railway],
+*[grade_of_track               ][!railway],
+*[kursbuchstrecke              ][!railway],
+*[lzb                          ][!railway],
+*[old_railway_operator         ][!railway],
+*[operating_procedure          ][!railway],
+*[pzb                          ][!railway],
+*[radio                        ][!railway],
+*[structure_gauge              ][!railway],
+*[tilting_technology           ][!railway],
+*[track_class                  ][!railway],
+*[tracks                       ][!railway],
+*[traffic_mode                 ][!railway],
+*[usage                        ][!railway],
+*[workrules                    ][!railway],
+*[stream                       ][!waterway],
+*[intermittent                 ][!waterway],
+*[length_unit                  ][!waterway],
+*[llid                         ][!waterway],
+*[canal                        ][!waterway],
+*[have_riverbank               ][!waterway],
+*[border_type                  ][!boundary],
+*[source:date                  ][!source],
+*[source:name                  ][!name],
+*[source:maxspeed:forward      ][!maxspeed:forward],
+*[source:maxspeed:backward     ][!maxspeed:backward],
+*[source:maxspeed:forward      ][!source:maxspeed:backward],
+*[source:maxspeed:backward     ][!source:maxspeed:forward],
+*[source:building              ][!building],
+*[source:ref                   ][!ref],
+*[source:population            ][!population],
+*[source:postal_code           ][!postal_code],
+*[source:ele                   ][!ele],
+*[source:ref:INSEE             ][!ref:INSEE],
+*[source:lit                   ][!lit],
+*[source:hgv                   ][!hgv],
+*[source:highway               ][!highway],
+*[source:maxaxleload           ][!maxaxleload],
+*[source:surface               ][!surface],
+*[source:bridge                ][!bridge],
+*[source:old_name              ][!old_name],
+*[source:bicycle               ][!bicycle],
+*[source:designation           ][!designation],
+*[source:height                ][!height],
+*[source:lanes                 ][!lanes],
+*[/source:(addr:)?postcode/    ][!addr:postcode],
+*[/source:(addr:)?housenumber/ ][!addr:housenumber],
+*[source:addr                  ][!/^addr:/],
+*[source:maxspeed              ][!/^maxspeed:?/] {
+  throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
+  assertMatch: "way lanes=42";
+  assertNoMatch: "way lanes=42 highway=unclassified";
+  assertMatch: "node source:addr:postcode=postman";
+  assertMatch: "node source:addr=postman";
+  assertNoMatch: "node source:addr=postman addr:housenumber=42";
+}
+
+/* {0.key} without {1.tag} */
+*[fence_type                   ][barrier!=fence],
+*[recycling_type               ][amenity!=recycling],
+*[board_type                   ][information!=board],
+*[shelter_type                 ][amenity!=shelter],
+*[lamp_type                    ][highway!=street_lamp],
+*[map_type                     ][information!=map],
+*[site_type                    ][historic!=archaeological_site],
+*[artwork_type                 ][tourism!=artwork],
+*[castle_type                  ][historic!=castle],
+*[reservoir_type               ][landuse!=reservoir][water!=reservoir],
+*[bunker_type                  ][military!=bunker] {
+  throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
+}
+
+/* {0.key} without {1.key} or {2.key} */
+*[incline                      ][!highway][!railway],
+*[oneway                       ][!highway][!railway] {
+  throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
+}
+
+/* {0.key} without {1.key} or {2.tag} */
+*[segregated                   ][!highway][railway=crossing],
+*[toll                         ][!highway][route!=ferry],
+*[boat                         ][!waterway][natural!=water][natural != water] {
+  throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
+}
+
+/* {0} on a node */
+node[source:geometry],
+node[source:outline] {
+  throwWarning: tr("{0} on a node", "{0.key}");
+}
+
+/* {0} on suspicious object */
+*[tunnel  ][!highway][!railway][!waterway][public_transport != platform][man_made != pipeline],
+*[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport != platform][man_made !~ /^(bridge|pipeline)$/][building != bridge],
+*[psv     ][!highway][!railway][!waterway][amenity !~ /^parking.*/],
+*[width   ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance],
+*[maxspeed][!highway][!railway][traffic_sign !~ /^(.*;)?maxspeed(;.*)?$/][type != enforcement],
+*[lit     ][!highway][!railway][!piste:type][amenity !~ /^parking/][public_transport!=platform][advertising!=billboard][leisure!=pitch] {
+  throwWarning: tr("{0} on suspicious object", "{0.key}");
+}
+
+node[amenity =~ /^(restaurant|cafe|fast_food)$/][!name] {
+  throwOther: tr("restaurant without name");
+  assertMatch: "node amenity=restaurant";
+  assertNoMatch: "node amenity=restaurant name=Foobar";
+}
+
+*[highway][waterway][waterway!=dam],
+*[highway][natural],
+*[landuse][building] {
+  throwWarning: tr("{0} used with {1}", "{0.key}", "{1.key}");
+}
+
+*[natural=water][leisure=swimming_pool],
+*[natural=water][amenity=swimming_pool] {
+  /* see #6932 */
+  throwWarning: tr("natural water used for swimming pool");
+}

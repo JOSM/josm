@@ -176,17 +176,3 @@
   throwWarning: tr("{0} is deprecated", "monitoring:river_level");
   fixChangeKey: "monitoring:river_level => monitoring:water_level";
 }
-
-*[layer=0] {
-  /* see #9365 - Useless tag layer=0 */
-  throwWarning: tr("{0}={1} is unnecessary", "layer", "0");
-  fixRemove: "layer";
-}
-
-*[emergency=permissive] {
-  /* see #9458 - emergency=permissive makes no sense */
-  throwWarning: tr("{0}={1} makes no sense", "emergency", "permissive");
-  fixAdd: "emergency=yes";
-  assertMatch: "way emergency=permissive";
-  assertNoMatch: "way emergency=designated";
-}

@@ -1,5 +1,11 @@
 /* measurement values and units warnings (ticket #8687) */
 
+*[/^[0-9]+$/] {
+  throwWarning: tr("numerical key");
+  assertMatch: "way 123=foo";
+  assertNoMatch: "way ref.1=foo";
+}
+
 *[layer =~ /\+.*/] {
   throwWarning: tr("layer tag with + sign");
   fixAdd: concat("layer=", replace(tag("layer"), "+", ""));
