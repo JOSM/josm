@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.text.MessageFormat;
 import java.util.EnumSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -15,6 +14,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
 abstract public class Condition {
@@ -38,13 +38,13 @@ abstract public class Condition {
         }
     }
 
-    public static Condition create(String k, boolean not, boolean yes, boolean no, Context context) {
+    public static Condition create(String k, boolean not, KeyMatchType matchType, Context context) {
         switch (context) {
         case PRIMITIVE:
-            return new KeyCondition(k, not, yes, no);
+            return new KeyCondition(k, not, matchType);
         case LINK:
-            if (yes || no)
-                throw new MapCSSException("Question mark operator ''?'' not supported in LINK context");
+            if (matchType != null)
+                throw new MapCSSException("Question mark operator ''?'' and regexp match not supported in LINK context");
             if (not)
                 return new RoleCondition(k, Op.NEQ);
             else
@@ -76,9 +76,8 @@ abstract public class Condition {
                 return !equal(testString, prototypeString);
             case REGEX:
             case NREGEX:
-                Pattern p = Pattern.compile(prototypeString);
-                Matcher m = p.matcher(testString);
-                return REGEX.equals(this) ? m.find() : !m.find();
+                final boolean contains = Pattern.compile(prototypeString).matcher(testString).find();
+                return REGEX.equals(this) ? contains : !contains;
             case ONE_OF:
                 String[] parts = testString.split(";");
                 for (String part : parts) {
@@ -141,9 +140,9 @@ abstract public class Condition {
      */
     public static class KeyValueCondition extends Condition {
 
-        public String k;
-        public String v;
-        public Op op;
+        public final String k;
+        public final String v;
+        public final Op op;
 
         /**
          * <p>Creates a key/value-condition.</p>
@@ -174,8 +173,8 @@ abstract public class Condition {
     }
 
     public static class RoleCondition extends Condition {
-        public String role;
-        public Op op;
+        public final String role;
+        public final Op op;
 
         public RoleCondition(String role, Op op) {
             this.role = role;
@@ -191,8 +190,8 @@ abstract public class Condition {
     }
 
     public static class IndexCondition extends Condition {
-        public String index;
-        public Op op;
+        public final String index;
+        public final Op op;
 
         public IndexCondition(String index, Op op) {
             this.index = index;
@@ -204,6 +203,10 @@ abstract public class Condition {
             if (env.index == null) return false;
             return op.eval(Integer.toString(env.index + 1), index);
         }
+    }
+
+    public static enum KeyMatchType {
+        EQ, TRUE, FALSE, REGEX
     }
 
     /**
@@ -227,26 +230,26 @@ abstract public class Condition {
      */
     public static class KeyCondition extends Condition {
 
-        private String label;
-        private boolean negateResult;
-        private boolean testForTrueValues;
-        private boolean testForFalseValues;
+        public final String label;
+        public final boolean negateResult;
+        public final KeyMatchType matchType;
 
-        public KeyCondition(String label, boolean negateResult, boolean testForTrueValues, boolean testForFalseValues){
+        public KeyCondition(String label, boolean negateResult, KeyMatchType matchType){
             this.label = label;
             this.negateResult = negateResult;
-            this.testForTrueValues = testForTrueValues;
-            this.testForFalseValues = testForFalseValues;
+            this.matchType = matchType;
         }
 
         @Override
         public boolean applies(Environment e) {
             switch(e.getContext()) {
             case PRIMITIVE:
-                if (testForTrueValues)
+                if (KeyMatchType.TRUE.equals(matchType))
                     return OsmUtils.isTrue(e.osm.get(label)) ^ negateResult;
-                else if (testForFalseValues)
+                else if (KeyMatchType.FALSE.equals(matchType))
                     return OsmUtils.isFalse(e.osm.get(label)) ^ negateResult;
+                else if (KeyMatchType.REGEX.equals(matchType))
+                    return Utils.exists(e.osm.keySet(), Predicates.stringContainsPattern(Pattern.compile(label))) ^ negateResult;
                 else
                     return e.osm.hasKey(label) ^ negateResult;
             case LINK:
@@ -268,8 +271,8 @@ abstract public class Condition {
 
     public static class PseudoClassCondition extends Condition {
 
-        String id;
-        boolean not;
+        public final String id;
+        public final boolean not;
 
         public PseudoClassCondition(String id, boolean not) {
             this.id = id;
