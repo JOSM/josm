@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins;
 
+import org.openstreetmap.josm.tools.Utils;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -8,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,12 +35,10 @@ public class PluginListParser {
     protected static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException{
         try {
             return new PluginInformation(
-                    new ByteArrayInputStream(manifest.getBytes("utf-8")),
+                    new ByteArrayInputStream(manifest.getBytes(Utils.UTF_8)),
                     name.substring(0, name.length() - 4),
                     url
                     );
-        } catch(UnsupportedEncodingException e) {
-            throw new PluginListParseException(tr("Failed to create plugin information from manifest for plugin ''{0}''", name), e);
         } catch (PluginException e) {
             throw new PluginListParseException(tr("Failed to create plugin information from manifest for plugin ''{0}''", name), e);
         }
@@ -60,7 +59,7 @@ public class PluginListParser {
         List<PluginInformation> ret = new LinkedList<PluginInformation>();
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new InputStreamReader(in, "utf-8"));
+            r = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));
             String name = null;
             String url = null;
             StringBuilder manifest = new StringBuilder();

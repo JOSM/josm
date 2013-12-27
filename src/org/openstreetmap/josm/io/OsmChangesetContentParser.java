@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -18,6 +17,7 @@ import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationTyp
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -104,12 +104,11 @@ public class OsmChangesetContentParser {
      * Constructs a new {@code OsmChangesetContentParser}.
      *
      * @param source the input stream with the changeset content as XML document. Must not be null.
-     * @throws UnsupportedEncodingException if {@code UTF-8} charset is missing
      * @throws IllegalArgumentException if source is {@code null}.
      */
-    public OsmChangesetContentParser(InputStream source) throws UnsupportedEncodingException {
+    public OsmChangesetContentParser(InputStream source) {
         CheckParameterUtil.ensureParameterNotNull(source, "source");
-        this.source = new InputSource(new InputStreamReader(source, "UTF-8"));
+        this.source = new InputSource(new InputStreamReader(source, Utils.UTF_8));
     }
 
     /**

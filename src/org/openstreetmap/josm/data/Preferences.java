@@ -595,7 +595,7 @@ public class Preferences {
         }
 
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                new FileOutputStream(prefFile + "_tmp"), "utf-8"), false);
+                new FileOutputStream(prefFile + "_tmp"), Utils.UTF_8), false);
         out.print(toXML(false));
         Utils.close(out);
 
@@ -620,11 +620,11 @@ public class Preferences {
         properties.clear();
         if (!Main.applet) {
             File pref = getPreferenceFile();
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), "utf-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8));
             try {
                 validateXML(in);
                 Utils.close(in);
-                in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), "utf-8"));
+                in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8));
                 fromXML(in);
             } finally {
                 Utils.close(in);

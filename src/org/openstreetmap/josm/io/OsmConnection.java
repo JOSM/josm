@@ -21,6 +21,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.Base64;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Base class that handles common things like authentication for the reader and writer
@@ -72,7 +73,7 @@ public class OsmConnection {
      * @throws OsmTransferException thrown if something went wrong. Check for nested exceptions
      */
     protected void addBasicAuthorizationHeader(HttpURLConnection con) throws OsmTransferException {
-        CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+        CharsetEncoder encoder = Utils.UTF_8.newEncoder();
         CredentialsAgentResponse response;
         String token;
         try {

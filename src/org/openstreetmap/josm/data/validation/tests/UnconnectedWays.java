@@ -127,8 +127,10 @@ public abstract class UnconnectedWays extends Test {
                         continue;
                     }
                     if (en.hasTag("highway", "turning_circle", "bus_stop")
+                            || en.hasTag("amenity", "parking_entrance")
                             || en.hasTag("railway", "buffer_stop")
                             || OsmUtils.isTrue(en.get("noexit"))
+                            || en.hasKey("entrance")
                             || en.hasKey("barrier")) {
                         continue;
                     }

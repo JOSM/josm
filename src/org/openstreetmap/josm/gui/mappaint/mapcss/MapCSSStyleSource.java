@@ -94,7 +94,7 @@ public class MapCSSStyleSource extends StyleSource {
     @Override
     public InputStream getSourceInputStream() throws IOException {
         if (css != null) {
-            return new ByteArrayInputStream(css.getBytes("UTF-8"));
+            return new ByteArrayInputStream(css.getBytes(Utils.UTF_8));
         }
         MirroredInputStream in = new MirroredInputStream(url);
         if (isZip) {

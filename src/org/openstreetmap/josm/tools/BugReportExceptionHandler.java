@@ -193,7 +193,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             GZIPOutputStream gzip = new GZIPOutputStream(out);
-            gzip.write(debugText.getBytes("UTF-8"));
+            gzip.write(debugText.getBytes(Utils.UTF_8));
             Utils.close(gzip);
 
             return new URL(Main.JOSM_WEBSITE+"/josmticket?" +

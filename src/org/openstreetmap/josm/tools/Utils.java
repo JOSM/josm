@@ -22,11 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -54,6 +54,13 @@ public final class Utils {
     private Utils() {
         // Hide default constructor for utils classes
     }
+
+    /**
+     * UTF-8 (UCS Transformation Format—8-bit).
+     *
+     * <p>Every implementation of the Java platform is required to support UTF-8 (see {@link Charset}).</p>
+     */
+    public static final Charset UTF_8 = Charset.forName("UTF-8");
 
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
@@ -435,12 +442,7 @@ public final class Utils {
      * @return MD5 hash of data, string of length 32 with characters in range [0-9a-f]
      */
     public static String md5Hex(String data) {
-        byte[] byteData = null;
-        try {
-            byteData = data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException();
-        }
+        byte[] byteData = data.getBytes(UTF_8);
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("MD5");
@@ -706,7 +708,7 @@ public final class Utils {
      * @since 6421
      */
     public static BufferedReader openURLReaderAndDecompress(final URL url, final boolean decompress) throws IOException {
-        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), "utf-8"));
+        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), UTF_8));
     }
 
     /**

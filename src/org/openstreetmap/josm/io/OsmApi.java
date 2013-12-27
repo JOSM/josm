@@ -626,7 +626,7 @@ public class OsmApi extends OsmConnection {
                     // we use the output stream, we create an output stream for PUT/POST
                     // even if there is no payload.
                     if (requestBody != null) {
-                        BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                        BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8));
                         try {
                             bwr.write(requestBody);
                             bwr.flush();

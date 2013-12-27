@@ -13,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -210,13 +209,7 @@ public class TagChecker extends Test {
             BufferedReader reader = null;
             try {
                 MirroredInputStream s = new MirroredInputStream(source);
-                InputStreamReader r;
-                try {
-                    r = new InputStreamReader(s, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    r = new InputStreamReader(s);
-                }
-                reader = new BufferedReader(r);
+                reader = new BufferedReader(new InputStreamReader(s, Utils.UTF_8));
 
                 String okValue = null;
                 boolean tagcheckerfile = false;

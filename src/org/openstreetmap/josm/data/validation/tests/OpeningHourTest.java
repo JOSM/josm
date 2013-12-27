@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tests the correct usage of the opening hour syntax of the tags
@@ -52,7 +53,7 @@ public class OpeningHourTest extends Test {
     public void initialize() throws Exception {
         super.initialize();
         if (ENGINE != null) {
-            ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/validator/opening_hours.js"), "UTF-8"));
+            ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/validator/opening_hours.js"), Utils.UTF_8));
             // fake country/state to not get errors on holidays
             ENGINE.eval("var nominatimJSON = {address: {state: 'Bayern', country_code: 'de'}};");
             ENGINE.eval("" +

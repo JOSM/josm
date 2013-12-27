@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

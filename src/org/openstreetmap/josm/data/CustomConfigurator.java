@@ -231,7 +231,7 @@ public final class CustomConfigurator {
 
         try {
             String toXML = Main.pref.toXML(true);
-            InputStream is = new ByteArrayInputStream(toXML.getBytes("UTF-8"));
+            InputStream is = new ByteArrayInputStream(toXML.getBytes(Utils.UTF_8));
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setValidating(false);
             builderFactory.setNamespaceAware(false);

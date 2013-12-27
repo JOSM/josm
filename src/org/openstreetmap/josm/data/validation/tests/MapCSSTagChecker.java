@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -367,10 +366,9 @@ public class MapCSSTagChecker extends Test {
      * Adds a new MapCSS config file from the given internal filename.
      * @param internalConfigFile the filename in data/validator
      * @throws ParseException if the config file does not match MapCSS syntax
-     * @throws UnsupportedEncodingException if UTF-8 charset is not supported on the platform
      */
-    private void addMapCSS(String internalConfigFile) throws ParseException, UnsupportedEncodingException {
-        addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/" + internalConfigFile + ".mapcss"), "UTF-8"));
+    private void addMapCSS(String internalConfigFile) throws ParseException {
+        addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/" + internalConfigFile + ".mapcss"), Utils.UTF_8));
     }
 
     @Override

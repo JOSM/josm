@@ -1,7 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import org.junit.Test 
+import org.junit.Test
+import org.openstreetmap.josm.tools.Utils
 
 import static org.junit.Assert.*;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
@@ -41,11 +42,11 @@ class OsmChangesetContentParserTest {
 		"""
 		
 		// should be OK 
-		parser = new OsmChangesetContentParser(new ByteArrayInputStream(doc.getBytes("UTF-8")))
+		parser = new OsmChangesetContentParser(new ByteArrayInputStream(doc.getBytes(Utils.UTF_8)))
 		parser.parse null
 		
 		// should be OK 
-		parser = new OsmChangesetContentParser(new ByteArrayInputStream(doc.getBytes("UTF-8")))		
+		parser = new OsmChangesetContentParser(new ByteArrayInputStream(doc.getBytes(Utils.UTF_8)))
 		parser.parse NullProgressMonitor.INSTANCE
 		
 		// should be OK 
