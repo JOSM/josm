@@ -54,6 +54,7 @@ public class MapCSSTagCheckerTest {
         assertTrue(check.matchesPrimitive(n1));
         assertThat(check.getErrorForPrimitive(n1).getMessage(), is("natural=marsh is deprecated"));
         assertThat(check.getErrorForPrimitive(n1).getSeverity(), is(Severity.WARNING));
+        assertThat(check.fixPrimitive(n1).getDescriptionText(), is("Sequence: Fix of natural=marsh is deprecated"));
         assertThat(((ChangePropertyCommand) check.fixPrimitive(n1).getChildren().iterator().next()).getTags().toString(),
                 is("{natural=}"));
         final Node n2 = new Node();
@@ -75,7 +76,7 @@ public class MapCSSTagCheckerTest {
         if (p == null) {
             throw new IllegalArgumentException("Expecting n/node/w/way/r/relation, but got " + x[0]);
         }
-        for (final Map.Entry<String, String> i : TextTagParser.getValidatedTagsFromText(x[1]).entrySet()) {
+        for (final Map.Entry<String, String> i : TextTagParser.readTagsFromText(x[1]).entrySet()) {
             p.put(i.getKey(), i.getValue());
         }
         return p;

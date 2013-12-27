@@ -254,7 +254,7 @@ public class MapCSSTagChecker extends Test {
                 final String newKey = insertArguments(matchingSelector, i.getValue());
                 cmds.add(new ChangePropertyKeyCommand(p, oldKey, newKey));
             }
-            return new SequenceCommand(tr("Fix of {0}", getDescription()), cmds);
+            return new SequenceCommand(tr("Fix of {0}", getDescriptionForMatchingSelector(matchingSelector)), cmds);
         }
 
         /**
@@ -270,6 +270,7 @@ public class MapCSSTagChecker extends Test {
          * Constructs a (localized) description for this deprecation check.
          *
          * @return a description (possibly with alternative suggestions)
+         * @see {@link #getDescriptionForMatchingSelector(Selector)}
          */
         String getDescription() {
             if (alternatives.isEmpty()) {
@@ -280,8 +281,23 @@ public class MapCSSTagChecker extends Test {
             }
         }
 
+        /**
+         * Constructs a (localized) description for this deprecation check
+         * where any placeholders are replaced by values of the matched selector.
+         *
+         * @return a description (possibly with alternative suggestions)
+         */
+        String getDescriptionForMatchingSelector(Selector matchingSelector) {
+            return insertArguments(matchingSelector, getDescription());
+        }
+
         Severity getSeverity() {
             return errors.values().iterator().next();
+        }
+
+        @Override
+        public String toString() {
+            return getDescription();
         }
 
         /**
@@ -294,7 +310,7 @@ public class MapCSSTagChecker extends Test {
             final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
             if (matchingSelector != null) {
                 final Command fix = fixPrimitive(p);
-                final String description = TagCheck.insertArguments(matchingSelector, getDescription());
+                final String description = getDescriptionForMatchingSelector(matchingSelector);
                 if (fix != null) {
                     return new FixableTestError(null, getSeverity(), description, 3000, p, fix);
                 } else {
@@ -362,5 +378,9 @@ public class MapCSSTagChecker extends Test {
         addMapCSS("numeric.mapcss");
         addMapCSS("religion.mapcss");
         addMapCSS("relation.mapcss");
+        addMapCSS("combinations.mapcss");
+        addMapCSS("unnecessary.mapcss");
+        addMapCSS("wikipedia.mapcss");
+        addMapCSS("power.mapcss");
     }
 }
