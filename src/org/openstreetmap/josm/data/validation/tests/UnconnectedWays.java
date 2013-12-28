@@ -113,7 +113,7 @@ public abstract class UnconnectedWays extends Test {
         othernodes = new HashSet<Node>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
-        dsArea = Main.main.getCurrentDataSet().getDataSourceArea();
+        dsArea = Main.main == null || !Main.main.hasEditLayer() ? null : Main.main.getCurrentDataSet().getDataSourceArea();
     }
 
     @Override
@@ -134,11 +134,10 @@ public abstract class UnconnectedWays extends Test {
                             || en.hasKey("barrier")) {
                         continue;
                     }
-                    // There's a small false-positive here.  Imagine an intersection
-                    // like a 't'.  If the top part of the 't' is short enough, it
-                    // will trigger the node at the very top of the 't' to be unconnected
-                    // to the way that "crosses" the 't'.  We should probably check that
-                    // the ways to which 'en' belongs are not connected to 's.w'.
+                    // to handle intersections of 't' shapes and similar
+                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                        continue;
+                    }
                     map.put(en, s.w);
                 }
                 if(isCanceled())
