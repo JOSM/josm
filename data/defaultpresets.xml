@@ -125,7 +125,7 @@ chunk: a template of elements for later (repeated) use
   id: the unique identifier for this chunk
 
 reference: include an earlier defined template
-  ref: he unique identifier of the (already defined) template to include
+  ref: the unique identifier of the (already defined) template to include
 
  presets: For external files <presets> should have following attributes:
    author: the author of the preset
@@ -180,7 +180,7 @@ Note that for a match, at least one positive and no negative is required.
     </chunk>
     <chunk id="highway_yesno_incline_oneway_lit_width">
         <reference ref="highway_yesno_incline_oneway_lit" />
-        <check key="lit" text="Lit" />
+        <text key="width" text="Width (meters)" />
     </chunk>
     <chunk id="barrier_5">
         <optional text="Allowed traffic:">
