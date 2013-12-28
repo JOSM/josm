@@ -445,8 +445,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0),"onTableInsert");
         tagTable.getActionMap().put("onTableInsert",addAction);
 
-        // unassign some standard shortcuts for JTable to allow upload / download
+        // unassign some standard shortcuts for JTable to allow upload / download / image browsing
         InputMapUtils.unassignCtrlShiftUpDown(tagTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        InputMapUtils.unassignPageUpDown(tagTable, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // unassign some standard shortcuts for correct copy-pasting, fix #8508
         tagTable.setTransferHandler(null);
