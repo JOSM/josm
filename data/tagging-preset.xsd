@@ -99,7 +99,7 @@
         <attribute name="ref" type="IDREF" use="required" />
     </complexType>
 
-	<group name="optional_elements">
+    <group name="optional_elements">
 		<choice>
 			<element name="label" type="tns:label" />
 			<element name="space" type="tns:space" />
