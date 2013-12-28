@@ -105,4 +105,23 @@ class MapCSSParserTest {
         assert c1.applies(getEnvironment("lanes:backward", "3"))
         assert !c1.applies(getEnvironment("lanes:foobar", "3"))
     }
+
+    @Test
+    public void testKeyKeyCondition() throws Exception {
+        def c1 = (Condition.KeyValueCondition) new MapCSSParser(new StringReader("[foo = *bar]")).condition(Condition.Context.PRIMITIVE)
+        def w1 = new Way()
+        w1.put("foo", "123")
+        w1.put("bar", "456")
+        assert !c1.applies(new Environment().withPrimitive(w1))
+        w1.put("bar", "123")
+        assert c1.applies(new Environment().withPrimitive(w1))
+        def c2 = (Condition.KeyValueCondition) new MapCSSParser(new StringReader("[foo =~ */bar/]")).condition(Condition.Context.PRIMITIVE)
+        def w2 = new Way(w1)
+        w2.put("bar", "[0-9]{3}")
+        assert c2.applies(new Environment().withPrimitive(w2))
+        w2.put("bar", "[0-9]")
+        assert c2.applies(new Environment().withPrimitive(w2))
+        w2.put("bar", "^[0-9]\$")
+        assert !c2.applies(new Environment().withPrimitive(w2))
+    }
 }
