@@ -3,10 +3,14 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -15,6 +19,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -24,6 +29,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
@@ -37,10 +43,13 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -383,15 +392,33 @@ public class MapCSSTagChecker extends Test {
         addMapCSS("wikipedia");
         addMapCSS("power");
         addMapCSS("geometry");
+        for (final String i : sourcesProperty.get()) {
+            final String file = new File(i).getAbsolutePath();
+            try {
+                Main.info(tr("Adding {0} to tag checker", file));
+                addMapCSS(new BufferedReader(new InputStreamReader(new FileInputStream(i), Utils.UTF_8)));
+            } catch (Exception ex) {
+                Main.warn(new RuntimeException(tr("Failed to add {0} to tag checker", file), ex));
+            }
+        }
     }
+
+    protected EditableList sourcesList;
+    protected final CollectionProperty sourcesProperty = new CollectionProperty(
+            "validator." + this.getClass().getName() + ".sources", Collections.<String>emptyList());
 
     @Override
     public void addGui(JPanel testPanel) {
         super.addGui(testPanel);
+        sourcesList = new EditableList(tr("TagChecker source"));
+        sourcesList.setItems(sourcesProperty.get());
+        testPanel.add(new JLabel(tr("Data sources ({0})", "*.mapcss")), GBC.eol().insets(23, 0, 0, 0));
+        testPanel.add(sourcesList, GBC.eol().fill(GBC.HORIZONTAL).insets(23, 0, 0, 0));
     }
 
     @Override
     public boolean ok() {
+        sourcesProperty.put(sourcesList.getItems());
         return super.ok();
     }
 }
