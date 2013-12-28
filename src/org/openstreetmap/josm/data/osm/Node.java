@@ -7,6 +7,13 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
+
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * One node data, consisting of one world coordinate waypoint.
@@ -334,6 +341,38 @@ public final class Node extends OsmPrimitive implements INode {
     @Override
     public boolean concernsArea() {
         // A node cannot be an area
+        return false;
+    }
+
+    /**
+     * Tests whether {@code this} node is connected to {@code otherNode} via at most {@code hops} nodes
+     * matching the {@code predicate} (which may be {@code null} to consider all nodes).
+     */
+    public boolean isConnectedTo(final Collection<Node> otherNodes, final int hops, Predicate<Node> predicate) {
+        CheckParameterUtil.ensureParameterNotNull(otherNodes);
+        CheckParameterUtil.ensureThat(!otherNodes.isEmpty(), "otherNodes must not be empty!");
+        CheckParameterUtil.ensureThat(hops >= 0, "hops must be non-negative!");
+        return hops == 0
+                ? isConnectedTo(otherNodes, hops, predicate, null)
+                : isConnectedTo(otherNodes, hops, predicate, new TreeSet<Node>());
+    }
+
+    private boolean isConnectedTo(final Collection<Node> otherNodes, final int hops, Predicate<Node> predicate, Set<Node> visited) {
+        if (otherNodes.contains(this)) {
+            return true;
+        }
+        if (hops > 0) {
+            visited.add(this);
+            for (final Way w : Utils.filteredCollection(this.getReferrers(), Way.class)) {
+                for (final Node n : w.getNodes()) {
+                    final boolean containsN = visited.contains(n);
+                    visited.add(n);
+                    if (!containsN && (predicate == null || predicate.evaluate(n)) && n.isConnectedTo(otherNodes, hops - 1, predicate, visited)) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 }
