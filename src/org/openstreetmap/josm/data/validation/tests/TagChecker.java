@@ -4,9 +4,9 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +27,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -58,6 +54,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Check;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
+import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -127,10 +124,6 @@ public class TagChecker extends Test {
     protected JCheckBox prefUseIgnoreFile;
     protected JCheckBox prefUseSpellFile;
 
-    protected JButton addSrcButton;
-    protected JButton editSrcButton;
-    protected JButton deleteSrcButton;
-
     protected static final int EMPTY_VALUES      = 1200;
     protected static final int INVALID_KEY       = 1201;
     protected static final int INVALID_VALUE     = 1202;
@@ -144,8 +137,7 @@ public class TagChecker extends Test {
     protected static final int LOW_CHAR_KEY      = 1211;
     /** 1250 and up is used by tagcheck */
 
-    /** List of sources for spellcheck data */
-    protected JList sourcesList;
+    protected EditableList sourcesList;
 
     protected static final Entities entities = new Entities();
 
@@ -532,94 +524,11 @@ public class TagChecker extends Test {
         prefCheckComplexBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckComplexBeforeUpload, a);
 
-        sourcesList = new JList(new DefaultListModel());
-
-        String sources = Main.pref.get( PREF_SOURCES );
-        if (sources != null && sources.length() > 0) {
-            for (String source : sources.split(";")) {
-                ((DefaultListModel)sourcesList.getModel()).addElement(source);
-            }
-        }
-
-        addSrcButton = new JButton(tr("Add"));
-        addSrcButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String source = JOptionPane.showInputDialog(
-                        Main.parent,
-                        tr("TagChecker source"),
-                        tr("TagChecker source"),
-                        JOptionPane.QUESTION_MESSAGE);
-                if (source != null) {
-                    ((DefaultListModel)sourcesList.getModel()).addElement(source);
-                }
-                sourcesList.clearSelection();
-            }
-        });
-
-        editSrcButton = new JButton(tr("Edit"));
-        editSrcButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int row = sourcesList.getSelectedIndex();
-                if (row == -1 && sourcesList.getModel().getSize() == 1) {
-                    sourcesList.setSelectedIndex(0);
-                    row = 0;
-                }
-                if (row == -1) {
-                    if (sourcesList.getModel().getSize() == 0) {
-                        String source = JOptionPane.showInputDialog(Main.parent, tr("TagChecker source"), tr("TagChecker source"), JOptionPane.QUESTION_MESSAGE);
-                        if (source != null) {
-                            ((DefaultListModel)sourcesList.getModel()).addElement(source);
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(
-                                Main.parent,
-                                tr("Please select the row to edit."),
-                                tr("Information"),
-                                JOptionPane.INFORMATION_MESSAGE
-                                );
-                    }
-                } else {
-                    String source = (String)JOptionPane.showInputDialog(Main.parent,
-                            tr("TagChecker source"),
-                            tr("TagChecker source"),
-                            JOptionPane.QUESTION_MESSAGE, null, null,
-                            sourcesList.getSelectedValue());
-                    if (source != null) {
-                        ((DefaultListModel)sourcesList.getModel()).setElementAt(source, row);
-                    }
-                }
-                sourcesList.clearSelection();
-            }
-        });
-
-        deleteSrcButton = new JButton(tr("Delete"));
-        deleteSrcButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (sourcesList.getSelectedIndex() == -1) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."), tr("Information"), JOptionPane.QUESTION_MESSAGE);
-                } else {
-                    ((DefaultListModel)sourcesList.getModel()).remove(sourcesList.getSelectedIndex());
-                }
-            }
-        });
-        sourcesList.setMinimumSize(new Dimension(300,50));
-        sourcesList.setVisibleRowCount(3);
-
-        sourcesList.setToolTipText(tr("The sources (URL or filename) of spell check (see http://wiki.openstreetmap.org/index.php/User:JLS/speller) or tag checking data files."));
-        addSrcButton.setToolTipText(tr("Add a new source to the list."));
-        editSrcButton.setToolTipText(tr("Edit the selected source."));
-        deleteSrcButton.setToolTipText(tr("Delete the selected source from the list."));
-
-        testPanel.add(new JLabel(tr("Data sources")), GBC.eol().insets(23,0,0,0));
-        testPanel.add(new JScrollPane(sourcesList), GBC.eol().insets(23,0,0,0).fill(GridBagConstraints.HORIZONTAL));
-        final JPanel buttonPanel = new JPanel(new GridBagLayout());
-        testPanel.add(buttonPanel, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-        buttonPanel.add(addSrcButton, GBC.std().insets(0,5,0,0));
-        buttonPanel.add(editSrcButton, GBC.std().insets(5,5,5,0));
-        buttonPanel.add(deleteSrcButton, GBC.std().insets(0,5,0,0));
+        final String sources = Main.pref.get(PREF_SOURCES);
+        sourcesList = new EditableList(tr("TagChecker source"));
+        sourcesList.setItems(sources != null ? Arrays.asList(sources.split(";")) : Collections.<String>emptyList());
+        testPanel.add(new JLabel(tr("Data sources ({0})", "*.cfg")), GBC.eol().insets(23, 0, 0, 0));
+        testPanel.add(sourcesList, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(23, 0, 0, 0));
 
         ActionListener disableCheckActionListener = new ActionListener() {
             @Override
@@ -666,10 +575,7 @@ public class TagChecker extends Test {
     public void handlePrefEnable() {
         boolean selected = prefCheckKeys.isSelected() || prefCheckKeysBeforeUpload.isSelected()
                 || prefCheckComplex.isSelected() || prefCheckComplexBeforeUpload.isSelected();
-        sourcesList.setEnabled( selected );
-        addSrcButton.setEnabled(selected);
-        editSrcButton.setEnabled(selected);
-        deleteSrcButton.setEnabled(selected);
+        sourcesList.setEnabled(selected);
     }
 
     @Override
@@ -689,16 +595,8 @@ public class TagChecker extends Test {
         Main.pref.put(PREF_USE_DATA_FILE, prefUseDataFile.isSelected());
         Main.pref.put(PREF_USE_IGNORE_FILE, prefUseIgnoreFile.isSelected());
         Main.pref.put(PREF_USE_SPELL_FILE, prefUseSpellFile.isSelected());
-        StringBuilder sources = new StringBuilder();
-        if (sourcesList.getModel().getSize() > 0) {
-            for (int i = 0; i < sourcesList.getModel().getSize(); ++i) {
-                if (sources.length() > 0) {
-                    sources.append(";");
-                }
-                sources.append(sourcesList.getModel().getElementAt(i));
-            }
-        }
-        return Main.pref.put(PREF_SOURCES, sources.length() > 0 ? sources.toString() : null);
+        final List<String> sources = sourcesList.getItems();
+        return Main.pref.put(PREF_SOURCES, sources.isEmpty() ? null : Utils.join(";", sources));
     }
 
     @Override
