@@ -21,11 +21,13 @@ abstract public class Condition {
 
     abstract public boolean applies(Environment e);
 
-    public static Condition create(String k, String v, Op op, Context context) {
+    public static Condition create(String k, String v, Op op, Context context, boolean considerValAsKey) {
         switch (context) {
         case PRIMITIVE:
-            return new KeyValueCondition(k, v, op);
+            return new KeyValueCondition(k, v, op, considerValAsKey);
         case LINK:
+            if (considerValAsKey)
+                throw new MapCSSException("''considerValAsKey'' not supported in LINK context");
             if ("role".equalsIgnoreCase(k))
                 return new RoleCondition(v, op);
             else if ("index".equalsIgnoreCase(k))
@@ -143,6 +145,7 @@ abstract public class Condition {
         public final String k;
         public final String v;
         public final Op op;
+        public boolean considerValAsKey;
 
         /**
          * <p>Creates a key/value-condition.</p>
@@ -150,16 +153,18 @@ abstract public class Condition {
          * @param k the key
          * @param v the value
          * @param op the operation
+         * @param considerValAsKey whether to consider {@code v} as another key and compare the values of key {@code k} and key {@code v}.
          */
-        public KeyValueCondition(String k, String v, Op op) {
+        public KeyValueCondition(String k, String v, Op op, boolean considerValAsKey) {
             this.k = k;
             this.v = v;
             this.op = op;
+            this.considerValAsKey = considerValAsKey;
         }
 
         @Override
         public boolean applies(Environment env) {
-            return op.eval(env.osm.get(k), v);
+            return op.eval(env.osm.get(k), considerValAsKey ? env.osm.get(v) : v);
         }
 
         public Tag asTag() {
