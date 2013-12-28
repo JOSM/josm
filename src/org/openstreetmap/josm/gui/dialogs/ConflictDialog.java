@@ -202,14 +202,19 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             @Override
             public void run() {
                 model.fireContentChanged();
-                updateTitle(conflicts.size());
+                updateTitle();
             }
         });
     }
 
-    private void updateTitle(int conflictsCount) {
+    private void updateTitle() {
+        int conflictsCount = conflicts.size();
         if (conflictsCount > 0) {
-            setTitle(tr("Conflicts: {0} unresolved", conflicts.size()));
+            setTitle(tr("Conflicts: {0} unresolved", conflicts.size()) +
+                    " ("+tr("Rel.:{0} / Ways:{1} / Nodes:{2}",
+                            conflicts.getRelationConflicts().size(),
+                            conflicts.getWayConflicts().size(),
+                            conflicts.getNodeConflicts().size())+")");
         } else {
             setTitle(tr("Conflict"));
         }
