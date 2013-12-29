@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -318,23 +320,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @param primitive the primitive to check for
      */
     public void removeMembersFor(OsmPrimitive primitive) {
-        if (primitive == null)
-            return;
-
-        boolean locked = writeLock();
-        try {
-            List<RelationMember> todelete = new ArrayList<RelationMember>();
-            for (RelationMember member: members) {
-                if (member.getMember() == primitive) {
-                    todelete.add(member);
-                }
-            }
-            List<RelationMember> members = getMembers();
-            members.removeAll(todelete);
-            setMembers(members);
-        } finally {
-            writeUnlock(locked);
-        }
+        removeMembersFor(Collections.singleton(primitive));
     }
 
     @Override
@@ -355,6 +341,19 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     /**
+     * Obtains all members with member.member == primitive
+     * @param primitives the primitives to check for
+     */
+    public Collection<RelationMember> getMembersFor(final Collection<? extends OsmPrimitive> primitives) {
+        return Utils.filter(getMembers(), new Predicate<RelationMember>() {
+            @Override
+            public boolean evaluate(RelationMember member) {
+                return primitives.contains(member.getMember());
+            }
+        });
+    }
+
+    /**
      * removes all members with member.member == primitive
      *
      * @param primitives the primitives to check for
@@ -366,14 +365,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
         boolean locked = writeLock();
         try {
-            List<RelationMember> todelete = new ArrayList<RelationMember>();
-            for (RelationMember member: members) {
-                if (primitives.contains(member.getMember())) {
-                    todelete.add(member);
-                }
-            }
             List<RelationMember> members = getMembers();
-            members.removeAll(todelete);
+            members.removeAll(getMembersFor(primitives));
             setMembers(members);
         } finally {
             writeUnlock(locked);
