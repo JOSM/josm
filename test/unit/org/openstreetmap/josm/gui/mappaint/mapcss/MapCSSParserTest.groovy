@@ -9,6 +9,9 @@ import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
+import org.openstreetmap.josm.tools.Utils
+
+import java.awt.Color
 
 class MapCSSParserTest {
 
@@ -59,7 +62,7 @@ class MapCSSParserTest {
     public void testClassMatching() throws Exception {
         def css = new MapCSSStyleSource("")
         getParser("" +
-                "way[highway=footway] { set path; color: #FF6644; width: 2; }\n" +
+                "way[highway=footway] { set .path; color: #FF6644; width: 2; }\n" +
                 "way[highway=path]    { set path; color: brown; width: 2; }\n" +
                 "way[\"set\"=escape]  {  }\n" +
                 "way.path             { text:auto; text-color: green; text-position: line; text-offset: 5; }\n" +
@@ -74,6 +77,9 @@ class MapCSSParserTest {
         css.apply(mc2, getPrimitive("highway", "residential"), 1, null, false);
         assert "orange".equals(mc2.getCascade("default").get("color", null, String.class))
         assert mc2.getCascade("default").get("text-color", null, String.class) == null
+        def mc3 = new MultiCascade()
+        css.apply(mc3, getPrimitive("highway", "footway"), 1, null, false);
+        assert Utils.hexToColor("#FF6644").equals(mc3.getCascade("default").get("color", null, Color.class))
     }
 
     @Test

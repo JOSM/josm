@@ -20,7 +20,7 @@ public class MultiCascade implements StyleKeys {
 
     public MultiCascade() {
         layers = new HashMap<String, Cascade>();
-        range = new Range();
+        range = Range.ZERO_TO_INFINITY;
     }
 
     /**

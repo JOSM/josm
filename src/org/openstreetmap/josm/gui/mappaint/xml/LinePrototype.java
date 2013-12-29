@@ -34,7 +34,7 @@ public class LinePrototype extends Prototype {
     public void init()
     {
         priority = 0;
-        range = new Range();
+        range = Range.ZERO_TO_INFINITY;
         width = -1;
         realWidth = null;
         dashed = null;

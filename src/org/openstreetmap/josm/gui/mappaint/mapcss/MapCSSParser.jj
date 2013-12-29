@@ -462,12 +462,14 @@ List<Instruction> declaration() :
     <LBRACE> w()
     (
         (
-        <SET> w() key=<IDENT> w()
-        ( <EQUAL> val=expression() )?
-        { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val)); }
-        ( <RBRACE> { return ins; } | <SEMICOLON> w() )
+            <SET> w()
+            (<FULLSTOP>)? // specification allows "set .class" to set "class". we also support "set class"
+            key=<IDENT> w()
+            ( <EQUAL> val=expression() )?
+            { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val)); }
+            ( <RBRACE> { return ins; } | <SEMICOLON> w() )
         )
-        |
+    |
         key=<IDENT> w() <COLON> w()
         (
             LOOKAHEAD( float_array() w() ( <SEMICOLON> | <RBRACE> ) )

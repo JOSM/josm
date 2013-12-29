@@ -21,7 +21,7 @@ public class IconPrototype extends Prototype {
 
     public void init() {
         priority = 0;
-        range = new Range();
+        range = Range.ZERO_TO_INFINITY;
         icon = null;
         annotate = null;
     }
