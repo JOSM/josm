@@ -313,11 +313,8 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
     public void setDefaultChangesetTags(Map<String, String> tags) {
         pnlTagSettings.setDefaultTags(tags);
-         for (Entry<String, String> entry: tags.entrySet()) {
-            if ("comment".equals(entry.getKey())) {
-                changesetCommentModel.setComment(entry.getValue());
-            }
-        }
+        changesetCommentModel.setComment(tags.get("comment"));
+        changesetSourceModel.setComment(tags.get("source"));
     }
 
     /**
