@@ -182,6 +182,19 @@ Note that for a match, at least one positive and no negative is required.
         <reference ref="highway_yesno_incline_oneway_lit" />
         <text key="width" text="Width (meters)" />
     </chunk>
+    <chunk id="railway_service">
+        <combo key="service" text="Service type" values="yard,siding,spur" />
+    </chunk>
+    <chunk id="railway_electrified">
+        <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
+        <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
+        <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
+    </chunk>
+    <chunk id="railway_service_gauge_electrified">
+        <reference ref="railway_service" />
+        <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
+        <reference ref="railway_electrified" />
+    </chunk>
     <chunk id="barrier_5">
         <optional text="Allowed traffic:">
             <check key="foot" text="Foot" default="on"/>
@@ -1908,11 +1921,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="railway" value="rail" />
             <optional>
                 <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
-                <combo key="service" text="Service type" values="yard,siding,spur" />
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
-                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
+                <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item>
         <item name="Narrow Gauge Rail" icon="presets/railway.png" type="way">
@@ -1921,11 +1930,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="railway" value="narrow_gauge" />
             <optional>
                 <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
-                <combo key="service" text="Service type" values="yard,siding,spur" />
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
-                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
+                <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item>
         <item name="Monorail" icon="presets/railway.png" type="way">
@@ -1936,10 +1941,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Monorail" />
             <key key="railway" value="monorail" />
             <optional>
-                <combo key="service" text="Service type" values="yard,siding,spur" />
-                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
+                <reference ref="railway_service" />
+                <reference ref="railway_electrified" />
             </optional>
         </item>
         <item name="Preserved" icon="presets/rail_preserved.png" type="way">
@@ -1947,11 +1950,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Preserved Railway" />
             <key key="railway" value="preserved" />
             <optional>
-                <combo key="service" text="Service type" values="yard,siding,spur" />
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
-                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
+                <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item>
         <item name="Light Rail" icon="presets/rail_light.png" type="way">
@@ -1959,11 +1958,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Light Rail" />
             <key key="railway" value="light_rail" />
             <optional>
-                <combo key="service" text="Service type" values="yard,siding,spur" />
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
-                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
+                <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item>
         <item name="Subway" icon="presets/rail_light.png" type="way">
@@ -1974,11 +1969,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Subway" />
             <key key="railway" value="subway" />
             <optional>
-                <combo key="service" text="Service type" values="yard,siding,spur" />
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
-                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
+                <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item>
         <item name="Tram" icon="presets/tram.png" type="way">
@@ -1991,11 +1982,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Tram" />
             <key key="railway" value="tram" />
             <optional>
-                <combo key="service" text="Service type" values="yard,siding,spur" />
-                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
-                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
-                <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
+                <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item>
         <item name="Bus Guideway" icon="presets/busway.png" type="way">
@@ -2020,7 +2007,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Disused Railway" />
             <key key="railway" value="disused" />
             <optional>
-                <combo key="service" text="Service type" values="yard,siding,spur" />
+                <reference ref="railway_service" />
             </optional>
         </item>
         <item name="Abandoned Rail" icon="presets/railway.png" type="way">
@@ -2029,7 +2016,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Abandoned Railway" />
             <key key="railway" value="abandoned" />
             <optional>
-                <combo key="service" text="Service type" values="yard,siding,spur" />
+                <reference ref="railway_service" />
             </optional>
         </item>
         <separator/>
