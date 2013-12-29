@@ -826,7 +826,7 @@ abstract public class Main {
      * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
      * @since 5519
      */
-    public static boolean saveUnsavedModifications(List<? extends Layer> selectedLayers, boolean exit) {
+    public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, boolean exit) {
         SaveLayersDialog dialog = new SaveLayersDialog(parent);
         List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<OsmDataLayer>();
         for (Layer l: selectedLayers) {

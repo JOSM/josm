@@ -11,6 +11,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +65,7 @@ public class BasicUploadSettingsPanel extends JPanel {
 
         pnl.add(new JLabel(tr("Specify the data source for the changes:")), GBC.eol().insets(0, 8, 10, 3));
         hcbUploadSource.setToolTipText(tr("Enter a source"));
-        List<String> sourceHistory = new LinkedList<String>(Main.pref.getCollection(SOURCE_HISTORY_KEY, new LinkedList<String>()));
+        List<String> sourceHistory = new LinkedList<String>(Main.pref.getCollection(SOURCE_HISTORY_KEY, Arrays.asList("knowledge", "survey")));
         Collections.reverse(sourceHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadSource.setPossibleItems(sourceHistory);
         final CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);

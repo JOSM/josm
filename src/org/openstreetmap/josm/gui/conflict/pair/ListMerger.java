@@ -888,7 +888,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
     protected final <P extends OsmPrimitive> OsmDataLayer findLayerFor(P primitive) {
         if (primitive != null) {
-            List<OsmDataLayer> layers = Main.map.mapView.getLayersOfType(OsmDataLayer.class);
+            Iterable<OsmDataLayer> layers = Main.map.mapView.getLayersOfType(OsmDataLayer.class);
             // Find layer with same dataset
             for (OsmDataLayer layer : layers) {
                 if (layer.data == primitive.getDataSet()) {

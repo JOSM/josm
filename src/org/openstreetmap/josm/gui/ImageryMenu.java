@@ -9,6 +9,7 @@ import java.awt.MenuComponent;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            List<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
+            Collection<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
             if (layers.isEmpty()) {
                 setEnabled(false);
                 return;
@@ -57,7 +58,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
             }
             JPopupMenu popup = new JPopupMenu();
             if (layers.size() == 1) {
-                JComponent c = layers.get(0).getOffsetMenuItem(popup);
+                JComponent c = layers.iterator().next().getOffsetMenuItem(popup);
                 if (c instanceof JMenuItem) {
                     ((JMenuItem) c).getAction().actionPerformed(e);
                 } else {
@@ -182,7 +183,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
             offsetAction.setEnabled(false);
             return singleOffset;
         }
-        List<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
+        Collection<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
         if (layers.isEmpty()) {
             offsetAction.setEnabled(false);
             return singleOffset;
@@ -199,7 +200,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         newMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
         newMenu.setAction(offsetAction);
         if (layers.size() == 1)
-            return (JMenuItem)layers.get(0).getOffsetMenuItem(newMenu);
+            return (JMenuItem)layers.iterator().next().getOffsetMenuItem(newMenu);
         for (ImageryLayer layer : layers) {
             JMenuItem layerMenu = layer.getOffsetMenuItem();
             layerMenu.setText(layer.getName());

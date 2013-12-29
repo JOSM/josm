@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -230,7 +231,12 @@ public class UploadAction extends JosmAction{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                dialog.setDefaultChangesetTags(layer.data.getChangeSetTags());
+                final HashMap<String, String> tags = new HashMap<String, String>(layer.data.getChangeSetTags());
+                if (!tags.containsKey("source")) {
+                    tags.put("source", Main.map.mapView.getLayerInformationForSourceTag());
+                    System.out.println(tags.get("source"));
+                }
+                dialog.setDefaultChangesetTags(tags);
             }
         });
         dialog.setUploadedPrimitives(apiData);
