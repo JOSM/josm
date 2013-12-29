@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
@@ -91,39 +92,43 @@ public final class TaggingPresetReader {
         final List<TaggingPresetItems.Check> checks = new LinkedList<TaggingPresetItems.Check>();
         List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<TaggingPresetItems.PresetListEntry>();
         final Map<String, List<Object>> byId = new HashMap<String, List<Object>>();
-        String lastId = null;
-        Iterator<Object> lastIdIterator = null;
+        final Stack<String> lastIds = new Stack<String>();
+        /** lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
+        final Stack<Iterator<Object>> lastIdIterators = new Stack<Iterator<Object>>();
 
         if (validate) {
             parser.startWithValidation(in, Main.JOSM_WEBSITE+"/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
         } else {
             parser.start(in);
         }
-        while (parser.hasNext()) {
+        while (parser.hasNext() || !lastIdIterators.isEmpty()) {
             final Object o;
-            if (lastIdIterator != null && lastIdIterator.hasNext()) {
-                // obtain elements from lastIdIterator with higher priority
-                o = lastIdIterator.next();
+            if (!lastIdIterators.isEmpty()) {
+                // obtain elements from lastIdIterators with higher priority
+                o = lastIdIterators.peek().next();
+                if (!lastIdIterators.peek().hasNext()) {
+                    // remove iterator is is empty
+                    lastIdIterators.pop();
+                }
             } else {
                 o = parser.next();
             }
             if (o instanceof Chunk) {
-                if (((Chunk) o).id.equals(lastId)) {
-                    // reset last id on end of object, don't process further
-                    lastId = null;
+                if (!lastIds.isEmpty() && ((Chunk) o).id.equals(lastIds.peek())) {
+                    // pop last id on end of object, don't process further
+                    lastIds.pop();
                     ((Chunk) o).id = null;
                     continue;
-                } else if (lastId == null) {
+                } else {
                     // if preset item contains an id, store a mapping for later usage
-                    lastId = ((Chunk) o).id;
+                    String lastId = ((Chunk) o).id;
+                    lastIds.push(lastId);
                     byId.put(lastId, new ArrayList<Object>());
                     continue;
-                } else {
-                    throw new IllegalStateException("Cannot deal with nested id objects (lastId was expected to be null)");
                 }
-            } else if (lastId != null) {
+            } else if (!lastIds.isEmpty()) {
                 // add object to mapping for later usage
-                byId.get(lastId).add(o);
+                byId.get(lastIds.peek()).add(o);
                 continue;
             }
             if (o instanceof Reference) {
@@ -133,7 +138,7 @@ public final class TaggingPresetReader {
                 if (byId.get(ref) == null) {
                     throw new SAXException(tr("Reference {0} is being used before it was defined", ref));
                 }
-                lastIdIterator = byId.get(ref).iterator();
+                lastIdIterators.push(byId.get(ref).iterator());
                 continue;
             }
             if (!(o instanceof TaggingPresetItem) && !checks.isEmpty()) {
