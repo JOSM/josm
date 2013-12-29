@@ -266,9 +266,9 @@ public interface Selector {
     }
 
     public static class GeneralSelector extends AbstractSelector {
-        private String base;
-        public Range range;
-        private String subpart;
+        public final String base;
+        public final Range range;
+        public final String subpart;
 
         public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
             super(conds);
@@ -278,10 +278,11 @@ public interface Selector {
                 int b = zoom.b == null ? Integer.MAX_VALUE : zoom.b;
                 if (a <= b) {
                     range = fromLevel(a, b);
+                } else {
+                    range = Range.ZERO_TO_INFINITY;
                 }
-            }
-            if (range == null) {
-                range = new Range();
+            } else {
+                range = Range.ZERO_TO_INFINITY;
             }
             this.subpart = subpart;
         }
@@ -347,7 +348,7 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return base + (range == null ? "" : range) + Utils.join("", conds) + (subpart != null ? ("::" + subpart) : "");
+            return base + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range) + Utils.join("", conds) + (subpart != null ? ("::" + subpart) : "");
         }
     }
 }
