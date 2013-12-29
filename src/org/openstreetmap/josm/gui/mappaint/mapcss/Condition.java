@@ -21,7 +21,7 @@ abstract public class Condition {
 
     abstract public boolean applies(Environment e);
 
-    public static Condition create(String k, String v, Op op, Context context, boolean considerValAsKey) {
+    public static Condition createKeyValueCondition(String k, String v, Op op, Context context, boolean considerValAsKey) {
         switch (context) {
         case PRIMITIVE:
             return new KeyValueCondition(k, v, op, considerValAsKey);
@@ -40,7 +40,7 @@ abstract public class Condition {
         }
     }
 
-    public static Condition create(String k, boolean not, KeyMatchType matchType, Context context) {
+    public static Condition createKeyCondition(String k, boolean not, KeyMatchType matchType, Context context) {
         switch (context) {
         case PRIMITIVE:
             return new KeyCondition(k, not, matchType);
@@ -56,11 +56,15 @@ abstract public class Condition {
         }
     }
 
-    public static Condition create(String id, boolean not, Context context) {
+    public static Condition createPseudoClassCondition(String id, boolean not, Context context) {
         return new PseudoClassCondition(id, not);
     }
 
-    public static Condition create(Expression e, Context context) {
+    public static Condition createClassCondition(String id, boolean not, Context context) {
+        return new ClassCondition(id, not);
+    }
+
+    public static Condition createExpressionCondition(Expression e, Context context) {
         return new ExpressionCondition(e);
     }
 
@@ -271,6 +275,27 @@ abstract public class Condition {
         @Override
         public String toString() {
             return "[" + (negateResult ? "!" : "") + label + "]";
+        }
+    }
+
+    public static class ClassCondition extends Condition {
+
+        public final String id;
+        public final boolean not;
+
+        public ClassCondition(String id, boolean not) {
+            this.id = id;
+            this.not = not;
+        }
+
+        @Override
+        public boolean applies(Environment env) {
+            return not ^ env.mc.getCascade(env.layer).containsKey(id);
+        }
+
+        @Override
+        public String toString() {
+            return (not ? "!" : "") + "." + id;
         }
     }
 

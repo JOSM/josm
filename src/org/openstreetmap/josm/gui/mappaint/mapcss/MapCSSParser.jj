@@ -41,7 +41,8 @@ PARSER_END(MapCSSParser)
 <DEFAULT>
 TOKEN:
 {
-    < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
+    < SET: ("set" | "SET") >
+|   < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
 |   < UINT: ["1"-"9"] ( ["0"-"9"] )* >
 |   < UFLOAT: ( ["0"-"9"] )+ ( "." ( ["0"-"9"] )+ )? >
 |   < STRING: "\"" ( [" ","!","#"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
@@ -77,6 +78,7 @@ TOKEN:
 |   < QUESTION: "?" >
 |   < DOLLAR: "$" >
 |   < CARET: "^" >
+|   < FULLSTOP: "." >
 |   < COMMENT_START: "/*" > : COMMENT
 |   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
 }
@@ -270,7 +272,7 @@ Selector child_selector() :
     selLeft=selector() w()
     (
         ( <GREATER> { parentSelector = false; } | <LESS> { parentSelector = true; } ) 
-        ( ( c=condition(Context.LINK) | c=pseudoclass(Context.LINK) ) { conditions.add(c); } )*
+        ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
         { selLink = new LinkSelector(conditions); }
         w()
         selRight=selector() w()
@@ -289,7 +291,7 @@ Selector selector() :
 {
     ( base=<IDENT> | base=<STAR> )
     ( r=zoom() )?
-    ( ( c=condition(Context.PRIMITIVE) | c=pseudoclass(Context.PRIMITIVE) ) { conditions.add(c); } )*
+    ( ( c=condition(Context.PRIMITIVE) | c=class_or_pseudoclass(Context.PRIMITIVE) ) { conditions.add(c); } )*
     ( sub=subpart() )?
     { return new GeneralSelector(base.image, r, conditions, sub); }
 }
@@ -326,7 +328,7 @@ Condition condition(Context context) :
         LOOKAHEAD( simple_key_value_condition(context) s() <RSQUARE> )
             c=simple_key_value_condition(context) s() <RSQUARE> { return c; }
         |
-            e=expression() <RSQUARE> { return Condition.create(e, context); }
+            e=expression() <RSQUARE> { return Condition.createExpressionCondition(e, context); }
     )
 }
 
@@ -356,7 +358,7 @@ Condition simple_key_condition(Context context) :
     )
     ( LOOKAHEAD(2) <QUESTION> <EXCLAMATION> { matchType = Condition.KeyMatchType.FALSE; } )?
     (              <QUESTION>               { matchType = Condition.KeyMatchType.TRUE;  } )?
-    { return Condition.create(key, not, matchType, context); }
+    { return Condition.createKeyCondition(key, not, matchType, context); }
 }
 
 Condition simple_key_value_condition(Context context) :
@@ -417,19 +419,26 @@ Condition simple_key_value_condition(Context context) :
             s()
             f=float_() { val=Float.toString(f); }
     )
-    { return Condition.create(key, val, op, context, considerValAsKey); }
+    { return Condition.createKeyValueCondition(key, val, op, context, considerValAsKey); }
 }
 
-Condition pseudoclass(Context context) :
+Condition class_or_pseudoclass(Context context) :
 {
     Token t;
     boolean not = false;
+    boolean pseudo;
 }
 {
     ( <EXCLAMATION> { not = true; } )? 
-    <COLON>
+    (
+        <FULLSTOP> { pseudo = false; }
+    |
+        <COLON> { pseudo = true; }
+    )
     t=<IDENT>
-    { return Condition.create(t.image, not, context); }
+    { return pseudo
+        ? Condition.createPseudoClassCondition(t.image, not, context)
+        : Condition.createClassCondition(t.image, not, context); }
 }
 
 String subpart() :
@@ -447,11 +456,18 @@ List<Instruction> declaration() :
     List<Instruction> ins = new ArrayList<Instruction>();
     Instruction i;
     Token key;
-    Object val;
+    Object val = null;
 }
 {
     <LBRACE> w()
     (
+        (
+        <SET> w() key=<IDENT> w()
+        ( <EQUAL> val=expression() )?
+        { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val)); }
+        ( <RBRACE> { return ins; } | <SEMICOLON> w() )
+        )
+        |
         key=<IDENT> w() <COLON> w()
         (
             LOOKAHEAD( float_array() w() ( <SEMICOLON> | <RBRACE> ) )

@@ -83,6 +83,11 @@ public final class ExpressionFactory {
 
         Environment env;
 
+        /**
+         * Identity function for compatibility with MapCSS specification.
+         * @param o any object
+         * @return {@code o} unchanged
+         */
         public static Object eval(Object o) {
             return o;
         }
