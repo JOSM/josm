@@ -13,6 +13,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -203,6 +204,9 @@ public class PluginInformation {
                     Main.info(tr("Invalid plugin description ''{0}'' in plugin {1}", s, name));
                 }
             }
+        } else {
+            //noinspection NullArgumentToVariableArgMethod
+            s = MessageFormat.format(s, null);
         }
         description = s;
         early = Boolean.parseBoolean(attr.getValue("Plugin-Early"));
