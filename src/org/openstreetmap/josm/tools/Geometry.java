@@ -659,7 +659,7 @@ public final class Geometry {
     }
 
     /**
-     * Compute the centroid of nodes
+     * Compute the centroid/barycenter of nodes
      * @param nodes Nodes for which the centroid is wanted
      * @return the centroid of nodes
      */
