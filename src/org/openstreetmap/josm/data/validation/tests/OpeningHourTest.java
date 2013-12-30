@@ -122,15 +122,6 @@ public class OpeningHourTest extends Test {
         }
 
         /**
-         * Constructs a new {@code OpeningHoursTestError}.
-         * @param message The error message
-         * @param severity The error severity
-         */
-        public OpeningHoursTestError(String message, Severity severity) {
-            this(message, severity, null);
-        }
-
-        /**
          * Returns the real test error given to JOSM validator.
          * @param p The incriminated OSM primitive.
          * @param key The incriminated key, used for display.
@@ -167,6 +158,11 @@ public class OpeningHourTest extends Test {
          */
         public Severity getSeverity() {
             return severity;
+        }
+
+        @Override
+        public String toString() {
+            return getMessage() + " => " + getPrettifiedValue();
         }
     }
 
@@ -216,7 +212,7 @@ public class OpeningHourTest extends Test {
      * @return a list of {@link TestError} or an empty list
      */
     public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value) {
-        return checkOpeningHourSyntax(key, value, CheckMode.TIME_RANGE);
+        return checkOpeningHourSyntax(key, value, "opening_hours".equals(key) ? CheckMode.TIME_RANGE : CheckMode.BOTH);
     }
 
     protected void check(final OsmPrimitive p, final String key, CheckMode mode) {
