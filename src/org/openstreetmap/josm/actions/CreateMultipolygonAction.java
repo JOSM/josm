@@ -92,12 +92,22 @@ public class CreateMultipolygonAction extends JosmAction {
             return;
         }
 
-        final Pair<SequenceCommand, Relation> commandAndRelation = createMultipolygonCommand(selectedWays, selectedRelations);
-        final Command command = commandAndRelation.a;
-        final Relation relation = commandAndRelation.b;
-        if (command == null) {
+        final Relation multipolygonRelation = getSelectedMultipolygonRelation(selectedRelations);
+        if (multipolygonRelation != null && (multipolygonRelation.isIncomplete() || multipolygonRelation.hasIncompleteMembers())) {
+            new Notification(
+                    tr("Cannot update multipolygon since relation is incomplete."))
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .setDuration(Notification.TIME_DEFAULT)
+                    .show();
             return;
         }
+
+        final Pair<SequenceCommand, Relation> commandAndRelation = createMultipolygonCommand(selectedWays, selectedRelations);
+        if (commandAndRelation == null) {
+            return;
+        }
+        final Command command = commandAndRelation.a;
+        final Relation relation = commandAndRelation.b;
         Main.main.undoRedo.add(command);
 
         // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
