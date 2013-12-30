@@ -735,8 +735,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *
      * @return an unmodifiable list of layers of a certain type.
      */
-    public <T extends Layer> Collection<T>  getLayersOfType(Class<T> ofType) {
-        return Utils.filteredCollection(getAllLayers(), ofType);
+    public <T extends Layer> List<T>  getLayersOfType(Class<T> ofType) {
+        return new ArrayList<T>(Utils.filteredCollection(getAllLayers(), ofType));
     }
 
     /**
