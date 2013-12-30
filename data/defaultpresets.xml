@@ -236,8 +236,11 @@ Note that for a match, at least one positive and no negative is required.
         <text key="name" text="Name" />
         <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
     </chunk>
+    <chunk id="service_times">
+        <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 09:30,11:00|Sa,Su,PH 09:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+    </chunk>
     <chunk id="oh">
-        <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+        <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00, Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
     </chunk>
     <chunk id="name_oh">
         <text key="name" text="Name" />
@@ -3611,7 +3614,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="building" text="Building type" values="basilica,cathedral,chapel,church,temple" values_searchable="true" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,greek_catholic,greek_orthodox,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,russian_orthodox,seventh_day_adventist" values_searchable="true" />
-            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <reference ref="service_times" />
             <reference ref="oh" />
         </item>
         <item name="Mosque" icon="styles/standard/religion/muslim.png" type="node,closedway,relation">
@@ -3635,7 +3638,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="building" text="Building type" values="mosque" values_searchable="true" />
             <combo key="denomination" text="Denomination" values="ibadi,shia,sunni" values_searchable="true" />
-            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <reference ref="service_times" />
             <reference ref="oh" />
         </item>
         <item name="Synagogue" icon="styles/standard/religion/jewish.png" type="node,closedway,relation">
@@ -3659,7 +3662,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="building" text="Building type" values="synagogue" values_searchable="true" />
             <combo key="denomination" text="Denomination" values="orthodox,conservative,reform" values_searchable="true" />
-            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <reference ref="service_times" />
             <reference ref="oh" />
         </item>
         <item name="Buddhist Temple" icon="styles/standard/religion/buddhism.png" type="node,closedway,relation">
@@ -3682,7 +3685,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="religion" value="buddhist" />
             <text key="name" text="Name" />
             <combo key="denomination" text="Denomination" values="theravada,mahayana,vajrayana" values_searchable="true" />
-            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <reference ref="service_times" />
             <reference ref="oh" />
         </item>
         <item name="Hindu Temple" icon="styles/standard/religion/hinduism.png" type="node,closedway,relation">
@@ -3705,7 +3708,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="religion" value="hindu" />
             <text key="name" text="Name" />
             <combo key="denomination" text="Denomination" values="vaishnavism,shaivism,shaktism,smartism" values_searchable="true" />
-            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <reference ref="service_times" />
             <reference ref="oh" />
         </item>
         <item name="Shinto Shrine" icon="styles/standard/religion/shinto.png" type="node,closedway,relation">
@@ -3727,7 +3730,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="place_of_worship" />
             <key key="religion" value="shinto" />
             <text key="name" text="Name" />
-            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <reference ref="service_times" />
             <reference ref="oh" />
         </item>
         <item name="Other Place of Worship" type="node,closedway,relation">
@@ -3749,7 +3752,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="place_of_worship" />
             <text key="name" text="Name" />
             <combo key="religion" text="Religion" values="bahai,jain,sikh,spiritualist,taoist,unitarian,zoroastrian" match="keyvalue" values_searchable="true" />
-            <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 9:30,11:00|Sa,Su,PH 9:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 1-53/2 Fr 09:00-12:00; week 2-52/2 We 09:00-12:00" />
+            <reference ref="service_times" />
             <reference ref="oh" />
         </item>
     </group> <!-- Place of Worship -->
@@ -4099,7 +4102,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="post_box" />
             <text key="operator" text="Operator" />
             <text key="ref" text="Reference number" />
-            <combo key="collection_times" text="Collection times" delimiter="|" values="11:30|Mo-Fr 15:00,17:45,19:00,23:00; Sa 15:10; Su 10:30,23:00|Mo-Fr 09:00-12:00,17:15; Sa 14:00; So,PH off" />
+            <combo key="collection_times" text="Collection times" delimiter="|" values="11:30|Mo-Fr 15:00,17:45,19:00,23:00; Sa 15:10; Su 10:30,23:00|Mo-Fr 09:00-12:00,17:15; Sa 14:00; Su,PH off" />
             <check key="drive_through" text="Drive through" />
         </item>
         <item name="Telephone" icon="presets/telephone.png" type="node">
@@ -4148,7 +4151,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Automated External Defibrillator" />
             <space />
             <key key="emergency" value="aed" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,limited" />
+            <reference ref="oh" />
             <text  key="operator" text="Operator" />
             <check key="indoor" text="Located inside a building?" />
             <!-- lastcheck is in use for aed devices, but not yet well discussed or documented

@@ -4,9 +4,20 @@ package org.openstreetmap.josm.data.validation.tests;
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.Severity;
+import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.CustomMatchers.hasSize;
 import static org.CustomMatchers.isEmpty;
@@ -126,5 +137,25 @@ public class OpeningHourTestTest {
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00", OpeningHourTest.CheckMode.BOTH), hasSize(1));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00", OpeningHourTest.CheckMode.BOTH).get(0).getSeverity(), is(Severity.OTHER));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 13:30, 17:45, 19:00; Sa 15:00; Su 11:00", OpeningHourTest.CheckMode.BOTH).get(0).getPrettifiedValue(), is("Mo-Fr 13:30,17:45,19:00; Sa 15:00; Su 11:00"));
+    }
+
+    @Test
+    public void testPresetValues() throws Exception {
+        final Collection<TaggingPreset> presets = TaggingPresetReader.readFromPreferences(false);
+        final Set<Tag> values = new LinkedHashSet<Tag>();
+        for (final TaggingPreset p : presets) {
+            for (final TaggingPresetItem i : p.data) {
+                if (i instanceof TaggingPresetItems.KeyedItem &&
+                        Arrays.asList("opening_hours", "service_times", "collection_times").contains(((TaggingPresetItems.KeyedItem) i).key)) {
+                    for (final String v : ((TaggingPresetItems.KeyedItem) i).getValues()) {
+                        values.add(new Tag(((TaggingPresetItems.KeyedItem) i).key, v));
+                    }
+                }
+            }
+        }
+        for (final Tag t : values) {
+            final List<OpeningHourTest.OpeningHoursTestError> errors = OPENING_HOUR_TEST.checkOpeningHourSyntax(t.getKey(), t.getValue());
+            assertThat(t + " is valid", errors, isEmpty());
+        }
     }
 }
