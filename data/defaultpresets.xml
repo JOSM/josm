@@ -411,10 +411,8 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <check key="oneway" text="Oneway" />
                 <check key="motorroad" text="Motorroad" />
-                <reference ref="highway_yesno_incline" />
-                <check key="lit" text="Lit" />
+                <reference ref="highway_yesno_incline_oneway_lit" />
             </optional>
         </item>
         <item name="Primary Link" icon="presets/way_primary.png" type="way">
@@ -429,10 +427,8 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="primary_link" />
             <optional>
                 <reference ref="highway_base" />
-                <check key="oneway" text="Oneway" />
                 <check key="motorroad" text="Motorroad" />
-                <reference ref="highway_yesno_incline" />
-                <check key="lit" text="Lit" />
+                <reference ref="highway_yesno_incline_oneway_lit" />
             </optional>
         </item>
         <item name="Secondary" icon="presets/way_secondary.png" type="way">
