@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -35,6 +36,7 @@ public class Highways extends Test {
     protected static final int SOURCE_MAXSPEED_UNKNOWN_CONTEXT = 2704;
     protected static final int SOURCE_MAXSPEED_CONTEXT_MISMATCH_VS_MAXSPEED = 2705;
     protected static final int SOURCE_MAXSPEED_CONTEXT_MISMATCH_VS_HIGHWAY = 2706;
+    protected static final int SOURCE_WRONG_LINK = 2707;
 
     /**
      * Classified highways in order of importance
@@ -103,6 +105,7 @@ public class Highways extends Test {
                 // Check maxspeed, including context against highway
                 testSourceMaxspeed(w, true);
             }
+            testHighwayLink(w);
         }
     }
 
@@ -136,6 +139,31 @@ public class Highways extends Test {
                     break;
                 }
             }
+        }
+    }
+
+    public static boolean isHighwayLinkOkay(final Way way) {
+        final String highway = way.get("highway");
+        if (highway == null || !highway.endsWith("_link")) {
+            return true;
+        }
+
+        final HashSet<OsmPrimitive> referrers = new HashSet<OsmPrimitive>();
+        referrers.addAll(way.firstNode().getReferrers());
+        referrers.addAll(way.lastNode().getReferrers());
+
+        return Utils.exists(Utils.filteredCollection(referrers, Way.class), new Predicate<Way>() {
+            @Override
+            public boolean evaluate(final Way otherWay) {
+                return !way.equals(otherWay) && otherWay.hasTag("highway", highway, highway.replaceAll("_link$", ""));
+            }
+        });
+    }
+
+    private void testHighwayLink(final Way way) {
+        if (!isHighwayLinkOkay(way)) {
+            errors.add(new TestError(this, Severity.WARNING,
+                    tr("Highway link is not linked to adequate highway/link"), SOURCE_WRONG_LINK, way));
         }
     }
 

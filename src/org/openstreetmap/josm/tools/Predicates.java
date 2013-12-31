@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.tools;
 
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+
 import java.util.regex.Pattern;
 
 /**
@@ -42,6 +44,18 @@ public final class Predicates {
             @Override
             public boolean evaluate(String string) {
                 return string.contains(pattern);
+            }
+        };
+    }
+
+    /**
+     * Returns a {@link Predicate} executing {@link OsmPrimitive#hasTag(String, String...)}.
+     */
+    public static Predicate<OsmPrimitive> hasTag(final String key, final String... values) {
+        return new Predicate<OsmPrimitive>() {
+            @Override
+            public boolean evaluate(OsmPrimitive p) {
+                return p.hasTag(key, values);
             }
         };
     }
