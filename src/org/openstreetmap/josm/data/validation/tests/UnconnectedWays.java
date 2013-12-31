@@ -129,7 +129,7 @@ public abstract class UnconnectedWays extends Test {
                     if (en.hasTag("highway", "turning_circle", "bus_stop")
                             || en.hasTag("amenity", "parking_entrance")
                             || en.hasTag("railway", "buffer_stop")
-                            || OsmUtils.isTrue(en.get("noexit"))
+                            || en.isKeyTrue("noexit")
                             || en.hasKey("entrance")
                             || en.hasKey("barrier")) {
                         continue;
@@ -234,7 +234,7 @@ public abstract class UnconnectedWays extends Test {
             this.w = w;
             String railway = w.get("railway");
             String highway = w.get("highway");
-            this.isAbandoned = "abandoned".equals(railway) || OsmUtils.isTrue(w.get("disused"));
+            this.isAbandoned = "abandoned".equals(railway) || w.isKeyTrue("disused");
             this.highway = (highway != null || railway != null) && !isAbandoned;
             this.isBoundary = !this.highway && "administrative".equals(w.get("boundary"));
             line = new Line2D.Double(n1.getEastNorth().east(), n1.getEastNorth().north(),
@@ -251,7 +251,7 @@ public abstract class UnconnectedWays extends Test {
             }
             if (w.containsNode(n))
                 return false;
-            if (OsmUtils.isTrue(n.get("noexit")))
+            if (n.isKeyTrue("noexit"))
                 return false;
             EastNorth coord = n.getEastNorth();
             if (coord == null)

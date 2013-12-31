@@ -602,6 +602,22 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return null;
     }
 
+    /**
+     * Returns true if the {@code key} corresponds to an OSM true value.
+     * @see {@link OsmUtils#isTrue(String) }
+     */
+    public final boolean isKeyTrue(String key) {
+        return OsmUtils.isTrue(get(key));
+    }
+
+    /**
+     * Returns true if the {@code key} corresponds to an OSM false value.
+     * @see {@link OsmUtils#isFalse(String) }
+     */
+    public final boolean isKeyFalse(String key) {
+        return OsmUtils.isFalse(get(key));
+    }
+
     public final String getIgnoreCase(String key) {
         String[] keys = this.keys;
         if (key == null)

@@ -254,9 +254,9 @@ abstract public class Condition {
             switch(e.getContext()) {
             case PRIMITIVE:
                 if (KeyMatchType.TRUE.equals(matchType))
-                    return OsmUtils.isTrue(e.osm.get(label)) ^ negateResult;
+                    return e.osm.isKeyTrue(label) ^ negateResult;
                 else if (KeyMatchType.FALSE.equals(matchType))
-                    return OsmUtils.isFalse(e.osm.get(label)) ^ negateResult;
+                    return e.osm.isKeyFalse(label) ^ negateResult;
                 else if (KeyMatchType.REGEX.equals(matchType))
                     return Utils.exists(e.osm.keySet(), Predicates.stringContainsPattern(Pattern.compile(label))) ^ negateResult;
                 else

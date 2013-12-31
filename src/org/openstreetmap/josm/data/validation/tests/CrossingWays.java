@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -62,6 +63,23 @@ public class CrossingWays extends Test {
         seenWays = null;
     }
 
+    private String getLayer(OsmPrimitive w) {
+        String layer1 = w.get("layer");
+        if ("0".equals(layer1)) {
+            layer1 = null; // 0 is default value for layer.
+        } else if (layer1 == null && w.isKeyTrue("bridge")) {
+            /* see #4280.
+               In order to avoid a test error for simple settings (such as one way is a bridge, the other one isn't),
+               set layer to a marker value <bridge>. Then, two crossing bridges w/o a layer set are still detected.
+            */
+            layer1 = "<bridge>";
+        } else if (layer1 == null && w.isKeyTrue("tunnel")) {
+            /* likewise for tunnels */
+            layer1 = "<tunnel>";
+        }
+        return layer1;
+    }
+
     @Override
     public void visit(Way w) {
         if(!w.isUsable())
@@ -83,10 +101,7 @@ public class CrossingWays extends Test {
             return;
 
         String level1 = w.get("level");
-        String layer1 = w.get("layer");
-        if ("0".equals(layer1)) {
-            layer1 = null; // 0 is default value for layer. Don't assume the same for levels
-        }
+        String layer1 = getLayer(w);
 
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
