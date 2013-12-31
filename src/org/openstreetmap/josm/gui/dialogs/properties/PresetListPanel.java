@@ -39,14 +39,14 @@ public class PresetListPanel extends JPanel {
      * Small helper class that manages the highlighting of the label on hover as well as opening
      * the corresponding preset when clicked
      */
-    private static class PresetLabelML implements MouseListener {
+    public static class PresetLabelML implements MouseListener {
         final JLabel label;
         final Font hover;
         final Font normal;
         final TaggingPreset tag;
         final PresetHandler presetHandler;
 
-        PresetLabelML(JLabel lbl, TaggingPreset t, PresetHandler presetHandler) {
+        public PresetLabelML(JLabel lbl, TaggingPreset t, PresetHandler presetHandler) {
             super();
             label = lbl;
             lbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -81,6 +81,12 @@ public class PresetListPanel extends JPanel {
         public void mouseReleased(MouseEvent arg0) {}
     }
 
+    public static JLabel createLabelForPreset(TaggingPreset t) {
+        JLabel lbl = new JLabel(t.getName() + " …");
+        lbl.setIcon(t.getIcon());
+        return lbl;
+    }
+
     public void updatePresets(final Collection<TaggingPresetType> types, final Map<String, String> tags, PresetHandler presetHandler) {
 
         removeAll();
@@ -90,8 +96,7 @@ public class PresetListPanel extends JPanel {
         }
 
         for (TaggingPreset t : TaggingPreset.getMatchingPresets(types, tags, true)) {
-            JLabel lbl = new JLabel(t.getName() + " …");
-            lbl.setIcon(t.getIcon());
+            final JLabel lbl = createLabelForPreset(t);
             lbl.addMouseListener(new PresetLabelML(lbl, t, presetHandler));
             add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
         }

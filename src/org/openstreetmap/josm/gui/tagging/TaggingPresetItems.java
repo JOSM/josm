@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -47,6 +48,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
+import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPriority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -56,6 +59,7 @@ import org.openstreetmap.josm.gui.widgets.QuadStateCheckBox;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -374,7 +378,7 @@ public final class TaggingPresetItems {
                 url = href;
             }
             if (url != null) {
-                p.add(new UrlLabel(url, locale_text, 2), GBC.eol().anchor(GBC.WEST));
+                p.add(new UrlLabel(url, locale_text, 2), GBC.eol().insets(0, 10, 0, 0));
             }
             return false;
         }
@@ -384,6 +388,36 @@ public final class TaggingPresetItems {
             return super.fieldsToString()
                     + (href != null ? "href=" + href + ", " : "")
                     + (locale_href != null ? "locale_href=" + locale_href + ", " : "");
+        }
+    }
+
+    public static class PresetLink extends TaggingPresetItem {
+
+        public String preset_name = "";
+
+        @Override
+        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            final String presetName = preset_name;
+            final TaggingPreset t = Utils.filter(TaggingPresetPreference.taggingPresets, new Predicate<TaggingPreset>() {
+                @Override
+                public boolean evaluate(TaggingPreset object) {
+                    return presetName.equals(object.name);
+                }
+            }).iterator().next();
+            if (t == null) return false;
+            JLabel lbl = PresetListPanel.createLabelForPreset(t);
+            lbl.addMouseListener(new PresetListPanel.PresetLabelML(lbl, t, null) {
+                @Override
+                public void mouseClicked(MouseEvent arg0) {
+                    t.actionPerformed(null);
+                }
+            });
+            p.add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
+            return false;
+        }
+
+        @Override
+        void addCommands(List<Tag> changedTags) {
         }
     }
     

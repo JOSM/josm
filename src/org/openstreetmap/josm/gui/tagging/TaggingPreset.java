@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -39,6 +40,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
@@ -206,6 +208,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return null;
         PresetPanel p = new PresetPanel();
         LinkedList<TaggingPresetItem> l = new LinkedList<TaggingPresetItem>();
+        LinkedList<TaggingPresetItem> presetLink = new LinkedList<TaggingPresetItem>();
         if(types != null){
             JPanel pp = new JPanel();
             for(TaggingPresetType t : types){
@@ -220,6 +223,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         for (TaggingPresetItem i : data){
             if(i instanceof Link) {
                 l.add(i);
+            } else if (i instanceof TaggingPresetItems.PresetLink) {
+                presetLink.add(i);
             } else {
                 if(i.addToPanel(items, selected)) {
                     p.hasElements = true;
@@ -231,6 +236,15 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             GuiHelper.setEnabledRec(items, false);
         }
 
+        // add PresetLink
+        if (!presetLink.isEmpty()) {
+            p.add(new JLabel(tr("Edit also …")), GBC.eol().insets(0, 8, 0, 0));
+        }
+        for(TaggingPresetItem link : presetLink) {
+            link.addToPanel(p, selected);
+        }
+
+        // add Link
         for(TaggingPresetItem link : l) {
             link.addToPanel(p, selected);
         }

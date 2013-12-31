@@ -23,6 +23,9 @@ group: a group of items (same syntax as "item")
 link: link to the relating map features website
   href: the URL
 
+preset_link: a link to an other preset
+  preset_name: the exact name of the preset to link to
+
 label: simple static text label
   text: the text to display
 
@@ -3872,6 +3875,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="kindergarten" />
             <text key="name" text="Name" />
+            <preset_link preset_name="Contact (common schema)" />
         </item>
         <item name="School" icon="presets/school.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=school"
@@ -3888,6 +3892,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="school" />
             <text key="name" text="Name" />
+            <preset_link preset_name="Contact (common schema)" />
         </item>
         <item name="University" icon="styles/standard/education/university.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=university"
@@ -3903,6 +3908,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="university" />
             <text key="name" text="Name" />
+            <preset_link preset_name="Contact (common schema)" />
         </item>
         <item name="College" icon="styles/standard/education/college.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=college"
@@ -3915,6 +3921,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="college" />
             <text key="name" text="Name" />
+            <preset_link preset_name="Contact (common schema)" />
         </item>
          <item name="Driving School" icon="styles/standard/education/driving_school.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/driving_school" />
@@ -3923,6 +3930,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="driving_school" />
             <reference ref="name_operator" />
             <combo key="license_classes" text="License Classes" values="A;A1;B;BE;C,A;A1;B;B1;C;C1;D;D1;BE;CE;C1E;DE;D1E" />
+             <preset_link preset_name="Contact (common schema)" />
         </item>
     </group> <!-- Education -->
     <group name="Health" icon="presets/pharmacy.png">

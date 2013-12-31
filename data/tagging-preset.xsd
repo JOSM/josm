@@ -104,6 +104,7 @@
 			<element name="label" type="tns:label" />
 			<element name="space" type="tns:space" />
 			<element name="link" type="tns:link" />
+			<element name="preset_link" type="tns:preset_link" />
 			<element name="text" type="tns:text" />
 			<element name="combo" type="tns:combo" />
 			<element name="multiselect" type="tns:multiselect" />
@@ -128,6 +129,11 @@
 
 		<attribute name="name" use="prohibited" />
 		<anyAttribute processContents="skip" />
+	</complexType>
+
+	<complexType name="preset_link">
+		<attribute name="preset_name" type="string" use="required" />
+		<attribute name="name" use="prohibited" />
 	</complexType>
 
 	<complexType name="label">

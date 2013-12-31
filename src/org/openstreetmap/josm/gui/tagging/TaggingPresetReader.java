@@ -71,6 +71,7 @@ public final class TaggingPresetReader {
         parser.mapBoth("group", TaggingPresetMenu.class);
         parser.map("text", TaggingPresetItems.Text.class);
         parser.map("link", TaggingPresetItems.Link.class);
+        parser.map("preset_link", TaggingPresetItems.PresetLink.class);
         parser.mapOnStart("optional", TaggingPresetItems.Optional.class);
         parser.mapOnStart("roles", TaggingPresetItems.Roles.class);
         parser.map("role", TaggingPresetItems.Role.class);
