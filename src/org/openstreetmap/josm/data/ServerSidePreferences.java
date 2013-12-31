@@ -150,11 +150,11 @@ public class ServerSidePreferences extends Preferences {
     }
 
     public void download(String userName, String password) {
-        if (!properties.containsKey("applet.username") && userName != null) {
-            properties.put("applet.username", userName);
+        if (!settingsMap.containsKey("applet.username") && userName != null) {
+            settingsMap.put("applet.username", new StringSetting(userName));
         }
-        if (!properties.containsKey("applet.password") && password != null) {
-            properties.put("applet.password", password);
+        if (!settingsMap.containsKey("applet.password") && password != null) {
+            settingsMap.put("applet.password", new StringSetting(password));
         }
         try {
             download();

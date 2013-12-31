@@ -38,7 +38,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences.ListListSetting;
+import org.openstreetmap.josm.data.Preferences.ListSetting;
+import org.openstreetmap.josm.data.Preferences.MapListSetting;
 import org.openstreetmap.josm.data.Preferences.Setting;
+import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.gui.io.DownloadFileTask;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -275,7 +279,7 @@ public final class CustomConfigurator {
     }
 
 
-        public static void deleteFile(String path, String base) {
+    public static void deleteFile(String path, String base) {
         String dir = getDirectoryByAbbr(base);
         if (dir==null) {
             log("Error: Can not find base, use base=cache, base=prefs or base=plugins attribute.");
@@ -289,7 +293,6 @@ public final class CustomConfigurator {
         if (fOut.exists()) {
             deleteFileOrDirectory(fOut);
         }
-        return;
     }
 
     public static void deleteFileOrDirectory(String path) {
@@ -400,14 +403,8 @@ public final class CustomConfigurator {
 
     public static Preferences clonePreferences(Preferences pref) {
         Preferences tmp = new Preferences();
-        tmp.defaults.putAll(   pref.defaults );
-        tmp.properties.putAll( pref.properties );
-        tmp.arrayDefaults.putAll(   pref.arrayDefaults );
-        tmp.arrayProperties.putAll( pref.arrayProperties );
-        tmp.collectionDefaults.putAll(   pref.collectionDefaults );
-        tmp.collectionProperties.putAll( pref.collectionProperties );
-        tmp.listOfStructsDefaults.putAll(   pref.listOfStructsDefaults );
-        tmp.listOfStructsProperties.putAll( pref.listOfStructsProperties );
+        tmp.settingsMap.putAll(pref.settingsMap);
+        tmp.defaultsMap.putAll(pref.defaultsMap);
         tmp.colornames.putAll( pref.colornames );
 
         return tmp;
@@ -737,165 +734,127 @@ public final class CustomConfigurator {
     }
 
     /**
-     * Helper class to do specific Prefrences operation - appending, replacing,
+     * Helper class to do specific Preferences operation - appending, replacing,
      * deletion by key and by value
      * Also contains functions that convert preferences object to JavaScript object and back
      */
     public static class PreferencesUtils {
 
         private static void replacePreferences(Preferences fragment, Preferences mainpref) {
-            // normal prefs
-            for (Entry<String, String> entry : fragment.properties.entrySet()) {
-                mainpref.put(entry.getKey(), entry.getValue());
+            for (Entry<String, Setting> entry: fragment.settingsMap.entrySet()) {
+                mainpref.putSetting(entry.getKey(), entry.getValue());
             }
-            // "list"
-            for (Entry<String, List<String>> entry : fragment.collectionProperties.entrySet()) {
-                mainpref.putCollection(entry.getKey(), entry.getValue());
-            }
-            // "lists"
-            for (Entry<String, List<List<String>>> entry : fragment.arrayProperties.entrySet()) {
-                List<Collection<String>> array = new ArrayList<Collection<String>>();
-                array.addAll(entry.getValue());
-                mainpref.putArray(entry.getKey(), array);
-            }
-            /// "maps"
-            for (Entry<String, List<Map<String, String>>> entry : fragment.listOfStructsProperties.entrySet()) {
-                mainpref.putListOfStructs(entry.getKey(), entry.getValue());
-            }
-
         }
 
         private static void appendPreferences(Preferences fragment, Preferences mainpref) {
-            // normal prefs
-            for (Entry<String, String> entry : fragment.properties.entrySet()) {
-                mainpref.put(entry.getKey(), entry.getValue());
-            }
-
-            // "list"
-            for (Entry<String, List<String>> entry : fragment.collectionProperties.entrySet()) {
+            for (Entry<String, Setting> entry: fragment.settingsMap.entrySet()) {
                 String key = entry.getKey();
-
-                Collection<String> newItems = getCollection(mainpref, key, true);
-                if (newItems == null) continue;
-
-                for (String item : entry.getValue()) {
-                    // add nonexisting elements to then list
-                    if (!newItems.contains(item)) {
-                        newItems.add(item);
+                if (entry.getValue() instanceof StringSetting) {
+                    mainpref.putSetting(key, entry.getValue());
+                } else if (entry.getValue() instanceof ListSetting) {
+                    ListSetting lSetting = (ListSetting) entry.getValue();
+                    Collection<String> newItems = getCollection(mainpref, key, true);
+                    if (newItems == null) continue;
+                    for (String item : lSetting.getValue()) {
+                        // add nonexisting elements to then list
+                        if (!newItems.contains(item)) {
+                            newItems.add(item);
+                        }
                     }
-                }
-                mainpref.putCollection(entry.getKey(), newItems);
-            }
+                    mainpref.putCollection(key, newItems);
+                } else if (entry.getValue() instanceof ListListSetting) {
+                    ListListSetting llSetting = (ListListSetting) entry.getValue();
+                    Collection<Collection<String>> newLists = getArray(mainpref, key, true);
+                    if (newLists == null) continue;
 
-            // "lists"
-            for (Entry<String, List<List<String>>> entry : fragment.arrayProperties.entrySet()) {
-                String key = entry.getKey();
-
-                Collection<Collection<String>> newLists = getArray(mainpref, key, true);
-                if (newLists == null) continue;
-
-                for (Collection<String> list : entry.getValue()) {
-                    // add nonexisting list (equals comparison for lists is used implicitly)
-                    if (!newLists.contains(list)) {
-                        newLists.add(list);
+                    for (Collection<String> list : llSetting.getValue()) {
+                        // add nonexisting list (equals comparison for lists is used implicitly)
+                        if (!newLists.contains(list)) {
+                            newLists.add(list);
+                        }
                     }
-                }
-                mainpref.putArray(entry.getKey(), newLists);
-            }
+                    mainpref.putArray(key, newLists);
+                } else if (entry.getValue() instanceof MapListSetting) {
+                    MapListSetting mlSetting = (MapListSetting) entry.getValue();
+                    List<Map<String, String>> newMaps = getListOfStructs(mainpref, key, true);
+                    if (newMaps == null) continue;
 
-            /// "maps"
-            for (Entry<String, List<Map<String, String>>> entry : fragment.listOfStructsProperties.entrySet()) {
-                String key = entry.getKey();
+                    // get existing properties as list of maps
 
-                List<Map<String, String>> newMaps = getListOfStructs(mainpref, key, true);
-                if (newMaps == null) continue;
-
-                // get existing properties as list of maps
-
-                for (Map<String, String> map : entry.getValue()) {
-                    // add nonexisting map (equals comparison for maps is used implicitly)
-                    if (!newMaps.contains(map)) {
-                        newMaps.add(map);
+                    for (Map<String, String> map : mlSetting.getValue()) {
+                        // add nonexisting map (equals comparison for maps is used implicitly)
+                        if (!newMaps.contains(map)) {
+                            newMaps.add(map);
+                        }
                     }
+                    mainpref.putListOfStructs(entry.getKey(), newMaps);
                 }
-                mainpref.putListOfStructs(entry.getKey(), newMaps);
             }
         }
 
         /**
-     * Delete items from @param mainpref collections that match items from @param fragment collections
-     */
-    private static void deletePreferenceValues(Preferences fragment, Preferences mainpref) {
+        * Delete items from @param mainpref collections that match items from @param fragment collections
+        */
+        private static void deletePreferenceValues(Preferences fragment, Preferences mainpref) {
 
-
-        // normal prefs
-        for (Entry<String, String> entry : fragment.properties.entrySet()) {
-            // if mentioned value found, delete it
-            if (entry.getValue().equals(mainpref.properties.get(entry.getKey()))) {
-                mainpref.put(entry.getKey(), null);
-            }
-        }
-
-        // "list"
-        for (Entry<String, List<String>> entry : fragment.collectionProperties.entrySet()) {
-            String key = entry.getKey();
-
-            Collection<String> newItems = getCollection(mainpref, key, true);
-            if (newItems == null) continue;
-
-            // remove mentioned items from collection
-            for (String item : entry.getValue()) {
-                log("Deleting preferences: from list %s: %s\n", key, item);
-                newItems.remove(item);
-            }
-            mainpref.putCollection(entry.getKey(), newItems);
-        }
-
-        // "lists"
-        for (Entry<String, List<List<String>>> entry : fragment.arrayProperties.entrySet()) {
-            String key = entry.getKey();
-
-
-            Collection<Collection<String>> newLists = getArray(mainpref, key, true);
-            if (newLists == null) continue;
-
-            // if items are found in one of lists, remove that list!
-            Iterator<Collection<String>> listIterator = newLists.iterator();
-            while (listIterator.hasNext()) {
-                Collection<String> list = listIterator.next();
-                for (Collection<String> removeList : entry.getValue()) {
-                    if (list.containsAll(removeList)) {
-                        // remove current list, because it matches search criteria
-                        log("Deleting preferences: list from lists %s: %s\n", key, list);
-                        listIterator.remove();
+            for (Entry<String, Setting> entry : fragment.settingsMap.entrySet()) {
+                String key = entry.getKey();
+                if (entry.getValue() instanceof StringSetting) {
+                    StringSetting sSetting = (StringSetting) entry.getValue();
+                    // if mentioned value found, delete it
+                    if (sSetting.equals(mainpref.settingsMap.get(key))) {
+                        mainpref.put(key, null);
                     }
+                } else if (entry.getValue() instanceof ListSetting) {
+                    ListSetting lSetting = (ListSetting) entry.getValue();
+                    Collection<String> newItems = getCollection(mainpref, key, true);
+                    if (newItems == null) continue;
+
+                    // remove mentioned items from collection
+                    for (String item : lSetting.getValue()) {
+                        log("Deleting preferences: from list %s: %s\n", key, item);
+                        newItems.remove(item);
+                    }
+                    mainpref.putCollection(entry.getKey(), newItems);
+                } else if (entry.getValue() instanceof ListListSetting) {
+                    ListListSetting llSetting = (ListListSetting) entry.getValue();
+                    Collection<Collection<String>> newLists = getArray(mainpref, key, true);
+                    if (newLists == null) continue;
+
+                    // if items are found in one of lists, remove that list!
+                    Iterator<Collection<String>> listIterator = newLists.iterator();
+                    while (listIterator.hasNext()) {
+                        Collection<String> list = listIterator.next();
+                        for (Collection<String> removeList : llSetting.getValue()) {
+                            if (list.containsAll(removeList)) {
+                                // remove current list, because it matches search criteria
+                                log("Deleting preferences: list from lists %s: %s\n", key, list);
+                                listIterator.remove();
+                            }
+                        }
+                    }
+
+                    mainpref.putArray(key, newLists);
+                } else if (entry.getValue() instanceof MapListSetting) {
+                    MapListSetting mlSetting = (MapListSetting) entry.getValue();
+                    List<Map<String, String>> newMaps = getListOfStructs(mainpref, key, true);
+                    if (newMaps == null) continue;
+
+                    Iterator<Map<String, String>> mapIterator = newMaps.iterator();
+                    while (mapIterator.hasNext()) {
+                        Map<String, String> map = mapIterator.next();
+                        for (Map<String, String> removeMap : mlSetting.getValue()) {
+                            if (map.entrySet().containsAll(removeMap.entrySet())) {
+                                // the map contain all mentioned key-value pair, so it should be deleted from "maps"
+                                log("Deleting preferences: deleting map from maps %s: %s\n", key, map);
+                                mapIterator.remove();
+                            }
+                        }
+                    }
+                    mainpref.putListOfStructs(entry.getKey(), newMaps);
                 }
             }
-
-            mainpref.putArray(entry.getKey(), newLists);
         }
-
-        /// "maps"
-        for (Entry<String, List<Map<String, String>>> entry : fragment.listOfStructsProperties.entrySet()) {
-            String key = entry.getKey();
-
-            List<Map<String, String>> newMaps = getListOfStructs(mainpref, key, true);
-            if (newMaps == null) continue;
-
-            Iterator<Map<String, String>> mapIterator = newMaps.iterator();
-            while (mapIterator.hasNext()) {
-                Map<String, String> map = mapIterator.next();
-                for (Map<String, String> removeMap : entry.getValue()) {
-                    if (map.entrySet().containsAll(removeMap.entrySet())) {
-                        // the map contain all mentioned key-value pair, so it should be deleted from "maps"
-                        log("Deleting preferences: deleting map from maps %s: %s\n", key, map);
-                        mapIterator.remove();
-                    }
-                }
-            }
-            mainpref.putListOfStructs(entry.getKey(), newMaps);
-        }
-    }
 
     private static void deletePreferenceKeyByPattern(String pattern, Preferences pref) {
         Map<String, Setting> allSettings = pref.getAllSettings();
@@ -903,7 +862,7 @@ public final class CustomConfigurator {
             String key = entry.getKey();
             if (key.matches(pattern)) {
                 log("Deleting preferences: deleting key from preferences: " + key);
-                pref.putSetting(key, entry.getValue().getNullInstance());
+                pref.putSetting(key, null);
             }
         }
     }
@@ -912,46 +871,50 @@ public final class CustomConfigurator {
         Map<String, Setting> allSettings = pref.getAllSettings();
         if (allSettings.containsKey(key)) {
             log("Deleting preferences: deleting key from preferences: " + key);
-            pref.putSetting(key, allSettings.get(key).getNullInstance());
+            pref.putSetting(key, null);
         }
     }
 
     private static Collection<String> getCollection(Preferences mainpref, String key, boolean warnUnknownDefault)  {
-        Collection<String> existing = mainpref.collectionProperties.get(key);
-        Collection<String> defaults = mainpref.collectionDefaults.get(key);
-
+        ListSetting existing = Utils.cast(mainpref.settingsMap.get(key), ListSetting.class);
+        ListSetting defaults = Utils.cast(mainpref.defaultsMap.get(key), ListSetting.class);
         if (existing == null && defaults == null) {
             if (warnUnknownDefault) defaultUnknownWarning(key);
             return null;
         }
-        return  (existing != null)
-                ? new ArrayList<String>(existing) : new ArrayList<String>(defaults);
+        if (existing != null)
+            return new ArrayList<String>(existing.getValue());
+        else
+            return defaults.getValue() == null ? null : new ArrayList<String>(defaults.getValue());
     }
 
     private static Collection<Collection<String>> getArray(Preferences mainpref, String key, boolean warnUnknownDefault)  {
-        Collection<List<String>> existing = mainpref.arrayProperties.get(key);
-        Collection<List<String>> defaults = mainpref.arrayDefaults.get(key);
+        ListListSetting existing = Utils.cast(mainpref.settingsMap.get(key), ListListSetting.class);
+        ListListSetting defaults = Utils.cast(mainpref.defaultsMap.get(key), ListListSetting.class);
 
         if (existing == null && defaults == null) {
             if (warnUnknownDefault) defaultUnknownWarning(key);
             return null;
         }
-
-        return  (existing != null)
-                ? new ArrayList<Collection<String>>(existing) : new ArrayList<Collection<String>>(defaults);
+        if (existing != null)
+            return new ArrayList<Collection<String>>(existing.getValue());
+        else
+            return defaults.getValue() == null ? null : new ArrayList<Collection<String>>(defaults.getValue());
     }
 
     private static List<Map<String, String>> getListOfStructs(Preferences mainpref, String key, boolean warnUnknownDefault)  {
-        Collection<Map<String, String>> existing = mainpref.listOfStructsProperties.get(key);
-        Collection<Map<String, String>> defaults = mainpref.listOfStructsDefaults.get(key);
+        MapListSetting existing = Utils.cast(mainpref.settingsMap.get(key), MapListSetting.class);
+        MapListSetting defaults = Utils.cast(mainpref.settingsMap.get(key), MapListSetting.class);
 
         if (existing == null && defaults == null) {
             if (warnUnknownDefault) defaultUnknownWarning(key);
             return null;
         }
 
-        return (existing != null)
-                ? new ArrayList<Map<String, String>>(existing) : new ArrayList<Map<String, String>>(defaults);
+        if (existing != null)
+            return new ArrayList<Map<String, String>>(existing.getValue());
+        else
+            return defaults.getValue() == null ? null : new ArrayList<Map<String, String>>(defaults.getValue());
     }
 
     private static void defaultUnknownWarning(String key) {
@@ -964,10 +927,7 @@ public final class CustomConfigurator {
     }
 
     private static void showPrefs(Preferences tmpPref) {
-        Main.info("properties: " + tmpPref.properties);
-        Main.info("collections: " + tmpPref.collectionProperties);
-        Main.info("arrays: " + tmpPref.arrayProperties);
-        Main.info("maps: " + tmpPref.listOfStructsProperties);
+        Main.info("properties: " + tmpPref.settingsMap);
     }
 
     private static void modifyPreferencesByScript(ScriptEngine engine, Preferences tmpPref, String js) throws ScriptException {
@@ -1036,30 +996,26 @@ public final class CustomConfigurator {
         @SuppressWarnings("unchecked")
         Map<String, List<Map<String, String>>> listmapMap = (SortedMap<String, List<Map<String,String>>>) engine.get("listmapMap");
 
-        tmpPref.properties.clear();
-        tmpPref.collectionProperties.clear();
-        tmpPref.arrayProperties.clear();
-        tmpPref.listOfStructsProperties.clear();
+        tmpPref.settingsMap.clear();
 
+        Map<String, Setting> tmp = new HashMap<String, Setting>();
         for (Entry<String, String> e : stringMap.entrySet()) {
-            if (e.getValue().equals( tmpPref.defaults.get(e.getKey())) ) continue;
-            tmpPref.properties.put(e.getKey(), e.getValue());
+            tmp.put(e.getKey(), new StringSetting(e.getValue()));
         }
-
         for (Entry<String, List<String>> e : listMap.entrySet()) {
-            if (Preferences.equalCollection(e.getValue(), tmpPref.collectionDefaults.get(e.getKey()))) continue;
-            tmpPref.collectionProperties.put(e.getKey(), e.getValue());
+            tmp.put(e.getKey(), new ListSetting(e.getValue()));
         }
 
         for (Entry<String, List<Collection<String>>> e : listlistMap.entrySet()) {
-            if (Preferences.equalArray(e.getValue(), tmpPref.arrayDefaults.get(e.getKey()))) continue;
             @SuppressWarnings("unchecked") List<List<String>> value = (List)e.getValue();
-            tmpPref.arrayProperties.put(e.getKey(), value);
+            tmp.put(e.getKey(), new ListListSetting(value));
         }
-
         for (Entry<String, List<Map<String, String>>> e : listmapMap.entrySet()) {
-            if (Preferences.equalListOfStructs(e.getValue(), tmpPref.listOfStructsDefaults.get(e.getKey()))) continue;
-            tmpPref.listOfStructsProperties.put(e.getKey(), e.getValue());
+            tmp.put(e.getKey(), new MapListSetting(e.getValue()));
+        }
+        for (Entry<String, Setting> e : tmp.entrySet()) {
+            if (e.getValue().equals(tmpPref.defaultsMap.get(e.getKey()))) continue;
+            tmpPref.settingsMap.put(e.getKey(), e.getValue());
         }
     }
 
@@ -1078,21 +1034,39 @@ public final class CustomConfigurator {
         Map<String, List<Map<String, String>>> listmapMap = new TreeMap<String, List<Map<String, String>>>();
 
         if (includeDefaults) {
-            stringMap.putAll(tmpPref.defaults);
-            listMap.putAll(tmpPref.collectionDefaults);
-            listlistMap.putAll(tmpPref.arrayDefaults);
-            listmapMap.putAll(tmpPref.listOfStructsDefaults);
+            for (Map.Entry<String, Setting> e: tmpPref.defaultsMap.entrySet()) {
+                Setting setting = e.getValue();
+                if (setting instanceof StringSetting) {
+                    stringMap.put(e.getKey(), ((StringSetting) setting).getValue());
+                } else if (setting instanceof ListSetting) {
+                    listMap.put(e.getKey(), ((ListSetting) setting).getValue());
+                } else if (setting instanceof ListListSetting) {
+                    listlistMap.put(e.getKey(), ((ListListSetting) setting).getValue());
+                } else if (setting instanceof MapListSetting) {
+                    listmapMap.put(e.getKey(), ((MapListSetting) setting).getValue());
+                }
+            }
+        }
+        Iterator<Map.Entry<String, Setting>> it = tmpPref.settingsMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Setting> e = it.next();
+            if (e.getValue().getValue() == null) {
+                it.remove();
+            }
         }
 
-        while (stringMap.values().remove(null));
-        while (listMap.values().remove(null));
-        while (listlistMap.values().remove(null));
-        while (listmapMap.values().remove(null));
-
-        stringMap.putAll(tmpPref.properties);
-        listMap.putAll(tmpPref.collectionProperties);
-        listlistMap.putAll(tmpPref.arrayProperties);
-        listmapMap.putAll(tmpPref.listOfStructsProperties);
+        for (Map.Entry<String, Setting> e: tmpPref.settingsMap.entrySet()) {
+            Setting setting = e.getValue();
+            if (setting instanceof StringSetting) {
+                stringMap.put(e.getKey(), ((StringSetting) setting).getValue());
+            } else if (setting instanceof ListSetting) {
+                listMap.put(e.getKey(), ((ListSetting) setting).getValue());
+            } else if (setting instanceof ListListSetting) {
+                listlistMap.put(e.getKey(), ((ListListSetting) setting).getValue());
+            } else if (setting instanceof MapListSetting) {
+                listmapMap.put(e.getKey(), ((MapListSetting) setting).getValue());
+            }
+        }
 
         engine.put("stringMap", stringMap);
         engine.put("listMap", listMap);
