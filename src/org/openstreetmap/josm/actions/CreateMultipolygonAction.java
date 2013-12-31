@@ -35,7 +35,6 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Create multipolygon from selected ways automatically.
@@ -146,7 +145,7 @@ public class CreateMultipolygonAction extends JosmAction {
         if (selectedMultipolygonRelation != null) {
             // add ways of existing relation to include them in polygon analysis
             selectedWays = new HashSet<Way>(selectedWays);
-            selectedWays.addAll(Utils.filteredCollection(selectedMultipolygonRelation.getMemberPrimitives(), Way.class));
+            selectedWays.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
         }
 
         final MultipolygonCreate polygon = analyzeWays(selectedWays);

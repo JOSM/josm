@@ -396,6 +396,10 @@ public final class Relation extends OsmPrimitive implements IRelation {
         return ret;
     }
 
+    public <T extends OsmPrimitive> Collection<T> getMemberPrimitives(Class<T> tClass) {
+        return Utils.filteredCollection(getMemberPrimitives(), tClass);
+    }
+
     public List<OsmPrimitive> getMemberPrimitivesList() {
         return Utils.transform(getMembers(), new Utils.Function<RelationMember, OsmPrimitive>() {
             @Override
