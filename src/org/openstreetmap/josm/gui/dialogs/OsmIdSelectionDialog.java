@@ -198,7 +198,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
                 txt = buf;
             }
             if (buf.length() <= Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) {
-                tfId.tryToPasteFrom(txt);
+                tfId.tryToPasteFrom(txt.replaceAll("[^0-9]+", " ").replaceAll("\\s\\s+", " "));
             }
         }
     }
