@@ -89,7 +89,10 @@ public class OsmValidator implements LayerChangeListener {
         UntaggedWay.class, // ID  301 ..  399
         SelfIntersectingWay.class, // ID  401 ..  499
         DuplicatedWayNodes.class, // ID  501 ..  599
-        CrossingWays.class, // ID  601 ..  699
+        CrossingWays.Ways.class, // ID  601 ..  699
+        CrossingWays.Boundaries.class, // ID  601 ..  699
+        CrossingWays.NaturalOrLanduse.class, // ID  601 ..  699
+        CrossingWays.Barrier.class, // ID  601 ..  699
         SimilarNamedWays.class, // ID  701 ..  799
         Coastlines.class, // ID  901 ..  999
         WronglyOrderedWays.class, // ID 1001 .. 1099
