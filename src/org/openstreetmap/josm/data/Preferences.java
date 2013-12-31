@@ -870,7 +870,7 @@ public class Preferences {
         }
         String colStr = specName != null ? get("color."+specName) : "";
         if(colStr.isEmpty()) {
-            colStr = get("color."+colKey, ColorHelper.color2html(def));
+            colStr = get("color." + colKey, "");
         }
         return colStr.isEmpty() ? def : ColorHelper.html2color(colStr);
     }

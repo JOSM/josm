@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.awt.geom.Line2D;
+
 /**
  * A segment consisting of 2 consecutive nodes out of a way.
  */
@@ -61,5 +63,23 @@ public final class WaySegment implements Comparable<WaySegment> {
     @Override
     public int compareTo(WaySegment o) {
         return equals(o) ? 0 : toWay().compareTo(o.toWay());
+    }
+
+    /**
+     * Checks whether this segment crosses other segment
+     *
+     * @param s2 The other segment
+     * @return true if both segments crosses
+     */
+    public boolean intersects(WaySegment s2) {
+        if (getFirstNode().equals(s2.getFirstNode()) || getSecondNode().equals(s2.getSecondNode()) ||
+                getFirstNode().equals(s2.getSecondNode()) || getSecondNode().equals(s2.getFirstNode()))
+            return false;
+
+        return Line2D.linesIntersect(
+                getFirstNode().getEastNorth().east(), getFirstNode().getEastNorth().north(),
+                getSecondNode().getEastNorth().east(), getSecondNode().getEastNorth().north(),
+                s2.getFirstNode().getEastNorth().east(), s2.getFirstNode().getEastNorth().north(),
+                s2.getSecondNode().getEastNorth().east(), s2.getSecondNode().getEastNorth().north());
     }
 }
