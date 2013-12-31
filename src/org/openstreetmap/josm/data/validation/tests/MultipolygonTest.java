@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.CreateMultipolygonAction;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -27,10 +28,12 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Checks if multipolygons are valid
@@ -175,9 +178,26 @@ public class MultipolygonTest extends Test {
                 addError(r, new TestError(this, Severity.WARNING, tr("No outer way for multipolygon"), MISSING_OUTER_WAY, r));
             }
 
-            for (RelationMember rm : r.getMembers()) {
-                if (!rm.getMember().isUsable())
-                    return; // Rest of checks is only for complete multipolygons
+            if (r.hasIncompleteMembers()) {
+                return; // Rest of checks is only for complete multipolygons
+            }
+
+            // Create new multipolygon using the logics from CreateMultipolygonAction and see if roles match.
+            final Pair<Relation, Relation> newMP = CreateMultipolygonAction.createMultipolygonRelation(
+                    r.getMemberPrimitives(Way.class), Collections.singleton(new Relation()));
+            if (newMP != null) {
+                for (RelationMember member : r.getMembers()) {
+                    final Collection<RelationMember> memberInNewMP = newMP.b.getMembersFor(Collections.singleton(member.getMember()));
+                    if (memberInNewMP != null && !memberInNewMP.isEmpty()) {
+                        final String roleInNewMP = memberInNewMP.iterator().next().getRole();
+                        if (!member.getRole().equals(roleInNewMP)) {
+                            addError(r, new TestError(this, Severity.WARNING, tr("Role for ''{0}'' should be ''{1}''",
+                                    member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
+                                    WRONG_MEMBER_ROLE, Collections.singleton(r), Collections.singleton(member.getMember())));
+                        }
+                    }
+                }
+
             }
 
             List<List<Node>> innerWays = joinWays(polygon.getInnerWays()); // Side effect - sets nonClosedWays
