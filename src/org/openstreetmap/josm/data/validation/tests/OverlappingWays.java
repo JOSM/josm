@@ -5,17 +5,23 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.openstreetmap.josm.command.ChangeNodesCommand;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -40,6 +46,7 @@ public class OverlappingWays extends Test {
     protected static final int OVERLAPPING_RAILWAY_AREA = 112;
     protected static final int OVERLAPPING_WAY_AREA = 113;
     protected static final int OVERLAPPING_AREA = 120;
+    protected static final int DUPLICATE_WAY_SEGMENT = 121;
 
     /** Constructor */
     public OverlappingWays() {
@@ -145,8 +152,42 @@ public class OverlappingWays extends Test {
         nodePairs = null;
     }
 
+    public static Command fixDuplicateWaySegment(Way w) {
+        // test for ticket #4959
+        Set<WaySegment> segments = new TreeSet<WaySegment>(new Comparator<WaySegment>() {
+            @Override
+            public int compare(WaySegment o1, WaySegment o2) {
+                return o1.way.getNode(o1.lowerIndex).compareTo(o2.way.getNode(o2.lowerIndex));
+            }
+        });
+        final Set<Integer> wayNodesToFix = new TreeSet<Integer>(Collections.reverseOrder());
+        for (int i = 0; i < w.getNodesCount() - 1; i++) {
+            final boolean wasInSet = !segments.add(new WaySegment(w, i));
+            if (wasInSet) {
+                wayNodesToFix.add(i);
+            }
+        }
+        if (!wayNodesToFix.isEmpty()) {
+            final List<Node> newNodes = new ArrayList<Node>(w.getNodes());
+            for (final int i : wayNodesToFix) {
+                newNodes.remove(i);
+            }
+            return new ChangeNodesCommand(w, newNodes);
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void visit(Way w) {
+
+        final Command duplicateWaySegmentFix = fixDuplicateWaySegment(w);
+        if (duplicateWaySegmentFix != null) {
+            errors.add(new FixableTestError(this, Severity.ERROR, tr("Way contains segment twice"),
+                    DUPLICATE_WAY_SEGMENT, w, duplicateWaySegmentFix));
+            return;
+        }
+
         Node lastN = null;
         int i = -2;
         for (Node n : w.getNodes()) {
