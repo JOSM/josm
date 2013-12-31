@@ -397,7 +397,7 @@ public class MainApplication extends Main {
 
         Main.MasterWindowListener.setup();
 
-        boolean maximized = Boolean.parseBoolean(Main.pref.get("gui.maximized"));
+        boolean maximized = Main.pref.getBoolean("gui.maximized", false);
         if ((!args.containsKey(Option.NO_MAXIMIZE) && maximized) || args.containsKey(Option.MAXIMIZE)) {
             if (Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH)) {
                 Main.windowState = JFrame.MAXIMIZED_BOTH;
