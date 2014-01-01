@@ -55,7 +55,7 @@ import javax.swing.JPanel;
  * MapCSS-based tag checker/fixer.
  * @since 6506
  */
-public class MapCSSTagChecker extends Test {
+public class MapCSSTagChecker extends Test.TagTest {
 
     /**
      * Constructs a new {@code MapCSSTagChecker}.
@@ -337,7 +337,8 @@ public class MapCSSTagChecker extends Test {
      *
      * @param p The primitive to inspect.
      */
-    public void visit(OsmPrimitive p) {
+    @Override
+    public void check(OsmPrimitive p) {
         for (TagCheck check : checks) {
             final TestError error = check.getErrorForPrimitive(p);
             if (error != null) {
@@ -345,21 +346,6 @@ public class MapCSSTagChecker extends Test {
                 errors.add(error);
             }
         }
-    }
-
-    @Override
-    public void visit(Node n) {
-        visit((OsmPrimitive) n);
-    }
-
-    @Override
-    public void visit(Way w) {
-        visit((OsmPrimitive) w);
-    }
-
-    @Override
-    public void visit(Relation r) {
-        visit((OsmPrimitive) r);
     }
 
     /**

@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @since 6370
  */
-public class OpeningHourTest extends Test {
+public class OpeningHourTest extends Test.TagTest {
 
     /**
      * Javascript engine
@@ -221,24 +221,10 @@ public class OpeningHourTest extends Test {
         }
     }
 
-    protected void check(final OsmPrimitive p) {
+    @Override
+    public void check(final OsmPrimitive p) {
         check(p, "opening_hours", CheckMode.TIME_RANGE);
         check(p, "collection_times", CheckMode.BOTH);
         check(p, "service_times", CheckMode.BOTH);
-    }
-
-    @Override
-    public void visit(final Node n) {
-        check(n);
-    }
-
-    @Override
-    public void visit(final Relation r) {
-        check(r);
-    }
-
-    @Override
-    public void visit(final Way w) {
-        check(w);
     }
 }

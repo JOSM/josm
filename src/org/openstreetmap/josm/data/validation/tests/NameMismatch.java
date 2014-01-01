@@ -28,7 +28,7 @@ import org.openstreetmap.josm.data.validation.TestError;
  *
  * @author Skela
  */
-public class NameMismatch extends Test {
+public class NameMismatch extends Test.TagTest {
     protected static final int NAME_MISSING = 1501;
     protected static final int NAME_TRANSLATION_MISSING = 1502;
 
@@ -56,6 +56,7 @@ public class NameMismatch extends Test {
      *
      * @param p The primitive to be tested
      */
+    @Override
     public void check(OsmPrimitive p) {
         HashSet<String> names = new HashSet<String>();
 
@@ -96,20 +97,6 @@ public class NameMismatch extends Test {
             if (!names.contains(n)) {
                 missingTranslation(p);
                 return;
-            }
-        }
-    }
-
-    /**
-     * Checks a name mismatch in all primitives.
-     *
-     * @param selection The primitives to be tested
-     */
-    @Override
-    public void visit(Collection<OsmPrimitive> selection) {
-        for (OsmPrimitive p : selection) {
-            if (!p.isDeleted() && !p.isIncomplete()) {
-                check(p);
             }
         }
     }
