@@ -118,6 +118,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     public void setDefaultTags(Map<String, String> tags) {
         defaultTags.clear();
         defaultTags.putAll(tags);
+        tableChanged(null);
     }
 
     public void startUserInput() {

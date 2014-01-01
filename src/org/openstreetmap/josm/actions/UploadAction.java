@@ -234,7 +234,6 @@ public class UploadAction extends JosmAction{
                 final HashMap<String, String> tags = new HashMap<String, String>(layer.data.getChangeSetTags());
                 if (!tags.containsKey("source")) {
                     tags.put("source", Main.map.mapView.getLayerInformationForSourceTag());
-                    System.out.println(tags.get("source"));
                 }
                 dialog.setDefaultChangesetTags(tags);
             }
