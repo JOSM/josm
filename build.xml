@@ -39,17 +39,20 @@
       ** Initializes the REVISION.XML file from SVN information
     -->
     <target name="init-svn-revision-xml">
-        <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false" errorproperty="svn.info.failed">
+        <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false" resultproperty="svn.info.result">
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
             <arg value="."/>
         </exec>
+        <condition property="svn.info.success">
+            <equals arg1="${svn.info.result}" arg2="0" />
+        </condition>
     </target>
     <!--
       ** Initializes the REVISION.XML file from git information
     -->
-    <target name="init-git-revision-xml" if="svn.info.failed">
+    <target name="init-git-revision-xml" unless="svn.info.success">
         <exec append="false" output="REVISION.XML" executable="git" failifexecutionfails="false">
             <arg value="log"/>
             <arg value="-1"/>
