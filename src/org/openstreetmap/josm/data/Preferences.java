@@ -1489,6 +1489,9 @@ public class Preferences {
 
         @Override
         public void visit(ListSetting setting) {
+            /* don't save default values */
+            if (setting.equals(defaultsMap.get(key)))
+                return;
             b.append("  <list key='").append(XmlWriter.encode(key)).append("'>\n");
             for (String s : setting.getValue()) {
                 b.append("    <entry value='").append(XmlWriter.encode(s)).append("'/>\n");
@@ -1498,6 +1501,9 @@ public class Preferences {
 
         @Override
         public void visit(ListListSetting setting) {
+            /* don't save default values */
+            if (setting.equals(defaultsMap.get(key)))
+                return;
             b.append("  <lists key='").append(XmlWriter.encode(key)).append("'>\n");
             for (List<String> list : setting.getValue()) {
                 b.append("    <list>\n");
@@ -1557,6 +1563,12 @@ public class Preferences {
                 "gpxLayer.downloadAlongTrack.distance",        // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.distance
                 "gpxLayer.downloadAlongTrack.area",            // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.area
                 "gpxLayer.downloadAlongTrack.near",            // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.near
+                "validator.tests",                             // 01/2014 - can be removed mid-2014. Replaced by validator.skip
+                "validator.testsBeforeUpload",                 // 01/2014 - can be removed mid-2014. Replaced by validator.skipBeforeUpload
+                "validator.TagChecker.sources",                // 01/2014 - can be removed mid-2014. Replaced by validator.TagChecker.source
+                "validator.TagChecker.usedatafile",            // 01/2014 - can be removed mid-2014. Replaced by validator.TagChecker.source
+                "validator.TagChecker.useignorefile",          // 01/2014 - can be removed mid-2014. Replaced by validator.TagChecker.source
+                "validator.TagChecker.usespellfile",           // 01/2014 - can be removed mid-2014. Replaced by validator.TagChecker.source
         };
         for (String key : obsolete) {
             if (settingsMap.containsKey(key)) {

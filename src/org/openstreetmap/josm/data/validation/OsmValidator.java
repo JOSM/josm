@@ -84,6 +84,7 @@ public class OsmValidator implements LayerChangeListener {
      */
     @SuppressWarnings("unchecked")
     private static final Class<Test>[] allAvailableTests = new Class[] {
+        /* FIXME - unique error numbers for tests aren't properly unique - ignoring will not work as expected */
         DuplicateNode.class, // ID    1 ..   99
         OverlappingWays.class, // ID  101 ..  199
         UntaggedNode.class, // ID  201 ..  299
@@ -230,22 +231,16 @@ public class OsmValidator implements LayerChangeListener {
     }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
-        Pattern regexp = Pattern.compile("(\\w+)=(true|false),?");
-        Matcher m = regexp.matcher(Main.pref.get(beforeUpload ? ValidatorPreference.PREF_TESTS_BEFORE_UPLOAD
-                : ValidatorPreference.PREF_TESTS));
-        int pos = 0;
-        while (m.find(pos)) {
-            String testName = m.group(1);
+        for(String testName : Main.pref.getCollection(beforeUpload
+        ? ValidatorPreference.PREF_SKIP_TESTS_BEFORE_UPLOAD : ValidatorPreference.PREF_SKIP_TESTS)) {
             Test test = tests.get(testName);
             if (test != null) {
-                boolean enabled = Boolean.valueOf(m.group(2));
                 if (beforeUpload) {
-                    test.testBeforeUpload = enabled;
+                    test.testBeforeUpload = false;
                 } else {
-                    test.enabled = enabled;
+                    test.enabled = false;
                 }
             }
-            pos = m.end();
         }
     }
 

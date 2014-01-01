@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -51,13 +52,13 @@ public final class ValidatorPreference extends DefaultTabPreferenceSetting {
     public static final String PREF_LAYER = PREFIX + ".layer";
 
     /** The preferences key for enabled tests */
-    public static final String PREF_TESTS = PREFIX + ".tests";
+    public static final String PREF_SKIP_TESTS = PREFIX + ".skip";
 
     /** The preferences key for enabled tests */
     public static final String PREF_USE_IGNORE = PREFIX + ".ignore";
 
     /** The preferences key for enabled tests before upload*/
-    public static final String PREF_TESTS_BEFORE_UPLOAD = PREFIX + ".testsBeforeUpload";
+    public static final String PREF_SKIP_TESTS_BEFORE_UPLOAD = PREFIX + ".skipBeforeUpload";
 
     /** The preferences key for ignored severity other on upload */
     public static final String PREF_OTHER_UPLOAD = PREFIX + ".otherUpload";
@@ -125,27 +126,21 @@ public final class ValidatorPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public boolean ok() {
-        StringBuilder tests = new StringBuilder();
-        StringBuilder testsBeforeUpload = new StringBuilder();
+        Collection<String> tests = new LinkedList<String>();
+        Collection<String> testsBeforeUpload = new LinkedList<String>();
 
         for (Test test : allTests) {
             test.ok();
             String name = test.getClass().getSimpleName();
-            tests.append(',').append(name).append('=').append(test.enabled);
-            testsBeforeUpload.append(',').append(name).append('=').append(test.testBeforeUpload);
+            if(!test.enabled)
+                tests.add(name);
+            if(!test.testBeforeUpload)
+                testsBeforeUpload.add(name);
         }
-
-        if (tests.length() > 0) {
-            tests = tests.deleteCharAt(0);
-        }
-        if (testsBeforeUpload.length() > 0) {
-            testsBeforeUpload = testsBeforeUpload.deleteCharAt(0);
-        }
-
         OsmValidator.initializeTests(allTests);
 
-        Main.pref.put(PREF_TESTS, tests.toString());
-        Main.pref.put(PREF_TESTS_BEFORE_UPLOAD, testsBeforeUpload.toString());
+        Main.pref.putCollection(PREF_SKIP_TESTS, tests);
+        Main.pref.putCollection(PREF_SKIP_TESTS_BEFORE_UPLOAD, testsBeforeUpload);
         Main.pref.put(PREF_USE_IGNORE, prefUseIgnore.isSelected());
         Main.pref.put(PREF_OTHER, prefOther.isSelected());
         Main.pref.put(PREF_OTHER_UPLOAD, prefOtherUpload.isSelected());
