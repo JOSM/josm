@@ -51,8 +51,8 @@ public final class ExceptionUtil {
         e.printStackTrace();
         String msg = tr(
                 "<html>Failed to initialize communication with the OSM server {0}.<br>"
-                + "Check the server URL in your preferences and your internet connection.", Main.pref.get(
-                        "osm-server.url", OsmApi.DEFAULT_API_URL));
+                + "Check the server URL in your preferences and your internet connection.",
+                Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
         return msg;
     }
 
