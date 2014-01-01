@@ -93,10 +93,7 @@ public class TagChecker extends Test.TagTest {
     public static final String PREF_CHECK_COMPLEX = PREFIX + ".checkComplex";
     public static final String PREF_CHECK_FIXMES = PREFIX + ".checkFixmes";
 
-    public static final String PREF_SOURCES = PREFIX + ".sources";
-    public static final String PREF_USE_DATA_FILE = PREFIX + ".usedatafile";
-    public static final String PREF_USE_IGNORE_FILE = PREFIX + ".useignorefile";
-    public static final String PREF_USE_SPELL_FILE = PREFIX + ".usespellfile";
+    public static final String PREF_SOURCES = PREFIX + ".source";
 
     public static final String PREF_CHECK_KEYS_BEFORE_UPLOAD = PREF_CHECK_KEYS + "BeforeUpload";
     public static final String PREF_CHECK_VALUES_BEFORE_UPLOAD = PREF_CHECK_VALUES + "BeforeUpload";
@@ -119,10 +116,6 @@ public class TagChecker extends Test.TagTest {
     protected JCheckBox prefCheckComplexBeforeUpload;
     protected JCheckBox prefCheckFixmesBeforeUpload;
     protected JCheckBox prefCheckPaintBeforeUpload;
-
-    protected JCheckBox prefUseDataFile;
-    protected JCheckBox prefUseIgnoreFile;
-    protected JCheckBox prefUseSpellFile;
 
     protected static final int EMPTY_VALUES      = 1200;
     protected static final int INVALID_KEY       = 1201;
@@ -171,33 +164,9 @@ public class TagChecker extends Test.TagTest {
         ignoreDataKeyPair.clear();
 
         spellCheckKeyData = new HashMap<String, String>();
-        String sources = Main.pref.get( PREF_SOURCES, "");
-        if (Main.pref.getBoolean(PREF_USE_DATA_FILE, true)) {
-            if (sources == null || sources.length() == 0) {
-                sources = DATA_FILE;
-            } else {
-                sources = DATA_FILE + ";" + sources;
-            }
-        }
-        if (Main.pref.getBoolean(PREF_USE_IGNORE_FILE, true)) {
-            if (sources == null || sources.length() == 0) {
-                sources = IGNORE_FILE;
-            } else {
-                sources = IGNORE_FILE + ";" + sources;
-            }
-        }
-        if (Main.pref.getBoolean(PREF_USE_SPELL_FILE, true)) {
-            if( sources == null || sources.length() == 0) {
-                sources = SPELL_FILE;
-            } else {
-                sources = SPELL_FILE + ";" + sources;
-            }
-        }
-
+        
         String errorSources = "";
-        if (sources.length() == 0)
-            return;
-        for (String source : sources.split(";")) {
+        for (String source : Main.pref.getCollection(PREF_SOURCES, Arrays.asList(DATA_FILE, IGNORE_FILE, SPELL_FILE))) {
             BufferedReader reader = null;
             try {
                 MirroredInputStream s = new MirroredInputStream(source);
@@ -510,9 +479,9 @@ public class TagChecker extends Test.TagTest {
         prefCheckComplexBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckComplexBeforeUpload, a);
 
-        final String sources = Main.pref.get(PREF_SOURCES);
+        final Collection<String> sources = Main.pref.getCollection(PREF_SOURCES, Arrays.asList(DATA_FILE, IGNORE_FILE, SPELL_FILE));
         sourcesList = new EditableList(tr("TagChecker source"));
-        sourcesList.setItems(sources != null ? Arrays.asList(sources.split(";")) : Collections.<String>emptyList());
+        sourcesList.setItems(sources);
         testPanel.add(new JLabel(tr("Data sources ({0})", "*.cfg")), GBC.eol().insets(23, 0, 0, 0));
         testPanel.add(sourcesList, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(23, 0, 0, 0));
 
@@ -544,18 +513,6 @@ public class TagChecker extends Test.TagTest {
         prefCheckFixmesBeforeUpload = new JCheckBox();
         prefCheckFixmesBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckFixmesBeforeUpload, a);
-
-        prefUseDataFile = new JCheckBox(tr("Use default data file."), Main.pref.getBoolean(PREF_USE_DATA_FILE, true));
-        prefUseDataFile.setToolTipText(tr("Use the default data file (recommended)."));
-        testPanel.add(prefUseDataFile, GBC.eol().insets(20,0,0,0));
-
-        prefUseIgnoreFile = new JCheckBox(tr("Use default tag ignore file."), Main.pref.getBoolean(PREF_USE_IGNORE_FILE, true));
-        prefUseIgnoreFile.setToolTipText(tr("Use the default tag ignore file (recommended)."));
-        testPanel.add(prefUseIgnoreFile, GBC.eol().insets(20,0,0,0));
-
-        prefUseSpellFile = new JCheckBox(tr("Use default spellcheck file."), Main.pref.getBoolean(PREF_USE_SPELL_FILE, true));
-        prefUseSpellFile.setToolTipText(tr("Use the default spellcheck file (recommended)."));
-        testPanel.add(prefUseSpellFile, GBC.eol().insets(20,0,0,0));
     }
 
     public void handlePrefEnable() {
@@ -578,16 +535,11 @@ public class TagChecker extends Test.TagTest {
         Main.pref.put(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, prefCheckComplexBeforeUpload.isSelected());
         Main.pref.put(PREF_CHECK_KEYS_BEFORE_UPLOAD, prefCheckKeysBeforeUpload.isSelected());
         Main.pref.put(PREF_CHECK_FIXMES_BEFORE_UPLOAD, prefCheckFixmesBeforeUpload.isSelected());
-        Main.pref.put(PREF_USE_DATA_FILE, prefUseDataFile.isSelected());
-        Main.pref.put(PREF_USE_IGNORE_FILE, prefUseIgnoreFile.isSelected());
-        Main.pref.put(PREF_USE_SPELL_FILE, prefUseSpellFile.isSelected());
-        final List<String> sources = sourcesList.getItems();
-        return Main.pref.put(PREF_SOURCES, sources.isEmpty() ? null : Utils.join(";", sources));
+        return Main.pref.putCollection(PREF_SOURCES, sourcesList.getItems());
     }
 
     @Override
     public Command fixError(TestError testError) {
-
         List<Command> commands = new ArrayList<Command>(50);
 
         Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();
@@ -630,7 +582,6 @@ public class TagChecker extends Test.TagTest {
 
     @Override
     public boolean isFixable(TestError testError) {
-
         if (testError.getTester() instanceof TagChecker) {
             int code = testError.getCode();
             return code == INVALID_KEY || code == EMPTY_VALUES || code == INVALID_SPACE || code == INVALID_KEY_SPACE || code == INVALID_HTML;
