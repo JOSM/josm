@@ -65,7 +65,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author frsantos
  */
-public class TagChecker extends Test {
+public class TagChecker extends Test.TagTest {
     
     /** The default data file of tagchecker rules */
     public static final String DATA_FILE = "resource://data/validator/tagchecker.cfg";
@@ -316,21 +316,6 @@ public class TagChecker extends Test {
         }
     }
 
-    @Override
-    public void visit(Node n) {
-        checkPrimitive(n);
-    }
-
-    @Override
-    public void visit(Relation n) {
-        checkPrimitive(n);
-    }
-
-    @Override
-    public void visit(Way w) {
-        checkPrimitive(w);
-    }
-
     /**
      * Checks given string (key or value) if it contains characters with code below 0x20 (either newline or some other special characters)
      * @param s string to check
@@ -349,7 +334,8 @@ public class TagChecker extends Test {
      * Checks the primitive tags
      * @param p The primitive to check
      */
-    private void checkPrimitive(OsmPrimitive p) {
+    @Override
+    public void check(OsmPrimitive p) {
         // Just a collection to know if a primitive has been already marked with error
         MultiMap<OsmPrimitive, String> withErrors = new MultiMap<OsmPrimitive, String>();
 

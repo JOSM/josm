@@ -87,6 +87,36 @@ public class Test extends AbstractVisitor
     }
 
     /**
+     * A test that forwards all primitives to {@link #check(OsmPrimitive)}.
+     */
+    public static abstract class TagTest extends Test {
+        public TagTest(String name, String description) {
+            super(name, description);
+        }
+
+        public TagTest(String name) {
+            super(name);
+        }
+
+        public abstract void check(final OsmPrimitive p);
+
+        @Override
+        public void visit(Node n) {
+            check(n);
+        }
+
+        @Override
+        public void visit(Way w) {
+            check(w);
+        }
+
+        @Override
+        public void visit(Relation r) {
+            check(r);
+        }
+    }
+
+    /**
      * Initializes any global data used this tester.
      * @throws Exception When cannot initialize the test
      */
