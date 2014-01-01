@@ -319,7 +319,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         if (addOnToolbar.isSelected()) {
             ToolbarPreferences.ActionDefinition aDef =
                     new ToolbarPreferences.ActionDefinition(Main.main.menu.search);
-            aDef.getParameters().put("searchExpression", initialValues);
+            aDef.getParameters().put(SEARCH_EXPRESSION, initialValues);
+            aDef.setName(initialValues.text); // Display search expression as tooltip instead of generic one
             // parametrized action definition is now composed
             ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
             String res = actionParser.saveAction(aDef);
