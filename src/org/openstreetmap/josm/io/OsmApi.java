@@ -98,13 +98,9 @@ public class OsmApi extends OsmConnection {
      * Replies the {@link OsmApi} for the URL given by the preference <code>osm-server.url</code>
      *
      * @return the OsmApi
-     * @throws IllegalStateException thrown, if the preference <code>osm-server.url</code> is not set
-     *
      */
     static public OsmApi getOsmApi() {
         String serverUrl = Main.pref.get("osm-server.url", DEFAULT_API_URL);
-        if (serverUrl == null)
-            throw new IllegalStateException(tr("Preference ''{0}'' missing. Cannot initialize OsmApi.", "osm-server.url"));
         return getOsmApi(serverUrl);
     }
 
