@@ -4,8 +4,6 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -44,6 +42,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.widgets.EditableList;
+import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
@@ -394,12 +393,11 @@ public class MapCSSTagChecker extends Test {
         addMapCSS("power");
         addMapCSS("geometry");
         for (final String i : sourcesProperty.get()) {
-            final String file = new File(i).getAbsolutePath();
             try {
-                Main.info(tr("Adding {0} to tag checker", file));
-                addMapCSS(new BufferedReader(new InputStreamReader(new FileInputStream(i), Utils.UTF_8)));
+                Main.info(tr("Adding {0} to tag checker", i));
+                addMapCSS(new BufferedReader(new InputStreamReader(new MirroredInputStream(i), Utils.UTF_8)));
             } catch (Exception ex) {
-                Main.warn(new RuntimeException(tr("Failed to add {0} to tag checker", file), ex));
+                Main.warn(new RuntimeException(tr("Failed to add {0} to tag checker", i), ex));
             }
         }
     }
