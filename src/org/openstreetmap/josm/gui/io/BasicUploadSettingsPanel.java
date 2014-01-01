@@ -37,6 +37,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class BasicUploadSettingsPanel extends JPanel {
     public static final String HISTORY_KEY = "upload.comment.history";
     public static final String HISTORY_LAST_USED_KEY = "upload.comment.last-used";
+    public static final String HISTORY_MAX_AGE_KEY = "upload.comment.max-age";
     public static final String SOURCE_HISTORY_KEY = "upload.source.history";
 
     /** the history combo box for the upload comment */
@@ -143,7 +144,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         List<String> history = hcbUploadComment.getHistory();
         int age = (int) (System.currentTimeMillis()/1000 - Main.pref.getInteger(HISTORY_LAST_USED_KEY, 0));
         // only pre-select latest entry if used less than 4 hours ago.
-        if (age < 4 * 3600 * 1000 && history != null && !history.isEmpty()) {
+        if (age < Main.pref.getInteger(HISTORY_MAX_AGE_KEY, 4 * 3600 * 1000) && history != null && !history.isEmpty()) {
             hcbUploadComment.setText(history.get(0));
         }
         hcbUploadComment.requestFocusInWindow();
