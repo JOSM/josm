@@ -19,7 +19,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -78,8 +77,7 @@ public class ExtendedDialog extends JDialog {
     private WindowGeometry defaultWindowGeometry = null;
     private String togglePref = "";
     private int toggleValue = -1;
-    private String toggleCheckboxText = tr("Do not show again (remembers choice)");
-    private JCheckBox toggleCheckbox = null;
+    private ConditionalOptionPaneUtil.MessagePanel togglePanel;
     private Component parent;
     private Component content;
     private final String[] bTexts;
@@ -371,14 +369,12 @@ public class ExtendedDialog extends JDialog {
         gc.weighty = 0.0;
 
         if (toggleable) {
-            toggleCheckbox = new JCheckBox(toggleCheckboxText);
-            boolean showDialog = Main.pref.getBoolean("message."+ togglePref, true);
-            toggleCheckbox.setSelected(!showDialog);
+            togglePanel = new ConditionalOptionPaneUtil.MessagePanel(null, false);
             gc.gridx = icon != null ? 1 : 0;
             gc.gridy = y++;
             gc.anchor = GridBagConstraints.LINE_START;
             gc.insets = new Insets(5,contentInsets.left,5,contentInsets.right);
-            cp.add(toggleCheckbox, gc);
+            cp.add(togglePanel, gc);
         }
 
         gc.gridy = y++;
@@ -545,18 +541,6 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * Overwrites the default "Don't show again" text of the toggle checkbox
-     * if you want to give more information. Only has an effect if
-     * <code>toggleEnable</code> is set.
-     * @param text The toggle checkbox text
-     * @return {@code this}
-     */
-    public ExtendedDialog setToggleCheckboxText(String text) {
-        this.toggleCheckboxText = text;
-        return this;
-    }
-
-    /**
      * Sets the button that will react to ENTER.
      * @param defaultButtonIdx The button index (starts to )
      * @return {@code this}
@@ -596,13 +580,8 @@ public class ExtendedDialog extends JDialog {
      */
     public final boolean toggleCheckState() {
         toggleable = togglePref != null && !togglePref.isEmpty();
-
-        toggleValue = Main.pref.getInteger("message."+togglePref+".value", -1);
-        // No identifier given, so return false (= show the dialog)
-        if (!toggleable || toggleValue == -1)
-            return false;
-        // The pref is true, if the dialog should be shown.
-        return !(Main.pref.getBoolean("message."+ togglePref, true));
+        toggleValue = ConditionalOptionPaneUtil.getDialogReturnValue(togglePref);
+        return toggleable && toggleValue != -1;
     }
 
     /**
@@ -611,12 +590,11 @@ public class ExtendedDialog extends JDialog {
      */
     private void toggleSaveState() {
         if (!toggleable ||
-                toggleCheckbox == null ||
+                togglePanel == null ||
                 cancelButtonIdx.contains(result) ||
                 result == ExtendedDialog.DialogClosedOtherwise)
             return;
-        Main.pref.put("message."+ togglePref, !toggleCheckbox.isSelected());
-        Main.pref.putInteger("message."+togglePref+".value", result);
+        togglePanel.getNotShowAgain().store(togglePref, result);
     }
 
     /**
