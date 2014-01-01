@@ -13,6 +13,30 @@ public final class Predicates {
     }
 
     /**
+     * Returns the negation of {@code predicate}.
+     */
+    public static <T> Predicate<T> not(final Predicate<T> predicate) {
+        return new Predicate<T>() {
+            @Override
+            public boolean evaluate(T obj) {
+                return !predicate.evaluate(obj);
+            }
+        };
+    }
+
+    /**
+     * Returns a {@link Predicate} executing {@link Utils#equal}.
+     */
+    public static <T> Predicate<T> equalTo(final T ref) {
+        return new Predicate<T>() {
+            @Override
+            public boolean evaluate(T obj) {
+                return Utils.equal(obj, ref);
+            }
+        };
+    }
+
+    /**
      * Returns a {@link Predicate} executing {@link Pattern#matcher(CharSequence)} and {@link java.util.regex.Matcher#matches}.
      */
     public static Predicate<String> stringMatchesPattern(final Pattern pattern) {

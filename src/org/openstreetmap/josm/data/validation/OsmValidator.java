@@ -33,6 +33,7 @@ import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
 import org.openstreetmap.josm.data.validation.tests.DuplicatedWayNodes;
 import org.openstreetmap.josm.data.validation.tests.Highways;
+import org.openstreetmap.josm.data.validation.tests.Lanes;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.data.validation.tests.NameMismatch;
@@ -119,6 +120,7 @@ public class OsmValidator implements LayerChangeListener {
         BarriersEntrances.class, // ID 2801 .. 2899
         OpeningHourTest.class, // 2901 .. 2999
         MapCSSTagChecker.class, // 3000 .. 3099
+        Lanes.class, // 3100 .. 3199
     };
     
     private static Map<String, Test> allTestsMap;
