@@ -457,7 +457,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                     tr("Ignore this hint and upload anyway")});
             dlg.setIcon(JOptionPane.WARNING_MESSAGE);
             dlg.toggleEnable(togglePref);
-            dlg.setToggleCheckboxText(tr("Do not show this message again"));
             dlg.setCancelButton(1, 2);
             return dlg.showDialog().getValue() != 3;
         }

@@ -6,14 +6,20 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import javax.swing.JCheckBox;
+import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * ConditionalOptionPaneUtil provides static utility methods for displaying modal message dialogs
@@ -28,31 +34,17 @@ import org.openstreetmap.josm.tools.GBC;
 public final class ConditionalOptionPaneUtil {
     static public final int DIALOG_DISABLED_OPTION = Integer.MIN_VALUE;
 
+    /** (preference key => return value) mappings valid for the current operation (no, those two maps cannot be combined) */
+    protected static final Map<String, Integer> sessionChoices = new HashMap<String, Integer>();
+    /** (preference key => return value) mappings valid for the current session */
+    protected static final Map<String, Integer> immediateChoices = new HashMap<String, Integer>();
+    /** a set indication that (preference key) is or may be stored for the currently active bulk operation */
+    protected static final Set<String> immediateActive = new HashSet<String>();
+
     /**
      * this is a static utility class only
      */
     private ConditionalOptionPaneUtil() {}
-
-    /**
-     * Replies the preference value for the preference key "message." + <code>prefKey</code>.
-     * The default value if the preference key is missing is true.
-     *
-     * @param  prefKey the preference key
-     * @return the preference value for the preference key "message." + <code>prefKey</code>
-     */
-    public static boolean getDialogShowingEnabled(String prefKey) {
-        return Main.pref.getBoolean("message."+prefKey, true);
-    }
-
-    /**
-     * sets the value for the preference key "message." + <code>prefKey</code>.
-     *
-     * @param prefKey the key
-     * @param enabled the value
-     */
-    public static void setDialogShowingEnabled(String prefKey, boolean enabled) {
-        Main.pref.put("message."+prefKey, enabled);
-    }
 
     /**
      * Returns the preference value for the preference key "message." + <code>prefKey</code> + ".value".
@@ -61,18 +53,29 @@ public final class ConditionalOptionPaneUtil {
      * @param  prefKey the preference key
      * @return the preference value for the preference key "message." + <code>prefKey</code> + ".value"
      */
-    public static Integer getDialogReturnValue(String prefKey) {
-        return Main.pref.getInteger("message."+prefKey+".value", -1);
+    public static int getDialogReturnValue(String prefKey) {
+        return Utils.firstNonNull(
+                immediateChoices.get(prefKey),
+                sessionChoices.get(prefKey),
+                !Main.pref.getBoolean("message." + prefKey, true) ? Main.pref.getInteger("message." + prefKey + ".value", -1) : -1
+        );
     }
 
     /**
-     * sets the value for the preference key "message." + <code>prefKey</code> + ".value".
-     *
-     * @param prefKey the key
-     * @param value the value
+     * Marks the beginning of a bulk operation in order to provide a "Do not show again (this operation)" option.
+     * @param prefKey the preference key
      */
-    public static void setDialogReturnValue(String prefKey, Integer value) {
-        Main.pref.putInteger("message."+prefKey+".value", value);
+    public static void startBulkOperation(final String prefKey) {
+        immediateActive.add(prefKey);
+    }
+
+    /**
+     * Marks the ending of a bulk operation. Removes the "Do not show again (this operation)" result value.
+     * @param prefKey the preference key
+     */
+    public static void endBulkOperation(final String prefKey) {
+        immediateActive.remove(prefKey);
+        immediateChoices.remove(prefKey);
     }
 
     /**
@@ -103,14 +106,12 @@ public final class ConditionalOptionPaneUtil {
      */
     static public int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, Object [] options, Object defaultOption) throws HeadlessException {
         int ret = getDialogReturnValue(preferenceKey);
-        if (!getDialogShowingEnabled(preferenceKey) && ((ret == JOptionPane.YES_OPTION) || (ret == JOptionPane.NO_OPTION)))
+        if (isYesOrNo(ret))
             return ret;
-        MessagePanel pnl = new MessagePanel(false, message);
+        MessagePanel pnl = new MessagePanel(message, immediateActive.contains(preferenceKey));
         ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null, options, defaultOption);
-
-        if (((ret == JOptionPane.YES_OPTION) || (ret == JOptionPane.NO_OPTION)) && !pnl.getDialogShowingEnabled()) {
-            setDialogShowingEnabled(preferenceKey, false);
-            setDialogReturnValue(preferenceKey, ret);
+        if (isYesOrNo(ret)) {
+            pnl.getNotShowAgain().store(preferenceKey, ret);
         }
         return ret;
     }
@@ -148,15 +149,18 @@ public final class ConditionalOptionPaneUtil {
      */
     static public boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
         int ret = getDialogReturnValue(preferenceKey);
-        if (!getDialogShowingEnabled(preferenceKey) && ((ret == JOptionPane.YES_OPTION) || (ret == JOptionPane.NO_OPTION)))
+        if (isYesOrNo(ret))
             return ret == trueOption;
-        MessagePanel pnl = new MessagePanel(false, message);
+        MessagePanel pnl = new MessagePanel(message, immediateActive.contains(preferenceKey));
         ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
-        if (((ret == JOptionPane.YES_OPTION) || (ret == JOptionPane.NO_OPTION)) && !pnl.getDialogShowingEnabled()) {
-            setDialogShowingEnabled(preferenceKey, false);
-            setDialogReturnValue(preferenceKey, ret);
+        if ((isYesOrNo(ret))) {
+            pnl.getNotShowAgain().store(preferenceKey, ret);
         }
         return ret == trueOption;
+    }
+
+    private static boolean isYesOrNo(int returnCode) {
+        return (returnCode == JOptionPane.YES_OPTION) || (returnCode == JOptionPane.NO_OPTION);
     }
 
     /**
@@ -178,12 +182,53 @@ public final class ConditionalOptionPaneUtil {
      * @see JOptionPane#ERROR_MESSAGE
      */
     static public void showMessageDialog(String preferenceKey, Component parent, Object message, String title,int messageType) {
-        if (!getDialogShowingEnabled(preferenceKey))
+        if (getDialogReturnValue(preferenceKey) == Integer.MAX_VALUE)
             return;
-        MessagePanel pnl = new MessagePanel(false, message);
+        MessagePanel pnl = new MessagePanel(message, immediateActive.contains(preferenceKey));
         JOptionPane.showMessageDialog(parent, pnl, title, messageType);
-        if(!pnl.getDialogShowingEnabled()) {
-            setDialogShowingEnabled(preferenceKey, false);
+        pnl.getNotShowAgain().store(preferenceKey, Integer.MAX_VALUE);
+    }
+
+    /**
+     * An enum designating how long to not show this message again, i.e., for how long to store
+     */
+    static enum NotShowAgain {
+        NO, OPERATION, SESSION, PERMANENT;
+
+        /**
+         * Stores the dialog result {@code value} at the corresponding place.
+         * @param prefKey the preference key
+         * @param value the dialog result
+         */
+        void store(String prefKey, Integer value) {
+            switch (this) {
+                case NO:
+                    break;
+                case OPERATION:
+                    immediateChoices.put(prefKey, value);
+                    break;
+                case SESSION:
+                    sessionChoices.put(prefKey, value);
+                    break;
+                case PERMANENT:
+                    Main.pref.put("message." + prefKey, false);
+                    Main.pref.putInteger("message." + prefKey + ".value", value);
+                    break;
+            }
+        }
+
+        String getLabel() {
+            switch (this) {
+                case NO:
+                    return tr("Show this dialog again the next time");
+                case OPERATION:
+                    return tr("Do not show again (this operation)");
+                case SESSION:
+                    return tr("Do not show again (this session)");
+                case PERMANENT:
+                    return tr("Do not show again (remembers choice)");
+            }
+            throw new IllegalStateException();
         }
     }
 
@@ -194,24 +239,49 @@ public final class ConditionalOptionPaneUtil {
      * a checkbox for enabling/disabling this particular dialog.
      *
      */
-    private static class MessagePanel extends JPanel {
-        JCheckBox cbShowDialog;
+    static class MessagePanel extends JPanel {
+        private final ButtonGroup group = new ButtonGroup();
+        private final JRadioButton cbShowPermanentDialog = new JRadioButton(NotShowAgain.PERMANENT.getLabel());
+        private final JRadioButton cbShowSessionDialog = new JRadioButton(NotShowAgain.SESSION.getLabel());
+        private final JRadioButton cbShowImmediateDialog = new JRadioButton(NotShowAgain.OPERATION.getLabel());
+        private final JRadioButton cbStandard = new JRadioButton(NotShowAgain.NO.getLabel());
 
-        public MessagePanel(boolean donotshow, Object message) {
-            cbShowDialog = new JCheckBox(tr("Do not show again (remembers choice)"));
-            cbShowDialog.setSelected(donotshow);
+        /**
+         * Constructs a new panel.
+         * @param message the the message (null to add no message, Component instances are added directly, otherwise a JLabel with the string representation is added)
+         * @param displayImmediateOption whether to provide "Do not show again (this session)"
+         */
+        public MessagePanel(Object message, boolean displayImmediateOption) {
+            cbStandard.setSelected(true);
+            group.add(cbShowPermanentDialog);
+            group.add(cbShowSessionDialog);
+            group.add(cbShowImmediateDialog);
+            group.add(cbStandard);
+
             setLayout(new GridBagLayout());
-
             if (message instanceof Component) {
-                add((Component)message, GBC.eop());
-            } else {
-                add(new JLabel(message.toString()),GBC.eop());
+                add((Component) message, GBC.eop());
+            } else if (message != null) {
+                add(new JLabel(message.toString()), GBC.eop());
             }
-            add(cbShowDialog, GBC.eol());
+            add(cbShowPermanentDialog, GBC.eol());
+            add(cbShowSessionDialog, GBC.eol());
+            if (displayImmediateOption) {
+                add(cbShowImmediateDialog, GBC.eol());
+            }
+            add(cbStandard, GBC.eol());
         }
 
-        public boolean getDialogShowingEnabled() {
-            return !cbShowDialog.isSelected();
+        NotShowAgain getNotShowAgain() {
+            return cbStandard.isSelected()
+                    ? NotShowAgain.NO
+                    : cbShowImmediateDialog.isSelected()
+                    ? NotShowAgain.OPERATION
+                    : cbShowSessionDialog.isSelected()
+                    ? NotShowAgain.SESSION
+                    : cbShowPermanentDialog.isSelected()
+                    ? NotShowAgain.PERMANENT
+                    : null;
         }
     }
 }
