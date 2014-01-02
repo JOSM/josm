@@ -38,4 +38,14 @@ class LanesTest extends GroovyTestCase {
         lanes.check(TestUtils.createPrimitive("way turn:lanes:forward=left|right change:lanes:forward=yes|no|yes width:backward=1|2|3"))
         assert lanes.errors.get(0).getMessage() == "Number of lane dependent values inconsistent in forward direction"
     }
+
+    void test5() {
+        lanes.check(TestUtils.createPrimitive("way lanes:forward=5 turn:lanes:forward=left|right"))
+        assert lanes.errors.get(0).getMessage() == "Number of lanes:forward greater than *:lanes:forward"
+    }
+
+    void test6() {
+        lanes.check(TestUtils.createPrimitive("way lanes:forward=foo|bar turn:lanes:forward=foo+bar"))
+        assert lanes.errors.isEmpty()
+    }
 }
