@@ -65,6 +65,7 @@ public class CombineWayAction extends JosmAction {
         ed.setButtonIcons(new String[] {"wayflip.png", "cancel.png"});
         ed.setContent(tr("The ways can not be combined in their current directions.  "
                 + "Do you want to reverse some of them?"));
+        ed.toggleEnable("combineway-reverse");
         ed.showDialog();
         return ed.getValue() == 1;
     }
