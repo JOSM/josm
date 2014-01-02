@@ -1025,7 +1025,8 @@ public class Preferences {
     synchronized public <T extends Setting> T getSetting(String key, T def, Class<T> klass) {
         CheckParameterUtil.ensureParameterNotNull(key);
         CheckParameterUtil.ensureParameterNotNull(def);
-        if (defaultsMap.containsKey(key) && !def.equals(defaultsMap.get(key))) {
+        Setting oldDef = defaultsMap.get(key);
+        if (oldDef != null && oldDef.getValue() != null && def.getValue() != null && !def.equals(oldDef)) {
             Main.info("Defaults for " + key + " differ: " + def + " != " + defaultsMap.get(key));
         }
         defaultsMap.put(key, def.copy());

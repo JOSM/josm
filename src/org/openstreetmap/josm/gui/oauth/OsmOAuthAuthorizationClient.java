@@ -34,7 +34,6 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.oauth.OsmPrivileges;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -61,7 +60,7 @@ public class OsmOAuthAuthorizationClient {
      *
      */
     public OsmOAuthAuthorizationClient() {
-        oauthProviderParameters = OAuthParameters.createDefault(Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
+        oauthProviderParameters = OAuthParameters.createDefault(Main.pref.get("osm-server.url"));
         consumer = oauthProviderParameters.buildConsumer();
         provider = oauthProviderParameters.buildProvider(consumer);
     }
