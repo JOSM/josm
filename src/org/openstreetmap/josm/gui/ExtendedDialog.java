@@ -369,7 +369,7 @@ public class ExtendedDialog extends JDialog {
         gc.weighty = 0.0;
 
         if (toggleable) {
-            togglePanel = new ConditionalOptionPaneUtil.MessagePanel(null, false);
+            togglePanel = new ConditionalOptionPaneUtil.MessagePanel(null, ConditionalOptionPaneUtil.isInBulkOperation(togglePref));
             gc.gridx = icon != null ? 1 : 0;
             gc.gridy = y++;
             gc.anchor = GridBagConstraints.LINE_START;

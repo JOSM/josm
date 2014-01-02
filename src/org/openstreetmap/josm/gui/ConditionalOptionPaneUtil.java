@@ -70,6 +70,14 @@ public final class ConditionalOptionPaneUtil {
     }
 
     /**
+     * Determines whether the key has been marked to be part of a bulk operation (in order to provide a "Do not show again (this operation)" option).
+     * @param prefKey the preference key
+     */
+    public static boolean isInBulkOperation(final String prefKey) {
+        return immediateActive.contains(prefKey);
+    }
+
+    /**
      * Marks the ending of a bulk operation. Removes the "Do not show again (this operation)" result value.
      * @param prefKey the preference key
      */
@@ -108,7 +116,7 @@ public final class ConditionalOptionPaneUtil {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret;
-        MessagePanel pnl = new MessagePanel(message, immediateActive.contains(preferenceKey));
+        MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));
         ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null, options, defaultOption);
         if (isYesOrNo(ret)) {
             pnl.getNotShowAgain().store(preferenceKey, ret);
@@ -151,7 +159,7 @@ public final class ConditionalOptionPaneUtil {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret == trueOption;
-        MessagePanel pnl = new MessagePanel(message, immediateActive.contains(preferenceKey));
+        MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));
         ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
         if ((isYesOrNo(ret))) {
             pnl.getNotShowAgain().store(preferenceKey, ret);
@@ -184,7 +192,7 @@ public final class ConditionalOptionPaneUtil {
     static public void showMessageDialog(String preferenceKey, Component parent, Object message, String title,int messageType) {
         if (getDialogReturnValue(preferenceKey) == Integer.MAX_VALUE)
             return;
-        MessagePanel pnl = new MessagePanel(message, immediateActive.contains(preferenceKey));
+        MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));
         JOptionPane.showMessageDialog(parent, pnl, title, messageType);
         pnl.getNotShowAgain().store(preferenceKey, Integer.MAX_VALUE);
     }
