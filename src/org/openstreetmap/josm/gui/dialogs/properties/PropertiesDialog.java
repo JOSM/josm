@@ -74,6 +74,7 @@ import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
@@ -844,6 +845,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     class DeleteAction extends JosmAction implements ListSelectionListener {
 
+        static final String DELETE_FROM_RELATION_PREF = "delete_from_relation";
+
         public DeleteAction() {
             super(tr("Delete"), "dialogs/delete", tr("Delete the selected key in all objects"),
                     Shortcut.registerShortcut("properties:delete", tr("Delete Tags"), KeyEvent.VK_D,
@@ -900,7 +903,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     new String[] {tr("Delete from relation"), tr("Cancel")});
             ed.setButtonIcons(new String[] {"dialogs/delete.png", "cancel.png"});
             ed.setContent(tr("Really delete selection from relation {0}?", cur.getDisplayName(DefaultNameFormatter.getInstance())));
-            ed.toggleEnable("delete_from_relation");
+            ed.toggleEnable(DELETE_FROM_RELATION_PREF);
             ed.showDialog();
 
             if(ed.getValue() != 1)
@@ -924,11 +927,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 int[] rows = tagTable.getSelectedRows();
                 deleteTags(rows);
             } else if (membershipTable.getSelectedRowCount() > 0) {
+                ConditionalOptionPaneUtil.startBulkOperation(DELETE_FROM_RELATION_PREF);
                 int[] rows = membershipTable.getSelectedRows();
-                // delete from last relation to convserve row numbers in the table
+                // delete from last relation to conserve row numbers in the table
                 for (int i=rows.length-1; i>=0; i--) {
                     deleteFromRelation(rows[i]);
                 }
+                ConditionalOptionPaneUtil.endBulkOperation(DELETE_FROM_RELATION_PREF);
             }
         }
 
