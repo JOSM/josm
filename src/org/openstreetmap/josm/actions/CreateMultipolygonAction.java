@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Create multipolygon from selected ways automatically.
@@ -53,14 +54,24 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class CreateMultipolygonAction extends JosmAction {
 
+    private final boolean update;
+
     /**
      * Constructs a new {@code CreateMultipolygonAction}.
      */
-    public CreateMultipolygonAction() {
-        super(tr("Create multipolygon"), "multipoly_create", tr("Create multipolygon"),
-            Shortcut.registerShortcut("tools:multipoly", tr("Tool: {0}", tr("Create multipolygon")),
-            KeyEvent.VK_A, Shortcut.ALT_CTRL), true);
+    public CreateMultipolygonAction(final boolean update) {
+        super(getName(update), "multipoly_create", getName(update),
+                update
+                        ? null
+                        : Shortcut.registerShortcut("tools:multipoly", tr("Tool: {0}", getName(false)), KeyEvent.VK_A, Shortcut.ALT_CTRL),
+                true, update ? "multipoly_update" : "multipoly_create", true);
+        this.update = update;
     }
+
+    private static String getName(boolean update) {
+        return update ? tr("Update multipolygon") : tr("Create multipolygon");
+    }
+
     /**
      * The action button has been clicked
      *
@@ -91,7 +102,9 @@ public class CreateMultipolygonAction extends JosmAction {
             return;
         }
 
-        final Relation multipolygonRelation = getSelectedMultipolygonRelation(selectedRelations);
+        final Relation multipolygonRelation = update
+                ? getSelectedMultipolygonRelation(selectedWays, selectedRelations)
+                : null;
         if (multipolygonRelation != null && (multipolygonRelation.isIncomplete() || multipolygonRelation.hasIncompleteMembers())) {
             new Notification(
                     tr("Cannot update multipolygon since relation is incomplete."))
@@ -101,7 +114,7 @@ public class CreateMultipolygonAction extends JosmAction {
             return;
         }
 
-        final Pair<SequenceCommand, Relation> commandAndRelation = createMultipolygonCommand(selectedWays, selectedRelations);
+        final Pair<SequenceCommand, Relation> commandAndRelation = createMultipolygonCommand(selectedWays, multipolygonRelation);
         if (commandAndRelation == null) {
             return;
         }
@@ -130,31 +143,47 @@ public class CreateMultipolygonAction extends JosmAction {
 
     }
 
-    private static Relation getSelectedMultipolygonRelation(Collection<Relation> selectedRelations) {
-        return  selectedRelations.size() == 1 && "multipolygon".equals(selectedRelations.iterator().next().get("type"))
-                ? selectedRelations.iterator().next()
-                : null;
+    private Relation getSelectedMultipolygonRelation() {
+        return getSelectedMultipolygonRelation(getCurrentDataSet().getSelectedWays(), getCurrentDataSet().getSelectedRelations());
+    }
+
+    private static Relation getSelectedMultipolygonRelation(Collection<Way> selectedWays, Collection<Relation> selectedRelations) {
+        if (selectedRelations.size() == 1 && "multipolygon".equals(selectedRelations.iterator().next().get("type"))) {
+            return selectedRelations.iterator().next();
+        } else {
+            final HashSet<Relation> relatedRelations = new HashSet<Relation>();
+            for (final Way w : selectedWays) {
+                relatedRelations.addAll(Utils.filteredCollection(w.getReferrers(), Relation.class));
+            }
+            return relatedRelations.size() == 1 ? relatedRelations.iterator().next() : null;
+        }
     }
 
     /**
      * Returns a {@link Pair} of the old multipolygon {@link Relation} (or null) and the newly created/modified multipolygon {@link Relation}.
      */
-    public static Pair<Relation, Relation> createMultipolygonRelation(Collection<Way> selectedWays, Collection<Relation> selectedRelations) {
+    public static Pair<Relation, Relation> updateMultipolygonRelation(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
-        final Relation selectedMultipolygonRelation = getSelectedMultipolygonRelation(selectedRelations);
-        if (selectedMultipolygonRelation != null) {
-            // add ways of existing relation to include them in polygon analysis
-            selectedWays = new HashSet<Way>(selectedWays);
-            selectedWays.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
-        }
+        // add ways of existing relation to include them in polygon analysis
+        selectedWays = new HashSet<Way>(selectedWays);
+        selectedWays.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
 
         final MultipolygonCreate polygon = analyzeWays(selectedWays);
         if (polygon == null) {
             return null; //could not make multipolygon.
-        }
-
-        if (selectedMultipolygonRelation != null) {
+        } else {
             return Pair.create(selectedMultipolygonRelation, createRelation(polygon, new Relation(selectedMultipolygonRelation)));
+        }
+    }
+
+    /**
+     * Returns a {@link Pair} null and the newly created/modified multipolygon {@link Relation}.
+     */
+    public static Pair<Relation, Relation> createMultipolygonRelation(Collection<Way> selectedWays) {
+
+        final MultipolygonCreate polygon = analyzeWays(selectedWays);
+        if (polygon == null) {
+            return null; //could not make multipolygon.
         } else {
             return Pair.create(null, createRelation(polygon, new Relation()));
         }
@@ -163,9 +192,11 @@ public class CreateMultipolygonAction extends JosmAction {
     /**
      * Returns a pair of a multipolygon creating/modifying {@link Command} as well as the multipolygon {@link Relation}.
      */
-    public static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> selectedWays, Collection<Relation> selectedRelations) {
+    public static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
-        final Pair<Relation, Relation> rr = createMultipolygonRelation(selectedWays, selectedRelations);
+        final Pair<Relation, Relation> rr = selectedMultipolygonRelation == null
+                ? createMultipolygonRelation(selectedWays)
+                : updateMultipolygonRelation(selectedWays, selectedMultipolygonRelation);
         if (rr == null) {
             return null;
         }
@@ -176,10 +207,10 @@ public class CreateMultipolygonAction extends JosmAction {
         final String commandName;
         if (existingRelation == null) {
             list.add(new AddCommand(relation));
-            commandName = tr("Create multipolygon");
+            commandName = getName(false);
         } else {
             list.add(new ChangeCommand(existingRelation, relation));
-            commandName = tr("Update multipolygon");
+            commandName = getName(true);
         }
         return Pair.create(new SequenceCommand(commandName, list), relation);
     }
@@ -199,11 +230,11 @@ public class CreateMultipolygonAction extends JosmAction {
       * @param selection the current selection, gets tested for emptyness
       */
     @Override protected void updateEnabledState(Collection < ? extends OsmPrimitive > selection) {
-        setEnabled(selection != null && !selection.isEmpty());
-        putValue(NAME, getSelectedMultipolygonRelation(getCurrentDataSet().getSelectedRelations()) != null
-                ? tr("Update multipolygon")
-                : tr("Create multipolygon")
-        );
+        if (update) {
+            setEnabled(getSelectedMultipolygonRelation() != null);
+        } else {
+            setEnabled(!getCurrentDataSet().getSelectedWays().isEmpty());
+        }
     }
 
     /**
