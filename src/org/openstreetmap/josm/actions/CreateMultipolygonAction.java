@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -105,41 +107,54 @@ public class CreateMultipolygonAction extends JosmAction {
         final Relation multipolygonRelation = update
                 ? getSelectedMultipolygonRelation(selectedWays, selectedRelations)
                 : null;
-        if (multipolygonRelation != null && (multipolygonRelation.isIncomplete() || multipolygonRelation.hasIncompleteMembers())) {
-            new Notification(
-                    tr("Cannot update multipolygon since relation is incomplete."))
-                    .setIcon(JOptionPane.WARNING_MESSAGE)
-                    .setDuration(Notification.TIME_DEFAULT)
-                    .show();
-            return;
-        }
 
-        final Pair<SequenceCommand, Relation> commandAndRelation = createMultipolygonCommand(selectedWays, multipolygonRelation);
-        if (commandAndRelation == null) {
-            return;
-        }
-        final Command command = commandAndRelation.a;
-        final Relation relation = commandAndRelation.b;
-        Main.main.undoRedo.add(command);
-
-        // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
-        // knows about the new relation before we try to select it.
-        // (Yes, we are already in event dispatch thread. But DatasetEventManager
-        // uses 'SwingUtilities.invokeLater' to fire events so we have to do
-        // the same.)
-        SwingUtilities.invokeLater(new Runnable() {
+        // runnable to create/update multipolygon relation
+        final Runnable createOrUpdateMultipolygonTask = new Runnable() {
             @Override
             public void run() {
-                Main.map.relationListDialog.selectRelation(relation);
-                if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
-                    //Open relation edit window, if set up in preferences
-                    RelationEditor editor = RelationEditor.getEditor(Main.main.getEditLayer(), relation, null);
-
-                    editor.setModal(true);
-                    editor.setVisible(true);
+                final Pair<SequenceCommand, Relation> commandAndRelation = createMultipolygonCommand(selectedWays, multipolygonRelation);
+                if (commandAndRelation == null) {
+                    return;
                 }
+                final Command command = commandAndRelation.a;
+                final Relation relation = commandAndRelation.b;
+
+
+                // to avoid EDT violations
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Main.main.undoRedo.add(command);
+                    }
+                });
+
+                // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
+                // knows about the new relation before we try to select it.
+                // (Yes, we are already in event dispatch thread. But DatasetEventManager
+                // uses 'SwingUtilities.invokeLater' to fire events so we have to do
+                // the same.)
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Main.map.relationListDialog.selectRelation(relation);
+                        if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
+                            //Open relation edit window, if set up in preferences
+                            RelationEditor editor = RelationEditor.getEditor(Main.main.getEditLayer(), relation, null);
+
+                            editor.setModal(true);
+                            editor.setVisible(true);
+                        }
+                    }
+                });
             }
-        });
+        };
+
+        // download incomplete relation if necessary
+        if (multipolygonRelation != null && (multipolygonRelation.isIncomplete() || multipolygonRelation.hasIncompleteMembers())) {
+            Main.worker.submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.main.getEditLayer()));
+        }
+        // create/update multipolygon relation
+        Main.worker.submit(createOrUpdateMultipolygonTask);
 
     }
 
