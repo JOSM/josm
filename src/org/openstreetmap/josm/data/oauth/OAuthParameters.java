@@ -90,7 +90,7 @@ public class OAuthParameters {
      * @return the parameters
      */
     static public OAuthParameters createFromPreferences(Preferences pref) {
-        OAuthParameters parameters = createDefault(pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
+        OAuthParameters parameters = createDefault(pref.get("osm-server.url"));
         parameters.setConsumerKey(pref.get("oauth.settings.consumer-key", parameters.getConsumerKey()));
         parameters.setConsumerSecret(pref.get("oauth.settings.consumer-secret", parameters.getConsumerSecret()));
         parameters.setRequestTokenUrl(pref.get("oauth.settings.request-token-url", parameters.getRequestTokenUrl()));
