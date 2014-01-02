@@ -59,4 +59,10 @@ public class TestUtils {
         assertThat(p.get("name"), is("Foo"));
         assertThat(p.get("railway"), is("rail"));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreatePrimitiveFail() throws Exception {
+        TestUtils.createPrimitive("noway name=Foo");
+    }
+
 }

@@ -22,17 +22,15 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
@@ -67,15 +65,15 @@ public class MapCSSTagChecker extends Test.TagTest {
     final List<TagCheck> checks = new ArrayList<TagCheck>();
 
     static class TagCheck implements Predicate<OsmPrimitive> {
-        protected final List<Selector> selector;
+        protected final MapCSSRule rule;
         protected final List<PrimitiveToTag> change = new ArrayList<PrimitiveToTag>();
         protected final Map<String, String> keyChange = new LinkedHashMap<String, String>();
         protected final List<String> alternatives = new ArrayList<String>();
         protected final Map<String, Severity> errors = new HashMap<String, Severity>();
         protected final Map<String, Boolean> assertions = new HashMap<String, Boolean>();
 
-        TagCheck(List<Selector> selector) {
-            this.selector = selector;
+        TagCheck(MapCSSRule rule) {
+            this.rule = rule;
         }
 
         /**
@@ -112,7 +110,8 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         static TagCheck ofMapCSSRule(final MapCSSRule rule) {
-            final TagCheck check = new TagCheck(rule.selectors);
+            final TagCheck check = new TagCheck(rule);
+            boolean containsSetClassExpression = false;
             for (Instruction i : rule.declaration) {
                 if (i instanceof Instruction.AssignmentInstruction) {
                     final Instruction.AssignmentInstruction ai = (Instruction.AssignmentInstruction) i;
@@ -141,12 +140,14 @@ public class MapCSSTagChecker extends Test.TagTest {
                         check.assertions.put(val, true);
                     } else if ("assertNoMatch".equals(ai.key) && val != null) {
                         check.assertions.put(val, false);
+                    } else if (ai.val instanceof Boolean && ((Boolean) ai.val)) {
+                        containsSetClassExpression = true;
                     } else {
                         throw new RuntimeException("Cannot add instruction " + ai.key + ": " + ai.val + "!");
                     }
                 }
             }
-            if (check.errors.isEmpty()) {
+            if (check.errors.isEmpty() && !containsSetClassExpression) {
                 throw new RuntimeException("No throwError/throwWarning/throwOther given! You should specify a validation error message for " + rule.selectors);
             } else if (check.errors.size() > 1) {
                 throw new RuntimeException("More than one throwError/throwWarning/throwOther given! You should specify a single validation error message for " + rule.selectors);
@@ -182,14 +183,20 @@ public class MapCSSTagChecker extends Test.TagTest {
          *
          * @param primitive the primitive to test
          * @return true when the primitive contains a deprecated tag
+         * @deprecated since it does not handle MapCSS-classes
          */
+        @Deprecated
         boolean matchesPrimitive(OsmPrimitive primitive) {
             return whichSelectorMatchesPrimitive(primitive) != null;
         }
 
         Selector whichSelectorMatchesPrimitive(OsmPrimitive primitive) {
-            final Environment env = new Environment().withPrimitive(primitive);
-            for (Selector i : selector) {
+            return whichSelectorMatchesEnvironment(new Environment().withPrimitive(primitive));
+        }
+
+        Selector whichSelectorMatchesEnvironment(Environment env) {
+            for (Selector i : rule.selectors) {
+                env.clearSelectorMatchingInformation();
                 if (i.matches(env)) {
                     return i;
                 }
@@ -317,8 +324,11 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @return an instance of {@link TestError}, or returns null if the primitive does not give rise to an error.
          */
         TestError getErrorForPrimitive(OsmPrimitive p) {
-            final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
-            if (matchingSelector != null) {
+            return getErrorForPrimitive(p, whichSelectorMatchesPrimitive(p));
+        }
+
+        TestError getErrorForPrimitive(OsmPrimitive p, Selector matchingSelector) {
+            if (matchingSelector != null && !errors.isEmpty()) {
                 final Command fix = fixPrimitive(p);
                 final String description = getDescriptionForMatchingSelector(matchingSelector);
                 if (fix != null) {
@@ -332,6 +342,41 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
     }
 
+    static class MapCSSTagCheckerAndRule extends MapCSSTagChecker {
+        public final MapCSSRule rule;
+
+        MapCSSTagCheckerAndRule(MapCSSRule rule) {
+            this.rule = rule;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj)
+                    || (obj instanceof TagCheck && rule.equals(((TagCheck) obj).rule))
+                    || (obj instanceof MapCSSRule && rule.equals(obj));
+        }
+    }
+
+    /**
+     * Obtains all {@link TestError}s for the {@link OsmPrimitive} {@code p}.
+     */
+    public Collection<TestError> getErrorsForPrimitive(OsmPrimitive p) {
+        final ArrayList<TestError> r = new ArrayList<TestError>();
+        final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        for (TagCheck check : checks) {
+            final Selector selector = check.whichSelectorMatchesEnvironment(env);
+            if (selector != null) {
+                check.rule.execute(env);
+                final TestError error = check.getErrorForPrimitive(p, selector);
+                if (error != null) {
+                    error.setTester(new MapCSSTagCheckerAndRule(check.rule));
+                    r.add(error);
+                }
+            }
+        }
+        return r;
+    }
+
     /**
      * Visiting call for primitives.
      *
@@ -339,13 +384,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
-        for (TagCheck check : checks) {
-            final TestError error = check.getErrorForPrimitive(p);
-            if (error != null) {
-                error.setTester(this);
-                errors.add(error);
-            }
-        }
+        errors.addAll(getErrorsForPrimitive(p));
     }
 
     /**

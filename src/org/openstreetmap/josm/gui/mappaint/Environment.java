@@ -20,6 +20,7 @@ public class Environment {
     public String layer;
     public StyleSource source;
     private Context context = Context.PRIMITIVE;
+    public static final String DEFAULT_LAYER = "default";
 
     /**
      * If not null, this is the matching parent object if a condition or an expression
