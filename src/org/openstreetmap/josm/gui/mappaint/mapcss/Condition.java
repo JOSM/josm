@@ -290,7 +290,7 @@ abstract public class Condition {
 
         @Override
         public boolean applies(Environment env) {
-            return not ^ env.mc.getCascade(env.layer).containsKey(id);
+            return env != null && env.mc != null && env.mc.getCascade(env.layer) != null && not ^ env.mc.getCascade(env.layer).containsKey(id);
         }
 
         @Override

@@ -8,11 +8,12 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
-import org.openstreetmap.josm.tools.TextTagParser;
+import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.Utils;
 
 import java.io.StringReader;
 import java.text.MessageFormat;
@@ -61,13 +62,8 @@ public class MapCSSTagCheckerTest {
         final Node n2 = new Node();
         n2.put("natural", "wood");
         assertFalse(check.matchesPrimitive(n2));
-        assertThat(MapCSSTagChecker.TagCheck.insertArguments(check.selector.get(0), "The key is {0.key} and the value is {0.value}"),
+        assertThat(MapCSSTagChecker.TagCheck.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}"),
                 is("The key is natural and the value is marsh"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCreatePrimitiveForAssertionFail() throws Exception {
-        final OsmPrimitive p = TestUtils.createPrimitive("noway name=Foo");
     }
 
     @Test
@@ -79,9 +75,16 @@ public class MapCSSTagCheckerTest {
         for (final MapCSSTagChecker.TagCheck check : c.checks) {
             for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
                 final OsmPrimitive p = TestUtils.createPrimitive(i.getKey());
-                if (check.matchesPrimitive(p) != i.getValue()) {
+                final boolean isError = Utils.exists(c.getErrorsForPrimitive(p), new Predicate<TestError>() {
+                    @Override
+                    public boolean evaluate(TestError e) {
+                        //noinspection EqualsBetweenInconvertibleTypes
+                        return e.getTester().equals(check.rule);
+                    }
+                });
+                if (isError != i.getValue()) {
                     final String error = MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
-                            check.getMessage(), check.selector, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
+                            check.getMessage(), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
                     System.err.println(error);
                     assertionErrors.add(error);
                 }
