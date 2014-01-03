@@ -1,19 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.CustomMatchers.isEmpty;
+import static org.junit.Assert.assertThat;
+
+import java.io.FileInputStream;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
-
-import java.io.FileInputStream;
-
-import static org.CustomMatchers.isEmpty;
-import static org.junit.Assert.assertThat;
 
 public class UnconnectedWaysTest {
 
@@ -22,7 +21,7 @@ public class UnconnectedWaysTest {
     @Before
     public void setUp() throws Exception {
         bib = new UnconnectedWays.UnconnectedHighways();
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         bib.initialize();
         bib.startTest(null);

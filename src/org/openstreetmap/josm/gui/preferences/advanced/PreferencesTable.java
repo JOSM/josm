@@ -11,7 +11,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -119,8 +118,6 @@ public class PreferencesTable extends JTable {
             llEditor.showDialog();
             if (llEditor.getValue() == 1) {
                 List<List<String>> data = llEditor.getData();
-                @SuppressWarnings("unchecked")
-                Collection<Collection<String>> stgValue = (Collection<Collection<String>>) stg.getValue();
                 if (!llSetting.equalVal(data)) {
                     e.setValue(new Preferences.ListListSetting(data));
                     return true;

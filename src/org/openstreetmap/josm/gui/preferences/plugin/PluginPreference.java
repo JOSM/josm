@@ -54,6 +54,10 @@ import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * Preference settings for plugins.
+ * @since 168
+ */
 public final class PluginPreference extends DefaultTabPreferenceSetting {
 
     /**
@@ -70,6 +74,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         super("plugin", tr("Plugins"), tr("Configure available plugins."), false, new JTabbedPane());
     }
 
+    /**
+     * Returns the download summary string to be shown.
+     * @param task The plugin download task that has completed
+     * @return the download summary string to be shown. Contains summary of success/failed plugins.
+     */
     public static String buildDownloadSummary(PluginDownloadTask task) {
         Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
         Collection<PluginInformation> failed = task.getFailedPlugins();
@@ -468,7 +477,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
     }
 
-    static private class PluginConfigurationSitesPanel extends JPanel {
+    private static class PluginConfigurationSitesPanel extends JPanel {
 
         private DefaultListModel model;
 

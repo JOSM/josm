@@ -1,19 +1,10 @@
 package org.openstreetmap.josm.data.validation.tests;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.openstreetmap.TestUtils;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.ChangePropertyCommand;
-import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.validation.Severity;
-import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.tools.Predicate;
-import org.openstreetmap.josm.tools.Predicates;
-import org.openstreetmap.josm.tools.Utils;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.text.MessageFormat;
@@ -21,17 +12,24 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+import org.openstreetmap.TestUtils;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.validation.Severity;
+import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 public class MapCSSTagCheckerTest {
 
     @Before
     public void setUp() throws Exception {
-        Main.pref = new Preferences();
+        Main.initApplicationPreferences();
     }
 
     @Test

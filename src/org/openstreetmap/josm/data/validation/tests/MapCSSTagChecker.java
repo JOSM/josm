@@ -79,7 +79,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         /**
          * A function mapping the matched {@link OsmPrimitive} to a {@link Tag}.
          */
-        static abstract class PrimitiveToTag implements Utils.Function<OsmPrimitive, Tag> {
+        abstract static class PrimitiveToTag implements Utils.Function<OsmPrimitive, Tag> {
 
             /**
              * Creates a new mapping from an {@code MapCSS} object.
@@ -225,6 +225,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     return tag.toString();
                 }
             } catch (IndexOutOfBoundsException ignore) {
+                Main.debug(ignore.getMessage());
             }
             return null;
         }

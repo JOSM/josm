@@ -19,7 +19,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.widgets.ChangesetIdTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
-import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This panel allows to enter the ID of single changeset and to download
@@ -79,7 +78,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
     class DownloadAction extends AbstractAction implements DocumentListener{
 
         public DownloadAction() {
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangesetcontent"));
+            putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Download the changeset with the specified id, including the changeset content"));
             updateEnabledState();
         }
