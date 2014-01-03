@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
@@ -8,12 +9,14 @@ import java.util.regex.PatternSyntaxException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
@@ -35,7 +38,7 @@ public interface Selector {
     public Range getRange();
 
     public static enum ChildOrParentSelectorType {
-        CHILD, PARENT, CONTAINS
+        CHILD, PARENT, ELEMENT_OF
     }
 
     /**
@@ -148,41 +151,43 @@ public interface Selector {
 
         private class ContainsFinder extends AbstractVisitor {
             private final Environment e;
-            private final List<Node> nodes;
 
             private ContainsFinder(Environment e) {
                 this.e = e;
-                if (e.osm instanceof Node) {
-                    nodes = Collections.singletonList((Node) e.osm);
-                } else if (e.osm instanceof Way) {
-                    nodes = ((Way) e.osm).getNodes();
-                } else {
-                    throw new IllegalArgumentException("Relations not supported");
-                }
+                CheckParameterUtil.ensureThat(!(e.osm instanceof Node), "Nodes not supported");
             }
 
             @Override
             public void visit(Node n) {
+                if (e.parent == null && right.matches(e.withPrimitive(n))) {
+                    if (e.osm instanceof Way && Geometry.nodeInsidePolygon(n, ((Way) e.osm).getNodes())
+                            || e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() && Geometry.isNodeInsideMultiPolygon(n, (Relation) e.osm, null)) {
+                        e.parent = n;
+                    }
+                }
             }
 
             @Override
             public void visit(Way w) {
-                if (e.parent == null && left.matches(e.withPrimitive(w))) {
-                    if (nodes.size() == 1
-                            ? Geometry.nodeInsidePolygon(nodes.get(0), w.getNodes())
-                            : Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(Geometry.polygonIntersection(nodes, w.getNodes()))) {
+                if (e.parent == null && right.matches(e.withPrimitive(w))) {
+                    if (e.osm instanceof Way && Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))
+                            || e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() && Geometry.isPolygonInsideMultiPolygon(w.getNodes(), (Relation) e.osm, null)) {
                         e.parent = w;
-                        e.index = 0;
                     }
                 }
             }
 
             @Override
             public void visit(Relation r) {
-                if (e.parent == null && left.matches(e.withPrimitive(r))) {
-                    if (r.isMultipolygon() && Geometry.isPolygonInsideMultiPolygon(nodes, r, null)) {
-                        e.parent = r;
-                        e.index = 0;
+            }
+
+            public void visit(Collection<? extends OsmPrimitive> primitives) {
+                for (OsmPrimitive p : primitives) {
+                    if (e.parent != null) {
+                        // abort if first match has been found
+                        break;
+                    } else if (!e.osm.equals(p)) {
+                        p.accept(this);
                     }
                 }
             }
@@ -190,22 +195,33 @@ public interface Selector {
 
         @Override
         public boolean matches(Environment e) {
+
             if (!right.matches(e))
                 return false;
 
-            if (ChildOrParentSelectorType.CONTAINS.equals(type)) {
-                final OsmPrimitive rightPrimitive = e.osm;
-                final ContainsFinder containsFinder = new ContainsFinder(e);
-                for (final OsmPrimitive p : rightPrimitive.getDataSet().allPrimitives()) {
-                    if (rightPrimitive.equals(p)) {
-                        continue;
-                    }
-                    p.accept(containsFinder);
-                    if (e.parent != null) {
-                        e.osm = rightPrimitive;
-                        return true;
-                    }
+            if (ChildOrParentSelectorType.ELEMENT_OF.equals(type)) {
+
+                if (e.osm instanceof Node) {
+                    // nodes cannot contain elements
+                    return false;
                 }
+                e.child = e.osm;
+
+                final ContainsFinder containsFinder = new ContainsFinder(e);
+                if (right instanceof GeneralSelector) {
+                    if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.NODE)) {
+                        containsFinder.visit(e.osm.getDataSet().searchNodes(e.osm.getBBox()));
+                    }
+                    if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
+                        containsFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
+                    }
+                } else {
+                    // use slow test
+                    containsFinder.visit(e.osm.getDataSet().allPrimitives());
+                }
+
+                return e.parent != null;
+
             } else if (ChildOrParentSelectorType.CHILD.equals(type)) {
                 MatchingReferrerFinder collector = new MatchingReferrerFinder(e);
                 e.osm.visitReferrers(collector);
@@ -356,21 +372,34 @@ public interface Selector {
             return range;
         }
 
-        public boolean matchesBase(Environment e){
-            if (e.osm instanceof Node) {
+        public boolean matchesBase(OsmPrimitiveType type) {
+            if (OsmPrimitiveType.NODE.equals(type)) {
                 return base.equals("node") || base.equals("*");
-            } else if (e.osm instanceof Way) {
+            } else if (OsmPrimitiveType.WAY.equals(type)) {
                 return base.equals("way") || base.equals("area") || base.equals("*");
-            } else if (e.osm instanceof Relation) {
-                if (base.equals("area")) {
-                    return ((Relation) e.osm).isMultipolygon();
-                } else if (base.equals("relation")) {
-                    return true;
-                } else if (base.equals("canvas")) {
-                    return e.osm.get("#canvas") != null;
-                }
+            } else if (OsmPrimitiveType.RELATION.equals(type)) {
+                return base.equals("area") || base.equals("relation") || base.equals("canvas");
             }
             return false;
+        }
+
+        public boolean matchesBase(OsmPrimitive p) {
+            if (!matchesBase(p.getType())) {
+                return false;
+            } else {
+                if (p instanceof Relation) {
+                    if (base.equals("area")) {
+                        return ((Relation) p).isMultipolygon();
+                    } else if (base.equals("canvas")) {
+                        return p.get("#canvas") != null;
+                    }
+                }
+                return true;
+            }
+        }
+
+        public boolean matchesBase(Environment e) {
+            return matchesBase(e.osm);
         }
 
         @Override
