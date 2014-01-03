@@ -8,7 +8,10 @@ import java.awt.geom.Path2D;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +25,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
@@ -734,5 +740,67 @@ public final class Geometry {
         } else {
             return null;
         }
+    }
+
+    public static class MultiPolygonMembers {
+        public final Set<Way> outers = new HashSet<Way>();
+        public final Set<Way> inners = new HashSet<Way>();
+
+        public MultiPolygonMembers(Relation multiPolygon) {
+            for (RelationMember m : multiPolygon.getMembers()) {
+                if (m.getType().equals(OsmPrimitiveType.WAY)) {
+                    if (m.getRole().equals("outer")) {
+                        outers.add(m.getWay());
+                    } else if (m.getRole().equals("inner")) {
+                        inners.add(m.getWay());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Tests if the {@code node} is inside the multipolygon {@code multiPolygon}. The nullable argument
+     * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
+     */
+    public static boolean isNodeInsideMultiPolygon(Node node, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
+        return isPolygonInsideMultiPolygon(Collections.singletonList(node), multiPolygon, isOuterWayAMatch);
+    }
+
+    /**
+     * Tests if the polygon formed by {@code nodes} is inside the multipolygon {@code multiPolygon}. The nullable argument
+     * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
+     * <p/>
+     * If {@code nodes} contains exactly one element, then it is checked whether that one node is inside the multipolygon.
+     */
+    public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
+        // Extract outer/inner members from multipolygon
+        MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
+        // Test if object is inside an outer member
+        for (Way out : mpm.outers) {
+            if (nodes.size() == 1
+                    ? nodeInsidePolygon(nodes.get(0), out.getNodes())
+                    : EnumSet.of(PolygonIntersection.FIRST_INSIDE_SECOND, PolygonIntersection.CROSSING).contains(polygonIntersection(nodes, out.getNodes()))) {
+                boolean insideInner = false;
+                // If inside an outer, check it is not inside an inner
+                for (Way in : mpm.inners) {
+                    if (polygonIntersection(in.getNodes(), out.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND
+                            && (nodes.size() == 1
+                            ? nodeInsidePolygon(nodes.get(0), in.getNodes())
+                            : polygonIntersection(nodes, in.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND)) {
+                        insideInner = true;
+                        break;
+                    }
+                }
+                // Inside outer but not inside inner -> the polygon appears to be inside a the multipolygon
+                if (!insideInner) {
+                    // Final check using predicate
+                    if (isOuterWayAMatch == null || isOuterWayAMatch.evaluate(out)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

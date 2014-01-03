@@ -72,54 +72,10 @@ public class BuildingInBuilding extends Test {
         return Geometry.nodeInsidePolygon(n, polygon);
     }
 
-    protected class MultiPolygonMembers {
-        private final Set<Way> outers = new HashSet<Way>();
-        private final Set<Way> inners = new HashSet<Way>();
-        public MultiPolygonMembers(Relation multiPolygon) {
-            for (RelationMember m : multiPolygon.getMembers()) {
-                if (m.getType().equals(OsmPrimitiveType.WAY)) {
-                    if (m.getRole().equals("outer")) {
-                        outers.add(m.getWay());
-                    } else if (m.getRole().equals("inner")) {
-                        inners.add(m.getWay());
-                    }
-                }
-            }
-        }
-    }
-
     protected boolean sameLayers(Way w1, Way w2) {
         String l1 = w1.get("layer") != null ? w1.get("layer") : "0";
         String l2 = w2.get("layer") != null ? w2.get("layer") : "0";
         return l1.equals(l2);
-    }
-
-    protected boolean isWayInsideMultiPolygon(Way object, Relation multiPolygon) {
-        // Extract outer/inner members from multipolygon
-        MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
-        // Test if object is inside an outer member
-        for (Way out : mpm.outers) {
-            PolygonIntersection inter = Geometry.polygonIntersection(object.getNodes(), out.getNodes());
-            if (inter == PolygonIntersection.FIRST_INSIDE_SECOND || inter == PolygonIntersection.CROSSING) {
-                boolean insideInner = false;
-                // If inside an outer, check it is not inside an inner
-                for (Way in : mpm.inners) {
-                    if (Geometry.polygonIntersection(in.getNodes(), out.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND &&
-                        Geometry.polygonIntersection(object.getNodes(), in.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND) {
-                        insideInner = true;
-                        break;
-                    }
-                }
-                // Inside outer but not inside inner -> the building appears to be inside a buiding
-                if (!insideInner) {
-                    // Final check on "layer" tag. Buildings of different layers may be superposed
-                    if (sameLayers(object, out)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -131,7 +87,7 @@ public class BuildingInBuilding extends Test {
                     return isInPolygon(n, object.getNodes()) || object.getNodes().contains(n);
                 }
 
-                protected boolean evaluateWay(Way w, Way object) {
+                protected boolean evaluateWay(final Way w, Way object) {
                     if (w.equals(object)) return false;
 
                     // Get all multipolygons referencing object
@@ -150,7 +106,12 @@ public class BuildingInBuilding extends Test {
                     } else {
                         // Else, test if w is inside one of the multipolygons
                         for (OsmPrimitive bmp : buildingMultiPolygons) {
-                            if (bmp instanceof Relation && isWayInsideMultiPolygon(w, (Relation) bmp)) {
+                            if (bmp instanceof Relation && Geometry.isPolygonInsideMultiPolygon(w.getNodes(), (Relation) bmp, new Predicate<Way>() {
+                                @Override
+                                public boolean evaluate(Way outer) {
+                                    return sameLayers(w, outer);
+                                }
+                            })) {
                                 return true;
                             }
                         }
@@ -159,7 +120,7 @@ public class BuildingInBuilding extends Test {
                 }
 
                 protected boolean evaluateRelation(Relation r, Way object) {
-                    MultiPolygonMembers mpm = new MultiPolygonMembers((Relation) p);
+                    Geometry.MultiPolygonMembers mpm = new Geometry.MultiPolygonMembers((Relation) p);
                     for (Way out : mpm.outers) {
                         if (evaluateWay(out, object)) {
                             return true;

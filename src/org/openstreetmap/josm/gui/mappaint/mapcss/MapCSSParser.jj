@@ -79,6 +79,7 @@ TOKEN:
 |   < DOLLAR: "$" >
 |   < CARET: "^" >
 |   < FULLSTOP: "." >
+|   < CONTAINS: "∋" >
 |   < COMMENT_START: "/*" > : COMMENT
 |   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
 }
@@ -261,7 +262,7 @@ MapCSSRule rule():
 
 Selector child_selector() :
 {
-    boolean parentSelector = false;
+    Selector.ChildOrParentSelectorType type = null;
     Condition c;
     List<Condition> conditions = new ArrayList<Condition>();
     Selector selLeft;
@@ -271,13 +272,17 @@ Selector child_selector() :
 {
     selLeft=selector() w()
     (
-        ( <GREATER> { parentSelector = false; } | <LESS> { parentSelector = true; } ) 
-        ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
+        (
+            ( <GREATER> { type = Selector.ChildOrParentSelectorType.CHILD; } | <LESS> { type = Selector.ChildOrParentSelectorType.PARENT; } )
+            ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
+        |
+            <CONTAINS> { type = Selector.ChildOrParentSelectorType.CONTAINS; }
+        )
         { selLink = new LinkSelector(conditions); }
         w()
         selRight=selector() w()
     )?
-    { return selRight != null ? new ChildOrParentSelector(selLeft, selLink, selRight, parentSelector) : selLeft; }
+    { return selRight != null ? new ChildOrParentSelector(selLeft, selLink, selRight, type) : selLeft; }
 }
 
 Selector selector() :
