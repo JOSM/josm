@@ -278,7 +278,7 @@ public class MirroredInputStream extends InputStream {
      * <p>
      * Manually follows redirects because
      * {@link HttpURLConnection#setFollowRedirects(boolean)} fails if the redirect
-     * is going from a http to a https URL, see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4620571">bug report</a>.
+     * is going from a http to a https URL, see <a href="https://bugs.openjdk.java.net/browse/JDK-4620571">bug report</a>.
      * <p>
      * This can causes problems when downloading from certain GitHub URLs.
      * 
