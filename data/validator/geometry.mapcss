@@ -9,3 +9,9 @@ node[source:outline] {
   assertMatch: "node bridge=yes";
   assertNoMatch: "node bridge=13";
 }
+
+/* Building inside building (spatial test) */
+*[building!~/no|entrance/][coalesce(tag("layer"),"0") = coalesce(parent_tag("layer"),"0")] ∈
+*[building!~/no|entrance/] {
+  throwWarning: tr("Building inside building");
+}

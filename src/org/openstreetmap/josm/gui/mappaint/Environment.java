@@ -214,4 +214,8 @@ public class Environment {
         child = null;
         index = null;
     }
+
+    public Cascade getCascade(String layer) {
+        return mc == null ? null : mc.getCascade(layer == null ? this.layer : layer);
+    }
 }

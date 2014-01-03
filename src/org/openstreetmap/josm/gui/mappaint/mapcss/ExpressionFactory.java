@@ -4,6 +4,10 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Color;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,6 +33,13 @@ import org.openstreetmap.josm.tools.Utils;
  * See {@link #createFunctionExpression}.
  */
 public final class ExpressionFactory {
+
+    /**
+     * Marks functions which should be executed also when one or more arguments are null.
+     */
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    static @interface NullableArguments {}
 
     private static final List<Method> arrayFunctions;
     private static final List<Method> parameterFunctions;
@@ -145,6 +156,15 @@ public final class ExpressionFactory {
         }
 
         /**
+         * Returns the first non-null object. The name originates from the {@code COALESCE} SQL function.
+         * @see Utils#firstNonNull(Object[])
+         */
+        @NullableArguments
+        public static Object coalesce(Object... args) {
+            return Utils.firstNonNull(args);
+        }
+
+        /**
          * Get the {@code n}th element of the list {@code lst} (counting starts at 0).
          * @since 5699
          */
@@ -220,10 +240,11 @@ public final class ExpressionFactory {
         /**
          * Assembles the strings to one.
          */
+        @NullableArguments
         public static String concat(Object... args) {
             StringBuilder res = new StringBuilder();
             for (Object f : args) {
-                res.append(f.toString());
+                res.append(String.valueOf(f));
             }
             return res.toString();
         }
@@ -239,13 +260,7 @@ public final class ExpressionFactory {
          * Returns the value of the property {@code key} from layer {@code layer}.
          */
         public Object prop(String key, String layer) {
-            Cascade c;
-            if (layer == null) {
-                c = env.mc.getCascade(env.layer);
-            } else {
-                c = env.mc.getCascade(layer);
-            }
-            return c.get(key);
+            return env.getCascade(layer).get(key);
         }
 
         /**
@@ -259,16 +274,7 @@ public final class ExpressionFactory {
          * Determines whether property {@code key} is set on layer {@code layer}.
          */
         public Boolean is_prop_set(String key, String layer) {
-            Cascade c;
-            if (layer == null) {
-                // env.layer is null if expression is evaluated
-                // in ExpressionCondition, but MultiCascade.getCascade
-                // handles this
-                c = env.mc.getCascade(env.layer);
-            } else {
-                c = env.mc.getCascade(layer);
-            }
-            return c.containsKey(key);
+            return env.getCascade(layer).containsKey(key);
         }
 
         /**
@@ -649,7 +655,7 @@ public final class ExpressionFactory {
             Object[] convertedArgs = new Object[expectedParameterTypes.length];
             for (int i = 0; i < args.size(); ++i) {
                 convertedArgs[i] = Cascade.convertTo(args.get(i).evaluate(env), expectedParameterTypes[i]);
-                if (convertedArgs[i] == null) {
+                if (convertedArgs[i] == null && m.getAnnotation(NullableArguments.class) == null) {
                     return null;
                 }
             }
@@ -695,7 +701,7 @@ public final class ExpressionFactory {
             Object arrayArg = Array.newInstance(arrayComponentType, args.size());
             for (int i = 0; i < args.size(); ++i) {
                 Object o = Cascade.convertTo(args.get(i).evaluate(env), arrayComponentType);
-                if (o == null) {
+                if (o == null && m.getAnnotation(NullableArguments.class) == null) {
                     return null;
                 }
                 Array.set(arrayArg, i, o);

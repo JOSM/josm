@@ -159,20 +159,20 @@ public interface Selector {
 
             @Override
             public void visit(Node n) {
-                if (e.parent == null && right.matches(e.withPrimitive(n))) {
+                if (e.child == null && left.matches(e.withPrimitive(n))) {
                     if (e.osm instanceof Way && Geometry.nodeInsidePolygon(n, ((Way) e.osm).getNodes())
                             || e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() && Geometry.isNodeInsideMultiPolygon(n, (Relation) e.osm, null)) {
-                        e.parent = n;
+                        e.child = n;
                     }
                 }
             }
 
             @Override
             public void visit(Way w) {
-                if (e.parent == null && right.matches(e.withPrimitive(w))) {
+                if (e.child == null && left.matches(e.withPrimitive(w))) {
                     if (e.osm instanceof Way && Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))
                             || e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() && Geometry.isPolygonInsideMultiPolygon(w.getNodes(), (Relation) e.osm, null)) {
-                        e.parent = w;
+                        e.child = w;
                     }
                 }
             }
@@ -183,7 +183,7 @@ public interface Selector {
 
             public void visit(Collection<? extends OsmPrimitive> primitives) {
                 for (OsmPrimitive p : primitives) {
-                    if (e.parent != null) {
+                    if (e.child != null) {
                         // abort if first match has been found
                         break;
                     } else if (!e.osm.equals(p)) {
@@ -205,7 +205,7 @@ public interface Selector {
                     // nodes cannot contain elements
                     return false;
                 }
-                e.child = e.osm;
+                e.parent = e.osm;
 
                 final ContainsFinder containsFinder = new ContainsFinder(e);
                 if (right instanceof GeneralSelector) {
@@ -220,7 +220,7 @@ public interface Selector {
                     containsFinder.visit(e.osm.getDataSet().allPrimitives());
                 }
 
-                return e.parent != null;
+                return e.child != null;
 
             } else if (ChildOrParentSelectorType.CHILD.equals(type)) {
                 MatchingReferrerFinder collector = new MatchingReferrerFinder(e);
@@ -373,10 +373,12 @@ public interface Selector {
         }
 
         public boolean matchesBase(OsmPrimitiveType type) {
-            if (OsmPrimitiveType.NODE.equals(type)) {
-                return base.equals("node") || base.equals("*");
+            if (base.equals("*")) {
+                return true;
+            } else if (OsmPrimitiveType.NODE.equals(type)) {
+                return base.equals("node");
             } else if (OsmPrimitiveType.WAY.equals(type)) {
-                return base.equals("way") || base.equals("area") || base.equals("*");
+                return base.equals("way") || base.equals("area");
             } else if (OsmPrimitiveType.RELATION.equals(type)) {
                 return base.equals("area") || base.equals("relation") || base.equals("canvas");
             }

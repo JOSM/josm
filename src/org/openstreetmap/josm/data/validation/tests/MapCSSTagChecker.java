@@ -115,6 +115,10 @@ public class MapCSSTagChecker extends Test.TagTest {
             for (Instruction i : rule.declaration) {
                 if (i instanceof Instruction.AssignmentInstruction) {
                     final Instruction.AssignmentInstruction ai = (Instruction.AssignmentInstruction) i;
+                    if (ai.isSetInstruction) {
+                        containsSetClassExpression = true;
+                        continue;
+                    }
                     final String val = ai.val instanceof Expression
                             ? (String) ((Expression) ai.val).evaluate(new Environment())
                             : ai.val instanceof String
@@ -140,8 +144,6 @@ public class MapCSSTagChecker extends Test.TagTest {
                         check.assertions.put(val, true);
                     } else if ("assertNoMatch".equals(ai.key) && val != null) {
                         check.assertions.put(val, false);
-                    } else if (ai.val instanceof Boolean && ((Boolean) ai.val)) {
-                        containsSetClassExpression = true;
                     } else {
                         throw new RuntimeException("Cannot add instruction " + ai.key + ": " + ai.val + "!");
                     }
