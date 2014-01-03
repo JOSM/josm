@@ -79,7 +79,7 @@ TOKEN:
 |   < DOLLAR: "$" >
 |   < CARET: "^" >
 |   < FULLSTOP: "." >
-|   < CONTAINS: "∋" >
+|   < ELEMENT_OF: "∈" >
 |   < COMMENT_START: "/*" > : COMMENT
 |   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
 }
@@ -276,7 +276,7 @@ Selector child_selector() :
             ( <GREATER> { type = Selector.ChildOrParentSelectorType.CHILD; } | <LESS> { type = Selector.ChildOrParentSelectorType.PARENT; } )
             ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
         |
-            <CONTAINS> { type = Selector.ChildOrParentSelectorType.CONTAINS; }
+            <ELEMENT_OF> { type = Selector.ChildOrParentSelectorType.ELEMENT_OF; }
         )
         { selLink = new LinkSelector(conditions); }
         w()
