@@ -238,10 +238,12 @@ public class AutoScaleAction extends JosmAction {
             for (OsmPrimitive osm : sel) {
                 osm.accept(v);
             }
-            // increase bbox by 0.001 degrees on each side. this is required
-            // especially if the bbox contains one single node, but helpful
-            // in most other cases as well.
-            v.enlargeBoundingBox();
+
+            // Increase the bounding box by up to 100% to give more context.
+            v.enlargeBoundingBoxLogarithmically(100);
+            // Make the bounding box at least 0.0005 degrees (≈ 56 m) wide to
+            // ensure reasonable zoom level when zooming onto single nodes.
+            v.enlargeToMinDegrees(0.0005);
         }
         else if (mode.equals("download")) {
             Bounds bounds = DownloadDialog.getSavedDownloadBounds();
