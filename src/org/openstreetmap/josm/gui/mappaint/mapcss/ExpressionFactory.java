@@ -470,11 +470,14 @@ public final class ExpressionFactory {
         public static String tr(String... args) {
             final String text = args[0];
             System.arraycopy(args, 1, args, 0, args.length - 1);
-            return org.openstreetmap.josm.tools.I18n.tr(text, args);
+            return org.openstreetmap.josm.tools.I18n.tr(text, (Object[])args);
         }
 
         /**
          * Returns the substring of {@code s} starting at index {@code begin} (inclusive, 0-indexed).
+         * @param s The base string
+         * @param begin The start index
+         * @return the substring
          * @see String#substring(int)
          */
         public static String substring(String s, /* due to missing Cascade.convertTo for int*/ float begin) {
@@ -484,6 +487,10 @@ public final class ExpressionFactory {
         /**
          * Returns the substring of {@code s} starting at index {@code begin} (inclusive)
          * and ending at index {@code end}, (exclusive, 0-indexed).
+         * @param s The base string
+         * @param begin The start index
+         * @param end The end index
+         * @return the substring
          * @see String#substring(int, int)
          */
         public static String substring(String s, float begin, float end) {

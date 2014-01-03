@@ -98,7 +98,7 @@ public class PluginInformation {
             if (manifest == null)
                 throw new PluginException(name, tr("The plugin file ''{0}'' does not include a Manifest.", file.toString()));
             scanManifest(manifest, false);
-            libraries.add(0, fileToURL(file));
+            libraries.add(0, Utils.fileToURL(file));
         } catch (IOException e) {
             throw new PluginException(name, e);
         } finally {
@@ -205,8 +205,7 @@ public class PluginInformation {
                 }
             }
         } else {
-            //noinspection NullArgumentToVariableArgMethod
-            s = MessageFormat.format(s, null);
+            s = MessageFormat.format(s, (Object[]) null);
         }
         description = s;
         early = Boolean.parseBoolean(attr.getValue("Plugin-Early"));
@@ -262,7 +261,7 @@ public class PluginInformation {
                     entryFile = new File(file.getParent(), entry);
                 }
 
-                libraries.add(fileToURL(entryFile));
+                libraries.add(Utils.fileToURL(entryFile));
             }
         }
         for (Object o : attr.keySet()) {
@@ -332,13 +331,7 @@ public class PluginInformation {
         }
     }
 
-    public static URL fileToURL(File f) {
-        try {
-            return f.toURI().toURL();
-        } catch (MalformedURLException ex) {
-            return null;
-        }
-    }
+
 
     /**
      * Try to find a plugin after some criterias. Extract the plugin-information
@@ -394,6 +387,10 @@ public class PluginInformation {
         return null;
     }
 
+    /**
+     * Returns all possible plugin locations.
+     * @return all possible plugin locations.
+     */
     public static Collection<String> getPluginLocations() {
         Collection<String> locations = Main.pref.getAllPossiblePreferenceDirs();
         Collection<String> all = new ArrayList<String>(locations.size());
@@ -461,7 +458,8 @@ public class PluginInformation {
     }
 
     /**
-     * Replies the name of the plugin
+     * Replies the name of the plugin.
+     * @return The plugin name
      */
     public String getName() {
         return name;

@@ -82,13 +82,13 @@ public class JSONArray {
     /**
      * The arrayList where the JSONArray's properties are kept.
      */
-    private final ArrayList myArrayList;
+    private final ArrayList<Object> myArrayList;
 
     /**
      * Construct an empty JSONArray.
      */
     public JSONArray() {
-        this.myArrayList = new ArrayList();
+        this.myArrayList = new ArrayList<Object>();
     }
 
     /**
@@ -150,10 +150,10 @@ public class JSONArray {
      * @param collection
      *            A Collection.
      */
-    public JSONArray(Collection collection) {
-        this.myArrayList = new ArrayList();
+    public JSONArray(Collection<?> collection) {
+        this.myArrayList = new ArrayList<Object>();
         if (collection != null) {
-            Iterator iter = collection.iterator();
+            Iterator<?> iter = collection.iterator();
             while (iter.hasNext()) {
                 this.myArrayList.add(JSONObject.wrap(iter.next()));
             }
@@ -593,7 +593,7 @@ public class JSONArray {
      *            A Collection value.
      * @return this.
      */
-    public JSONArray put(Collection value) {
+    public JSONArray put(Collection<?> value) {
         this.put(new JSONArray(value));
         return this;
     }
@@ -646,7 +646,7 @@ public class JSONArray {
      *            A Map value.
      * @return this.
      */
-    public JSONArray put(Map value) {
+    public JSONArray put(Map<?, ?> value) {
         this.put(new JSONObject(value));
         return this;
     }
@@ -695,7 +695,7 @@ public class JSONArray {
      * @throws JSONException
      *             If the index is negative or if the value is not finite.
      */
-    public JSONArray put(int index, Collection value) throws JSONException {
+    public JSONArray put(int index, Collection<?> value) throws JSONException {
         this.put(index, new JSONArray(value));
         return this;
     }
@@ -767,7 +767,7 @@ public class JSONArray {
      *             If the index is negative or if the the value is an invalid
      *             number.
      */
-    public JSONArray put(int index, Map value) throws JSONException {
+    public JSONArray put(int index, Map<?, ?> value) throws JSONException {
         this.put(index, new JSONObject(value));
         return this;
     }
