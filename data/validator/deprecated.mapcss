@@ -176,3 +176,10 @@
   throwWarning: tr("{0} is deprecated", "monitoring:river_level");
   fixChangeKey: "monitoring:river_level => monitoring:water_level";
 }
+
+/* from http://wiki.openstreetmap.org/wiki/Conditional_restrictions#Deprecated_tags */
+*[/(day|date|hour)_(on|off)/] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "*:conditional";
+  assertMatch: "node day_on=0-12";
+}
