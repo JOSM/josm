@@ -33,7 +33,7 @@ public class Lanes extends Test.TagTest {
         return value.isEmpty() ? 0 : value.split("\\|").length;
     }
 
-    protected void checkEqualNumberOfLanes(final OsmPrimitive p, String lanesKey, String message) {
+    protected void checkNumberOfLanesByKey(final OsmPrimitive p, String lanesKey, String message) {
         final Collection<String> keysForPattern = Utils.filter(p.keySet(),
                 Predicates.stringContainsPattern(Pattern.compile(":" + lanesKey + "$")));
         if (keysForPattern.size() < 1) {
@@ -61,10 +61,25 @@ public class Lanes extends Test.TagTest {
         }
     }
 
+    protected void checkNumberOfLanes(final OsmPrimitive p) {
+        final String lanes = p.get("lanes");
+        final String forward = Utils.firstNonNull(p.get("lanes:forward"), "0");
+        final String backward = Utils.firstNonNull(p.get("lanes:backward"), "0");
+        try {
+        if (Integer.parseInt(lanes) < Integer.parseInt(forward) + Integer.parseInt(backward)) {
+            errors.add(new TestError(this, Severity.WARNING,
+                    tr("Number of {0} greater than {1}", tr("{0}+{1}", "lanes:forward", "lanes:backward"), "lanes"), 3101, p));
+        }
+        } catch (NumberFormatException ignore) {
+            Main.debug(ignore.getMessage());
+        }
+    }
+
     @Override
     public void check(OsmPrimitive p) {
-        checkEqualNumberOfLanes(p, "lanes", tr("Number of lane dependent values inconsistent"));
-        checkEqualNumberOfLanes(p, "lanes:forward", tr("Number of lane dependent values inconsistent in forward direction"));
-        checkEqualNumberOfLanes(p, "lanes:backward", tr("Number of lane dependent values inconsistent in backward direction"));
+        checkNumberOfLanesByKey(p, "lanes", tr("Number of lane dependent values inconsistent"));
+        checkNumberOfLanesByKey(p, "lanes:forward", tr("Number of lane dependent values inconsistent in forward direction"));
+        checkNumberOfLanesByKey(p, "lanes:backward", tr("Number of lane dependent values inconsistent in backward direction"));
+        checkNumberOfLanes(p);
     }
 }
