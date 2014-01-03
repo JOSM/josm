@@ -409,7 +409,8 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     @Override
-    public void initialize() throws Exception {
+    public synchronized void initialize() throws Exception {
+        checks.clear();
         addMapCSS("deprecated");
         addMapCSS("highway");
         addMapCSS("numeric");
