@@ -526,7 +526,7 @@ public final class PluginHandler {
             allPluginLibraries.addAll(info.libraries);
             File pluginJar = new File(pluginDir, info.name + ".jar");
             I18n.addTexts(pluginJar);
-            URL pluginJarUrl = PluginInformation.fileToURL(pluginJar);
+            URL pluginJarUrl = Utils.fileToURL(pluginJar);
             allPluginLibraries.add(pluginJarUrl);
         }
 

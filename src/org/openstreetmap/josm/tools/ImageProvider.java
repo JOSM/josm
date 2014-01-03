@@ -516,13 +516,13 @@ public class ImageProvider {
                     new File(Main.pref.getCacheDirectory(), "images").getPath());
             switch (type) {
             case SVG:
-                URI uri = getSvgUniverse().loadSVG(is, is.getFile().toURI().toURL().toString());
+                URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(is.getFile()).toString());
                 SVGDiagram svg = getSvgUniverse().getDiagram(uri);
                 return svg == null ? null : new ImageResource(svg);
             case OTHER:
                 BufferedImage img = null;
                 try {
-                    img = ImageIO.read(is.getFile().toURI().toURL());
+                    img = ImageIO.read(Utils.fileToURL(is.getFile()));
                 } catch (IOException e) {
                     Main.warn("IOException while reading HTTP image: "+e.getMessage());
                 }
@@ -653,13 +653,9 @@ public class ImageProvider {
                     return res;
             }
         } else {
-            try {
-                File f = new File(path, name);
-                if ((path != null || f.isAbsolute()) && f.exists())
-                    return f.toURI().toURL();
-            } catch (MalformedURLException e) {
-                Main.warn(e);
-            }
+            File f = new File(path, name);
+            if ((path != null || f.isAbsolute()) && f.exists())
+                return Utils.fileToURL(f);
         }
         return null;
     }

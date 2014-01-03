@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.AudioUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Import audio files into a GPX layer to enable audio playback functions.
@@ -124,22 +124,14 @@ public class ImportAudioAction extends AbstractAction {
      * @param markers : keeps track of warning messages to avoid repeated warnings
      */
     private void importAudio(File wavFile, MarkerLayer ml, double firstStartTime, Markers markers) {
-        URL url = null;
+        URL url = Utils.fileToURL(wavFile);
         boolean hasTracks = layer.data.tracks != null && !layer.data.tracks.isEmpty();
         boolean hasWaypoints = layer.data.waypoints != null && !layer.data.waypoints.isEmpty();
-        try {
-            url = wavFile.toURI().toURL();
-        } catch (MalformedURLException e) {
-            Main.error("Unable to convert filename " + wavFile.getAbsolutePath() + " to URL");
-        }
         Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
         boolean timedMarkersOmitted = false;
         boolean untimedMarkersOmitted = false;
-        double snapDistance = Main.pref.getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3); /*
-         * about
-         * 25
-         * m
-         */
+        double snapDistance = Main.pref.getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3); 
+        // about 25 m
         WayPoint wayPointFromTimeStamp = null;
 
         // determine time of first point in track

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.FileChannel;
@@ -371,6 +372,23 @@ public final class Utils {
         } catch (IOException e) {
             Main.warn(e);
         }
+    }
+    
+    /**
+     * Converts the given file to its URL.
+     * @param f The file to get URL from
+     * @return The URL of the given file, or {@code null} if not possible.
+     * @since 6615
+     */
+    public static URL fileToURL(File f) {
+        if (f != null) {
+            try {
+                return f.toURI().toURL();
+            } catch (MalformedURLException ex) {
+                Main.error("Unable to convert filename " + f.getAbsolutePath() + " to URL");
+            }
+        }
+        return null;
     }
 
     private final static double EPSILON = 1e-11;
