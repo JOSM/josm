@@ -48,4 +48,9 @@ class LanesTest extends GroovyTestCase {
         lanes.check(TestUtils.createPrimitive("way lanes:forward=foo|bar turn:lanes:forward=foo+bar"))
         assert lanes.errors.isEmpty()
     }
+
+    void test7() {
+        lanes.check(TestUtils.createPrimitive("way lanes=3 lanes:forward=3 lanes:backward=7"))
+        assert lanes.errors.get(0).getMessage() == "Number of lanes:forward+lanes:backward greater than lanes"
+    }
 }
