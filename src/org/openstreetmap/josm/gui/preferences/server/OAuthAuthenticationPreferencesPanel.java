@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.oauth.AdvancedOAuthPropertiesPanel;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
@@ -159,6 +160,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      * Initializes the panel from preferences
      */
     public void initFromPreferences() {
+        setApiUrl(Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL).trim());
         refreshView();
     }
 

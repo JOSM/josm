@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Component allowing input os OSM API URL.
@@ -51,8 +52,10 @@ public class OsmApiUrlInputPanel extends JPanel {
     private SideButton btnTest;
     /** indicates whether to use the default OSM URL or not */
     private JCheckBox cbUseDefaultServerUrl;
+    
+    private ApiUrlPropagator propagator;
 
-    protected JPanel buildDefultServerUrlPanel() {
+    protected JPanel buildDefaultServerUrlPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -83,7 +86,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         gc.weightx = 1.0;
         gc.insets = new Insets(0,0,0,0);
         gc.gridwidth  = 4;
-        add(buildDefultServerUrlPanel(), gc);
+        add(buildDefaultServerUrlPanel(), gc);
 
 
         // the input field for the URL
@@ -100,7 +103,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         SelectAllOnFocusGainedDecorator.decorate(tfOsmServerUrl);
         valOsmServerUrl = new ApiUrlValidator(tfOsmServerUrl);
         valOsmServerUrl.validate();
-        ApiUrlPropagator propagator = new ApiUrlPropagator();
+        propagator = new ApiUrlPropagator();
         tfOsmServerUrl.addActionListener(propagator);
         tfOsmServerUrl.addFocusListener(propagator);
 
@@ -130,11 +133,11 @@ public class OsmApiUrlInputPanel extends JPanel {
         String url =  Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
         if (url.trim().equals(OsmApi.DEFAULT_API_URL)) {
             cbUseDefaultServerUrl.setSelected(true);
-            firePropertyChange(API_URL_PROP, null, OsmApi.DEFAULT_API_URL);
+            propagator.propagate(OsmApi.DEFAULT_API_URL);
         } else {
             cbUseDefaultServerUrl.setSelected(false);
             tfOsmServerUrl.setText(url);
-            firePropertyChange(API_URL_PROP, null, url);
+            propagator.propagate(url);
         }
     }
 
@@ -142,25 +145,37 @@ public class OsmApiUrlInputPanel extends JPanel {
      * Saves the values to the preferences
      */
     public void saveToPreferences() {
-        String old_url = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
+        String oldUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
+        String hmiUrl = getStrippedApiUrl();
         if (cbUseDefaultServerUrl.isSelected()) {
             Main.pref.put("osm-server.url", null);
-        } else if (tfOsmServerUrl.getText().trim().equals(OsmApi.DEFAULT_API_URL)) {
+        } else if (hmiUrl.equals(OsmApi.DEFAULT_API_URL)) {
             Main.pref.put("osm-server.url", null);
         } else {
-            Main.pref.put("osm-server.url", tfOsmServerUrl.getText().trim());
+            Main.pref.put("osm-server.url", hmiUrl);
         }
-        String new_url = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
+        String newUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
 
         // When API URL changes, re-initialize API connection so we may adjust
         // server-dependent settings.
-        if (!old_url.equals(new_url)) {
+        if (!oldUrl.equals(newUrl)) {
             try {
                 OsmApi.getOsmApi().initialize(null);
             } catch (Exception x) {
                 Main.warn(x);
             }
         }
+    }
+    
+    /**
+     * Returns the entered API URL, stripped of leading and trailing white characters.
+     * @return the entered API URL, stripped of leading and trailing white characters. 
+     *         May be an empty string if nothing has been entered. In this case, it means the user wants to use {@link OsmApi#DEFAULT_API_URL}.
+     * @see Utils#strip(String)
+     * @since 6602
+     */
+    public final String getStrippedApiUrl() {
+        return Utils.strip(tfOsmServerUrl.getText());
     }
 
     class ValidateApiUrlAction extends AbstractAction implements DocumentListener {
@@ -174,7 +189,7 @@ public class OsmApiUrlInputPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            final String url = tfOsmServerUrl.getText().trim();
+            final String url = getStrippedApiUrl();
             final ApiUrlTestTask task = new ApiUrlTestTask(OsmApiUrlInputPanel.this, url);
             Main.worker.submit(task);
             Runnable r = new Runnable() {
@@ -203,9 +218,8 @@ public class OsmApiUrlInputPanel extends JPanel {
         }
 
         protected void updateEnabledState() {
-            boolean enabled =
-                !tfOsmServerUrl.getText().trim().isEmpty()
-                && !tfOsmServerUrl.getText().trim().equals(lastTestedUrl);
+            String url = getStrippedApiUrl();
+            boolean enabled = !url.isEmpty() && !url.equals(lastTestedUrl);
             if (enabled) {
                 lblValid.setIcon(null);
             }
@@ -280,13 +294,13 @@ public class OsmApiUrlInputPanel extends JPanel {
             switch(e.getStateChange()) {
             case ItemEvent.SELECTED:
                 setApiUrlInputEnabled(false);
-                firePropertyChange(API_URL_PROP, null, OsmApi.DEFAULT_API_URL);
+                propagator.propagate(OsmApi.DEFAULT_API_URL);
                 break;
             case ItemEvent.DESELECTED:
                 setApiUrlInputEnabled(true);
                 valOsmServerUrl.validate();
                 tfOsmServerUrl.requestFocusInWindow();
-                firePropertyChange(API_URL_PROP, null, tfOsmServerUrl.getText());
+                propagator.propagate();
                 break;
             }
         }
@@ -294,7 +308,11 @@ public class OsmApiUrlInputPanel extends JPanel {
 
     class ApiUrlPropagator extends FocusAdapter implements ActionListener {
         public void propagate() {
-            firePropertyChange(API_URL_PROP, null, tfOsmServerUrl.getText());
+            propagate(getStrippedApiUrl());
+        }
+
+        public void propagate(String url) {
+            firePropertyChange(API_URL_PROP, null, url);
         }
 
         @Override
