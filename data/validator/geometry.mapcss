@@ -15,3 +15,16 @@ node[source:outline] {
 *[building!~/no|entrance/] {
   throwWarning: tr("Building inside building");
 }
+
+/* Overlapping areas (spatial test) */
+area[natural =~ /^(water|wetland|coastline)$/], area[landuse=reservoir] {
+  set water_area;
+}
+
+area.water_area ⧉ area.water_area {
+  throwWarning: tr("Overlapping Water Areas");
+}
+
+area ⧉ area {
+  throwOther: tr("Overlapping Areas");
+}

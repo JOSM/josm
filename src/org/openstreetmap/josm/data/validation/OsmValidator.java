@@ -37,7 +37,6 @@ import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.data.validation.tests.NameMismatch;
 import org.openstreetmap.josm.data.validation.tests.NodesDuplicatingWayTags;
 import org.openstreetmap.josm.data.validation.tests.OpeningHourTest;
-import org.openstreetmap.josm.data.validation.tests.OverlappingAreas;
 import org.openstreetmap.josm.data.validation.tests.OverlappingWays;
 import org.openstreetmap.josm.data.validation.tests.PowerLines;
 import org.openstreetmap.josm.data.validation.tests.RelationChecker;
@@ -109,7 +108,6 @@ public class OsmValidator implements LayerChangeListener {
         RelationChecker.class, // ID  1701 ..  1799
         TurnrestrictionTest.class, // ID  1801 ..  1899
         DuplicateRelation.class, // ID 1901 .. 1999
-        OverlappingAreas.class, // ID 2201 .. 2299
         WayConnectedToArea.class, // ID 2301 .. 2399
         NodesDuplicatingWayTags.class, // ID 2401 .. 2499
         PowerLines.class, // ID 2501 .. 2599

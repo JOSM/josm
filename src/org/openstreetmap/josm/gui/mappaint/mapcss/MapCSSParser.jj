@@ -80,6 +80,7 @@ TOKEN:
 |   < CARET: "^" >
 |   < FULLSTOP: "." >
 |   < ELEMENT_OF: "∈" >
+|   < CROSSING: "⧉" >
 |   < COMMENT_START: "/*" > : COMMENT
 |   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
 }
@@ -277,6 +278,8 @@ Selector child_selector() :
             ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
         |
             <ELEMENT_OF> { type = Selector.ChildOrParentSelectorType.ELEMENT_OF; }
+        |
+            <CROSSING> { type = Selector.ChildOrParentSelectorType.CROSSING; }
         )
         { selLink = new LinkSelector(conditions); }
         w()
