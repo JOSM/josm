@@ -16,8 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -27,6 +25,7 @@ import org.openstreetmap.josm.data.validation.tests.Addresses;
 import org.openstreetmap.josm.data.validation.tests.BarriersEntrances;
 import org.openstreetmap.josm.data.validation.tests.BuildingInBuilding;
 import org.openstreetmap.josm.data.validation.tests.Coastlines;
+import org.openstreetmap.josm.data.validation.tests.ConditionalKeys;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
 import org.openstreetmap.josm.data.validation.tests.DuplicateNode;
 import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
@@ -122,6 +121,7 @@ public class OsmValidator implements LayerChangeListener {
         OpeningHourTest.class, // 2901 .. 2999
         MapCSSTagChecker.class, // 3000 .. 3099
         Lanes.class, // 3100 .. 3199
+        ConditionalKeys.class, // 3200 .. 3299
     };
     
     private static Map<String, Test> allTestsMap;
@@ -132,7 +132,6 @@ public class OsmValidator implements LayerChangeListener {
                 allTestsMap.put(testClass.getSimpleName(), testClass.newInstance());
             } catch (Exception e) {
                 Main.error(e);
-                continue;
             }
         }
     }
