@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -32,6 +33,10 @@ public interface Selector {
     public String getSubpart();
 
     public Range getRange();
+
+    public static enum ChildOrParentSelectorType {
+        CHILD, PARENT, CONTAINS
+    }
 
     /**
      * <p>Represents a child selector or a parent selector.</p>
@@ -53,19 +58,19 @@ public interface Selector {
         private final Selector right;
         /** true, if this represents a parent selector (otherwise it is a child selector)
          */
-        private final boolean parentSelector;
+        private final ChildOrParentSelectorType type;
 
         /**
          *
          * @param a the first selector
          * @param b the second selector
-         * @param parentSelector if true, this is a parent selector; otherwise a child selector
+         * @param type the selector type
          */
-        public ChildOrParentSelector(Selector a, LinkSelector link, Selector b, boolean parentSelector) {
+        public ChildOrParentSelector(Selector a, LinkSelector link, Selector b, ChildOrParentSelectorType type) {
             this.left = a;
             this.link = link;
             this.right = b;
-            this.parentSelector = parentSelector;
+            this.type = type;
         }
 
         /**
@@ -141,12 +146,67 @@ public interface Selector {
             }
         }
 
+        private class ContainsFinder extends AbstractVisitor {
+            private final Environment e;
+            private final List<Node> nodes;
+
+            private ContainsFinder(Environment e) {
+                this.e = e;
+                if (e.osm instanceof Node) {
+                    nodes = Collections.singletonList((Node) e.osm);
+                } else if (e.osm instanceof Way) {
+                    nodes = ((Way) e.osm).getNodes();
+                } else {
+                    throw new IllegalArgumentException("Relations not supported");
+                }
+            }
+
+            @Override
+            public void visit(Node n) {
+            }
+
+            @Override
+            public void visit(Way w) {
+                if (e.parent == null && left.matches(e.withPrimitive(w))) {
+                    if (nodes.size() == 1
+                            ? Geometry.nodeInsidePolygon(nodes.get(0), w.getNodes())
+                            : Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(Geometry.polygonIntersection(nodes, w.getNodes()))) {
+                        e.parent = w;
+                        e.index = 0;
+                    }
+                }
+            }
+
+            @Override
+            public void visit(Relation r) {
+                if (e.parent == null && left.matches(e.withPrimitive(r))) {
+                    if (r.isMultipolygon() && Geometry.isPolygonInsideMultiPolygon(nodes, r, null)) {
+                        e.parent = r;
+                        e.index = 0;
+                    }
+                }
+            }
+        }
+
         @Override
         public boolean matches(Environment e) {
             if (!right.matches(e))
                 return false;
 
-            if (!parentSelector) {
+            if (ChildOrParentSelectorType.CONTAINS.equals(type)) {
+                final OsmPrimitive rightPrimitive = e.osm;
+                final ContainsFinder containsFinder = new ContainsFinder(e);
+                for (final OsmPrimitive p : rightPrimitive.getDataSet().allPrimitives()) {
+                    if (rightPrimitive.equals(p)) {
+                        continue;
+                    }
+                    p.accept(containsFinder);
+                    if (e.parent != null) {
+                        e.osm = rightPrimitive;
+                        return true;
+                    }
+                }
+            } else if (ChildOrParentSelectorType.CHILD.equals(type)) {
                 MatchingReferrerFinder collector = new MatchingReferrerFinder(e);
                 e.osm.visitReferrers(collector);
                 if (e.parent != null)
@@ -194,7 +254,7 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return left +" "+ (parentSelector? "<" : ">")+link+" " +right;
+            return left + " " + (ChildOrParentSelectorType.PARENT.equals(type) ? "<" : ">") + link + " " + right;
         }
     }
 
