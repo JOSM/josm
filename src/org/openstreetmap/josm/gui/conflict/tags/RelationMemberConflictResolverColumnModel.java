@@ -3,16 +3,63 @@ package org.openstreetmap.josm.gui.conflict.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 
-public class RelationMemberConflictResolverColumnModel extends DefaultTableColumnModel{
+public class RelationMemberConflictResolverColumnModel extends DefaultTableColumnModel {
 
+    private static Component setColors(Component comp, JTable table, boolean isSelected, int row) {
+        RelationMemberConflictResolverModel model = (RelationMemberConflictResolverModel) table.getModel();
+        
+        if (!isSelected && comp != null) {
+            switch (model.getDecision(row).getDecision()) {
+            case UNDECIDED:
+                comp.setForeground(ConflictColors.FGCOLOR_UNDECIDED.get());
+                comp.setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
+                break;
+            case KEEP:
+                comp.setForeground(ConflictColors.FGCOLOR_MEMBER_KEEP.get());
+                comp.setBackground(ConflictColors.BGCOLOR_MEMBER_KEEP.get());
+                break;
+            case REMOVE:
+                comp.setForeground(ConflictColors.FGCOLOR_MEMBER_REMOVE.get());
+                comp.setBackground(ConflictColors.BGCOLOR_MEMBER_REMOVE.get());
+                break;
+            }
+        }
+        return comp;
+    }
+    
     protected void createColumns() {
-        OsmPrimitivRenderer primitiveRenderer = new OsmPrimitivRenderer();
+        final DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
+        
+        OsmPrimitivRenderer primitiveRenderer = new OsmPrimitivRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table,
+                    Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                return setColors(super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column),
+                        table, isSelected, row);
+            }
+        };
+        
+        TableCellRenderer tableRenderer = new TableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                return setColors(defaultTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column),
+                        table, isSelected, row);
+            }
+        };
+        
         AutoCompletingTextField roleEditor = new AutoCompletingTextField();
         RelationMemberConflictDecisionRenderer decisionRenderer = new RelationMemberConflictDecisionRenderer();
         RelationMemberConflictDecisionEditor decisionEditor = new RelationMemberConflictDecisionEditor();
@@ -34,6 +81,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         col.setResizable(true);
         col.setWidth(40);
         col.setPreferredWidth(40);
+        col.setCellRenderer(tableRenderer);
         col.setMaxWidth(50);
         addColumn(col);
 
@@ -41,6 +89,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         col = new TableColumn(2);
         col.setHeaderValue(tr("Role"));
         col.setResizable(true);
+        col.setCellRenderer(tableRenderer);
         col.setCellEditor(roleEditor);
         col.setWidth(50);
         col.setPreferredWidth(50);
@@ -54,6 +103,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         col.setWidth(100);
         col.setPreferredWidth(100);
         addColumn(col);
+        
         // column 4 - New Way
         col = new TableColumn(4);
         col.setHeaderValue(tr("Decision"));
@@ -66,6 +116,9 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         addColumn(col);
     }
 
+    /**
+     * Constructs a new {@code RelationMemberConflictResolverColumnModel}.
+     */
     public RelationMemberConflictResolverColumnModel() {
         createColumns();
     }

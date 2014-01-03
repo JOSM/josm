@@ -28,6 +28,9 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
     private DefaultComboBoxModel model;
     private JosmComboBox cbDecisionRenderer;
 
+    /**
+     * Constructs a new {@code MultiValueCellRenderer}.
+     */
     public MultiValueCellRenderer() {
         setOpaque(true);
         iconDecided = ImageProvider.get("dialogs/conflict", "tagconflictresolved");
@@ -35,23 +38,36 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
         cbDecisionRenderer = new JosmComboBox(model = new DefaultComboBoxModel());
     }
 
-    protected void renderColors(MultiValueResolutionDecision decision, boolean selected) {
+    protected void renderColors(MultiValueResolutionDecision decision, boolean selected, boolean conflict) {
         if (selected) {
             setForeground(UIManager.getColor("Table.selectionForeground"));
             setBackground(UIManager.getColor("Table.selectionBackground"));
-        } else{
-            switch(decision.getDecisionType()) {
+        } else {
+            switch (decision.getDecisionType()) {
             case UNDECIDED:
-                setForeground(UIManager.getColor("Table.foreground"));
+                setForeground(ConflictColors.FGCOLOR_UNDECIDED.get());
                 setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
                 break;
             case KEEP_NONE:
-                setForeground(UIManager.getColor("Panel.foreground"));
-                setBackground(UIManager.getColor("Panel.background"));
+                setForeground(ConflictColors.FGCOLOR_TAG_KEEP_NONE.get());
+                setBackground(ConflictColors.BGCOLOR_TAG_KEEP_NONE.get());
                 break;
             default:
-                setForeground(UIManager.getColor("Table.foreground"));
-                setBackground(UIManager.getColor("Table.background"));
+                if (conflict) {
+                    switch (decision.getDecisionType()) {
+                    case KEEP_ONE:
+                        setForeground(ConflictColors.FGCOLOR_TAG_KEEP_ONE.get());
+                        setBackground(ConflictColors.BGCOLOR_TAG_KEEP_ONE.get());
+                        break;
+                    case KEEP_ALL:
+                        setForeground(ConflictColors.FGCOLOR_TAG_KEEP_ALL.get());
+                        setBackground(ConflictColors.BGCOLOR_TAG_KEEP_ALL.get());
+                        break;
+                    }
+                } else {
+                    setForeground(UIManager.getColor("Table.foreground"));
+                    setBackground(UIManager.getColor("Table.background"));
+                }
                 break;
             }
         }
@@ -59,7 +75,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
 
     protected void renderValue(MultiValueResolutionDecision decision) {
         model.removeAllElements();
-        switch(decision.getDecisionType()) {
+        switch (decision.getDecisionType()) {
         case UNDECIDED:
             model.addElement(tr("Choose a value"));
             cbDecisionRenderer.setFont(getFont().deriveFont(Font.ITALIC));
@@ -87,30 +103,25 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
      * Sets the text of the tooltip for both renderers, this (the JLabel) and the combobox renderer.
      */
     protected void renderToolTipText(MultiValueResolutionDecision decision) {
-        switch(decision.getDecisionType()) {
+        String toolTipText;
+        switch (decision.getDecisionType()) {
         case UNDECIDED:
-        {
-            String toolTipText = tr("Please decide which values to keep");
+            toolTipText = tr("Please decide which values to keep");
             setToolTipText(toolTipText);
             cbDecisionRenderer.setToolTipText(toolTipText);
             break;
-        }
         case KEEP_ONE:
-        {
-            String toolTipText = tr("Value ''{0}'' is going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
+            toolTipText = tr("Value ''{0}'' is going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
             setToolTipText(toolTipText);
             cbDecisionRenderer.setToolTipText(toolTipText);
             break;
-        }
         case KEEP_NONE:
-        {
-            String toolTipText = tr("The key ''{0}'' and all its values are going to be removed", decision.getKey());
+            toolTipText = tr("The key ''{0}'' and all its values are going to be removed", decision.getKey());
             setToolTipText(toolTipText);
             cbDecisionRenderer.setToolTipText(toolTipText);
             break;
-        }
         case KEEP_ALL:
-            String toolTipText = tr("All values joined as ''{0}'' are going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
+            toolTipText = tr("All values joined as ''{0}'' are going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
             setToolTipText(toolTipText);
             cbDecisionRenderer.setToolTipText(toolTipText);
             break;
@@ -124,15 +135,16 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-            int row, int column) {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
         reset();
         if (value == null)
             return this;
 
         MultiValueResolutionDecision decision = (MultiValueResolutionDecision)value;
-        renderColors(decision,isSelected);
+        TagConflictResolverModel model = (TagConflictResolverModel) table.getModel();
+        boolean conflict = model.getKeysWithConflicts().contains(model.getKey(row));
+        renderColors(decision, isSelected, conflict);
         renderToolTipText(decision);
         switch(column) {
         case 0:
