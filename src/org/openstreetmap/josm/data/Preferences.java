@@ -1260,7 +1260,7 @@ public class Preferences {
         updateSystemProperty("user.language", get("language"));
         // Workaround to fix a Java bug.
         // Force AWT toolkit to update its internal preferences (fix #3645).
-        // This ugly hack comes from Sun bug database: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6292739
+        // This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
         try {
             Field field = Toolkit.class.getDeclaredField("resources");
             field.setAccessible(true);
@@ -1270,8 +1270,8 @@ public class Preferences {
         }
         // Workaround to fix another Java bug
         // Force Java 7 to use old sorting algorithm of Arrays.sort (fix #8712).
-        // See Oracle bug database: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7075600
-        // and http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6923200
+        // See Oracle bug database: https://bugs.openjdk.java.net/browse/JDK-7075600
+        // and https://bugs.openjdk.java.net/browse/JDK-6923200
         if (Main.pref.getBoolean("jdk.Arrays.useLegacyMergeSort", !Version.getInstance().isLocalBuild())) {
             updateSystemProperty("java.util.Arrays.useLegacyMergeSort", "true");
         }
