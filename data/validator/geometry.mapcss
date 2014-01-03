@@ -28,3 +28,8 @@ area.water_area ⧉ area.water_area {
 area ⧉ area {
   throwOther: tr("Overlapping Areas");
 }
+
+/* see ticket #9311 */
+node[amenity=parking] ∈ *[amenity=parking] {
+  throwWarning: tr("{0} inside {1}", "amenity=parking", "amenity=parking");
+}
