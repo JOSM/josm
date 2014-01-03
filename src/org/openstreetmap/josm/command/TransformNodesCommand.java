@@ -127,7 +127,7 @@ public abstract class TransformNodesCommand extends Command {
     /**
      * Get the center of the nodes under modification.
      * It's just the barycenter.
-     * @see {@link org.openstreetmap.josm.tools.Geometry#getCentroid(java.util.List)}
+     * @see org.openstreetmap.josm.tools.Geometry#getCentroid(java.util.List)
      */
     public EastNorth getNodesCenter() {
         EastNorth sum = new EastNorth(0,0);

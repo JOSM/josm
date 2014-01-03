@@ -288,7 +288,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * Constructs a (localized) description for this deprecation check.
          *
          * @return a description (possibly with alternative suggestions)
-         * @see {@link #getDescriptionForMatchingSelector(Selector)}
+         * @see #getDescriptionForMatchingSelector(Selector)
          */
         String getDescription() {
             if (alternatives.isEmpty()) {

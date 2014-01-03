@@ -99,6 +99,9 @@ public final class Utils {
         return new FilteredCollection<T>(collection, predicate);
     }
 
+    /**
+     * Returns the first element from {@code items} which is non-null, or null if all elements are null.
+     */
     public static <T> T firstNonNull(T... items) {
         for (T i : items) {
             if (i != null) {

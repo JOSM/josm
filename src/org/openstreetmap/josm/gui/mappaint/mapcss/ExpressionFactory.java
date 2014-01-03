@@ -138,7 +138,7 @@ public final class ExpressionFactory {
 
         /**
          * Creates a list of values, e.g., for the {@code dashes} property.
-         * @see {@link Arrays#asList(Object[])}
+         * @see Arrays#asList(Object[])
          */
         public static List list(Object... args) {
             return Arrays.asList(args);
@@ -158,7 +158,7 @@ public final class ExpressionFactory {
 
         /**
          * Splits string {@code toSplit} at occurrences of the separator string {@code sep} and returns a list of matches.
-         * @see {@link String#split(String)}
+         * @see String#split(String)
          * @since 5699
          */
         public static List<String> split(String sep, String toSplit) {
@@ -167,7 +167,7 @@ public final class ExpressionFactory {
 
         /**
          * Creates a color value with the specified amounts of {@code r}ed, {@code g}reen, {@code b}lue (arguments from 0.0 to 1.0)
-         * @see {@link Color#Color(float, float, float)}
+         * @see Color#Color(float, float, float)
          */
         public static Color rgb(float r, float g, float b) {
             Color c;
@@ -195,7 +195,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the red color channel in the rgb color model
-         * @see {@link java.awt.Color#getRed()}
+         * @see java.awt.Color#getRed()
          */
         public static float red(Color c) {
             return Utils.color_int2float(c.getRed());
@@ -203,7 +203,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the green color channel in the rgb color model
-         * @see {@link java.awt.Color#getGreen()}
+         * @see java.awt.Color#getGreen()
          */
         public static float green(Color c) {
             return Utils.color_int2float(c.getGreen());
@@ -211,7 +211,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the blue color channel in the rgb color model
-         * @see {@link java.awt.Color#getBlue()}
+         * @see java.awt.Color#getBlue()
          */
         public static float blue(Color c) {
             return Utils.color_int2float(c.getBlue());
@@ -340,7 +340,7 @@ public final class ExpressionFactory {
 
         /**
          * Determines if the objects {@code a} and {@code b} are equal.
-         * @see {@link Object#equals(Object)}
+         * @see Object#equals(Object)
          */
         public static boolean equal(Object a, Object b) {
             // make sure the casts are done in a meaningful way, so
@@ -371,7 +371,7 @@ public final class ExpressionFactory {
         /**
          * Obtains the JOSM'key {@link org.openstreetmap.josm.data.Preferences} string for key {@code key},
          * and defaults to {@code def} if that is null.
-         * @see {@link org.openstreetmap.josm.data.Preferences#get(String, String)}
+         * @see org.openstreetmap.josm.data.Preferences#get(String, String)
          */
         public static String JOSM_pref(String key, String def) {
             String res = Main.pref.get(key, null);
@@ -381,7 +381,7 @@ public final class ExpressionFactory {
         /**
          * Obtains the JOSM'key {@link org.openstreetmap.josm.data.Preferences} color for key {@code key},
          * and defaults to {@code def} if that is null.
-         * @see {@link org.openstreetmap.josm.data.Preferences#getColor(String, java.awt.Color)}
+         * @see org.openstreetmap.josm.data.Preferences#getColor(String, java.awt.Color)
          */
         public static Color JOSM_pref_color(String key, Color def) {
             Color res = Main.pref.getColor(key, null);
@@ -390,7 +390,7 @@ public final class ExpressionFactory {
 
         /**
          * Tests if string {@code target} matches pattern {@code pattern}
-         * @see {@link Pattern#matches(String, CharSequence)}
+         * @see Pattern#matches(String, CharSequence)
          * @since 5699
          */
         public static boolean regexp_test(String pattern, String target) {
@@ -451,7 +451,7 @@ public final class ExpressionFactory {
 
         /**
          * Returns the OSM id of the current object.
-         * @see {@link org.openstreetmap.josm.data.osm.AbstractPrimitive#generateUniqueId()}
+         * @see OsmPrimitive#getUniqueId()
          */
         public long osm_id() {
             return env.osm.getUniqueId();
@@ -469,7 +469,7 @@ public final class ExpressionFactory {
 
         /**
          * Returns the substring of {@code s} starting at index {@code begin} (inclusive, 0-indexed).
-         * * @see {@link String#substring(int)}
+         * @see String#substring(int)
          */
         public static String substring(String s, /* due to missing Cascade.convertTo for int*/ float begin) {
             return s == null ? null : s.substring((int) begin);
@@ -478,7 +478,7 @@ public final class ExpressionFactory {
         /**
          * Returns the substring of {@code s} starting at index {@code begin} (inclusive)
          * and ending at index {@code end}, (exclusive, 0-indexed).
-         * @see {@link String#substring(int, int)}
+         * @see String#substring(int, int)
          */
         public static String substring(String s, float begin, float end) {
             return s == null ? null : s.substring((int) begin, (int) end);
@@ -486,7 +486,7 @@ public final class ExpressionFactory {
 
         /**
          * Replaces in {@code s} every {@code} target} substring by {@code replacement}.
-         * * @see {@link String#replace(CharSequence, CharSequence)}
+         * * @see String#replace(CharSequence, CharSequence)
          */
         public static String replace(String s, String target, String replacement) {
             return s == null ? null : s.replace(target, replacement);
