@@ -137,7 +137,7 @@ public class UnclosedWays extends Test {
     }
 
     private final UnclosedWaysCheck[] checks = {
-        new UnclosedWaysCheck(1101, "natural",   marktr("natural type {0}"), Arrays.asList("coastline", "cliff", "tree_row")),
+        new UnclosedWaysCheck(1101, "natural",   marktr("natural type {0}"), Arrays.asList("coastline", "cliff", "tree_row", "ridge", "arete")),
         new UnclosedWaysCheck(1102, "landuse",   marktr("landuse type {0}")),
         new UnclosedWaysCheck(1103, "amenities", marktr("amenities type {0}")),
         new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"), Arrays.asList("water_slide", "climbing")),
