@@ -23,11 +23,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class SourceButton extends JComponent {
 
-    private final int layerHeight = 20;
-    private final int leftPadding = 5;
-    private final int topPadding = 5;
-    private final int bottomPadding = 5;
-
+    private static final int LAYER_HEIGHT = 20;
+    private static final int LEFT_PADDING = 5;
+    private static final int TOP_PADDING = 5;
+    private static final int BOTTOM_PADDING = 5;
 
     private TileSource[] sources;
 
@@ -46,7 +45,6 @@ public class SourceButton extends JComponent {
     private final SlippyMapBBoxChooser slippyMapBBoxChooser;
 
     public SourceButton(SlippyMapBBoxChooser slippyMapBBoxChooser, Collection<TileSource> sources) {
-        super();
         this.slippyMapBBoxChooser = slippyMapBBoxChooser;
         setSources(sources);
         enlargeImage = ImageProvider.get("layer-switcher-maximize.png");
@@ -67,7 +65,7 @@ public class SourceButton extends JComponent {
                     if (barWidth < point.x && point.y < shrinkImage.getIconHeight()) {
                         toggle();
                     } else {
-                        int result = (point.y - 5) / layerHeight;
+                        int result = (point.y - 5) / LAYER_HEIGHT;
                         if (result >= 0 && result < SourceButton.this.sources.length) {
                             SourceButton.this.slippyMapBBoxChooser.toggleMapSource(SourceButton.this.sources[result]);
                             currentMap = result;
@@ -77,7 +75,6 @@ public class SourceButton extends JComponent {
                 } else {
                     toggle();
                 }
-
             }
         }
     };
@@ -104,14 +101,14 @@ public class SourceButton extends JComponent {
                 int radioButtonSize = 10;
 
                 g.setColor(new Color(0, 0, 139, 179));
-                g.fillRoundRect(0, 0, barWidth + shrinkImage.getIconWidth(), sources.length * layerHeight + topPadding + bottomPadding, 10, 10);
+                g.fillRoundRect(0, 0, barWidth + shrinkImage.getIconWidth(), sources.length * LAYER_HEIGHT + TOP_PADDING + BOTTOM_PADDING, 10, 10);
                 for (int i=0; i<sources.length; i++) {
                     g.setColor(Color.WHITE);
-                    g.fillOval(leftPadding, topPadding + i * layerHeight + 6, radioButtonSize, radioButtonSize);
-                    g.drawString(sources[i].getName(), leftPadding + radioButtonSize + leftPadding, topPadding + i * layerHeight + g.getFontMetrics().getHeight());
+                    g.fillOval(LEFT_PADDING, TOP_PADDING + i * LAYER_HEIGHT + 6, radioButtonSize, radioButtonSize);
+                    g.drawString(sources[i].getName(), LEFT_PADDING + radioButtonSize + LEFT_PADDING, TOP_PADDING + i * LAYER_HEIGHT + g.getFontMetrics().getHeight());
                     if (currentMap == i) {
                         g.setColor(Color.BLACK);
-                        g.fillOval(leftPadding + 1, topPadding + 7 + i * layerHeight, radioButtonSize - 2, radioButtonSize - 2);
+                        g.fillOval(LEFT_PADDING + 1, TOP_PADDING + 7 + i * LAYER_HEIGHT, radioButtonSize - 2, radioButtonSize - 2);
                     }
                 }
 
@@ -154,7 +151,7 @@ public class SourceButton extends JComponent {
                 }
             }
             barWidth = textWidth + 50;
-            shownDimension = new Dimension(barWidth + shrinkImage.getIconWidth(), sources.length * layerHeight + topPadding + bottomPadding);
+            shownDimension = new Dimension(barWidth + shrinkImage.getIconWidth(), sources.length * LAYER_HEIGHT + TOP_PADDING + BOTTOM_PADDING);
         }
     }
 }

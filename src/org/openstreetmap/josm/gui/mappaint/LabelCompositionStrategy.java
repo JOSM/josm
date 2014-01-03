@@ -152,7 +152,7 @@ public abstract class LabelCompositionStrategy {
         /**
          * The list of default name tags from which a label candidate is derived.
          */
-        static public final String[] DEFAULT_NAME_TAGS = {
+        public static final String[] DEFAULT_NAME_TAGS = {
             "name:" + LanguageInfo.getJOSMLocaleCode(),
             "name",
             "int_name",
@@ -166,7 +166,7 @@ public abstract class LabelCompositionStrategy {
          * The list of default name complement tags from which a label candidate is derived.
          * @since 6541
          */
-        static public final String[] DEFAULT_NAME_COMPLEMENT_TAGS = {
+        public static final String[] DEFAULT_NAME_COMPLEMENT_TAGS = {
             "capacity"
         };
 

@@ -31,14 +31,17 @@ public class EditableList extends JPanel {
     public final JButton editSrcButton = new JButton(tr("Edit"));
     public final JButton deleteSrcButton = new JButton(tr("Delete"));
 
+    /**
+     * Constructs a new {@code EditableList}.
+     * @param title The title displayed in input dialog
+     */
     public EditableList(String title) {
         this.title = title;
         build();
     }
 
-    protected void build() {
+    protected final void build() {
 
-        //setLayout(new GridBagLayout());
         setLayout(new BorderLayout());
 
         addSrcButton.addActionListener(new ActionListener() {

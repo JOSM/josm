@@ -50,7 +50,7 @@ public class SelectNonBranchingWaySequences {
      * @param node a way endpoint
      */
     private void addNodes(Node node) {
-        if (node == null) ;
+        if (node == null) return;
         else if (!nodes.add(node))
             outerNodes.remove(node);
         else

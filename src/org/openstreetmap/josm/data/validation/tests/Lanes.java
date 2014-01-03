@@ -1,5 +1,7 @@
+// License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.data.validation.tests;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
@@ -14,8 +16,15 @@ import java.util.regex.Pattern;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+/**
+ * Test that validates {@code lane:} tags.
+ * @since 6592
+ */
 public class Lanes extends Test.TagTest {
 
+    /**
+     * Constructs a new {@code Lanes} test.
+     */
     public Lanes() {
         super(tr("Lane tags"));
     }
@@ -47,6 +56,7 @@ public class Lanes extends Test.TagTest {
                     errors.add(new TestError(this, Severity.WARNING, tr("Number of {0} greater than {1}", lanesKey, "*:" + lanesKey), 3100, p));
                 }
             } catch (NumberFormatException ignore) {
+                Main.debug(ignore.getMessage());
             }
         }
     }

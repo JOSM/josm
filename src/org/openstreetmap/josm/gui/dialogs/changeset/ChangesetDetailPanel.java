@@ -41,25 +41,25 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-
 /**
  * This panel displays the properties of the currently selected changeset in the
  * {@link ChangesetCacheManager}.
  *
  */
-public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener{
+public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener {
 
-    private JosmTextField tfID;
-    private JosmTextArea taComment;
-    private JosmTextField tfOpen;
-    private JosmTextField tfUser;
-    private JosmTextField tfCreatedOn;
-    private JosmTextField tfClosedOn;
-    private DonwloadChangesetContentAction actDownloadChangesetContent;
-    private UpdateChangesetAction actUpdateChangesets;
-    private RemoveFromCacheAction actRemoveFromCache;
-    private SelectInCurrentLayerAction actSelectInCurrentLayer;
-    private ZoomInCurrentLayerAction actZoomInCurrentLayerAction;
+    private final JosmTextField tfID        = new JosmTextField(10);
+    private final JosmTextArea  taComment   = new JosmTextArea(5,40);
+    private final JosmTextField tfOpen      = new JosmTextField(10);
+    private final JosmTextField tfUser      = new JosmTextField("");
+    private final JosmTextField tfCreatedOn = new JosmTextField(20);
+    private final JosmTextField tfClosedOn  = new JosmTextField(20);
+
+    private final DownloadChangesetContentAction actDownloadChangesetContent = new DownloadChangesetContentAction();
+    private final UpdateChangesetAction          actUpdateChangesets         = new UpdateChangesetAction();
+    private final RemoveFromCacheAction          actRemoveFromCache          = new RemoveFromCacheAction();
+    private final SelectInCurrentLayerAction     actSelectInCurrentLayer     = new SelectInCurrentLayerAction();
+    private final ZoomInCurrentLayerAction       actZoomInCurrentLayerAction = new ZoomInCurrentLayerAction();
 
     private Changeset current = null;
 
@@ -70,21 +70,21 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         tb.setFloatable(false);
 
         // -- remove from cache action
-        tb.add(actRemoveFromCache = new RemoveFromCacheAction());
+        tb.add(actRemoveFromCache);
         actRemoveFromCache.initProperties(current);
 
         // -- changeset update
-        tb.add(actUpdateChangesets = new UpdateChangesetAction());
+        tb.add(actUpdateChangesets);
         actUpdateChangesets.initProperties(current);
 
         // -- changeset content download
-        tb.add(actDownloadChangesetContent =new DonwloadChangesetContentAction());
+        tb.add(actDownloadChangesetContent);
         actDownloadChangesetContent.initProperties(current);
 
-        tb.add(actSelectInCurrentLayer = new SelectInCurrentLayerAction());
+        tb.add(actSelectInCurrentLayer);
         MapView.addEditLayerChangeListener(actSelectInCurrentLayer);
 
-        tb.add(actZoomInCurrentLayerAction = new ZoomInCurrentLayerAction());
+        tb.add(actZoomInCurrentLayerAction);
         MapView.addEditLayerChangeListener(actZoomInCurrentLayerAction);
 
         addComponentListener(
@@ -118,7 +118,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
         gc.gridx = 1;
-        pnl.add(tfID = new JosmTextField(10), gc);
+        pnl.add(tfID, gc);
         tfID.setEditable(false);
 
         //-- comment
@@ -132,7 +132,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         gc.gridx = 1;
-        pnl.add(taComment= new JosmTextArea(5,40), gc);
+        pnl.add(taComment, gc);
         taComment.setEditable(false);
 
         //-- Open/Closed
@@ -145,7 +145,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridx = 1;
-        pnl.add(tfOpen= new JosmTextField(10), gc);
+        pnl.add(tfOpen, gc);
         tfOpen.setEditable(false);
 
         //-- Created by:
@@ -158,7 +158,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.gridx = 1;
-        pnl.add(tfUser= new JosmTextField(""), gc);
+        pnl.add(tfUser, gc);
         tfUser.setEditable(false);
 
         //-- Created On:
@@ -170,7 +170,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridx = 1;
-        pnl.add(tfCreatedOn= new JosmTextField(20), gc);
+        pnl.add(tfCreatedOn, gc);
         tfCreatedOn.setEditable(false);
 
         //-- Closed On:
@@ -182,13 +182,13 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridx = 1;
-        pnl.add(tfClosedOn= new JosmTextField(20), gc);
+        pnl.add(tfClosedOn, gc);
         tfClosedOn.setEditable(false);
 
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
         add(buildDetailViewPanel(), BorderLayout.CENTER);
@@ -258,8 +258,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     public void propertyChange(PropertyChangeEvent evt) {
         if (! evt.getPropertyName().equals(ChangesetCacheManagerModel.CHANGESET_IN_DETAIL_VIEW_PROP))
             return;
-        Changeset cs = (Changeset)evt.getNewValue();
-        setCurrentChangeset(cs);
+        setCurrentChangeset((Changeset)evt.getNewValue());
     }
 
     /**
@@ -288,17 +287,17 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
      * Removes the selected changesets from the local changeset cache
      *
      */
-    class DonwloadChangesetContentAction extends AbstractAction{
-        public DonwloadChangesetContentAction() {
+    class DownloadChangesetContentAction extends AbstractAction {
+        public DownloadChangesetContentAction() {
             putValue(NAME, tr("Download content"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset","downloadchangesetcontent"));
+            putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
         }
 
         @Override
         public void actionPerformed(ActionEvent evt) {
             if (current == null) return;
-            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetDetailPanel.this,current.getId());
+            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetDetailPanel.this, current.getId());
             ChangesetCacheManager.getInstance().runDownloadTask(task);
         }
 
@@ -311,11 +310,11 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             }
             if (cs.getContent() == null) {
                 putValue(NAME, tr("Download content"));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset","downloadchangesetcontent"));
+                putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
                 putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
             } else {
                 putValue(NAME, tr("Update content"));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset","updatechangesetcontent"));
+                putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
                 putValue(SHORT_DESCRIPTION, tr("Update the changeset content from the OSM server"));
             }
         }
@@ -328,7 +327,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     class UpdateChangesetAction extends AbstractAction{
         public UpdateChangesetAction() {
             putValue(NAME, tr("Update changeset"));
-            putValue(SMALL_ICON,ImageProvider.get("dialogs/changeset","updatechangeset"));
+            putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Update the changeset from the OSM server"));
         }
 

@@ -58,22 +58,22 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * and updates its view accordingly.
  *
  */
-public class ChangesetContentPanel extends JPanel implements PropertyChangeListener{
+public class ChangesetContentPanel extends JPanel implements PropertyChangeListener {
 
     private ChangesetContentTableModel model;
     private Changeset currentChangeset;
 
-    private DonwloadChangesetContentAction actDownloadContentAction;
+    private DownloadChangesetContentAction actDownloadContentAction;
     private ShowHistoryAction actShowHistory;
     private SelectInCurrentLayerAction actSelectInCurrentLayerAction;
     private ZoomInCurrentLayerAction actZoomInCurrentLayerAction;
 
-    private HeaderPanel pnlHeader;
+    private final HeaderPanel pnlHeader = new HeaderPanel();
 
     protected void buildModels() {
         DefaultListSelectionModel selectionModel =new DefaultListSelectionModel();
         model = new ChangesetContentTableModel(selectionModel);
-        actDownloadContentAction = new DonwloadChangesetContentAction();
+        actDownloadContentAction = new DownloadChangesetContentAction();
         actDownloadContentAction.initProperties(currentChangeset);
         actShowHistory = new ShowHistoryAction();
         model.getSelectionModel().addListSelectionListener(actShowHistory);
@@ -125,15 +125,14 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         setLayout(new BorderLayout());
         buildModels();
 
-        add(pnlHeader = new HeaderPanel(), BorderLayout.NORTH);
+        add(pnlHeader, BorderLayout.NORTH);
         add(buildActionButtonPanel(), BorderLayout.WEST);
         add(buildContentPanel(), BorderLayout.CENTER);
-
     }
 
     /**
@@ -172,15 +171,29 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         Changeset cs = (Changeset)evt.getNewValue();
         setCurrentChangeset(cs);
     }
+    
+    private final void alertNoPrimitivesTo(Collection<HistoryOsmPrimitive> primitives, String title, String helpTopic) {
+        HelpAwareOptionPane.showOptionDialog(
+                ChangesetContentPanel.this,
+                trn("<html>The selected object is not available in the current<br>"
+                        + "edit layer ''{0}''.</html>",
+                        "<html>None of the selected objects is available in the current<br>"
+                        + "edit layer ''{0}''.</html>",
+                        primitives.size(),
+                        Main.main.getEditLayer().getName()
+                ),
+                title, JOptionPane.WARNING_MESSAGE, helpTopic
+        );
+    }
 
     /**
      * Downloads/Updates the content of the changeset
      *
      */
-    class DonwloadChangesetContentAction extends AbstractAction{
-        public DonwloadChangesetContentAction() {
+    class DownloadChangesetContentAction extends AbstractAction{
+        public DownloadChangesetContentAction() {
             putValue(NAME, tr("Download content"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset","downloadchangesetcontent"));
+            putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
         }
 
@@ -200,11 +213,11 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             }
             if (cs.getContent() == null) {
                 putValue(NAME, tr("Download content"));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset","downloadchangesetcontent"));
+                putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
                 putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
             } else {
                 putValue(NAME, tr("Update content"));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset","updatechangesetcontent"));
+                putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
                 putValue(SHORT_DESCRIPTION, tr("Update the changeset content from the OSM server"));
             }
         }
@@ -220,7 +233,41 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
     }
 
-    class ShowHistoryAction extends AbstractAction implements ListSelectionListener{
+    class ShowHistoryAction extends AbstractAction implements ListSelectionListener {
+        
+        private final class ShowHistoryTask implements Runnable {
+            private final Collection<HistoryOsmPrimitive> primitives;
+
+            private ShowHistoryTask(Collection<HistoryOsmPrimitive> primitives) {
+                this.primitives = primitives;
+            }
+
+            @Override
+            public void run() {
+                try {
+                    for (HistoryOsmPrimitive p : primitives) {
+                        final History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
+                        if (h == null) {
+                            continue;
+                        }
+                        GuiHelper.runInEDT(new Runnable() {
+                            @Override
+                            public void run() {
+                                HistoryBrowserDialogManager.getInstance().show(h);
+                            }
+                        });
+                    }
+                } catch (final Exception e) {
+                    GuiHelper.runInEDT(new Runnable() {
+                        @Override
+                        public void run() {
+                            BugReportExceptionHandler.handleException(e);
+                        }
+                    });
+                }
+            }
+        }
+
         public ShowHistoryAction() {
             putValue(NAME, tr("Show history"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
@@ -249,36 +296,10 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 Main.worker.submit(task);
             }
 
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        for (HistoryOsmPrimitive p : primitives) {
-                            final History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
-                            if (h == null) {
-                                continue;
-                            }
-                            GuiHelper.runInEDT(new Runnable() {
-                                @Override public void run() {
-                                    HistoryBrowserDialogManager.getInstance().show(h);
-                                }
-                            });
-                        }
-                    } catch (final Exception e) {
-                        GuiHelper.runInEDT(new Runnable() {
-                            @Override
-                            public void run() {
-                                BugReportExceptionHandler.handleException(e);
-                            }
-                        });
-                    }
-
-                }
-            };
-            Main.worker.submit(r);
+            Main.worker.submit(new ShowHistoryTask(primitives));
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(model.hasSelectedPrimitives());
         }
 
@@ -304,22 +325,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             updateEnabledState();
         }
 
-        protected void alertNoPrimitivesToSelect(Collection<HistoryOsmPrimitive> primitives) {
-            HelpAwareOptionPane.showOptionDialog(
-                    ChangesetContentPanel.this,
-                    trn("<html>The selected object is not available in the current<br>"
-                            + "edit layer ''{0}''.</html>",
-                            "<html>None of the selected objects is available in the current<br>"
-                            + "edit layer ''{0}''.</html>",
-                            primitives.size(),
-                            Main.main.getEditLayer().getName()
-                    ),
-                    tr("Nothing to select"),
-                    JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToSelectInLayer")
-            );
-        }
-
         @Override
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
@@ -335,13 +340,14 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 }
             }
             if (target.isEmpty()) {
-                alertNoPrimitivesToSelect(selected);
+                alertNoPrimitivesTo(selected, tr("Nothing to select"), 
+                        HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToSelectInLayer"));
                 return;
             }
             layer.data.setSelected(target);
         }
 
-        public void updateEnabledState() {
+        public final void updateEnabledState() {
             if (Main.main == null || !Main.main.hasEditLayer()) {
                 setEnabled(false);
                 return;
@@ -369,22 +375,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             updateEnabledState();
         }
 
-        protected void alertNoPrimitivesToZoomTo(Collection<HistoryOsmPrimitive> primitives) {
-            HelpAwareOptionPane.showOptionDialog(
-                    ChangesetContentPanel.this,
-                    trn("<html>The selected object is not available in the current<br>"
-                            + "edit layer ''{0}''.</html>",
-                            "<html>None of the selected objects is available in the current<br>"
-                            + "edit layer ''{0}''.</html>",
-                            primitives.size(),
-                            Main.main.getEditLayer().getName()
-                    ),
-                    tr("Nothing to zoom to"),
-                    JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToZoomTo")
-            );
-        }
-
         @Override
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
@@ -400,14 +390,15 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 }
             }
             if (target.isEmpty()) {
-                alertNoPrimitivesToZoomTo(selected);
+                alertNoPrimitivesTo(selected, tr("Nothing to zoom to"), 
+                        HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToZoomTo"));
                 return;
             }
             layer.data.setSelected(target);
             AutoScaleAction.zoomToSelection();
         }
 
-        public void updateEnabledState() {
+        public final void updateEnabledState() {
             if (Main.main == null || !Main.main.hasEditLayer()) {
                 setEnabled(false);
                 return;
@@ -426,12 +417,12 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
     }
 
-    static private class HeaderPanel extends JPanel {
+    private static class HeaderPanel extends JPanel {
 
         private JMultilineLabel lblMessage;
         private Changeset current;
 
-        protected void build() {
+        protected final void build() {
             setLayout(new FlowLayout(FlowLayout.LEFT));
             lblMessage = new JMultilineLabel(
                     tr("The content of this changeset is not downloaded yet.")
@@ -454,7 +445,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             public DownloadAction() {
                 putValue(NAME, tr("Download now"));
                 putValue(SHORT_DESCRIPTION, tr("Download the changeset content"));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangesetcontent"));
+                putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
             }
 
             @Override
