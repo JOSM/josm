@@ -91,6 +91,9 @@ public class TagConflictResolver extends JPanel {
         add(new JScrollPane(new TagConflictResolverTable(model)), BorderLayout.CENTER);
     }
 
+    /**
+     * Constructs a new {@code TagConflictResolver}.
+     */
     public TagConflictResolver() {
         this.model = new TagConflictResolverModel();
         build();

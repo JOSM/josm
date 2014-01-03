@@ -86,7 +86,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
             if (model.getListMergeModel().isFrozen()) {
                 bgc = ConflictColors.BGCOLOR_FROZEN.get();
             } else if (model.isParticipatingInCurrentComparePair()) {
-                bgc = ConflictColors.BGCOLOR_PARTICIPAING_IN_COMPARISON.get();
+                bgc = ConflictColors.BGCOLOR_PARTICIPATING_IN_COMPARISON.get();
             } else if (isSelected) {
                 bgc = ConflictColors.BGCOLOR_SELECTED.get();
             }
@@ -115,7 +115,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     protected void renderForeground(ListMergeModel<Node>.EntriesTableModel model, RelationMember member, int row, int col, boolean isSelected) {
         Color fgc = ConflictColors.FGCOLOR.get();
         if (col == 0 && model.isParticipatingInCurrentComparePair() && ! model.getListMergeModel().isFrozen()) {
-            fgc = ConflictColors.FGCOLOR_PARTICIPAING_IN_COMPARISON.get();
+            fgc = ConflictColors.FGCOLOR_PARTICIPATING_IN_COMPARISON.get();
         }
         setForeground(fgc);
     }

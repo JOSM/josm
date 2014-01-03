@@ -136,6 +136,16 @@ public class TagConflictResolverModel extends DefaultTableModel {
         decisions = new HashMap<String, MultiValueResolutionDecision>();
         rebuild();
     }
+    
+    /**
+     * Returns the OSM key at the given row.
+     * @param row The table row
+     * @return the OSM key at the given row.
+     * @since 6616
+     */
+    public final String getKey(int row) {
+        return displayedKeys.get(row);
+    }
 
     @Override
     public int getRowCount() {
@@ -145,7 +155,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     @Override
     public Object getValueAt(int row, int column) {
-        return decisions.get(displayedKeys.get(row));
+        return getDecision(row);
     }
 
     @Override
@@ -155,7 +165,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     @Override
     public void setValueAt(Object value, int row, int column) {
-        MultiValueResolutionDecision decision = decisions.get(displayedKeys.get(row));
+        MultiValueResolutionDecision decision = getDecision(row);
         if (value instanceof String) {
             decision.keepOne((String)value);
         } else if (value instanceof MultiValueDecisionType) {
@@ -213,8 +223,13 @@ public class TagConflictResolverModel extends DefaultTableModel {
         return tc;
     }
 
+    /**
+     * Returns the conflict resolution decision at the given row.
+     * @param row The table row
+     * @return the conflict resolution decision at the given row.
+     */
     public MultiValueResolutionDecision getDecision(int row) {
-        return decisions.get(displayedKeys.get(row));
+        return decisions.get(getKey(row));
     }
 
     /**
@@ -253,5 +268,13 @@ public class TagConflictResolverModel extends DefaultTableModel {
         }
         rebuild();
     }
-
+    
+    /**
+     * Returns the set of keys in conflict.
+     * @return the set of keys in conflict.
+     * @since 6616
+     */
+    public final Set<String> getKeysWithConflicts() {
+        return new HashSet<String>(keysWithConflicts);
+    }
 }
