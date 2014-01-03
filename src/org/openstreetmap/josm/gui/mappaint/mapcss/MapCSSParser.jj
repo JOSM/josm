@@ -471,7 +471,7 @@ List<Instruction> declaration() :
             (<FULLSTOP>)? // specification allows "set .class" to set "class". we also support "set class"
             key=<IDENT> w()
             ( <EQUAL> val=expression() )?
-            { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val)); }
+            { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val, true)); }
             ( <RBRACE> { return ins; } | <SEMICOLON> w() )
         )
     |
@@ -479,16 +479,16 @@ List<Instruction> declaration() :
         (
             LOOKAHEAD( float_array() w() ( <SEMICOLON> | <RBRACE> ) )
                 val=float_array()
-                { ins.add(new Instruction.AssignmentInstruction(key.image, val)); }
+                { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
                 w()
                 ( <RBRACE> { return ins; } | <SEMICOLON> w() )
             |
             LOOKAHEAD( expression() ( <SEMICOLON> | <RBRACE> ) )
                 val=expression()
-                { ins.add(new Instruction.AssignmentInstruction(key.image, val)); }
+                { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
                 ( <RBRACE> { return ins; } | <SEMICOLON> w() )
             |
-                val=readRaw() w() { ins.add(new Instruction.AssignmentInstruction(key.image, val)); }
+                val=readRaw() w() { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
         )
     )*
     <RBRACE>
