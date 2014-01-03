@@ -38,7 +38,7 @@ public interface Selector {
     public Range getRange();
 
     public static enum ChildOrParentSelectorType {
-        CHILD, PARENT, ELEMENT_OF
+        CHILD, PARENT, ELEMENT_OF, CROSSING
     }
 
     /**
@@ -149,11 +149,56 @@ public interface Selector {
             }
         }
 
-        private class ContainsFinder extends AbstractVisitor {
-            private final Environment e;
+        private abstract class AbstractFinder extends AbstractVisitor {
+            protected final Environment e;
 
-            private ContainsFinder(Environment e) {
+            protected AbstractFinder(Environment e) {
                 this.e = e;
+            }
+
+            @Override
+            public void visit(Node n) {
+            }
+
+            @Override
+            public void visit(Way w) {
+            }
+
+            @Override
+            public void visit(Relation r) {
+            }
+
+            public void visit(Collection<? extends OsmPrimitive> primitives) {
+                for (OsmPrimitive p : primitives) {
+                    if (e.child != null) {
+                        // abort if first match has been found
+                        break;
+                    } else if (!e.osm.equals(p)) {
+                        p.accept(this);
+                    }
+                }
+            }
+        }
+
+        private class CrossingFinder extends AbstractFinder {
+            private CrossingFinder(Environment e) {
+                super(e);
+                CheckParameterUtil.ensureThat(e.osm instanceof Way, "Only ways are supported");
+            }
+
+            @Override
+            public void visit(Way w) {
+                if (e.child == null && left.matches(e.withPrimitive(w))) {
+                    if (e.osm instanceof Way && Geometry.PolygonIntersection.CROSSING.equals(Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))) {
+                        e.child = w;
+                    }
+                }
+            }
+        }
+
+        private class ContainsFinder extends AbstractFinder {
+            private ContainsFinder(Environment e) {
+                super(e);
                 CheckParameterUtil.ensureThat(!(e.osm instanceof Node), "Nodes not supported");
             }
 
@@ -173,21 +218,6 @@ public interface Selector {
                     if (e.osm instanceof Way && Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))
                             || e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() && Geometry.isPolygonInsideMultiPolygon(w.getNodes(), (Relation) e.osm, null)) {
                         e.child = w;
-                    }
-                }
-            }
-
-            @Override
-            public void visit(Relation r) {
-            }
-
-            public void visit(Collection<? extends OsmPrimitive> primitives) {
-                for (OsmPrimitive p : primitives) {
-                    if (e.child != null) {
-                        // abort if first match has been found
-                        break;
-                    } else if (!e.osm.equals(p)) {
-                        p.accept(this);
                     }
                 }
             }
@@ -222,6 +252,12 @@ public interface Selector {
 
                 return e.child != null;
 
+            } else if (ChildOrParentSelectorType.CROSSING.equals(type) && e.osm instanceof Way) {
+                final CrossingFinder crossingFinder = new CrossingFinder(e);
+                if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
+                    crossingFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
+                }
+                return e.child != null;
             } else if (ChildOrParentSelectorType.CHILD.equals(type)) {
                 MatchingReferrerFinder collector = new MatchingReferrerFinder(e);
                 e.osm.visitReferrers(collector);
