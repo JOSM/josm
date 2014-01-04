@@ -183,7 +183,7 @@ public class MultipolygonTest extends Test {
             }
 
             // Create new multipolygon using the logics from CreateMultipolygonAction and see if roles match.
-            final Pair<Relation, Relation> newMP = CreateMultipolygonAction.createMultipolygonRelation(r.getMemberPrimitives(Way.class));
+            final Pair<Relation, Relation> newMP = CreateMultipolygonAction.createMultipolygonRelation(r.getMemberPrimitives(Way.class), false);
             if (newMP != null) {
                 for (RelationMember member : r.getMembers()) {
                     final Collection<RelationMember> memberInNewMP = newMP.b.getMembersFor(Collections.singleton(member.getMember()));
