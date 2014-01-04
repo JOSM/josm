@@ -157,17 +157,18 @@ public class OverlappingWays extends Test {
         Set<WaySegment> segments = new TreeSet<WaySegment>(new Comparator<WaySegment>() {
             @Override
             public int compare(WaySegment o1, WaySegment o2) {
-                return o1.way.getNode(o1.lowerIndex).compareTo(o2.way.getNode(o2.lowerIndex));
+                return o1.getFirstNode().compareTo(o2.getFirstNode());
             }
         });
         final Set<Integer> wayNodesToFix = new TreeSet<Integer>(Collections.reverseOrder());
+        
         for (int i = 0; i < w.getNodesCount() - 1; i++) {
             final boolean wasInSet = !segments.add(new WaySegment(w, i));
             if (wasInSet) {
                 wayNodesToFix.add(i);
             }
         }
-        if (!wayNodesToFix.isEmpty()) {
+        if (wayNodesToFix.size() > 1) {
             final List<Node> newNodes = new ArrayList<Node>(w.getNodes());
             for (final int i : wayNodesToFix) {
                 newNodes.remove(i);

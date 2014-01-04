@@ -7,6 +7,7 @@ import java.awt.geom.Line2D;
  * A segment consisting of 2 consecutive nodes out of a way.
  */
 public final class WaySegment implements Comparable<WaySegment> {
+    
     /**
      * The way.
      */
@@ -18,6 +19,11 @@ public final class WaySegment implements Comparable<WaySegment> {
      */
     public int lowerIndex;
 
+    /**
+     * Constructs a new {@code WaySegment}.
+     * @param w The way
+     * @param i The node lower index
+     */
     public WaySegment(Way w, int i) {
         way = w;
         lowerIndex = i;
@@ -50,13 +56,15 @@ public final class WaySegment implements Comparable<WaySegment> {
         return w;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         return o instanceof WaySegment
             && ((WaySegment) o).way == way
             && ((WaySegment) o).lowerIndex == lowerIndex;
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return way.hashCode() ^ lowerIndex;
     }
 
@@ -81,5 +89,10 @@ public final class WaySegment implements Comparable<WaySegment> {
                 getSecondNode().getEastNorth().east(), getSecondNode().getEastNorth().north(),
                 s2.getFirstNode().getEastNorth().east(), s2.getFirstNode().getEastNorth().north(),
                 s2.getSecondNode().getEastNorth().east(), s2.getSecondNode().getEastNorth().north());
+    }
+
+    @Override
+    public String toString() {
+        return "WaySegment [way=" + way.getId() + ", lowerIndex=" + lowerIndex + "]";
     }
 }
