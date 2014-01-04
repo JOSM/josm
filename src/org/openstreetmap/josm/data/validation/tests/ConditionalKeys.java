@@ -97,7 +97,7 @@ public class ConditionalKeys extends Test.TagTest {
             final Pattern part = Pattern.compile("([^@\\p{Space}][^@]*?)" + "\\s*@\\s*" + "(\\([^)\\p{Space}][^)]+?\\)|[^();\\p{Space}][^();]*?)\\s*");
             final Matcher m = Pattern.compile("(" + part + ")(;\\s*" + part + ")*").matcher(value);
             if (!m.matches()) {
-                throw new ConditionalParsingException(tr("Does not match pattern ''{0}''", tr("restriction value") + " @ " + tr("condition")));
+                throw new ConditionalParsingException(tr("Does not match pattern ''restriction value @ condition''"));
             } else {
                 int i = 2;
                 while (i + 1 <= m.groupCount() && m.group(i + 1) != null) {
@@ -116,7 +116,7 @@ public class ConditionalKeys extends Test.TagTest {
             for (final ConditionalValue conditional : ConditionalValue.parse(value)) {
                 // validate restriction value
                 if (isTransportationMode(key.split(":")[0]) && !isRestrictionValue(conditional.restrictionValue)) {
-                    return tr("{0} is not a valid {1}", conditional.restrictionValue, tr("restriction value"));
+                    return tr("{0} is not a valid restriction value", conditional.restrictionValue);
                 }
                 // validate opening hour if the value contains an hour (heuristic)
                 for (final String condition : conditional.conditions) {
