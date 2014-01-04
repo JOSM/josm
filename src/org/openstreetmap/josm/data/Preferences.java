@@ -877,7 +877,11 @@ public class Preferences {
         if (colStr.isEmpty()) {
             colStr = get("color." + colKey, ColorHelper.color2html(def));
         }
-        return colStr.isEmpty() ? def : ColorHelper.html2color(colStr);
+        if (colStr != null && !colStr.isEmpty()) {
+            return ColorHelper.html2color(colStr);
+        } else {
+            return def;
+        }
     }
 
     synchronized public Color getDefaultColor(String colKey) {
