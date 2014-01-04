@@ -48,8 +48,6 @@ public enum ConflictColors implements ColorKey {
     private final String name;
     private final Color defaultColor;
 
-    private static Color backgroundColorCache = null;
-
     private ConflictColors(String name, Color defaultColor) {
         this.name = name;
         this.defaultColor = defaultColor;
@@ -70,12 +68,19 @@ public enum ConflictColors implements ColorKey {
         return null;
     }
 
+    /**
+     * Returns the color.
+     * @return the color
+     */
     public Color get() {
         return Main.pref.getColor(this);
     }
 
+    /**
+     * Loads all colors from preferences.
+     */
     public static void getColors() {
-        for (ConflictColors c:values()) {
+        for (ConflictColors c : values()) {
             c.get();
         }
     }
