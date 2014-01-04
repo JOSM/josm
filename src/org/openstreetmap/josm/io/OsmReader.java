@@ -83,6 +83,10 @@ public class OsmReader extends AbstractReader {
         this.parser = parser;
     }
 
+    protected void throwException(String msg, Throwable th) throws XMLStreamException {
+        throw new OsmParsingException(msg, parser.getLocation(), th);
+    }
+
     protected void throwException(String msg) throws XMLStreamException {
         throw new OsmParsingException(msg, parser.getLocation());
     }
@@ -134,7 +138,7 @@ public class OsmReader extends AbstractReader {
 
             if (cancel) {
                 cancel = false;
-                throwException(tr("Reading was canceled"));
+                throw new OsmParsingCanceledException(tr("Reading was canceled"), parser.getLocation());
             }
 
             if (event == XMLStreamConstants.START_ELEMENT) {
@@ -299,7 +303,7 @@ public class OsmReader extends AbstractReader {
         try {
             id = Long.parseLong(value);
         } catch(NumberFormatException e) {
-            throwException(tr("Illegal value for attribute ''ref'' on member in relation {0}. Got {1}", Long.toString(r.getUniqueId()),value));
+            throwException(tr("Illegal value for attribute ''ref'' on member in relation {0}. Got {1}", Long.toString(r.getUniqueId()),value), e);
         }
         value = parser.getAttributeValue(null, "type");
         if (value == null) {
@@ -308,7 +312,7 @@ public class OsmReader extends AbstractReader {
         try {
             type = OsmPrimitiveType.fromApiTypeName(value);
         } catch(IllegalArgumentException e) {
-            throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.", Long.toString(id), Long.toString(r.getUniqueId()), value));
+            throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.", Long.toString(id), Long.toString(r.getUniqueId()), value), e);
         }
         value = parser.getAttributeValue(null, "role");
         role = value;
@@ -403,7 +407,7 @@ public class OsmReader extends AbstractReader {
             long id = Long.parseLong(uid);
             return User.createOsmUser(id, name);
         } catch(NumberFormatException e) {
-            throwException(MessageFormat.format("Illegal value for attribute ''uid''. Got ''{0}''.", uid));
+            throwException(MessageFormat.format("Illegal value for attribute ''uid''. Got ''{0}''.", uid), e);
         }
         return null;
     }
@@ -440,7 +444,7 @@ public class OsmReader extends AbstractReader {
             try {
                 version = Integer.parseInt(versionString);
             } catch(NumberFormatException e) {
-                throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString));
+                throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString), e);
             }
             if (ds.getVersion().equals("0.6")){
                 if (version <= 0 && current.getUniqueId() > 0) {
@@ -501,7 +505,7 @@ public class OsmReader extends AbstractReader {
                     current.setChangesetId(0);
                 } else {
                     // for an existing primitive this is a problem
-                    throwException(tr("Illegal value for attribute ''changeset''. Got {0}.", v));
+                    throwException(tr("Illegal value for attribute ''changeset''. Got {0}.", v), e);
                 }
             }
             if (current.getChangesetId() <=0) {
@@ -525,19 +529,12 @@ public class OsmReader extends AbstractReader {
         try {
             return Long.parseLong(value);
         } catch(NumberFormatException e) {
-            throwException(tr("Illegal long value for attribute ''{0}''. Got ''{1}''.",name, value));
+            throwException(tr("Illegal long value for attribute ''{0}''. Got ''{1}''.",name, value), e);
         }
         return 0; // should not happen
     }
 
     private static class OsmParsingException extends XMLStreamException {
-        public OsmParsingException() {
-            super();
-        }
-
-        public OsmParsingException(String msg) {
-            super(msg);
-        }
 
         public OsmParsingException(String msg, Location location) {
             super(msg); /* cannot use super(msg, location) because it messes with the message preventing localization */
@@ -547,14 +544,6 @@ public class OsmReader extends AbstractReader {
         public OsmParsingException(String msg, Location location, Throwable th) {
             super(msg, th);
             this.location = location;
-        }
-
-        public OsmParsingException(String msg, Throwable th) {
-            super(msg, th);
-        }
-
-        public OsmParsingException(Throwable th) {
-            super(th);
         }
 
         @Override
@@ -567,6 +556,20 @@ public class OsmReader extends AbstractReader {
                 return msg;
             msg = msg + " " + tr("(at line {0}, column {1})", getLocation().getLineNumber(), getLocation().getColumnNumber());
             return msg;
+        }
+    }
+
+    /**
+     * Exception thrown after user cancelation.
+     */
+    private static final class OsmParsingCanceledException extends OsmParsingException implements ImportCancelException {
+        /**
+         * Constructs a new {@code OsmParsingCanceledException}.
+         * @param msg The error message
+         * @param location The parser location
+         */
+        public OsmParsingCanceledException(String msg, Location location) {
+            super(msg, location);
         }
     }
 
