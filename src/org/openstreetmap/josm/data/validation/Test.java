@@ -33,8 +33,8 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author frsantos
  */
-public class Test extends AbstractVisitor
-{
+public class Test extends AbstractVisitor {
+
     /** Name of the test */
     protected final String name;
 
@@ -89,15 +89,28 @@ public class Test extends AbstractVisitor
     /**
      * A test that forwards all primitives to {@link #check(OsmPrimitive)}.
      */
-    public static abstract class TagTest extends Test {
+    public abstract static class TagTest extends Test {
+        /**
+         * Constructs a new {@code TagTest} with given name and description.
+         * @param name The test name
+         * @param description The test description
+         */
         public TagTest(String name, String description) {
             super(name, description);
         }
 
+        /**
+         * Constructs a new {@code TagTest} with given name.
+         * @param name The test name
+         */
         public TagTest(String name) {
             super(name);
         }
 
+        /**
+         * Checks the tags of the given primitive.
+         * @param p The primitive to test
+         */
         public abstract void check(final OsmPrimitive p);
 
         @Override
@@ -162,7 +175,7 @@ public class Test extends AbstractVisitor
      * Notification of the end of the test. The tester may perform additional
      * actions and destroy the used structures.
      * <p>
-     * If you override this method, don't forget to cleanup {@link #progressMonitor}
+     * If you override this method, don't forget to cleanup {@code progressMonitor}
      * (most overrides call {@code super.endTest()} to do this).
      */
     public void endTest() {
@@ -190,6 +203,11 @@ public class Test extends AbstractVisitor
         }
     }
 
+    /**
+     * Determines if the primitive is usable for tests.
+     * @param p The primitive
+     * @return {@code true} if the primitive can be tested, {@code false} otherwise
+     */
     public boolean isPrimitiveUsable(OsmPrimitive p) {
         return p.isUsable() && (!(p instanceof Way) || (((Way) p).getNodesCount() > 1)); // test only Ways with at least 2 nodes
     }
@@ -221,6 +239,7 @@ public class Test extends AbstractVisitor
 
     /**
      * Called when the used submits the preferences
+     * @return {@code true} if restart is required, {@code false} otherwise
      */
     public boolean ok() {
         enabled = checkEnabled.isSelected();
@@ -264,10 +283,18 @@ public class Test extends AbstractVisitor
         this.isBeforeUpload = isUpload;
     }
 
+    /**
+     * Returns the test name.
+     * @return The test name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Determines if the test has been canceled.
+     * @return {@code true} if the test has been canceled, {@code false} otherwise
+     */
     public boolean isCanceled() {
         return progressMonitor.isCanceled();
     }

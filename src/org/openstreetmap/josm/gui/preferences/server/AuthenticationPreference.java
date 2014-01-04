@@ -13,7 +13,7 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
  * Authentication sub-preferences in server preferences.
  * @since 6523
  */
-public class AuthenticationPreference implements SubPreferenceSetting {
+public final class AuthenticationPreference implements SubPreferenceSetting {
 
     /**
      * Factory used to create a new {@code AuthenticationPreference}.

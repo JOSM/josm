@@ -30,6 +30,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -57,24 +58,22 @@ public class VersionTable extends JTable implements Observer{
             @Override
             public void keyReleased(KeyEvent e) {
                 // navigate history down/up using the corresponding arrow keys.
-                try {
-                    final HistoryOsmPrimitive ref = model.getReferencePointInTime();
-                    final HistoryOsmPrimitive cur = model.getCurrentPointInTime();
-                    if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                        // compute both values first and set them afterwards such that nothing is changed in case of an exception (e.g., reached top/bottom)
-                        final HistoryOsmPrimitive refNext = model.getHistory().from(ref.getVersion()).sortAscending().get(1);
-                        final HistoryOsmPrimitive curNext = model.getHistory().from(cur.getVersion()).sortAscending().get(1);
-                        model.setReferencePointInTime(refNext);
-                        model.setCurrentPointInTime(curNext);
-                    } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                        // compute both values first and set them afterwards such that nothing is changed in case of an exception (e.g., reached top/bottom)
-                        final HistoryOsmPrimitive refNext = model.getHistory().until(ref.getVersion()).sortDescending().get(1);
-                        final HistoryOsmPrimitive curNext = model.getHistory().until(cur.getVersion()).sortDescending().get(1);
-                        model.setReferencePointInTime(refNext);
-                        model.setCurrentPointInTime(curNext);
+                long ref = model.getReferencePointInTime().getVersion();
+                long cur = model.getCurrentPointInTime().getVersion();
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    History refNext = model.getHistory().from(ref);
+                    History curNext = model.getHistory().from(cur);
+                    if (refNext.getNumVersions() > 1 && curNext.getNumVersions() > 1) {
+                        model.setReferencePointInTime(refNext.sortAscending().get(1));
+                        model.setCurrentPointInTime(curNext.sortAscending().get(1));
                     }
-                } catch (NullPointerException ignore) {
-                } catch (IndexOutOfBoundsException ignore) {
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    History refNext = model.getHistory().until(ref);
+                    History curNext = model.getHistory().until(cur);
+                    if (refNext.getNumVersions() > 1 && curNext.getNumVersions() > 1) {
+                        model.setReferencePointInTime(refNext.sortDescending().get(1));
+                        model.setCurrentPointInTime(curNext.sortDescending().get(1));
+                    }
                 }
             }
         });

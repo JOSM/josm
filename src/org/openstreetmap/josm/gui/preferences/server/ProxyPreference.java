@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
  * Proxy sub-preferences in server preferences.
  * @since 6523
  */
-public class ProxyPreference implements SubPreferenceSetting {
+public final class ProxyPreference implements SubPreferenceSetting {
 
     /**
      * Factory used to create a new {@code ProxyPreference}.

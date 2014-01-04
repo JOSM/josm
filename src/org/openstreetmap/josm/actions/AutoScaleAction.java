@@ -210,7 +210,6 @@ public class AutoScaleAction extends JosmAction {
             if (getActiveLayer() == null)
                 return null;
             // try to zoom to the first selected layer
-            //
             Layer l = getFirstSelectedLayer();
             if (l == null) return null;
             l.visitBoundingBox(v);
@@ -244,8 +243,7 @@ public class AutoScaleAction extends JosmAction {
             // Make the bounding box at least 0.0005 degrees (≈ 56 m) wide to
             // ensure reasonable zoom level when zooming onto single nodes.
             v.enlargeToMinDegrees(0.0005);
-        }
-        else if (mode.equals("download")) {
+        } else if (mode.equals("download")) {
             Bounds bounds = DownloadDialog.getSavedDownloadBounds();
             if (bounds != null) {
                 try {

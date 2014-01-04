@@ -32,6 +32,10 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class CrossingWays extends Test {
     protected static final int CROSSING_WAYS = 601;
+    
+    private static final String HIGHWAY = "highway";
+    private static final String RAILWAY = "railway";
+    private static final String WATERWAY = "waterway";
 
     /** All way segments, grouped by cells */
     private Map<Point2D,List<WaySegment>> cellSegments;
@@ -46,9 +50,9 @@ public abstract class CrossingWays extends Test {
         public boolean isPrimitiveUsable(OsmPrimitive w) {
             return super.isPrimitiveUsable(w)
                     && !isProposedOrAbandoned(w)
-                    && (w.hasKey("highway")
-                    || w.hasKey("waterway")
-                    || (w.hasKey("railway") && !isSubwayOrTram(w))
+                    && (w.hasKey(HIGHWAY)
+                    || w.hasKey(WATERWAY)
+                    || (w.hasKey(RAILWAY) && !isSubwayOrTram(w))
                     || isCoastline(w)
                     || isBuilding(w));
         }
@@ -58,7 +62,7 @@ public abstract class CrossingWays extends Test {
             if (!Utils.equal(getLayer(w1), getLayer(w2))) {
                 return true;
             }
-            if (w1.hasKey("highway") && w2.hasKey("highway") && !Utils.equal(w1.get("level"), w2.get("level"))) {
+            if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Utils.equal(w1.get("level"), w2.get("level"))) {
                 return true;
             }
             if (isSubwayOrTram(w2)) {
@@ -67,8 +71,8 @@ public abstract class CrossingWays extends Test {
             if (isCoastline(w1) != isCoastline(w2)) {
                 return true;
             }
-            if ((w1.hasTag("waterway", "river") && w2.hasTag("waterway", "riverbank"))
-                    || (w2.hasTag("waterway", "river") && w1.hasTag("waterway", "riverbank"))) {
+            if ((w1.hasTag(WATERWAY, "river") && w2.hasTag(WATERWAY, "riverbank"))
+                    || (w2.hasTag(WATERWAY, "river") && w1.hasTag(WATERWAY, "riverbank"))) {
                 return true;
             }
             if (isProposedOrAbandoned(w2)) {
@@ -81,10 +85,10 @@ public abstract class CrossingWays extends Test {
         String createMessage(Way w1, Way w2) {
             if (isBuilding(w1)) {
                 return ("Crossing buildings");
-            } else if (w1.hasKey("waterway") && w2.hasKey("waterway")) {
+            } else if (w1.hasKey(WATERWAY) && w2.hasKey(WATERWAY)) {
                 return tr("Crossing waterways");
-            } else if ((w1.hasKey("highway") && w2.hasKey("waterway"))
-                    || (w2.hasKey("highway") && w1.hasKey("waterway"))) {
+            } else if ((w1.hasKey(HIGHWAY) && w2.hasKey(WATERWAY))
+                    || (w2.hasKey(HIGHWAY) && w1.hasKey(WATERWAY))) {
                 return tr("Crossing waterway/highway");
             } else {
                 return tr("Crossing ways");
@@ -206,11 +210,11 @@ public abstract class CrossingWays extends Test {
     }
 
     static boolean isSubwayOrTram(OsmPrimitive w) {
-        return w.hasTag("railway", "subway", "tram");
+        return w.hasTag(RAILWAY, "subway", "tram");
     }
 
     static boolean isProposedOrAbandoned(OsmPrimitive w) {
-        return w.hasTag("highway", "proposed") || w.hasTag("railway", "proposed", "abandoned");
+        return w.hasTag(HIGHWAY, "proposed") || w.hasTag(RAILWAY, "proposed", "abandoned");
     }
 
     abstract boolean ignoreWaySegmentCombination(Way w1, Way w2);

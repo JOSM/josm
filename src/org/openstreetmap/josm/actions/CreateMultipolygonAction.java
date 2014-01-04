@@ -60,11 +60,11 @@ public class CreateMultipolygonAction extends JosmAction {
 
     /**
      * Constructs a new {@code CreateMultipolygonAction}.
+     * @param update {@code true} if the multipolygon must be updated, {@code false} if it must be created
      */
     public CreateMultipolygonAction(final boolean update) {
         super(getName(update), "multipoly_create", getName(update),
-                update
-                        ? null
+                update  ? null
                         : Shortcut.registerShortcut("tools:multipoly", tr("Tool: {0}", getName(false)), KeyEvent.VK_A, Shortcut.ALT_CTRL),
                 true, update ? "multipoly_update" : "multipoly_create", true);
         this.update = update;
@@ -72,6 +72,54 @@ public class CreateMultipolygonAction extends JosmAction {
 
     private static String getName(boolean update) {
         return update ? tr("Update multipolygon") : tr("Create multipolygon");
+    }
+    
+    private class CreateUpdateMultipolygonTask implements Runnable {
+        private final Collection<Way> selectedWays;
+        private final Relation multipolygonRelation;
+
+        public CreateUpdateMultipolygonTask(Collection<Way> selectedWays, Relation multipolygonRelation) {
+            this.selectedWays = selectedWays;
+            this.multipolygonRelation = multipolygonRelation;
+        }
+
+        @Override
+        public void run() {
+            final Pair<SequenceCommand, Relation> commandAndRelation = createMultipolygonCommand(selectedWays, multipolygonRelation);
+            if (commandAndRelation == null) {
+                return;
+            }
+            final Command command = commandAndRelation.a;
+            final Relation relation = commandAndRelation.b;
+
+
+            // to avoid EDT violations
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    Main.main.undoRedo.add(command);
+                }
+            });
+
+            // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
+            // knows about the new relation before we try to select it.
+            // (Yes, we are already in event dispatch thread. But DatasetEventManager
+            // uses 'SwingUtilities.invokeLater' to fire events so we have to do
+            // the same.)
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    Main.map.relationListDialog.selectRelation(relation);
+                    if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
+                        //Open relation edit window, if set up in preferences
+                        RelationEditor editor = RelationEditor.getEditor(Main.main.getEditLayer(), relation, null);
+
+                        editor.setModal(true);
+                        editor.setVisible(true);
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -108,53 +156,12 @@ public class CreateMultipolygonAction extends JosmAction {
                 ? getSelectedMultipolygonRelation(selectedWays, selectedRelations)
                 : null;
 
-        // runnable to create/update multipolygon relation
-        final Runnable createOrUpdateMultipolygonTask = new Runnable() {
-            @Override
-            public void run() {
-                final Pair<SequenceCommand, Relation> commandAndRelation = createMultipolygonCommand(selectedWays, multipolygonRelation);
-                if (commandAndRelation == null) {
-                    return;
-                }
-                final Command command = commandAndRelation.a;
-                final Relation relation = commandAndRelation.b;
-
-
-                // to avoid EDT violations
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        Main.main.undoRedo.add(command);
-                    }
-                });
-
-                // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
-                // knows about the new relation before we try to select it.
-                // (Yes, we are already in event dispatch thread. But DatasetEventManager
-                // uses 'SwingUtilities.invokeLater' to fire events so we have to do
-                // the same.)
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        Main.map.relationListDialog.selectRelation(relation);
-                        if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
-                            //Open relation edit window, if set up in preferences
-                            RelationEditor editor = RelationEditor.getEditor(Main.main.getEditLayer(), relation, null);
-
-                            editor.setModal(true);
-                            editor.setVisible(true);
-                        }
-                    }
-                });
-            }
-        };
-
         // download incomplete relation if necessary
         if (multipolygonRelation != null && (multipolygonRelation.isIncomplete() || multipolygonRelation.hasIncompleteMembers())) {
             Main.worker.submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.main.getEditLayer()));
         }
         // create/update multipolygon relation
-        Main.worker.submit(createOrUpdateMultipolygonTask);
+        Main.worker.submit(new CreateUpdateMultipolygonTask(selectedWays, multipolygonRelation));
 
     }
 
@@ -180,10 +187,10 @@ public class CreateMultipolygonAction extends JosmAction {
     public static Pair<Relation, Relation> updateMultipolygonRelation(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
         // add ways of existing relation to include them in polygon analysis
-        selectedWays = new HashSet<Way>(selectedWays);
-        selectedWays.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
+        Set<Way> ways = new HashSet<Way>(selectedWays);
+        ways.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
 
-        final MultipolygonCreate polygon = analyzeWays(selectedWays, true);
+        final MultipolygonCreate polygon = analyzeWays(ways, true);
         if (polygon == null) {
             return null; //could not make multipolygon.
         } else {
@@ -205,7 +212,7 @@ public class CreateMultipolygonAction extends JosmAction {
     }
 
     /**
-     * Returns a pair of a multipolygon creating/modifying {@link Command} as well as the multipolygon {@link Relation}.
+     * Returns a {@link Pair} of a multipolygon creating/modifying {@link Command} as well as the multipolygon {@link Relation}.
      */
     public static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
@@ -308,7 +315,7 @@ public class CreateMultipolygonAction extends JosmAction {
         }
     }
 
-    static public final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList(new String[] {"barrier", "source"});
+    public static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList(new String[] {"barrier", "source"});
 
     /**
      * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary

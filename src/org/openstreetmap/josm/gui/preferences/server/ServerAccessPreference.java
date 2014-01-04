@@ -79,7 +79,8 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 1.0;
         gc.insets = new Insets(0,0,0,0);
-        pnl.add(pnlApiUrlPreferences = new OsmApiUrlInputPanel(), gc);
+        pnlApiUrlPreferences = new OsmApiUrlInputPanel();
+        pnl.add(pnlApiUrlPreferences, gc);
 
         // the remaining access properties
         gc.gridy = 1;

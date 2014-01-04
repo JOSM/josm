@@ -155,12 +155,10 @@ public class BoundingXYVisitor extends AbstractVisitor {
 
         double enlargeEast = Math.min(maxEnlargePercent - 10*Math.log(diffEast), 1)/100;
         double enlargeNorth = Math.min(maxEnlargePercent - 10*Math.log(diffNorth), 1)/100;
-        System.out.println(enlargeEast);
 
         visit(bounds.getMin().add(-enlargeEast/2, -enlargeNorth/2));
         visit(bounds.getMax().add(+enlargeEast/2, +enlargeNorth/2));
     }
-
 
     /**
      * Specify a degree larger than 0 in order to make the bounding box at least
