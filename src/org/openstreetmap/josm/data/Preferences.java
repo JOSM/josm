@@ -851,6 +851,11 @@ public class Preferences {
         return tr(colornames.containsKey(o) ? colornames.get(o) : o);
     }
 
+    /**
+     * Returns the color for the given key.
+     * @param key The color key
+     * @return the color
+     */
     public Color getColor(ColorKey key) {
         return getColor(key.getColorName(), key.getSpecialName(), key.getDefaultValue());
     }
@@ -869,8 +874,8 @@ public class Preferences {
             colornames.put(colKey, colName);
         }
         String colStr = specName != null ? get("color."+specName) : "";
-        if(colStr.isEmpty()) {
-            colStr = get("color." + colKey, "");
+        if (colStr.isEmpty()) {
+            colStr = get("color." + colKey, ColorHelper.color2html(def));
         }
         return colStr.isEmpty() ? def : ColorHelper.html2color(colStr);
     }
