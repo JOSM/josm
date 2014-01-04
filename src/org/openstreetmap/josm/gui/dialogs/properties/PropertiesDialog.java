@@ -559,10 +559,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             tagTable.getCellEditor().cancelCellEditing();
         }
         
-        // Discard parameter as we do not want to operate always on real selection here, especially in draw mode
-        newSelection = Main.main.getInProgressSelection();
-        if (newSelection == null) {
-            newSelection = Collections.<OsmPrimitive>emptyList();
+        // Ignore parameter as we do not want to operate always on real selection here, especially in draw mode
+        Collection<OsmPrimitive> newSel = Main.main.getInProgressSelection();
+        if (newSel == null) {
+            newSel = Collections.<OsmPrimitive>emptyList();
         }
 
         String selectedTag;
@@ -583,7 +583,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         final Map<String, String> tags = new HashMap<String, String>();
         valueCount.clear();
         EnumSet<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
-        for (OsmPrimitive osm : newSelection) {
+        for (OsmPrimitive osm : newSel) {
             types.add(TaggingPresetType.forPrimitive(osm));
             for (String key : osm.keySet()) {
                 if (displayDiscardableKeys || !OsmPrimitive.getDiscardableKeys().contains(key)) {
@@ -605,8 +605,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             for (Entry<String, Integer> e1 : e.getValue().entrySet()) {
                 count += e1.getValue();
             }
-            if (count < newSelection.size()) {
-                e.getValue().put("", newSelection.size() - count);
+            if (count < newSel.size()) {
+                e.getValue().put("", newSel.size() - count);
             }
             tagData.addRow(new Object[]{e.getKey(), e.getValue()});
             tags.put(e.getKey(), e.getValue().size() == 1
@@ -616,7 +616,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipData.setRowCount(0);
 
         Map<Relation, MemberInfo> roles = new HashMap<Relation, MemberInfo>();
-        for (OsmPrimitive primitive: newSelection) {
+        for (OsmPrimitive primitive: newSel) {
             for (OsmPrimitive ref: primitive.getReferrers()) {
                 if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
                     Relation r = (Relation) ref;
@@ -656,7 +656,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
         membershipTable.setVisible(membershipData.getRowCount() > 0);
 
-        boolean hasSelection = !newSelection.isEmpty();
+        boolean hasSelection = !newSel.isEmpty();
         boolean hasTags = hasSelection && tagData.getRowCount() > 0;
         boolean hasMemberships = hasSelection && membershipData.getRowCount() > 0;
         btnAdd.setEnabled(hasSelection);

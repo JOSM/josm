@@ -16,10 +16,7 @@ import javax.script.ScriptException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
@@ -193,9 +190,9 @@ public class OpeningHourTest extends Test.TagTest {
         if (ENGINE == null || value == null || value.trim().isEmpty()) {
             return Collections.emptyList();
         }
+        final List<OpeningHoursTestError> errors = new ArrayList<OpeningHoursTestError>();
         try {
             final Object r = parse(value, mode);
-            final List<OpeningHoursTestError> errors = new ArrayList<OpeningHoursTestError>();
             String prettifiedValue = null;
             try {
                 prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
@@ -211,10 +208,12 @@ public class OpeningHourTest extends Test.TagTest {
             if (!ignoreOtherSeverity && errors.isEmpty() && prettifiedValue != null && !value.equals(prettifiedValue)) {
                 errors.add(new OpeningHoursTestError(tr("opening_hours value can be prettified"), Severity.OTHER, prettifiedValue));
             }
-            return errors;
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex);
+        } catch (ScriptException ex) {
+            Main.error(ex);
+        } catch (NoSuchMethodException ex) {
+            Main.error(ex);
         }
+        return errors;
     }
 
     /**

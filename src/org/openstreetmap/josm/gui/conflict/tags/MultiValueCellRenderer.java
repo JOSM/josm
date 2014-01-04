@@ -13,6 +13,7 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -63,6 +64,8 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
                         setForeground(ConflictColors.FGCOLOR_TAG_KEEP_ALL.get());
                         setBackground(ConflictColors.BGCOLOR_TAG_KEEP_ALL.get());
                         break;
+                    default:
+                        Main.error("Unknown decision type: "+decision.getDecisionType());
                     }
                 } else {
                     setForeground(UIManager.getColor("Table.foreground"));
@@ -142,8 +145,8 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
             return this;
 
         MultiValueResolutionDecision decision = (MultiValueResolutionDecision)value;
-        TagConflictResolverModel model = (TagConflictResolverModel) table.getModel();
-        boolean conflict = model.getKeysWithConflicts().contains(model.getKey(row));
+        TagConflictResolverModel tagModel = (TagConflictResolverModel) table.getModel();
+        boolean conflict = tagModel.getKeysWithConflicts().contains(tagModel.getKey(row));
         renderColors(decision, isSelected, conflict);
         renderToolTipText(decision);
         switch(column) {

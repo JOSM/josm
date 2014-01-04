@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -19,11 +20,11 @@ public class SelectNonBranchingWaySequences {
     /**
      * outer endpoints of selected ways
      */
-    TreeSet<Node> outerNodes;
+    Set<Node> outerNodes;
     /**
      * endpoints of selected ways
      */
-    TreeSet<Node> nodes;
+    Set<Node> nodes;
 
     /**
      * Creates a way selection

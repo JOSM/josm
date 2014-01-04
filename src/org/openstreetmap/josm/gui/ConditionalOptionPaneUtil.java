@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  */
 public final class ConditionalOptionPaneUtil {
-    static public final int DIALOG_DISABLED_OPTION = Integer.MIN_VALUE;
+    public static final int DIALOG_DISABLED_OPTION = Integer.MIN_VALUE;
 
     /** (preference key => return value) mappings valid for the current operation (no, those two maps cannot be combined) */
     protected static final Map<String, Integer> sessionChoices = new HashMap<String, Integer>();

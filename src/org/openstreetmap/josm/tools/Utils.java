@@ -886,11 +886,10 @@ public final class Utils {
      * @return null if <code>o</code> is null or the type <code>o</code> is not
      *  a subclass of <code>klass</code>. The casted value otherwise.
      */
+    @SuppressWarnings("unchecked")
     public static <T> T cast(Object o, Class<T> klass) {
         if (klass.isInstance(o)) {
-            @SuppressWarnings("unchecked")
-            T ret = (T) o;
-            return ret;
+            return (T) o;
         }
         return null;
     }

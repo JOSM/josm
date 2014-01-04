@@ -112,7 +112,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     /**
      * Initializes the panel from preferences
      */
-    public void initFromPreferences() {
+    public final void initFromPreferences() {
         String authMethod = Main.pref.get("osm-server.auth-method", "basic");
         if (authMethod.equals("basic")) {
             rbBasicAuthentication.setSelected(true);
@@ -130,7 +130,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     /**
      * Saves the current values to preferences
      */
-    public void saveToPreferences() {
+    public final void saveToPreferences() {
         // save the authentication method
         String authMethod;
         if (rbBasicAuthentication.isSelected()) {

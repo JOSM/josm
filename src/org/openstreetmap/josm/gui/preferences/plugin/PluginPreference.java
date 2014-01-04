@@ -12,6 +12,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -137,7 +138,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfFilter = new JosmTextField(), gc);
+        tfFilter = new JosmTextField();
+        pnl.add(tfFilter, gc);
         tfFilter.setToolTipText(tr("Enter a search expression"));
         SelectAllOnFocusGainedDecorator.decorate(tfFilter);
         tfFilter.getDocument().addDocumentListener(new SearchFieldAdapter());
@@ -157,7 +159,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(buildSearchFieldPanel(), BorderLayout.NORTH);
         model  = new PluginPreferencesModel();
-        spPluginPreferences = new JScrollPane(pnlPluginPreferences = new PluginListPanel(model));
+        pnlPluginPreferences = new PluginListPanel(model);
+        spPluginPreferences = new JScrollPane(pnlPluginPreferences);
         spPluginPreferences.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         spPluginPreferences.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         spPluginPreferences.getVerticalScrollBar().addComponentListener(
@@ -180,8 +183,9 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
     protected JTabbedPane buildContentPane() {
         JTabbedPane pane = getTabPane();
+        pnlPluginUpdatePolicy = new PluginUpdatePolicyPanel();
         pane.addTab(tr("Plugins"), buildPluginListPanel());
-        pane.addTab(tr("Plugin update policy"), pnlPluginUpdatePolicy = new PluginUpdatePolicyPanel());
+        pane.addTab(tr("Plugin update policy"), pnlPluginUpdatePolicy);
         return pane;
     }
 
@@ -362,8 +366,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                                 );
                     }
                 });
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+                Main.error(e);
+            } catch (InvocationTargetException e) {
+                Main.error(e);
             }
         }
 
@@ -481,7 +487,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         private DefaultListModel model;
 
-        protected void build() {
+        protected final void build() {
             setLayout(new GridBagLayout());
             add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
             model = new DefaultListModel();

@@ -17,6 +17,26 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 
 public class RelationMemberConflictResolverColumnModel extends DefaultTableColumnModel {
 
+    private final DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
+    
+    private final OsmPrimitivRenderer primitiveRenderer = new OsmPrimitivRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table,
+                Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            return setColors(super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column),
+                    table, isSelected, row);
+        }
+    };
+    
+    private final TableCellRenderer tableRenderer = new TableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            return setColors(defaultTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column),
+                    table, isSelected, row);
+        }
+    };
+    
     private static Component setColors(Component comp, JTable table, boolean isSelected, int row) {
         RelationMemberConflictResolverModel model = (RelationMemberConflictResolverModel) table.getModel();
         
@@ -39,26 +59,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         return comp;
     }
     
-    protected void createColumns() {
-        final DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
-        
-        OsmPrimitivRenderer primitiveRenderer = new OsmPrimitivRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table,
-                    Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                return setColors(super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column),
-                        table, isSelected, row);
-            }
-        };
-        
-        TableCellRenderer tableRenderer = new TableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                return setColors(defaultTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column),
-                        table, isSelected, row);
-            }
-        };
+    protected final void createColumns() {
         
         AutoCompletingTextField roleEditor = new AutoCompletingTextField();
         RelationMemberConflictDecisionRenderer decisionRenderer = new RelationMemberConflictDecisionRenderer();

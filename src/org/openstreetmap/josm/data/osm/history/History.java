@@ -208,7 +208,7 @@ public class History{
         return h.getLatest();
     }
 
-    public HistoryOsmPrimitive get(int idx) {
+    public HistoryOsmPrimitive get(int idx) throws IndexOutOfBoundsException {
         if (idx < 0 || idx >= versions.size())
             throw new IndexOutOfBoundsException(MessageFormat.format("Parameter ''{0}'' in range 0..{1} expected. Got ''{2}''.", "idx", versions.size()-1, idx));
         return versions.get(idx);
@@ -230,7 +230,11 @@ public class History{
         return versions.size();
     }
 
-    public boolean isEmpty() {
+    /**
+     * Returns true if this history contains no version.
+     * @return {@code true} if this history contains no version, {@code false} otherwise
+     */
+    public final boolean isEmpty() {
         return versions.isEmpty();
     }
 

@@ -180,7 +180,7 @@ public interface Selector {
             }
         }
 
-        private class CrossingFinder extends AbstractFinder {
+        private final class CrossingFinder extends AbstractFinder {
             private CrossingFinder(Environment e) {
                 super(e);
                 CheckParameterUtil.ensureThat(e.osm instanceof Way, "Only ways are supported");
@@ -196,7 +196,7 @@ public interface Selector {
             }
         }
 
-        private class ContainsFinder extends AbstractFinder {
+        private final class ContainsFinder extends AbstractFinder {
             private ContainsFinder(Environment e) {
                 super(e);
                 CheckParameterUtil.ensureThat(!(e.osm instanceof Node), "Nodes not supported");
