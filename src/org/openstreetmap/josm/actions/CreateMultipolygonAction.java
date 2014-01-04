@@ -183,7 +183,7 @@ public class CreateMultipolygonAction extends JosmAction {
         selectedWays = new HashSet<Way>(selectedWays);
         selectedWays.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
 
-        final MultipolygonCreate polygon = analyzeWays(selectedWays);
+        final MultipolygonCreate polygon = analyzeWays(selectedWays, true);
         if (polygon == null) {
             return null; //could not make multipolygon.
         } else {
@@ -194,9 +194,9 @@ public class CreateMultipolygonAction extends JosmAction {
     /**
      * Returns a {@link Pair} null and the newly created/modified multipolygon {@link Relation}.
      */
-    public static Pair<Relation, Relation> createMultipolygonRelation(Collection<Way> selectedWays) {
+    public static Pair<Relation, Relation> createMultipolygonRelation(Collection<Way> selectedWays, boolean showNotif) {
 
-        final MultipolygonCreate polygon = analyzeWays(selectedWays);
+        final MultipolygonCreate polygon = analyzeWays(selectedWays, showNotif);
         if (polygon == null) {
             return null; //could not make multipolygon.
         } else {
@@ -210,7 +210,7 @@ public class CreateMultipolygonAction extends JosmAction {
     public static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
         final Pair<Relation, Relation> rr = selectedMultipolygonRelation == null
-                ? createMultipolygonRelation(selectedWays)
+                ? createMultipolygonRelation(selectedWays, true)
                 : updateMultipolygonRelation(selectedWays, selectedMultipolygonRelation);
         if (rr == null) {
             return null;
@@ -257,15 +257,17 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param selectedWays list of selected ways
      * @return <code>null</code>, if there was a problem with the ways.
      */
-    private static MultipolygonCreate analyzeWays(Collection < Way > selectedWays) {
+    private static MultipolygonCreate analyzeWays(Collection < Way > selectedWays, boolean showNotif) {
 
         MultipolygonCreate pol = new MultipolygonCreate();
         String error = pol.makeFromWays(selectedWays);
 
         if (error != null) {
-            new Notification(error)
-                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                    .show();
+            if (showNotif) {
+                new Notification(error)
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                        .show();
+            }
             return null;
         } else {
             return pol;
