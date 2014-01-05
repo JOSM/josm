@@ -235,6 +235,9 @@ public class UploadAction extends JosmAction{
                 if (!tags.containsKey("source")) {
                     tags.put("source", Main.map.mapView.getLayerInformationForSourceTag());
                 }
+                if (!tags.containsKey("comment")) {
+                    tags.put("comment", dialog.getLastChangesetCommentFromHistory());
+                }
                 dialog.setDefaultChangesetTags(tags);
             }
         });
