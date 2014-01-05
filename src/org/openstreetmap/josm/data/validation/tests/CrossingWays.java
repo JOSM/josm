@@ -192,15 +192,6 @@ public abstract class CrossingWays extends Test {
         String layer1 = w.get("layer");
         if ("0".equals(layer1)) {
             layer1 = null; // 0 is default value for layer.
-        } else if (layer1 == null && w.isKeyTrue("bridge")) {
-            /* see #4280.
-               In order to avoid a test error for simple settings (such as one way is a bridge, the other one isn't),
-               set layer to a marker value <bridge>. Then, two crossing bridges w/o a layer set are still detected.
-            */
-            layer1 = "<bridge>";
-        } else if (layer1 == null && w.isKeyTrue("tunnel")) {
-            /* likewise for tunnels */
-            layer1 = "<tunnel>";
         }
         return layer1;
     }
