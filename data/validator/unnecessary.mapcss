@@ -15,3 +15,8 @@
   assertMatch: "way emergency=permissive";
   assertNoMatch: "way emergency=designated";
 }
+
+/* see ticket #7639 -- Warn when a node has the same tags as its parent way. */
+way >:sameTags node:tagged {
+  throwWarning: tr("Nodes duplicating parent way tags");
+}

@@ -8,12 +8,12 @@ import java.util.EnumSet;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -57,7 +57,7 @@ abstract public class Condition {
     }
 
     public static Condition createPseudoClassCondition(String id, boolean not, Context context) {
-        return new PseudoClassCondition(id, not);
+        return new PseudoClassCondition(id, not, context);
     }
 
     public static Condition createClassCondition(String id, boolean not, Context context) {
@@ -304,9 +304,10 @@ abstract public class Condition {
         public final String id;
         public final boolean not;
 
-        public PseudoClassCondition(String id, boolean not) {
+        public PseudoClassCondition(String id, boolean not, Context context) {
             this.id = id;
             this.not = not;
+            CheckParameterUtil.ensureThat(!"sameTags".equals(id) || Context.LINK.equals(context), "sameTags only supported in LINK context");
         }
 
         @Override
@@ -321,14 +322,17 @@ abstract public class Condition {
                 if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
                     return true;
                 return false;
-            } else if (equal(id, "modified"))
+            } else if (equal(id, "modified")) {
                 return e.osm.isModified() || e.osm.isNewOrUndeleted();
-            else if (equal(id, "new"))
+            } else if (equal(id, "new")) {
                 return e.osm.isNew();
-            else if (equal(id, "connection") && (e.osm instanceof Node))
+            } else if (equal(id, "connection") && (e.osm instanceof Node)) {
                 return ((Node) e.osm).isConnectionNode();
-            else if (equal(id, "tagged"))
+            } else if (equal(id, "tagged")) {
                 return e.osm.isTagged();
+            } else if ("sameTags".equals(id)) {
+                return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
+            }
             return true;
         }
 

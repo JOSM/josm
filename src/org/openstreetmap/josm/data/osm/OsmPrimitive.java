@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -725,6 +726,22 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         return false;
     }
 
+    /**
+     * Returns {@link #getKeys()} for which {@code key} does not fulfill {@link #isUninterestingKey}.
+     */
+    public Map<String, String> getInterestingTags() {
+        Map<String, String> result = new HashMap<String, String>();
+        String[] keys = this.keys;
+        if (keys != null) {
+            for (int i = 0; i < keys.length; i += 2) {
+                if (!isUninterestingKey(keys[i])) {
+                    result.put(keys[i], keys[i + 1]);
+                }
+            }
+        }
+        return result;
+    }
+
     private static volatile Match directionKeys = null;
     private static volatile Match reversedDirectionKeys = null;
 
@@ -1114,6 +1131,21 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
+     * Replies true if other isn't null and has the same interesting tags (key/value-pairs) as this.
+     *
+     * @param other the other object primitive
+     * @return true if other isn't null and has the same interesting tags (key/value-pairs) as this.
+     */
+    public boolean hasSameInterestingTags(OsmPrimitive other) {
+        // We cannot directly use Arrays.equals(keys, other.keys) as keys is not ordered by key
+        // but we can at least check if both arrays are null or of the same size before creating
+        // and comparing the key maps (costly operation, see #7159)
+        return (keys == null && other.keys == null)
+                || (keys != null && other.keys != null && keys.length == other.keys.length
+                        && (keys.length == 0 || getInterestingTags().equals(other.getInterestingTags())));
+    }
+
+    /**
      * Replies true if this primitive and other are equal with respect to their
      * semantic attributes.
      * <ol>
@@ -1132,7 +1164,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
             return false;
         // can't do an equals check on the internal keys array because it is not ordered
         //
-        return hasSameTags(other);
+        return hasSameInterestingTags(other);
     }
 
     /**
