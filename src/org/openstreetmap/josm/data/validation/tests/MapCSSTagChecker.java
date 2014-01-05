@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -283,7 +284,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @return a message
          */
         String getMessage() {
-            return errors.keySet().iterator().next();
+            return errors.isEmpty() ? null : errors.keySet().iterator().next();
         }
 
         /**
@@ -312,7 +313,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         Severity getSeverity() {
-            return errors.values().iterator().next();
+            return errors.isEmpty() ? null : errors.values().iterator().next();
         }
 
         @Override
@@ -363,10 +364,13 @@ public class MapCSSTagChecker extends Test.TagTest {
     /**
      * Obtains all {@link TestError}s for the {@link OsmPrimitive} {@code p}.
      */
-    public Collection<TestError> getErrorsForPrimitive(OsmPrimitive p) {
+    public Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
         final ArrayList<TestError> r = new ArrayList<TestError>();
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         for (TagCheck check : checks) {
+            if (Severity.OTHER.equals(check.getSeverity()) && !includeOtherSeverity) {
+                continue;
+            }
             final Selector selector = check.whichSelectorMatchesEnvironment(env);
             if (selector != null) {
                 check.rule.execute(env);
@@ -387,7 +391,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
-        errors.addAll(getErrorsForPrimitive(p));
+        errors.addAll(getErrorsForPrimitive(p, ValidatorPreference.PREF_OTHER.get()));
     }
 
     /**

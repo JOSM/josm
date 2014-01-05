@@ -73,7 +73,7 @@ public class MapCSSTagCheckerTest {
         for (final MapCSSTagChecker.TagCheck check : c.checks) {
             for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
                 final OsmPrimitive p = TestUtils.createPrimitive(i.getKey());
-                final boolean isError = Utils.exists(c.getErrorsForPrimitive(p), new Predicate<TestError>() {
+                final boolean isError = Utils.exists(c.getErrorsForPrimitive(p, true), new Predicate<TestError>() {
                     @Override
                     public boolean evaluate(TestError e) {
                         //noinspection EqualsBetweenInconvertibleTypes

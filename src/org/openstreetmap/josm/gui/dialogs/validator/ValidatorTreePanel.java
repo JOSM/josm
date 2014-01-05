@@ -160,7 +160,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             errorTreeDeep.put(s, new HashMap<String, MultiMap<String, TestError>>());
         }
 
-        boolean other = Main.pref.getBoolean(ValidatorPreference.PREF_OTHER, false);
+        final Boolean other = ValidatorPreference.PREF_OTHER.get();
         for (TestError e : errors) {
             if (e.getIgnored()) {
                 continue;
