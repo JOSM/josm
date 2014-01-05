@@ -145,7 +145,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
         b = bis.read();
         if (b != 'Z')
             throw new IOException(tr("Invalid bz2 file."));
-        return new CBZip2InputStream(bis);
+        return new CBZip2InputStream(bis, /* see #9537 */ true);
     }
 
     public static GZIPInputStream getGZipInputStream(InputStream in) throws IOException {
