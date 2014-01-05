@@ -91,7 +91,7 @@ way[highway=cycleway][cycleway=lane] {
 }
 
 *[name =~ /(?i).*Strasse.*/] {
-  throwWarning: tr("street name contains ss");
+  throwOther: tr("street name contains ss");
   assertMatch: "way name=Foobarstrasse";
   assertMatch: "way name=Foobar-Strassenweg";
   assertNoMatch: "way name=Foobarstraße";
