@@ -141,12 +141,6 @@ public class BasicUploadSettingsPanel extends JPanel {
      * Initializes the panel for user input
      */
     public void startUserInput() {
-        List<String> history = hcbUploadComment.getHistory();
-        int age = (int) (System.currentTimeMillis()/1000 - Main.pref.getInteger(HISTORY_LAST_USED_KEY, 0));
-        // only pre-select latest entry if used less than 4 hours ago.
-        if (age < Main.pref.getInteger(HISTORY_MAX_AGE_KEY, 4 * 3600 * 1000) && history != null && !history.isEmpty()) {
-            hcbUploadComment.setText(history.get(0));
-        }
         hcbUploadComment.requestFocusInWindow();
         hcbUploadComment.getEditor().getEditorComponent().requestFocusInWindow();
     }
