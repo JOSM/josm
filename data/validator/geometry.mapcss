@@ -21,11 +21,11 @@ area[natural =~ /^(water|wetland|coastline)$/], area[landuse=reservoir] {
   set water_area;
 }
 
-area.water_area ⧉ area.water_area {
+area:closed:areaStyle.water_area ⧉ area:closed:areaStyle.water_area {
   throwWarning: tr("Overlapping Water Areas");
 }
 
-area ⧉ area {
+area:closed:areaStyle ⧉ area:closed:areaStyle {
   throwOther: tr("Overlapping Areas");
 }
 

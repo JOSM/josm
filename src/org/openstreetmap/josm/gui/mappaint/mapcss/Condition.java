@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicates;
@@ -332,6 +333,8 @@ abstract public class Condition {
                 return e.osm.isTagged();
             } else if ("sameTags".equals(id)) {
                 return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
+            } else if ("areaStyle".equals(id)) {
+                return ElemStyles.hasAreaElemStyle(e.osm, false);
             }
             return true;
         }
