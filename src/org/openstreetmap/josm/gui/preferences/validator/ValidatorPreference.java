@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
@@ -63,8 +64,8 @@ public final class ValidatorPreference extends DefaultTabPreferenceSetting {
     /** The preferences key for ignored severity other on upload */
     public static final String PREF_OTHER_UPLOAD = PREFIX + ".otherUpload";
 
-    /** The preferences key for ignored severity other */
-    public static final String PREF_OTHER = PREFIX + ".other";
+    /** The preferences for ignored severity other */
+    public static final BooleanProperty PREF_OTHER = new BooleanProperty(PREFIX + ".other", false);
 
     /**
      * The preferences key for enabling the permanent filtering
@@ -94,7 +95,7 @@ public final class ValidatorPreference extends DefaultTabPreferenceSetting {
         prefUseLayer.setToolTipText(tr("Use the error layer to display problematic elements."));
         testPanel.add(prefUseLayer, GBC.eol());
 
-        prefOther = new JCheckBox(tr("Show informational level."), Main.pref.getBoolean(PREF_OTHER, false));
+        prefOther = new JCheckBox(tr("Show informational level."), PREF_OTHER.get());
         prefOther.setToolTipText(tr("Show the informational tests."));
         testPanel.add(prefOther, GBC.eol());
 
@@ -142,7 +143,7 @@ public final class ValidatorPreference extends DefaultTabPreferenceSetting {
         Main.pref.putCollection(PREF_SKIP_TESTS, tests);
         Main.pref.putCollection(PREF_SKIP_TESTS_BEFORE_UPLOAD, testsBeforeUpload);
         Main.pref.put(PREF_USE_IGNORE, prefUseIgnore.isSelected());
-        Main.pref.put(PREF_OTHER, prefOther.isSelected());
+        PREF_OTHER.put(prefOther.isSelected());
         Main.pref.put(PREF_OTHER_UPLOAD, prefOtherUpload.isSelected());
         Main.pref.put(PREF_LAYER, prefUseLayer.isSelected());
         return false;
