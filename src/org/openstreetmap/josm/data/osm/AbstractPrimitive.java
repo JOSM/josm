@@ -670,20 +670,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
-     * Replies true if other isn't null and has the same tags (key/value-pairs) as this.
-     *
-     * @param other the other object primitive
-     * @return true if other isn't null and has the same tags (key/value-pairs) as this.
-     */
-    public boolean hasSameTags(OsmPrimitive other) {
-        // We cannot directly use Arrays.equals(keys, other.keys) as keys is not ordered by key
-        // but we can at least check if both arrays are null or of the same size before creating
-        // and comparing the key maps (costly operation, see #7159)
-        return (keys == null && other.keys == null)
-            || (keys != null && other.keys != null && keys.length == other.keys.length && (keys.length == 0 || getKeys().equals(other.getKeys())));
-    }
-
-    /**
      * What to do, when the tags have changed by one of the tag-changing methods.
      */
     abstract protected void keysChangedImpl(Map<String, String> originalKeys);
