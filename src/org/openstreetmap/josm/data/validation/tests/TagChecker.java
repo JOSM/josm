@@ -134,6 +134,8 @@ public class TagChecker extends Test.TagTest {
 
     protected static final Entities entities = new Entities();
 
+    static final List<String> DEFAULT_SOURCES = Arrays.asList(DATA_FILE, IGNORE_FILE, SPELL_FILE);
+
     /**
      * Constructor
      */
@@ -166,7 +168,7 @@ public class TagChecker extends Test.TagTest {
         spellCheckKeyData = new HashMap<String, String>();
         
         String errorSources = "";
-        for (String source : Main.pref.getCollection(PREF_SOURCES, Arrays.asList(DATA_FILE, IGNORE_FILE, SPELL_FILE))) {
+        for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
             BufferedReader reader = null;
             try {
                 MirroredInputStream s = new MirroredInputStream(source);
@@ -175,16 +177,22 @@ public class TagChecker extends Test.TagTest {
                 String okValue = null;
                 boolean tagcheckerfile = false;
                 boolean ignorefile = false;
+                boolean isFirstLine = true;
                 String line;
                 while ((line = reader.readLine()) != null && (tagcheckerfile || line.length() != 0)) {
                     if (line.startsWith("#")) {
                         if (line.startsWith("# JOSM TagChecker")) {
                             tagcheckerfile = true;
-                        }
+                            if (!DEFAULT_SOURCES.contains(source)) {
+                                Main.info(tr("Adding {0} to tag checker", source));
+                            }
+                        } else
                         if (line.startsWith("# JOSM IgnoreTags")) {
                             ignorefile = true;
+                            if (!DEFAULT_SOURCES.contains(source)) {
+                                Main.info(tr("Adding {0} to ignore tags", source));
+                            }
                         }
-                        continue;
                     } else if (ignorefile) {
                         line = line.trim();
                         if (line.length() < 4) {
@@ -207,7 +215,6 @@ public class TagChecker extends Test.TagTest {
                             tmp.value = line.substring(mid+1);
                             ignoreDataKeyPair.add(tmp);
                         }
-                        continue;
                     } else if (tagcheckerfile) {
                         if (line.length() > 0) {
                             CheckerData d = new CheckerData();
@@ -225,6 +232,12 @@ public class TagChecker extends Test.TagTest {
                         spellCheckKeyData.put(line.substring(1), okValue);
                     } else {
                         Main.error(tr("Invalid spellcheck line: {0}", line));
+                    }
+                    if (isFirstLine) {
+                        isFirstLine = false;
+                        if (!(tagcheckerfile || ignorefile) && !DEFAULT_SOURCES.contains(source)) {
+                            Main.info(tr("Adding {0} to spellchecker", source));
+                        }
                     }
                 }
             } catch (IOException e) {
