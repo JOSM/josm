@@ -70,8 +70,10 @@ way[junction                   ][!highway],
 *[source:designation           ][!designation],
 *[source:height                ][!height],
 *[source:lanes                 ][!lanes],
-*[/source:(addr:)?postcode/    ][!addr:postcode],
-*[/source:(addr:)?housenumber/ ][!addr:housenumber],
+*[source:postcode              ][!addr:postcode],
+*[source:housenumber           ][!addr:housenumber],
+*[source:addr:postcode         ][!addr:postcode],
+*[source:addr:housenumber      ][!addr:housenumber],
 *[source:addr                  ][!/^addr:/],
 *[source:maxspeed              ][!/^maxspeed:?/] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
