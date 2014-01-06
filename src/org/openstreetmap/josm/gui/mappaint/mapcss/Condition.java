@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -25,7 +26,9 @@ abstract public class Condition {
     public static Condition createKeyValueCondition(String k, String v, Op op, Context context, boolean considerValAsKey) {
         switch (context) {
         case PRIMITIVE:
-            return new KeyValueCondition(k, v, op, considerValAsKey);
+            return KeyValueRegexpCondition.SUPPORTED_OPS.contains(op) && !considerValAsKey
+                    ? new KeyValueRegexpCondition(k, v, op, false)
+                    : new KeyValueCondition(k, v, op, considerValAsKey);
         case LINK:
             if (considerValAsKey)
                 throw new MapCSSException("''considerValAsKey'' not supported in LINK context");
@@ -182,6 +185,27 @@ abstract public class Condition {
         }
     }
 
+    public static class KeyValueRegexpCondition extends KeyValueCondition {
+
+        public final Pattern pattern;
+        public static final EnumSet<Op> SUPPORTED_OPS = EnumSet.of(Op.REGEX, Op.NREGEX);
+
+        public KeyValueRegexpCondition(String k, String v, Op op, boolean considerValAsKey) {
+            super(k, v, op, considerValAsKey);
+            CheckParameterUtil.ensureThat(!considerValAsKey, "considerValAsKey is not supported");
+            CheckParameterUtil.ensureThat(SUPPORTED_OPS.contains(op), "Op must be REGEX or NREGEX");
+            this.pattern = Pattern.compile(v);
+        }
+
+        @Override
+        public boolean applies(Environment env) {
+            final String value = env.osm.get(k);
+            return value != null && (op.equals(Op.REGEX)
+                    ? pattern.matcher(value).find()
+                    : !pattern.matcher(value).find());
+        }
+    }
+
     public static class RoleCondition extends Condition {
         public final String role;
         public final Op op;
@@ -243,11 +267,15 @@ abstract public class Condition {
         public final String label;
         public final boolean negateResult;
         public final KeyMatchType matchType;
+        public Predicate<String> containsPattern;
 
         public KeyCondition(String label, boolean negateResult, KeyMatchType matchType){
             this.label = label;
             this.negateResult = negateResult;
             this.matchType = matchType;
+            this.containsPattern = KeyMatchType.REGEX.equals(matchType)
+                    ? Predicates.stringContainsPattern(Pattern.compile(label))
+                    : null;
         }
 
         @Override
@@ -258,10 +286,11 @@ abstract public class Condition {
                     return e.osm.isKeyTrue(label) ^ negateResult;
                 else if (KeyMatchType.FALSE.equals(matchType))
                     return e.osm.isKeyFalse(label) ^ negateResult;
-                else if (KeyMatchType.REGEX.equals(matchType))
-                    return Utils.exists(e.osm.keySet(), Predicates.stringContainsPattern(Pattern.compile(label))) ^ negateResult;
-                else
+                else if (KeyMatchType.REGEX.equals(matchType)) {
+                    return Utils.exists(e.osm.keySet(), containsPattern) ^ negateResult;
+                } else {
                     return e.osm.hasKey(label) ^ negateResult;
+                }
             case LINK:
                 Utils.ensure(false, "Illegal state: KeyCondition not supported in LINK context");
                 return false;

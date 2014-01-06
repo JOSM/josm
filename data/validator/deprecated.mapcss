@@ -178,7 +178,12 @@
 }
 
 /* from http://wiki.openstreetmap.org/wiki/Conditional_restrictions#Deprecated_tags */
-*[/(day|date|hour)_(on|off)/][!restriction] {
+*[day_on][!restriction],
+*[day_off][!restriction],
+*[date_on][!restriction],
+*[date_off][!restriction],
+*[hour_on][!restriction],
+*[hour_off][!restriction] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "*:conditional";
   assertMatch: "node day_on=0-12";
