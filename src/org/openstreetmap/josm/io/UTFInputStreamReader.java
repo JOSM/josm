@@ -13,7 +13,16 @@ import java.io.UnsupportedEncodingException;
 public final class UTFInputStreamReader extends InputStreamReader {
     
     /**
-     * converts input stream to reader
+     * Creates a new {@link InputStreamReader} from the {@link InputStream} with UTF-8 as default encoding.
+     * @return A reader with the correct encoding. Starts to read after the BOM.
+     * @see #create(java.io.InputStream, String)
+     */
+    public static UTFInputStreamReader create(InputStream input) throws IOException {
+        return create(input, "UTF-8");
+    }
+
+    /**
+     * Creates a new {@link InputStreamReader} from the {@link InputStream}.
      * @param defaultEncoding Used, when no BOM was recognized. Can be null.
      * @return A reader with the correct encoding. Starts to read after the BOM.
      */

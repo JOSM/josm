@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
@@ -428,7 +429,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         for (final String i : sourcesProperty.get()) {
             try {
                 Main.info(tr("Adding {0} to tag checker", i));
-                addMapCSS(new BufferedReader(new InputStreamReader(new MirroredInputStream(i), Utils.UTF_8)));
+                addMapCSS(new BufferedReader(UTFInputStreamReader.create(new MirroredInputStream(i))));
             } catch (Exception ex) {
                 Main.warn(new RuntimeException(tr("Failed to add {0} to tag checker", i), ex));
             }

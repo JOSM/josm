@@ -52,7 +52,7 @@ public class ImageryReader {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
             InputStream in = new MirroredInputStream(source);
-            InputSource is = new InputSource(UTFInputStreamReader.create(in, "UTF-8"));
+            InputSource is = new InputSource(UTFInputStreamReader.create(in));
             factory.newSAXParser().parse(is, parser);
             return parser.entries;
         } catch (SAXException e) {

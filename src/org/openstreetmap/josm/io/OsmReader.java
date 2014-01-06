@@ -588,7 +588,7 @@ public class OsmReader extends AbstractReader {
             progressMonitor.beginTask(tr("Prepare OSM data...", 2));
             progressMonitor.indeterminateSubTask(tr("Parsing OSM data..."));
 
-            InputStreamReader ir = UTFInputStreamReader.create(source, "UTF-8");
+            InputStreamReader ir = UTFInputStreamReader.create(source);
             XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(ir);
             setParser(parser);
             parse();

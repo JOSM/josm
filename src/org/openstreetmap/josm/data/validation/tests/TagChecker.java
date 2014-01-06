@@ -166,7 +166,7 @@ public class TagChecker extends Test.TagTest {
             BufferedReader reader = null;
             try {
                 MirroredInputStream s = new MirroredInputStream(source);
-                reader = new BufferedReader(UTFInputStreamReader.create(s, "UTF-8"));
+                reader = new BufferedReader(UTFInputStreamReader.create(s));
 
                 String okValue = null;
                 boolean tagcheckerfile = false;
