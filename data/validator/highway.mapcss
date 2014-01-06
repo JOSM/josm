@@ -53,7 +53,7 @@ way.major_road[!ref] {
 }
 
 way.major_road[foot?][!sidewalk] {
-  throwWarning: tr("{0} used with {1}", tr("major road"), "{0.tag}");
+  throwWarning: tr("major road used with {0}", "{0.tag}");
   suggestAlternative: "sidewalk";
   suggestAlternative: tr("separate footway");
   assertMatch: "way highway=primary foot=yes";
