@@ -6891,8 +6891,8 @@ Note that for a match, at least one positive and no negative is required.
             </roles>
         </item>
         <item name="Site" type="relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Relations=Site"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Relations=Site" />
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:site"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:site" />
             <label text="Edit Site" />
             <space />
             <key key="type" value="site" />
