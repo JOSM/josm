@@ -5,22 +5,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.MessageFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
-import org.openstreetmap.josm.gui.widgets.JosmHTMLEditorKit;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -103,33 +98,8 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     }
 
     protected void build() {
-        jepMessage = new JosmEditorPane("text/html", "");
-        jepMessage.setOpaque(false);
-        jepMessage.setEditable(false);
+        jepMessage = JosmEditorPane.createJLabelLikePane();
         jepMessage.addHyperlinkListener(this);
-        Font f = UIManager.getFont("Label.font");
-        StyleSheet ss = new StyleSheet();
-        String rule = MessageFormat.format(
-                "font-family: ''{0}'';font-size: {1,number}pt; font-weight: {2}; font-style: {3}",
-                f.getName(),
-                f.getSize(),
-                f.isBold() ? "bold" : "normal",
-                        f.isItalic() ? "italic" : "normal"
-        );
-        rule = "body {" + rule + "}";
-        rule = MessageFormat.format(
-                "font-family: ''{0}'';font-size: {1,number}pt; font-weight: {2}; font-style: {3}",
-                f.getName(),
-                f.getSize(),
-                "bold",
-                f.isItalic() ? "italic" : "normal"
-        );
-        rule = "strong {" + rule + "}";
-        ss.addRule(rule);
-        ss.addRule("a {text-decoration: underline; color: blue}");
-        JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
-        kit.setStyleSheet(ss);
-        jepMessage.setEditorKit(kit);
 
         setLayout(new BorderLayout());
         add(jepMessage, BorderLayout.CENTER);

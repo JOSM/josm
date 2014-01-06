@@ -233,7 +233,7 @@ public class UploadAction extends JosmAction{
             public void run() {
                 final HashMap<String, String> tags = new HashMap<String, String>(layer.data.getChangeSetTags());
                 if (!tags.containsKey("source")) {
-                    tags.put("source", Main.map.mapView.getLayerInformationForSourceTag());
+                    tags.put("source", dialog.getLastChangesetSourceFromHistory());
                 }
                 if (!tags.containsKey("comment")) {
                     tags.put("comment", dialog.getLastChangesetCommentFromHistory());

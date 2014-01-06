@@ -44,6 +44,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -978,7 +979,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             layerInfo.add(i.getName());
         }
         for (final ImageryLayer i : getLayersOfType(ImageryLayer.class)) {
-            layerInfo.add(i.getName());
+            layerInfo.add(ImageryInfo.ImageryType.BING.equals(i.getInfo().getImageryType()) ? "Bing" : i.getName());
         }
         return Utils.join("; ", layerInfo);
     }
