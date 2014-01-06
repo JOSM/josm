@@ -429,7 +429,7 @@ public class GpxReader implements GpxConstants {
      * @throws IOException if an IO error occurs, e.g. the input stream is closed.
      */
     public GpxReader(InputStream source) throws IOException {
-        Reader utf8stream = UTFInputStreamReader.create(source, "UTF-8");
+        Reader utf8stream = UTFInputStreamReader.create(source);
         Reader filtered = new InvalidXmlCharacterFilter(utf8stream);
         this.inputSource = new InputSource(filtered);
     }
