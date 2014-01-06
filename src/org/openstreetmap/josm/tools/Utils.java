@@ -36,6 +36,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -858,6 +859,39 @@ public final class Utils {
         long days = elapsedTime/86400000;
         return String.format("%d %s %d %s", days, trn("day", "days", days), elapsedTime/3600000, tr("h"));
     }
+
+    /**
+     * Returns a human readable representation of a list of positions.
+     * <p/>
+     * For instance, {@code [1,5,2,6,7} yields "1-2,5-7
+     * @param positionList a list of positions
+     * @return a human readable representation
+     */
+    public static String getPositionListString(List<Integer> positionList)  {
+        Collections.sort(positionList);
+        final StringBuilder sb = new StringBuilder(32);
+        sb.append(positionList.get(0));
+        int cnt = 0;
+        int last = positionList.get(0);
+        for (int i = 1; i < positionList.size(); ++i) {
+            int cur = positionList.get(i);
+            if (cur == last + 1) {
+                ++cnt;
+            } else if (cnt == 0) {
+                sb.append(",").append(cur);
+            } else {
+                sb.append("-").append(last);
+                sb.append(",").append(cur);
+                cnt = 0;
+            }
+            last = cur;
+        }
+        if (cnt >= 1) {
+            sb.append("-").append(last);
+        }
+        return sb.toString();
+    }
+
 
     /**
      * Returns a list of capture groups if {@link Matcher#matches()}, or {@code null}.
