@@ -296,7 +296,12 @@ public class MirroredInputStream extends InputStream {
             con.setInstanceFollowRedirects(false);
             con.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
             con.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
-            con.connect();
+            try {
+                con.connect();
+            } catch (IOException e) {
+                Main.addNetworkError(downloadUrl, Utils.getRootCause(e));
+                throw e;
+            }
             switch(con.getResponseCode()) {
             case HttpURLConnection.HTTP_OK:
                 return con;

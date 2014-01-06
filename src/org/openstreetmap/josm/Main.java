@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -201,12 +202,15 @@ abstract public class Main {
      * The data validation handler.
      */
     public OsmValidator validator;
+
     /**
      * The MOTD Layer.
      */
     private GettingStarted gettingStarted = new GettingStarted();
 
     private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<MapFrameListener>();
+
+    protected static final Map<String, Throwable> networkErrors = new HashMap<String, Throwable>();
 
     /**
      * Logging level (4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
@@ -302,8 +306,7 @@ abstract public class Main {
      * @since 6248
      */
     public static void error(Throwable t) {
-        error(getErrorMessage(t));
-        t.printStackTrace();
+        error(t, true);
     }
 
     /**
@@ -312,11 +315,45 @@ abstract public class Main {
      * @since 6248
      */
     public static void warn(Throwable t) {
-        warn(getErrorMessage(t));
-        t.printStackTrace();
+        warn(t, true);
     }
 
-    private static String getErrorMessage(Throwable t) {
+    /**
+     * Prints an error message for the given Throwable.
+     * @param t The throwable object causing the error
+     * @param stackTrace {@code true}, if the stacktrace should be displayed
+     * @since 6442
+     */
+    public static void error(Throwable t, boolean stackTrace) {
+        error(getErrorMessage(t));
+        if (stackTrace) {
+            t.printStackTrace();
+        }
+    }
+
+    /**
+     * Prints a warning message for the given Throwable.
+     * @param t The throwable object causing the error
+     * @param stackTrace {@code true}, if the stacktrace should be displayed
+     * @since 6442
+     */
+    public static void warn(Throwable t, boolean stackTrace) {
+        warn(getErrorMessage(t));
+        if (stackTrace) {
+            t.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns a human-readable message of error, also usable for developers.
+     * @param t The error
+     * @return The human-readable error message
+     * @since 6642
+     */
+    public static String getErrorMessage(Throwable t) {
+    	if (t == null) {
+    		return null;
+    	}
         StringBuilder sb = new StringBuilder(t.getClass().getName());
         String msg = t.getMessage();
         if (msg != null) {
@@ -454,8 +491,8 @@ abstract public class Main {
                 }
                 try {
                     OsmApi.getOsmApi().initialize(null, true);
-                } catch (Exception x) {
-                    // ignore any exception here.
+                } catch (Exception e) {
+                    Main.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
                 return null;
             }
@@ -721,7 +758,7 @@ abstract public class Main {
             contentPanePrivate.updateUI();
             panel.updateUI();
         } catch (final Exception e) {
-            e.printStackTrace();
+            error(e);
         }
         UIManager.put("OptionPane.okIcon", ImageProvider.get("ok"));
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
@@ -1348,5 +1385,50 @@ abstract public class Main {
      */
     public static boolean removeMapFrameListener(MapFrameListener listener) {
         return listener != null ? mapFrameListeners.remove(listener) : false;
+    }
+
+    /**
+     * Adds a new network error that occur to give a hint about broken Internet connection.
+     * Do not use this method for errors known for sure thrown because of a bad proxy configuration.
+     * 
+     * @param url The accessed URL that caused the error
+     * @param t The network error
+     * @return The previous error associated to the given resource, if any. Can be {@code null}
+     * @since 6639
+     */
+    public static Throwable addNetworkError(URL url, Throwable t) {
+        if (url != null && t != null) {
+            Throwable old = addNetworkError(url.toExternalForm(), t);
+            if (old != null) {
+                Main.warn("Already here "+old);
+            }
+            return old;
+        }
+        return null;
+    }
+
+    /**
+     * Adds a new network error that occur to give a hint about broken Internet connection.
+     * Do not use this method for errors known for sure thrown because of a bad proxy configuration.
+     * 
+     * @param url The accessed URL that caused the error
+     * @param t The network error
+     * @return The previous error associated to the given resource, if any. Can be {@code null}
+     * @since 6639
+     */
+    public static Throwable addNetworkError(String url, Throwable t) {
+        if (url != null && t != null) {
+            return networkErrors.put(url, t);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the network errors that occured until now.
+     * @return the network errors that occured until now, indexed by URL
+     * @since 6639
+     */
+    public static Map<String, Throwable> getNetworkErrors() {
+        return new HashMap<String, Throwable>(networkErrors);
     }
 }

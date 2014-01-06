@@ -80,11 +80,11 @@ public class ImageryLayerInfo {
                 defaultLayers.addAll(result);
             } catch (IOException ex) {
                 Utils.close(stream);
-                ex.printStackTrace();
+                Main.error(ex, false);
                 continue;
-            } catch (SAXException sex) {
+            } catch (SAXException ex) {
                 Utils.close(stream);
-                sex.printStackTrace();
+                Main.error(ex);
                 continue;
             }
         }

@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -86,7 +88,8 @@ public class MainApplication extends Main {
         l.add(ImageProvider.get("logo").getImage());
         mainFrame.setIconImages(l);
         mainFrame.addWindowListener(new WindowAdapter(){
-            @Override public void windowClosing(final WindowEvent arg0) {
+            @Override
+            public void windowClosing(final WindowEvent arg0) {
                 Main.exitJosm(true, 0);
             }
         });
@@ -296,7 +299,8 @@ public class MainApplication extends Main {
         });
 
         Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
-        // http://stuffthathappens.com/blog/2007/10/15/one-more-note-on-uncaught-exception-handlers/
+        // http://stackoverflow.com/q/75218/2257172
+        // To be replaced with official API when switching to Java 7: https://bugs.openjdk.java.net/browse/JDK-4714232
         System.setProperty("sun.awt.exception.handler", BugReportExceptionHandler.class.getName());
 
         // initialize the platform hook, and
@@ -440,8 +444,10 @@ public class MainApplication extends Main {
         @Override
         public void run() {
 
-            // Handle proxy errors early to inform user he should change settings to be able to use JOSM correctly
-            handleProxyErrors();
+            // Handle proxy/network errors early to inform user he should change settings to be able to use JOSM correctly
+            if (!handleProxyErrors()) {
+                handleNetworkErrors();
+            }
 
             // Restore autosave layers after crash and start autosave thread
             handleAutosave();
@@ -479,27 +485,54 @@ public class MainApplication extends Main {
             }
         }
 
-        private void handleProxyErrors() {
-            if (proxySelector.hasErrors()) {
+        private boolean handleNetworkOrProxyErrors(boolean hasErrors, String title, String message) {
+            if (hasErrors) {
                 ExtendedDialog ed = new ExtendedDialog(
-                        Main.parent, tr("Proxy errors occurred"),
+                        Main.parent, title,
                         new String[]{tr("Change proxy settings"), tr("Cancel")});
                 ed.setButtonIcons(new String[]{"dialogs/settings.png", "cancel.png"}).setCancelButton(2);
                 ed.setMinimumSize(new Dimension(460, 260));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
-                ed.setContent(tr("JOSM tried to access the following resources:<br>" +
-                        "{0}" +
-                        "but <b>failed</b> to do so, because of the following proxy errors:<br>" +
-                        "{1}" +
-                        "Would you like to change your proxy settings now?",
-                        Utils.joinAsHtmlUnorderedList(proxySelector.getErrorResources()),
-                        Utils.joinAsHtmlUnorderedList(proxySelector.getErrorMessages())
-                ));
+                ed.setContent(message);
 
                 if (ed.showDialog().getValue() == 1) {
                     PreferencesAction.forPreferenceSubTab(null, null, ProxyPreference.class).run();
                 }
             }
+            return hasErrors;
+        }
+
+        private boolean handleProxyErrors() {
+            return handleNetworkOrProxyErrors(proxySelector.hasErrors(), tr("Proxy errors occurred"),
+                    tr("JOSM tried to access the following resources:<br>" +
+                            "{0}" +
+                            "but <b>failed</b> to do so, because of the following proxy errors:<br>" +
+                            "{1}" +
+                            "Would you like to change your proxy settings now?",
+                            Utils.joinAsHtmlUnorderedList(proxySelector.getErrorResources()),
+                            Utils.joinAsHtmlUnorderedList(proxySelector.getErrorMessages())
+                    ));
+        }
+
+        private boolean handleNetworkErrors() {
+            boolean condition = !networkErrors.isEmpty();
+            if (condition) {
+                Set<String> errors = new TreeSet<String>();
+                for (Throwable t : networkErrors.values()) {
+                    errors.add(t.toString());
+                }
+                return handleNetworkOrProxyErrors(condition, tr("Network errors occurred"),
+                        tr("JOSM tried to access the following resources:<br>" +
+                                "{0}" +
+                                "but <b>failed</b> to do so, because of the following network errors:<br>" +
+                                "{1}" +
+                                "It may result of a missing proxy configuration.<br>" +
+                                "Would you like to change your proxy settings now?",
+                                Utils.joinAsHtmlUnorderedList(networkErrors.keySet()),
+                                Utils.joinAsHtmlUnorderedList(errors)
+                        ));
+            }
+            return false;
         }
     }
 }
