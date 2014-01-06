@@ -89,7 +89,7 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainGeneric(Exception e) {
-        e.printStackTrace();
+        Main.error(e);
         BugReportExceptionHandler.handleException(e);
     }
 

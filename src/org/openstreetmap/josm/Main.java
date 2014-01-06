@@ -226,7 +226,9 @@ abstract public class Main {
     public static void error(String msg) {
         if (logLevel < 1)
             return;
-        System.err.println(tr("ERROR: {0}", msg));
+        if (msg != null && !msg.isEmpty()) {
+            System.err.println(tr("ERROR: {0}", msg));
+        }
     }
 
     /**
@@ -236,7 +238,9 @@ abstract public class Main {
     public static void warn(String msg) {
         if (logLevel < 2)
             return;
-        System.err.println(tr("WARNING: {0}", msg));
+        if (msg != null && !msg.isEmpty()) {
+            System.err.println(tr("WARNING: {0}", msg));
+        }
     }
 
     /**
@@ -246,7 +250,9 @@ abstract public class Main {
     public static void info(String msg) {
         if (logLevel < 3)
             return;
-        System.out.println(tr("INFO: {0}", msg));
+        if (msg != null && !msg.isEmpty()) {
+            System.out.println(tr("INFO: {0}", msg));
+        }
     }
 
     /**
@@ -256,7 +262,9 @@ abstract public class Main {
     public static void debug(String msg) {
         if (logLevel < 4)
             return;
-        System.out.println(tr("DEBUG: {0}", msg));
+        if (msg != null && !msg.isEmpty()) {
+            System.out.println(tr("DEBUG: {0}", msg));
+        }
     }
 
     /**
@@ -322,7 +330,7 @@ abstract public class Main {
      * Prints an error message for the given Throwable.
      * @param t The throwable object causing the error
      * @param stackTrace {@code true}, if the stacktrace should be displayed
-     * @since 6442
+     * @since 6642
      */
     public static void error(Throwable t, boolean stackTrace) {
         error(getErrorMessage(t));
@@ -335,7 +343,7 @@ abstract public class Main {
      * Prints a warning message for the given Throwable.
      * @param t The throwable object causing the error
      * @param stackTrace {@code true}, if the stacktrace should be displayed
-     * @since 6442
+     * @since 6642
      */
     public static void warn(Throwable t, boolean stackTrace) {
         warn(getErrorMessage(t));
@@ -1394,7 +1402,7 @@ abstract public class Main {
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}
-     * @since 6639
+     * @since 6642
      */
     public static Throwable addNetworkError(URL url, Throwable t) {
         if (url != null && t != null) {
@@ -1414,7 +1422,7 @@ abstract public class Main {
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}
-     * @since 6639
+     * @since 6642
      */
     public static Throwable addNetworkError(String url, Throwable t) {
         if (url != null && t != null) {

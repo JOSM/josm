@@ -45,6 +45,7 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -717,7 +718,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 g.setColor(Color.BLACK);
                 g.drawRect(x_min, y_min, w, h);
             } catch (Exception e) {
-                e.printStackTrace();
+                Main.error(e);
             }
         }
     }

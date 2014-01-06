@@ -153,7 +153,7 @@ public class OAuthAccessTokenHolder {
         try {
             token = cm.lookupOAuthAccessToken();
         } catch(CredentialsAgentException e) {
-            e.printStackTrace();
+            Main.error(e);
             Main.warn(tr("Failed to retrieve OAuth Access Token from credential manager"));
             Main.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
         }
@@ -184,7 +184,7 @@ public class OAuthAccessTokenHolder {
                 cm.storeOAuthAccessToken(new OAuthToken(accessTokenKey, accessTokenSecret));
             }
         } catch(CredentialsAgentException e){
-            e.printStackTrace();
+            Main.error(e);
             Main.warn(tr("Failed to store OAuth Access Token to credentials manager"));
             Main.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
         }

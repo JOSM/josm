@@ -96,7 +96,7 @@ public class UpdateDataAction extends JosmAction{
                             try {
                                 future.get();
                             } catch(Exception e) {
-                                e.printStackTrace();
+                                Main.error(e);
                                 return;
                             }
                             monitor.close();

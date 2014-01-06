@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -258,7 +259,7 @@ public class ChangesetQuery {
             try {
                 sb.append("display_name").append("=").append(URLEncoder.encode(userName, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                Main.error(e);
             }
         }
         if (bounds != null) {

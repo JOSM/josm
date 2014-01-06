@@ -27,8 +27,8 @@ import java.util.concurrent.Future;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -481,14 +481,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 } catch(CancellationException e) {
                     model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } catch(Exception e) {
-                    e.printStackTrace();
+                    Main.error(e);
                     model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
                 }
                 if (currentTask.isCanceled()) {
                     model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } else if (currentTask.isFailed()) {
-                    currentTask.getLastException().printStackTrace();
+                    Main.error(currentTask.getLastException());
                     ExceptionDialogUtil.explainException(currentTask.getLastException());
                     model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
                 } else {
@@ -515,7 +515,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 } catch(CancellationException e) {
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } catch(Exception e) {
-                    e.printStackTrace();
+                    Main.error(e);
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
                 }
@@ -523,7 +523,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } else if (currentTask.isFailed()) {
                     if (currentTask.getLastException() != null) {
-                        currentTask.getLastException().printStackTrace();
+                        Main.error(currentTask.getLastException());
                         ExceptionDialogUtil.explainException(currentTask.getLastException());
                     }
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.FAILED);

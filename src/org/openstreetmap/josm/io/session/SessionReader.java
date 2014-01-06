@@ -457,7 +457,7 @@ public class SessionReader {
                     exception = ex;
                 }
                 if (exception != null) {
-                    exception.printStackTrace();
+                    Main.error(exception);
                     CancelOrContinueDialog dialog = new CancelOrContinueDialog();
                     dialog.show(
                             tr("Error loading layer"),

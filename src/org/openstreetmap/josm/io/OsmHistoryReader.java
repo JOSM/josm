@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -41,6 +42,7 @@ public class OsmHistoryReader {
             return "(" + locator.getLineNumber() + "," + locator.getColumnNumber() + ")";
         }
 
+        @Override
         protected void throwException(String message) throws SAXException {
             throw new SAXException(getCurrentPosition() + message);
         }
@@ -85,7 +87,7 @@ public class OsmHistoryReader {
         try {
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new Parser());
         } catch (ParserConfigurationException e) {
-            e.printStackTrace(); // broken SAXException chaining
+            Main.error(e); // broken SAXException chaining
             throw new SAXException(e);
         } finally {
             progressMonitor.finishTask();

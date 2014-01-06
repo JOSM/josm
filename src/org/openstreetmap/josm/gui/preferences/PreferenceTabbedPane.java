@@ -551,7 +551,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                                 try {
                                     sps.addGui(this);
                                 } catch (SecurityException ex) {
-                                    ex.printStackTrace();
+                                    Main.error(ex);
                                 } catch (Throwable ex) {
                                     BugReportExceptionHandler.handleException(ex);
                                 } finally {
@@ -565,7 +565,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                     insertGUITabsForSetting(icon, preferenceSettings, index);
                     setSelectedIndex(index);
                 } catch (SecurityException ex) {
-                    ex.printStackTrace();
+                    Main.error(ex);
                 } catch (Throwable ex) {
                     // allow to change most settings even if e.g. a plugin fails
                     BugReportExceptionHandler.handleException(ex);

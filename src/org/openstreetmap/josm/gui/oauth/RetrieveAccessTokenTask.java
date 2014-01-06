@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -86,7 +87,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
         } catch(OsmTransferCanceledException e) {
             return;
         } catch (OsmOAuthAuthorizationException e) {
-            e.printStackTrace();
+            Main.error(e);
             alertRetrievingAccessTokenFailed(e);
             accessToken = null;
         } finally {

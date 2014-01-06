@@ -40,7 +40,7 @@ public class ConflictAddCommand extends Command {
         try {
             getLayer().getConflicts().add(conflict);
         } catch(IllegalStateException e) {
-            e.printStackTrace();
+            Main.error(e);
             warnBecauseOfDoubleConflict();
         }
         return true;

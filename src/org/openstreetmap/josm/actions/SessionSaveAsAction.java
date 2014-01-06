@@ -133,7 +133,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         try {
             sw.write(file);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Main.error(ex);
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     tr("<html>Could not save session file ''{0}''.<br>Error is:<br>{1}</html>", file.getName(), ex.getMessage()),

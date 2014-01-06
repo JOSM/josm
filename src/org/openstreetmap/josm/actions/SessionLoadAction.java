@@ -46,8 +46,8 @@ public class SessionLoadAction extends DiskAccessAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JFileChooser fc = createAndOpenFileChooser(true, false, tr("Open session"), 
-                Arrays.asList(SessionImporter.FILE_FILTER, FileFilterAllFiles.getInstance()), 
+        JFileChooser fc = createAndOpenFileChooser(true, false, tr("Open session"),
+                Arrays.asList(SessionImporter.FILE_FILTER, FileFilterAllFiles.getInstance()),
                 SessionImporter.FILE_FILTER, JFileChooser.FILES_ONLY, "lastDirectory");
         if (fc == null) return;
         File file = fc.getSelectedFile();
@@ -173,7 +173,7 @@ public class SessionLoadAction extends DiskAccessAction {
                     }
                 }
             } catch (IllegalDataException e) {
-                e.printStackTrace();
+                Main.error(e);
                 HelpAwareOptionPane.showMessageDialogInEDT(
                         Main.parent,
                         tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>", uri != null ? uri : file.getName(), e.getMessage()),
@@ -183,7 +183,7 @@ public class SessionLoadAction extends DiskAccessAction {
                         );
                 cancel();
             } catch (IOException e) {
-                e.printStackTrace();
+                Main.error(e);
                 HelpAwareOptionPane.showMessageDialogInEDT(
                         Main.parent,
                         tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>", uri != null ? uri : file.getName(), e.getMessage()),

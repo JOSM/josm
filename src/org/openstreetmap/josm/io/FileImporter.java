@@ -82,7 +82,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
     }
     
     private static void displayError(File f, Exception e) {
-        e.printStackTrace();
+        Main.error(e);
         HelpAwareOptionPane.showMessageDialogInEDT(
                 Main.parent,
                 tr("<html>Could not read file ''{0}''.<br>Error is:<br>{1}</html>", f.getName(), e.getMessage()),
@@ -109,7 +109,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
             importData(files, progressMonitor);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Main.error(e);
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     tr("<html>Could not read files.<br>Error is:<br>{0}</html>", e.getMessage()),

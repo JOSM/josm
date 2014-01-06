@@ -559,22 +559,13 @@ public final class PluginHandler {
             }
             msg = null;
         } catch (PluginException e) {
-            Main.error(e.getMessage());
-            Throwable cause = e.getCause();
-            if (cause != null) {
-                msg = cause.getLocalizedMessage();
-                if (msg != null) {
-                    Main.error("Cause: " + cause.getClass().getName()+": " + msg);
-                } else {
-                    cause.printStackTrace();
-                }
-            }
+            Main.error(e);
             if (e.getCause() instanceof ClassNotFoundException) {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", plugin.name, plugin.className);
             }
         }  catch (Throwable e) {
-            e.printStackTrace();
+            Main.error(e);
         }
         if (msg != null && confirmDisablePlugin(parent, msg, plugin.name)) {
             Main.pref.removeFromCollection("plugins", plugin.name);
@@ -686,7 +677,7 @@ public final class PluginHandler {
             try {
                 future.get();
             } catch(ExecutionException e) {
-                e.printStackTrace();
+                Main.error(e);
                 return null;
             } catch(InterruptedException e) {
                 Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while loading locally available plugin information");
@@ -816,7 +807,7 @@ public final class PluginHandler {
                     }
                 } catch (PluginException e) {
                     Main.warn(tr("Failed to find plugin {0}", name));
-                    e.printStackTrace();
+                    Main.error(e);
                 }
             }
         }
@@ -857,7 +848,7 @@ public final class PluginHandler {
                 plugins = buildListOfPluginsToLoad(parent,monitor.createSubTaskMonitor(1, false));
             } catch (ExecutionException e) {
                 Main.warn(tr("Failed to download plugin information list")+": ExecutionException");
-                e.printStackTrace();
+                Main.error(e);
                 // don't abort in case of error, continue with downloading plugins below
             } catch (InterruptedException e) {
                 Main.warn(tr("Failed to download plugin information list")+": InterruptedException");
@@ -904,7 +895,7 @@ public final class PluginHandler {
                 try {
                     future.get();
                 } catch(ExecutionException e) {
-                    e.printStackTrace();
+                    Main.error(e);
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
                 } catch(InterruptedException e) {
@@ -1097,7 +1088,7 @@ public final class PluginHandler {
             try {
                 pi.updateFromJar(new PluginInformation(downloadedPluginFile, pi.name));
             } catch(PluginException e) {
-                e.printStackTrace();
+                Main.error(e);
             }
         }
     }

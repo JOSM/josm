@@ -164,7 +164,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 text.append(entry.getKey()).append("=").append(entry.getValue().getValue().toString()).append("\n");
             }
         } catch (Exception x) {
-            x.printStackTrace();
+            Main.error(x);
         }
 
         JosmTextArea ta = new JosmTextArea(text.toString());

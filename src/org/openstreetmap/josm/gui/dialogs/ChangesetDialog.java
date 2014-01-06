@@ -513,8 +513,8 @@ public class ChangesetDialog extends ToggleDialog{
                             future.get();
                         } catch(InterruptedException e) {
                             Main.warn("InterruptedException in "+getClass().getSimpleName()+" while downloading changeset header");
-                        } catch(ExecutionException e){
-                            e.printStackTrace();
+                        } catch(ExecutionException e) {
+                            Main.error(e);
                             BugReportExceptionHandler.handleException(e.getCause());
                             return;
                         }

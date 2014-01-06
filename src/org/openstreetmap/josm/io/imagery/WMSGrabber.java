@@ -71,8 +71,8 @@ public class WMSGrabber extends Grabber {
             request.finish(State.IMAGE, grab(request, url, attempt));
 
         } catch(Exception e) {
-            e.printStackTrace();
-            throw new Exception(e.getMessage() + "\nImage couldn't be fetched: " + (url != null ? url.toString() : ""));
+            Main.error(e);
+            throw new Exception(e.getMessage() + "\nImage couldn't be fetched: " + (url != null ? url.toString() : ""), e);
         }
     }
 

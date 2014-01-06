@@ -125,7 +125,7 @@ public class WmsCache {
                 Main.error("Unable to load layers index for wms cache (file " + layerIndexFile + " not found)");
             } catch (IOException e) {
                 Main.error("Unable to load layers index for wms cache");
-                e.printStackTrace();
+                Main.error(e);
             }
 
             for (Object propKey: layersIndex.keySet()) {
@@ -151,7 +151,7 @@ public class WmsCache {
                     layersIndex.store(fos, "");
                 } catch (IOException e) {
                     Main.error("Unable to save layer index for wms cache");
-                    e.printStackTrace();
+                    Main.error(e);
                 }
             }
         } finally {
@@ -200,7 +200,7 @@ public class WmsCache {
             }
         } catch (Exception e) {
             if (indexFile.exists()) {
-                e.printStackTrace();
+                Main.error(e);
                 Main.info("Unable to load index for wms-cache, new file will be created");
             } else {
                 Main.info("Index for wms-cache doesn't exist, new file will be created");
@@ -297,7 +297,7 @@ public class WmsCache {
             marshaller.marshal(index, new FileOutputStream(new File(cacheDir, INDEX_FILENAME)));
         } catch (Exception e) {
             Main.error("Failed to save wms-cache file");
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 
@@ -364,7 +364,7 @@ public class WmsCache {
                 return loadImage(projectionEntries, entry);
             } catch (IOException e) {
                 Main.error("Unable to load file from wms cache");
-                e.printStackTrace();
+                Main.error(e);
                 return null;
             }
         }

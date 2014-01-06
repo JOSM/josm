@@ -145,7 +145,7 @@ public class HelpBrowser extends JDialog {
             }
         } catch(Exception e) {
             Main.error(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));
-            e.printStackTrace();
+            Main.error(e);
             return ss;
         } finally {
             Utils.close(reader);
@@ -236,7 +236,7 @@ public class HelpBrowser extends JDialog {
         try {
             help.getEditorKit().read(new StringReader(content), document, 0);
         } catch (Exception e) {
-            e.printStackTrace();
+            Main.error(e);
         }
         help.setDocument(document);
     }
@@ -316,17 +316,17 @@ public class HelpBrowser extends JDialog {
                     handleMissingHelpContent(relativeHelpTopic);
                     return;
                 } catch(HelpContentReaderException e2) {
-                    e2.printStackTrace();
+                    Main.error(e2);
                     handleHelpContentReaderException(relativeHelpTopic, e2);
                     return;
                 }
             } catch(HelpContentReaderException e1) {
-                e1.printStackTrace();
+                Main.error(e1);
                 handleHelpContentReaderException(relativeHelpTopic, e1);
                 return;
             }
         } catch(HelpContentReaderException e) {
-            e.printStackTrace();
+            Main.error(e);
             handleHelpContentReaderException(relativeHelpTopic, e);
             return;
         }
@@ -351,7 +351,7 @@ public class HelpBrowser extends JDialog {
             handleMissingHelpContent(absoluteHelpTopic);
             return;
         } catch(HelpContentReaderException e) {
-            e.printStackTrace();
+            Main.error(e);
             handleHelpContentReaderException(absoluteHelpTopic, e);
             return;
         }
@@ -555,7 +555,7 @@ public class HelpBrowser extends JDialog {
                     }
                 } catch (BadLocationException e) {
                     Main.warn(tr("Bad location in HTML document. Exception was: {0}", e.toString()));
-                    e.printStackTrace();
+                    Main.error(e);
                 }
             }
             return false;

@@ -172,7 +172,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
             output.write(this.data);
             output.flush();
         } catch(Exception e) {
-            e.printStackTrace();
+            Main.error(e);
         } finally {
             Utils.close(output);
         }

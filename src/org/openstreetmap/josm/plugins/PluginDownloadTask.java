@@ -162,7 +162,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             try {
                 download(d, pluginFile);
             } catch(PluginDownloadException e) {
-                e.printStackTrace();
+                Main.error(e);
                 failed.add(d);
                 continue;
             }

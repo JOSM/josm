@@ -273,8 +273,8 @@ public final class CustomConfigurator {
             ts.setOutputProperty(OutputKeys.INDENT, "yes");
             ts.transform(new DOMSource(exportDocument), new StreamResult(f.toURI().getPath()));
         } catch (Exception ex) {
-            Main.warn("Error saving preferences part: " +ex.getMessage());
-            ex.printStackTrace();
+            Main.warn("Error saving preferences part:");
+            Main.error(ex);
         }
     }
 

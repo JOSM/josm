@@ -142,7 +142,7 @@ public class OpenLocationAction extends JosmAction {
                         result.add(task);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Main.error(e);
                 }
             }
         }
@@ -162,7 +162,7 @@ public class OpenLocationAction extends JosmAction {
                     DownloadTask task = taskClass.getConstructor().newInstance();
                     result.append(task.acceptsDocumentationSummary());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Main.error(e);
                 }
             }
         }

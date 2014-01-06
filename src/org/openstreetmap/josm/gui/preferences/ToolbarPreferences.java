@@ -731,7 +731,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         movingComponent = "";
                         return true;
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Main.error(e);
                     }
                     return false;
                 }
@@ -750,7 +750,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                                 }
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Main.error(e);
                         }
                         movingComponent = "";
                     }

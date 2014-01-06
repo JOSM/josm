@@ -222,7 +222,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             try {
                 return getBaseUserUrl() + "/" + URLEncoder.encode(user.getName(), "UTF-8").replaceAll("\\+", "%20");
             } catch(UnsupportedEncodingException e) {
-                e.printStackTrace();
+                Main.error(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("<html>Failed to create an URL because the encoding ''{0}''<br>"

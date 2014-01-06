@@ -48,7 +48,7 @@ public final class ExceptionUtil {
      * @param e the exception
      */
     public static String explainOsmApiInitializationException(OsmApiInitializationException e) {
-        e.printStackTrace();
+        Main.error(e);
         String msg = tr(
                 "<html>Failed to initialize communication with the OSM server {0}.<br>"
                 + "Check the server URL in your preferences and your internet connection.",
@@ -63,7 +63,7 @@ public final class ExceptionUtil {
      * @param e the exception
      */
     public static String explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
-        e.printStackTrace();
+        Main.error(e);
         String msg = tr(
                 "<html>Failed to authenticate at the OSM server ''{0}''.<br>"
                 + "You are using OAuth to authenticate but currently there is no<br>"
@@ -128,7 +128,7 @@ public final class ExceptionUtil {
      * @param e the exception
      */
     public static String explainPreconditionFailed(OsmApiException e) {
-        e.printStackTrace();
+        Main.error(e);
         Pair<OsmPrimitive, Collection<OsmPrimitive>> conflict = parsePreconditionFailed(e.getErrorHeader());
         if (conflict != null) {
             OsmPrimitive firstRefs = conflict.b.iterator().next();
@@ -246,7 +246,7 @@ public final class ExceptionUtil {
     }
 
     public static String explainFailedBasicAuthentication(OsmApiException e) {
-        e.printStackTrace();
+        Main.error(e);
         return tr("<html>"
                 + "Authentication at the OSM server with the username ''{0}'' failed.<br>"
                 + "Please check the username and the password in the JOSM preferences."
@@ -256,7 +256,7 @@ public final class ExceptionUtil {
     }
 
     public static String explainFailedOAuthAuthentication(OsmApiException e) {
-        e.printStackTrace();
+        Main.error(e);
         return tr("<html>"
                 + "Authentication at the OSM server with the OAuth token ''{0}'' failed.<br>"
                 + "Please launch the preferences dialog and retrieve another OAuth token."
@@ -266,7 +266,7 @@ public final class ExceptionUtil {
     }
 
     public static String explainFailedAuthorisation(OsmApiException e) {
-        e.printStackTrace();
+        Main.error(e);
         String header = e.getErrorHeader();
         String body = e.getErrorBody();
         String msg = null;
@@ -297,7 +297,7 @@ public final class ExceptionUtil {
     }
 
     public static String explainFailedOAuthAuthorisation(OsmApiException e) {
-        e.printStackTrace();
+        Main.error(e);
         return tr("<html>"
                 + "Authorisation at the OSM server with the OAuth token ''{0}'' failed.<br>"
                 + "The token is not authorised to access the protected resource<br>"
@@ -316,7 +316,7 @@ public final class ExceptionUtil {
      * @return the message
      */
     public static String explainClientTimeout(OsmApiException e) {
-        e.printStackTrace();
+        Main.error(e);
         return tr("<html>"
                 + "Communication with the OSM server ''{0}'' timed out. Please retry later."
                 + "</html>",
@@ -331,7 +331,7 @@ public final class ExceptionUtil {
      * @return the message
      */
     public static String explainGenericOsmApiException(OsmApiException e) {
-        e.printStackTrace();
+        Main.error(e);
         String errMsg = e.getErrorHeader();
         if (errMsg == null) {
             errMsg = e.getErrorBody();
@@ -357,7 +357,7 @@ public final class ExceptionUtil {
      * @param e the exception
      */
     public static String explainConflict(OsmApiException e) {
-        e.printStackTrace();
+        Main.error(e);
         String msg = e.getErrorHeader();
         if (msg != null) {
             String pattern = "The changeset (\\d+) was closed at (.*)";
@@ -373,7 +373,7 @@ public final class ExceptionUtil {
                     closeDate = formatter.parse(m.group(2));
                 } catch (ParseException ex) {
                     Main.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
-                    ex.printStackTrace();
+                    Main.error(ex);
                 }
                 if (closeDate == null) {
                     msg = tr(
@@ -418,7 +418,7 @@ public final class ExceptionUtil {
                 e.getChangesetId(),
                 e.getClosedOn() == null ? "?" : dateFormat.format(e.getClosedOn())
         );
-        e.printStackTrace();
+        Main.error(e);
         return msg;
     }
 
@@ -432,7 +432,7 @@ public final class ExceptionUtil {
         if (msg == null || msg.trim().isEmpty()) {
             msg = e.toString();
         }
-        e.printStackTrace();
+        Main.error(e);
         return escapeReservedCharactersHTML(msg);
     }
 
@@ -471,7 +471,7 @@ public final class ExceptionUtil {
         String apiUrl = e.getUrl();
         String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
                 + "Please check your internet connection.", apiUrl);
-        e.printStackTrace();
+        Main.error(e);
         return message;
     }
 
@@ -490,7 +490,7 @@ public final class ExceptionUtil {
                 + "due to a problem with transferring data.<br>"
                 + "Details (untranslated): {1}</html>", apiUrl, ioe
                 .getMessage());
-        e.printStackTrace();
+        Main.error(e);
         return message;
     }
 
@@ -505,7 +505,7 @@ public final class ExceptionUtil {
         String message = tr("<html>Failed to download data. "
                 + "Its format is either unsupported, ill-formed, and/or inconsistent.<br>"
                 + "<br>Details (untranslated): {0}</html>", ide.getMessage());
-        e.printStackTrace();
+        Main.error(e);
         return message;
     }
 
@@ -520,7 +520,7 @@ public final class ExceptionUtil {
         String apiUrl = e.getUrl();
         String message = tr("<html>The OSM server<br>" + "''{0}''<br>" + "reported an internal server error.<br>"
                 + "This is most likely a temporary problem. Please try again later.", apiUrl);
-        e.printStackTrace();
+        Main.error(e);
         return message;
     }
 
@@ -543,7 +543,7 @@ public final class ExceptionUtil {
             message += tr("<br>Error message(untranslated): {0}", e.getErrorHeader());
         }
         message = "<html>" + message + "</html>";
-        e.printStackTrace();
+        Main.error(e);
         return message;
     }
 
@@ -556,7 +556,7 @@ public final class ExceptionUtil {
     public static String explainBandwidthLimitExceeded(OsmApiException e) {
         // TODO: Write a proper error message
         String message = explainGenericOsmApiException(e);
-        e.printStackTrace();
+        Main.error(e);
         return message;
     }
 
@@ -574,7 +574,7 @@ public final class ExceptionUtil {
                 + "it. Please carefully check the server''s address ''{0}'' for typos."
                 , apiUrl);
         message = "<html>" + message + "</html>";
-        e.printStackTrace();
+        Main.error(e);
         return message;
     }
 
@@ -598,7 +598,7 @@ public final class ExceptionUtil {
         String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
                 + "Host name ''{1}'' could not be resolved. <br>"
                 + "Please check the API URL in your preferences and your internet connection.", apiUrl, host);
-        e.printStackTrace();
+        Main.error(e);
         return message;
     }
 
@@ -691,7 +691,7 @@ public final class ExceptionUtil {
         } else {
             msg = explainGeneric(e);
         }
-        e.printStackTrace();
+        Main.error(e);
         return msg;
     }
 

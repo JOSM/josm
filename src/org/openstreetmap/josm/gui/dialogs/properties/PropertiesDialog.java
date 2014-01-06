@@ -1093,12 +1093,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                 }
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Main.error(e);
                         }
                     }
                 });
             } catch (Exception e1) {
-                e1.printStackTrace();
+                Main.error(e1);
             }
         }
     }

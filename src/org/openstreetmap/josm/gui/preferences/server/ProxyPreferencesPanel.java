@@ -358,7 +358,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
                 tfProxyHttpPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
         } catch(CredentialsAgentException e) {
-            e.printStackTrace();
+            Main.error(e);
             tfProxyHttpUser.setText("");
             tfProxyHttpPassword.setText("");
         }
@@ -433,7 +433,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
             );
             cm.store(RequestorType.PROXY, tfProxyHttpHost.getText(), pa);
         } catch(CredentialsAgentException e) {
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 }

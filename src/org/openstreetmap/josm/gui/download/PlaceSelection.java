@@ -245,10 +245,10 @@ public class PlaceSelection implements DownloadSelection {
                     data.add(currentResult);
                 }
             } catch (NumberFormatException x) {
-                x.printStackTrace(); // SAXException does not chain correctly
+                Main.error(x); // SAXException does not chain correctly
                 throw new SAXException(x.getMessage(), x);
             } catch (NullPointerException x) {
-                x.printStackTrace(); // SAXException does not chain correctly
+                Main.error(x); // SAXException does not chain correctly
                 throw new SAXException(tr("Null pointer exception, possibly some missing tags."), x);
             }
         }

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -55,7 +56,7 @@ class SaveLayerTask extends AbstractIOTask {
                 layerInfo.getLayer().onPostSaveToFile();
             }
         } catch(Exception e) {
-            e.printStackTrace();
+            Main.error(e);
             setLastException(e);
         }
     }

@@ -64,7 +64,7 @@ public class OsmImporter extends FileImporter {
             in = new FileInputStream(file);
             importData(in, file, progressMonitor);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Main.error(e);
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));
         } finally {
             Utils.close(in);

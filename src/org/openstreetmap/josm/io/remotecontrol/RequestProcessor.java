@@ -239,8 +239,9 @@ public class RequestProcessor extends Thread {
             }
 
         } catch (IOException ioe) {
+            Main.debug(Main.getErrorMessage(ioe));
         } catch (Exception e) {
-            e.printStackTrace();
+            Main.error(e);
             try {
                 sendError(out);
             } catch (IOException e1) {
@@ -249,6 +250,7 @@ public class RequestProcessor extends Thread {
             try {
                 request.close();
             } catch (IOException e) {
+                Main.debug(Main.getErrorMessage(e));
             }
         }
     }
@@ -388,7 +390,7 @@ public class RequestProcessor extends Thread {
             if (c==null) return null;
             handler = handlers.get(cmd).newInstance();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Main.error(ex);
             return null;
         }
 
@@ -449,7 +451,7 @@ public class RequestProcessor extends Thread {
      * Reports HTML message with the description of all available commands
      * @return HTML message with the description of all available commands
      * @throws IllegalAccessException
-     * @throws InstantiationException 
+     * @throws InstantiationException
      */
     public static String getUsageAsHtml() throws IllegalAccessException, InstantiationException {
         StringBuilder usage = new StringBuilder(1024);

@@ -35,7 +35,7 @@ public class ImportHandler extends RequestHandler {
             }
         } catch (Exception ex) {
             Main.warn("RemoteControl: Error parsing import remote control request:");
-            ex.printStackTrace();
+            Main.error(ex);
             throw new RequestHandlerErrorException();
         }
     }

@@ -84,8 +84,8 @@ public class FileDrop
     // Default border color
     private static Color defaultBorderColor = new Color( 0f, 0f, 1f, 0.25f );
 
-    /** 
-     * Constructor for JOSM file drop 
+    /**
+     * Constructor for JOSM file drop
      * @param c The drop target
      */
     public FileDrop(final Component c){
@@ -225,12 +225,12 @@ public class FileDrop
             }   // end try
             catch ( IOException io)
             {   Main.warn("FileDrop: IOException - abort:" );
-            io.printStackTrace();
+            Main.error(io);
             evt.rejectDrop();
             }   // end catch IOException
             catch (UnsupportedFlavorException ufe)
             {   Main.warn("FileDrop: UnsupportedFlavorException - abort:" );
-            ufe.printStackTrace();
+            Main.error(ufe);
             evt.rejectDrop();
             }   // end catch: UnsupportedFlavorException
             finally
@@ -332,7 +332,7 @@ public class FileDrop
         {   dt.addDropTargetListener( dropListener );
         }   // end try
         catch( TooManyListenersException e )
-        {   e.printStackTrace();
+        {   Main.error(e);
         Main.warn("FileDrop: Drop will not work due to previous error. Do you have another listener attached?" );
         }   // end catch
 
@@ -412,7 +412,7 @@ public class FileDrop
      * <var>c</var> if <var>c</var> is a {@link java.awt.Container}.
      *
      * @param c The component to unregister as a drop target
-     * @return {@code true} if at least one item has been removed, {@code false} otherwise 
+     * @return {@code true} if at least one item has been removed, {@code false} otherwise
      */
     public static boolean remove( Component c)
     {   return remove( c, true );

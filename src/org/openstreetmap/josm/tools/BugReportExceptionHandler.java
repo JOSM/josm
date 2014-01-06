@@ -65,7 +65,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
         handlingInProgress = true;
         exceptionCounter++;
         try {
-            e.printStackTrace();
+            Main.error(e);
             if (Main.parent != null) {
                 if (e instanceof OutOfMemoryError) {
                     // do not translate the string, as translation may raise an exception
@@ -165,7 +165,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
                             JOptionPane.showMessageDialog(Main.parent, p, tr("You have encountered a bug in JOSM"), JOptionPane.ERROR_MESSAGE);
                         } catch (Exception e1) {
-                            e1.printStackTrace();
+                            Main.error(e1);
                         }
                     }
                 });
@@ -199,7 +199,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             return new URL(Main.JOSM_WEBSITE+"/josmticket?" +
                     "gdata="+Base64.encode(ByteBuffer.wrap(out.toByteArray()), true));
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.error(e);
             return null;
         }
     }

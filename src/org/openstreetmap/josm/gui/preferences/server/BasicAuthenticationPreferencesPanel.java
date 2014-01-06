@@ -107,7 +107,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
                 tfOsmPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
         } catch(CredentialsAgentException e) {
-            e.printStackTrace();
+            Main.error(e);
             Main.warn(tr("Failed to retrieve OSM credentials from credential manager."));
             Main.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
             tfOsmUserName.setText("");
@@ -127,7 +127,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
             );
             cm.store(RequestorType.SERVER, OsmApi.getOsmApi().getHost(), pa);
         } catch (CredentialsAgentException e) {
-            e.printStackTrace();
+            Main.error(e);
             Main.warn(tr("Failed to save OSM credentials to credential manager."));
             Main.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
         }

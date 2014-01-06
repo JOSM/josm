@@ -272,7 +272,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
                 g.drawRect(x_min, y_min, w, h);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 

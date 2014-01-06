@@ -153,7 +153,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
                     lblUser.setUrl(null);
                 }
             } catch(UnsupportedEncodingException e) {
-                e.printStackTrace();
+                Main.error(e);
                 lblUser.setUrl(null);
             }
             String username = "";
@@ -171,7 +171,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
                     String url = AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(user, "UTF-8").replaceAll("\\+", "%20");
                     lblUser.setUrl(url);
                 } catch(UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    Main.error(e);
                     lblUser.setUrl(null);
                 }
                 lblUser.setDescription(user);

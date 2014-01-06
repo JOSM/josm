@@ -77,7 +77,6 @@ public class ServerSidePreferences extends Preferences {
                 return b.toString();
             } catch (IOException e) {
                 Main.error(e);
-                e.printStackTrace();
             }
             return null;
         }
@@ -106,7 +105,7 @@ public class ServerSidePreferences extends Preferences {
                         JOptionPane.INFORMATION_MESSAGE
                         );
             } catch (Exception e) {
-                e.printStackTrace();
+                Main.error(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Could not upload preferences. Reason: {0}", e.getMessage()),
@@ -122,7 +121,7 @@ public class ServerSidePreferences extends Preferences {
         try {
             connection = new Connection(new URL(serverUrl+"user/preferences"));
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Main.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Could not load preferences from server."),
@@ -172,9 +171,9 @@ public class ServerSidePreferences extends Preferences {
         try {
             fromXML(in);
         } catch (RuntimeException e) {
-            e.printStackTrace();
+            Main.error(e);
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            Main.error(e);
         }
         return res;
     }
