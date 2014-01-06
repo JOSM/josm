@@ -131,7 +131,7 @@ public class RelationTree extends JTree {
             if (canceled)
                 return;
             if (lastException != null) {
-                lastException.printStackTrace();
+                Main.error(lastException);
                 return;
             }
             DataSetMerger visitor = new DataSetMerger(Main.main.getEditLayer().data, ds);

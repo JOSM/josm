@@ -195,7 +195,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 tfPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
         } catch(CredentialsAgentException e) {
-            e.printStackTrace();
+            Main.error(e);
             tfUserName.setText("");
             tfPassword.setText("");
         }
@@ -524,7 +524,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     }
                 }
             };
-            e.printStackTrace();
+            Main.error(e);
             GuiHelper.runInEDT(r);
         }
 

@@ -780,7 +780,7 @@ public class Preferences {
                 save();
             }
         } catch(IOException e) {
-            e.printStackTrace();
+            Main.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>Failed to initialize preferences.<br>Failed to reset preference file to default: {0}</html>",getPreferenceFile().getAbsoluteFile()),
@@ -792,7 +792,7 @@ public class Preferences {
         try {
             load();
         } catch (Exception e) {
-            e.printStackTrace();
+            Main.error(e);
             File backupFile = new File(prefDir,"preferences.xml.bak");
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -805,7 +805,7 @@ public class Preferences {
                 resetToDefault();
                 save();
             } catch(IOException e1) {
-                e1.printStackTrace();
+                Main.error(e1);
                 Main.warn(tr("Failed to initialize preferences. Failed to reset preference file to default: {0}", getPreferenceFile()));
             }
         }

@@ -85,8 +85,8 @@ public class GpxExportAction extends DiskAccessAction {
             if (exporter.acceptFile(file, layer)) {
                 try {
                     exporter.exportData(file, layer);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (IOException e) {
+                    Main.error(e);
                 }
             }
         }

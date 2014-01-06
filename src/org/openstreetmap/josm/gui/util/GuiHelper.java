@@ -81,9 +81,9 @@ public final class GuiHelper {
             try {
                 SwingUtilities.invokeAndWait(task);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Main.error(e);
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                Main.error(e);
             }
         }
     }

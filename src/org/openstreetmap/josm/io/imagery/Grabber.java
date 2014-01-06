@@ -69,7 +69,7 @@ abstract public class Grabber implements Runnable {
                     Main.debug("InterruptedException in "+getClass().getSimpleName()+" during WMS request");
                 }
                 if(i == maxTries) {
-                    e.printStackTrace();
+                    Main.error(e);
                     request.finish(State.FAILED, null);
                 }
             }

@@ -178,7 +178,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             new GpxWriter(fo).write(gpxData);
             fo.flush();
         } catch (IOException x) {
-            x.printStackTrace();
+            Main.error(x);
             JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn, x.getMessage()),
                     tr("Error"), JOptionPane.ERROR_MESSAGE);
         } finally {

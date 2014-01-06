@@ -82,15 +82,15 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
 
         } catch (IOException e) {
             Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
-            e.printStackTrace();
+            Main.error(e);
             logError(e);
         } catch (SAXParseException e) {
             Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}", url, e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
-            e.printStackTrace();
+            Main.error(e);
             logError(e);
         } catch (SAXException e) {
             Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-            e.printStackTrace();
+            Main.error(e);
             logError(e);
         }
     }

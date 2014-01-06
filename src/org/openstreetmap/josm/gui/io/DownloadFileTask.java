@@ -148,7 +148,7 @@ public class DownloadFileTask extends PleaseWaitRunnable{
         try {
             download();
         } catch(DownloadException e) {
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 

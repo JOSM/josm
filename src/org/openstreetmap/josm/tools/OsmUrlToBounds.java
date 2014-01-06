@@ -72,11 +72,11 @@ public final class OsmUrlToBounds {
                         z == null ? 18 : Integer.parseInt(z));
             }
         } catch (NumberFormatException x) {
-            x.printStackTrace();
+            Main.error(x);
         } catch (NullPointerException x) {
-            x.printStackTrace();
+            Main.error(x);
         } catch (ArrayIndexOutOfBoundsException x) {
-            x.printStackTrace();
+            Main.error(x);
         }
         return b;
     }

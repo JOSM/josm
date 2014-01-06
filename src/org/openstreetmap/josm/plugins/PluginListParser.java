@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins;
 
-import org.openstreetmap.josm.tools.Utils;
-
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -12,6 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A parser for the plugin list provided by a JOSM Plugin Download Site.
@@ -103,7 +104,7 @@ public class PluginListParser {
                 }
             }
         } catch (PluginListParseException ex) {
-            ex.printStackTrace();
+            Main.error(ex);
         }
     }
 

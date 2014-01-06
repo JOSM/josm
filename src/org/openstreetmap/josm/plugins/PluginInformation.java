@@ -247,7 +247,7 @@ public class PluginInformation {
                         }
                     }
                 }
-                catch(Exception e) { e.printStackTrace(); }
+                catch(Exception e) { Main.error(e); }
             }
         }
 

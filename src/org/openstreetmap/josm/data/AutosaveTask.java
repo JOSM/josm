@@ -215,7 +215,6 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 // Don't let exception stop time thread
                 Main.error("Autosave failed:");
                 Main.error(t);
-                t.printStackTrace();
             }
         }
     }

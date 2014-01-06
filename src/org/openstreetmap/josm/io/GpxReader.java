@@ -466,7 +466,7 @@ public class GpxReader implements GpxConstants {
             } else
                 throw e;
         } catch (ParserConfigurationException e) {
-            e.printStackTrace(); // broken SAXException chaining
+            Main.error(e); // broken SAXException chaining
             throw new SAXException(e);
         }
     }

@@ -109,7 +109,7 @@ public abstract class OsmServerReader extends OsmConnection {
                 Main.info("GET " + url);
                 activeConnection.connect();
             } catch (Exception e) {
-                e.printStackTrace();
+                Main.error(e);
                 OsmTransferException ote = new OsmTransferException(tr("Could not connect to the OSM server. Please check your internet connection."), e);
                 ote.setUrl(url.toString());
                 throw ote;
@@ -170,7 +170,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * Download OSM files from somewhere
      * @param progressMonitor The progress monitor
      * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs 
+     * @throws OsmTransferException if any error occurs
      */
     public abstract DataSet parseOsm(final ProgressMonitor progressMonitor) throws OsmTransferException;
 
@@ -178,7 +178,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * Download OSM Change files from somewhere
      * @param progressMonitor The progress monitor
      * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs 
+     * @throws OsmTransferException if any error occurs
      */
     public DataSet parseOsmChange(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
@@ -188,7 +188,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * Download BZip2-compressed OSM Change files from somewhere
      * @param progressMonitor The progress monitor
      * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs 
+     * @throws OsmTransferException if any error occurs
      */
     public DataSet parseOsmChangeBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
@@ -198,7 +198,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * Download GZip-compressed OSM Change files from somewhere
      * @param progressMonitor The progress monitor
      * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs 
+     * @throws OsmTransferException if any error occurs
      */
     public DataSet parseOsmChangeGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
@@ -229,7 +229,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * Download BZip2-compressed OSM files from somewhere
      * @param progressMonitor The progress monitor
      * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs 
+     * @throws OsmTransferException if any error occurs
      */
     public DataSet parseOsmBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
@@ -239,7 +239,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * Download GZip-compressed OSM files from somewhere
      * @param progressMonitor The progress monitor
      * @return The corresponding dataset
-     * @throws OsmTransferException if any error occurs 
+     * @throws OsmTransferException if any error occurs
      */
     public DataSet parseOsmGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;

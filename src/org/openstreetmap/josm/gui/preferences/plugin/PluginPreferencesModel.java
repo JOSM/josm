@@ -11,9 +11,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginException;
@@ -358,7 +358,7 @@ public class PluginPreferencesModel extends Observable{
                 }
                 oldinfo.updateLocalInfo(newinfo);
             } catch(PluginException e) {
-                e.printStackTrace();
+                Main.error(e);
             }
         }
     }

@@ -180,7 +180,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             return sb.toString();
         } catch (MalformedURLException e) {
             if (canceled) return null;
-            e.printStackTrace();
+            Main.error(e);
             return null;
         } catch (IOException e) {
             if (canceled) return null;
@@ -233,8 +233,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                     panel.add(new JLabel(tr("Details:")), GBC.eol().insets(0, 0, 0, 10));
                     JosmTextArea area = new JosmTextArea(details);
                     area.setEditable(false);
-                    area.setLineWrap(true);  
-                    area.setWrapStyleWord(true); 
+                    area.setLineWrap(true);
+                    area.setWrapStyleWord(true);
                     JScrollPane scrollPane = new JScrollPane(area);
                     scrollPane.setPreferredSize(new Dimension(500, 300));
                     panel.add(scrollPane, GBC.eol().fill());
@@ -272,7 +272,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             }
         } catch (MalformedURLException e) {
             if (canceled) return;
-            e.printStackTrace();
+            Main.error(e);
             return;
         } catch (IOException e) {
             if (canceled) return;
@@ -321,7 +321,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             writer.write(list);
         } catch(IOException e) {
             // just failed to write the cache file. No big deal, but log the exception anyway
-            e.printStackTrace();
+            Main.error(e);
         } finally {
             if (writer != null) {
                 writer.flush();
@@ -366,7 +366,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             availablePlugins.addAll(filterDeprecatedPlugins(pis));
         } catch (PluginListParseException e) {
             Main.error(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 

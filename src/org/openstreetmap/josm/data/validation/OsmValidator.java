@@ -159,7 +159,7 @@ public class OsmValidator implements LayerChangeListener {
                 pathDir.mkdirs();
             }
         } catch (Exception e){
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 
@@ -173,9 +173,9 @@ public class OsmValidator implements LayerChangeListener {
                     ignoredErrors.add(line);
                 }
             } catch (final FileNotFoundException e) {
-                // Ignore
+                Main.debug(Main.getErrorMessage(e));
             } catch (final IOException e) {
-                e.printStackTrace();
+                Main.error(e);
             } finally {
                 Utils.close(in);
             }
@@ -198,7 +198,7 @@ public class OsmValidator implements LayerChangeListener {
                 out.println(e);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.error(e);
         } finally {
             Utils.close(out);
         }
@@ -290,7 +290,7 @@ public class OsmValidator implements LayerChangeListener {
                     test.initialize();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Main.error(e);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("Error initializing test {0}:\n {1}", test.getClass()
                                 .getSimpleName(), e),

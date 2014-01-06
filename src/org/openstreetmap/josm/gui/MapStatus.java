@@ -903,7 +903,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
             try {
                 thread.interrupt();
             } catch (Exception e) {
-                e.printStackTrace();
+                Main.error(e);
             }
         }
     }

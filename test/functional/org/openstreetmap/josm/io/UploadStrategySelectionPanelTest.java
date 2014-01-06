@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.io.UploadStrategySelectionPanel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
@@ -39,7 +40,7 @@ public class UploadStrategySelectionPanelTest extends JFrame {
                         try {
                             n = Integer.parseInt(tf.getText());
                         } catch(NumberFormatException e) {
-                            e.printStackTrace();
+                            Main.error(e);
                             return;
                         }
                         uploadStrategySelectionPanel.setNumUploadedObjects(n);
@@ -48,6 +49,10 @@ public class UploadStrategySelectionPanelTest extends JFrame {
         );
         return pnl;
     }
+    
+    /**
+     * Constructs a new {@code UploadStrategySelectionPanelTest}.
+     */
     public UploadStrategySelectionPanelTest() {
         build();
         uploadStrategySelectionPanel.setNumUploadedObjects(51000);

@@ -13,6 +13,7 @@ import java.net.URL;
 
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -210,7 +211,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
             if (canceled)
                 // ignore exceptions
                 return;
-            e.printStackTrace();
+            Main.error(e);
             alertConnectionFailed();
             return;
         } finally {

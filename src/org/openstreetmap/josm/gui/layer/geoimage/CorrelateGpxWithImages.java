@@ -77,7 +77,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.PrimaryDateParser;
 import org.xml.sax.SAXException;
 
-/** 
+/**
  * This class displays the window to select the GPX file and the offset (timezone + delta).
  * Then it correlates the images of the layer with that GPX file.
  */
@@ -179,7 +179,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     data.storageFile = sel;
 
                 } catch (SAXException x) {
-                    x.printStackTrace();
+                    Main.error(x);
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Error while parsing {0}",sel.getName())+": "+x.getMessage(),
@@ -188,7 +188,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     );
                     return;
                 } catch (IOException x) {
-                    x.printStackTrace();
+                    Main.error(x);
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Could not read \"{0}\"",sel.getName())+"\n"+x.getMessage(),
@@ -1144,7 +1144,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                         } catch(ParseException e) {
                             Main.error("Error while parsing date \"" + curWpTimeStr + '"');
-                            e.printStackTrace();
+                            Main.error(e);
                             prevWp = null;
                             prevWpTime = 0;
                         }

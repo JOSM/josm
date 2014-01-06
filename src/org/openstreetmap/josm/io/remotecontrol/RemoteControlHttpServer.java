@@ -39,7 +39,7 @@ public class RemoteControlHttpServer extends Thread {
             Main.warn(marktr("Cannot start remotecontrol server on port {0}: {1}"),
                     Integer.toString(port), ex.getLocalizedMessage());
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            Main.error(ioe);
         }
     }
 
@@ -53,7 +53,7 @@ public class RemoteControlHttpServer extends Thread {
                 instance.stopServer();
                 instance = null;
             } catch (IOException ioe) {
-                ioe.printStackTrace();
+                Main.error(ioe);
             }
         }
     }
@@ -63,9 +63,7 @@ public class RemoteControlHttpServer extends Thread {
      * @param port The port this server will listen on
      * @throws IOException when connection errors
      */
-    public RemoteControlHttpServer(int port)
-        throws IOException
-    {
+    public RemoteControlHttpServer(int port) throws IOException {
         super("RemoteControl HTTP Server");
         this.setDaemon(true);
         // Start the server socket with only 1 connection.
@@ -80,25 +78,18 @@ public class RemoteControlHttpServer extends Thread {
      * The main loop, spawns a {@link RequestProcessor} for each connection
      */
     @Override
-    public void run()
-    {
+    public void run() {
         Main.info(marktr("RemoteControl::Accepting connections on port {0}"),
              Integer.toString(server.getLocalPort()));
-        while (true)
-        {
-            try
-            {
+        while (true) {
+            try {
                 Socket request = server.accept();
                 RequestProcessor.processRequest(request);
-            }
-            catch( SocketException se)
-            {
+            } catch( SocketException se) {
                 if( !server.isClosed() )
-                    se.printStackTrace();
-                }
-            catch (IOException ioe)
-            {
-                ioe.printStackTrace();
+                    Main.error(se);
+            } catch (IOException ioe) {
+                Main.error(ioe);
             }
         }
     }
@@ -108,8 +99,7 @@ public class RemoteControlHttpServer extends Thread {
      *
      * @throws IOException
      */
-    public void stopServer() throws IOException
-    {
+    public void stopServer() throws IOException {
         server.close();
         Main.info(marktr("RemoteControl::Server stopped."));
     }

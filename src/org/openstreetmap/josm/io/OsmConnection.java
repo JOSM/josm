@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 
 import oauth.signpost.OAuthConsumer;
@@ -41,10 +40,13 @@ public class OsmConnection {
         try {
             HttpURLConnection.setFollowRedirects(true);
         } catch (SecurityException e) {
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 
+    /**
+     * Cancels the connection.
+     */
     public void cancel() {
         cancel = true;
         synchronized (this) {

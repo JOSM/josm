@@ -253,7 +253,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     //
                     break;
                 } catch(OsmTransferCanceledException e) {
-                    e.printStackTrace();
+                    Main.error(e);
                     uploadCanceled = true;
                     break uploadloop;
                 } catch(OsmApiPrimitiveGoneException e) {

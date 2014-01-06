@@ -181,7 +181,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     try {
                         canonical = f.getCanonicalPath();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Main.error(e);
                         rememberError(tr("Unable to get canonical path for directory {0}\n",
                                 f.getAbsolutePath()));
                     }
@@ -198,7 +198,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                         try {
                             addRecursiveFiles(files, Arrays.asList(children));
                         } catch(NullPointerException npe) {
-                            npe.printStackTrace();
+                            Main.error(npe);
                             rememberError(tr("Found null file in directory {0}\n", f.getPath()));
                         }
                     } else {
