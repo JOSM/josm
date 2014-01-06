@@ -2,6 +2,7 @@ package org.openstreetmap.josm.tools;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
@@ -80,6 +81,18 @@ public final class Predicates {
             @Override
             public boolean evaluate(OsmPrimitive p) {
                 return p.hasTag(key, values);
+            }
+        };
+    }
+
+    /**
+     * Returns a {@link Predicate} executing {@link Collection#contains(Object)}.
+     */
+    public static <T> Predicate<T> inCollection(final Collection<? extends T> target) {
+        return new Predicate<T>() {
+            @Override
+            public boolean evaluate(T object) {
+                return target.contains(object);
             }
         };
     }

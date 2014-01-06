@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -320,21 +322,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 boolean isDisabledAndHidden = (((Relation)table.getValueAt(row, 0))).isDisabledAndHidden();
                 if (c instanceof JLabel) {
-                    JLabel label = (JLabel)c;
-                    MemberInfo col = (MemberInfo) value;
-
-                    String text = null;
-                    for (RelationMember r : col.role) {
-                        if (text == null) {
-                            text = r.getRole();
-                        }
-                        else if (!text.equals(r.getRole())) {
-                            text = tr("<different>");
-                            break;
-                        }
-                    }
-
-                    label.setText(text);
+                    JLabel label = (JLabel) c;
+                    label.setText(((MemberInfo) value).getRoleString());
                     if (isDisabledAndHidden) {
                         label.setFont(label.getFont().deriveFont(Font.ITALIC));
                     }
@@ -622,7 +611,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     Relation r = (Relation) ref;
                     MemberInfo mi = roles.get(r);
                     if(mi == null) {
-                        mi = new MemberInfo();
+                        mi = new MemberInfo(newSel);
                     }
                     roles.put(r, mi);
                     int i = 1;
@@ -791,40 +780,61 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     static class MemberInfo {
-        List<RelationMember> role = new ArrayList<RelationMember>();
-        List<Integer> position = new ArrayList<Integer>();
+        private List<RelationMember> role = new ArrayList<RelationMember>();
+        private Set<OsmPrimitive> members = new HashSet<OsmPrimitive>();
+        private List<Integer> position = new ArrayList<Integer>();
+        private Iterable<OsmPrimitive> selection;
         private String positionString = null;
+        private String roleString = null;
+
+        MemberInfo(Iterable<OsmPrimitive> selection) {
+            this.selection = selection;
+        }
+
         void add(RelationMember r, Integer p) {
             role.add(r);
+            members.add(r.getMember());
             position.add(p);
         }
+
         String getPositionString() {
             if (positionString == null) {
-                Collections.sort(position);
-                positionString = String.valueOf(position.get(0));
-                int cnt = 0;
-                int last = position.get(0);
-                for (int i = 1; i < position.size(); ++i) {
-                    int cur = position.get(i);
-                    if (cur == last + 1) {
-                        ++cnt;
-                    } else if (cnt == 0) {
-                        positionString += "," + cur;
-                    } else {
-                        positionString += "-" + last;
-                        positionString += "," + cur;
-                        cnt = 0;
-                    }
-                    last = cur;
+                positionString = Utils.getPositionListString(position);
+                // if not all objects from the selection are member of this relation
+                if (Utils.exists(selection, Predicates.not(Predicates.inCollection(members)))) {
+                    positionString += ",\u2717";
                 }
-                if (cnt >= 1) {
-                    positionString += "-" + last;
-                }
+                members = null;
+                position = null;
+                selection = null;
             }
             if (positionString.length() > 20) {
                 positionString = positionString.substring(0, 17) + "...";
             }
             return positionString;
+        }
+
+        String getRoleString() {
+            if (roleString == null) {
+                for (RelationMember r : role) {
+                    if (roleString == null) {
+                        roleString = r.getRole();
+                    } else if (!roleString.equals(r.getRole())) {
+                        roleString = tr("<different>");
+                        break;
+                    }
+                }
+                role = null;
+            }
+            return roleString;
+        }
+
+        @Override
+        public String toString() {
+            return "MemberInfo{" +
+                    "roles='" + roleString + '\'' +
+                    ", positions='" + positionString + '\'' +
+                    '}';
         }
     }
 

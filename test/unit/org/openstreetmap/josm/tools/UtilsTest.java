@@ -4,10 +4,13 @@ package org.openstreetmap.josm.tools;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 
 import java.io.BufferedReader;
 import java.net.URL;
+import java.util.Arrays;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests of {@link Utils} class.
@@ -85,5 +88,14 @@ public class UtilsTest {
         final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("http://www.openstreetmap.org/trace/785544/data"), true);
         Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         x.close();
+    }
+
+    @Test
+    public void testPositionListString() throws Exception {
+        assertThat(Utils.getPositionListString(Arrays.asList(1)), is("1"));
+        assertThat(Utils.getPositionListString(Arrays.asList(1, 2, 3)), is("1-3"));
+        assertThat(Utils.getPositionListString(Arrays.asList(3, 1, 2)), is("1-3"));
+        assertThat(Utils.getPositionListString(Arrays.asList(1, 2, 3, 6, 7, 8)), is("1-3,6-8"));
+        assertThat(Utils.getPositionListString(Arrays.asList(1, 5, 2, 6, 7)), is("1-2,5-7"));
     }
 }
