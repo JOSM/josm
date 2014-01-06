@@ -589,13 +589,21 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         setTitle(tr("Upload to ''{0}''", url));
     }
 
-    public String getLastChangesetCommentFromHistory() {
-        Collection<String> history = Main.pref.getCollection(BasicUploadSettingsPanel.HISTORY_KEY, new ArrayList<String>());
+    private String getLastChangesetTagFromHistory(String historyKey) {
+        Collection<String> history = Main.pref.getCollection(historyKey, new ArrayList<String>());
         int age = (int) (System.currentTimeMillis() / 1000 - Main.pref.getInteger(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0));
         if (age < Main.pref.getInteger(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, 4 * 3600 * 1000) && history != null && !history.isEmpty()) {
             return history.iterator().next();
         } else {
             return null;
         }
+    }
+
+    public String getLastChangesetCommentFromHistory() {
+        return getLastChangesetTagFromHistory(BasicUploadSettingsPanel.HISTORY_KEY);
+    }
+
+    public String getLastChangesetSourceFromHistory() {
+        return getLastChangesetTagFromHistory(BasicUploadSettingsPanel.SOURCE_HISTORY_KEY);
     }
 }
