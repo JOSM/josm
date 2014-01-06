@@ -196,6 +196,7 @@ Note that for a match, at least one positive and no negative is required.
     </chunk>
     <chunk id="railway_service_gauge_electrified">
         <reference ref="railway_service" />
+        <combo key="tracks" text="Tracks" values="1,2,3,4" length="4" />
         <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
         <reference ref="railway_electrified" />
     </chunk>
