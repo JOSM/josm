@@ -1366,4 +1366,10 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @since 6491
      */
     public abstract boolean concernsArea();
+
+    /**
+     * Tests if this primitive lies outside of the downloaded area of its {@link DataSet}.
+     * @return {@code true} if this primitive lies outside of the downloaded area
+     */
+    public abstract boolean isOutsideDownloadArea();
 }

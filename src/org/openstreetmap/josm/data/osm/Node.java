@@ -375,4 +375,10 @@ public final class Node extends OsmPrimitive implements INode {
         }
         return false;
     }
+
+    @Override
+    public boolean isOutsideDownloadArea() {
+        return !isNewOrUndeleted() && getDataSet() != null && getDataSet().getDataSourceArea() != null
+                && !getCoor().isIn(getDataSet().getDataSourceArea());
+    }
 }
