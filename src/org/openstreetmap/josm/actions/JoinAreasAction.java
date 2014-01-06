@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -337,7 +336,6 @@ public class JoinAreasAction extends JosmAction {
         }
 
         // TODO: Only display this warning when nodes outside dataSourceArea are deleted
-        Area dataSourceArea = Main.main.getCurrentDataSet().getDataSourceArea();
         boolean ok = Command.checkAndConfirmOutlyingOperation("joinarea", tr("Join area confirmation"),
                 trn("The selected way has nodes outside of the downloaded data region.",
                     "The selected ways have nodes outside of the downloaded data region.",
@@ -346,7 +344,7 @@ public class JoinAreasAction extends JosmAction {
                     + tr("Are you really sure to continue?")
                     + tr("Please abort if you are not sure"),
                 tr("The selected area is incomplete. Continue?"),
-                dataSourceArea, allNodes, null);
+                allNodes, null);
         if(!ok) return;
 
         //analyze multipolygon relations and collect all areas

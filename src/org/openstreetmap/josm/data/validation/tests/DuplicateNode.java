@@ -408,7 +408,7 @@ public class DuplicateNode extends Test {
                 target = nodes.iterator().next();
             }
 
-            if (DeleteCommand.checkAndConfirmOutlyingDelete(Main.main.getCurrentDataSet().getDataSourceArea(), nodes, Collections.singleton(target)))
+            if (DeleteCommand.checkAndConfirmOutlyingDelete(nodes, Collections.singleton(target)))
                 return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
         }
 

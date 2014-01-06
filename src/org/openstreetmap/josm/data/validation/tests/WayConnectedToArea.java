@@ -63,7 +63,8 @@ public class WayConnectedToArea extends Test {
     }
 
     private void testForError(Way w, Node wayNode, OsmPrimitive p) {
-        if (isArea(p)) {
+        if (wayNode.isOutsideDownloadArea()) {
+        } else if (isArea(p)) {
             addError(w, wayNode, p);
         } else {
             for (OsmPrimitive r : p.getReferrers()) {

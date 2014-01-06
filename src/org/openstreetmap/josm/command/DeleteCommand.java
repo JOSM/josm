@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.GridBagLayout;
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -252,7 +251,7 @@ public class DeleteCommand extends Command {
 
         if (parents.isEmpty())
             return null;
-        if (!silent && !checkAndConfirmOutlyingDelete(layer, parents, null))
+        if (!silent && !checkAndConfirmOutlyingDelete(parents, null))
             return null;
         return new DeleteCommand(layer,parents);
     }
@@ -354,7 +353,7 @@ public class DeleteCommand extends Command {
             primitivesToDelete.addAll(nodesToDelete);
         }
 
-        if (!silent && !checkAndConfirmOutlyingDelete(layer,
+        if (!silent && !checkAndConfirmOutlyingDelete(
                 primitivesToDelete, Utils.filteredCollection(primitivesToDelete, Way.class)))
             return null;
 
@@ -449,11 +448,7 @@ public class DeleteCommand extends Command {
         }
     }
 
-    public static boolean checkAndConfirmOutlyingDelete(OsmDataLayer layer, Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore) {
-        return checkAndConfirmOutlyingDelete(layer.data.getDataSourceArea(), primitives, ignore);
-    }
-
-    public static boolean checkAndConfirmOutlyingDelete(Area area, Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore) {
+    public static boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore) {
         return Command.checkAndConfirmOutlyingOperation("delete",
                 tr("Delete confirmation"),
                 tr("You are about to delete nodes outside of the area you have downloaded."
@@ -465,7 +460,7 @@ public class DeleteCommand extends Command {
                         + "<br>"
                         + "This will cause problems because you don''t see the real object."
                         + "<br>" + "Do you really want to delete?"),
-                area, primitives, ignore);
+                primitives, ignore);
     }
 
     private static boolean confirmRelationDeletion(Collection<Relation> relations) {
