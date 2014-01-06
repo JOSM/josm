@@ -17,6 +17,7 @@ class LanesTest extends GroovyTestCase {
         assert lanes.getLanesCount("left") == 1
         assert lanes.getLanesCount("left|right") == 2
         assert lanes.getLanesCount("yes|no|yes") == 3
+        assert lanes.getLanesCount("yes||") == 3
     }
 
     void test1() {
@@ -52,5 +53,10 @@ class LanesTest extends GroovyTestCase {
     void test7() {
         lanes.check(TestUtils.createPrimitive("way lanes=3 lanes:forward=3 lanes:backward=7"))
         assert lanes.errors.get(0).getMessage() == "Number of lanes:forward+lanes:backward greater than lanes"
+    }
+
+    void test8() {
+        lanes.check(TestUtils.createPrimitive("way destination:country:lanes=X|Y;Z|none destination:ref:lanes=xyz|| destination:sign:lanes=none|airport|none"))
+        assert lanes.errors.isEmpty()
     }
 }
