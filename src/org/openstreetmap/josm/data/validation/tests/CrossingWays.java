@@ -123,32 +123,6 @@ public abstract class CrossingWays extends Test {
         }
     }
 
-    public static class NaturalOrLanduse extends CrossingWays {
-
-        @Override
-        public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && (p.hasKey("natural") || p.hasKey("landuse"))
-                    && (!(p instanceof Relation) || (((Relation) p).isMultipolygon() && !((Relation) p).hasIncompleteMembers()));
-        }
-
-        @Override
-        boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            return false;
-        }
-
-        @Override
-        String createMessage(Way w1, Way w2) {
-            return tr("Crossing natural/landuse");
-        }
-
-        @Override
-        public void visit(Relation r) {
-            for (Way w : r.getMemberPrimitives(Way.class)) {
-                visit(w);
-            }
-        }
-    }
-
     public static class Barrier extends CrossingWays {
 
         @Override
