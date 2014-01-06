@@ -4773,7 +4773,7 @@ Note that for a match, at least one positive and no negative is required.
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <label text="Edit Building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed" values_context="building" default="yes" match="keyvalue" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,construction" values_context="building" default="yes" match="keyvalue" values_searchable="true" />
             <text key="name" text="Name" />
         </item>
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation">
