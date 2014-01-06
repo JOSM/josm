@@ -445,7 +445,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         super.addGui(testPanel);
         sourcesList = new EditableList(tr("TagChecker source"));
         sourcesList.setItems(sourcesProperty.get());
-        testPanel.add(new JLabel(tr("Data sources ({0})", "*.mapcss")), GBC.eol().insets(23, 0, 0, 0));
+        testPanel.add(new JLabel(tr("Data sources ({0})", "*.validator.mapcss")), GBC.eol().insets(23, 0, 0, 0));
         testPanel.add(sourcesList, GBC.eol().fill(GBC.HORIZONTAL).insets(23, 0, 0, 0));
     }
 
