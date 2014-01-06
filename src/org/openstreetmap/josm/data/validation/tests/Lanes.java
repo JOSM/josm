@@ -30,7 +30,7 @@ public class Lanes extends Test.TagTest {
     }
 
     static int getLanesCount(String value) {
-        return value.isEmpty() ? 0 : value.split("\\|").length;
+        return value.isEmpty() ? 0 : value.replaceAll("[^|]", "").length() + 1;
     }
 
     protected void checkNumberOfLanesByKey(final OsmPrimitive p, String lanesKey, String message) {
