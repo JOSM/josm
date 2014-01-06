@@ -18,6 +18,7 @@ import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -55,25 +56,11 @@ public class OsmApiUrlInputPanel extends JPanel {
     
     private ApiUrlPropagator propagator;
 
-    protected JPanel buildDefaultServerUrlPanel() {
-        JPanel pnl = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.weightx = 0.0;
-        gc.insets = new Insets(0,0,0,3);
-        gc.gridwidth  = 1;
-        pnl.add(cbUseDefaultServerUrl = new JCheckBox(), gc);
+    protected JComponent buildDefaultServerUrlPanel() {
+        cbUseDefaultServerUrl = new JCheckBox(tr("<html>Use the default OSM server URL (<strong>{0}</strong>)</html>", OsmApi.DEFAULT_API_URL));
         cbUseDefaultServerUrl.addItemListener(new UseDefaultServerUrlChangeHandler());
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        JLabel lbl = new JLabel(tr("<html>Use the default OSM server URL (<strong>{0}</strong>)</html>", OsmApi.DEFAULT_API_URL));
-        lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
-        pnl.add(lbl, gc);
-
-        return pnl;
+        cbUseDefaultServerUrl.setFont(cbUseDefaultServerUrl.getFont().deriveFont(Font.PLAIN));
+        return cbUseDefaultServerUrl;
     }
 
     protected void build() {
