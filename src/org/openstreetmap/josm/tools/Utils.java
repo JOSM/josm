@@ -418,7 +418,7 @@ public final class Utils {
             });
             return true;
         } catch (IllegalStateException ex) {
-            ex.printStackTrace();
+            Main.error(ex);
             return false;
         }
     }
@@ -448,10 +448,10 @@ public final class Utils {
                 return text;
             }
         } catch (UnsupportedFlavorException ex) {
-            ex.printStackTrace();
+            Main.error(ex);
             return null;
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Main.error(ex);
             return null;
         }
         return null;
@@ -894,4 +894,21 @@ public final class Utils {
         return null;
     }
 
+    /**
+     * Returns the root cause of a throwable object.
+     * @param t The object to get root cause for
+     * @return the root cause of {@code t}
+     * @since 6639
+     */
+    public static Throwable getRootCause(Throwable t) {
+        Throwable result = t;
+        if (result != null) {
+            Throwable cause = result.getCause();
+            while (cause != null && cause != result) {
+                result = cause;
+                cause = result.getCause();
+            }
+        }
+        return result;
+    }
 }

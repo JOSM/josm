@@ -17,6 +17,10 @@ public class WikiReader {
 
     private final String baseurl;
 
+    /**
+     * Constructs a new {@code WikiReader} for the given base URL.
+     * @param baseurl The wiki base URL
+     */
     public WikiReader(String baseurl) {
         this.baseurl = baseurl;
     }
@@ -79,7 +83,13 @@ public class WikiReader {
     }
 
     private String readLang(URL url) throws IOException {
-        BufferedReader in = Utils.openURLReader(url);
+        BufferedReader in;
+        try {
+            in = Utils.openURLReader(url);
+        } catch (IOException e) {
+            Main.addNetworkError(url, Utils.getRootCause(e));
+            throw e;
+        }
         try {
             return readFromTrac(in, url);
         } finally {
@@ -123,7 +133,6 @@ public class WikiReader {
             if (inside && !transl && !skip) {
                 // add a border="0" attribute to images, otherwise the internal help browser
                 // will render a thick  border around images inside an <a> element
-                //
                 b += line.replaceAll("<img ", "<img border=\"0\" ")
                          .replaceAll("<span class=\"icon\">.</span>", "")
                          .replaceAll("href=\"/", "href=\"" + baseurl + "/")

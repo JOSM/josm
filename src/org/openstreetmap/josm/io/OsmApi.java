@@ -77,6 +77,8 @@ public class OsmApi extends OsmConnection {
     // The collection of instantiated OSM APIs
     private static Map<String, OsmApi> instances = new HashMap<String, OsmApi>();
 
+    private URL url = null;
+
     /**
      * Replies the {@link OsmApi} for a given server URL
      *
@@ -234,7 +236,10 @@ public class OsmApi extends OsmConnection {
 
             /* This is an interim solution for openstreetmap.org not currently
              * transmitting their imagery blacklist in the capabilities call.
-             * remove this as soon as openstreetmap.org adds blacklists. */
+             * remove this as soon as openstreetmap.org adds blacklists.
+             * If you want to update this list, please ask for update of
+             * http://trac.openstreetmap.org/ticket/5024
+             * This list should not be maintained by each OSM editor (see #9210) */
             if (this.serverUrl.matches(".*openstreetmap.org/api.*") && capabilities.getImageryBlacklist().isEmpty())
             {
                 capabilities.put("blacklist", "regex", ".*\\.google\\.com/.*");
@@ -260,6 +265,10 @@ public class OsmApi extends OsmConnection {
 
         } catch (OsmTransferCanceledException e) {
             throw e;
+        } catch (OsmTransferException e) {
+            initialized = false;
+            Main.addNetworkError(url, Utils.getRootCause(e));
+            throw new OsmApiInitializationException(e);
         } catch (Exception e) {
             initialized = false;
             throw new OsmApiInitializationException(e);
@@ -597,8 +606,8 @@ public class OsmApi extends OsmConnection {
 
         while(true) { // the retry loop
             try {
-                URL url = new URL(new URL(getBaseUrl()), urlSuffix);
-                System.out.print(requestMethod + " " + url + "... ");
+                url = new URL(new URL(getBaseUrl()), urlSuffix);
+                Main.info(requestMethod + " " + url + "... ");
                 // fix #5369, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
                 activeConnection = Utils.openHttpConnection(url, false);
                 activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect",15)*1000);
