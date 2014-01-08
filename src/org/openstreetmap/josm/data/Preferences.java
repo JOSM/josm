@@ -1038,7 +1038,9 @@ public class Preferences {
         if (oldDef != null && oldDef.getValue() != null && def.getValue() != null && !def.equals(oldDef)) {
             Main.info("Defaults for " + key + " differ: " + def + " != " + defaultsMap.get(key));
         }
-        defaultsMap.put(key, def.copy());
+        if (def.getValue() != null || oldDef == null) {
+            defaultsMap.put(key, def.copy());
+        }
         Setting prop = settingsMap.get(key);
         if (klass.isInstance(prop)) {
             @SuppressWarnings("unchecked")
