@@ -12,6 +12,11 @@ public final class ColorHelper {
         // Hide default constructor for utils classes
     }
     
+    /**
+     * Returns the {@code Color} for the given HTML code.
+     * @param html the color code
+     * @return the color
+     */
     public static Color html2color(String html) {
         if (html.length() > 0 && html.charAt(0) == '#')
             html = html.substring(1);
@@ -33,9 +38,32 @@ public final class ColorHelper {
         return s.toUpperCase();
     }
 
+    /**
+     * Returns the HTML color code (6 or 8 digit).
+     * @param col The color to convert
+     * @return the HTML color code (6 or 8 digit)
+     */
     public static String color2html(Color col) {
+        return color2html(col, true);
+    }
+
+    /**
+     * Returns the HTML color code (6 or 8 digit).
+     * @param col The color to convert
+     * @param withAlpha if {@code true} and alpha value < 255, return 8-digit color code, else always 6-digit
+     * @return the HTML color code (6 or 8 digit)
+     * @since 6655
+     */
+    public static String color2html(Color col, boolean withAlpha) {
         if (col == null)
             return null;
-        return "#"+int2hex(col.getRed())+int2hex(col.getGreen())+int2hex(col.getBlue());
+        String code = "#"+int2hex(col.getRed())+int2hex(col.getGreen())+int2hex(col.getBlue());
+        if (withAlpha) {
+            int alpha = col.getAlpha();
+            if (alpha < 255) {
+                code += int2hex(alpha);
+            }
+        }
+        return code;
     }
 }
