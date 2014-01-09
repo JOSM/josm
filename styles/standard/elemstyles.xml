@@ -1279,6 +1279,12 @@ For external files the <rules> should have following elements:
 		<area colour="power#eeeeee"/>
 	</rule>
 
+    <rule>
+        <condition k="power" v="substation"/>
+        <icon annotate="true" src="misc/landmark/power.png"/>
+        <area colour="power#eeeeee"/>
+    </rule>
+
 	<rule>
 		<condition k="power" v="cable_distribution_cabinet"/>
 		<icon annotate="true" src="misc/landmark/power.png"/>
