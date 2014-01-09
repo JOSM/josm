@@ -4174,13 +4174,13 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="internet_access:fee" text="Internet access fee" values="yes,no" match="key" />
         </item>
         <item name="Automated Defibrillator" icon="presets/aed.svg" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=aed"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=aed"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=aed"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=aed" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=defibrillator"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=defibrillator"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=defibrillator"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=defibrillator" />
             <label text="Edit Automated External Defibrillator" />
             <space />
-            <key key="emergency" value="aed" />
+            <key key="emergency" value="defibrillator" />
             <reference ref="oh" />
             <text  key="operator" text="Operator" />
             <check key="indoor" text="Located inside a building?" />
