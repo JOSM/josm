@@ -177,6 +177,12 @@
   fixChangeKey: "monitoring:river_level => monitoring:water_level";
 }
 
+*[emergency=aed] {
+  /* see #9554 - http://wiki.openstreetmap.org/wiki/Proposed_features/automated_external_defibrillator */
+  throwWarning: tr("{0}={1} is deprecated", "emergency", "aed");
+  fixAdd: "emergency=defibrillator";
+}
+
 /* from http://wiki.openstreetmap.org/wiki/Conditional_restrictions#Deprecated_tags */
 *[day_on][!restriction],
 *[day_off][!restriction],
