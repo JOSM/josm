@@ -5194,6 +5194,7 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Power Substation" icon="presets/power.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=substation"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <label text="Edit Power Substation" />
             <space />
@@ -5211,7 +5212,8 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Power Transformer" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=transformer"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=transformersubstation"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=transformer"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=transformer"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=transformer" />
             <label text="Edit Power Transformer" />
             <space />
