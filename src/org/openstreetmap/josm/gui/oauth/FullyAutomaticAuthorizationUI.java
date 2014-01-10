@@ -166,9 +166,9 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         JPanel pnl = new JPanel(new BorderLayout());
 
         JTabbedPane tpProperties = new JTabbedPane();
-        tpProperties.add(VerticallyScrollablePanel.embed(buildUserNamePasswordPanel()));
-        tpProperties.add(VerticallyScrollablePanel.embed(buildGrantsPanel()));
-        tpProperties.add(VerticallyScrollablePanel.embed(getAdvancedPropertiesPanel()));
+        tpProperties.add(buildUserNamePasswordPanel().getVerticalScrollPane());
+        tpProperties.add(buildGrantsPanel().getVerticalScrollPane());
+        tpProperties.add(getAdvancedPropertiesPanel().getVerticalScrollPane());
         tpProperties.setTitleAt(0, tr("Basic"));
         tpProperties.setTitleAt(1, tr("Granted rights"));
         tpProperties.setTitleAt(2, tr("Advanced OAuth properties"));

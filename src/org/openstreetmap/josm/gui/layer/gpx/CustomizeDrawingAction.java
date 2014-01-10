@@ -24,6 +24,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
 import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class CustomizeDrawingAction extends AbstractAction implements LayerAction, MultiLayerAction {
@@ -79,7 +80,7 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
             }
         }
         GPXSettingsPanel panel = new GPXSettingsPanel(layers.get(0).getName(), hasLocal, hasNonlocal);
-        JScrollPane scrollpane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollpane = GuiHelper.embedInVerticalScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
         if (screenHeight < 700) {

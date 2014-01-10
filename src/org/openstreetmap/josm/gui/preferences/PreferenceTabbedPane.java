@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.preferences.server.ServerAccessPreference;
 import org.openstreetmap.josm.gui.preferences.shortcut.ShortcutPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorTestsPreference;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -285,6 +286,15 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     /**
+     * Returns the {@code ValidatorPreference} object.
+     * @return the {@code ValidatorPreference} object.
+     * @since 6665
+     */
+    public final ValidatorPreference getValidatorPreference() {
+        return getSetting(ValidatorPreference.class);
+    }
+
+    /**
      * Saves preferences.
      */
     public void savePreferences() {
@@ -502,6 +512,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         settingsFactory.add(new AudioPreference.Factory());
         settingsFactory.add(new ShortcutPreference.Factory());
         settingsFactory.add(new ValidatorPreference.Factory());
+        settingsFactory.add(new ValidatorTestsPreference.Factory());
         settingsFactory.add(new RemoteControlPreference.Factory());
         settingsFactory.add(new ImageryPreference.Factory());
 

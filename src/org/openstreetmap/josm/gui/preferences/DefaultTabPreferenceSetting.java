@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 
 public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetting implements TabPreferenceSetting {
@@ -19,6 +20,9 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
     private final JTabbedPane tabpane;
     private final Map<SubPreferenceSetting, Component> subSettingMap;
     
+    /**
+     * Constructs a new {@code DefaultTabPreferenceSetting}.
+     */
     public DefaultTabPreferenceSetting() {
         this(null, null, null);
     }
@@ -77,7 +81,7 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
         GBC a = GBC.eol().insets(-5,0,0,0);
         a.anchor = GBC.EAST;
         
-        JScrollPane scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.setBorder(null);
 
         JPanel tab = gui.createPreferenceTab(this);
@@ -95,6 +99,7 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
                     return true;
                 } catch (IllegalArgumentException e) {
                     // Ignore exception and return false below
+                    Main.debug(Main.getErrorMessage(e));
                 }
             }
         }

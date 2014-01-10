@@ -36,7 +36,7 @@ public final class AuthenticationPreference implements SubPreferenceSetting {
         pnlAuthPreferences = new AuthenticationPreferencesPanel();
         gui.getServerPreference().addApiUrlChangeListener(pnlAuthPreferences);
         gui.getServerPreference().addSubTab(this, tr("Authentication"),
-                ServerAccessPreference.wrapVerticallyScrollablePanel(pnlAuthPreferences),
+                pnlAuthPreferences.getVerticalScrollPane(),
                 tr("Configure your identity and how to authenticate at the OSM server"));
     }
 

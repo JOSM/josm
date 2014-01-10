@@ -10,7 +10,6 @@ import java.awt.Insets;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -18,7 +17,6 @@ import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 
 /**
  * Connection preferences, including authentication and proxy sub-preferences.
@@ -41,18 +39,6 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
 
     /** indicates whether to use the default OSM URL or not */
     private OsmApiUrlInputPanel pnlApiUrlPreferences;
-
-    /**
-     * Embeds a vertically scrollable panel in a {@link JScrollPane}
-     * @param panel the panel
-     * @return the scroll pane
-     */
-    public static JScrollPane wrapVerticallyScrollablePanel(VerticallyScrollablePanel panel) {
-        JScrollPane sp = new JScrollPane(panel);
-        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        return sp;
-    }
 
     /**
      * Builds the tabbed pane with the server preferences

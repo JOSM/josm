@@ -160,9 +160,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         pnl.add(buildSearchFieldPanel(), BorderLayout.NORTH);
         model  = new PluginPreferencesModel();
         pnlPluginPreferences = new PluginListPanel(model);
-        spPluginPreferences = new JScrollPane(pnlPluginPreferences);
-        spPluginPreferences.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        spPluginPreferences.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        spPluginPreferences = GuiHelper.embedInVerticalScrollPane(pnlPluginPreferences);
         spPluginPreferences.getVerticalScrollBar().addComponentListener(
                 new ComponentAdapter(){
                     @Override

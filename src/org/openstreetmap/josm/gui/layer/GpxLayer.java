@@ -219,7 +219,7 @@ public class GpxLayer extends Layer {
         info.append(trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size())).append(
                 trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>");
 
-        final JScrollPane sp = new JScrollPane(new HtmlPanel(info.toString()), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        final JScrollPane sp = new JScrollPane(new HtmlPanel(info.toString()));
         sp.setPreferredSize(new Dimension(sp.getPreferredSize().width, 350));
         SwingUtilities.invokeLater(new Runnable() {
             @Override

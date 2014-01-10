@@ -54,8 +54,6 @@ public class NodeListViewer extends JPanel {
 
     protected JScrollPane embeddInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
-        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         adjustmentSynchronizer.participateInSynchronizedScrolling(pane.getVerticalScrollBar());
         return pane;
     }
