@@ -90,12 +90,12 @@ public class EastNorth extends Coordinate {
     }
 
     /**
-     * Replies true if east and north are different from Double.NaN
+     * Replies true if east and north are different from Double.NaN and not inifinite
      *
-     * @return true if east and north are different from Double.NaN
+     * @return true if east and north are different from Double.NaN and not inifinite
      */
     public boolean isValid() {
-        return !java.lang.Double.isNaN(x) && !java.lang.Double.isNaN(y);
+        return !Double.isNaN(x) && !Double.isNaN(y) && !Double.isInfinite(x) && !Double.isInfinite(y);
     }
 
     public EastNorth sub(EastNorth en) {
