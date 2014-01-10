@@ -38,6 +38,7 @@ import org.openstreetmap.josm.data.preferences.CachedProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
@@ -209,11 +210,7 @@ public class Marker implements TemplateEngineDataProvider {
                     } catch (MalformedURLException e) {
                         // Try a relative file:// url, if the link is not in an URL-compatible form
                         if (relativePath != null) {
-                            try {
-                                url = new File(relativePath.getParentFile(), uri).toURI().toURL();
-                            } catch (MalformedURLException e1) {
-                                Main.warn("Unable to convert uri {0} to URL: {1}", uri, e1.getMessage());
-                            }
+                            url = Utils.fileToURL(new File(relativePath.getParentFile(), uri));
                         }
                     }
                 }

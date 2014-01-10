@@ -941,7 +941,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         }
 
         /**
-         * Determine prmitive to be selected and build cycleList
+         * Determine primitive to be selected and build cycleList
          * @param nearest primitive found by simple method
          * @param p point where user clicked
          * @return OsmPrimitive to be selected

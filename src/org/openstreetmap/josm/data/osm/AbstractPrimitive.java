@@ -602,6 +602,22 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return null;
     }
 
+    /**
+     * Returns true if the {@code key} corresponds to an OSM true value.
+     * @see OsmUtils#isTrue(String)
+     */
+    public final boolean isKeyTrue(String key) {
+        return OsmUtils.isTrue(get(key));
+    }
+
+    /**
+     * Returns true if the {@code key} corresponds to an OSM false value.
+     * @see OsmUtils#isFalse(String)
+     */
+    public final boolean isKeyFalse(String key) {
+        return OsmUtils.isFalse(get(key));
+    }
+
     public final String getIgnoreCase(String key) {
         String[] keys = this.keys;
         if (key == null)
@@ -651,20 +667,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
             if (keys[i].equals(key)) return true;
         }
         return false;
-    }
-
-    /**
-     * Replies true if other isn't null and has the same tags (key/value-pairs) as this.
-     *
-     * @param other the other object primitive
-     * @return true if other isn't null and has the same tags (key/value-pairs) as this.
-     */
-    public boolean hasSameTags(OsmPrimitive other) {
-        // We cannot directly use Arrays.equals(keys, other.keys) as keys is not ordered by key
-        // but we can at least check if both arrays are null or of the same size before creating
-        // and comparing the key maps (costly operation, see #7159)
-        return (keys == null && other.keys == null)
-            || (keys != null && other.keys != null && keys.length == other.keys.length && (keys.length == 0 || getKeys().equals(other.getKeys())));
     }
 
     /**

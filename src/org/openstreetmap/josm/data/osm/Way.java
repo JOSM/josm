@@ -725,4 +725,14 @@ public final class Way extends OsmPrimitive implements IWay {
     public boolean concernsArea() {
         return hasAreaTags();
     }
+
+    @Override
+    public boolean isOutsideDownloadArea() {
+        for (final Node n : nodes) {
+            if (n.isOutsideDownloadArea()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

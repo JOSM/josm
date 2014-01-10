@@ -40,7 +40,7 @@ public class PowerLines extends Test {
     /** Values for {@code power} key interpreted as power towers */
     public static final Collection<String> POWER_TOWER_TAGS = Arrays.asList("tower", "pole");
     /** Values for {@code power} key interpreted as power stations */
-    public static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "plant", "generator");
+    public static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "substation", "plant", "generator");
     /** Values for {@code power} key interpreted as allowed power items */
     public static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator");
 

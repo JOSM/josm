@@ -20,6 +20,7 @@ public class Environment {
     public String layer;
     public StyleSource source;
     private Context context = Context.PRIMITIVE;
+    public static final String DEFAULT_LAYER = "default";
 
     /**
      * If not null, this is the matching parent object if a condition or an expression
@@ -212,5 +213,9 @@ public class Environment {
         parent = null;
         child = null;
         index = null;
+    }
+
+    public Cascade getCascade(String layer) {
+        return mc == null ? null : mc.getCascade(layer == null ? this.layer : layer);
     }
 }

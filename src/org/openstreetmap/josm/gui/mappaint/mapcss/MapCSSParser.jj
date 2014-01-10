@@ -41,7 +41,8 @@ PARSER_END(MapCSSParser)
 <DEFAULT>
 TOKEN:
 {
-    < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
+    < SET: ("set" | "SET") >
+|   < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
 |   < UINT: ["1"-"9"] ( ["0"-"9"] )* >
 |   < UFLOAT: ( ["0"-"9"] )+ ( "." ( ["0"-"9"] )+ )? >
 |   < STRING: "\"" ( [" ","!","#"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
@@ -77,6 +78,9 @@ TOKEN:
 |   < QUESTION: "?" >
 |   < DOLLAR: "$" >
 |   < CARET: "^" >
+|   < FULLSTOP: "." >
+|   < ELEMENT_OF: "∈" >
+|   < CROSSING: "⧉" >
 |   < COMMENT_START: "/*" > : COMMENT
 |   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
 }
@@ -259,7 +263,7 @@ MapCSSRule rule():
 
 Selector child_selector() :
 {
-    boolean parentSelector = false;
+    Selector.ChildOrParentSelectorType type = null;
     Condition c;
     List<Condition> conditions = new ArrayList<Condition>();
     Selector selLeft;
@@ -269,13 +273,19 @@ Selector child_selector() :
 {
     selLeft=selector() w()
     (
-        ( <GREATER> { parentSelector = false; } | <LESS> { parentSelector = true; } ) 
-        ( ( c=condition(Context.LINK) | c=pseudoclass(Context.LINK) ) { conditions.add(c); } )*
+        (
+            ( <GREATER> { type = Selector.ChildOrParentSelectorType.CHILD; } | <LESS> { type = Selector.ChildOrParentSelectorType.PARENT; } )
+            ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
+        |
+            <ELEMENT_OF> { type = Selector.ChildOrParentSelectorType.ELEMENT_OF; }
+        |
+            <CROSSING> { type = Selector.ChildOrParentSelectorType.CROSSING; }
+        )
         { selLink = new LinkSelector(conditions); }
         w()
         selRight=selector() w()
     )?
-    { return selRight != null ? new ChildOrParentSelector(selLeft, selLink, selRight, parentSelector) : selLeft; }
+    { return selRight != null ? new ChildOrParentSelector(selLeft, selLink, selRight, type) : selLeft; }
 }
 
 Selector selector() :
@@ -289,7 +299,7 @@ Selector selector() :
 {
     ( base=<IDENT> | base=<STAR> )
     ( r=zoom() )?
-    ( ( c=condition(Context.PRIMITIVE) | c=pseudoclass(Context.PRIMITIVE) ) { conditions.add(c); } )*
+    ( ( c=condition(Context.PRIMITIVE) | c=class_or_pseudoclass(Context.PRIMITIVE) ) { conditions.add(c); } )*
     ( sub=subpart() )?
     { return new GeneralSelector(base.image, r, conditions, sub); }
 }
@@ -326,7 +336,7 @@ Condition condition(Context context) :
         LOOKAHEAD( simple_key_value_condition(context) s() <RSQUARE> )
             c=simple_key_value_condition(context) s() <RSQUARE> { return c; }
         |
-            e=expression() <RSQUARE> { return Condition.create(e, context); }
+            e=expression() <RSQUARE> { return Condition.createExpressionCondition(e, context); }
     )
 }
 
@@ -344,16 +354,19 @@ String tag_key() :
 Condition simple_key_condition(Context context) :
 {
     boolean not = false;
-    boolean yes = false;
-    boolean no = false;
+    Condition.KeyMatchType matchType = null;;
     String key;
 }
 {
     ( <EXCLAMATION> { not = true; } )?
-    key=tag_key()
-    ( LOOKAHEAD(2) <QUESTION> <EXCLAMATION> { no = true; } )?
-    ( <QUESTION> { yes = true; } )?
-    { return Condition.create(key, not, yes, no, context); }
+    (
+        { matchType = Condition.KeyMatchType.REGEX; } key = regex()
+    |
+        key = tag_key()
+    )
+    ( LOOKAHEAD(2) <QUESTION> <EXCLAMATION> { matchType = Condition.KeyMatchType.FALSE; } )?
+    (              <QUESTION>               { matchType = Condition.KeyMatchType.TRUE;  } )?
+    { return Condition.createKeyCondition(key, not, matchType, context); }
 }
 
 Condition simple_key_value_condition(Context context) :
@@ -363,15 +376,20 @@ Condition simple_key_value_condition(Context context) :
     float f;
     int i;
     Condition.Op op;
+    boolean considerValAsKey = false;
 }
 {
     key=tag_key() s()
     (
-        LOOKAHEAD(2)
-            <EQUAL> <TILDE> { op=Condition.Op.REGEX; } s() val=regex()
-        |
-        LOOKAHEAD(2)
-            <EXCLAMATION> <TILDE> { op=Condition.Op.NREGEX; } s() val=regex()
+        LOOKAHEAD(3)
+            (
+                    <EQUAL> <TILDE> { op=Condition.Op.REGEX; }
+                |
+                    <EXCLAMATION> <TILDE> { op=Condition.Op.NREGEX; }
+            )
+            s()
+            ( <STAR> { considerValAsKey=true; } )?
+            val=regex()
         |
             (
                     <EXCLAMATION> <EQUAL> { op=Condition.Op.NEQ; }
@@ -387,6 +405,7 @@ Condition simple_key_value_condition(Context context) :
                     <STAR> <EQUAL> { op=Condition.Op.CONTAINS; }
             )
             s()
+            ( <STAR> { considerValAsKey=true; } )?
             ( 
                 LOOKAHEAD(2) 
                         i=int_() { val=Integer.toString(i); }
@@ -408,19 +427,26 @@ Condition simple_key_value_condition(Context context) :
             s()
             f=float_() { val=Float.toString(f); }
     )
-    { return Condition.create(key, val, op, context); }
+    { return Condition.createKeyValueCondition(key, val, op, context, considerValAsKey); }
 }
 
-Condition pseudoclass(Context context) :
+Condition class_or_pseudoclass(Context context) :
 {
     Token t;
     boolean not = false;
+    boolean pseudo;
 }
 {
     ( <EXCLAMATION> { not = true; } )? 
-    <COLON>
+    (
+        <FULLSTOP> { pseudo = false; }
+    |
+        <COLON> { pseudo = true; }
+    )
     t=<IDENT>
-    { return Condition.create(t.image, not, context); }
+    { return pseudo
+        ? Condition.createPseudoClassCondition(t.image, not, context)
+        : Condition.createClassCondition(t.image, not, context); }
 }
 
 String subpart() :
@@ -438,25 +464,34 @@ List<Instruction> declaration() :
     List<Instruction> ins = new ArrayList<Instruction>();
     Instruction i;
     Token key;
-    Object val;
+    Object val = null;
 }
 {
     <LBRACE> w()
     (
+        (
+            <SET> w()
+            (<FULLSTOP>)? // specification allows "set .class" to set "class". we also support "set class"
+            key=<IDENT> w()
+            ( <EQUAL> val=expression() )?
+            { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val, true)); }
+            ( <RBRACE> { return ins; } | <SEMICOLON> w() )
+        )
+    |
         key=<IDENT> w() <COLON> w()
         (
             LOOKAHEAD( float_array() w() ( <SEMICOLON> | <RBRACE> ) )
                 val=float_array()
-                { ins.add(new Instruction.AssignmentInstruction(key.image, val)); }
+                { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
                 w()
                 ( <RBRACE> { return ins; } | <SEMICOLON> w() )
             |
             LOOKAHEAD( expression() ( <SEMICOLON> | <RBRACE> ) )
                 val=expression()
-                { ins.add(new Instruction.AssignmentInstruction(key.image, val)); }
+                { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
                 ( <RBRACE> { return ins; } | <SEMICOLON> w() )
             |
-                val=readRaw() w() { ins.add(new Instruction.AssignmentInstruction(key.image, val)); }
+                val=readRaw() w() { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
         )
     )*
     <RBRACE>

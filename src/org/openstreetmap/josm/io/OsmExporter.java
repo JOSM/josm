@@ -68,7 +68,7 @@ public class OsmExporter extends FileExporter {
 
             // create outputstream and wrap it with gzip or bzip, if necessary
             OutputStream out = getOutputStream(file);
-            Writer writer = new OutputStreamWriter(out, "UTF-8");
+            Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
 
             OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
             layer.data.getReadLock().lock();
@@ -86,7 +86,7 @@ public class OsmExporter extends FileExporter {
             }
             layer.onPostSaveToFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>An error occurred while saving.<br>Error is:<br>{0}</html>", e.getMessage()),
@@ -101,7 +101,7 @@ public class OsmExporter extends FileExporter {
                     Utils.copyFile(tmpFile, file);
                 }
             } catch (IOException e2) {
-                e2.printStackTrace();
+                Main.error(e2);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("<html>An error occurred while restoring backup file.<br>Error is:<br>{0}</html>", e2.getMessage()),

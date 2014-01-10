@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 
 import oauth.signpost.OAuthConsumer;
@@ -21,6 +20,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.Base64;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Base class that handles common things like authentication for the reader and writer
@@ -40,10 +40,13 @@ public class OsmConnection {
         try {
             HttpURLConnection.setFollowRedirects(true);
         } catch (SecurityException e) {
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 
+    /**
+     * Cancels the connection.
+     */
     public void cancel() {
         cancel = true;
         synchronized (this) {
@@ -72,7 +75,7 @@ public class OsmConnection {
      * @throws OsmTransferException thrown if something went wrong. Check for nested exceptions
      */
     protected void addBasicAuthorizationHeader(HttpURLConnection con) throws OsmTransferException {
-        CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+        CharsetEncoder encoder = Utils.UTF_8.newEncoder();
         CredentialsAgentResponse response;
         String token;
         try {

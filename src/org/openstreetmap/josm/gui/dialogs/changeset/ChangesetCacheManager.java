@@ -19,6 +19,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -59,6 +60,11 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *
  */
 public class ChangesetCacheManager extends JFrame {
+
+    /** The changeset download icon **/
+    public static final ImageIcon DOWNLOAD_CONTENT_ICON = ImageProvider.get("dialogs/changeset", "downloadchangesetcontent");
+    /** The changeset update icon **/
+    public static final ImageIcon UPDATE_CONTENT_ICON   = ImageProvider.get("dialogs/changeset", "updatechangesetcontent");
 
     /** the unique instance of the cache manager  */
     private static ChangesetCacheManager instance;
@@ -159,8 +165,8 @@ public class ChangesetCacheManager extends JFrame {
         JTabbedPane tp = new JTabbedPane();
 
         // -- add the details panel
-        ChangesetDetailPanel pnlChangesetDetail;
-        tp.add(pnlChangesetDetail = new ChangesetDetailPanel());
+        ChangesetDetailPanel pnlChangesetDetail = new ChangesetDetailPanel();
+        tp.add(pnlChangesetDetail);
         model.addPropertyChangeListener(pnlChangesetDetail);
 
         // -- add the tags panel
@@ -283,6 +289,9 @@ public class ChangesetCacheManager extends JFrame {
         addWindowListener(new WindowEventHandler());
     }
 
+    /**
+     * Constructs a new {@code ChangesetCacheManager}.
+     */
     public ChangesetCacheManager() {
         build();
     }
@@ -482,7 +491,7 @@ public class ChangesetCacheManager extends JFrame {
     class DownloadSelectedChangesetContentAction extends AbstractAction implements ListSelectionListener{
         public DownloadSelectedChangesetContentAction() {
             putValue(NAME, tr("Download changeset content"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangesetcontent"));
+            putValue(SMALL_ICON, DOWNLOAD_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Download the content of the selected changesets from the server"));
             updateEnabledState();
         }
@@ -626,14 +635,18 @@ public class ChangesetCacheManager extends JFrame {
         setSelectedChangesets(toSelect);
     }
 
+    /**
+     * Runs the given changeset download task.
+     * @param task The changeset download task to run
+     */
     public void runDownloadTask(final ChangesetDownloadTask task) {
         Main.worker.submit(task);
-        Runnable r = new Runnable() {
-            @Override public void run() {
+        Main.worker.submit(new Runnable() {
+            @Override
+            public void run() {
                 if (task.isCanceled() || task.isFailed()) return;
                 setSelectedChangesets(task.getDownloadedChangesets());
             }
-        };
-        Main.worker.submit(r);
+        });
     }
 }

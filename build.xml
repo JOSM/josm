@@ -36,22 +36,51 @@
         <antcall target="create-revision"/>
     </target>
     <!--
-      ** Creates the REVISION file to be included in the distribution
+      ** Initializes the REVISION.XML file from SVN information
     -->
-    <target name="create-revision">
-        <property name="revision.dir" value="${build.dir}"/>
-        <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false">
+    <target name="init-svn-revision-xml">
+        <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false" resultproperty="svn.info.result">
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
             <arg value="http://josm.openstreetmap.de/svn/trunk"/>
         </exec>
+        <condition property="svn.info.success">
+            <equals arg1="${svn.info.result}" arg2="0" />
+        </condition>
+    </target>
+    <!--
+      ** Initializes the REVISION.XML file from git information
+    -->
+    <target name="init-git-revision-xml" unless="svn.info.success">
+        <exec append="false" output="REVISION.XML" executable="git" failifexecutionfails="false">
+            <arg value="log"/>
+            <arg value="-1"/>
+            <arg value="--grep=git-svn-id"/>
+            <!--
+            %B:  raw body (unwrapped subject and body)
+            %n:  new line
+            %ai: author date, ISO 8601 format
+            -->
+            <arg value="--pretty=format:%B%n%ai"/>
+            <arg value="HEAD"/>
+        </exec>
+        <replaceregexp file="REVISION.XML" flags="s"
+                       match=".*git-svn-id: [^@]*@([0-9]+).*(\d{4}-\d{2}-\d{2}.\d{2}\:\d{2}\:\d{2}\s*[+-]\d{2}:?\d{2})\s*$"
+                       replace="&lt;info&gt;&lt;entry&gt;&lt;commit revision=&quot;\1&quot;&gt;&lt;date&gt;\2&lt;/date&gt;&lt;/commit&gt;&lt;/entry&gt;&lt;/info&gt;"/>
+    </target>
+    <!--
+      ** Creates the REVISION file to be included in the distribution
+    -->
+    <target name="create-revision" depends="init-svn-revision-xml, init-git-revision-xml">
+        <property name="revision.dir" value="${build.dir}"/>
         <xmlproperty file="REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
         <delete file="REVISION.XML"/>
         <tstamp>
             <format property="build.tstamp" pattern="yyyy-MM-dd HH:mm:ss"/>
         </tstamp>
         <property name="version.entry.commit.revision" value="UNKNOWN"/>
+        <property name="version.entry.commit.date" value="UNKNOWN"/>
         <mkdir dir="${revision.dir}"/>
         <!-- add Build-Name: ... when making special builds, e.g. DEBIAN -->
         <echo file="${revision.dir}/REVISION">
@@ -61,6 +90,9 @@ Is-Local-Build: true
 Build-Date: ${build.tstamp}
 </echo>
     </target>
+    <!--
+      ** Check internal XML files against their XSD
+    -->
     <target name="check-schemas">
         <schemavalidate file="data/defaultpresets.xml" >
             <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="data/tagging-preset.xsd" />
@@ -69,17 +101,10 @@ Build-Date: ${build.tstamp}
             <schema namespace="http://josm.openstreetmap.de/mappaint-style-1.0" file="data/mappaint-style.xsd" />
         </schemavalidate>
     </target>
+    <!--
+      ** Main target that builds JOSM and checks XML against schemas
+    -->
     <target name="dist" depends="compile,create-revision,check-schemas">
-        <exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
-            <env key="LANG" value="C"/>
-            <arg value="info"/>
-            <arg value="--xml"/>
-            <arg value="http://josm.openstreetmap.de/svn/trunk"/>
-        </exec>
-        <xmlproperty file="REVISION" prefix="version" keepRoot="false" collapseAttributes="true"/>
-        <delete file="REVISION"/>
-        <property name="version.entry.commit.revision" value="UNKNOWN"/>
-        <property name="version.entry.commit.date" value="UNKNOWN"/>
         <echo>Revision ${version.entry.commit.revision}</echo>
         <copy file="CONTRIBUTION" todir="build"/>
         <copy file="README" todir="build"/>

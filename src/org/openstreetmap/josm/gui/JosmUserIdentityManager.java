@@ -64,7 +64,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
                 try {
                     instance.initFromOAuth(Main.parent);
                 } catch (Throwable t) {
-                    t.printStackTrace();
+                    Main.error(t);
                     // Fall back to preferences if OAuth identification fails for any reason
                     instance.initFromPreferences();
                 }
@@ -217,9 +217,9 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
             UserInfo info = new OsmServerUserInfoReader().fetchUserInfo(NullProgressMonitor.INSTANCE);
             setFullyIdentified(info.getDisplayName(), info);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            Main.error(e);
         } catch (OsmTransferException e) {
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 
@@ -276,7 +276,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
                 try {
                     instance.initFromOAuth(Main.parent);
                 } catch (Throwable t) {
-                    t.printStackTrace();
+                    Main.error(t);
                 }
             }
         }

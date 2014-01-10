@@ -790,7 +790,6 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         return primitivesMap.get(primitiveId);
     }
 
-
     /**
      * Show message and stack trace in log in case primitive is not found
      * @param primitiveId
@@ -802,7 +801,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
             Main.warn(tr("JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
                     + "at http://josm.openstreetmap.de/. This is not a critical error, it should be safe to continue in your work.",
                     primitiveId.getType(), Long.toString(primitiveId.getUniqueId())));
-            new Exception().printStackTrace();
+            Main.error(new Exception());
         }
 
         return result;

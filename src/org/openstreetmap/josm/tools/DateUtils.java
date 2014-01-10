@@ -12,6 +12,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * A static utility class dealing with parsing XML date quickly and formatting
  * a date to the XML UTC format regardless of current locale.
@@ -36,7 +38,7 @@ public final class DateUtils {
         try {
             fact = DatatypeFactory.newInstance();
         } catch(DatatypeConfigurationException ce) {
-            ce.printStackTrace();
+            Main.error(ce);
         }
         XML_DATE = fact;
     }

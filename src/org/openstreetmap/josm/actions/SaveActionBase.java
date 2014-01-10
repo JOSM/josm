@@ -86,7 +86,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             }
             Main.parent.repaint();
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.error(e);
             return false;
         }
         return true;

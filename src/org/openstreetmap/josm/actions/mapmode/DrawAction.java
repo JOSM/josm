@@ -178,16 +178,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return false;
 
         // update selection to reflect which way being modified
-        if (currentBaseNode != null && getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty()) {
+        DataSet currentDataSet = getCurrentDataSet();
+        if (currentBaseNode != null && currentDataSet != null && !currentDataSet.getSelected().isEmpty()) {
             Way continueFrom = getWayForNode(currentBaseNode);
             if (alt && continueFrom != null && (!currentBaseNode.isSelected() || continueFrom.isSelected())) {
-                getCurrentDataSet().beginUpdate(); // to prevent the selection listener to screw around with the state
-                getCurrentDataSet().addSelected(currentBaseNode);
-                getCurrentDataSet().clearSelection(continueFrom);
-                getCurrentDataSet().endUpdate();
+                addRemoveSelection(currentDataSet, currentBaseNode, continueFrom);
                 needsRepaint = true;
             } else if (!alt && continueFrom != null && !continueFrom.isSelected()) {
-                getCurrentDataSet().addSelected(continueFrom);
+                currentDataSet.addSelected(continueFrom);
                 needsRepaint = true;
             }
         }
@@ -196,6 +194,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             Main.map.mapView.repaint();
         }
         return needsRepaint;
+    }
+
+    private static void addRemoveSelection(DataSet ds, OsmPrimitive toAdd, OsmPrimitive toRemove) {
+        ds.beginUpdate(); // to prevent the selection listener to screw around with the state
+        ds.addSelected(toAdd);
+        ds.clearSelection(toRemove);
+        ds.endUpdate();
     }
 
     @Override
@@ -1250,9 +1255,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * Get selected primitives, while draw action is in progress.
      *
      * While drawing a way, technically the last node is selected.
-     * This is inconvenient when the user tries to add tags to the
-     * way using a keyboard shortcut. In that case, this method returns
-     * the current way as selection, to work around this issue.
+     * This is inconvenient when the user tries to add/edit tags to the way.
+     * For this case, this method returns the current way as selection,
+     * to work around this issue.
      * Otherwise the normal selection of the current data layer is returned.
      */
     public Collection<OsmPrimitive> getInProgressSelection() {
@@ -1260,7 +1265,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (ds == null) return null;
         if (currentBaseNode != null && !ds.getSelected().isEmpty()) {
             Way continueFrom = getWayForNode(currentBaseNode);
-            if (alt && continueFrom != null)
+            if (continueFrom != null)
                 return Collections.<OsmPrimitive>singleton(continueFrom);
         }
         return ds.getSelected();

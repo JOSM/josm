@@ -145,8 +145,8 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         if (model.getListMergeModel().isFrozen()) {
             setBackground(ConflictColors.BGCOLOR_FROZEN.get());
         } else if (model.isParticipatingInCurrentComparePair()) {
-            setBackground(ConflictColors.BGCOLOR_PARTICIPAING_IN_COMPARISON.get());
-            setForeground(ConflictColors.FGCOLOR_PARTICIPAING_IN_COMPARISON.get());
+            setBackground(ConflictColors.BGCOLOR_PARTICIPATING_IN_COMPARISON.get());
+            setForeground(ConflictColors.FGCOLOR_PARTICIPATING_IN_COMPARISON.get());
         }
         setText(Integer.toString(row+1));
     }

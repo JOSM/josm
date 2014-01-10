@@ -39,6 +39,9 @@ public class TagConflictResolverColumnModel extends DefaultTableColumnModel{
         addColumn(col);
     }
 
+    /**
+     * Constructs a new {@code TagConflictResolverColumnModel}.
+     */
     public TagConflictResolverColumnModel() {
         createColumns();
     }

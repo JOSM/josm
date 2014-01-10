@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
+import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -59,6 +61,7 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
@@ -199,12 +202,15 @@ abstract public class Main {
      * The data validation handler.
      */
     public OsmValidator validator;
+
     /**
      * The MOTD Layer.
      */
     private GettingStarted gettingStarted = new GettingStarted();
 
     private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<MapFrameListener>();
+
+    protected static final Map<String, Throwable> networkErrors = new HashMap<String, Throwable>();
 
     /**
      * Logging level (4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
@@ -220,7 +226,9 @@ abstract public class Main {
     public static void error(String msg) {
         if (logLevel < 1)
             return;
-        System.err.println(tr("ERROR: {0}", msg));
+        if (msg != null && !msg.isEmpty()) {
+            System.err.println(tr("ERROR: {0}", msg));
+        }
     }
 
     /**
@@ -230,7 +238,9 @@ abstract public class Main {
     public static void warn(String msg) {
         if (logLevel < 2)
             return;
-        System.err.println(tr("WARNING: {0}", msg));
+        if (msg != null && !msg.isEmpty()) {
+            System.err.println(tr("WARNING: {0}", msg));
+        }
     }
 
     /**
@@ -240,7 +250,9 @@ abstract public class Main {
     public static void info(String msg) {
         if (logLevel < 3)
             return;
-        System.out.println(tr("INFO: {0}", msg));
+        if (msg != null && !msg.isEmpty()) {
+            System.out.println(tr("INFO: {0}", msg));
+        }
     }
 
     /**
@@ -250,7 +262,9 @@ abstract public class Main {
     public static void debug(String msg) {
         if (logLevel < 4)
             return;
-        System.out.println(tr("DEBUG: {0}", msg));
+        if (msg != null && !msg.isEmpty()) {
+            System.out.println(tr("DEBUG: {0}", msg));
+        }
     }
 
     /**
@@ -300,8 +314,7 @@ abstract public class Main {
      * @since 6248
      */
     public static void error(Throwable t) {
-        error(getErrorMessage(t));
-        t.printStackTrace();
+        error(t, true);
     }
 
     /**
@@ -310,11 +323,45 @@ abstract public class Main {
      * @since 6248
      */
     public static void warn(Throwable t) {
-        warn(getErrorMessage(t));
-        t.printStackTrace();
+        warn(t, true);
     }
 
-    private static String getErrorMessage(Throwable t) {
+    /**
+     * Prints an error message for the given Throwable.
+     * @param t The throwable object causing the error
+     * @param stackTrace {@code true}, if the stacktrace should be displayed
+     * @since 6642
+     */
+    public static void error(Throwable t, boolean stackTrace) {
+        error(getErrorMessage(t));
+        if (stackTrace) {
+            t.printStackTrace();
+        }
+    }
+
+    /**
+     * Prints a warning message for the given Throwable.
+     * @param t The throwable object causing the error
+     * @param stackTrace {@code true}, if the stacktrace should be displayed
+     * @since 6642
+     */
+    public static void warn(Throwable t, boolean stackTrace) {
+        warn(getErrorMessage(t));
+        if (stackTrace) {
+            t.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns a human-readable message of error, also usable for developers.
+     * @param t The error
+     * @return The human-readable error message
+     * @since 6642
+     */
+    public static String getErrorMessage(Throwable t) {
+    	if (t == null) {
+    		return null;
+    	}
         StringBuilder sb = new StringBuilder(t.getClass().getName());
         String msg = t.getMessage();
         if (msg != null) {
@@ -452,8 +499,8 @@ abstract public class Main {
                 }
                 try {
                     OsmApi.getOsmApi().initialize(null, true);
-                } catch (Exception x) {
-                    // ignore any exception here.
+                } catch (Exception e) {
+                    Main.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
                 return null;
             }
@@ -590,6 +637,25 @@ abstract public class Main {
         if (!hasEditLayer()) return null;
         return getEditLayer().data;
     }
+    
+    /**
+     * Replies the current selected primitives, from a end-user point of view.
+     * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
+     * Indeed, if the user is currently in drawing mode, only the way currently being drawn is returned,
+     * see {@link DrawAction#getInProgressSelection()}.
+     * 
+     * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
+     * @since 6546
+     */
+    public Collection<OsmPrimitive> getInProgressSelection() {
+        if (map != null && map.mapMode instanceof DrawAction) {
+            return ((DrawAction) map.mapMode).getInProgressSelection();
+        } else {
+            DataSet ds = getCurrentDataSet();
+            if (ds == null) return null;
+            return ds.getSelected();
+        }
+    }
 
     /**
      * Returns the currently active  layer
@@ -700,7 +766,7 @@ abstract public class Main {
             contentPanePrivate.updateUI();
             panel.updateUI();
         } catch (final Exception e) {
-            e.printStackTrace();
+            error(e);
         }
         UIManager.put("OptionPane.okIcon", ImageProvider.get("ok"));
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
@@ -805,7 +871,7 @@ abstract public class Main {
      * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
      * @since 5519
      */
-    public static boolean saveUnsavedModifications(List<? extends Layer> selectedLayers, boolean exit) {
+    public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, boolean exit) {
         SaveLayersDialog dialog = new SaveLayersDialog(parent);
         List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<OsmDataLayer>();
         for (Layer l: selectedLayers) {
@@ -1327,5 +1393,50 @@ abstract public class Main {
      */
     public static boolean removeMapFrameListener(MapFrameListener listener) {
         return listener != null ? mapFrameListeners.remove(listener) : false;
+    }
+
+    /**
+     * Adds a new network error that occur to give a hint about broken Internet connection.
+     * Do not use this method for errors known for sure thrown because of a bad proxy configuration.
+     * 
+     * @param url The accessed URL that caused the error
+     * @param t The network error
+     * @return The previous error associated to the given resource, if any. Can be {@code null}
+     * @since 6642
+     */
+    public static Throwable addNetworkError(URL url, Throwable t) {
+        if (url != null && t != null) {
+            Throwable old = addNetworkError(url.toExternalForm(), t);
+            if (old != null) {
+                Main.warn("Already here "+old);
+            }
+            return old;
+        }
+        return null;
+    }
+
+    /**
+     * Adds a new network error that occur to give a hint about broken Internet connection.
+     * Do not use this method for errors known for sure thrown because of a bad proxy configuration.
+     * 
+     * @param url The accessed URL that caused the error
+     * @param t The network error
+     * @return The previous error associated to the given resource, if any. Can be {@code null}
+     * @since 6642
+     */
+    public static Throwable addNetworkError(String url, Throwable t) {
+        if (url != null && t != null) {
+            return networkErrors.put(url, t);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the network errors that occured until now.
+     * @return the network errors that occured until now, indexed by URL
+     * @since 6639
+     */
+    public static Map<String, Throwable> getNetworkErrors() {
+        return new HashMap<String, Throwable>(networkErrors);
     }
 }

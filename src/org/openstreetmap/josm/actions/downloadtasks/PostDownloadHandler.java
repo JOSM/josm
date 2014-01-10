@@ -69,7 +69,7 @@ public class PostDownloadHandler implements Runnable {
             try {
                 future.get();
             } catch(Exception e) {
-                e.printStackTrace();
+                Main.error(e);
                 return;
             }
         }

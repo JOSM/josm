@@ -54,11 +54,11 @@ public class DownloadSessionTask extends AbstractDownloadTask {
                 loader = new Loader(Utils.openURL(u), u.toURI(), url.endsWith(".joz"));
                 return Main.worker.submit(loader);
             } catch (URISyntaxException e) {
-                e.printStackTrace();
+                Main.error(e);
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                Main.error(e);
             } catch (IOException e) {
-                e.printStackTrace();
+                Main.error(e);
             }
         }
         return null;

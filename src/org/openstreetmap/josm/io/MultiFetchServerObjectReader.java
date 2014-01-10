@@ -356,9 +356,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                     merge(result.dataSet);
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Main.error(e);
             } catch (ExecutionException e) {
-                e.printStackTrace();
+                Main.error(e);
             }
         }
         // Cancel requests if the user choosed to

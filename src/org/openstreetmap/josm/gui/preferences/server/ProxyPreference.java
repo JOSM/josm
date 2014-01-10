@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
  * Proxy sub-preferences in server preferences.
  * @since 6523
  */
-public class ProxyPreference implements SubPreferenceSetting {
+public final class ProxyPreference implements SubPreferenceSetting {
 
     /**
      * Factory used to create a new {@code ProxyPreference}.
@@ -40,7 +40,7 @@ public class ProxyPreference implements SubPreferenceSetting {
     public void addGui(PreferenceTabbedPane gui) {
         pnlProxyPreferences = new ProxyPreferencesPanel();
         gui.getServerPreference().addSubTab(this, tr("Proxy settings"),
-                ServerAccessPreference.wrapVerticallyScrollablePanel(pnlProxyPreferences),
+                pnlProxyPreferences.getVerticalScrollPane(),
                 tr("Configure whether to use a proxy server"));
     }
 

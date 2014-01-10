@@ -16,15 +16,13 @@ import javax.script.ScriptException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tests the correct usage of the opening hour syntax of the tags
@@ -33,7 +31,7 @@ import org.openstreetmap.josm.io.MirroredInputStream;
  *
  * @since 6370
  */
-public class OpeningHourTest extends Test {
+public class OpeningHourTest extends Test.TagTest {
 
     /**
      * Javascript engine
@@ -52,7 +50,7 @@ public class OpeningHourTest extends Test {
     public void initialize() throws Exception {
         super.initialize();
         if (ENGINE != null) {
-            ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/validator/opening_hours.js"), "UTF-8"));
+            ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/validator/opening_hours.js"), Utils.UTF_8));
             // fake country/state to not get errors on holidays
             ENGINE.eval("var nominatimJSON = {address: {state: 'Bayern', country_code: 'de'}};");
             ENGINE.eval("" +
@@ -121,15 +119,6 @@ public class OpeningHourTest extends Test {
         }
 
         /**
-         * Constructs a new {@code OpeningHoursTestError}.
-         * @param message The error message
-         * @param severity The error severity
-         */
-        public OpeningHoursTestError(String message, Severity severity) {
-            this(message, severity, null);
-        }
-
-        /**
          * Returns the real test error given to JOSM validator.
          * @param p The incriminated OSM primitive.
          * @param key The incriminated key, used for display.
@@ -167,6 +156,11 @@ public class OpeningHourTest extends Test {
         public Severity getSeverity() {
             return severity;
         }
+
+        @Override
+        public String toString() {
+            return getMessage() + " => " + getPrettifiedValue();
+        }
     }
 
     /**
@@ -179,12 +173,26 @@ public class OpeningHourTest extends Test {
      * @return a list of {@link TestError} or an empty list
      */
     public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, CheckMode mode) {
+        return checkOpeningHourSyntax(key, value, mode, false);
+    }
+
+    /**
+     * Checks for a correct usage of the opening hour syntax of the {@code value} given according to
+     * <a href="https://github.com/ypid/opening_hours.js">opening_hours.js</a> and returns a list containing
+     * validation errors or an empty list. Null values result in an empty list.
+     * @param key the OSM key (should be "opening_hours", "collection_times" or "service_times").
+     * @param value the opening hour value to be checked.
+     * @param mode whether to validate {@code value} as a time range, or points in time, or both.
+     * @param ignoreOtherSeverity whether to ignore errors with {@link Severity#OTHER}.
+     * @return a list of {@link TestError} or an empty list
+     */
+    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, CheckMode mode, boolean ignoreOtherSeverity) {
         if (ENGINE == null || value == null || value.trim().isEmpty()) {
             return Collections.emptyList();
         }
+        final List<OpeningHoursTestError> errors = new ArrayList<OpeningHoursTestError>();
         try {
             final Object r = parse(value, mode);
-            final List<OpeningHoursTestError> errors = new ArrayList<OpeningHoursTestError>();
             String prettifiedValue = null;
             try {
                 prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
@@ -197,13 +205,15 @@ public class OpeningHourTest extends Test {
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"))) {
                 errors.add(new OpeningHoursTestError(i.toString().trim(), Severity.WARNING, prettifiedValue));
             }
-            if (errors.isEmpty() && prettifiedValue != null && !value.equals(prettifiedValue)) {
+            if (!ignoreOtherSeverity && errors.isEmpty() && prettifiedValue != null && !value.equals(prettifiedValue)) {
                 errors.add(new OpeningHoursTestError(tr("opening_hours value can be prettified"), Severity.OTHER, prettifiedValue));
             }
-            return errors;
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex);
+        } catch (ScriptException ex) {
+            Main.error(ex);
+        } catch (NoSuchMethodException ex) {
+            Main.error(ex);
         }
+        return errors;
     }
 
     /**
@@ -215,7 +225,7 @@ public class OpeningHourTest extends Test {
      * @return a list of {@link TestError} or an empty list
      */
     public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value) {
-        return checkOpeningHourSyntax(key, value, CheckMode.TIME_RANGE);
+        return checkOpeningHourSyntax(key, value, "opening_hours".equals(key) ? CheckMode.TIME_RANGE : CheckMode.BOTH);
     }
 
     protected void check(final OsmPrimitive p, final String key, CheckMode mode) {
@@ -224,24 +234,10 @@ public class OpeningHourTest extends Test {
         }
     }
 
-    protected void check(final OsmPrimitive p) {
+    @Override
+    public void check(final OsmPrimitive p) {
         check(p, "opening_hours", CheckMode.TIME_RANGE);
         check(p, "collection_times", CheckMode.BOTH);
         check(p, "service_times", CheckMode.BOTH);
-    }
-
-    @Override
-    public void visit(final Node n) {
-        check(n);
-    }
-
-    @Override
-    public void visit(final Relation r) {
-        check(r);
-    }
-
-    @Override
-    public void visit(final Way w) {
-        check(w);
     }
 }

@@ -43,6 +43,7 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -169,9 +170,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI(apiUrl);
         pnlManualAuthorisationUI = new ManualAuthorizationUI(apiUrl);
 
-        spAuthorisationProcedureUI = new JScrollPane(new JPanel());
-        spAuthorisationProcedureUI.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        spAuthorisationProcedureUI.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        spAuthorisationProcedureUI = GuiHelper.embedInVerticalScrollPane(new JPanel());
         spAuthorisationProcedureUI.getVerticalScrollBar().addComponentListener(
                 new ComponentListener() {
                     @Override

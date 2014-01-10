@@ -14,7 +14,7 @@ import org.openstreetmap.josm.Main;
 
 /**
  * A subclass of {@link JPasswordField} to implement a workaround to 
- * <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6322854">JDK bug 6322854</a>.
+ * <a href="https://bugs.openjdk.java.net/browse/JDK-6322854">JDK bug 6322854</a>.
  * This class can be deleted after Oracle decides to fix this bug...
  * 
  * @since 5752
@@ -90,7 +90,7 @@ public class JosmPasswordField extends JPasswordField {
     }
     
     /**
-     * Implements a workaround to <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6322854">JDK bug 6322854</a>.
+     * Implements a workaround to <a href="https://bugs.openjdk.java.net/browse/JDK-6322854">JDK bug 6322854</a>.
      * @param text The {@link JTextComponent} to protect.
      */
     public static final void workaroundJdkBug6322854(final JTextComponent text) {
@@ -106,7 +106,7 @@ public class JosmPasswordField extends JPasswordField {
                     } catch (NullPointerException npe) {
                         Main.error("NullPointerException occured because of JDK bug 6322854. "
                                 +"Copy/Paste operation has not been performed. Please complain to Oracle: "+
-                                "http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6322854");
+                                "https://bugs.openjdk.java.net/browse/JDK-6322854");
                     }
                 }
                 

@@ -22,11 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -35,6 +36,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -54,6 +56,13 @@ public final class Utils {
     private Utils() {
         // Hide default constructor for utils classes
     }
+
+    /**
+     * UTF-8 (UCS Transformation Format—8-bit).
+     *
+     * <p>Every implementation of the Java platform is required to support UTF-8 (see {@link Charset}).</p>
+     */
+    public static final Charset UTF_8 = Charset.forName("UTF-8");
 
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
@@ -92,6 +101,9 @@ public final class Utils {
         return new FilteredCollection<T>(collection, predicate);
     }
 
+    /**
+     * Returns the first element from {@code items} which is non-null, or null if all elements are null.
+     */
     public static <T> T firstNonNull(T... items) {
         for (T i : items) {
             if (i != null) {
@@ -362,6 +374,23 @@ public final class Utils {
             Main.warn(e);
         }
     }
+    
+    /**
+     * Converts the given file to its URL.
+     * @param f The file to get URL from
+     * @return The URL of the given file, or {@code null} if not possible.
+     * @since 6615
+     */
+    public static URL fileToURL(File f) {
+        if (f != null) {
+            try {
+                return f.toURI().toURL();
+            } catch (MalformedURLException ex) {
+                Main.error("Unable to convert filename " + f.getAbsolutePath() + " to URL");
+            }
+        }
+        return null;
+    }
 
     private final static double EPSILON = 1e-11;
 
@@ -390,7 +419,7 @@ public final class Utils {
             });
             return true;
         } catch (IllegalStateException ex) {
-            ex.printStackTrace();
+            Main.error(ex);
             return false;
         }
     }
@@ -420,10 +449,10 @@ public final class Utils {
                 return text;
             }
         } catch (UnsupportedFlavorException ex) {
-            ex.printStackTrace();
+            Main.error(ex);
             return null;
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Main.error(ex);
             return null;
         }
         return null;
@@ -435,12 +464,7 @@ public final class Utils {
      * @return MD5 hash of data, string of length 32 with characters in range [0-9a-f]
      */
     public static String md5Hex(String data) {
-        byte[] byteData = null;
-        try {
-            byteData = data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException();
-        }
+        byte[] byteData = data.getBytes(UTF_8);
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("MD5");
@@ -706,7 +730,7 @@ public final class Utils {
      * @since 6421
      */
     public static BufferedReader openURLReaderAndDecompress(final URL url, final boolean decompress) throws IOException {
-        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), "utf-8"));
+        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), UTF_8));
     }
 
     /**
@@ -728,7 +752,7 @@ public final class Utils {
     /**
      * An alternative to {@link String#trim()} to effectively remove all leading and trailing white characters, including Unicode ones.
      * @see <a href="http://closingbraces.net/2008/11/11/javastringtrim/">Java’s String.trim has a strange idea of whitespace</a>
-     * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4080617">JDK bug 4080617</a>
+     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-4080617">JDK bug 4080617</a>
      * @param str The string to strip
      * @return <code>str</code>, without leading and trailing characters, according to
      *         {@link Character#isWhitespace(char)} and {@link Character#isSpaceChar(char)}.
@@ -808,33 +832,72 @@ public final class Utils {
     /**
      * Returns a simple human readable (hours, minutes, seconds) string for a given duration in milliseconds.
      * @param elapsedTime The duration in milliseconds
-     * @return A human redable string for the given duration
+     * @return A human readable string for the given duration
      * @throws IllegalArgumentException if elapsedTime is < 0
      * @since 6354
      */
     public static String getDurationString(long elapsedTime) throws IllegalArgumentException {
+        final int MILLIS_OF_SECOND = 1000;
+        final int MILLIS_OF_MINUTE = 60000;
+        final int MILLIS_OF_HOUR = 3600000;
+        final int MILLIS_OF_DAY = 86400000;
         if (elapsedTime < 0) {
             throw new IllegalArgumentException("elapsedTime must be > 0");
         }
         // Is it less than 1 second ?
-        if (elapsedTime < 1000) {
+        if (elapsedTime < MILLIS_OF_SECOND) {
             return String.format("%d %s", elapsedTime, tr("ms"));
         }
         // Is it less than 1 minute ?
-        if (elapsedTime < 60*1000) {
-            return String.format("%.1f %s", elapsedTime/1000f, tr("s"));
+        if (elapsedTime < MILLIS_OF_MINUTE) {
+            return String.format("%.1f %s", elapsedTime / (float) MILLIS_OF_SECOND, tr("s"));
         }
         // Is it less than 1 hour ?
-        if (elapsedTime < 60*60*1000) {
-            return String.format("%d %s %d %s", elapsedTime/60000, tr("min"), elapsedTime/1000, tr("s"));
+        if (elapsedTime < MILLIS_OF_HOUR) {
+            final long min = elapsedTime / MILLIS_OF_MINUTE;
+            return String.format("%d %s %d %s", min, tr("min"), (elapsedTime - min * MILLIS_OF_MINUTE) / MILLIS_OF_SECOND, tr("s"));
         }
         // Is it less than 1 day ?
-        if (elapsedTime < 24*60*60*1000) {
-            return String.format("%d %s %d %s", elapsedTime/3600000, tr("h"), elapsedTime/60000, tr("min"));
+        if (elapsedTime < MILLIS_OF_DAY) {
+            final long hour = elapsedTime / MILLIS_OF_HOUR;
+            return String.format("%d %s %d %s", hour, tr("h"), (elapsedTime - hour * MILLIS_OF_HOUR) / MILLIS_OF_MINUTE, tr("min"));
         }
-        long days = elapsedTime/86400000;
-        return String.format("%d %s %d %s", days, trn("day", "days", days), elapsedTime/3600000, tr("h"));
+        long days = elapsedTime / MILLIS_OF_DAY;
+        return String.format("%d %s %d %s", days, trn("day", "days", days), (elapsedTime - days * MILLIS_OF_DAY) / MILLIS_OF_HOUR, tr("h"));
     }
+
+    /**
+     * Returns a human readable representation of a list of positions.
+     * <p/>
+     * For instance, {@code [1,5,2,6,7} yields "1-2,5-7
+     * @param positionList a list of positions
+     * @return a human readable representation
+     */
+    public static String getPositionListString(List<Integer> positionList)  {
+        Collections.sort(positionList);
+        final StringBuilder sb = new StringBuilder(32);
+        sb.append(positionList.get(0));
+        int cnt = 0;
+        int last = positionList.get(0);
+        for (int i = 1; i < positionList.size(); ++i) {
+            int cur = positionList.get(i);
+            if (cur == last + 1) {
+                ++cnt;
+            } else if (cnt == 0) {
+                sb.append(",").append(cur);
+            } else {
+                sb.append("-").append(last);
+                sb.append(",").append(cur);
+                cnt = 0;
+            }
+            last = cur;
+        }
+        if (cnt >= 1) {
+            sb.append("-").append(last);
+        }
+        return sb.toString();
+    }
+
 
     /**
      * Returns a list of capture groups if {@link Matcher#matches()}, or {@code null}.
@@ -853,5 +916,39 @@ public final class Utils {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Cast an object savely.
+     * @param <T> the target type
+     * @param o the object to cast
+     * @param klass the target class (same as T)
+     * @return null if <code>o</code> is null or the type <code>o</code> is not
+     *  a subclass of <code>klass</code>. The casted value otherwise.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T cast(Object o, Class<T> klass) {
+        if (klass.isInstance(o)) {
+            return (T) o;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the root cause of a throwable object.
+     * @param t The object to get root cause for
+     * @return the root cause of {@code t}
+     * @since 6639
+     */
+    public static Throwable getRootCause(Throwable t) {
+        Throwable result = t;
+        if (result != null) {
+            Throwable cause = result.getCause();
+            while (cause != null && cause != result) {
+                result = cause;
+                cause = result.getCause();
+            }
+        }
+        return result;
     }
 }

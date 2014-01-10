@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -33,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 
 import org.openstreetmap.josm.actions.SaveAction;
@@ -213,12 +213,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
     }
 
     protected void addDataFile(OutputStream out) throws IOException {
-        Writer writer = null;
-        try {
-            writer = new OutputStreamWriter(out, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
         OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
         layer.data.getReadLock().lock();
         try {

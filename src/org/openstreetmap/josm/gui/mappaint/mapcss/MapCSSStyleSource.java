@@ -78,15 +78,15 @@ public class MapCSSStyleSource extends StyleSource {
             }
         } catch (IOException e) {
             Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
-            e.printStackTrace();
+            Main.error(e);
             logError(e);
         } catch (TokenMgrError e) {
             Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-            e.printStackTrace();
+            Main.error(e);
             logError(e);
         } catch (ParseException e) {
             Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-            e.printStackTrace();
+            Main.error(e);
             logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
         }
     }
@@ -94,7 +94,7 @@ public class MapCSSStyleSource extends StyleSource {
     @Override
     public InputStream getSourceInputStream() throws IOException {
         if (css != null) {
-            return new ByteArrayInputStream(css.getBytes("UTF-8"));
+            return new ByteArrayInputStream(css.getBytes(Utils.UTF_8));
         }
         MirroredInputStream in = new MirroredInputStream(url);
         if (isZip) {

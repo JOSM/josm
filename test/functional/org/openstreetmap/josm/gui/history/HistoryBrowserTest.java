@@ -81,7 +81,7 @@ public class HistoryBrowserTest extends JFrame {
         try {
             ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         } catch(OsmTransferException e) {
-            e.printStackTrace();
+            Main.error(e);
             return;
         }
         History h = ds.getHistory(new SimplePrimitiveId(id, type));

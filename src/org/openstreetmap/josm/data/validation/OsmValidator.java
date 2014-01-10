@@ -16,8 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -25,21 +23,19 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.data.validation.tests.Addresses;
 import org.openstreetmap.josm.data.validation.tests.BarriersEntrances;
-import org.openstreetmap.josm.data.validation.tests.BuildingInBuilding;
 import org.openstreetmap.josm.data.validation.tests.Coastlines;
+import org.openstreetmap.josm.data.validation.tests.ConditionalKeys;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
 import org.openstreetmap.josm.data.validation.tests.DuplicateNode;
 import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
 import org.openstreetmap.josm.data.validation.tests.DuplicatedWayNodes;
 import org.openstreetmap.josm.data.validation.tests.Highways;
+import org.openstreetmap.josm.data.validation.tests.Lanes;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.data.validation.tests.NameMismatch;
-import org.openstreetmap.josm.data.validation.tests.NodesDuplicatingWayTags;
-import org.openstreetmap.josm.data.validation.tests.NodesWithSameName;
 import org.openstreetmap.josm.data.validation.tests.OpeningHourTest;
-import org.openstreetmap.josm.data.validation.tests.OverlappingAreas;
 import org.openstreetmap.josm.data.validation.tests.OverlappingWays;
 import org.openstreetmap.josm.data.validation.tests.PowerLines;
 import org.openstreetmap.josm.data.validation.tests.RelationChecker;
@@ -84,15 +80,17 @@ public class OsmValidator implements LayerChangeListener {
      */
     @SuppressWarnings("unchecked")
     private static final Class<Test>[] allAvailableTests = new Class[] {
+        /* FIXME - unique error numbers for tests aren't properly unique - ignoring will not work as expected */
         DuplicateNode.class, // ID    1 ..   99
         OverlappingWays.class, // ID  101 ..  199
         UntaggedNode.class, // ID  201 ..  299
         UntaggedWay.class, // ID  301 ..  399
         SelfIntersectingWay.class, // ID  401 ..  499
         DuplicatedWayNodes.class, // ID  501 ..  599
-        CrossingWays.class, // ID  601 ..  699
+        CrossingWays.Ways.class, // ID  601 ..  699
+        CrossingWays.Boundaries.class, // ID  601 ..  699
+        CrossingWays.Barrier.class, // ID  601 ..  699
         SimilarNamedWays.class, // ID  701 ..  799
-        NodesWithSameName.class, // ID  801 ..  899
         Coastlines.class, // ID  901 ..  999
         WronglyOrderedWays.class, // ID 1001 .. 1099
         UnclosedWays.class, // ID 1101 .. 1199
@@ -108,17 +106,15 @@ public class OsmValidator implements LayerChangeListener {
         RelationChecker.class, // ID  1701 ..  1799
         TurnrestrictionTest.class, // ID  1801 ..  1899
         DuplicateRelation.class, // ID 1901 .. 1999
-        BuildingInBuilding.class, // ID 2001 .. 2099
-        //DeprecatedTags.class, // ID 2101 .. 2199
-        OverlappingAreas.class, // ID 2201 .. 2299
         WayConnectedToArea.class, // ID 2301 .. 2399
-        NodesDuplicatingWayTags.class, // ID 2401 .. 2499
         PowerLines.class, // ID 2501 .. 2599
         Addresses.class, // ID 2601 .. 2699
         Highways.class, // ID 2701 .. 2799
         BarriersEntrances.class, // ID 2801 .. 2899
         OpeningHourTest.class, // 2901 .. 2999
         MapCSSTagChecker.class, // 3000 .. 3099
+        Lanes.class, // 3100 .. 3199
+        ConditionalKeys.class, // 3200 .. 3299
     };
     
     private static Map<String, Test> allTestsMap;
@@ -129,7 +125,6 @@ public class OsmValidator implements LayerChangeListener {
                 allTestsMap.put(testClass.getSimpleName(), testClass.newInstance());
             } catch (Exception e) {
                 Main.error(e);
-                continue;
             }
         }
     }
@@ -163,7 +158,7 @@ public class OsmValidator implements LayerChangeListener {
                 pathDir.mkdirs();
             }
         } catch (Exception e){
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 
@@ -177,9 +172,9 @@ public class OsmValidator implements LayerChangeListener {
                     ignoredErrors.add(line);
                 }
             } catch (final FileNotFoundException e) {
-                // Ignore
+                Main.debug(Main.getErrorMessage(e));
             } catch (final IOException e) {
-                e.printStackTrace();
+                Main.error(e);
             } finally {
                 Utils.close(in);
             }
@@ -202,7 +197,7 @@ public class OsmValidator implements LayerChangeListener {
                 out.println(e);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.error(e);
         } finally {
             Utils.close(out);
         }
@@ -228,22 +223,16 @@ public class OsmValidator implements LayerChangeListener {
     }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
-        Pattern regexp = Pattern.compile("(\\w+)=(true|false),?");
-        Matcher m = regexp.matcher(Main.pref.get(beforeUpload ? ValidatorPreference.PREF_TESTS_BEFORE_UPLOAD
-                : ValidatorPreference.PREF_TESTS));
-        int pos = 0;
-        while (m.find(pos)) {
-            String testName = m.group(1);
+        for(String testName : Main.pref.getCollection(beforeUpload
+        ? ValidatorPreference.PREF_SKIP_TESTS_BEFORE_UPLOAD : ValidatorPreference.PREF_SKIP_TESTS)) {
             Test test = tests.get(testName);
             if (test != null) {
-                boolean enabled = Boolean.valueOf(m.group(2));
                 if (beforeUpload) {
-                    test.testBeforeUpload = enabled;
+                    test.testBeforeUpload = false;
                 } else {
-                    test.enabled = enabled;
+                    test.enabled = false;
                 }
             }
-            pos = m.end();
         }
     }
 
@@ -300,7 +289,7 @@ public class OsmValidator implements LayerChangeListener {
                     test.initialize();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Main.error(e);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("Error initializing test {0}:\n {1}", test.getClass()
                                 .getSimpleName(), e),

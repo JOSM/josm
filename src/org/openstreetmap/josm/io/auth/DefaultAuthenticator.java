@@ -6,6 +6,7 @@ import java.net.PasswordAuthentication;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmApi;
 
 /**
@@ -56,7 +57,7 @@ public final class DefaultAuthenticator extends Authenticator {
             credentialsTried.put(getRequestorType(), true);
             return new PasswordAuthentication(response.getUsername(), response.getPassword());
         } catch(CredentialsAgentException e) {
-            e.printStackTrace();
+            Main.error(e);
             return null;
         }
     }

@@ -22,7 +22,7 @@ public class AreaPrototype extends Prototype {
     public void init()
     {
         priority = 0;
-        range = new Range();
+        range = Range.ZERO_TO_INFINITY;
         closed = false;
         color = null;
     }

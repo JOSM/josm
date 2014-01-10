@@ -130,7 +130,7 @@ public class WMSImagery {
         Main.info("GET " + getCapabilitiesUrl.toString());
         URLConnection openConnection = Utils.openHttpConnection(getCapabilitiesUrl);
         InputStream inputStream = openConnection.getInputStream();
-        BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream, "UTF-8"));
+        BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream));
         String line;
         StringBuilder ba = new StringBuilder();
         try {

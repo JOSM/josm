@@ -53,7 +53,7 @@ public class RestartAction extends JosmAction {
         try {
             restartJOSM();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Main.error(ex);
         }
     }
 
@@ -122,7 +122,7 @@ public class RestartAction extends JosmAction {
                     try {
                         Runtime.getRuntime().exec(cmd.toArray(new String[cmd.size()]));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Main.error(e);
                     }
                 }
             });

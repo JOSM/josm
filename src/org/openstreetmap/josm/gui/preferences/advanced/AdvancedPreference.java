@@ -435,7 +435,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     public boolean ok() {
         for (PrefEntry e : allData) {
             if (e.isChanged()) {
-                Main.pref.putSetting(e.getKey(), e.getValue());
+                Main.pref.putSetting(e.getKey(), e.getValue().getValue() == null ? null : e.getValue());
             }
         }
         return false;

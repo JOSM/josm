@@ -4,9 +4,7 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Future;
@@ -38,10 +36,10 @@ import org.xml.sax.SAXException;
  */
 public class DownloadOsmTask extends AbstractDownloadTask {
 
-    private static final String PATTERN_OSM_API_URL           = "http://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
-    private static final String PATTERN_OVERPASS_API_URL      = "http://.*/interpreter\\?data=.*";
-    private static final String PATTERN_OVERPASS_API_XAPI_URL = "http://.*/xapi(\\?.*\\[@meta\\]|_meta\\?).*";
-    private static final String PATTERN_EXTERNAL_OSM_FILE     = "https?://.*/.*\\.osm";
+    protected static final String PATTERN_OSM_API_URL           = "http://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
+    protected static final String PATTERN_OVERPASS_API_URL      = "http://.*/interpreter\\?data=.*";
+    protected static final String PATTERN_OVERPASS_API_XAPI_URL = "http://.*/xapi(\\?.*\\[@meta\\]|_meta\\?).*";
+    protected static final String PATTERN_EXTERNAL_OSM_FILE     = "https?://.*/.*\\.osm";
 
     protected Bounds currentBounds;
     protected DataSet downloadedData;
@@ -136,18 +134,10 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         return Main.worker.submit(downloadTask);
     }
 
-    protected final String encodePartialUrl(String url, String safePart) {
-        if (url != null && safePart != null) {
-            int pos = url.indexOf(safePart);
-            if (pos > -1) {
-                pos += safePart.length();
-                try {
-                    return url.substring(0, pos) + URLEncoder.encode(url.substring(pos), "UTF-8").replaceAll("\\+", "%20");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    /**
+     * This allows subclasses to perform operations on the URL before {@link #loadUrl} is performed.
+     */
+    protected String modifyUrlBeforeLoad(String url) {
         return url;
     }
 
@@ -158,12 +148,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
      */
     @Override
     public Future<?> loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
-        if (url.matches(PATTERN_OVERPASS_API_URL)) {
-            url = encodePartialUrl(url, "/interpreter?data="); // encode only the part after the = sign
-
-        } else if (url.matches(PATTERN_OVERPASS_API_XAPI_URL)) {
-            url = encodePartialUrl(url, "/xapi?"); // encode only the part after the ? sign
-        }
+        url = modifyUrlBeforeLoad(url);
         downloadTask = new DownloadTask(new_layer,
                 new OsmServerLocationReader(url),
                 progressMonitor);

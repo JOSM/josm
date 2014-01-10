@@ -47,6 +47,7 @@ import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -240,6 +241,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 addCoordinates((Node) o);
             } else if (o instanceof Way) {
                 addBbox(o);
+                add(tr("Centroid: "), Main.getProjection().eastNorth2latlon(
+                        Geometry.getCentroid(((Way) o).getNodes())).toStringCSV(", "));
                 addWayNodes((Way) o);
             } else if (o instanceof Relation) {
                 addBbox(o);
@@ -277,6 +280,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                         Double.toString(bottomRigth.north()), ", ",
                         Double.toString(bottomRigth.east()), ", ",
                         Double.toString(topLeft.north()));
+                add(tr("Center of bounding box: "), bbox.getCenter().toStringCSV(", "));
             }
         }
 

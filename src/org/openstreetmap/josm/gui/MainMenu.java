@@ -77,6 +77,7 @@ import org.openstreetmap.josm.actions.ReverseWayAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
+import org.openstreetmap.josm.actions.SelectNonBranchingWaySequencesAction;
 import org.openstreetmap.josm.actions.SessionLoadAction;
 import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
@@ -252,13 +253,17 @@ public class MainMenu extends JMenuBar {
     /** Tools -> Join overlapping Areas */
     public final JoinAreasAction joinAreas = new JoinAreasAction();
     /** Tools -> Create multipolygon */
-    public final CreateMultipolygonAction createMultipolygon = new CreateMultipolygonAction();
+    public final CreateMultipolygonAction createMultipolygon = new CreateMultipolygonAction(false);
+    /** Tools -> Update multipolygon */
+    public final CreateMultipolygonAction updateMultipolygon = new CreateMultipolygonAction(true);
 
     /* Selection menu */
     /** Selection -> Select All */
     public final SelectAllAction selectAll = new SelectAllAction();
     /** Selection -> Unselect All */
     public final UnselectAllAction unselectAll = new UnselectAllAction();
+    /** Selection -> Non-branching way sequences */
+    public final SelectNonBranchingWaySequencesAction nonBranchingWaySequences = new SelectNonBranchingWaySequencesAction();
 
     /* Audio menu */
     /** Audio -> Play/Pause */
@@ -703,6 +708,7 @@ public class MainMenu extends JMenuBar {
         
         add(selectionMenu, selectAll);
         add(selectionMenu, unselectAll);
+        add(selectionMenu, nonBranchingWaySequences);
 
         add(toolsMenu, splitWay);
         add(toolsMenu, combineWay);
@@ -728,6 +734,7 @@ public class MainMenu extends JMenuBar {
         toolsMenu.addSeparator();
         add(toolsMenu, joinAreas);
         add(toolsMenu, createMultipolygon);
+        add(toolsMenu, updateMultipolygon);
 
         // -- changeset manager toggle action
         final JCheckBoxMenuItem mi = MainMenu.addWithCheckbox(windowMenu, changesetManager,

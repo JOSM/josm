@@ -190,21 +190,20 @@ abstract public class Command extends PseudoCommand {
      * @param dialogTitle the title of the dialog being displayed
      * @param outsideDialogMessage the message text to be displayed when data is outside of the download area
      * @param incompleteDialogMessage the message text to be displayed when data is incomplete
-     * @param area the area used to determine whether data is outlying
      * @param primitives the primitives to operate on
      * @param ignore {@code null} or a primitive to be ignored
      * @return true, if operating on outlying primitives is OK; false, otherwise
      */
     public static boolean checkAndConfirmOutlyingOperation(String operation,
             String dialogTitle, String outsideDialogMessage, String incompleteDialogMessage,
-            Area area, Collection<? extends OsmPrimitive> primitives,
+            Collection<? extends OsmPrimitive> primitives,
             Collection<? extends OsmPrimitive> ignore) {
         boolean outside = false;
         boolean incomplete = false;
         for (OsmPrimitive osm : primitives) {
             if (osm.isIncomplete()) {
                 incomplete = true;
-            } else if (area != null && isOutlying(osm, area)
+            } else if (osm.isOutsideDownloadArea()
                     && (ignore == null || !ignore.contains(osm))) {
                 outside = true;
             }
@@ -240,17 +239,4 @@ abstract public class Command extends PseudoCommand {
         return true;
     }
 
-    private static boolean isOutlying(OsmPrimitive osm, Area area) {
-        if (osm instanceof Node && !osm.isNewOrUndeleted()) {
-            return !((Node) osm).getCoor().isIn(area);
-        } else if (osm instanceof Way) {
-            for (Node n : ((Way) osm).getNodes()) {
-                if (isOutlying(n, area)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-    }
 }

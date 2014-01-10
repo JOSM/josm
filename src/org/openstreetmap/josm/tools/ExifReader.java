@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
@@ -60,7 +61,7 @@ public final class ExifReader {
         } catch (ParseException e) {
             throw e;
         } catch (Exception e) {
-            e.printStackTrace();
+            Main.error(e);
         }
         return null;
     }
@@ -86,11 +87,11 @@ public final class ExifReader {
             final Directory dir = metadata.getDirectory(ExifIFD0Directory.class);
             return dir.getInt(ExifIFD0Directory.TAG_ORIENTATION);
         } catch (JpegProcessingException e) {
-            e.printStackTrace();
+            Main.error(e);
         } catch (MetadataException e) {
-            e.printStackTrace();
+            Main.error(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.error(e);
         }
         return null;
     }
@@ -107,11 +108,11 @@ public final class ExifReader {
             final GpsDirectory dirGps = metadata.getDirectory(GpsDirectory.class);
             return readLatLon(dirGps);
         } catch (JpegProcessingException e) {
-            e.printStackTrace();
+            Main.error(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.error(e);
         } catch (MetadataException e) {
-            e.printStackTrace();
+            Main.error(e);
         }
         return null;
     }
@@ -120,7 +121,7 @@ public final class ExifReader {
      * Returns the geolocation of the given EXIF GPS directory.
      * @param dirGps The EXIF GPS directory
      * @return The lat/lon read in the EXIF section, or {@code null} if {@code dirGps} is null
-     * @throws MetadataException 
+     * @throws MetadataException
      * @since 6209
      */
     public static LatLon readLatLon(GpsDirectory dirGps) throws MetadataException {
@@ -144,9 +145,9 @@ public final class ExifReader {
             final GpsDirectory dirGps = metadata.getDirectory(GpsDirectory.class);
             return readDirection(dirGps);
         } catch (JpegProcessingException e) {
-            e.printStackTrace();
+            Main.error(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.error(e);
         }
         return null;
     }

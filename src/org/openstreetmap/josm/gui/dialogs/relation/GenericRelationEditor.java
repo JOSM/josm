@@ -767,6 +767,7 @@ public class GenericRelationEditor extends RelationEditor  {
             if (primitives == null || primitives.isEmpty())
                 return primitives;
             List<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
+            ConditionalOptionPaneUtil.startBulkOperation("add_primitive_to_relation");
             for (OsmPrimitive primitive : primitives) {
                 if (primitive instanceof Relation && getRelation() != null && getRelation().equals(primitive)) {
                     warnOfCircularReferences(primitive);
@@ -781,6 +782,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     ret.add(primitive);
                 }
             }
+            ConditionalOptionPaneUtil.endBulkOperation("add_primitive_to_relation");
             return ret;
         }
     }

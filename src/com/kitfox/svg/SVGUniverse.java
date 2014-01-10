@@ -388,7 +388,7 @@ public class SVGUniverse implements Serializable
             if ("jar".equals(xmlBase.getScheme()) && xmlBase.getPath() != null && !xmlBase.getPath().contains("!/"))
             {
                 //Workaround for resources stored in jars loaded by Webstart.
-                //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6753651
+                //https://bugs.openjdk.java.net/browse/JDK-6753651
                 url = SVGUniverse.class.getResource("xmlBase.getPath()");
             }
             else

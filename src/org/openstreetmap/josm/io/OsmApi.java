@@ -77,6 +77,8 @@ public class OsmApi extends OsmConnection {
     // The collection of instantiated OSM APIs
     private static Map<String, OsmApi> instances = new HashMap<String, OsmApi>();
 
+    private URL url = null;
+
     /**
      * Replies the {@link OsmApi} for a given server URL
      *
@@ -98,13 +100,9 @@ public class OsmApi extends OsmConnection {
      * Replies the {@link OsmApi} for the URL given by the preference <code>osm-server.url</code>
      *
      * @return the OsmApi
-     * @throws IllegalStateException thrown, if the preference <code>osm-server.url</code> is not set
-     *
      */
     static public OsmApi getOsmApi() {
         String serverUrl = Main.pref.get("osm-server.url", DEFAULT_API_URL);
-        if (serverUrl == null)
-            throw new IllegalStateException(tr("Preference ''{0}'' missing. Cannot initialize OsmApi.", "osm-server.url"));
         return getOsmApi(serverUrl);
     }
 
@@ -238,7 +236,10 @@ public class OsmApi extends OsmConnection {
 
             /* This is an interim solution for openstreetmap.org not currently
              * transmitting their imagery blacklist in the capabilities call.
-             * remove this as soon as openstreetmap.org adds blacklists. */
+             * remove this as soon as openstreetmap.org adds blacklists.
+             * If you want to update this list, please ask for update of
+             * http://trac.openstreetmap.org/ticket/5024
+             * This list should not be maintained by each OSM editor (see #9210) */
             if (this.serverUrl.matches(".*openstreetmap.org/api.*") && capabilities.getImageryBlacklist().isEmpty())
             {
                 capabilities.put("blacklist", "regex", ".*\\.google\\.com/.*");
@@ -264,6 +265,10 @@ public class OsmApi extends OsmConnection {
 
         } catch (OsmTransferCanceledException e) {
             throw e;
+        } catch (OsmTransferException e) {
+            initialized = false;
+            Main.addNetworkError(url, Utils.getRootCause(e));
+            throw new OsmApiInitializationException(e);
         } catch (Exception e) {
             initialized = false;
             throw new OsmApiInitializationException(e);
@@ -601,8 +606,8 @@ public class OsmApi extends OsmConnection {
 
         while(true) { // the retry loop
             try {
-                URL url = new URL(new URL(getBaseUrl()), urlSuffix);
-                System.out.print(requestMethod + " " + url + "... ");
+                url = new URL(new URL(getBaseUrl()), urlSuffix);
+                Main.info(requestMethod + " " + url + "... ");
                 // fix #5369, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
                 activeConnection = Utils.openHttpConnection(url, false);
                 activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect",15)*1000);
@@ -626,7 +631,7 @@ public class OsmApi extends OsmConnection {
                     // we use the output stream, we create an output stream for PUT/POST
                     // even if there is no payload.
                     if (requestBody != null) {
-                        BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                        BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8));
                         try {
                             bwr.write(requestBody);
                             bwr.flush();

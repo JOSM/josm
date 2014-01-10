@@ -30,9 +30,11 @@ abstract public class Instruction implements StyleKeys {
     public static class AssignmentInstruction extends Instruction {
         public final String key;
         public final Object val;
+        public final boolean isSetInstruction;
 
-        public AssignmentInstruction(String key, Object val) {
+        public AssignmentInstruction(String key, Object val, boolean isSetInstruction) {
             this.key = key;
+            this.isSetInstruction = isSetInstruction;
             if (val instanceof LiteralExpression) {
                 Object litValue = ((LiteralExpression) val).evaluate(null);
                 if (key.equals(TEXT)) {

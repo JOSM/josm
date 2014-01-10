@@ -12,7 +12,6 @@ relation[type=route][!route],
 relation[type=route_master][!route_master],
 relation[type=restriction][!restriction],
 relation[type=boundary][!boundary],
-relation[type=site][!site],
 relation[type=public_transport][!public_transport],
 relation[type=waterway][!waterway],
 relation[type=enforcement][!enforcement] {
@@ -25,7 +24,6 @@ relation[type=enforcement][!enforcement] {
   assertNoMatch: "relation type=restriction restriction=no_left_turn";
   assertMatch: "relation type=boundary";
   assertNoMatch: "relation type=boundary boundary=administrative";
-  assertMatch: "relation type=site";
   assertNoMatch: "relation type=site site=administrative";
   assertMatch: "relation type=public_transport";
   assertNoMatch: "relation type=public_transport public_transport=stop_area";

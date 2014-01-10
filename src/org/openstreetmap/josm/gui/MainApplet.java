@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 public class MainApplet extends JApplet {
 
@@ -179,12 +180,7 @@ public class MainApplet extends JApplet {
 
             @Override
             public URL getCodeBase() {
-                try {
-                    return new File(".").toURI().toURL();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
+                return Utils.fileToURL(new File("."));
             }
 
             @Override

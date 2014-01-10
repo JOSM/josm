@@ -1,0 +1,35 @@
+/* {0} on a node */
+node[oneway],
+node[bridge?],
+node[source:geometry],
+node[source:outline] {
+  throwWarning: tr("{0} on a node", "{0.key}");
+  assertMatch: "node oneway=-1";
+  assertNoMatch: "way oneway=-1";
+  assertMatch: "node bridge=yes";
+  assertNoMatch: "node bridge=13";
+}
+
+/* Building inside building (spatial test) */
+*[building!~/no|entrance/][coalesce(tag("layer"),"0") = coalesce(parent_tag("layer"),"0")] ∈
+*[building!~/no|entrance/] {
+  throwWarning: tr("Building inside building");
+}
+
+/* Overlapping areas (spatial test) */
+area[natural =~ /^(water|wetland|coastline)$/], area[landuse=reservoir] {
+  set water_area;
+}
+
+area:closed:areaStyle.water_area ⧉ area:closed:areaStyle.water_area {
+  throwWarning: tr("Overlapping Water Areas");
+}
+
+area:closed:areaStyle ⧉ area:closed:areaStyle {
+  throwOther: tr("Overlapping Areas");
+}
+
+/* see ticket #9311 */
+node[amenity=parking]["capacity:disabled" !~ /^(yes|[0-9]+)$/] ∈ *[amenity=parking] {
+  throwWarning: tr("{0} inside {1}", "amenity=parking", "amenity=parking");
+}

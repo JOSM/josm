@@ -273,11 +273,15 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         return restart;
     }
 
-    /**
-     * Initialize the tagging presets (load and may display error)
-     */
-    public static void initialize() {
+    public static void readFromPreferences() {
         taggingPresets = TaggingPresetReader.readFromPreferences(false);
+    }
+
+        /**
+         * Initialize the tagging presets (load and may display error)
+         */
+    public static void initialize() {
+        readFromPreferences();
         for (TaggingPreset tp: taggingPresets) {
             if (!(tp instanceof TaggingPresetSeparator)) {
                 Main.toolbar.register(tp);

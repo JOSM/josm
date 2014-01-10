@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -173,7 +172,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 connection.setRequestProperty("Cache-Control", "no-cache");
                 connection.setRequestProperty("Accept-Charset", "utf-8");
             }
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8));
             StringBuilder sb = new StringBuilder();
             while ((line = in.readLine()) != null) {
                 sb.append(line).append("\n");
@@ -181,7 +180,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             return sb.toString();
         } catch (MalformedURLException e) {
             if (canceled) return null;
-            e.printStackTrace();
+            Main.error(e);
             return null;
         } catch (IOException e) {
             if (canceled) return null;
@@ -206,7 +205,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             BufferedReader err = null;
             try {
                 String line;
-                err = new BufferedReader(new InputStreamReader(errStream, "UTF-8"));
+                err = new BufferedReader(new InputStreamReader(errStream, Utils.UTF_8));
                 while ((line = err.readLine()) != null) {
                     sb.append(line).append("\n");
                 }
@@ -234,8 +233,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                     panel.add(new JLabel(tr("Details:")), GBC.eol().insets(0, 0, 0, 10));
                     JosmTextArea area = new JosmTextArea(details);
                     area.setEditable(false);
-                    area.setLineWrap(true);  
-                    area.setWrapStyleWord(true); 
+                    area.setLineWrap(true);
+                    area.setWrapStyleWord(true);
                     JScrollPane scrollPane = new JScrollPane(area);
                     scrollPane.setPreferredSize(new Dimension(500, 300));
                     panel.add(scrollPane, GBC.eol().fill());
@@ -273,7 +272,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             }
         } catch (MalformedURLException e) {
             if (canceled) return;
-            e.printStackTrace();
+            Main.error(e);
             return;
         } catch (IOException e) {
             if (canceled) return;
@@ -318,11 +317,11 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             }
             File cacheFile = createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST);
             getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
-            writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), "utf-8"));
+            writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), Utils.UTF_8));
             writer.write(list);
         } catch(IOException e) {
             // just failed to write the cache file. No big deal, but log the exception anyway
-            e.printStackTrace();
+            Main.error(e);
         } finally {
             if (writer != null) {
                 writer.flush();
@@ -362,15 +361,12 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     protected void parsePluginListDocument(String site, String doc) {
         try {
             getProgressMonitor().subTask(tr("Parsing plugin list from site ''{0}''", site));
-            InputStream in = new ByteArrayInputStream(doc.getBytes("UTF-8"));
+            InputStream in = new ByteArrayInputStream(doc.getBytes(Utils.UTF_8));
             List<PluginInformation> pis = new PluginListParser().parse(in);
             availablePlugins.addAll(filterDeprecatedPlugins(pis));
-        } catch (UnsupportedEncodingException e) {
-            Main.error(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
-            e.printStackTrace();
         } catch (PluginListParseException e) {
             Main.error(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
-            e.printStackTrace();
+            Main.error(e);
         }
     }
 

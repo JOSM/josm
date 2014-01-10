@@ -12,6 +12,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,6 +55,10 @@ import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * Preference settings for plugins.
+ * @since 168
+ */
 public final class PluginPreference extends DefaultTabPreferenceSetting {
 
     /**
@@ -70,6 +75,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         super("plugin", tr("Plugins"), tr("Configure available plugins."), false, new JTabbedPane());
     }
 
+    /**
+     * Returns the download summary string to be shown.
+     * @param task The plugin download task that has completed
+     * @return the download summary string to be shown. Contains summary of success/failed plugins.
+     */
     public static String buildDownloadSummary(PluginDownloadTask task) {
         Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
         Collection<PluginInformation> failed = task.getFailedPlugins();
@@ -128,7 +138,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfFilter = new JosmTextField(), gc);
+        tfFilter = new JosmTextField();
+        pnl.add(tfFilter, gc);
         tfFilter.setToolTipText(tr("Enter a search expression"));
         SelectAllOnFocusGainedDecorator.decorate(tfFilter);
         tfFilter.getDocument().addDocumentListener(new SearchFieldAdapter());
@@ -148,9 +159,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(buildSearchFieldPanel(), BorderLayout.NORTH);
         model  = new PluginPreferencesModel();
-        spPluginPreferences = new JScrollPane(pnlPluginPreferences = new PluginListPanel(model));
-        spPluginPreferences.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        spPluginPreferences.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        pnlPluginPreferences = new PluginListPanel(model);
+        spPluginPreferences = GuiHelper.embedInVerticalScrollPane(pnlPluginPreferences);
         spPluginPreferences.getVerticalScrollBar().addComponentListener(
                 new ComponentAdapter(){
                     @Override
@@ -171,8 +181,9 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
     protected JTabbedPane buildContentPane() {
         JTabbedPane pane = getTabPane();
+        pnlPluginUpdatePolicy = new PluginUpdatePolicyPanel();
         pane.addTab(tr("Plugins"), buildPluginListPanel());
-        pane.addTab(tr("Plugin update policy"), pnlPluginUpdatePolicy = new PluginUpdatePolicyPanel());
+        pane.addTab(tr("Plugin update policy"), pnlPluginUpdatePolicy);
         return pane;
     }
 
@@ -353,8 +364,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                                 );
                     }
                 });
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+                Main.error(e);
+            } catch (InvocationTargetException e) {
+                Main.error(e);
             }
         }
 
@@ -468,11 +481,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
     }
 
-    static private class PluginConfigurationSitesPanel extends JPanel {
+    private static class PluginConfigurationSitesPanel extends JPanel {
 
         private DefaultListModel model;
 
-        protected void build() {
+        protected final void build() {
             setLayout(new GridBagLayout());
             add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
             model = new DefaultListModel();

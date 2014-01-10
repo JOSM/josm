@@ -10,10 +10,7 @@ public class Range {
     private double lower;
     private double upper;
 
-    public Range() {
-        this.lower = 0;
-        this.upper = Double.POSITIVE_INFINITY;
-    }
+    public static final Range ZERO_TO_INFINITY = new Range(0.0, Double.POSITIVE_INFINITY);
 
     public Range(double lower, double upper) {
         if (lower < 0 || lower >= upper)
@@ -75,5 +72,29 @@ public class Range {
     @Override
     public String toString() {
         return String.format("|s%s-%s", lower, upper);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Range range = (Range) o;
+
+        if (Double.compare(range.lower, lower) != 0) return false;
+        if (Double.compare(range.upper, upper) != 0) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(lower);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(upper);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 }

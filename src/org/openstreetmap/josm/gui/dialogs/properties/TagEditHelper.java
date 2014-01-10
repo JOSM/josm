@@ -56,11 +56,9 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -104,7 +102,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     public static final int DEFAULT_LRU_TAGS_NUMBER = 5;
     public static final int MAX_LRU_TAGS_NUMBER = 30;
 
-    // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html) 
+    // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
     private final Map<Tag, Void> recentTags = new LinkedHashMap<Tag, Void>(MAX_LRU_TAGS_NUMBER+1, 1.1f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<Tag, Void> eldest) {
@@ -123,23 +121,17 @@ import org.openstreetmap.josm.tools.WindowGeometry;
      */
     public void addTag() {
         changedKey = null;
-        if (Main.map.mapMode instanceof DrawAction) {
-            sel = ((DrawAction) Main.map.mapMode).getInProgressSelection();
-        } else {
-            DataSet ds = Main.main.getCurrentDataSet();
-            if (ds == null) return;
-            sel = ds.getSelected();
-        }
-        if (sel.isEmpty()) return;
+        sel = Main.main.getInProgressSelection();
+        if (sel == null || sel.isEmpty()) return;
 
-        final AddTagsDialog addDialog = new AddTagsDialog();        
+        final AddTagsDialog addDialog = new AddTagsDialog();
         
         addDialog.showDialog();
         
         addDialog.destroyActions();
-        if (addDialog.getValue() == 1)           
+        if (addDialog.getValue() == 1)
             addDialog.performTagAdding();
-        else 
+        else
             addDialog.undoAllTagsAdding();
     }
     
@@ -151,14 +143,14 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     */
     public void editTag(final int row, boolean focusOnKey) {
         changedKey = null;
-        sel = Main.main.getCurrentDataSet().getSelected();
-        if (sel.isEmpty()) return;
+        sel = Main.main.getInProgressSelection();
+        if (sel == null || sel.isEmpty()) return;
 
         String key = tagData.getValueAt(row, 0).toString();
         objKey=key;
         
         @SuppressWarnings("unchecked")
-        final EditTagDialog editDialog = new EditTagDialog(key, row, 
+        final EditTagDialog editDialog = new EditTagDialog(key, row,
                 (Map<String, Integer>) tagData.getValueAt(row, 1), focusOnKey);
         editDialog.showDialog();
         if (editDialog.getValue() !=1 ) return;
@@ -289,7 +281,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             keys.setEditable(true);
             keys.setSelectedItem(key);
 
-            p.add(Box.createVerticalStrut(5),GBC.eol()); 
+            p.add(Box.createVerticalStrut(5),GBC.eol());
             p.add(new JLabel(tr("Key")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
             p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
@@ -306,7 +298,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             values.setPossibleACItems(valueList);
             values.setSelectedItem(selection);
             values.getEditor().setItem(selection);
-            p.add(Box.createVerticalStrut(5),GBC.eol()); 
+            p.add(Box.createVerticalStrut(5),GBC.eol());
             p.add(new JLabel(tr("Value")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
             p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
@@ -628,7 +620,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         }
         
         private void suggestRecentlyAddedTags(JPanel mainPanel, int tagsToShow, final FocusAdapter focus) {
-            if (!(tagsToShow > 0 && !recentTags.isEmpty())) 
+            if (!(tagsToShow > 0 && !recentTags.isEmpty()))
                 return;
 
             mainPanel.add(new JLabel(tr("Recently added tags")), GBC.eol());
@@ -648,7 +640,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         keys.setSelectedItem(t.getKey());
-                        // Update list of values (fix #7951) 
+                        // Update list of values (fix #7951)
                         // fix #8298 - update list of values before setting value (?)
                         focus.focusGained(null);
                         values.setSelectedItem(t.getValue());
@@ -690,7 +682,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 // Create tag label
                 final String color = action.isEnabled() ? "" : "; color:gray";
                 final JLabel tagLabel = new JLabel("<html>"
-                    + "<style>td{border:1px solid gray; font-weight:normal"+color+"}</style>" 
+                    + "<style>td{border:1px solid gray; font-weight:normal"+color+"}</style>"
                     + "<table><tr><td>" + XmlWriter.encode(t.toString(), true) + "</td></tr></table></html>");
                 if (action.isEnabled()) {
                     // Register action

@@ -1,6 +1,9 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.preferences.advanced;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -8,9 +11,9 @@ import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
@@ -21,13 +24,12 @@ import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
-import static org.openstreetmap.josm.tools.I18n.marktr;
-import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -105,19 +107,18 @@ public class PreferencesTable extends JTable {
             lEditor.showDialog();
             if (lEditor.getValue() == 1) {
                 List<String> data = lEditor.getData();
-                if (!Preferences.equalCollection(lSetting.getValue(), data)) {
+                if (!lSetting.equalVal(data)) {
                     e.setValue(new Preferences.ListSetting(data));
                     return true;
                 }
             }
         } else if (stg instanceof Preferences.ListListSetting) {
-            ListListEditor llEditor = new ListListEditor(gui, e, (Preferences.ListListSetting) stg);
+            Preferences.ListListSetting llSetting = (Preferences.ListListSetting) stg;
+            ListListEditor llEditor = new ListListEditor(gui, e, llSetting);
             llEditor.showDialog();
             if (llEditor.getValue() == 1) {
                 List<List<String>> data = llEditor.getData();
-                @SuppressWarnings("unchecked")
-                Collection<Collection<String>> stgValue = (Collection<Collection<String>>) stg.getValue();
-                if (!Preferences.equalArray(stgValue, data)) {
+                if (!llSetting.equalVal(data)) {
                     e.setValue(new Preferences.ListListSetting(data));
                     return true;
                 }
@@ -128,7 +129,7 @@ public class PreferencesTable extends JTable {
             mlEditor.showDialog();
             if (mlEditor.getValue() == 1) {
                 List<Map<String, String>> data = mlEditor.getData();
-                if (!Preferences.equalListOfStructs(mlSetting.getValue(), data)) {
+                if (!mlSetting.equalVal(data)) {
                     e.setValue(new Preferences.MapListSetting(data));
                     return true;
                 }
@@ -195,7 +196,7 @@ public class PreferencesTable extends JTable {
                 lEditor.showDialog();
                 if (lEditor.getValue() == 1) {
                     List<String> data = lEditor.getData();
-                    if (!Preferences.equalCollection(lSetting.getValue(), data)) {
+                    if (!lSetting.equalVal(data)) {
                         pe.setValue(new Preferences.ListSetting(data));
                         ok = true;
                     }
@@ -207,9 +208,7 @@ public class PreferencesTable extends JTable {
                 llEditor.showDialog();
                 if (llEditor.getValue() == 1) {
                     List<List<String>> data = llEditor.getData();
-                    @SuppressWarnings("unchecked")
-                    Collection<Collection<String>> llSettingValue = (Collection) llSetting.getValue();
-                    if (!Preferences.equalArray(llSettingValue, data)) {
+                    if (!llSetting.equalVal(data)) {
                         pe.setValue(new Preferences.ListListSetting(data));
                         ok = true;
                     }
@@ -221,7 +220,7 @@ public class PreferencesTable extends JTable {
                 mlEditor.showDialog();
                 if (mlEditor.getValue() == 1) {
                     List<Map<String, String>> data = mlEditor.getData();
-                    if (!Preferences.equalListOfStructs(mlSetting.getValue(), data)) {
+                    if (!mlSetting.equalVal(data)) {
                         pe.setValue(new Preferences.MapListSetting(data));
                         ok = true;
                     }

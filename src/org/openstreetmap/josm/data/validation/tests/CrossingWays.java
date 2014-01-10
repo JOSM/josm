@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -22,34 +23,133 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.ValUtil;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tests if there are segments that crosses in the same layer
  *
  * @author frsantos
  */
-public class CrossingWays extends Test {
+public abstract class CrossingWays extends Test {
     protected static final int CROSSING_WAYS = 601;
+    
+    private static final String HIGHWAY = "highway";
+    private static final String RAILWAY = "railway";
+    private static final String WATERWAY = "waterway";
 
     /** All way segments, grouped by cells */
-    private Map<Point2D,List<ExtendedSegment>> cellSegments;
+    private Map<Point2D,List<WaySegment>> cellSegments;
     /** The already detected errors */
     private Set<WaySegment> errorSegments;
     /** The already detected ways in error */
     private Map<List<Way>, List<WaySegment>> seenWays;
 
-    /**
-     * Constructor
-     */
+    public static class Ways extends CrossingWays {
+
+        @Override
+        public boolean isPrimitiveUsable(OsmPrimitive w) {
+            return super.isPrimitiveUsable(w)
+                    && !isProposedOrAbandoned(w)
+                    && (w.hasKey(HIGHWAY)
+                    || w.hasKey(WATERWAY)
+                    || (w.hasKey(RAILWAY) && !isSubwayOrTram(w))
+                    || isCoastline(w)
+                    || isBuilding(w));
+        }
+
+        @Override
+        boolean ignoreWaySegmentCombination(Way w1, Way w2) {
+            if (!Utils.equal(getLayer(w1), getLayer(w2))) {
+                return true;
+            }
+            if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Utils.equal(w1.get("level"), w2.get("level"))) {
+                return true;
+            }
+            if (isSubwayOrTram(w2)) {
+                return true;
+            }
+            if (isCoastline(w1) != isCoastline(w2)) {
+                return true;
+            }
+            if ((w1.hasTag(WATERWAY, "river") && w2.hasTag(WATERWAY, "riverbank"))
+                    || (w2.hasTag(WATERWAY, "river") && w1.hasTag(WATERWAY, "riverbank"))) {
+                return true;
+            }
+            if (isProposedOrAbandoned(w2)) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        String createMessage(Way w1, Way w2) {
+            if (isBuilding(w1)) {
+                return ("Crossing buildings");
+            } else if (w1.hasKey(WATERWAY) && w2.hasKey(WATERWAY)) {
+                return tr("Crossing waterways");
+            } else if ((w1.hasKey(HIGHWAY) && w2.hasKey(WATERWAY))
+                    || (w2.hasKey(HIGHWAY) && w1.hasKey(WATERWAY))) {
+                return tr("Crossing waterway/highway");
+            } else {
+                return tr("Crossing ways");
+            }
+        }
+
+    }
+
+    public static class Boundaries extends CrossingWays {
+
+        @Override
+        public boolean isPrimitiveUsable(OsmPrimitive p) {
+            return super.isPrimitiveUsable(p) && p.hasKey("boundary")
+                    && (!(p instanceof Relation) || (((Relation) p).isMultipolygon() && !((Relation) p).hasIncompleteMembers()));
+        }
+
+        @Override
+        boolean ignoreWaySegmentCombination(Way w1, Way w2) {
+            return !Utils.equal(w1.get("boundary"), w2.get("boundary"));
+        }
+
+        @Override
+        String createMessage(Way w1, Way w2) {
+            return tr("Crossing boundaries");
+        }
+
+        @Override
+        public void visit(Relation r) {
+            for (Way w : r.getMemberPrimitives(Way.class)) {
+                visit(w);
+            }
+        }
+    }
+
+    public static class Barrier extends CrossingWays {
+
+        @Override
+        public boolean isPrimitiveUsable(OsmPrimitive p) {
+            return super.isPrimitiveUsable(p) && p.hasKey("barrier");
+        }
+
+        @Override
+        boolean ignoreWaySegmentCombination(Way w1, Way w2) {
+            return false;
+        }
+
+        @Override
+        String createMessage(Way w1, Way w2) {
+            return tr("Crossing barriers");
+        }
+    }
+
     public CrossingWays() {
-        super(tr("Crossing ways."),
+        super(tr("Crossing ways"),
                 tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
     }
 
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        cellSegments = new HashMap<Point2D,List<ExtendedSegment>>(1000);
+        cellSegments = new HashMap<Point2D,List<WaySegment>>(1000);
         errorSegments = new HashSet<WaySegment>();
         seenWays = new HashMap<List<Way>, List<WaySegment>>(50);
     }
@@ -62,100 +162,54 @@ public class CrossingWays extends Test {
         seenWays = null;
     }
 
-    @Override
-    public void visit(Way w) {
-        if(!w.isUsable())
-            return;
-
-        String natural1 = w.get("natural");
-        String landuse1 = w.get("landuse");
-        boolean isCoastline1 = "water".equals(natural1) || "coastline".equals(natural1) || "reservoir".equals(landuse1);
-        String highway1 = w.get("highway");
-        String railway1 = w.get("railway");
-        boolean isSubway1 = "subway".equals(railway1);
-        boolean isTram1 = "tram".equals(railway1);
-        boolean isBuilding = isBuilding(w);
-        String waterway1 = w.get("waterway");
-
-        if (w.get("highway") == null && w.get("waterway") == null
-                && (railway1 == null || isSubway1 || isTram1)
-                && !isCoastline1 && !isBuilding)
-            return;
-
-        String level1 = w.get("level");
+    static String getLayer(OsmPrimitive w) {
         String layer1 = w.get("layer");
         if ("0".equals(layer1)) {
-            layer1 = null; // 0 is default value for layer. Don't assume the same for levels
+            layer1 = null; // 0 is default value for layer.
         }
+        return layer1;
+    }
+
+    static boolean isCoastline(OsmPrimitive w) {
+        return w.hasTag("natural", "water", "coastline") || w.hasTag("landuse", "reservoir");
+    }
+
+    static boolean isSubwayOrTram(OsmPrimitive w) {
+        return w.hasTag(RAILWAY, "subway", "tram");
+    }
+
+    static boolean isProposedOrAbandoned(OsmPrimitive w) {
+        return w.hasTag(HIGHWAY, "proposed") || w.hasTag(RAILWAY, "proposed", "abandoned");
+    }
+
+    abstract boolean ignoreWaySegmentCombination(Way w1, Way w2);
+
+    abstract String createMessage(Way w1, Way w2);
+
+    @Override
+    public void visit(Way w) {
 
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
-            WaySegment ws = new WaySegment(w, i);
-            ExtendedSegment es1 = new ExtendedSegment(ws, layer1, highway1, railway1, isCoastline1, waterway1, level1);
-            for (List<ExtendedSegment> segments : getSegments(es1.n1, es1.n2)) {
-                for (ExtendedSegment es2 : segments) {
+            final WaySegment es1 = new WaySegment(w, i);
+            for (List<WaySegment> segments : getSegments(es1.getFirstNode(), es1.getSecondNode())) {
+                for (WaySegment es2 : segments) {
                     List<Way> prims;
                     List<WaySegment> highlight;
 
-                    if (errorSegments.contains(ws) && errorSegments.contains(es2.ws)) {
+                    if (errorSegments.contains(es1) && errorSegments.contains(es2)
+                            || !es1.intersects(es2)
+                            || ignoreWaySegmentCombination(es1.way, es2.way)) {
                         continue;
                     }
 
-                    String level2 = es2.level;
-                    String layer2 = es2.layer;
-                    String highway2 = es2.highway;
-                    String railway2 = es2.railway;
-                    boolean isCoastline2 = es2.coastline;
-                    if (layer1 == null ? layer2 != null : !layer1.equals(layer2)) {
-                        continue;
-                    }
-                    // Ignore indoor highways on different levels
-                    if (highway1 != null && highway2 != null && level1 != null && level2 != null && !level1.equals(level2)) {
-                        continue;
-                    }
-
-                    if (!es1.intersects(es2) ) {
-                        continue;
-                    }
-                    if (isSubway1 && "subway".equals(railway2)) {
-                        continue;
-                    }
-                    if (isTram1 && "tram".equals(railway2)) {
-                        continue;
-                    }
-
-                    if (isCoastline1 != isCoastline2) {
-                        continue;
-                    }
-                    if (("river".equals(waterway1) && "riverbank".equals(es2.waterway))
-                            || ("riverbank".equals(waterway1) && "river".equals(es2.waterway))) {
-                        continue;
-                    }
-
-                    if ("proposed".equals(es1.highway) || "proposed".equals(highway2)
-                     || "proposed".equals(es1.railway) || "proposed".equals(railway2)
-                     || "abandoned".equals(es1.railway) || "abandoned".equals(railway2)) {
-                        continue;
-                    }
-
-                    prims = Arrays.asList(es1.ws.way, es2.ws.way);
+                    prims = Arrays.asList(es1.way, es2.way);
                     if ((highlight = seenWays.get(prims)) == null) {
                         highlight = new ArrayList<WaySegment>();
-                        highlight.add(es1.ws);
-                        highlight.add(es2.ws);
+                        highlight.add(es1);
+                        highlight.add(es2);
 
-                        String message;
-                        if (isBuilding) {
-                            message = tr("Crossing buildings");
-                        } else if ((es1.waterway != null && es2.waterway != null)) {
-                            message = tr("Crossing waterways");
-                        } else if ((es1.waterway != null && es2.highway != null)
-                                || (es2.waterway != null && es1.highway != null)) {
-                            message = tr("Crossing waterway/highway");
-                        } else {
-                            message = tr("Crossing ways");
-                        }
-
+                        final String message = createMessage(es1.way, es2.way);
                         errors.add(new TestError(this, Severity.WARNING,
                                 message,
                                 CROSSING_WAYS,
@@ -163,8 +217,8 @@ public class CrossingWays extends Test {
                                 highlight));
                         seenWays.put(prims, highlight);
                     } else {
-                        highlight.add(es1.ws);
-                        highlight.add(es2.ws);
+                        highlight.add(es1);
+                        highlight.add(es2);
                     }
                 }
                 segments.add(es1);
@@ -180,13 +234,13 @@ public class CrossingWays extends Test {
      * @param n2 The second node
      * @return A list with all the cells the segment crosses
      */
-    public List<List<ExtendedSegment>> getSegments(Node n1, Node n2) {
+    public List<List<WaySegment>> getSegments(Node n1, Node n2) {
 
-        List<List<ExtendedSegment>> cells = new ArrayList<List<ExtendedSegment>>();
-        for(Point2D cell : ValUtil.getSegmentCells(n1, n2, OsmValidator.griddetail)) {
-            List<ExtendedSegment> segments = cellSegments.get(cell);
+        List<List<WaySegment>> cells = new ArrayList<List<WaySegment>>();
+        for (Point2D cell : ValUtil.getSegmentCells(n1, n2, OsmValidator.griddetail)) {
+            List<WaySegment> segments = cellSegments.get(cell);
             if (segments == null) {
-                segments = new ArrayList<ExtendedSegment>();
+                segments = new ArrayList<WaySegment>();
                 cellSegments.put(cell, segments);
             }
             cells.add(segments);
@@ -194,69 +248,4 @@ public class CrossingWays extends Test {
         return cells;
     }
 
-    /**
-     * A way segment with some additional information
-     */
-    public static class ExtendedSegment {
-        private final Node n1, n2;
-
-        private final WaySegment ws;
-
-        /** The layer */
-        private final String layer;
-
-        /** The highway type */
-        private final String highway;
-
-        /** The railway type */
-        private final String railway;
-
-        /** The waterway type */
-        private final String waterway;
-
-        /** The coastline type */
-        private final boolean coastline;
-
-        /** The level, only considered for indoor highways */
-        private final String level;
-
-        /**
-         * Constructor
-         * @param ws The way segment
-         * @param layer The layer of the way this segment is in
-         * @param highway The highway type of the way this segment is in
-         * @param railway The railway type of the way this segment is in
-         * @param coastline The coastline flag of the way the segment is in
-         * @param waterway The waterway type of the way this segment is in
-         * @param level The level of the way this segment is in
-         */
-        public ExtendedSegment(WaySegment ws, String layer, String highway, String railway, boolean coastline, String waterway, String level) {
-            this.ws = ws;
-            this.n1 = ws.way.getNodes().get(ws.lowerIndex);
-            this.n2 = ws.way.getNodes().get(ws.lowerIndex + 1);
-            this.layer = layer;
-            this.highway = highway;
-            this.railway = railway;
-            this.coastline = coastline;
-            this.waterway = waterway;
-            this.level = level;
-        }
-
-        /**
-         * Checks whether this segment crosses other segment
-         * @param s2 The other segment
-         * @return true if both segments crosses
-         */
-        public boolean intersects(ExtendedSegment s2) {
-            if (n1.equals(s2.n1) || n2.equals(s2.n2) ||
-                    n1.equals(s2.n2) || n2.equals(s2.n1))
-                return false;
-
-            return Line2D.linesIntersect(
-                    n1.getEastNorth().east(), n1.getEastNorth().north(),
-                    n2.getEastNorth().east(), n2.getEastNorth().north(),
-                    s2.n1.getEastNorth().east(), s2.n1.getEastNorth().north(),
-                    s2.n2.getEastNorth().east(), s2.n2.getEastNorth().north());
-        }
-    }
 }

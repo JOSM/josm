@@ -11,6 +11,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,12 +20,15 @@ import java.util.Observer;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -36,6 +40,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class BasicUploadSettingsPanel extends JPanel {
     public static final String HISTORY_KEY = "upload.comment.history";
     public static final String HISTORY_LAST_USED_KEY = "upload.comment.last-used";
+    public static final String HISTORY_MAX_AGE_KEY = "upload.comment.max-age";
     public static final String SOURCE_HISTORY_KEY = "upload.source.history";
 
     /** the history combo box for the upload comment */
@@ -48,10 +53,11 @@ public class BasicUploadSettingsPanel extends JPanel {
     private final ChangesetCommentModel changesetSourceModel;
 
     protected JPanel buildUploadCommentPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
 
-        pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
+        final JEditorPane commentLabel = JosmEditorPane.createJLabelLikePane();
+        commentLabel.setText("<html><b>" + tr("Provide a brief comment for the changes you are uploading:"));
+        pnl.add(commentLabel, GBC.eol().insets(0, 5, 10, 3).fill(GBC.HORIZONTAL));
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
         hcbUploadComment.setMaxTextLength(Changeset.MAX_COMMENT_LENGTH);
         List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
@@ -62,9 +68,21 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.getEditor().getEditorComponent().addFocusListener(commentModelListener);
         pnl.add(hcbUploadComment, GBC.eol().fill(GBC.HORIZONTAL));
 
-        pnl.add(new JLabel(tr("Specify the data source for the changes:")), GBC.eol().insets(0, 8, 10, 3));
+        final JEditorPane sourceLabel = JosmEditorPane.createJLabelLikePane();
+        sourceLabel.setText("<html><b>" + tr("Specify the data source for the changes")
+                + "</b> (<a href=\"urn:changeset-source\">" + tr("obtain from current layers") + "</a>)<b>:</b>");
+        sourceLabel.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
+                    hcbUploadSource.setText(Main.map.mapView.getLayerInformationForSourceTag());
+                }
+            }
+        });
+        pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 3).fill(GBC.HORIZONTAL));
+
         hcbUploadSource.setToolTipText(tr("Enter a source"));
-        List<String> sourceHistory = new LinkedList<String>(Main.pref.getCollection(SOURCE_HISTORY_KEY, new LinkedList<String>()));
+        List<String> sourceHistory = new LinkedList<String>(Main.pref.getCollection(SOURCE_HISTORY_KEY, Arrays.asList("knowledge", "survey", "Bing")));
         Collections.reverse(sourceHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadSource.setPossibleItems(sourceHistory);
         final CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);
@@ -139,12 +157,6 @@ public class BasicUploadSettingsPanel extends JPanel {
      * Initializes the panel for user input
      */
     public void startUserInput() {
-        List<String> history = hcbUploadComment.getHistory();
-        int age = (int) (System.currentTimeMillis()/1000 - Main.pref.getInteger(HISTORY_LAST_USED_KEY, 0));
-        // only pre-select latest entry if used less than 4 hours ago.
-        if (age < 4 * 3600 * 1000 && history != null && !history.isEmpty()) {
-            hcbUploadComment.setText(history.get(0));
-        }
         hcbUploadComment.requestFocusInWindow();
         hcbUploadComment.getEditor().getEditorComponent().requestFocusInWindow();
     }

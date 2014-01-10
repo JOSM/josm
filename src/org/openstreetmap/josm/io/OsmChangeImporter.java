@@ -24,6 +24,9 @@ public class OsmChangeImporter extends FileImporter {
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "osc,osc.bz2,osc.bz,osc.gz", "osc", tr("OsmChange File") + " (*.osc *.osc.bz2 *.osc.bz *.osc.gz)");
 
+    /**
+     * Constructs a new {@code OsmChangeImporter}.
+     */
     public OsmChangeImporter() {
         super(FILE_FILTER);
     }
@@ -45,7 +48,7 @@ public class OsmChangeImporter extends FileImporter {
             }
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Main.error(e);
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));
         }
     }

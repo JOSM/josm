@@ -8,7 +8,9 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,8 +33,11 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Create multipolygon from selected ways automatically.
@@ -51,14 +56,72 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class CreateMultipolygonAction extends JosmAction {
 
+    private final boolean update;
+
     /**
      * Constructs a new {@code CreateMultipolygonAction}.
+     * @param update {@code true} if the multipolygon must be updated, {@code false} if it must be created
      */
-    public CreateMultipolygonAction() {
-        super(tr("Create multipolygon"), "multipoly_create", tr("Create multipolygon."),
-            Shortcut.registerShortcut("tools:multipoly", tr("Tool: {0}", tr("Create multipolygon")),
-            KeyEvent.VK_A, Shortcut.ALT_CTRL), true);
+    public CreateMultipolygonAction(final boolean update) {
+        super(getName(update), "multipoly_create", getName(update),
+                update  ? null
+                        : Shortcut.registerShortcut("tools:multipoly", tr("Tool: {0}", getName(false)), KeyEvent.VK_A, Shortcut.ALT_CTRL),
+                true, update ? "multipoly_update" : "multipoly_create", true);
+        this.update = update;
     }
+
+    private static String getName(boolean update) {
+        return update ? tr("Update multipolygon") : tr("Create multipolygon");
+    }
+    
+    private class CreateUpdateMultipolygonTask implements Runnable {
+        private final Collection<Way> selectedWays;
+        private final Relation multipolygonRelation;
+
+        public CreateUpdateMultipolygonTask(Collection<Way> selectedWays, Relation multipolygonRelation) {
+            this.selectedWays = selectedWays;
+            this.multipolygonRelation = multipolygonRelation;
+        }
+
+        @Override
+        public void run() {
+            final Pair<SequenceCommand, Relation> commandAndRelation = createMultipolygonCommand(selectedWays, multipolygonRelation);
+            if (commandAndRelation == null) {
+                return;
+            }
+            final Command command = commandAndRelation.a;
+            final Relation relation = commandAndRelation.b;
+
+
+            // to avoid EDT violations
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    Main.main.undoRedo.add(command);
+                }
+            });
+
+            // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
+            // knows about the new relation before we try to select it.
+            // (Yes, we are already in event dispatch thread. But DatasetEventManager
+            // uses 'SwingUtilities.invokeLater' to fire events so we have to do
+            // the same.)
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    Main.map.relationListDialog.selectRelation(relation);
+                    if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
+                        //Open relation edit window, if set up in preferences
+                        RelationEditor editor = RelationEditor.getEditor(Main.main.getEditLayer(), relation, null);
+
+                        editor.setModal(true);
+                        editor.setVisible(true);
+                    }
+                }
+            });
+        }
+    }
+
     /**
      * The action button has been clicked
      *
@@ -75,7 +138,8 @@ public class CreateMultipolygonAction extends JosmAction {
             return;
         }
 
-        Collection<Way> selectedWays = Main.main.getCurrentDataSet().getSelectedWays();
+        final Collection<Way> selectedWays = Main.main.getCurrentDataSet().getSelectedWays();
+        final Collection<Relation> selectedRelations = Main.main.getCurrentDataSet().getSelectedRelations();
 
         if (selectedWays.size() < 1) {
             // Sometimes it make sense creating multipoly of only one way (so it will form outer way)
@@ -88,51 +152,89 @@ public class CreateMultipolygonAction extends JosmAction {
             return;
         }
 
-        MultipolygonCreate polygon = this.analyzeWays(selectedWays);
+        final Relation multipolygonRelation = update
+                ? getSelectedMultipolygonRelation(selectedWays, selectedRelations)
+                : null;
 
-        if (polygon == null)
-            return;                   //could not make multipolygon.
-
-        final Relation relation = this.createRelation(polygon);
-
-        if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
-            //Open relation edit window, if set up in preferences
-            RelationEditor editor = RelationEditor.getEditor(Main.main.getEditLayer(), relation, null);
-
-            editor.setModal(true);
-            editor.setVisible(true);
-
-            //TODO: cannot get the resulting relation from RelationEditor :(.
-            /*
-            if (relationCountBefore < relationCountAfter) {
-                //relation saved, clean up the tags
-                List<Command> list = this.removeTagsFromInnerWays(relation);
-                if (list.size() > 0)
-                {
-                    Main.main.undoRedo.add(new SequenceCommand(tr("Remove tags from multipolygon inner ways"), list));
-                }
-            }
-             */
-
-        } else {
-            //Just add the relation
-            List<Command> list = this.removeTagsFromWaysIfNeeded(relation);
-            list.add(new AddCommand(relation));
-            Main.main.undoRedo.add(new SequenceCommand(tr("Create multipolygon"), list));
-            // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
-            // knows about the new relation before we try to select it.
-            // (Yes, we are already in event dispatch thread. But DatasetEventManager
-            // uses 'SwingUtilities.invokeLater' to fire events so we have to do
-            // the same.)
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    Main.map.relationListDialog.selectRelation(relation);
-                }
-            });
+        // download incomplete relation if necessary
+        if (multipolygonRelation != null && (multipolygonRelation.isIncomplete() || multipolygonRelation.hasIncompleteMembers())) {
+            Main.worker.submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.main.getEditLayer()));
         }
+        // create/update multipolygon relation
+        Main.worker.submit(new CreateUpdateMultipolygonTask(selectedWays, multipolygonRelation));
 
+    }
 
+    private Relation getSelectedMultipolygonRelation() {
+        return getSelectedMultipolygonRelation(getCurrentDataSet().getSelectedWays(), getCurrentDataSet().getSelectedRelations());
+    }
+
+    private static Relation getSelectedMultipolygonRelation(Collection<Way> selectedWays, Collection<Relation> selectedRelations) {
+        if (selectedRelations.size() == 1 && "multipolygon".equals(selectedRelations.iterator().next().get("type"))) {
+            return selectedRelations.iterator().next();
+        } else {
+            final HashSet<Relation> relatedRelations = new HashSet<Relation>();
+            for (final Way w : selectedWays) {
+                relatedRelations.addAll(Utils.filteredCollection(w.getReferrers(), Relation.class));
+            }
+            return relatedRelations.size() == 1 ? relatedRelations.iterator().next() : null;
+        }
+    }
+
+    /**
+     * Returns a {@link Pair} of the old multipolygon {@link Relation} (or null) and the newly created/modified multipolygon {@link Relation}.
+     */
+    public static Pair<Relation, Relation> updateMultipolygonRelation(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
+
+        // add ways of existing relation to include them in polygon analysis
+        Set<Way> ways = new HashSet<Way>(selectedWays);
+        ways.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
+
+        final MultipolygonCreate polygon = analyzeWays(ways, true);
+        if (polygon == null) {
+            return null; //could not make multipolygon.
+        } else {
+            return Pair.create(selectedMultipolygonRelation, createRelation(polygon, new Relation(selectedMultipolygonRelation)));
+        }
+    }
+
+    /**
+     * Returns a {@link Pair} null and the newly created/modified multipolygon {@link Relation}.
+     */
+    public static Pair<Relation, Relation> createMultipolygonRelation(Collection<Way> selectedWays, boolean showNotif) {
+
+        final MultipolygonCreate polygon = analyzeWays(selectedWays, showNotif);
+        if (polygon == null) {
+            return null; //could not make multipolygon.
+        } else {
+            return Pair.create(null, createRelation(polygon, new Relation()));
+        }
+    }
+
+    /**
+     * Returns a {@link Pair} of a multipolygon creating/modifying {@link Command} as well as the multipolygon {@link Relation}.
+     */
+    public static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
+
+        final Pair<Relation, Relation> rr = selectedMultipolygonRelation == null
+                ? createMultipolygonRelation(selectedWays, true)
+                : updateMultipolygonRelation(selectedWays, selectedMultipolygonRelation);
+        if (rr == null) {
+            return null;
+        }
+        final Relation existingRelation = rr.a;
+        final Relation relation = rr.b;
+
+        final List<Command> list = removeTagsFromWaysIfNeeded(relation);
+        final String commandName;
+        if (existingRelation == null) {
+            list.add(new AddCommand(relation));
+            commandName = getName(false);
+        } else {
+            list.add(new ChangeCommand(existingRelation, relation));
+            commandName = getName(true);
+        }
+        return Pair.create(new SequenceCommand(commandName, list), relation);
     }
 
     /** Enable this action only if something is selected */
@@ -150,7 +252,11 @@ public class CreateMultipolygonAction extends JosmAction {
       * @param selection the current selection, gets tested for emptyness
       */
     @Override protected void updateEnabledState(Collection < ? extends OsmPrimitive > selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        if (update) {
+            setEnabled(getSelectedMultipolygonRelation() != null);
+        } else {
+            setEnabled(!getCurrentDataSet().getSelectedWays().isEmpty());
+        }
     }
 
     /**
@@ -158,15 +264,17 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param selectedWays list of selected ways
      * @return <code>null</code>, if there was a problem with the ways.
      */
-    private MultipolygonCreate analyzeWays(Collection < Way > selectedWays) {
+    private static MultipolygonCreate analyzeWays(Collection < Way > selectedWays, boolean showNotif) {
 
         MultipolygonCreate pol = new MultipolygonCreate();
         String error = pol.makeFromWays(selectedWays);
 
         if (error != null) {
-            new Notification(error)
-                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                    .show();
+            if (showNotif) {
+                new Notification(error)
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                        .show();
+            }
             return null;
         } else {
             return pol;
@@ -178,26 +286,36 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param pol data storage class containing polygon information
      * @return multipolygon relation
      */
-    private Relation createRelation(MultipolygonCreate pol) {
+    private static Relation createRelation(MultipolygonCreate pol, final Relation rel) {
         // Create new relation
-        Relation rel = new Relation();
         rel.put("type", "multipolygon");
         // Add ways to it
         for (JoinedPolygon jway:pol.outerWays) {
-            for (Way way:jway.ways) {
-                rel.addMember(new RelationMember("outer", way));
-            }
+            addMembers(jway, rel, "outer");
         }
 
         for (JoinedPolygon jway:pol.innerWays) {
-            for (Way way:jway.ways) {
-                rel.addMember(new RelationMember("inner", way));
-            }
+            addMembers(jway, rel, "inner");
         }
         return rel;
     }
 
-    static public final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList(new String[] {"barrier", "source"});
+    private static void addMembers(JoinedPolygon polygon, Relation rel, String role) {
+        final int count = rel.getMembersCount();
+        final HashSet<Way> ways = new HashSet<Way>(polygon.ways);
+        for (int i = 0; i < count; i++) {
+            final RelationMember m = rel.getMember(i);
+            if (ways.contains(m.getMember()) && !role.equals(m.getRole())) {
+                rel.setMember(i, new RelationMember(role, m.getMember()));
+            }
+        }
+        ways.removeAll(rel.getMemberPrimitives());
+        for (final Way way : ways) {
+            rel.addMember(new RelationMember(role, way));
+        }
+    }
+
+    public static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList(new String[] {"barrier", "source"});
 
     /**
      * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary
@@ -205,7 +323,7 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param relation the multipolygon style relation to process
      * @return a list of commands to execute
      */
-    private List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
+    private static List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
         Map<String, String> values = new HashMap<String, String>();
 
         if( relation.hasKeys() ) {

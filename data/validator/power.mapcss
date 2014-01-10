@@ -1,0 +1,17 @@
+/* power related stuff (incomplete) */
+
+*[power =~ /line|minor_line|cable/][!voltage],
+*[substation][power!=substation],
+*[transformer][!power] {
+  throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
+  assertMatch: "way power=line";
+  assertNoMatch: "way power=line voltage=1";
+}
+
+*[power=substation][!substation],
+*[power=transformer][!transformer] {
+  throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  assertMatch: "way power=substation";
+  assertMatch: "way power=substation transformer=foobar";
+  assertNoMatch: "way power=substation substation=foobar";
+}

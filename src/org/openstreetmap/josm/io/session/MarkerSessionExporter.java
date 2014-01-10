@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 
 import org.openstreetmap.josm.Main;
@@ -85,12 +85,7 @@ public class MarkerSessionExporter implements SessionLayerExporter {
     }
 
     protected void addDataFile(OutputStream out) throws IOException {
-        Writer writer = null;
-        try {
-            writer = new OutputStreamWriter(out, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
         MarkerWriter w = new MarkerWriter(new PrintWriter(writer));
         w.write(layer);
         w.flush();

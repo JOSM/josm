@@ -113,7 +113,7 @@ public abstract class UnconnectedWays extends Test {
         othernodes = new HashSet<Node>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
-        dsArea = Main.main.getCurrentDataSet().getDataSourceArea();
+        dsArea = Main.main == null || !Main.main.hasEditLayer() ? null : Main.main.getCurrentDataSet().getDataSourceArea();
     }
 
     @Override
@@ -127,16 +127,17 @@ public abstract class UnconnectedWays extends Test {
                         continue;
                     }
                     if (en.hasTag("highway", "turning_circle", "bus_stop")
+                            || en.hasTag("amenity", "parking_entrance")
                             || en.hasTag("railway", "buffer_stop")
-                            || OsmUtils.isTrue(en.get("noexit"))
+                            || en.isKeyTrue("noexit")
+                            || en.hasKey("entrance")
                             || en.hasKey("barrier")) {
                         continue;
                     }
-                    // There's a small false-positive here.  Imagine an intersection
-                    // like a 't'.  If the top part of the 't' is short enough, it
-                    // will trigger the node at the very top of the 't' to be unconnected
-                    // to the way that "crosses" the 't'.  We should probably check that
-                    // the ways to which 'en' belongs are not connected to 's.w'.
+                    // to handle intersections of 't' shapes and similar
+                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                        continue;
+                    }
                     map.put(en, s.w);
                 }
                 if(isCanceled())
@@ -155,6 +156,9 @@ public abstract class UnconnectedWays extends Test {
             if(isCanceled())
                 return;
             for (Node en : s.nearbyNodes(mindist)) {
+                if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                    continue;
+                }
                 if (endnodes_highway.contains(en) && !s.highway && !s.w.concernsArea()) {
                     map.put(en, s.w);
                 } else if (endnodes.contains(en) && !s.w.concernsArea()) {
@@ -176,6 +180,9 @@ public abstract class UnconnectedWays extends Test {
                 if(isCanceled())
                     return;
                 for (Node en : s.nearbyNodes(minmiddledist)) {
+                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                        continue;
+                    }
                     if (!middlenodes.contains(en)) {
                         continue;
                     }
@@ -192,6 +199,9 @@ public abstract class UnconnectedWays extends Test {
             map.clear();
             for (MyWaySegment s : ways) {
                 for (Node en : s.nearbyNodes(minmiddledist)) {
+                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                        continue;
+                    }
                     if(isCanceled())
                         return;
                     if (!othernodes.contains(en)) {
@@ -233,7 +243,7 @@ public abstract class UnconnectedWays extends Test {
             this.w = w;
             String railway = w.get("railway");
             String highway = w.get("highway");
-            this.isAbandoned = "abandoned".equals(railway) || OsmUtils.isTrue(w.get("disused"));
+            this.isAbandoned = "abandoned".equals(railway) || w.isKeyTrue("disused");
             this.highway = (highway != null || railway != null) && !isAbandoned;
             this.isBoundary = !this.highway && "administrative".equals(w.get("boundary"));
             line = new Line2D.Double(n1.getEastNorth().east(), n1.getEastNorth().north(),
@@ -250,7 +260,7 @@ public abstract class UnconnectedWays extends Test {
             }
             if (w.containsNode(n))
                 return false;
-            if (OsmUtils.isTrue(n.get("noexit")))
+            if (n.isKeyTrue("noexit"))
                 return false;
             EastNorth coord = n.getEastNorth();
             if (coord == null)

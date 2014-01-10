@@ -91,7 +91,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                 processLocalPluginInformationFile(f);
             } catch(PluginListParseException e) {
                 Main.warn(tr("Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
-                e.printStackTrace();
+                Main.error(e);
             }
             monitor.worked(1);
         }

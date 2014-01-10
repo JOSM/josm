@@ -10,11 +10,13 @@ import java.io.InputStreamReader;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -40,6 +42,7 @@ public class OsmHistoryReader {
             return "(" + locator.getLineNumber() + "," + locator.getColumnNumber() + ")";
         }
 
+        @Override
         protected void throwException(String message) throws SAXException {
             throw new SAXException(getCurrentPosition() + message);
         }
@@ -79,12 +82,12 @@ public class OsmHistoryReader {
      * @throws IOException If any IO errors occur.
      */
     public HistoryDataSet parse(ProgressMonitor progressMonitor) throws SAXException, IOException {
-        InputSource inputSource = new InputSource(new InputStreamReader(in, "UTF-8"));
+        InputSource inputSource = new InputSource(new InputStreamReader(in, Utils.UTF_8));
         progressMonitor.beginTask(tr("Parsing OSM history data ..."));
         try {
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new Parser());
         } catch (ParserConfigurationException e) {
-            e.printStackTrace(); // broken SAXException chaining
+            Main.error(e); // broken SAXException chaining
             throw new SAXException(e);
         } finally {
             progressMonitor.finishTask();

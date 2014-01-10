@@ -13,7 +13,7 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
  * Authentication sub-preferences in server preferences.
  * @since 6523
  */
-public class AuthenticationPreference implements SubPreferenceSetting {
+public final class AuthenticationPreference implements SubPreferenceSetting {
 
     /**
      * Factory used to create a new {@code AuthenticationPreference}.
@@ -36,7 +36,7 @@ public class AuthenticationPreference implements SubPreferenceSetting {
         pnlAuthPreferences = new AuthenticationPreferencesPanel();
         gui.getServerPreference().addApiUrlChangeListener(pnlAuthPreferences);
         gui.getServerPreference().addSubTab(this, tr("Authentication"),
-                ServerAccessPreference.wrapVerticallyScrollablePanel(pnlAuthPreferences),
+                pnlAuthPreferences.getVerticalScrollPane(),
                 tr("Configure your identity and how to authenticate at the OSM server"));
     }
 

@@ -437,6 +437,6 @@ public class UnGlueAction extends JosmAction {
                         + "<br>"
                         + "This will cause problems because you don''t see the real object."
                         + "<br>" + "Do you really want to unglue?"),
-                getEditLayer().data.getDataSourceArea(), primitives, null);
+                primitives, null);
     }
 }

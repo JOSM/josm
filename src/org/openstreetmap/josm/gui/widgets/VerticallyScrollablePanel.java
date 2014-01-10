@@ -9,15 +9,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 
+import org.openstreetmap.josm.gui.util.GuiHelper;
+
 public class VerticallyScrollablePanel extends JPanel implements Scrollable {
 
-    static public JScrollPane embed(VerticallyScrollablePanel panel) {
-        JScrollPane sp = new JScrollPane(panel);
-        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        return sp;
-    }
-
+    /**
+     * Constructs a new {@code VerticallyScrollablePanel}.
+     */
     public VerticallyScrollablePanel() {
         super();
     }
@@ -32,6 +30,15 @@ public class VerticallyScrollablePanel extends JPanel implements Scrollable {
 
     public VerticallyScrollablePanel(LayoutManager layout) {
         super(layout);
+    }
+
+    /**
+     * Returns a vertical scrollable {@code JScrollPane} containing this panel.
+     * @return the vertical scrollable {@code JScrollPane}
+     * @since 6666
+     */
+    public final JScrollPane getVerticalScrollPane() {
+        return GuiHelper.embedInVerticalScrollPane(this);
     }
 
     @Override

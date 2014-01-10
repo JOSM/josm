@@ -78,7 +78,8 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
         portLabel.setFont(portLabel.getFont().deriveFont(Font.PLAIN));
         remote.add(portLabel, GBC.eol().insets(5, 5, 0, 10).fill(GBC.HORIZONTAL));
 
-        remote.add(enableRemoteControl = new JCheckBox(tr("Enable remote control"), RemoteControl.PROP_REMOTECONTROL_ENABLED.get()), GBC.eol());
+        enableRemoteControl = new JCheckBox(tr("Enable remote control"), RemoteControl.PROP_REMOTECONTROL_ENABLED.get());
+        remote.add(enableRemoteControl, GBC.eol());
 
         final JPanel wrapper = new JPanel();
         wrapper.setLayout(new GridBagLayout());
@@ -87,9 +88,8 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
         remote.add(wrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 5));
 
         wrapper.add(new JLabel(tr("Permitted actions:")), GBC.eol());
-        int INDENT = 15;
         for (JCheckBox p : prefs.values()) {
-            wrapper.add(p, GBC.eol().insets(INDENT, 5, 0, 0).fill(GBC.HORIZONTAL));
+            wrapper.add(p, GBC.eol().insets(15, 5, 0, 0).fill(GBC.HORIZONTAL));
         }
 
         wrapper.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL).insets(15, 5, 15, 5));

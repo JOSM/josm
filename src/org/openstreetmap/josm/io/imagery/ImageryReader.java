@@ -14,6 +14,7 @@ import java.util.Stack;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -51,13 +52,13 @@ public class ImageryReader {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
             InputStream in = new MirroredInputStream(source);
-            InputSource is = new InputSource(UTFInputStreamReader.create(in, "UTF-8"));
+            InputSource is = new InputSource(UTFInputStreamReader.create(in));
             factory.newSAXParser().parse(is, parser);
             return parser.entries;
         } catch (SAXException e) {
             throw e;
         } catch (ParserConfigurationException e) {
-            e.printStackTrace(); // broken SAXException chaining
+            Main.error(e); // broken SAXException chaining
             throw new SAXException(e);
         }
     }

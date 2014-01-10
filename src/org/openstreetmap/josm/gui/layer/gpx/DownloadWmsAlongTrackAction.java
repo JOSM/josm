@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -94,7 +95,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
     }
 
     protected WMSLayer askWMSLayer() {
-        List<WMSLayer> targetLayers = Main.map.mapView.getLayersOfType(WMSLayer.class);
+        Collection<WMSLayer> targetLayers = Main.map.mapView.getLayersOfType(WMSLayer.class);
         if (targetLayers.isEmpty()) {
             warnNoImageryLayers();
             return null;

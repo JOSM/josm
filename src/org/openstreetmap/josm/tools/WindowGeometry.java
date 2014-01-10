@@ -341,7 +341,7 @@ public class WindowGeometry {
      * @return The virtual bounds of graphics environment, as an union of all screen bounds.
      * @since 6522
      */
-    public Rectangle getVirtualScreenBounds() {
+    public static Rectangle getVirtualScreenBounds() {
         Rectangle virtualBounds = new Rectangle();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         for (GraphicsDevice gd : ge.getScreenDevices()) {

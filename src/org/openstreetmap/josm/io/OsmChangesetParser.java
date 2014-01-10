@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.DateUtils;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -213,7 +214,7 @@ public final class OsmChangesetParser {
         try {
             progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing list of changesets..."));
-            InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
+            InputSource inputSource = new InputSource(new InputStreamReader(source, Utils.UTF_8));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser.new Parser());
             return parser.getChangesets();
         } catch(ParserConfigurationException e) {

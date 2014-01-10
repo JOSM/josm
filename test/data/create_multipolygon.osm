@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='true' generator='JOSM'>
+  <node id='-38' action='modify' visible='true' lat='47.265124621055826' lon='11.28482073183536' />
+  <node id='-36' action='modify' visible='true' lat='47.253175055149' lon='11.261554365976664' />
+  <node id='-34' action='modify' visible='true' lat='47.23274480805068' lon='11.301709059176806' />
+  <node id='-32' action='modify' visible='true' lat='47.25500424514393' lon='11.302876869046163' />
+  <node id='-30' action='modify' visible='true' lat='47.256162699461036' lon='11.282305449039825' />
+  <node id='-28' action='modify' visible='true' lat='47.2492725719865' lon='11.277185051920343' />
+  <node id='-26' action='modify' visible='true' lat='47.24299140935173' lon='11.298564955682387' />
+  <node id='-24' action='modify' visible='true' lat='47.25354089820264' lon='11.296678493585736' />
+  <node id='-22' action='modify' visible='true' lat='47.252316770203464' lon='11.288373497503738' />
+  <node id='-20' action='modify' visible='true' lat='47.25145444588241' lon='11.284054104666238' />
+  <node id='-18' action='modify' visible='true' lat='47.246452687934294' lon='11.294598504828375' />
+  <node id='-16' action='modify' visible='true' lat='47.251713144653' lon='11.293328095170287' />
+  <node id='-14' action='modify' visible='true' lat='47.261370327868704' lon='11.285451555290134' />
+  <node id='-12' action='modify' visible='true' lat='47.257317974382424' lon='11.274780114162187' />
+  <node id='-10' action='modify' visible='true' lat='47.2567144058372' lon='11.287865333640504' />
+  <node id='-8' action='modify' visible='true' lat='47.25456741408533' lon='11.285796564093733' />
+  <node id='-6' action='modify' visible='true' lat='47.25353087229522' lon='11.281933808372019' />
+  <node id='-4' action='modify' visible='true' lat='47.25267723441035' lon='11.285347406451674' />
+  <way id='-48' action='modify' visible='true'>
+    <nd ref='-38' />
+    <nd ref='-36' />
+    <nd ref='-34' />
+    <nd ref='-32' />
+    <nd ref='-38' />
+    <tag k='landuse' v='forest' />
+    <tag k='ref' v='1' />
+  </way>
+  <way id='-46' action='modify' visible='true'>
+    <nd ref='-30' />
+    <nd ref='-28' />
+    <nd ref='-26' />
+    <nd ref='-24' />
+    <nd ref='-30' />
+    <tag k='ref' v='1.1' />
+  </way>
+  <way id='-44' action='modify' visible='true'>
+    <nd ref='-22' />
+    <nd ref='-20' />
+    <nd ref='-18' />
+    <nd ref='-16' />
+    <nd ref='-22' />
+    <tag k='ref' v='1.1.1' />
+  </way>
+  <way id='-42' action='modify' visible='true'>
+    <nd ref='-14' />
+    <nd ref='-12' />
+    <nd ref='-10' />
+    <nd ref='-14' />
+    <tag k='ref' v='1.2' />
+  </way>
+  <way id='-40' action='modify' visible='true'>
+    <nd ref='-8' />
+    <nd ref='-6' />
+    <nd ref='-4' />
+    <nd ref='-8' />
+    <tag k='ref' v='1.1.2' />
+  </way>
+</osm>

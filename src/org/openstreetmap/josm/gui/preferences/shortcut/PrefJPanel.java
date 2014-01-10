@@ -82,7 +82,7 @@ public class PrefJPanel extends JPanel {
                         list.put(Integer.valueOf(i), s);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Main.error(e);
                 }
             }
         }

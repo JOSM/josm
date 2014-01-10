@@ -28,7 +28,7 @@ public class GeoJSONExporter extends FileExporter {
     public void exportData(File file, Layer layer) throws IOException {
         if (layer instanceof OsmDataLayer) {
             String json = new GeoJSONWriter((OsmDataLayer) layer).write();
-            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Utils.UTF_8));
             try {
                 out.write(json);
             } finally {

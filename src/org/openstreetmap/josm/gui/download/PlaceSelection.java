@@ -245,10 +245,10 @@ public class PlaceSelection implements DownloadSelection {
                     data.add(currentResult);
                 }
             } catch (NumberFormatException x) {
-                x.printStackTrace(); // SAXException does not chain correctly
+                Main.error(x); // SAXException does not chain correctly
                 throw new SAXException(x.getMessage(), x);
             } catch (NullPointerException x) {
-                x.printStackTrace(); // SAXException does not chain correctly
+                Main.error(x); // SAXException does not chain correctly
                 throw new SAXException(tr("Null pointer exception, possibly some missing tags."), x);
             }
         }
@@ -369,7 +369,7 @@ public class PlaceSelection implements DownloadSelection {
                 }
                 connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
                 InputStream inputStream = connection.getInputStream();
-                InputSource inputSource = new InputSource(new InputStreamReader(inputStream, "UTF-8"));
+                InputSource inputSource = new InputSource(new InputStreamReader(inputStream, Utils.UTF_8));
                 NameFinderResultParser parser = new NameFinderResultParser();
                 SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
                 this.data = parser.getResult();

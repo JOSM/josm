@@ -49,7 +49,7 @@ public class Version {
             s = sb.toString();
         } catch (IOException e) {
             Main.error(tr("Failed to load resource ''{0}'', error is {1}.", resource.toString(), e.toString()));
-            e.printStackTrace();
+            Main.error(e);
         }
         return s;
     }

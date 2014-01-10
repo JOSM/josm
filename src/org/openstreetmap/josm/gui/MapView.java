@@ -44,6 +44,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -51,15 +52,18 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a component used in the {@link MapFrame} for browsing the map. It use is to
@@ -732,14 +736,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *
      * @return an unmodifiable list of layers of a certain type.
      */
-    public <T> List<T>  getLayersOfType(Class<T> ofType) {
-        List<T> ret = new ArrayList<T>();
-        for (Layer layer : getAllLayersAsList()) {
-            if (ofType.isInstance(layer)) {
-                ret.add(ofType.cast(layer));
-            }
-        }
-        return ret;
+    public <T extends Layer> List<T>  getLayersOfType(Class<T> ofType) {
+        return new ArrayList<T>(Utils.filteredCollection(getAllLayers(), ofType));
     }
 
     /**
@@ -966,5 +964,23 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         if (layer == getEditLayer()) {
             refreshTitle();
         }
+    }
+
+    /**
+     * Get a string representation of all layers suitable for the {@code source} changeset tag.
+     */
+    public String getLayerInformationForSourceTag() {
+        final Collection<String> layerInfo = new ArrayList<String>();
+        if (!getLayersOfType(GpxLayer.class).isEmpty()) {
+            // no i18n for international values
+            layerInfo.add("survey");
+        }
+        for (final GeoImageLayer i : getLayersOfType(GeoImageLayer.class)) {
+            layerInfo.add(i.getName());
+        }
+        for (final ImageryLayer i : getLayersOfType(ImageryLayer.class)) {
+            layerInfo.add(ImageryInfo.ImageryType.BING.equals(i.getInfo().getImageryType()) ? "Bing" : i.getName());
+        }
+        return Utils.join("; ", layerInfo);
     }
 }

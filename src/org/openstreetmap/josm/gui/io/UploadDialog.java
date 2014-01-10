@@ -313,11 +313,8 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
     public void setDefaultChangesetTags(Map<String, String> tags) {
         pnlTagSettings.setDefaultTags(tags);
-         for (Entry<String, String> entry: tags.entrySet()) {
-            if ("comment".equals(entry.getKey())) {
-                changesetCommentModel.setComment(entry.getValue());
-            }
-        }
+        changesetCommentModel.setComment(tags.get("comment"));
+        changesetSourceModel.setComment(tags.get("source"));
     }
 
     /**
@@ -460,7 +457,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                     tr("Ignore this hint and upload anyway")});
             dlg.setIcon(JOptionPane.WARNING_MESSAGE);
             dlg.toggleEnable(togglePref);
-            dlg.setToggleCheckboxText(tr("Do not show this message again"));
             dlg.setCancelButton(1, 2);
             return dlg.showDialog().getValue() != 3;
         }
@@ -591,5 +587,23 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
             url = newValue.getValue().toString();
         }
         setTitle(tr("Upload to ''{0}''", url));
+    }
+
+    private String getLastChangesetTagFromHistory(String historyKey) {
+        Collection<String> history = Main.pref.getCollection(historyKey, new ArrayList<String>());
+        int age = (int) (System.currentTimeMillis() / 1000 - Main.pref.getInteger(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0));
+        if (age < Main.pref.getInteger(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, 4 * 3600 * 1000) && history != null && !history.isEmpty()) {
+            return history.iterator().next();
+        } else {
+            return null;
+        }
+    }
+
+    public String getLastChangesetCommentFromHistory() {
+        return getLastChangesetTagFromHistory(BasicUploadSettingsPanel.HISTORY_KEY);
+    }
+
+    public String getLastChangesetSourceFromHistory() {
+        return getLastChangesetTagFromHistory(BasicUploadSettingsPanel.SOURCE_HISTORY_KEY);
     }
 }

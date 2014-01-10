@@ -114,12 +114,18 @@ public class RelationMemberConflictResolver extends JPanel {
         return pnl;
     }
 
+    /**
+     * Constructs a new {@code RelationMemberConflictResolver}.
+     */
     public RelationMemberConflictResolver() {
         build();
     }
 
+    /**
+     * Initializes for way combining.
+     */
     public void initForWayCombining() {
-        lblHeader.setText(tr("<html>The combined ways are members in one ore more relations. "
+        lblHeader.setText(tr("<html>The combined ways are members in one or more relations. "
                 + "Please decide whether you want to <strong>keep</strong> these memberships "
                 + "for the combined way or whether you want to <strong>remove</strong> them.<br>"
                 + "The default is to <strong>keep</strong> the first way and <strong>remove</strong> "
@@ -129,8 +135,11 @@ public class RelationMemberConflictResolver extends JPanel {
         invalidate();
     }
 
+    /**
+     * Initializes for node merging.
+     */
     public void initForNodeMerging() {
-        lblHeader.setText(tr("<html>The merged nodes are members in one ore more relations. "
+        lblHeader.setText(tr("<html>The merged nodes are members in one or more relations. "
                 + "Please decide whether you want to <strong>keep</strong> these memberships "
                 + "for the target node or whether you want to <strong>remove</strong> them.<br>"
                 + "The default is to <strong>keep</strong> the first node and <strong>remove</strong> "

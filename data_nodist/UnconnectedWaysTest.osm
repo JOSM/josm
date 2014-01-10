@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <node id='-222' visible='true' lat='34.56990542224688' lon='-6.811381227813049' />
+  <node id='-221' visible='true' lat='34.569663967347694' lon='-6.811562128191087' />
+  <node id='-220' visible='true' lat='34.56981334217753' lon='-6.811764873147308' />
+  <node id='-219' visible='true' lat='34.569940990748705' lon='-6.8114046823157315' />
+  <node id='-218' visible='true' lat='34.56991845793937' lon='-6.81141750053251' />
+  <node id='-217' visible='true' lat='34.56975622907155' lon='-6.811807241057648' />
+  <node id='-216' visible='true' lat='34.56991204337294' lon='-6.811693873591789' />
+  <node id='-215' visible='true' lat='34.56993168009912' lon='-6.811454292115847' />
+  <way id='-226' visible='true'>
+    <nd ref='-220' />
+    <nd ref='-217' />
+    <tag k='highway' v='service' />
+  </way>
+  <way id='-225' visible='true'>
+    <nd ref='-221' />
+    <nd ref='-218' />
+    <nd ref='-219' />
+    <tag k='highway' v='service' />
+  </way>
+  <way id='-224' visible='true'>
+    <nd ref='-216' />
+    <nd ref='-220' />
+    <tag k='highway' v='service' />
+  </way>
+  <way id='-223' visible='true'>
+    <nd ref='-215' />
+    <nd ref='-218' />
+    <nd ref='-222' />
+    <tag k='highway' v='service' />
+  </way>
+</osm>

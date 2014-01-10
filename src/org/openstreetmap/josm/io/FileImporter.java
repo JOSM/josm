@@ -17,8 +17,10 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public abstract class FileImporter implements Comparable<FileImporter>, LayerChangeListener {
 
@@ -65,24 +67,49 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
             Main.info("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
             importData(f, progressMonitor);
             return true;
+        } catch (IllegalDataException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof ImportCancelException) {
+                displayCancel(cause);
+            } else {
+                displayError(f, e);
+            }
+            return false;
         } catch (Exception e) {
-            e.printStackTrace();
-            HelpAwareOptionPane.showMessageDialogInEDT(
-                    Main.parent,
-                    tr("<html>Could not read file ''{0}''.<br>Error is:<br>{1}</html>", f.getName(), e.getMessage()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE, null
-            );
+            displayError(f, e);
             return false;
         }
     }
+    
+    private static void displayError(File f, Exception e) {
+        Main.error(e);
+        HelpAwareOptionPane.showMessageDialogInEDT(
+                Main.parent,
+                tr("<html>Could not read file ''{0}''.<br>Error is:<br>{1}</html>", f.getName(), e.getMessage()),
+                tr("Error"),
+                JOptionPane.ERROR_MESSAGE, null
+        );
+    }
+    
+    private static void displayCancel(final Throwable t) {
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override
+            public void run() {
+                Notification note = new Notification(t.getMessage());
+                note.setIcon(JOptionPane.INFORMATION_MESSAGE);
+                note.setDuration(Notification.TIME_SHORT);
+                note.show();
+            }
+        });
+    }
+    
     public boolean importDataHandleExceptions(List<File> files, ProgressMonitor progressMonitor) {
         try {
             Main.info("Open "+files.size()+" files");
             importData(files, progressMonitor);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Main.error(e);
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     tr("<html>Could not read files.<br>Error is:<br>{0}</html>", e.getMessage()),
@@ -118,7 +145,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
         b = bis.read();
         if (b != 'Z')
             throw new IOException(tr("Invalid bz2 file."));
-        return new CBZip2InputStream(bis);
+        return new CBZip2InputStream(bis, /* see #9537 */ true);
     }
 
     public static GZIPInputStream getGZipInputStream(InputStream in) throws IOException {

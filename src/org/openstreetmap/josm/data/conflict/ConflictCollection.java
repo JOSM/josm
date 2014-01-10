@@ -11,8 +11,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a collection of {@link Conflict}s. This collection is {@link Iterable}, i.e.
@@ -35,6 +40,24 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimitive>>{
     private final List<Conflict<? extends OsmPrimitive>> conflicts;
     private CopyOnWriteArrayList<IConflictListener> listeners;
+
+    private static class FilterPredicate implements Predicate<Conflict<? extends OsmPrimitive>> {
+
+        private final Class<? extends OsmPrimitive> c;
+        
+        public FilterPredicate(Class<? extends OsmPrimitive> c) {
+            this.c = c;
+        }
+
+        @Override
+        public boolean evaluate(Conflict<? extends OsmPrimitive> conflict) {
+            return conflict != null && c.isInstance(conflict.getMy());
+        }
+    }
+    
+    private static final FilterPredicate NODE_FILTER_PREDICATE = new FilterPredicate(Node.class);
+    private static final FilterPredicate WAY_FILTER_PREDICATE = new FilterPredicate(Way.class);
+    private static final FilterPredicate RELATION_FILTER_PREDICATE = new FilterPredicate(Relation.class);
 
     /**
      * Constructs a new {@code ConflictCollection}.
@@ -280,6 +303,10 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
         return conflicts.iterator();
     }
 
+    /**
+     * Adds all conflicts from another collection.
+     * @param other The other collection of conflicts to add
+     */
     public void add(ConflictCollection other) {
         for (Conflict<?> c : other) {
             add(c);
@@ -327,5 +354,32 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     @Override
     public String toString() {
         return conflicts.toString();
+    }
+
+    /**
+     * Returns the list of conflicts involving nodes.
+     * @return The list of conflicts involving nodes.
+     * @since 6555
+     */
+    public final Collection<Conflict<? extends OsmPrimitive>> getNodeConflicts() {
+        return Utils.filter(conflicts, NODE_FILTER_PREDICATE);
+    }
+
+    /**
+     * Returns the list of conflicts involving nodes.
+     * @return The list of conflicts involving nodes.
+     * @since 6555
+     */
+    public final Collection<Conflict<? extends OsmPrimitive>> getWayConflicts() {
+        return Utils.filter(conflicts, WAY_FILTER_PREDICATE);
+    }
+
+    /**
+     * Returns the list of conflicts involving nodes.
+     * @return The list of conflicts involving nodes.
+     * @since 6555
+     */
+    public final Collection<Conflict<? extends OsmPrimitive>> getRelationConflicts() {
+        return Utils.filter(conflicts, RELATION_FILTER_PREDICATE);
     }
 }

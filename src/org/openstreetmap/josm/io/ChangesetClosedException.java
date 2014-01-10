@@ -83,7 +83,7 @@ public class ChangesetClosedException extends OsmTransferException {
                 closedOn = formatter.parse(m.group(2));
             } catch(ParseException ex) {
                 Main.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
-                ex.printStackTrace();
+                Main.error(ex);
             }
         } else {
             Main.error(tr("Unexpected format of error header for conflict in changeset update. Got ''{0}''", errorHeader));

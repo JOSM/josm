@@ -177,16 +177,20 @@
   fixChangeKey: "monitoring:river_level => monitoring:water_level";
 }
 
-*[layer=0] {
-  /* see #9365 - Useless tag layer=0 */
-  throwWarning: tr("{0}={1} is unnecessary", "layer", "0");
-  fixRemove: "layer";
+*[emergency=aed] {
+  /* see #9554 - http://wiki.openstreetmap.org/wiki/Proposed_features/automated_external_defibrillator */
+  throwWarning: tr("{0}={1} is deprecated", "emergency", "aed");
+  fixAdd: "emergency=defibrillator";
 }
 
-*[emergency=permissive] {
-  /* see #9458 - emergency=permissive makes no sense */
-  throwWarning: tr("{0}={1} makes no sense", "emergency", "permissive");
-  fixAdd: "emergency=yes";
-  assertMatch: "way emergency=permissive";
-  assertNoMatch: "way emergency=designated";
+/* from http://wiki.openstreetmap.org/wiki/Conditional_restrictions#Deprecated_tags */
+*[day_on][!restriction],
+*[day_off][!restriction],
+*[date_on][!restriction],
+*[date_off][!restriction],
+*[hour_on][!restriction],
+*[hour_off][!restriction] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "*:conditional";
+  assertMatch: "node day_on=0-12";
 }

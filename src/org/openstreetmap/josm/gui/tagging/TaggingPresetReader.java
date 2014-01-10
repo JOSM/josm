@@ -9,10 +9,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
@@ -45,6 +49,20 @@ public final class TaggingPresetReader {
 
         return sources;
     }
+
+    /**
+     * Holds a reference to a chunk of  items/objects.
+     */
+    public static class Chunk {
+        public String id;
+    }
+
+    /**
+     * Holds a reference to an earlier item/object.
+     */
+    public static class Reference {
+        public String ref;
+    }
     
     public static List<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
         XmlObjectParser parser = new XmlObjectParser();
@@ -53,6 +71,7 @@ public final class TaggingPresetReader {
         parser.mapBoth("group", TaggingPresetMenu.class);
         parser.map("text", TaggingPresetItems.Text.class);
         parser.map("link", TaggingPresetItems.Link.class);
+        parser.map("preset_link", TaggingPresetItems.PresetLink.class);
         parser.mapOnStart("optional", TaggingPresetItems.Optional.class);
         parser.mapOnStart("roles", TaggingPresetItems.Roles.class);
         parser.map("role", TaggingPresetItems.Role.class);
@@ -65,20 +84,64 @@ public final class TaggingPresetReader {
         parser.map("key", TaggingPresetItems.Key.class);
         parser.map("list_entry", TaggingPresetItems.PresetListEntry.class);
         parser.map("item_separator", TaggingPresetItems.ItemSeparator.class);
-        
+        parser.mapBoth("chunk", Chunk.class);
+        parser.map("reference", Reference.class);
+
         LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
         TaggingPresetMenu lastmenu = null;
         TaggingPresetItems.Roles lastrole = null;
         final List<TaggingPresetItems.Check> checks = new LinkedList<TaggingPresetItems.Check>();
         List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<TaggingPresetItems.PresetListEntry>();
+        final Map<String, List<Object>> byId = new HashMap<String, List<Object>>();
+        final Stack<String> lastIds = new Stack<String>();
+        /** lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
+        final Stack<Iterator<Object>> lastIdIterators = new Stack<Iterator<Object>>();
 
         if (validate) {
             parser.startWithValidation(in, Main.JOSM_WEBSITE+"/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
         } else {
             parser.start(in);
         }
-        while (parser.hasNext()) {
-            Object o = parser.next();
+        while (parser.hasNext() || !lastIdIterators.isEmpty()) {
+            final Object o;
+            if (!lastIdIterators.isEmpty()) {
+                // obtain elements from lastIdIterators with higher priority
+                o = lastIdIterators.peek().next();
+                if (!lastIdIterators.peek().hasNext()) {
+                    // remove iterator is is empty
+                    lastIdIterators.pop();
+                }
+            } else {
+                o = parser.next();
+            }
+            if (o instanceof Chunk) {
+                if (!lastIds.isEmpty() && ((Chunk) o).id.equals(lastIds.peek())) {
+                    // pop last id on end of object, don't process further
+                    lastIds.pop();
+                    ((Chunk) o).id = null;
+                    continue;
+                } else {
+                    // if preset item contains an id, store a mapping for later usage
+                    String lastId = ((Chunk) o).id;
+                    lastIds.push(lastId);
+                    byId.put(lastId, new ArrayList<Object>());
+                    continue;
+                }
+            } else if (!lastIds.isEmpty()) {
+                // add object to mapping for later usage
+                byId.get(lastIds.peek()).add(o);
+                continue;
+            }
+            if (o instanceof Reference) {
+                // if o is a reference, obtain the corresponding objects from the mapping,
+                // and iterate over those before consuming the next element from parser.
+                final String ref = ((Reference) o).ref;
+                if (byId.get(ref) == null) {
+                    throw new SAXException(tr("Reference {0} is being used before it was defined", ref));
+                }
+                lastIdIterators.push(byId.get(ref).iterator());
+                continue;
+            }
             if (!(o instanceof TaggingPresetItem) && !checks.isEmpty()) {
                 all.getLast().data.addAll(checks);
                 checks.clear();
@@ -161,12 +224,7 @@ public final class TaggingPresetReader {
             if(zip != null) {
                 zipIcons = s.getFile();
             }
-            InputStreamReader r;
-            try {
-                r = new InputStreamReader(zip == null ? s : zip, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                r = new InputStreamReader(zip == null ? s: zip);
-            }
+            InputStreamReader r = new InputStreamReader(zip == null ? s : zip, Utils.UTF_8);
             try {
                 tp = readAll(new BufferedReader(r), validate);
             } finally {
