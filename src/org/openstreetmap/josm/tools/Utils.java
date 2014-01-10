@@ -832,32 +832,38 @@ public final class Utils {
     /**
      * Returns a simple human readable (hours, minutes, seconds) string for a given duration in milliseconds.
      * @param elapsedTime The duration in milliseconds
-     * @return A human redable string for the given duration
+     * @return A human readable string for the given duration
      * @throws IllegalArgumentException if elapsedTime is < 0
      * @since 6354
      */
     public static String getDurationString(long elapsedTime) throws IllegalArgumentException {
+        final int MILLIS_OF_SECOND = 1000;
+        final int MILLIS_OF_MINUTE = 60000;
+        final int MILLIS_OF_HOUR = 3600000;
+        final int MILLIS_OF_DAY = 86400000;
         if (elapsedTime < 0) {
             throw new IllegalArgumentException("elapsedTime must be > 0");
         }
         // Is it less than 1 second ?
-        if (elapsedTime < 1000) {
+        if (elapsedTime < MILLIS_OF_SECOND) {
             return String.format("%d %s", elapsedTime, tr("ms"));
         }
         // Is it less than 1 minute ?
-        if (elapsedTime < 60*1000) {
-            return String.format("%.1f %s", elapsedTime/1000f, tr("s"));
+        if (elapsedTime < MILLIS_OF_MINUTE) {
+            return String.format("%.1f %s", elapsedTime / (float) MILLIS_OF_SECOND, tr("s"));
         }
         // Is it less than 1 hour ?
-        if (elapsedTime < 60*60*1000) {
-            return String.format("%d %s %d %s", elapsedTime/60000, tr("min"), elapsedTime/1000, tr("s"));
+        if (elapsedTime < MILLIS_OF_HOUR) {
+            final long min = elapsedTime / MILLIS_OF_MINUTE;
+            return String.format("%d %s %d %s", min, tr("min"), (elapsedTime - min * MILLIS_OF_MINUTE) / MILLIS_OF_SECOND, tr("s"));
         }
         // Is it less than 1 day ?
-        if (elapsedTime < 24*60*60*1000) {
-            return String.format("%d %s %d %s", elapsedTime/3600000, tr("h"), elapsedTime/60000, tr("min"));
+        if (elapsedTime < MILLIS_OF_DAY) {
+            final long hour = elapsedTime / MILLIS_OF_HOUR;
+            return String.format("%d %s %d %s", hour, tr("h"), (elapsedTime - hour * MILLIS_OF_HOUR) / MILLIS_OF_MINUTE, tr("min"));
         }
-        long days = elapsedTime/86400000;
-        return String.format("%d %s %d %s", days, trn("day", "days", days), elapsedTime/3600000, tr("h"));
+        long days = elapsedTime / MILLIS_OF_DAY;
+        return String.format("%d %s %d %s", days, trn("day", "days", days), (elapsedTime - days * MILLIS_OF_DAY) / MILLIS_OF_HOUR, tr("h"));
     }
 
     /**
