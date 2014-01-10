@@ -51,18 +51,18 @@ public class UnclosedWays extends Test {
         private final boolean ignore;
         
         /**
-         * Constructs a new {@code UnclosedWaysCheck}. 
+         * Constructs a new {@code UnclosedWaysCheck}.
          * @param code The unique numeric code for this check
          * @param key The OSM key checked
          * @param engMessage The English message
          */
         @SuppressWarnings("unchecked")
         public UnclosedWaysCheck(int code, String key, String engMessage) {
-            this(code, key, engMessage, (List<String>) Collections.EMPTY_LIST);
+            this(code, key, engMessage, Collections.EMPTY_LIST);
         }
         
         /**
-         * Constructs a new {@code UnclosedWaysCheck}. 
+         * Constructs a new {@code UnclosedWaysCheck}.
          * @param code The unique numeric code for this check
          * @param key The OSM key checked
          * @param engMessage The English message
@@ -73,12 +73,12 @@ public class UnclosedWays extends Test {
         }
         
         /**
-         * Constructs a new {@code UnclosedWaysCheck}. 
+         * Constructs a new {@code UnclosedWaysCheck}.
          * @param code The unique numeric code for this check
          * @param key The OSM key checked
          * @param engMessage The English message
          * @param specialValues The special values, to be ignored if ignore is set to true; to be considered only if ignore is set to false
-         * @param ignore indicates if special values must be ignored or considered only 
+         * @param ignore indicates if special values must be ignored or considered only
          */
         public UnclosedWaysCheck(int code, String key, String engMessage, List<String> specialValues, boolean ignore) {
             this.code = code;
@@ -91,7 +91,7 @@ public class UnclosedWays extends Test {
         /**
          * Returns the test error of the given way, if any.
          * @param w The way to check
-         * @return The test error if the way is erroneous, {@code null} otherwise 
+         * @return The test error if the way is erroneous, {@code null} otherwise
          */
         public final TestError getTestError(Way w) {
             String value = w.get(key);
@@ -119,7 +119,7 @@ public class UnclosedWays extends Test {
     private final class UnclosedWaysBooleanCheck extends UnclosedWaysCheck {
 
         /**
-         * Constructs a new {@code UnclosedWaysBooleanCheck}. 
+         * Constructs a new {@code UnclosedWaysBooleanCheck}.
          * @param code The unique numeric code for this check
          * @param key The OSM key checked
          * @param engMessage The English message
@@ -141,7 +141,7 @@ public class UnclosedWays extends Test {
         new UnclosedWaysCheck(1102, "landuse",   marktr("landuse type {0}")),
         new UnclosedWaysCheck(1103, "amenities", marktr("amenities type {0}")),
         new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"), Arrays.asList("water_slide", "climbing")),
-        new UnclosedWaysCheck(1105, "tourism",   marktr("tourism type {0}")),
+        new UnclosedWaysCheck(1105, "tourism",   marktr("tourism type {0}"), Arrays.asList("attraction")),
         new UnclosedWaysCheck(1106, "shop",      marktr("shop type {0}")),
         new UnclosedWaysCheck(1107, "leisure",   marktr("leisure type {0}"), Arrays.asList("track")),
         new UnclosedWaysCheck(1108, "waterway",  marktr("waterway type {0}"), Arrays.asList("riverbank"), false),
