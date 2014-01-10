@@ -8,6 +8,7 @@ import org.openstreetmap.josm.Main;
 import java.io.BufferedReader;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -97,5 +98,17 @@ public class UtilsTest {
         assertThat(Utils.getPositionListString(Arrays.asList(3, 1, 2)), is("1-3"));
         assertThat(Utils.getPositionListString(Arrays.asList(1, 2, 3, 6, 7, 8)), is("1-3,6-8"));
         assertThat(Utils.getPositionListString(Arrays.asList(1, 5, 2, 6, 7)), is("1-2,5-7"));
+    }
+
+    @Test
+    public void testDurationString() throws Exception {
+        Locale.setDefault(Locale.ENGLISH);
+        assertThat(Utils.getDurationString(123), is("123 ms"));
+        assertThat(Utils.getDurationString(1234), is("1.2 s"));
+        assertThat(Utils.getDurationString(57 * 1000), is("57.0 s"));
+        assertThat(Utils.getDurationString(507 * 1000), is("8 min 27 s"));
+        assertThat(Utils.getDurationString((long) (8.4 * 60 * 60 * 1000)), is("8 h 24 min"));
+        assertThat(Utils.getDurationString((long) (1.5 * 24 * 60 * 60 * 1000)), is("1 day 12 h"));
+        assertThat(Utils.getDurationString((long) (8.5 * 24 * 60 * 60 * 1000)), is("8 days 12 h"));
     }
 }
