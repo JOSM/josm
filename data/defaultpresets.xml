@@ -2081,6 +2081,11 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=buffer_stop" />
             <key key="railway" value="buffer_stop" />
         </item>
+        <item name="Railway Switch" icon="presets/railway_switch.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=switch" />
+            <key key="railway" value="switch" />
+            <text key="ref" text="Reference" />
+        </item>
     </group> <!-- Railway -->
     <group name="Aerialway" icon="presets/aerialway.png">
         <item name="Chair Lift" icon="presets/chair_lift.png" type="way">
