@@ -53,12 +53,11 @@ public class BasicUploadSettingsPanel extends JPanel {
     private final ChangesetCommentModel changesetSourceModel;
 
     protected JPanel buildUploadCommentPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
 
         final JEditorPane commentLabel = JosmEditorPane.createJLabelLikePane();
         commentLabel.setText("<html><b>" + tr("Provide a brief comment for the changes you are uploading:"));
-        pnl.add(commentLabel, GBC.eol().insets(0, 5, 10, 3));
+        pnl.add(commentLabel, GBC.eol().insets(0, 5, 10, 3).fill(GBC.HORIZONTAL));
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
         hcbUploadComment.setMaxTextLength(Changeset.MAX_COMMENT_LENGTH);
         List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
@@ -80,7 +79,7 @@ public class BasicUploadSettingsPanel extends JPanel {
                 }
             }
         });
-        pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 3));
+        pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 3).fill(GBC.HORIZONTAL));
 
         hcbUploadSource.setToolTipText(tr("Enter a source"));
         List<String> sourceHistory = new LinkedList<String>(Main.pref.getCollection(SOURCE_HISTORY_KEY, Arrays.asList("knowledge", "survey", "Bing")));
