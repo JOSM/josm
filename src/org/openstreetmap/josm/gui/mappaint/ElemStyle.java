@@ -154,17 +154,15 @@ abstract public class ElemStyle implements StyleKeys {
     }
 
     protected static Font getFont(Cascade c) {
-        initDefaultFontParameters(); // populated cached preferences, if necesary
+        initDefaultFontParameters(); // populated cached preferences, if necessary
         String name = c.get("font-family", DEFAULT_FONT_NAME, String.class);
         float size = c.get("font-size", DEFAULT_FONT_SIZE, Float.class);
         int weight = Font.PLAIN;
-        Keyword weightKW = c.get("font-weight", null, Keyword.class);
-        if (weightKW != null && equal(weightKW, "bold")) {
+        if ("bold".equalsIgnoreCase(c.get("font-weight", null, String.class))) {
             weight = Font.BOLD;
         }
         int style = Font.PLAIN;
-        Keyword styleKW = c.get("font-style", null, Keyword.class);
-        if (styleKW != null && equal(styleKW.val, "italic")) {
+        if ("italic".equalsIgnoreCase(c.get("font-style", null, String.class))) {
             style = Font.ITALIC;
         }
         return getCachedFont(name, style | weight, Math.round(size));
