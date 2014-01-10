@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -32,19 +31,6 @@ public class HistoryBrowser extends JPanel {
     private JTabbedPane tpViewers;
 
     /**
-     * embedds table in a {@link JScrollPane}
-     *
-     * @param table the table
-     * @return the {@link JScrollPane} with the embedded table
-     */
-    protected JScrollPane embeddInScrollPane(JTable table) {
-        JScrollPane pane = new JScrollPane(table);
-        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        return pane;
-    }
-
-    /**
      * creates the table which shows the list of versions
      *
      * @return  the panel with the version table
@@ -54,7 +40,7 @@ public class HistoryBrowser extends JPanel {
         pnl.setLayout(new BorderLayout());
 
         VersionTable versionTable = new VersionTable(model);
-        pnl.add(embeddInScrollPane(versionTable), BorderLayout.CENTER);
+        pnl.add(new JScrollPane(versionTable), BorderLayout.CENTER);
         return pnl;
     }
 

@@ -365,10 +365,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
             Point p = mv.getLocationOnScreen();
             Dimension scrn = Toolkit.getDefaultToolkit().getScreenSize();
 
-            // Create a JScrollPane around the content, in case there's not
-            // enough space
-            JScrollPane sp = new JScrollPane(content);
-            sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            // Create a JScrollPane around the content, in case there's not enough space
+            JScrollPane sp = GuiHelper.embedInVerticalScrollPane(content);
             sp.setBorder(BorderFactory.createRaisedBevelBorder());
             // Implement max-size content-independent
             Dimension prefsize = sp.getPreferredSize();

@@ -40,7 +40,7 @@ public final class ProxyPreference implements SubPreferenceSetting {
     public void addGui(PreferenceTabbedPane gui) {
         pnlProxyPreferences = new ProxyPreferencesPanel();
         gui.getServerPreference().addSubTab(this, tr("Proxy settings"),
-                ServerAccessPreference.wrapVerticallyScrollablePanel(pnlProxyPreferences),
+                pnlProxyPreferences.getVerticalScrollPane(),
                 tr("Configure whether to use a proxy server"));
     }
 

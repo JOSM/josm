@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
@@ -108,9 +109,7 @@ public class BackupPreference implements SubPreferenceSetting {
         autosaveEnabled.actionPerformed(null);
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
-        JScrollPane sp = new JScrollPane(panel);
-        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane sp = GuiHelper.embedInVerticalScrollPane(panel);
 
         gui.getMapPreference().addSubTab(this, tr("File backup"), sp, tr("Configure whether to create backup files"));
     }

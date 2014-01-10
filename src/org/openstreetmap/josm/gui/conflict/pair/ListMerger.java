@@ -14,7 +14,6 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -86,8 +85,6 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
     protected JScrollPane embeddInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
-        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         if (adjustmentSynchronizer == null) {
             adjustmentSynchronizer = new AdjustmentSynchronizer();
         }
@@ -479,7 +476,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyBeforeCurrentLeftAction extends CopyAction {
 
         public CopyBeforeCurrentLeftAction() {
-            super("copybeforecurrentleft", tr("> before"), 
+            super("copybeforecurrentleft", tr("> before"),
                     tr("Copy my selected elements before the first selected element in the list of merged elements."));
         }
 
@@ -509,7 +506,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyAfterCurrentLeftAction extends CopyAction {
 
         public CopyAfterCurrentLeftAction() {
-            super("copyaftercurrentleft", tr("> after"), 
+            super("copyaftercurrentleft", tr("> after"),
                     tr("Copy my selected elements after the first selected element in the list of merged elements."));
         }
 
@@ -569,7 +566,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyBeforeCurrentRightAction extends CopyAction {
 
         public CopyBeforeCurrentRightAction() {
-            super("copybeforecurrentright", tr("< before"), 
+            super("copybeforecurrentright", tr("< before"),
                     tr("Copy their selected elements before the first selected element in the list of merged elements."));
         }
 
@@ -595,7 +592,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyAfterCurrentRightAction extends CopyAction {
 
         public CopyAfterCurrentRightAction() {
-            super("copyaftercurrentright", tr("< after"), 
+            super("copyaftercurrentright", tr("< after"),
                     tr("Copy their selected element after the first selected element in the list of merged elements"));
         }
 

@@ -51,9 +51,6 @@ public class TagMerger extends JPanel implements IConflictResolver {
      */
     protected JScrollPane embeddInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
-        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
         adjustmentSynchronizer.synchronizeAdjustment(pane.getVerticalScrollBar());
         return pane;
     }

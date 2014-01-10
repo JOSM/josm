@@ -26,6 +26,7 @@ import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -245,5 +246,15 @@ public final class GuiHelper {
         } else {
             return new Font("SansSerif", Font.BOLD, 20);
         }
+    }
+
+    /**
+     * Embeds the given component into a new vertical-only scrollable {@code JScrollPane}.
+     * @param panel The component to embed
+     * @return the vertical scrollable {@code JScrollPane}
+     * @since 6666
+     */
+    public static JScrollPane embedInVerticalScrollPane(Component panel) {
+        return new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     }
 }
