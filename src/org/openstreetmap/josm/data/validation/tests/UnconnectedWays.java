@@ -156,6 +156,9 @@ public abstract class UnconnectedWays extends Test {
             if(isCanceled())
                 return;
             for (Node en : s.nearbyNodes(mindist)) {
+                if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                    continue;
+                }
                 if (endnodes_highway.contains(en) && !s.highway && !s.w.concernsArea()) {
                     map.put(en, s.w);
                 } else if (endnodes.contains(en) && !s.w.concernsArea()) {
@@ -177,6 +180,9 @@ public abstract class UnconnectedWays extends Test {
                 if(isCanceled())
                     return;
                 for (Node en : s.nearbyNodes(minmiddledist)) {
+                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                        continue;
+                    }
                     if (!middlenodes.contains(en)) {
                         continue;
                     }
@@ -193,6 +199,9 @@ public abstract class UnconnectedWays extends Test {
             map.clear();
             for (MyWaySegment s : ways) {
                 for (Node en : s.nearbyNodes(minmiddledist)) {
+                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                        continue;
+                    }
                     if(isCanceled())
                         return;
                     if (!othernodes.contains(en)) {
