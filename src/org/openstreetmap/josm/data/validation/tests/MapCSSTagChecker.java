@@ -4,12 +4,12 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +24,6 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
@@ -37,25 +36,28 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
-import org.openstreetmap.josm.gui.widgets.EditableList;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  * MapCSS-based tag checker/fixer.
  * @since 6506
  */
 public class MapCSSTagChecker extends Test.TagTest {
+
+    /**
+     * The preference key for tag checker source entries.
+     * @since 6670
+     */
+    public static final String ENTRIES_PREF_KEY = "validator." + MapCSSTagChecker.class.getName() + ".entries";
 
     /**
      * Constructs a new {@code MapCSSTagChecker}.
@@ -169,12 +171,29 @@ public class MapCSSTagChecker extends Test.TagTest {
             final MapCSSStyleSource source = new MapCSSStyleSource("");
             css.sheet(source);
             assert source.getErrors().isEmpty();
+            // Ignore "meta" rule(s) from external rules of JOSM wiki
+            removeMetaRules(source);
             return new ArrayList<TagCheck>(Utils.transform(source.rules, new Utils.Function<MapCSSRule, TagCheck>() {
                 @Override
                 public TagCheck apply(MapCSSRule x) {
                     return TagCheck.ofMapCSSRule(x);
                 }
             }));
+        }
+        
+        private static void removeMetaRules(MapCSSStyleSource source) {
+            for (Iterator<MapCSSRule> it = source.rules.iterator(); it.hasNext(); ) {
+                MapCSSRule x = it.next();
+                if (x.selectors.size() == 1) {
+                    Selector sel = x.selectors.get(0);
+                    if (sel instanceof GeneralSelector) {
+                        GeneralSelector gs = (GeneralSelector) sel;
+                        if ("meta".equals(gs.base) && gs.getConditions().isEmpty()) {
+                            it.remove();
+                        }
+                    }
+                }
+            }
         }
 
         @Override
@@ -404,54 +423,25 @@ public class MapCSSTagChecker extends Test.TagTest {
         checks.addAll(TagCheck.readMapCSS(css));
     }
 
-    /**
-     * Adds a new MapCSS config file from the given internal filename.
-     * @param internalConfigFile the filename in data/validator
-     * @throws ParseException if the config file does not match MapCSS syntax
-     */
-    private void addMapCSS(String internalConfigFile) throws ParseException {
-        addMapCSS(new InputStreamReader(getClass().getResourceAsStream("/data/validator/" + internalConfigFile + ".mapcss"), Utils.UTF_8));
-    }
-
     @Override
     public synchronized void initialize() throws Exception {
         checks.clear();
-        addMapCSS("deprecated");
-        addMapCSS("highway");
-        addMapCSS("numeric");
-        addMapCSS("religion");
-        addMapCSS("relation");
-        addMapCSS("combinations");
-        addMapCSS("unnecessary");
-        addMapCSS("wikipedia");
-        addMapCSS("power");
-        addMapCSS("geometry");
-        for (final String i : sourcesProperty.get()) {
+        for (String i : new ValidatorTagCheckerRulesPreference.RulePrefHelper().getActiveUrls()) {
             try {
                 Main.info(tr("Adding {0} to tag checker", i));
-                addMapCSS(new BufferedReader(UTFInputStreamReader.create(new MirroredInputStream(i))));
+                MirroredInputStream s = new MirroredInputStream(i);
+                try {
+                    addMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
+                } finally {
+                    Utils.close(s);
+                }
+            } catch (IOException ex) {
+                Main.warn(tr("Failed to add {0} to tag checker", i));
+                Main.warn(ex, false);
             } catch (Exception ex) {
-                Main.warn(new RuntimeException(tr("Failed to add {0} to tag checker", i), ex));
+                Main.warn(tr("Failed to add {0} to tag checker", i));
+                Main.warn(ex);
             }
         }
-    }
-
-    protected EditableList sourcesList;
-    protected final CollectionProperty sourcesProperty = new CollectionProperty(
-            "validator." + this.getClass().getName() + ".sources", Collections.<String>emptyList());
-
-    @Override
-    public void addGui(JPanel testPanel) {
-        super.addGui(testPanel);
-        sourcesList = new EditableList(tr("TagChecker source"));
-        sourcesList.setItems(sourcesProperty.get());
-        testPanel.add(new JLabel(tr("Data sources ({0})", "*.validator.mapcss")), GBC.eol().insets(23, 0, 0, 0));
-        testPanel.add(sourcesList, GBC.eol().fill(GBC.HORIZONTAL).insets(23, 0, 0, 0));
-    }
-
-    @Override
-    public boolean ok() {
-        sourcesProperty.put(sourcesList.getItems());
-        return super.ok();
     }
 }

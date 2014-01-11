@@ -41,6 +41,10 @@ public final class MapPaintStyles {
 
     private static ElemStyles styles = new ElemStyles();
 
+    /**
+     * Returns the {@link ElemStyles} instance.
+     * @return the {@code ElemStyles} instance
+     */
     public static ElemStyles getStyles() {
         return styles;
     }

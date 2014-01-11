@@ -90,9 +90,9 @@ public class EastNorth extends Coordinate {
     }
 
     /**
-     * Replies true if east and north are different from Double.NaN and not inifinite
+     * Replies true if east and north are different from Double.NaN and not infinite
      *
-     * @return true if east and north are different from Double.NaN and not inifinite
+     * @return true if east and north are different from Double.NaN and not infinite
      */
     public boolean isValid() {
         return !Double.isNaN(x) && !Double.isNaN(y) && !Double.isInfinite(x) && !Double.isInfinite(y);

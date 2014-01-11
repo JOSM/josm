@@ -221,6 +221,20 @@ public class OsmValidator implements LayerChangeListener {
         applyPrefs(allTestsMap, true);
         return new HashMap<String, Test>(allTestsMap);
     }
+    
+    /**
+     * Returns the instance of the given test class.
+     * @param testClass The class of test to retrieve
+     * @return the instance of the given test class, if any, or {@code null}
+     * @since 6670
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Test> T getTest(Class<T> testClass) {
+        if (testClass == null) {
+            return null;
+        }
+        return (T) allTestsMap.get(testClass.getSimpleName());
+    }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
         for(String testName : Main.pref.getCollection(beforeUpload
@@ -282,7 +296,7 @@ public class OsmValidator implements LayerChangeListener {
      * Initializes all tests
      * @param allTests The tests to initialize
      */
-    public static void initializeTests(Collection<Test> allTests) {
+    public static void initializeTests(Collection<? extends Test> allTests) {
         for (Test test : allTests) {
             try {
                 if (test.enabled) {
