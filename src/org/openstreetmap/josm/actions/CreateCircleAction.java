@@ -20,6 +20,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -202,10 +203,7 @@ public final class CreateCircleAction extends JosmAction {
             double sUnder = (x1 - x2)*(y3 - y1) - (y2 - y1)*(x1 - x3);
 
             if (sUnder == 0) {
-                new Notification(
-                        tr("Those nodes are not in a circle. Aborting."))
-                        .setIcon(JOptionPane.WARNING_MESSAGE)
-                        .show();
+                notifyNodesNotOnCircle();
                 return;
             }
 
@@ -245,7 +243,12 @@ public final class CreateCircleAction extends JosmAction {
                 // get the position of the new node and insert it
                 double x = xc + r*Math.cos(a);
                 double y = yc + r*Math.sin(a);
-                Node n = new Node(Main.getProjection().eastNorth2latlon(new EastNorth(x,y)));
+                LatLon ll = Main.getProjection().eastNorth2latlon(new EastNorth(x,y));
+                if (ll.isOutSideWorld()) {
+                    notifyNodesNotOnCircle();
+                    return;
+                }
+                Node n = new Node(ll);
                 wayToAdd.add(n);
                 cmds.add(new AddCommand(n));
             }
@@ -271,6 +274,13 @@ public final class CreateCircleAction extends JosmAction {
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Create Circle"), cmds));
         Main.map.repaint();
+    }
+    
+    private static void notifyNodesNotOnCircle() {
+        new Notification(
+                tr("Those nodes are not in a circle. Aborting."))
+                .setIcon(JOptionPane.WARNING_MESSAGE)
+                .show();
     }
 
     @Override
