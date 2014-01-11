@@ -52,6 +52,7 @@ import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -835,7 +836,7 @@ public class Preferences {
         try {
             Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
             if (m.matches()) {
-                return tr("Paint style {0}: {1}", tr(m.group(1)), tr(m.group(2)));
+                return tr("Paint style {0}: {1}", tr(I18n.escape(m.group(1))), tr(I18n.escape(m.group(2))));
             }
         } catch (Exception e) {
             Main.warn(e);
@@ -843,12 +844,12 @@ public class Preferences {
         try {
             Matcher m = Pattern.compile("layer (.+)").matcher(o);
             if (m.matches()) {
-                return tr("Layer: {0}", tr(m.group(1)));
+                return tr("Layer: {0}", tr(I18n.escape(m.group(1))));
             }
         } catch (Exception e) {
             Main.warn(e);
         }
-        return tr(colornames.containsKey(o) ? colornames.get(o) : o);
+        return tr(I18n.escape(colornames.containsKey(o) ? colornames.get(o) : o));
     }
 
     /**
