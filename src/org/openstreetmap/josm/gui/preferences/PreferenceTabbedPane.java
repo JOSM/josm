@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.preferences.server.ServerAccessPreference;
 import org.openstreetmap.josm.gui.preferences.shortcut.ShortcutPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTestsPreference;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -513,6 +514,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         settingsFactory.add(new ShortcutPreference.Factory());
         settingsFactory.add(new ValidatorPreference.Factory());
         settingsFactory.add(new ValidatorTestsPreference.Factory());
+        settingsFactory.add(new ValidatorTagCheckerRulesPreference.Factory());
         settingsFactory.add(new RemoteControlPreference.Factory());
         settingsFactory.add(new ImageryPreference.Factory());
 

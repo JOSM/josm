@@ -49,8 +49,7 @@ public class SourceEntry {
     public String title;
 
     /**
-     * active is a boolean flag that can be used to turn the style on or off
-     * at runtime.
+     * active is a boolean flag that can be used to turn the source on or off at runtime.
      */
     public boolean active;
 

@@ -25,6 +25,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
+import org.openstreetmap.josm.gui.preferences.SourceType;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceProvider;
@@ -40,6 +41,11 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
     private static final List<SourceProvider> styleSourceProviders = new ArrayList<SourceProvider>();
 
+    /**
+     * Registers a new additional style source provider.
+     * @param provider The style source provider
+     * @return {@code true}, if the provider has been added, {@code false} otherwise
+     */
     public static boolean registerSourceProvider(SourceProvider provider) {
         if (provider != null)
             return styleSourceProviders.add(provider);
@@ -57,7 +63,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
     }
 
     @Override
-    public void addGui(final PreferenceTabbedPane gui) {
+    public void addGui(PreferenceTabbedPane gui) {
         enableIconDefault = new JCheckBox(tr("Enable built-in icon defaults"),
                 Main.pref.getBoolean("mappaint.icon.enable-defaults", true));
 
@@ -69,21 +75,9 @@ public class MapPaintPreference implements SubPreferenceSetting {
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         panel.add(enableIconDefault, GBC.eol().insets(11,2,5,0));
 
-        gui.getMapPreference().addSubTab(this, tr("Map Paint Styles"), panel);
-
-        // this defers loading of style sources to the first time the tab
-        // with the map paint preferences is selected by the user
-        //
-        gui.getMapPreference().getTabPane().addChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        if (gui.getMapPreference().getTabPane().getSelectedComponent() == panel) {
-                            sources.initiallyLoadAvailableSources();
-                        }
-                    }
-                }
-                );
+        final MapPreference mapPref = gui.getMapPreference();
+        mapPref.addSubTab(this, tr("Map Paint Styles"), panel);
+        sources.deferLoading(mapPref, panel);
     }
 
     static class MapPaintSourceEditor extends SourceEditor {
@@ -91,7 +85,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         private static final String iconpref = "mappaint.icon.sources";
 
         public MapPaintSourceEditor() {
-            super(true, Main.JOSM_WEBSITE+"/styles", styleSourceProviders);
+            super(SourceType.MAP_PAINT_STYLE, Main.JOSM_WEBSITE+"/styles", styleSourceProviders, true);
         }
 
         @Override
@@ -185,6 +179,9 @@ public class MapPaintPreference implements SubPreferenceSetting {
         MapPaintStyles.readFromPreferences();
     }
 
+    /**
+     * Helper class for map paint styles preferences.
+     */
     public static class MapPaintPrefHelper extends SourceEditor.SourcePrefHelper {
 
         /**

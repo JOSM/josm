@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceProvider;
+import org.openstreetmap.josm.gui.preferences.SourceType;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -66,6 +67,11 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
     private SourceEditor sources;
     private JCheckBox sortMenu;
 
+    /**
+     * Registers a new additional preset source provider.
+     * @param provider The preset source provider
+     * @return {@code true}, if the provider has been added, {@code false} otherwise
+     */
     public static final boolean registerSourceProvider(SourceProvider provider) {
         if (provider != null)
             return presetSourceProviders.add(provider);
@@ -160,7 +166,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
     };
 
     @Override
-    public void addGui(final PreferenceTabbedPane gui) {
+    public void addGui(PreferenceTabbedPane gui) {
         sortMenu = new JCheckBox(tr("Sort presets menu"),
                 Main.pref.getBoolean("taggingpreset.sortmenu", false));
 
@@ -169,21 +175,9 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         panel.add(sortMenu, GBC.eol().insets(5,5,5,0));
         sources = new TaggingPresetSourceEditor();
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
-        gui.getMapPreference().addSubTab(this, tr("Tagging Presets"), panel);
-
-        // this defers loading of tagging preset sources to the first time the tab
-        // with the tagging presets is selected by the user
-        //
-        gui.getMapPreference().getTabPane().addChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        if (gui.getMapPreference().getTabPane().getSelectedComponent() == panel) {
-                            sources.initiallyLoadAvailableSources();
-                        }
-                    }
-                }
-                );
+        final MapPreference mapPref = gui.getMapPreference();
+        mapPref.addSubTab(this, tr("Tagging Presets"), panel);
+        sources.deferLoading(mapPref, panel);
         gui.addValidationListener(validationListener);
     }
 
@@ -192,7 +186,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         private static final String iconpref = "taggingpreset.icon.sources";
 
         public TaggingPresetSourceEditor() {
-            super(false, Main.JOSM_WEBSITE+"/presets", presetSourceProviders);
+            super(SourceType.TAGGING_PRESET, Main.JOSM_WEBSITE+"/presets", presetSourceProviders, true);
         }
 
         @Override
@@ -273,13 +267,16 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         return restart;
     }
 
+    /**
+     * Initializes tagging presets from preferences.
+     */
     public static void readFromPreferences() {
         taggingPresets = TaggingPresetReader.readFromPreferences(false);
     }
 
-        /**
-         * Initialize the tagging presets (load and may display error)
-         */
+    /**
+     * Initialize the tagging presets (load and may display error)
+     */
     public static void initialize() {
         readFromPreferences();
         for (TaggingPreset tp: taggingPresets) {
@@ -314,6 +311,9 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         }
     }
 
+    /**
+     * Helper class for tagging presets preferences.
+     */
     public static class PresetPrefHelper extends SourceEditor.SourcePrefHelper {
 
         /**

@@ -6,8 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -17,6 +19,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Test;
+import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -107,7 +110,13 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
             if(!test.testBeforeUpload)
                 testsBeforeUpload.add(name);
         }
-        OsmValidator.initializeTests(allTests);
+        
+        // Initializes all tests but MapCSSTagChecker because it is initialized
+        // later in ValidatorTagCheckerRulesPreference.ok(),
+        // after its list of rules has been saved to preferences
+        List<Test> testsToInitialize = new ArrayList<Test>(allTests);
+        testsToInitialize.remove(OsmValidator.getTest(MapCSSTagChecker.class));
+        OsmValidator.initializeTests(testsToInitialize);
 
         Main.pref.putCollection(ValidatorPreference.PREF_SKIP_TESTS, tests);
         Main.pref.putCollection(ValidatorPreference.PREF_SKIP_TESTS_BEFORE_UPLOAD, testsBeforeUpload);

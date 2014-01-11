@@ -16,12 +16,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.Utils;
@@ -40,20 +40,19 @@ public final class TaggingPresetReader {
     
     private static File zipIcons = null;
     
-    public static List<String> getPresetSources() {
-        LinkedList<String> sources = new LinkedList<String>();
-
-        for (SourceEntry e : (new TaggingPresetPreference.PresetPrefHelper()).get()) {
-            sources.add(e.url);
-        }
-
-        return sources;
+    /**
+     * Returns the set of preset source URLs.
+     * @return The set of preset source URLs.
+     */
+    public static Set<String> getPresetSources() {
+        return new TaggingPresetPreference.PresetPrefHelper().getActiveUrls();
     }
 
     /**
-     * Holds a reference to a chunk of  items/objects.
+     * Holds a reference to a chunk of items/objects.
      */
     public static class Chunk {
+        /** The chunk id, can be referenced later */
         public String id;
     }
 
@@ -61,6 +60,7 @@ public final class TaggingPresetReader {
      * Holds a reference to an earlier item/object.
      */
     public static class Reference {
+        /** Reference matching a chunk id defined earlier **/
         public String ref;
     }
     

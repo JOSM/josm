@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 
 public class MapCSSStyleSource extends StyleSource {
-    final public List<MapCSSRule> rules;
+    public final List<MapCSSRule> rules;
     private Color backgroundColorOverride;
     private String css = null;
     private ZipFile zipFile;

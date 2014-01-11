@@ -345,6 +345,9 @@ public interface Selector {
         }
 
         public List<Condition> getConditions() {
+            if (conds == null) {
+                return Collections.emptyList();
+            }
             return Collections.unmodifiableList(conds);
         }
     }
