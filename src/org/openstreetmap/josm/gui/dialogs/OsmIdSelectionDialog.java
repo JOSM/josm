@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -28,8 +30,10 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
@@ -186,19 +190,38 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
     protected void tryToPasteFromClipboard(OsmIdTextField tfId, OsmPrimitiveTypesComboBox cbType) {
         String buf = Utils.getClipboardContent();
         if (buf != null) {
-            if (buf.contains("node")) cbType.setSelectedIndex(0);
-            if (buf.contains("way")) cbType.setSelectedIndex(1);
-            if (buf.contains("relation")) cbType.setSelectedIndex(2);
-            String[] res = buf.split("/");
-            String txt;
-            if (res.length > 0) {
-                txt = res[res.length - 1];
-                if (txt.isEmpty() && txt.length() > 1) txt = res[res.length - 2];
-            } else {
-                txt = buf;
-            }
             if (buf.length() <= Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) {
-                tfId.tryToPasteFrom(txt.replaceAll("[^0-9]+", " ").replaceAll("\\s\\s+", " "));
+                final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
+                final String parsedText = Utils.join(", ", Utils.transform(ids, new Utils.Function<SimplePrimitiveId, String>() {
+                    @Override
+                    public String apply(SimplePrimitiveId x) {
+                        return x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId());
+                    }
+                }));
+                tfId.tryToPasteFrom(parsedText);
+                final Set<OsmPrimitiveType> types = new HashSet<OsmPrimitiveType>(Utils.transform(ids, new Utils.Function<SimplePrimitiveId, OsmPrimitiveType>() {
+                    @Override
+                    public OsmPrimitiveType apply(SimplePrimitiveId x) {
+                        return x.getType();
+                    }
+                }));
+                if (types.size() == 1) {
+                    // select corresponding type
+                    cbType.setSelectedItem(types.iterator().next());
+                } else {
+                    // select "mixed"
+                    cbType.setSelectedIndex(3);
+                }
+            } else {
+                if (buf.contains("node")) cbType.setSelectedIndex(0);
+                if (buf.contains("way")) cbType.setSelectedIndex(1);
+                if (buf.contains("relation")) cbType.setSelectedIndex(2);
+                String[] res = buf.split("/");
+                String txt;
+                if (res.length > 0) {
+                    txt = res[res.length - 1];
+                    if (txt.isEmpty() && txt.length() > 1) txt = res[res.length - 2];
+                }
             }
         }
     }

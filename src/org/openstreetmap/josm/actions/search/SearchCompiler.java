@@ -21,6 +21,7 @@ import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -745,22 +746,16 @@ public class SearchCompiler {
         }
     }
 
-    // TODO: change how we handle this
     private static class ExactType extends Match {
-        private final Class<?> type;
+        private final OsmPrimitiveType type;
         public ExactType(String type) throws ParseError {
-            if ("node".equals(type)) {
-                this.type = Node.class;
-            } else if ("way".equals(type)) {
-                this.type = Way.class;
-            } else if ("relation".equals(type)) {
-                this.type = Relation.class;
-            } else
+            this.type = OsmPrimitiveType.from(type);
+            if (this.type == null)
                 throw new ParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation",
                         type));
         }
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.getClass() == type;
+            return type.equals(osm.getType());
         }
         @Override public String toString() {return "type="+type;}
     }

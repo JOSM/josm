@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -51,16 +52,14 @@ public class LoadAndZoomHandler extends RequestHandler {
     private double maxlon;
 
     // Optional argument 'select'
-    private final Set<Long> ways = new HashSet<Long>();
-    private final Set<Long> nodes = new HashSet<Long>();
-    private final Set<Long> relations = new HashSet<Long>();
+    private final HashSet<SimplePrimitiveId> toSelect = new HashSet<SimplePrimitiveId>();
 
     @Override
     public String getPermissionMessage() {
         String msg = tr("Remote Control has been asked to load data from the API.") +
                 "<br>" + tr("Bounding box: ") + new BBox(minlon, minlat, maxlon, maxlat).toStringCSV(", ");
-        if (args.containsKey("select") && ways.size()+nodes.size()+relations.size() > 0) {
-            msg += "<br>" + tr("Sel.: Rel.:{0} / Ways:{1} / Nodes:{2}", relations.size(), ways.size(), nodes.size());
+        if (args.containsKey("select") && toSelect.size() > 0) {
+            msg += "<br>" + tr("Selection: {0}", toSelect.size());
         }
         return msg;
     }
@@ -167,24 +166,13 @@ public class LoadAndZoomHandler extends RequestHandler {
                     DataSet ds = Main.main.getCurrentDataSet();
                     if(ds == null) // e.g. download failed
                         return;
-                    for (Way w : ds.getWays()) {
-                        if (ways.contains(w.getId())) {
-                            newSel.add(w);
+                    for (SimplePrimitiveId id : toSelect) {
+                        final OsmPrimitive p = ds.getPrimitiveById(id);
+                        if (p != null) {
+                            newSel.add(p);
                         }
                     }
-                    ways.clear();
-                    for (Node n : ds.getNodes()) {
-                        if (nodes.contains(n.getId())) {
-                            newSel.add(n);
-                        }
-                    }
-                    nodes.clear();
-                    for (Relation r : ds.getRelations()) {
-                        if (relations.contains(r.getId())) {
-                            newSel.add(r);
-                        }
-                    }
-                    relations.clear();
+                    toSelect.clear();
                     ds.setSelected(newSel);
                     if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
                         // zoom_mode=(download|selection), defaults to selection
@@ -276,24 +264,12 @@ public class LoadAndZoomHandler extends RequestHandler {
 
         // Process optional argument 'select'
         if (args.containsKey("select")) {
-            ways.clear();
-            nodes.clear();
-            relations.clear();
+            toSelect.clear();
             for (String item : args.get("select").split(",")) {
                 try {
-                    if (item.startsWith("way")) {
-                        ways.add(Long.parseLong(item.substring(3)));
-                    } else if (item.startsWith("node")) {
-                        nodes.add(Long.parseLong(item.substring(4)));
-                    } else if (item.startsWith("relation")) {
-                        relations.add(Long.parseLong(item.substring(8)));
-                    } else if (item.startsWith("rel")) {
-                        relations.add(Long.parseLong(item.substring(3)));
-                    } else {
-                        Main.warn("RemoteControl: invalid selection '"+item+"' ignored");
-                    }
-                } catch (NumberFormatException e) {
-                    Main.warn("RemoteControl: invalid selection '"+item+"' ignored");
+                    toSelect.add(SimplePrimitiveId.fromString(item));
+                } catch (IllegalArgumentException ex) {
+                    Main.warn("RemoteControl: invalid selection '" + item + "' ignored");
                 }
             }
         }
