@@ -5223,7 +5223,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Power Transformer" />
             <space />
             <key key="power" value="transformer" />
-            <combo key="transformer" text="Type of transformer" values="distribution,generator,coverter,traction,auto,phase_angle_regulator,yes" match="key" values_context="power" />
+            <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,yes" match="key" values_context="power" />
             <combo key="location" text="Location" values="outdoor,indoor,underground,platform,kiosk" values_context="power" />
             <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
             <optional>
