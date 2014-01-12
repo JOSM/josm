@@ -73,7 +73,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         protected final List<PrimitiveToTag> change = new ArrayList<PrimitiveToTag>();
         protected final Map<String, String> keyChange = new LinkedHashMap<String, String>();
         protected final List<String> alternatives = new ArrayList<String>();
-        protected final Map<String, Severity> errors = new HashMap<String, Severity>();
+        protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<Instruction.AssignmentInstruction, Severity>();
         protected final Map<String, Boolean> assertions = new HashMap<String, Boolean>();
 
         TagCheck(MapCSSRule rule) {
@@ -130,7 +130,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                             : null;
                     if (ai.key.startsWith("throw")) {
                         final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase());
-                        check.errors.put(val, severity);
+                        check.errors.put(ai, severity);
                     } else if ("fixAdd".equals(ai.key)) {
                         final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, false);
                         check.change.add(toTag);
@@ -295,7 +295,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final String newKey = insertArguments(matchingSelector, i.getValue());
                 cmds.add(new ChangePropertyKeyCommand(p, oldKey, newKey));
             }
-            return new SequenceCommand(tr("Fix of {0}", getDescriptionForMatchingSelector(matchingSelector)), cmds);
+            return new SequenceCommand(tr("Fix of {0}", getDescriptionForMatchingSelector(p, matchingSelector)), cmds);
         }
 
         /**
@@ -303,22 +303,31 @@ public class MapCSSTagChecker extends Test.TagTest {
          *
          * @return a message
          */
-        String getMessage() {
-            return errors.isEmpty() ? null : errors.keySet().iterator().next();
+        String getMessage(OsmPrimitive p) {
+            if (errors.isEmpty()) {
+                return null;
+            } else {
+                final Object val = errors.keySet().iterator().next().val;
+                return String.valueOf(
+                        val instanceof Expression
+                                ? ((Expression) val).evaluate(new Environment().withPrimitive(p))
+                                : val
+                );
+            }
         }
 
         /**
          * Constructs a (localized) description for this deprecation check.
          *
          * @return a description (possibly with alternative suggestions)
-         * @see #getDescriptionForMatchingSelector(Selector)
+         * @see #getDescriptionForMatchingSelector
          */
-        String getDescription() {
+        String getDescription(OsmPrimitive p) {
             if (alternatives.isEmpty()) {
-                return getMessage();
+                return getMessage(p);
             } else {
                 /* I18N: {0} is the test error message and {1} is an alternative */
-                return tr("{0}, use {1} instead", getMessage(), Utils.join(tr(" or "), alternatives));
+                return tr("{0}, use {1} instead", getMessage(p), Utils.join(tr(" or "), alternatives));
             }
         }
 
@@ -328,8 +337,8 @@ public class MapCSSTagChecker extends Test.TagTest {
          *
          * @return a description (possibly with alternative suggestions)
          */
-        String getDescriptionForMatchingSelector(Selector matchingSelector) {
-            return insertArguments(matchingSelector, getDescription());
+        String getDescriptionForMatchingSelector(OsmPrimitive p, Selector matchingSelector) {
+            return insertArguments(matchingSelector, getDescription(p));
         }
 
         Severity getSeverity() {
@@ -338,7 +347,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         @Override
         public String toString() {
-            return getDescription();
+            return getDescription(null);
         }
 
         /**
@@ -354,7 +363,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         TestError getErrorForPrimitive(OsmPrimitive p, Selector matchingSelector) {
             if (matchingSelector != null && !errors.isEmpty()) {
                 final Command fix = fixPrimitive(p);
-                final String description = getDescriptionForMatchingSelector(matchingSelector);
+                final String description = getDescriptionForMatchingSelector(p, matchingSelector);
                 if (fix != null) {
                     return new FixableTestError(null, getSeverity(), description, null, matchingSelector.toString(), 3000, p, fix);
                 } else {
