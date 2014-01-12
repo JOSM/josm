@@ -356,9 +356,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final Command fix = fixPrimitive(p);
                 final String description = getDescriptionForMatchingSelector(matchingSelector);
                 if (fix != null) {
-                    return new FixableTestError(null, getSeverity(), description, description, matchingSelector.toString(), 3000, p, fix);
+                    return new FixableTestError(null, getSeverity(), description, null, matchingSelector.toString(), 3000, p, fix);
                 } else {
-                    return new TestError(null, getSeverity(), description, description, matchingSelector.toString(), 3000, p);
+                    return new TestError(null, getSeverity(), description, null, matchingSelector.toString(), 3000, p);
                 }
             } else {
                 return null;
