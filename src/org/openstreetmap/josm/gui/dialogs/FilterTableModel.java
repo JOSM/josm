@@ -375,7 +375,7 @@ public class FilterTableModel extends AbstractTableModel {
 
         if (disabledAndHiddenCount != 0) {
             /* for correct i18n of plural forms - see #9110 */
-            message += trn("<p><b>{0}</b> objects hidden", "<p><b>{0}</b> objects hidden", disabledAndHiddenCount, disabledAndHiddenCount);
+            message += trn("<p><b>{0}</b> object hidden", "<p><b>{0}</b> objects hidden", disabledAndHiddenCount, disabledAndHiddenCount);
         }
 
         if (disabledAndHiddenCount != 0 && disabledCount != 0) {
@@ -384,7 +384,7 @@ public class FilterTableModel extends AbstractTableModel {
 
         if (disabledCount != 0) {
             /* for correct i18n of plural forms - see #9110 */
-            message += trn("<b>{0}</b> objects disabled", "<b>{0}</b> objects disabled", disabledCount, disabledCount);
+            message += trn("<b>{0}</b> object disabled", "<b>{0}</b> objects disabled", disabledCount, disabledCount);
         }
 
         message += tr("</p><p>Close the filter dialog to see all objects.<p></html>");

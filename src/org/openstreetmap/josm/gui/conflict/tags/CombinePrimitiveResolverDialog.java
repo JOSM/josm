@@ -548,7 +548,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     protected static void informAboutRelationMembershipConflicts(
             final Collection<? extends OsmPrimitive> primitives,
             final Set<Relation> parentRelations) throws UserCancelException {
-        String msg = trn("You are about to combine {1} objects, "
+        /* I18n: object count < 2 is not possible */
+        String msg = trn("You are about to combine {1} object, "
                 + "which are part of {0} relation:<br/>{2}"
                 + "Combining these objects may break this relation. If you are unsure, please cancel this operation.<br/>"
                 + "If you want to continue, you are shown a dialog to decide how to adapt the relation.<br/><br/>"

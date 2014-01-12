@@ -166,11 +166,11 @@ public class ChangePropertyCommand extends Command {
         } else if (objects.size() > 1 && tags.size() == 1) {
             Map.Entry<String, String> entry = tags.entrySet().iterator().next();
             if (entry.getValue() == null) {
-                /* for correct i18n of plural forms - see #9110 */
-                text = trn("Remove \"{0}\" for {1} objects", "Remove \"{0}\" for {1} objects", objects.size(), entry.getKey(), objects.size());
+                /* I18n: plural form for objects, but value < 2 not possible! */
+                text = trn("Remove \"{0}\" for {1} object", "Remove \"{0}\" for {1} objects", objects.size(), entry.getKey(), objects.size());
             } else {
-                /* for correct i18n of plural forms - see #9110 */
-                text = trn("Set {0}={1} for {2} objects", "Set {0}={1} for {2} objects", objects.size(), entry.getKey(), entry.getValue(), objects.size());
+                /* I18n: plural form for objects, but value < 2 not possible! */
+                text = trn("Set {0}={1} for {2} object", "Set {0}={1} for {2} objects", objects.size(), entry.getKey(), entry.getValue(), objects.size());
             }
         }
         else {
@@ -183,11 +183,11 @@ public class ChangePropertyCommand extends Command {
             }
 
             if (allnull) {
-                /* for correct i18n of plural forms - see #9110 */
-                text = trn("Deleted {0} tags for {1} objects", "Deleted {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
+                /* I18n: plural form detected for objects only (but value < 2 not possible!), try to do your best for tags */ 
+                text = trn("Deleted {0} tags for {1} object", "Deleted {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
             } else {
-                /* for correct i18n of plural forms - see #9110 */
-                text = trn("Set {0} tags for {1} objects", "Set {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
+                /* I18n: plural form detected for objects only (but value < 2 not possible!), try to do your best for tags */
+                text = trn("Set {0} tags for {1} object", "Set {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
             }
         }
         return text;
