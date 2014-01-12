@@ -379,7 +379,7 @@ public class UnGlueAction extends JosmAction {
         fixRelations(selectedNode, cmds, newNodes);
 
         Main.main.undoRedo.add(new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
-                trn("Dupe into {0} nodes", "Dupe into {0} nodes", newNodes.size() + 1, newNodes.size() + 1), cmds));
+                trn("Dupe into {0} node", "Dupe into {0} nodes", newNodes.size() + 1, newNodes.size() + 1), cmds));
         // select one of the new nodes
         getCurrentDataSet().setSelected(newNodes.getFirst());
     }

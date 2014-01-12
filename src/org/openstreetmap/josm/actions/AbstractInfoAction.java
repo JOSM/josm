@@ -86,7 +86,7 @@ public abstract class AbstractInfoAction extends JosmAction {
 
     public static boolean confirmLaunchMultiple(int numBrowsers) {
         String msg  = /* for correct i18n of plural forms - see #9110 */ trn(
-                "You are about to launch {0} browser windows.<br>"
+                "You are about to launch {0} browser window.<br>"
                         + "This may both clutter your screen with browser windows<br>"
                         + "and take some time to finish.",
                 "You are about to launch {0} browser windows.<br>"
@@ -97,7 +97,7 @@ public abstract class AbstractInfoAction extends JosmAction {
                 new ButtonSpec(
                         tr("Continue"),
                         ImageProvider.get("ok"),
-                        trn("Click to continue and to open {0} browsers", "Click to continue and to open {0} browsers", numBrowsers, numBrowsers),
+                        trn("Click to continue and to open {0} browser", "Click to continue and to open {0} browsers", numBrowsers, numBrowsers),
                         null // no specific help topic
                 ),
                 new ButtonSpec(
