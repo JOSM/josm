@@ -467,6 +467,7 @@ public final class ExpressionFactory {
          * Translates some text for the current locale. The first argument is the text to translate,
          * and the subsequent arguments are parameters for the string indicated by {@code {0}}, {@code {1}}, …
          */
+        @NullableArguments
         public static String tr(String... args) {
             final String text = args[0];
             System.arraycopy(args, 1, args, 0, args.length - 1);
