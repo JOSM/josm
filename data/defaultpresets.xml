@@ -6152,24 +6152,38 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
         </item>
         <item name="Administrative" icon="presets/boundaries.png" type="closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:boundary=administrative"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:boundary=administrative"
+                  hu.href="http://wiki.openstreetmap.org/wiki/Hu:Tag:boundary=administrative"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:boundary=administrative"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:boundary=administrative"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:boundary=administrative" />
             <label text="Edit Administrative Boundary" />
             <space />
             <key key="boundary" value="administrative" />
             <text key="name" text="Name" />
         </item>
-        <item name="Civil" icon="presets/boundaries.png" type="closedway,relation">
-            <label text="Edit Civil Boundary" />
-            <space />
-            <key key="boundary" value="civil" />
-            <text key="name" text="Name" />
-        </item>
         <item name="Political" icon="presets/boundaries.png" type="closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:boundary=political"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:boundary=political" />
             <label text="Edit Political Boundary" />
             <space />
             <key key="boundary" value="political" />
+            <combo key="political_division" text="Division" values="canton, linguistic_community, ward" />
             <text key="name" text="Name" />
         </item>
+        <item name="Postal Code" icon="presets/boundaries.png" type="closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:boundary=postal_code" />
+            <label text="Edit Postal Code Boundary" />
+            <space />
+            <key key="boundary" value="postal_code" />
+            <text key="postal_code" text="Postal Code" />
+        </item>
         <item name="National park" icon="presets/boundaries.png" type="closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:boundary=national_park"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:boundary=national_park"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:boundary=national_park"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:boundary=national_park" />
             <label text="Edit National Park Boundary" />
             <space />
             <key key="boundary" value="national_park" />
