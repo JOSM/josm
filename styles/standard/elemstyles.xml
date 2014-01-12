@@ -3238,7 +3238,7 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="boundary" v="civil"/>
+		<condition k="boundary" v="postal_code"/>
 		<line width="1" colour="boundary#FF6600" dashed="true" priority="-10"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
