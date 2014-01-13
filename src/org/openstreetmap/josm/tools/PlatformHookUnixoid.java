@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
@@ -11,6 +12,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
@@ -40,12 +43,21 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void openUrl(String url) throws IOException {
-        String[] programs = {"gnome-open", "kfmclient openURL", "firefox"};
-        for (String program : programs) {
+        for (String program : Main.pref.getCollection("browser.unix",
+                Arrays.asList("xdg-open", "#DESKTOP#", "$BROWSER", "gnome-open", "kfmclient openURL", "firefox"))) {
             try {
-                Runtime.getRuntime().exec(program+" "+url);
+                if ("#DESKTOP#".equals(program)) {
+                    Desktop.getDesktop().browse(new URI(url));
+                } else if (program.startsWith("$")) {
+                    program = System.getenv().get(program.substring(1));
+                    Runtime.getRuntime().exec(new String[]{program, url});
+                } else {
+                    Runtime.getRuntime().exec(new String[]{program, url});
+                }
                 return;
             } catch (IOException e) {
+                Main.warn(e);
+            } catch (URISyntaxException e) {
                 Main.warn(e);
             }
         }
