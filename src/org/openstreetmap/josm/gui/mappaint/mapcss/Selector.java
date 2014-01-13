@@ -253,6 +253,7 @@ public interface Selector {
                 return e.child != null;
 
             } else if (ChildOrParentSelectorType.CROSSING.equals(type) && e.osm instanceof Way) {
+                e.parent = e.osm;
                 final CrossingFinder crossingFinder = new CrossingFinder(e);
                 if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
                     crossingFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
