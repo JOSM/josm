@@ -258,7 +258,9 @@ public class MapCSSTagChecker extends Test.TagTest {
          * key/value/tag of the {@code index}-th {@link Condition} of {@code matchingSelector}.
          */
         static String insertArguments(Selector matchingSelector, String s) {
-            if (!(matchingSelector instanceof Selector.GeneralSelector) || s == null) {
+            if (s != null && matchingSelector instanceof Selector.ChildOrParentSelector) {
+                return  insertArguments(((Selector.ChildOrParentSelector)matchingSelector).right, s);
+            } else if (s == null || !(matchingSelector instanceof GeneralSelector)) {
                 return s;
             }
             final Matcher m = Pattern.compile("\\{(\\d+)\\.(key|value|tag)\\}").matcher(s);

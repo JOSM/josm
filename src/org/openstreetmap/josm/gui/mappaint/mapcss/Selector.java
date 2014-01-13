@@ -56,12 +56,10 @@ public interface Selector {
      *
      */
     public static class ChildOrParentSelector implements Selector {
-        private final Selector left;
-        private final LinkSelector link;
-        private final Selector right;
-        /** true, if this represents a parent selector (otherwise it is a child selector)
-         */
-        private final ChildOrParentSelectorType type;
+        public final Selector left;
+        public final LinkSelector link;
+        public final Selector right;
+        public final ChildOrParentSelectorType type;
 
         /**
          *
