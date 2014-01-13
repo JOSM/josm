@@ -131,7 +131,7 @@ public class ValidateUploadHook implements UploadHook {
                 + "</table>"
         );
         pnlMessage.setPreferredSize(new Dimension(500, 150));
-        p.add(pnlMessage, GBC.eol());
+        p.add(pnlMessage, GBC.eol().fill(GBC.HORIZONTAL));
         p.add(new JScrollPane(errorPanel), GBC.eol().fill(GBC.BOTH));
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
