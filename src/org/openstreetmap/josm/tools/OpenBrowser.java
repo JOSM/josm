@@ -58,6 +58,9 @@ public final class OpenBrowser {
                 if (Main.platform instanceof PlatformHookWindows) {
                     // Desktop API works fine under Windows, so we don't try any fallback in case of I/O exceptions because it's not API's fault
                     Desktop.getDesktop().browse(uri);
+                } else if (Main.platform instanceof PlatformHookUnixoid) {
+                    // see #5629 #5108 #9568
+                    Main.platform.openUrl(uri.toString());
                 } else {
                     // This is not the case with some Linux environments (see below), and not sure about Mac OS X, so we need to handle API failure
                     try {
