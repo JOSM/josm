@@ -162,6 +162,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="access" b="no"/>
+        <linemod mode="under" width="+2" colour="no#ff8080" dashed="2"/>
 		<icon src="vehicle/restriction/access.png" priority="-100"/>
 	</rule>
 	<rule>
