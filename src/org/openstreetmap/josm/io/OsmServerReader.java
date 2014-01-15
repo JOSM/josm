@@ -46,21 +46,35 @@ public abstract class OsmServerReader extends OsmConnection {
      * Relative URL's are directed to API base URL.
      * @param urlStr The url to connect to.
      * @param progressMonitor progress monitoring and abort handler
-     * @return An reader reading the input stream (servers answer) or <code>null</code>.
+     * @return A reader reading the input stream (servers answer) or <code>null</code>.
      * @throws OsmTransferException thrown if data transfer errors occur
      */
     protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
+        return getInputStream(urlStr, progressMonitor, null);
+    }
+
+    /**
+     * Open a connection to the given url and return a reader on the input stream
+     * from that connection. In case of user cancel, return <code>null</code>.
+     * Relative URL's are directed to API base URL.
+     * @param urlStr The url to connect to.
+     * @param progressMonitor progress monitoring and abort handler
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @return A reader reading the input stream (servers answer) or <code>null</code>.
+     * @throws OsmTransferException thrown if data transfer errors occur
+     */
+    protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor, String reason) throws OsmTransferException  {
         try {
             api.initialize(progressMonitor);
-            urlStr = urlStr.startsWith("http") ? urlStr : (getBaseUrl() + urlStr);
-            return getInputStreamRaw(urlStr, progressMonitor);
+            String url = urlStr.startsWith("http") ? urlStr : (getBaseUrl() + urlStr);
+            return getInputStreamRaw(url, progressMonitor, reason);
         } finally {
             progressMonitor.invalidate();
         }
     }
 
     /**
-     * Retrun the base URL for relative URL requests
+     * Return the base URL for relative URL requests
      * @return base url of API
      */
     protected String getBaseUrl() {
@@ -76,6 +90,19 @@ public abstract class OsmServerReader extends OsmConnection {
      * @throws OsmTransferException thrown if data transfer errors occur
      */
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException {
+        return getInputStreamRaw(urlStr, progressMonitor, null);
+    }
+    
+    /**
+     * Open a connection to the given url and return a reader on the input stream
+     * from that connection. In case of user cancel, return <code>null</code>.
+     * @param urlStr The exact url to connect to.
+     * @param progressMonitor progress monitoring and abort handler
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @return An reader reading the input stream (servers answer) or <code>null</code>.
+     * @throws OsmTransferException thrown if data transfer errors occur
+     */
+    protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason) throws OsmTransferException {
         try {
             URL url = null;
             try {
@@ -106,7 +133,11 @@ public abstract class OsmServerReader extends OsmConnection {
             activeConnection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
             try {
-                Main.info("GET " + url);
+                if (reason != null && !reason.isEmpty()) {
+                    Main.info("GET " + url + " (" + reason + ")");
+                } else {
+                    Main.info("GET " + url);
+                }
                 activeConnection.connect();
             } catch (Exception e) {
                 Main.error(e);

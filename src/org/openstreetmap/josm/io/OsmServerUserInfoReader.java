@@ -143,11 +143,29 @@ public class OsmServerUserInfoReader extends OsmServerReader {
         return null;
     }
 
+    /**
+     * Fetches user info, without explicit reason.
+     * @param monitor The progress monitor
+     * @return The user info
+     * @throws OsmTransferException if something goes wrong
+     */
     public UserInfo fetchUserInfo(ProgressMonitor monitor) throws OsmTransferException {
+        return fetchUserInfo(monitor, null);
+    }
+
+    /**
+     * Fetches user info, with an explicit reason.
+     * @param monitor The progress monitor
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @return The user info
+     * @throws OsmTransferException if something goes wrong
+     * @since 6695
+     */
+    public UserInfo fetchUserInfo(ProgressMonitor monitor, String reason) throws OsmTransferException {
         try {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Reading user info ..."));
-            InputStream in = getInputStream("user/details", monitor.createSubTaskMonitor(1, true));
+            InputStream in = getInputStream("user/details", monitor.createSubTaskMonitor(1, true), reason);
             return buildFromXML(
                     DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in)
             );
