@@ -58,7 +58,7 @@ public final class MessageNotifier {
         @Override
         public void run() {
             try {
-                final UserInfo userInfo = new OsmServerUserInfoReader().fetchUserInfo(NullProgressMonitor.INSTANCE);
+                final UserInfo userInfo = new OsmServerUserInfoReader().fetchUserInfo(NullProgressMonitor.INSTANCE, tr("get number of unread messages"));
                 final int unread = userInfo.getUnreadMessages();
                 if (unread > 0 && unread != lastUnreadCount) {
                     GuiHelper.runInEDT(new Runnable() {
