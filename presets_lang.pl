@@ -33,7 +33,7 @@ sub handle_start
     }
     else
     {
-      my $main = `wget '$data{href}' -O - -q`;
+      my $main = `wget "$data{href}" -O - -q`;
       my $h = uri_unescape($data{href});
       my $v = "href=\"$h\"";
       if($h eq "http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema")
