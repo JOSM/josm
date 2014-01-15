@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -153,7 +154,7 @@ public class OverlappingWays extends Test {
         nodePairs = null;
     }
 
-    public static Command fixDuplicateWaySegment(Way w) {
+    public static Pair<ChangeNodesCommand, Set<WaySegment>> fixDuplicateWaySegment(Way w) {
         // test for ticket #4959
         Set<WaySegment> segments = new TreeSet<WaySegment>(new Comparator<WaySegment>() {
             @Override
@@ -168,11 +169,14 @@ public class OverlappingWays extends Test {
             }
         });
         final Set<Integer> wayNodesToFix = new TreeSet<Integer>(Collections.reverseOrder());
-        
+        final Set<WaySegment> duplicateWaySegments = new HashSet<WaySegment>();
+
         for (int i = 0; i < w.getNodesCount() - 1; i++) {
-            final boolean wasInSet = !segments.add(new WaySegment(w, i));
+            final WaySegment segment = new WaySegment(w, i);
+            final boolean wasInSet = !segments.add(segment);
             if (wasInSet) {
                 wayNodesToFix.add(i);
+                duplicateWaySegments.add(segment);
             }
         }
         if (wayNodesToFix.size() > 1) {
@@ -180,7 +184,7 @@ public class OverlappingWays extends Test {
             for (final int i : wayNodesToFix) {
                 newNodes.remove(i);
             }
-            return new ChangeNodesCommand(w, newNodes);
+            return Pair.create(new ChangeNodesCommand(w, newNodes), duplicateWaySegments);
         } else {
             return null;
         }
@@ -189,10 +193,10 @@ public class OverlappingWays extends Test {
     @Override
     public void visit(Way w) {
 
-        final Command duplicateWaySegmentFix = fixDuplicateWaySegment(w);
-        if (duplicateWaySegmentFix != null) {
+        final Pair<ChangeNodesCommand, Set<WaySegment>> duplicateWaySegment = fixDuplicateWaySegment(w);
+        if (duplicateWaySegment != null) {
             errors.add(new FixableTestError(this, Severity.ERROR, tr("Way contains segment twice"),
-                    DUPLICATE_WAY_SEGMENT, w, duplicateWaySegmentFix));
+                    DUPLICATE_WAY_SEGMENT, Collections.singleton(w), duplicateWaySegment.b, duplicateWaySegment.a));
             return;
         }
 
