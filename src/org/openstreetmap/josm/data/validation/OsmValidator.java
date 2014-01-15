@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
@@ -122,7 +124,7 @@ public class OsmValidator implements LayerChangeListener {
         allTestsMap = new HashMap<String, Test>();
         for (Class<Test> testClass : allAvailableTests) {
             try {
-                allTestsMap.put(testClass.getSimpleName(), testClass.newInstance());
+                allTestsMap.put(testClass.getName(), testClass.newInstance());
             } catch (Exception e) {
                 Main.error(e);
             }
@@ -214,12 +216,12 @@ public class OsmValidator implements LayerChangeListener {
 
     /**
      * Gets a map from simple names to all tests.
-     * @return A map of all tests, indexed by the simple name of their Java class
+     * @return A map of all tests, indexed and sorted by the name of their Java class
      */
-    public static Map<String, Test> getAllTestsMap() {
+    public static SortedMap<String, Test> getAllTestsMap() {
         applyPrefs(allTestsMap, false);
         applyPrefs(allTestsMap, true);
-        return new HashMap<String, Test>(allTestsMap);
+        return new TreeMap<String, Test>(allTestsMap);
     }
     
     /**
@@ -233,7 +235,7 @@ public class OsmValidator implements LayerChangeListener {
         if (testClass == null) {
             return null;
         }
-        return (T) allTestsMap.get(testClass.getSimpleName());
+        return (T) allTestsMap.get(testClass.getName());
     }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
