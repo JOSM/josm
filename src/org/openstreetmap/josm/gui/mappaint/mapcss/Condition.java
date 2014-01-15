@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
@@ -346,24 +347,26 @@ abstract public class Condition {
         }
 
         public boolean appliesImpl(Environment e) {
-            if (equal(id, "closed")) {
+            if ("closed".equals(id)) {
                 if (e.osm instanceof Way && ((Way) e.osm).isClosed())
                     return true;
                 if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
                     return true;
                 return false;
-            } else if (equal(id, "modified")) {
+            } else if ("modified".equals(id)) {
                 return e.osm.isModified() || e.osm.isNewOrUndeleted();
-            } else if (equal(id, "new")) {
+            } else if ("new".equals(id)) {
                 return e.osm.isNew();
-            } else if (equal(id, "connection") && (e.osm instanceof Node)) {
+            } else if ("connection".equals(id) && (e.osm instanceof Node)) {
                 return ((Node) e.osm).isConnectionNode();
-            } else if (equal(id, "tagged")) {
+            } else if ("tagged".equals(id)) {
                 return e.osm.isTagged();
             } else if ("sameTags".equals(id)) {
                 return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
             } else if ("areaStyle".equals(id)) {
                 return ElemStyles.hasAreaElemStyle(e.osm, false);
+            } else if ("unconnected".equals(id) && (e.osm instanceof Node)) {
+                return OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
             }
             return true;
         }
