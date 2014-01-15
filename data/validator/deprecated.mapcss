@@ -111,7 +111,7 @@
   /* see #8847 / #8961 - http://wiki.openstreetmap.org/wiki/Tag:power=station */
   throwWarning: tr("{0}={1} is deprecated", "power", "station");
   suggestAlternative: "power=plant";
-  suggestAlternative: "power=sub_station";
+  suggestAlternative: "power=substation";
 }
   
 *[generator:method=dam] {
