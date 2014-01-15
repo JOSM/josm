@@ -22,7 +22,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -42,40 +41,90 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public abstract class UnconnectedWays extends Test {
 
+    /**
+     * Unconnected highways test.
+     */
     public static class UnconnectedHighways extends UnconnectedWays {
 
+        /**
+         * Constructs a new {@code UnconnectedHighways} test.
+         */
+        public UnconnectedHighways() {
+            super(tr("Unconnected highways"));
+        }
+        
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && p.hasKey("highway");
         }
     }
 
+    /**
+     * Unconnected railways test.
+     */
     public static class UnconnectedRailways extends UnconnectedWays {
 
+        /**
+         * Constructs a new {@code UnconnectedRailways} test.
+         */
+        public UnconnectedRailways() {
+            super(tr("Unconnected railways"));
+        }
+        
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && p.hasKey("railway");
         }
     }
 
+    /**
+     * Unconnected waterways test.
+     */
     public static class UnconnectedWaterways extends UnconnectedWays {
 
+        /**
+         * Constructs a new {@code UnconnectedWaterways} test.
+         */
+        public UnconnectedWaterways() {
+            super(tr("Unconnected waterways"));
+        }
+        
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && p.hasKey("waterway");
         }
     }
 
+    /**
+     * Unconnected natural/landuse test.
+     */
     public static class UnconnectedNaturalOrLanduse extends UnconnectedWays {
 
+        /**
+         * Constructs a new {@code UnconnectedNaturalOrLanduse} test.
+         */
+        public UnconnectedNaturalOrLanduse() {
+            super(tr("Unconnected natural lands and landuses"));
+        }
+        
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && (p.hasKey("natural") || p.hasKey("landuse"));
         }
     }
 
+    /**
+     * Unconnected power ways test.
+     */
     public static class UnconnectedPower extends UnconnectedWays {
 
+        /**
+         * Constructs a new {@code UnconnectedPower} test.
+         */
+        public UnconnectedPower() {
+            super(tr("Unconnected power ways"));
+        }
+        
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && p.hasKey("power");
@@ -96,11 +145,12 @@ public abstract class UnconnectedWays extends Test {
     private double minmiddledist;
 
     /**
-     * Constructor
+     * Constructs a new {@code UnconnectedWays} test.
+     * @param title The test title
+     * @since 6691
      */
-    public UnconnectedWays() {
-        super(tr("Unconnected ways"),
-                tr("This test checks if a way has an endpoint very near to another way."));
+    public UnconnectedWays(String title) {
+        super(title, tr("This test checks if a way has an endpoint very near to another way."));
     }
 
     @Override

@@ -44,7 +44,17 @@ public abstract class CrossingWays extends Test {
     /** The already detected ways in error */
     private Map<List<Way>, List<WaySegment>> seenWays;
 
+    /**
+     * General crossing ways test.
+     */
     public static class Ways extends CrossingWays {
+
+        /**
+         * Constructs a new crossing {@code Ways} test.
+         */
+        public Ways() {
+            super(tr("Crossing ways"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive w) {
@@ -97,7 +107,17 @@ public abstract class CrossingWays extends Test {
 
     }
 
+    /**
+     * Crossing boundaries ways test.
+     */
     public static class Boundaries extends CrossingWays {
+
+        /**
+         * Constructs a new crossing {@code Boundaries} test.
+         */
+        public Boundaries() {
+            super(tr("Crossing boundaries"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
@@ -123,7 +143,17 @@ public abstract class CrossingWays extends Test {
         }
     }
 
+    /**
+     * Crossing barriers ways test.
+     */
     public static class Barrier extends CrossingWays {
+
+        /**
+         * Constructs a new crossing {@code Barrier} test.
+         */
+        public Barrier() {
+            super(tr("Crossing barriers"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
@@ -141,9 +171,13 @@ public abstract class CrossingWays extends Test {
         }
     }
 
-    public CrossingWays() {
-        super(tr("Crossing ways"),
-                tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
+    /**
+     * Constructs a new {@code CrossingWays} test.
+     * @param title The test title
+     * @since 6691
+     */
+    public CrossingWays(String title) {
+        super(title, tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
     }
 
     @Override
