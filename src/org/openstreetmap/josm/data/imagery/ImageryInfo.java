@@ -30,27 +30,46 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
+    /**
+     * Type of imagery entry.
+     */
     public enum ImageryType {
+        /** A WMS (Web Map Service) entry. **/
         WMS("wms"),
+        /** A TMS (Tile Map Service) entry. **/
         TMS("tms"),
+        /** An HTML proxy (previously used for Yahoo imagery) entry. **/
         HTML("html"),
+        /** TMS entry for Microsoft Bing. */
         BING("bing"),
+        /** TMS entry for Russian company <a href="https://wiki.openstreetmap.org/wiki/WikiProject_Russia/kosmosnimki">ScanEx</a>. **/
         SCANEX("scanex"),
+        /** A WMS endpoint entry only stores the WMS server info, without layer, which are chosen later by the user. **/
         WMS_ENDPOINT("wms_endpoint");
 
-        private String urlString;
+        private final String typeString;
 
-        ImageryType(String urlString) {
-            this.urlString = urlString;
+        private ImageryType(String urlString) {
+            this.typeString = urlString;
         }
 
-        public String getUrlString() {
-            return urlString;
+        /**
+         * Returns the unique string identifying this type.
+         * @return the unique string identifying this type
+         * @since 6690
+         */
+        public final String getTypeString() {
+            return typeString;
         }
 
-        public static ImageryType fromUrlString(String s) {
+        /**
+         * Returns the imagery type from the given type string.
+         * @param s The type string
+         * @return the imagery type matching the given type string
+         */
+        public static ImageryType fromString(String s) {
             for (ImageryType type : ImageryType.values()) {
-                if (type.getUrlString().equals(s)) {
+                if (type.getTypeString().equals(s)) {
                     return type;
                 }
             }
@@ -58,22 +77,44 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         }
     }
 
+    /**
+     * Multi-polygon bounds for imagery backgrounds.
+     * Used to display imagery coverage in preferences and to determine relevant imagery entries based on edit location.
+     */
     public static class ImageryBounds extends Bounds {
+        
+        /**
+         * Constructs a new {@code ImageryBounds} from string.
+         * @param asString The string containing the list of shapes defining this bounds
+         * @param separator The shape separator in the given string, usually a comma
+         */
         public ImageryBounds(String asString, String separator) {
             super(asString, separator);
         }
 
         private List<Shape> shapes = new ArrayList<Shape>();
 
-        public void addShape(Shape shape) {
+        /**
+         * Adds a new shape to this bounds.
+         * @param shape The shape to add
+         */
+        public final void addShape(Shape shape) {
             this.shapes.add(shape);
         }
 
-        public void setShapes(List<Shape> shapes) {
+        /**
+         * Sets the list of shapes defining this bounds.
+         * @param shapes The list of shapes defining this bounds.
+         */
+        public final void setShapes(List<Shape> shapes) {
             this.shapes = shapes;
         }
 
-        public List<Shape> getShapes() {
+        /**
+         * Returns the list of shapes defining this bounds.
+         * @return The list of shapes defining this bounds
+         */
+        public final List<Shape> getShapes() {
             return shapes;
         }
 
@@ -124,7 +165,9 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     private String icon;
     // when adding a field, also adapt the ImageryInfo(ImageryInfo) constructor
 
-    /** auxiliary class to save an ImageryInfo object in the preferences */
+    /**
+     * Auxiliary class to save an {@link ImageryInfo} object in the preferences.
+     */
     public static class ImageryPreferenceEntry {
         @pref String name;
         @pref String type;
@@ -147,14 +190,18 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         @pref String icon;
 
         /**
-         * Constructs a new {@code ImageryPreferenceEntry}.
+         * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
          */
         public ImageryPreferenceEntry() {
         }
 
+        /**
+         * Constructs a new {@code ImageryPreferenceEntry} from a given {@code ImageryInfo}.
+         * @param i The corresponding imagery info
+         */
         public ImageryPreferenceEntry(ImageryInfo i) {
             name = i.name;
-            type = i.imageryType.getUrlString();
+            type = i.imageryType.getTypeString();
             url = i.url;
             pixel_per_eastnorth = i.pixelPerDegree;
             eula = i.eulaAcceptanceRequired;
@@ -201,37 +248,45 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     }
 
     /**
-     * Constructs a new {@code ImageryInfo}.
+     * Constructs a new WMS {@code ImageryInfo}.
      */
     public ImageryInfo() {
     }
 
+    /**
+     * Constructs a new WMS {@code ImageryInfo} with a given name.
+     * @param name The entry name
+     */
     public ImageryInfo(String name) {
         this.name=name;
     }
 
+    /**
+     * Constructs a new WMS {@code ImageryInfo} with given name and extended URL.
+     * @param name The entry name
+     * @param url The entry extended URL
+     */
     public ImageryInfo(String name, String url) {
         this.name=name;
         setExtendedUrl(url);
     }
 
+    /**
+     * Constructs a new WMS {@code ImageryInfo} with given name, extended and EULA URLs.
+     * @param name The entry name
+     * @param url The entry URL
+     * @param eulaAcceptanceRequired The EULA URL
+     */
     public ImageryInfo(String name, String url, String eulaAcceptanceRequired) {
         this.name=name;
         setExtendedUrl(url);
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
 
-    public ImageryInfo(String name, String url, String eulaAcceptanceRequired, String cookies) {
-        this.name=name;
-        setExtendedUrl(url);
-        this.cookies=cookies;
-        this.eulaAcceptanceRequired = eulaAcceptanceRequired;
-    }
-
     public ImageryInfo(String name, String url, String type, String eulaAcceptanceRequired, String cookies) {
         this.name=name;
         setExtendedUrl(url);
-        ImageryType t = ImageryType.fromUrlString(type);
+        ImageryType t = ImageryType.fromString(type);
         this.cookies=cookies;
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
         if (t != null) {
@@ -239,13 +294,10 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         }
     }
 
-    public ImageryInfo(String name, String url, String cookies, double pixelPerDegree) {
-        this.name=name;
-        setExtendedUrl(url);
-        this.cookies=cookies;
-        this.pixelPerDegree=pixelPerDegree;
-    }
-
+    /**
+     * Constructs a new {@code ImageryInfo} from an imagery preference entry.
+     * @param e The imagery preference entry
+     */
     public ImageryInfo(ImageryPreferenceEntry e) {
         CheckParameterUtil.ensureParameterNotNull(e.name, "name");
         CheckParameterUtil.ensureParameterNotNull(e.url, "url");
@@ -253,7 +305,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         url = e.url;
         cookies = e.cookies;
         eulaAcceptanceRequired = e.eula;
-        imageryType = ImageryType.fromUrlString(e.type);
+        imageryType = ImageryType.fromString(e.type);
         if (imageryType == null) throw new IllegalArgumentException("unknown type");
         pixelPerDegree = e.pixel_per_eastnorth;
         defaultMaxZoom = e.max_zoom;
@@ -283,6 +335,10 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         icon = e.icon;
     }
 
+    /**
+     * Constructs a new {@code ImageryInfo} from an existing one.
+     * @param i The other imagery info
+     */
     public ImageryInfo(ImageryInfo i) {
         this.name = i.name;
         this.url = i.url;
@@ -337,8 +393,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     }
 
     @Override
-    public int compareTo(ImageryInfo in)
-    {
+    public int compareTo(ImageryInfo in) {
         int i = countryCode.compareTo(in.countryCode);
         if (i == 0) {
             i = name.compareTo(in.name);
@@ -352,8 +407,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         return i;
     }
 
-    public boolean equalsBaseValues(ImageryInfo in)
-    {
+    public boolean equalsBaseValues(ImageryInfo in) {
         return url.equals(in.url);
     }
 
@@ -361,18 +415,34 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.pixelPerDegree = ppd;
     }
 
+    /**
+     * Sets the maximum zoom level.
+     * @param defaultMaxZoom The maximum zoom level
+     */
     public void setDefaultMaxZoom(int defaultMaxZoom) {
         this.defaultMaxZoom = defaultMaxZoom;
     }
 
+    /**
+     * Sets the minimum zoom level.
+     * @param defaultMinZoom The minimum zoom level
+     */
     public void setDefaultMinZoom(int defaultMinZoom) {
         this.defaultMinZoom = defaultMinZoom;
     }
 
+    /**
+     * Sets the imagery polygonial bounds.
+     * @param b The imagery bounds (non-rectangular)
+     */
     public void setBounds(ImageryBounds b) {
         this.bounds = b;
     }
 
+    /**
+     * Returns the imagery polygonial bounds.
+     * @return The imagery bounds (non-rectangular)
+     */
     public ImageryBounds getBounds() {
         return bounds;
     }
@@ -440,6 +510,10 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         termsOfUseURL = text;
     }
 
+    /**
+     * Sets the extended URL of this entry.
+     * @param url Entry extended URL containing in addition of service URL, its type and min/max zoom info
+     */
     public void setExtendedUrl(String url) {
         CheckParameterUtil.ensureParameterNotNull(url);
 
@@ -450,7 +524,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         defaultMaxZoom = 0;
         defaultMinZoom = 0;
         for (ImageryType type : ImageryType.values()) {
-            Matcher m = Pattern.compile(type.getUrlString()+"(?:\\[(?:(\\d+),)?(\\d+)\\])?:(.*)").matcher(url);
+            Matcher m = Pattern.compile(type.getTypeString()+"(?:\\[(?:(\\d+),)?(\\d+)\\])?:(.*)").matcher(url);
             if (m.matches()) {
                 this.url = m.group(3);
                 this.imageryType = type;
@@ -478,26 +552,50 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         }
     }
 
+    /**
+     * Returns the entry name.
+     * @return The entry name
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Sets the entry name.
+     * @param name The entry name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns the entry URL.
+     * @return The entry URL
+     */
     public String getUrl() {
         return this.url;
     }
 
+    /**
+     * Sets the entry URL.
+     * @param url The entry URL
+     */
     public void setUrl(String url) {
         this.url = url;
     }
 
+    /**
+     * Determines if this entry is enabled by default.
+     * @return {@code true} if this entry is enabled by default, {@code false} otherwise
+     */
     public boolean isDefaultEntry() {
         return defaultEntry;
     }
 
+    /**
+     * Sets the default state of this entry.
+     * @param defaultEntry {@code true} if this entry has to be enabled by default, {@code false} otherwise
+     */
     public void setDefaultEntry(boolean defaultEntry) {
         this.defaultEntry = defaultEntry;
     }
@@ -510,34 +608,66 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         return this.pixelPerDegree;
     }
 
+    /**
+     * Returns the maximum zoom level.
+     * @return The maximum zoom level
+     */
     public int getMaxZoom() {
         return this.defaultMaxZoom;
     }
 
+    /**
+     * Returns the minimum zoom level.
+     * @return The minimum zoom level
+     */
     public int getMinZoom() {
         return this.defaultMinZoom;
     }
 
+    /**
+     * Returns the EULA acceptance URL, if any.
+     * @return The URL to an EULA text that has to be accepted before use, or {@code null}
+     */
     public String getEulaAcceptanceRequired() {
         return eulaAcceptanceRequired;
     }
 
+    /**
+     * Sets the EULA acceptance URL.
+     * @param eulaAcceptanceRequired The URL to an EULA text that has to be accepted before use
+     */
     public void setEulaAcceptanceRequired(String eulaAcceptanceRequired) {
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
 
+    /**
+     * Returns the ISO 3166-1-alpha-2 country code.
+     * @return The country code (2 letters)
+     */
     public String getCountryCode() {
         return countryCode;
     }
 
+    /**
+     * Sets the ISO 3166-1-alpha-2 country code.
+     * @param countryCode The country code (2 letters)
+     */
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
 
+    /**
+     * Returns the entry icon.
+     * @return The entry icon
+     */
     public String getIcon() {
         return icon;
     }
 
+    /**
+     * Sets the entry icon.
+     * @param icon The entry icon
+     */
     public void setIcon(String icon) {
         this.icon = icon;
     }
@@ -558,13 +688,16 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         this.serverProjections = new ArrayList<String>(serverProjections);
     }
 
+    /**
+     * Returns the extended URL, containing in addition of service URL, its type and min/max zoom info.
+     * @return The extended URL
+     */
     public String getExtendedUrl() {
-        return imageryType.getUrlString() + (defaultMaxZoom != 0
+        return imageryType.getTypeString() + (defaultMaxZoom != 0
             ? "["+(defaultMinZoom != 0 ? defaultMinZoom+",":"")+defaultMaxZoom+"]" : "") + ":" + url;
     }
 
-    public String getToolbarName()
-    {
+    public String getToolbarName() {
         String res = name;
         if(pixelPerDegree != 0.0) {
             res += "#PPD="+pixelPerDegree;
@@ -572,8 +705,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         return res;
     }
 
-    public String getMenuName()
-    {
+    public String getMenuName() {
         String res = name;
         if(pixelPerDegree != 0.0) {
             res += " ("+pixelPerDegree+")";
@@ -581,13 +713,19 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         return res;
     }
 
-    public boolean hasAttribution()
-    {
+    /**
+     * Determines if this entry requires attribution.
+     * @return {@code true} if some attribution text has to be displayed, {@code false} otherwise
+     */
+    public boolean hasAttribution() {
         return attributionText != null;
     }
 
-    public void copyAttribution(ImageryInfo i)
-    {
+    /**
+     * Copies attribution from another {@code ImageryInfo}.
+     * @param i The other imagery info to get attribution from
+     */
+    public void copyAttribution(ImageryInfo i) {
         this.attributionImage = i.attributionImage;
         this.attributionImageURL = i.attributionImageURL;
         this.attributionText = i.attributionText;
@@ -597,7 +735,8 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     }
 
     /**
-     * Applies the attribution from this object to a TMSTileSource.
+     * Applies the attribution from this object to a tile source.
+     * @param s The tile source
      */
     public void setAttribution(AbstractTileSource s) {
         if (attributionText != null) {
@@ -635,10 +774,18 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         }
     }
 
+    /**
+     * Returns the imagery type.
+     * @return The imagery type
+     */
     public ImageryType getImageryType() {
         return imageryType;
     }
 
+    /**
+     * Sets the imagery type.
+     * @param imageryType The imagery type
+     */
     public void setImageryType(ImageryType imageryType) {
         this.imageryType = imageryType;
     }
@@ -646,6 +793,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     /**
      * Returns true if this layer's URL is matched by one of the regular
      * expressions kept by the current OsmApi instance.
+     * @return {@code true} is this entry is blacklisted, {@code false} otherwise
      */
     public boolean isBlacklisted() {
         return OsmApi.getOsmApi().getCapabilities().isOnImageryBlacklist(this.url);

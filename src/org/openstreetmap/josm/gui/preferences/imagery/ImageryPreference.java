@@ -524,8 +524,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 for (int line : lines) {
                     ImageryInfo info = defaultModel.getRow(line);
 
-                    // Check if an entry with exactly the same values already
-                    // exists
+                    // Check if an entry with exactly the same values already exists
                     for (int j = 0; j < activeModel.getRowCount(); j++) {
                         if (info.equalsBaseValues(activeModel.getRow(j))) {
                             // Select the already existing row so the user has
@@ -571,14 +570,26 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
          * The table model for imagery layer list
          */
         public class ImageryLayerTableModel extends DefaultTableModel {
+            /**
+             * Constructs a new {@code ImageryLayerTableModel}.
+             */
             public ImageryLayerTableModel() {
                 setColumnIdentifiers(new String[] { tr("Menu Name"), tr("Imagery URL")});
             }
 
+            /**
+             * Returns the imagery info at the given row number.
+             * @param row The row number
+             * @return The imagery info at the given row number
+             */
             public ImageryInfo getRow(int row) {
                 return layerInfo.getLayers().get(row);
             }
 
+            /**
+             * Adds a new imagery info as the last row.
+             * @param i The imagery info to add
+             */
             public void addRow(ImageryInfo i) {
                 layerInfo.add(i);
                 int p = getRowCount() - 1;
@@ -635,10 +646,18 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
          * The table model for the default imagery layer list
          */
         public class ImageryDefaultLayerTableModel extends DefaultTableModel {
+            /**
+             * Constructs a new {@code ImageryDefaultLayerTableModel}.
+             */
             public ImageryDefaultLayerTableModel() {
                 setColumnIdentifiers(new String[]{"", tr("Menu Name (Default)"), tr("Imagery URL (Default)")});
             }
 
+            /**
+             * Returns the imagery info at the given row number.
+             * @param row The row number
+             * @return The imagery info at the given row number
+             */
             public ImageryInfo getRow(int row) {
                 return layerInfo.getDefaultLayers().get(row);
             }
@@ -833,6 +852,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         }
     }
 
+    /**
+     * Initializes imagery preferences.
+     */
     public static void initialize() {
         ImageryLayerInfo.instance.clear();
         ImageryLayerInfo.instance.loadDefaults(false);

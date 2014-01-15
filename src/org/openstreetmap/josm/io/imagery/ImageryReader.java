@@ -205,7 +205,7 @@ public class ImageryReader {
                 } else if (qName.equals("type")) {
                     boolean found = false;
                     for (ImageryType type : ImageryType.values()) {
-                        if (equal(accumulator.toString(), type.getUrlString())) {
+                        if (equal(accumulator.toString(), type.getTypeString())) {
                             entry.setImageryType(type);
                             found = true;
                             break;

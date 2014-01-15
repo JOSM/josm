@@ -122,7 +122,7 @@ public class ImageryHandler extends RequestHandler {
         final String types = Utils.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()), new Utils.Function<ImageryInfo.ImageryType, String>() {
             @Override
             public String apply(ImageryInfo.ImageryType x) {
-                return x.getUrlString();
+                return x.getTypeString();
             }
         }));
         return new String[] { "/imagery?title=osm&type=tms&url=http://tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
