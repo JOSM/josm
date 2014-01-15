@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -157,7 +158,13 @@ public class OverlappingWays extends Test {
         Set<WaySegment> segments = new TreeSet<WaySegment>(new Comparator<WaySegment>() {
             @Override
             public int compare(WaySegment o1, WaySegment o2) {
-                return o1.getFirstNode().compareTo(o2.getFirstNode());
+                final List<Node> n1 = Arrays.asList(o1.getFirstNode(), o1.getSecondNode());
+                final List<Node> n2 = Arrays.asList(o2.getFirstNode(), o2.getSecondNode());
+                Collections.sort(n1);
+                Collections.sort(n2);
+                final int first = n1.get(0).compareTo(n2.get(0));
+                final int second = n1.get(1).compareTo(n2.get(1));
+                return first != 0 ? first : second;
             }
         });
         final Set<Integer> wayNodesToFix = new TreeSet<Integer>(Collections.reverseOrder());
