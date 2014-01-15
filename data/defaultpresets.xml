@@ -287,6 +287,17 @@ Note that for a match, at least one positive and no negative is required.
         <text key="name" text="Name" />
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
     </chunk>
+    <chunk id="payment_base">
+        <check key="payment:coins" text="Coins" />
+        <check key="payment:notes" text="Notes" />
+        <check key="payment:electronic_purses" text="Electronic purses and Charge cards" />
+        <check key="payment:debit_cards" text="Debit cards" />
+        <check key="payment:credit_cards" text="Credit cards" />
+    </chunk>
+    <chunk id="payment_account">
+        <reference ref="payment_base" />
+        <check key="payment:account_cards" text="Account or loyalty cards" />
+    </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact">
     <preset_link preset_name="Contact (common schema)" />
@@ -2384,11 +2395,12 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item>
         <item name="Charging Station" icon="styles/standard/accommodation/camping/hookup.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fuel" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=charging_station"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=charging_station" />
             <label text="Edit Charging Station (for electric cars)" />
             <space />
             <key key="amenity" value="charging_station" />
-            <text key="operator" text="Operator" />
+            <reference ref="name_operator" />
             <text key="voltage" text="Voltage" />
             <text key="amperage" text="Amperage" />
         </item>
@@ -2730,12 +2742,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="vending" value="public_transport_tickets" />
             <reference ref="name_operator" />
             <text key="ref" text="Reference Number" />
-            <check key="payment:coins" text="Coins" />
-            <check key="payment:notes" text="Notes" />
-            <check key="payment:electronic_purses" text="Electronic purses and Charge cards" />
-            <check key="payment:debit_cards" text="Debit cards" />
-            <check key="payment:credit_cards" text="Credit cards" />
-            <check key="payment:account_cards" text="Account or loyalty cards" />
+            <reference ref="payment_account" />
         </item>
     </group>
     <group name="Public Transport (legacy)" icon="presets/bus.png">
@@ -4187,11 +4194,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="telephone" />
             <text key="operator" text="Operator" />
-            <check key="payment:coins" text="Coins" />
-            <check key="payment:notes" text="Notes" />
-            <check key="payment:electronic_purses" text="Electronic purses and Charge cards" />
-            <check key="payment:debit_cards" text="Debit cards" />
-            <check key="payment:credit_cards" text="Credit cards" />
+            <reference ref="payment_base" />
             <check key="payment:telephone_cards" text="Telephone cards" />
         </item>
         <item name="Emergency Phone" icon="presets/telephone.png" type="node">
@@ -6196,12 +6199,7 @@ Note that for a match, at least one positive and no negative is required.
         <text key="operator" text="Operator" />
         <text key="ref" text="Reference number" />
         <text key="note" text="Note" />
-        <check key="payment:coins" text="Coins" />
-        <check key="payment:notes" text="Notes" />
-        <check key="payment:electronic_purses" text="Electronic purses and Charge cards" />
-        <check key="payment:debit_cards" text="Debit cards" />
-        <check key="payment:credit_cards" text="Credit cards" />
-        <check key="payment:account_cards" text="Account or loyalty cards" />
+        <reference ref="payment_account" />
     </item>
   </group> <!-- Shops -->
   <group name="Geography" icon="presets/peak.svg">
