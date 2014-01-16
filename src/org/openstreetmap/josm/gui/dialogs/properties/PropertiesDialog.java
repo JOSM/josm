@@ -737,8 +737,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     public class MouseClickWatch extends MouseAdapter {
         @Override public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() < 2)
-            {
+            if (e.getClickCount() < 2) {
                 // single click, clear selection in other table not clicked in
                 if (e.getSource() == tagTable) {
                     membershipTable.clearSelection();
@@ -747,8 +746,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 }
             }
             // double click, edit or add tag
-            else if (e.getSource() == tagTable)
-            {
+            else if (e.getSource() == tagTable) {
                 int row = tagTable.rowAtPoint(e.getPoint());
                 if (row > -1) {
                     boolean focusOnKey = (tagTable.columnAtPoint(e.getPoint()) == 0);
@@ -763,8 +761,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     editMembership(row);
                 }
             }
-            else
-            {
+            else {
                 editHelper.addTag();
                 btnAdd.requestFocusInWindow();
             }
