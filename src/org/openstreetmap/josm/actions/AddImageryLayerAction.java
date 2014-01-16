@@ -23,15 +23,26 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.actionsupport.AlignImageryPanel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.preferences.imagery.WMSLayerTree;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
 
+/**
+ * Action displayed in imagery menu to add a new imagery layer. 
+ * @since 3715
+ */
 public class AddImageryLayerAction extends JosmAction implements AdaptableAction {
 
     private static final int MAX_ICON_SIZE = 24;
     private final ImageryInfo info;
 
+    /**
+     * Constructs a new {@code AddImageryLayerAction} for the given {@code ImageryInfo}.
+     * If an http:// icon is specified, it is fetched asynchronously.
+     * @param info The imagery info
+     */
     public AddImageryLayerAction(ImageryInfo info) {
         super(info.getMenuName(), /* ICON */"imagery_menu", tr("Add imagery layer {0}",info.getName()), null, false, false);
         putValue("toolbar", "imagery_" + info.getToolbarName());
@@ -41,11 +52,20 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         // change toolbar icon from if specified
         try {
             if (info.getIcon() != null) {
-                ImageIcon i = new ImageProvider(info.getIcon()).setOptional(true).
-                        setMaxHeight(MAX_ICON_SIZE).setMaxWidth(MAX_ICON_SIZE).get();
-                if (i != null) {
-                    putValue(Action.SMALL_ICON, i);
-                }
+                new ImageProvider(info.getIcon()).setOptional(true).
+                        setMaxHeight(MAX_ICON_SIZE).setMaxWidth(MAX_ICON_SIZE).getInBackground(new ImageCallback() {
+                            @Override
+                            public void finished(final ImageIcon result) {
+                                if (result != null) {
+                                    GuiHelper.runInEDT(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            putValue(Action.SMALL_ICON, result);
+                                        }
+                                    });
+                                }
+                            }
+                        });
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage(), ex);
