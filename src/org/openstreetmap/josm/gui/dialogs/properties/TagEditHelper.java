@@ -26,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -331,13 +332,12 @@ import org.openstreetmap.josm.tools.WindowGeometry;
          */
         private void performTagEdit() {
             String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
-            // is not Java 1.5
-            //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
+            value = Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
             if (value.isEmpty()) {
                 value = null; // delete the key
             }
             String newkey = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
-            //newkey = java.text.Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
+            newkey = Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
             if (newkey.isEmpty()) {
                 newkey = key;
                 value = null; // delete the key instead
