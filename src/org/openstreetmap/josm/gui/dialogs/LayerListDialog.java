@@ -762,13 +762,13 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (layer != null) {
-                new MergeLayerAction().merge(layer);
+                Main.main.menu.merge.merge(layer);
             } else {
                 if (getModel().getSelectedLayers().size() == 1) {
                     Layer selectedLayer = getModel().getSelectedLayers().get(0);
-                    new MergeLayerAction().merge(selectedLayer);
+                    Main.main.menu.merge.merge(selectedLayer);
                 } else {
-                    new MergeLayerAction().merge(getModel().getSelectedLayers());
+                    Main.main.menu.merge.merge(getModel().getSelectedLayers());
                 }
             }
         }

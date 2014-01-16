@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.MultiMap;
 
@@ -126,10 +127,15 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      */
     public void buildTree() {
         updateCount++;
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+        final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
         if (errors == null || errors.isEmpty()) {
-            valTreeModel.setRoot(rootNode);
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    valTreeModel.setRoot(rootNode);
+                }
+            });
             return;
         }
         // Sort validation errors - #8517
