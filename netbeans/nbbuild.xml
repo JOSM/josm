@@ -99,15 +99,24 @@ Build-Date: ${build.tstamp}
 </echo>
 	</target>
 
-    <target name="-pre-compile">
+    <target name="check-javacc">
+        <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
+            <srcfiles dir="${mapcss.dir}" includes="MapCSSParser.jj"/>
+        </uptodate>
+    </target>	
+    <target name="javacc" depends="check-javacc" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <exec append="false" executable="java" failifexecutionfails="true">
             <arg value="-cp"/>
             <arg value="${javacc.home}/javacc.jar"/>
             <arg value="javacc"/>
             <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
+            <arg value="-JDK_VERSION=1.6"/>
+            <arg value="-GRAMMAR_ENCODING=UTF-8"/>
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </exec>
+    </target>
+    <target name="-pre-compile" depends="javacc">
 <!--        <javacc target="${mapcss.dir}/MapCSSParser.jj" javacchome="${javacc.home}" outputdirectory="${mapcss.dir}/parsergen"/>-->
     </target>    
 </project>
