@@ -35,6 +35,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -562,9 +563,9 @@ public class TagChecker extends Test.TagTest {
                 if (value == null || value.trim().length() == 0) {
                     commands.add(new ChangePropertyCommand(p, key, null));
                 } else if (value.startsWith(" ") || value.endsWith(" ")) {
-                    commands.add(new ChangePropertyCommand(p, key, value.trim()));
+                    commands.add(new ChangePropertyCommand(p, key, Tag.removeWhiteSpaces(value)));
                 } else if (key.startsWith(" ") || key.endsWith(" ")) {
-                    commands.add(new ChangePropertyKeyCommand(p, key, key.trim()));
+                    commands.add(new ChangePropertyKeyCommand(p, key, Tag.removeWhiteSpaces(key)));
                 } else {
                     String evalue = entities.unescape(value);
                     if (!evalue.equals(value)) {
