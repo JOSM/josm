@@ -328,6 +328,15 @@ Note that for a match, at least one positive and no negative is required.
     <chunk id="general_access">
         <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_searchable="true" />
     </chunk>
+    <chunk id="name_wikipedia">
+        <text key="name" text="Name" />
+        <text key="wikipedia" text="Wikipedia" />
+    </chunk>
+    <chunk id="population_postcode_website">
+        <text key="population" text="Population" />
+        <text key="addr:postcode" text="Post code" />
+        <text key="website" text="Website" />
+    </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact">
     <preset_link preset_name="Contact (common schema)" />
@@ -1658,9 +1667,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Canal" />
             <space />
             <key key="waterway" value="canal" />
-            <text key="name" text="Name" />
+            <reference ref="name_wikipedia" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-            <text key="wikipedia" text="Wikipedia" />
         </item>
         <item name="River" icon="presets/river.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=river"
@@ -1672,9 +1680,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit River" />
             <space />
             <key key="waterway" value="river" />
-            <text key="name" text="Name" />
+            <reference ref="name_wikipedia" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-            <text key="wikipedia" text="Wikipedia" />
         </item>
         <separator/>
         <item name="Spring" icon="presets/spring.png" type="node,closedway">
@@ -1693,8 +1700,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Waterfall" />
             <space />
             <key key="waterway" value="waterfall" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
         <item name="Weir" icon="presets/weir.png" type="node,way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=weir"
@@ -1719,8 +1725,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Dam" />
             <space />
             <key key="waterway" value="dam" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
         <item name="Groyne" icon="presets/groyne.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=groyne"
@@ -5407,8 +5412,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Castle" />
             <space />
             <key key="historic" value="castle" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
         <item name="Ruins" icon="presets/ruins.png" type="node,closedway">
             <label text="Edit Ruins" />
@@ -6274,50 +6278,40 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Continent" />
             <space />
             <key key="place" value="continent" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
         <item name="Country" icon="presets/places.png" type="node,closedway">
             <label text="Edit Country" />
             <space />
             <key key="place" value="country" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
         <item name="State" icon="presets/places.png" type="node,closedway">
             <label text="Edit State" />
             <space />
             <key key="place" value="state" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
         <item name="Region" icon="presets/places.png" type="node,closedway">
             <label text="Edit Region" />
             <space />
             <key key="place" value="region" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
         <item name="County" icon="presets/places.png" type="node,closedway">
             <label text="Edit County" />
             <space />
             <key key="place" value="county" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
-            <text key="population" text="Population" />
-            <text key="addr:postcode" text="Post code" />
-            <text key="website" text="Website" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
         </item>
         <separator/>
         <item name="City" icon="presets/places.png" type="node,closedway">
             <label text="Edit City" />
             <space />
             <key key="place" value="city" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
-            <text key="population" text="Population" />
-            <text key="addr:postcode" text="Post code" />
-            <text key="website" text="Website" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
         </item>
         <item name="Town" icon="presets/places.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=town"
@@ -6329,11 +6323,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Town" />
             <space />
             <key key="place" value="town" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
-            <text key="population" text="Population" />
-            <text key="addr:postcode" text="Post code" />
-            <text key="website" text="Website" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
         </item>
         <item name="Suburb" icon="presets/places.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=suburb"
@@ -6345,41 +6336,29 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Suburb" />
             <space />
             <key key="place" value="suburb" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
-            <text key="population" text="Population" />
-            <text key="addr:postcode" text="Post code" />
-            <text key="website" text="Website" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
         </item>
         <item name="Village" icon="presets/places.png" type="node,closedway">
             <label text="Edit Village" />
             <space />
             <key key="place" value="village" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
-            <text key="population" text="Population" />
-            <text key="addr:postcode" text="Post code" />
-            <text key="website" text="Website" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
         </item>
         <item name="Hamlet" icon="presets/places.png" type="node,closedway">
             <label text="Edit Hamlet" />
             <space />
             <key key="place" value="hamlet" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
-            <text key="population" text="Population" />
-            <text key="addr:postcode" text="Post code" />
-            <text key="website" text="Website" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
         </item>
         <item name="Isolated Dwelling" icon="presets/places.png" type="node,closedway">
             <label text="Edit Isolated Dwelling" />
             <space />
             <key key="place" value="isolated_dwelling" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
-            <text key="population" text="Population" />
-            <text key="addr:postcode" text="Post code" />
-            <text key="website" text="Website" />
+            <reference ref="name_wikipedia" />
+            <reference ref="population_postcode_website" />
         </item>
         <item name="Neighbourhood" icon="presets/places.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=neighbourhood"
@@ -6391,8 +6370,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Neighbourhood" />
             <space />
             <key key="place" value="neighbourhood" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
             <text key="population" text="Population" />
             <text key="website" text="Website" />
         </item>
@@ -6407,8 +6385,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Locality" />
             <space />
             <key key="place" value="locality" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
     </group> <!-- Places -->
     <group name="Geography" icon="presets/peak.svg">
@@ -6421,9 +6398,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Peak" />
             <space />
             <key key="natural" value="peak" />
-            <text key="name" text="Name" />
+            <reference ref="name_wikipedia" />
             <text key="ele" text="Elevation" />
-            <text key="wikipedia" text="Wikipedia" />
         </item>
         <item name="Saddle" icon="presets/saddle.svg" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=saddle"
@@ -6433,9 +6409,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Saddle" />
             <space/>
             <key key="natural" value="saddle" />
-            <text key="name" text="Name" />
+            <reference ref="name_wikipedia" />
             <text key="ele" text="Elevation" />
-            <text key="wikipedia" text="Wikipedia" />
         </item>
         <item name="Glacier" icon="presets/glacier.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=glacier"
@@ -6445,9 +6420,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Glacier" />
             <space />
             <key key="natural" value="glacier" />
-            <text key="name" text="Name" />
+            <reference ref="name_wikipedia" />
             <text key="ele" text="Elevation" />
-            <text key="wikipedia" text="Wikipedia" />
         </item>
         <item name="Volcano" icon="presets/volcano.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=volcano"
@@ -6457,9 +6431,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Volcano" />
             <space />
             <key key="natural" value="volcano" />
-            <text key="name" text="Name" />
+            <reference ref="name_wikipedia" />
             <text key="ele" text="Elevation" />
-            <text key="wikipedia" text="Wikipedia" />
         </item>
         <item name="Cave Entrance" icon="presets/cave_entrance.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance"
@@ -6468,8 +6441,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Cave Entrance" />
             <space />
             <key key="natural" value="cave_entrance" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
         <separator/>
         <item name="Island" icon="presets/island.png" type="node,closedway">
@@ -6481,8 +6453,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Island" />
             <space />
             <key key="place" value="island" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
         <item name="Islet" icon="presets/islet.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=islet"
@@ -6492,8 +6463,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Islet" />
             <space />
             <key key="place" value="islet" />
-            <text key="name" text="Name" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="name_wikipedia" />
         </item>
     </group> <!-- Geography -->
     <group name="Nature" icon="presets/tree.png">
