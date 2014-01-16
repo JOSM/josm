@@ -141,7 +141,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     } else if ("fixChangeKey".equals(ai.key) && val != null) {
                         CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
                         final String[] x = val.split("=>", 2);
-                        check.keyChange.put(x[0].trim(), x[1].trim());
+                        check.keyChange.put(Tag.removeWhiteSpaces(x[0]), Tag.removeWhiteSpaces(x[1]));
                     } else if ("suggestAlternative".equals(ai.key) && val != null) {
                         check.alternatives.add(val);
                     } else if ("assertMatch".equals(ai.key) && val != null) {

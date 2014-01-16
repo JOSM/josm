@@ -713,7 +713,7 @@ public final class TaggingPresetItems {
                 return;
             }
             
-            v = v.trim();
+            v = Tag.removeWhiteSpaces(v);
 
             if (!"false".equals(use_last_as_default) || auto_increment != null) {
                 lastValue.put(key, v);
@@ -1075,7 +1075,7 @@ public final class TaggingPresetItems {
             } else {
                 value = "";
             }
-            value = value.trim();
+            value = Tag.removeWhiteSpaces(value);
 
             // no change if same as before
             if (originalValue == null) {

@@ -330,13 +330,13 @@ import org.openstreetmap.josm.tools.WindowGeometry;
          * Confirmations may be needed.
          */
         private void performTagEdit() {
-            String value = values.getEditor().getItem().toString().trim();
+            String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
             // is not Java 1.5
             //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
             if (value.isEmpty()) {
                 value = null; // delete the key
             }
-            String newkey = keys.getEditor().getItem().toString().trim();
+            String newkey = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
             //newkey = java.text.Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
             if (newkey.isEmpty()) {
                 newkey = key;
@@ -731,8 +731,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
          * Read tags from comboboxes and add it to all selected objects
          */
         public void performTagAdding() {
-            String key = keys.getEditor().getItem().toString().trim();
-            String value = values.getEditor().getItem().toString().trim();
+            String key = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
+            String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
             if (key.isEmpty() || value.isEmpty()) return;
             lastAddKey = key;
             lastAddValue = value;
@@ -742,11 +742,9 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             changedKey = key;
         }
         
-        
         public void undoAllTagsAdding() {
             Main.main.undoRedo.undo(commandCount);
         }
-
 
         private void disableTagIfNeeded(final Tag t, final JosmAction action) {
             // Disable action if its key is already set on the object (the key being absent from the keys list for this reason
