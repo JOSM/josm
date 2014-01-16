@@ -283,6 +283,12 @@ Note that for a match, at least one positive and no negative is required.
             <text key="maxwidth" text="Max. width (meters)" length="7" />
         </optional>
     </chunk>
+    <chunk id="optional_maxheight_maxwidth">
+        <optional>
+            <text key="maxheight" text="Max. height (meters)" length="7" />
+            <text key="maxwidth" text="Max. width (meters)" length="7" />
+        </optional>
+    </chunk>
     <chunk id="name_leisure_pitch">
         <text key="name" text="Name" />
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
@@ -318,6 +324,9 @@ Note that for a match, at least one positive and no negative is required.
         <combo key="supervised" text="Supervised" values="yes,no,interval" />
         <combo key="lit" text="Lit" values="yes,no,interval" />
         <reference ref="oh" />
+    </chunk>
+    <chunk id="general_access">
+        <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_searchable="true" />
     </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact">
@@ -1261,7 +1270,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="optional_maxwidth" />
         </item> <!-- cycle_barrier -->
         <item name="Cattle Grid" icon="presets/cattle_grid.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cattle_grid"
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=cattle_grid"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=cattle_grid"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=cattle_grid" />
             <label text="Edit Cattle Grid" />
@@ -1297,6 +1306,7 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item> <!-- toll_booth -->
         <item name="Border Control" icon="presets/douane.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=border_control" />
             <label text="Edit Border Control" />
             <key key="barrier" value="border_control" />
             <reference ref="barrier_5" />
@@ -1390,6 +1400,7 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item> <!-- ditch -->
         <item name="Kerb" type="way,closedway">
+            <link pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=kerb" />
             <label text="Edit Kerb" />
             <key key="barrier" value="kerb" />
             <reference ref="optional_height" />
@@ -1415,7 +1426,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Gate" />
             <key key="barrier" value="gate" />
             <reference ref="barrier_5" />
-            <reference ref="optional_maxwidth" />
+            <reference ref="optional_maxheight_maxwidth" />
+            <reference ref="general_access" />
         </item> <!-- gate -->
         <item name="Lift Gate" icon="presets/lift_gate.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=lift_gate"
@@ -1428,6 +1440,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="barrier" value="lift_gate" />
             <reference ref="barrier_5" />
             <reference ref="optional_maxwidth" />
+            <reference ref="general_access" />
         </item> <!-- lift_gate -->
         <item name="Hampshire Gate" icon="presets/empty.png" type="node">
             <label text="Edit Hampshire Gate" />
@@ -2536,7 +2549,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="amenity" value="bicycle_parking" />
             <reference ref="name_operator" />
             <text key="capacity" text="Capacity" />
-            <combo key="bicycle_parking" text="Type" values="anchors,building,ground_slots,informal,lockers,shed,stands,wall_loops" />
+            <combo key="bicycle_parking" text="Type" values="anchors,building,ground_slots,informal,lockers,rack,shed,stands,wall_loops" />
             <check key="covered" text="Covered" />
             <check key="supervised" text="Supervised" />
         </item>
@@ -4851,7 +4864,11 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <combo key="entrance" text="Entrance" values="yes,main,service,exit,emergency" values_context="entrance" default="yes" match="key" />
             <combo key="access" text="Access" values="yes,delivery,private,no" />
-            <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no,limited" />
+            <optional>
+                <text key="ref" text="Entrance number" />
+                <text key="addr:flats" text="Flat numbers" />
+            </optional>
         </item>
         <item name="Tower" icon="presets/tower.png" type="node,closedway">
             <label text="Edit Tower" />
