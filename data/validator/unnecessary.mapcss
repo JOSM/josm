@@ -1,10 +1,12 @@
 *[access][highway=proposed],
 *[motor_vehicle?][highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street/],
+*[bridge=no],
 *[layer="0"] {
   /* see #9365 - Useless tag layer=0 */
   throwWarning: tr("{0} is unnecessary", "{0.tag}");
   fixRemove: "{0.key}";
   assertMatch: "way layer=0";
+  assertMatch: "way bridge=no";
   assertMatch: "way highway=proposed access=no";
 }
 
