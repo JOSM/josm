@@ -1409,7 +1409,8 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item> <!-- ditch -->
         <item name="Kerb" type="way,closedway">
-            <link pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=kerb" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=kerb"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=kerb" />
             <label text="Edit Kerb" />
             <key key="barrier" value="kerb" />
             <reference ref="optional_height" />
