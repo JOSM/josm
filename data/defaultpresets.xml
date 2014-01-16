@@ -298,6 +298,27 @@ Note that for a match, at least one positive and no negative is required.
         <reference ref="payment_base" />
         <check key="payment:account_cards" text="Account or loyalty cards" />
     </chunk>
+    <chunk id="parking_name_type_ref">
+        <text key="name" text="Name" />
+        <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" />
+        <text key="ref" text="Reference number" />
+    </chunk>
+    <chunk id="parking_access_fee_operator_surface">
+        <space />
+        <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
+        <combo key="fee" text="Fee" values="yes,no,interval" />
+        <text key="operator" text="Operator" />
+        <reference ref="surface" />
+        <space />
+    </chunk>
+    <chunk id="stay">
+        <combo key="stay" text="Time Limit (minutes)" values="0,30-60,30-180,30+" />
+    </chunk>
+    <chunk id="supervised_lit_oh">
+        <combo key="supervised" text="Supervised" values="yes,no,interval" />
+        <combo key="lit" text="Lit" values="yes,no,interval" />
+        <reference ref="oh" />
+    </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact">
     <preset_link preset_name="Contact (common schema)" />
@@ -2287,20 +2308,18 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Parking" />
             <space />
             <key key="amenity" value="parking" />
-            <text key="name" text="Name" />
-            <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" />
-            <text key="ref" text="Reference number" />
+            <reference ref="parking_name_type_ref" />
             <text key="maxheight" text="Max. height (meters)" />
-            <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
-            <combo key="park_ride" text="Park and Ride" values="yes,no" />
-            <combo key="fee" text="Fee" values="yes,no" />
-            <text key="operator" text="Operator" />
-            <space />
+            <combo key="park_ride" text="Park and Ride" values="yes,no,bus,train,tram,metro,ferry" />
+            <reference ref="parking_access_fee_operator_surface" />
             <text key="capacity" text="Capacity (overall)" />
             <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,unknown,1,2,3" />
             <combo key="capacity:women" text="Spaces for Women" values="yes,no,unknown,1,2,3" />
             <combo key="capacity:parent" text="Spaces for Parents" values="yes,no,unknown,1,2,3" />
             <label text="See the Wiki for other capacity:[types]=*." />
+            <space />
+            <reference ref="stay" />
+            <reference ref="supervised_lit_oh" />
         </item>
         <item name="Parking space" icon="presets/parking.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking_space"
@@ -2312,20 +2331,12 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Parking space" />
             <space />
             <key key="amenity" value="parking_space" />
-            <text key="name" text="Name" />
-            <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" />
-            <text key="ref" text="Reference number" />
+            <reference ref="parking_name_type_ref" />
             <text key="capacity" text="Capacity" />
-            <space />
-            <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
-            <combo key="fee" text="Fee" values="yes,no,interval" />
-            <text key="operator" text="Operator" />
-            <reference ref="surface" />
-            <combo key="covered" text="Covered (with roof)" values="yes,no" />
-            <combo key="stay" text="Time Limit (minutes)" values="0,30-60,30-180,30+" />
-            <combo key="supervised" text="Supervised" values="yes,no,interval" />
-            <combo key="lit" text="Lit" values="yes,no,interval" />
-            <reference ref="oh" />
+            <reference ref="parking_access_fee_operator_surface" />
+            <reference ref="stay" />
+            <reference ref="supervised_lit_oh" />
+            <check key="covered" text="Covered (with roof)" />
         </item>
         <item name="Parking entrance" icon="presets/parking.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking_entrance"
@@ -2336,19 +2347,11 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Parking entrance" />
             <space />
             <key key="amenity" value="parking_entrance" />
-            <text key="name" text="Name" />
-            <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" />
-            <text key="ref" text="Reference number" />
-            <space />
-            <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
-            <combo key="fee" text="Fee" values="yes,no,interval" />
-            <text key="operator" text="Operator" />
-            <reference ref="surface" />
-            <combo key="covered" text="Covered (with roof)" values="yes,no" />
-            <combo key="stay" text="Time Limit (minutes)" values="0,30-60,30-180,30+" />
-            <combo key="supervised" text="Supervised" values="yes,no,interval" />
-            <combo key="lit" text="Lit" values="yes,no,interval" />
-            <reference ref="oh" />
+            <reference ref="parking_name_type_ref" />
+            <text key="maxheight" text="Max. height (meters)" />
+            <reference ref="parking_access_fee_operator_surface" />
+            <reference ref="supervised_lit_oh" />
+            <check key="covered" text="Covered (with roof)" />
         </item>
         <separator/>
         <item name="Fuel" icon="presets/fuel.png" type="node,closedway">
@@ -3544,8 +3547,8 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="bbq" />
             <text key="name" text="Name" />
-            <combo key="covered" text="Covered" values="yes,no" />
             <combo key="fuel" text="Fuel" text_context="grill" values="charcoal,electric,wood" />
+            <check key="covered" text="Covered" />
         </item>
         <item name="Fishing" icon="presets/fishing.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=fishing"
