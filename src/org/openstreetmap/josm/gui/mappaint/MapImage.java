@@ -36,7 +36,7 @@ public class MapImage {
     public int height = -1;
 
     private boolean temporary;
-    private Image disabledImg;
+    private Image disabledImgCache;
 
     public MapImage(String name, StyleSource source) {
         this.name = name;
@@ -44,12 +44,12 @@ public class MapImage {
     }
 
     public Image getDisabled() {
-        if (disabledImg != null)
-            return disabledImg;
+        if (disabledImgCache != null)
+                return disabledImgCache;
         if (img == null)
             getImage(); // fix #7498 ?
-        disabledImg = GuiHelper.getDisabledImage(img);
-        return disabledImg;
+        disabledImgCache = GuiHelper.getDisabledImage(img);
+        return disabledImgCache;
     }
 
     public BufferedImage getImage() {
@@ -75,6 +75,7 @@ public class MapImage {
                                 img = (BufferedImage) result.getImage();
                             }
                             if (temporary) {
+                                disabledImgCache = null;
                                 Main.map.mapView.preferenceChanged(null); // otherwise repaint is ignored, because layer hasn't changed
                                 Main.map.mapView.repaint();
                             }
