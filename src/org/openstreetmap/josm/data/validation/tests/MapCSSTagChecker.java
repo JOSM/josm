@@ -439,7 +439,11 @@ public class MapCSSTagChecker extends Test.TagTest {
         checks.clear();
         for (String i : new ValidatorTagCheckerRulesPreference.RulePrefHelper().getActiveUrls()) {
             try {
-                Main.info(tr("Adding {0} to tag checker", i));
+                if (i.startsWith("resource:")) {
+                    Main.debug(tr("Adding {0} to tag checker", i));
+                } else {
+                    Main.info(tr("Adding {0} to tag checker", i));
+                }
                 MirroredInputStream s = new MirroredInputStream(i);
                 try {
                     addMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
