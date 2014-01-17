@@ -183,6 +183,15 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     abstract public Object getInfoComponent();
 
     /**
+     * Determines if info dialog can be resized (false by default).
+     * @return {@code true} if the info dialog can be resized, {@code false} otherwise
+     * @since 6708
+     */
+    public boolean isInfoResizable() {
+        return false;
+    }
+
+    /**
      * Returns list of actions. Action can implement LayerAction interface when it needs to be represented by other
      * menu component than JMenuItem or when it supports multiple layers. Actions that support multiple layers should also
      * have correct equals implementation.
