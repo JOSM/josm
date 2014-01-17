@@ -92,6 +92,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_DOWN_MASK, false), "ZOOM_IN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0, false), "ZOOM_IN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0, false), "ZOOM_IN");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0, false), "ZOOM_IN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, InputEvent.SHIFT_DOWN_MASK, false), "ZOOM_IN");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK, false), "ZOOM_OUT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.META_DOWN_MASK, false), "ZOOM_OUT");
