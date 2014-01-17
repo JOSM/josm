@@ -527,10 +527,8 @@ public class Multipolygon {
 
         PolyData result = null;
         for (PolyData combined : outerPolygons) {
-            Intersection c = combined.contains(inner.poly);
-            if (c != Intersection.OUTSIDE)
-            {
-                if (result == null || result.contains(combined.poly) != Intersection.INSIDE) {
+            if (combined.contains(inner.poly) != Intersection.OUTSIDE) {
+                if (result == null || result.contains(combined.poly) == Intersection.INSIDE) {
                     result = combined;
                 }
             }
