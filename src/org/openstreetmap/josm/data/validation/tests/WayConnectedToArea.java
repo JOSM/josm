@@ -14,6 +14,8 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
+import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Checks for ways connected to areas.
@@ -64,6 +66,7 @@ public class WayConnectedToArea extends Test {
 
     private void testForError(Way w, Node wayNode, OsmPrimitive p) {
         if (wayNode.isOutsideDownloadArea()) {
+        } else if (Utils.exists(wayNode.getReferrers(), Predicates.hasTag("route", "ferry"))) {
         } else if (isArea(p)) {
             addError(w, wayNode, p);
         } else {
