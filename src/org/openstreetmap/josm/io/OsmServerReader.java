@@ -33,12 +33,6 @@ public abstract class OsmServerReader extends OsmConnection {
     private OsmApi api = OsmApi.getOsmApi();
     private boolean doAuthenticate = false;
     protected boolean gpxParsedProperly;
-    
-    protected enum Compression {
-        NONE,
-        BZIP2,
-        GZIP
-    }
 
     /**
      * Open a connection to the given url and return a reader on the input stream

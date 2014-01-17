@@ -52,7 +52,7 @@ public class OsmExporter extends FileExporter {
     }
 
     protected OutputStream getOutputStream(File file) throws FileNotFoundException, IOException {
-        return new FileOutputStream(file);
+        return Compression.getCompressedFileOutputStream(file);
     }
 
     private void save(File file, OsmDataLayer layer, boolean noBackup) {
