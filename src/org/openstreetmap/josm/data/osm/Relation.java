@@ -81,10 +81,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     public void addMember(RelationMember member) {
         boolean locked = writeLock();
         try {
-            RelationMember[] newMembers = new RelationMember[members.length + 1];
-            System.arraycopy(members, 0, newMembers, 0, members.length);
-            newMembers[members.length] = member;
-            members = newMembers;
+            members = Utils.addInArrayCopy(members, member);
             member.getMember().addReferrer(this);
             member.getMember().clearCachedStyle();
             fireMembersChanged();
@@ -479,7 +476,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         bbox = null; // bbox might have changed if relation was in ds, was removed, modified, added back to dataset
     }
 
-    private void checkMembers() {
+    private void checkMembers() throws DataIntegrityProblemException {
         DataSet dataSet = getDataSet();
         if (dataSet != null) {
             RelationMember[] members = this.members;
@@ -496,7 +493,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
-    private void fireMembersChanged() {
+    private void fireMembersChanged() throws DataIntegrityProblemException {
         checkMembers();
         if (getDataSet() != null) {
             getDataSet().fireRelationMembersChanged(this);

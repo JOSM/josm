@@ -16,6 +16,7 @@ import java.awt.Stroke;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -813,13 +814,11 @@ public class GpxLayer extends Layer {
      */
     final private void ensureTrackVisibilityLength() {
         final int l = data.tracks.size();
-        if(l == trackVisibility.length)
+        if (l == trackVisibility.length)
             return;
-        final boolean[] back = trackVisibility.clone();
-        final int m = Math.min(l, back.length);
-        trackVisibility = new boolean[l];
-        System.arraycopy(back, 0, trackVisibility, 0, m);
-        for(int i=m; i < l; i++) {
+        final int m = Math.min(l, trackVisibility.length);
+        trackVisibility = Arrays.copyOf(trackVisibility, l);
+        for (int i = m; i < l; i++) {
             trackVisibility[i] = true;
         }
     }

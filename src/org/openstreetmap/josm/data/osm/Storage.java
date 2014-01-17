@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.AbstractSet;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -146,9 +147,7 @@ public class Storage<T> extends AbstractSet<T> {
 
     private void copyArray() {
         if (arrayCopyNecessary) {
-            @SuppressWarnings("unchecked") T[] newData = (T[]) new Object[data.length];
-            System.arraycopy(data, 0, newData, 0, data.length);
-            data = newData;
+            data = Arrays.copyOf(data, data.length);
             arrayCopyNecessary = false;
         }
     }

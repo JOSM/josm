@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * One full way, consisting of a list of way {@link Node nodes}.
@@ -424,10 +425,7 @@ public final class Way extends OsmPrimitive implements IWay {
                 throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
             clearCachedStyle();
             n.addReferrer(this);
-            Node[] newNodes = new Node[nodes.length + 1];
-            System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
-            newNodes[nodes.length] = n;
-            nodes = newNodes;
+            nodes = Utils.addInArrayCopy(nodes, n);
             n.clearCachedStyle();
             fireNodesChanged();
         } finally {

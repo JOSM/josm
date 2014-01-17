@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 
@@ -923,10 +924,9 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Add new referrer. If referrer is already included then no action is taken
-     * @param referrer
+     * @param referrer The referrer to add
      */
     protected void addReferrer(OsmPrimitive referrer) {
-        // Based on methods from josm-ng
         if (referrers == null) {
             referrers = referrer;
         } else if (referrers instanceof OsmPrimitive) {
@@ -938,20 +938,15 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
                 if (primitive == referrer)
                     return;
             }
-            OsmPrimitive[] orig = (OsmPrimitive[])referrers;
-            OsmPrimitive[] bigger = new OsmPrimitive[orig.length+1];
-            System.arraycopy(orig, 0, bigger, 0, orig.length);
-            bigger[orig.length] = referrer;
-            referrers = bigger;
+            referrers = Utils.addInArrayCopy((OsmPrimitive[])referrers, referrer);
         }
     }
 
     /**
      * Remove referrer. No action is taken if referrer is not registered
-     * @param referrer
+     * @param referrer The referrer to remove
      */
     protected void removeReferrer(OsmPrimitive referrer) {
-        // Based on methods from josm-ng
         if (referrers instanceof OsmPrimitive) {
             if (referrers == referrer) {
                 referrers = null;
