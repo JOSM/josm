@@ -25,6 +25,9 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.Proxy
  *
  */
 public class DefaultProxySelector extends ProxySelector {
+
+    private static final List<Proxy> NO_PROXY_LIST = Collections.singletonList(Proxy.NO_PROXY);
+
     /**
      * The {@link ProxySelector} provided by the JDK will retrieve proxy information
      * from the system settings, if the system property <tt>java.net.useSystemProxies</tt>
@@ -183,28 +186,27 @@ public class DefaultProxySelector extends ProxySelector {
 
     @Override
     public List<Proxy> select(URI uri) {
-        Proxy proxy;
+        if (uri != null && "localhost".equals(uri.getHost())) {
+            return NO_PROXY_LIST;
+        }
         switch(proxyPolicy) {
         case USE_SYSTEM_SETTINGS:
             if (!JVM_WILL_USE_SYSTEM_PROXIES) {
                 Main.warn(tr("The JVM is not configured to lookup proxies from the system settings. The property ''java.net.useSystemProxies'' was missing at startup time.  Will not use a proxy."));
-                return Collections.singletonList(Proxy.NO_PROXY);
+                return NO_PROXY_LIST;
             }
             // delegate to the former proxy selector
-            List<Proxy> ret = delegate.select(uri);
-            return ret;
+            return delegate.select(uri);
         case NO_PROXY:
-            return Collections.singletonList(Proxy.NO_PROXY);
+            return NO_PROXY_LIST;
         case USE_HTTP_PROXY:
             if (httpProxySocketAddress == null)
-                return Collections.singletonList(Proxy.NO_PROXY);
-            proxy = new Proxy(Type.HTTP, httpProxySocketAddress);
-            return Collections.singletonList(proxy);
+                return NO_PROXY_LIST;
+            return Collections.singletonList(new Proxy(Type.HTTP, httpProxySocketAddress));
         case USE_SOCKS_PROXY:
             if (socksProxySocketAddress == null)
-                return Collections.singletonList(Proxy.NO_PROXY);
-            proxy = new Proxy(Type.SOCKS, socksProxySocketAddress);
-            return Collections.singletonList(proxy);
+                return NO_PROXY_LIST;
+            return Collections.singletonList(new Proxy(Type.SOCKS, socksProxySocketAddress));
         }
         // should not happen
         return null;
