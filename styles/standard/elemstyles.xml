@@ -118,7 +118,6 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="bridge" b="no"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000" priority="-50000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
@@ -143,17 +142,14 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="tunnel" b="no"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
 		<condition k="cutting" b="no"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
 		<condition k="embankment" b="no"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
@@ -475,7 +471,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="road"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
+		<line width="2" realwidth="5" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
@@ -673,7 +669,6 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="ford"/>
-		<line width="2" realwidth="5" colour="ford#ff0000"/>
 		<icon annotate="true" src="vehicle/ford.png"/>
 	</rule>
 
@@ -2433,13 +2428,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<!-- superseeded by greengrocer -->
-		<condition k="shop" v="groceries"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<area colour="deprecated#ff0000"/>
-	</rule>
-
-	<rule>
 		<condition k="shop" v="garden_centre"/>
 		<icon annotate="true" src="shop/garden_centre.png"/>
 		<area colour="shop#00005f"/>
@@ -3596,7 +3584,6 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="mountain_pass" b="yes"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon src="misc/landmark/mountain_pass.png"/>
 	</rule>
 
