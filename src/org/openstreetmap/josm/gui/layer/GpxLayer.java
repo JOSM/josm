@@ -220,7 +220,7 @@ public class GpxLayer extends Layer {
                 trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>");
 
         final JScrollPane sp = new JScrollPane(new HtmlPanel(info.toString()));
-        sp.setPreferredSize(new Dimension(sp.getPreferredSize().width, 350));
+        sp.setPreferredSize(new Dimension(sp.getPreferredSize().width+20, 370));
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -228,6 +228,11 @@ public class GpxLayer extends Layer {
             }
         });
         return sp;
+    }
+    
+    @Override
+    public boolean isInfoResizable() {
+        return true;
     }
 
     @Override
