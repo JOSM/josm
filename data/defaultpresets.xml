@@ -2607,7 +2607,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Edit Route" />
             <space />
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" values_searchable="true" />
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" values_searchable="true" match="keyvalue" />
             <reference ref="name_ref" />
             <optional>
                 <text key="from" text="From (initial stop)" />
