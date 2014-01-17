@@ -15,15 +15,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.openstreetmap.josm.command.ChangeNodesCommand;
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -154,7 +151,7 @@ public class OverlappingWays extends Test {
         nodePairs = null;
     }
 
-    public static Pair<ChangeNodesCommand, Set<WaySegment>> fixDuplicateWaySegment(Way w) {
+    protected static Set<WaySegment> checkDuplicateWaySegment(Way w) {
         // test for ticket #4959
         Set<WaySegment> segments = new TreeSet<WaySegment>(new Comparator<WaySegment>() {
             @Override
@@ -168,23 +165,17 @@ public class OverlappingWays extends Test {
                 return first != 0 ? first : second;
             }
         });
-        final Set<Integer> wayNodesToFix = new TreeSet<Integer>(Collections.reverseOrder());
         final Set<WaySegment> duplicateWaySegments = new HashSet<WaySegment>();
 
         for (int i = 0; i < w.getNodesCount() - 1; i++) {
             final WaySegment segment = new WaySegment(w, i);
             final boolean wasInSet = !segments.add(segment);
             if (wasInSet) {
-                wayNodesToFix.add(i);
                 duplicateWaySegments.add(segment);
             }
         }
-        if (wayNodesToFix.size() > 1) {
-            final List<Node> newNodes = new ArrayList<Node>(w.getNodes());
-            for (final int i : wayNodesToFix) {
-                newNodes.remove(i);
-            }
-            return Pair.create(new ChangeNodesCommand(w, newNodes), duplicateWaySegments);
+        if (duplicateWaySegments.size() > 1) {
+            return duplicateWaySegments;
         } else {
             return null;
         }
@@ -193,10 +184,10 @@ public class OverlappingWays extends Test {
     @Override
     public void visit(Way w) {
 
-        final Pair<ChangeNodesCommand, Set<WaySegment>> duplicateWaySegment = fixDuplicateWaySegment(w);
+        final Set<WaySegment> duplicateWaySegment = checkDuplicateWaySegment(w);
         if (duplicateWaySegment != null) {
-            errors.add(new FixableTestError(this, Severity.ERROR, tr("Way contains segment twice"),
-                    DUPLICATE_WAY_SEGMENT, Collections.singleton(w), duplicateWaySegment.b, duplicateWaySegment.a));
+            errors.add(new TestError(this, Severity.ERROR, tr("Way contains segment twice"),
+                    DUPLICATE_WAY_SEGMENT, Collections.singleton(w), duplicateWaySegment));
             return;
         }
 
