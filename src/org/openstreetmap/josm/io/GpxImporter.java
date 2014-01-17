@@ -4,10 +4,8 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
 
 import javax.swing.JOptionPane;
 
@@ -30,7 +28,7 @@ public class GpxImporter extends FileImporter {
      * The GPX file filter (*.gpx and *.gpx.gz files).
      */
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
-            "gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)");
+            "gpx,gpx.gz,gpx.bz2", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz, *.gpx.bz2)");
 
     /**
      * Utility class containing imported GPX and marker layers, and a task to run after they are added to MapView.
@@ -77,13 +75,8 @@ public class GpxImporter extends FileImporter {
 
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
-        InputStream is;
-        if (file.getName().endsWith(".gpx.gz")) {
-            is = new GZIPInputStream(new FileInputStream(file));
-        } else {
-            is = new FileInputStream(file);
-        }
-        String fileName = file.getName();
+        final InputStream is = Compression.getUncompressedFileInputStream(file);
+        final String fileName = file.getName();
 
         try {
             GpxReader r = new GpxReader(is);

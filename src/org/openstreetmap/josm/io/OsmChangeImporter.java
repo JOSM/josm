@@ -4,7 +4,6 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,16 +36,7 @@ public class OsmChangeImporter extends FileImporter {
 
     @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         try {
-            FileInputStream in = new FileInputStream(file);
-
-            if (file.getName().endsWith(".osc")) {
-                importData(in, file, progressMonitor);
-            } else if (file.getName().endsWith(".gz")) {
-                importData(getGZipInputStream(in), file, progressMonitor);
-            } else {
-                importData(getBZip2InputStream(in), file, progressMonitor);
-            }
-
+            importData(Compression.getUncompressedFileInputStream(file), file, progressMonitor);
         } catch (FileNotFoundException e) {
             Main.error(e);
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));

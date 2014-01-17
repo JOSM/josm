@@ -9,8 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.Calendar;
 
@@ -172,9 +172,9 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             gpxData.attr.put(META_KEYWORDS, keywords.getText());
         }
 
-        FileOutputStream fo = null;
+        OutputStream fo = null;
         try {
-            fo = new FileOutputStream(file);
+            fo = Compression.getCompressedFileOutputStream(file);
             new GpxWriter(fo).write(gpxData);
             fo.flush();
         } catch (IOException x) {
