@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -220,7 +221,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         int v = ed.getValue();
         // cancel for unknown buttons and copy back original settings
         if (v != 1 && v != 2) {
-            System.arraycopy(trackVisibilityBackup, 0, layer.trackVisibility, 0, layer.trackVisibility.length);
+            layer.trackVisibility = Arrays.copyOf(trackVisibilityBackup, layer.trackVisibility.length);
             Main.map.repaint();
             return;
         }

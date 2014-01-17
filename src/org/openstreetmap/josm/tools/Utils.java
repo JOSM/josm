@@ -951,4 +951,17 @@ public final class Utils {
         }
         return result;
     }
+    
+    /**
+     * Adds the given item at the end of a new copy of given array.
+     * @param array The source array
+     * @param item The item to add
+     * @return An extended copy of {@code array} containing {@code item} as additional last element
+     * @since 6717
+     */
+    public static <T> T[] addInArrayCopy(T[] array, T item) {
+        T[] biggerCopy = Arrays.copyOf(array, array.length + 1);
+        biggerCopy[array.length] = item;
+        return biggerCopy;
+    }
 }
