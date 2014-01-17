@@ -30,6 +30,7 @@ area:closed:areaStyle ⧉ area:closed:areaStyle {
 }
 
 /* see ticket #9311 */
+node[amenity=parking][!"capacity:disabled"] ∈ *[amenity=parking],
 node[amenity=parking]["capacity:disabled" !~ /^(yes|[0-9]+)$/] ∈ *[amenity=parking] {
   throwWarning: tr("{0} inside {1}", "amenity=parking", "amenity=parking");
 }
@@ -41,4 +42,18 @@ area:closed:areaStyle[tag("natural") = parent_tag("natural")] ⧉ area:closed:ar
 
 area:closed:areaStyle[tag("landuse") = parent_tag("landuse")] ⧉ area:closed:areaStyle[landuse] {
   throwWarning: tr("Overlapping Identical Landuses");
+}
+
+/* see ticket:#9522 */
+node[tag("amenity") = parent_tag("amenity")] ∈ *[amenity][amenity != parking] {
+  throwWarning: tr("{0} inside {1}", concat("amenity=", tag("amenity")), concat("amenity=", tag("amenity")));
+}
+node[tag("leisure") = parent_tag("leisure")] ∈ *[leisure] {
+  throwWarning: tr("{0} inside {1}", concat("leisure=", tag("leisure")), concat("leisure=", tag("leisure")));
+}
+node[tag("tourism") = parent_tag("tourism")] ∈ *[tourism] {
+  throwWarning: tr("{0} inside {1}", concat("tourism=", tag("tourism")), concat("tourism=", tag("tourism")));
+}
+node[tag("shop") = parent_tag("shop")] ∈ *[shop] {
+  throwWarning: tr("{0} inside {1}", concat("shop=", tag("shop")), concat("shop=", tag("shop")));
 }
