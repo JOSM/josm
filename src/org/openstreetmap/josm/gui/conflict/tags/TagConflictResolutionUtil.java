@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.tags;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -24,10 +25,10 @@ public final class TagConflictResolutionUtil {
      *
      *  For tags which are not present on at least one of the merged nodes, the empty value ""
      *  is added to the list of values for this tag, but only if there are at least two
-     *  primitives with tags.
+     *  primitives with tags, and at least one tagged primitive do not have this tag.
      *
      * @param tc the tag collection
-     * @param merged the collection of merged  primitives
+     * @param merged the collection of merged primitives
      */
     public static void normalizeTagCollectionBeforeEditing(TagCollection tc, Collection<? extends OsmPrimitive> merged) {
         // remove irrelevant tags
@@ -36,20 +37,20 @@ public final class TagConflictResolutionUtil {
             tc.removeByKey(key);
         }
 
-        int numNodesWithTags = 0;
+        Collection<OsmPrimitive> taggedPrimitives = new ArrayList<OsmPrimitive>();
         for (OsmPrimitive p: merged) {
-            if (!p.getKeys().isEmpty()) {
-                numNodesWithTags++;
+            if (p.isTagged()) {
+                taggedPrimitives.add(p);
             }
         }
-        if (numNodesWithTags <= 1)
+        if (taggedPrimitives.size() <= 1)
             return;
 
         for (String key: tc.getKeys()) {
             // make sure the empty value is in the tag set if a tag is not present
             // on all merged nodes
             //
-            for (OsmPrimitive p: merged) {
+            for (OsmPrimitive p: taggedPrimitives) {
                 if (p.get(key) == null) {
                     tc.add(new Tag(key, "")); // add a tag with key and empty value
                 }
