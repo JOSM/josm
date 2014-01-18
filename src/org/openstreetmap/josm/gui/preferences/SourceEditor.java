@@ -66,6 +66,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -701,9 +703,7 @@ public abstract class SourceEditor extends JPanel {
         private JCheckBox cbActive;
 
         public EditSourceEntryDialog(Component parent, String title, SourceEntry e) {
-            super(parent,
-                    title,
-                    new String[] {tr("Ok"), tr("Cancel")});
+            super(parent, title, new String[] {tr("Ok"), tr("Cancel")});
 
             JPanel p = new JPanel(new GridBagLayout());
 
@@ -717,7 +717,7 @@ public abstract class SourceEditor extends JPanel {
             JButton fileChooser = new JButton(new LaunchFileChooserAction());
             fileChooser.setMargin(new Insets(0, 0, 0, 0));
             p.add(fileChooser, GBC.eol().insets(0, 0, 5, 5));
-
+            
             if (e != null) {
                 if (e.title != null) {
                     tfTitle.setText(e.title);
@@ -731,6 +731,32 @@ public abstract class SourceEditor extends JPanel {
             }
             setButtonIcons(new String[] {"ok", "cancel"});
             setContent(p);
+
+            // Make OK button enabled only when a file/URL has been set
+            tfURL.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    updateOkButtonState();
+                }
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    updateOkButtonState();
+                }
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    updateOkButtonState();
+                }
+            });
+        }
+
+        private void updateOkButtonState() {
+            buttons.get(0).setEnabled(!Utils.strip(tfURL.getText()).isEmpty());
+        }
+
+        @Override
+        public void setupDialog() {
+            super.setupDialog();
+            updateOkButtonState();
         }
 
         class LaunchFileChooserAction extends AbstractAction {
