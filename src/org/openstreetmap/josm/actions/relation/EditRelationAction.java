@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -64,13 +66,22 @@ public class EditRelationAction extends AbstractRelationAction  {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.size()!=1) return;
-        launchEditor(relations.iterator().next());
+        if (!isEnabled() || relations.isEmpty()) return;
+        if (relations.size() > Main.pref.getInteger("warn.open.maxrelations", 5)) {
+            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent, 
+                    "<html>"+tr("You are about to open <b>{0}</b> different relation editors simultaneously.<br/>Do you want to continue ?", 
+                            relations.size())+"</html>", 
+                    tr("Confirmation"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE)) {
+                return;
+            }
+        }
+        for (Relation r : relations) {
+            launchEditor(r);
+        }
     }
 
     @Override
     protected void updateEnabledState() {
-        // only one selected relation can be edited
-        setEnabled( relations.size()==1 );
+        setEnabled( !relations.isEmpty() );
     }
 }
