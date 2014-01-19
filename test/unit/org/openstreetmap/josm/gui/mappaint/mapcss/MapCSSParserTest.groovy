@@ -2,6 +2,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss
 
 import org.junit.Before
 import org.junit.Test
+import org.openstreetmap.TestUtils
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Preferences
 import org.openstreetmap.josm.data.osm.OsmPrimitive
@@ -179,5 +180,22 @@ class MapCSSParserTest {
         assert c2.applies(new Environment().withPrimitive(w2))
         w2.put("bar", "^[0-9]\$")
         assert !c2.applies(new Environment().withPrimitive(w2))
+    }
+
+    @Test
+    public void testTicket8568() throws Exception {
+        def sheet = new MapCSSStyleSource("")
+        getParser("" +
+                "way { width: 5; }\n" +
+                "way[keyA], way[keyB] { width: eval(prop(width)+10); }").sheet(sheet)
+        def mc = new MultiCascade()
+        sheet.apply(mc, TestUtils.createPrimitive("way foo=bar"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 5
+        sheet.apply(mc, TestUtils.createPrimitive("way keyA=true"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
+        sheet.apply(mc, TestUtils.createPrimitive("way keyB=true"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
+        sheet.apply(mc, TestUtils.createPrimitive("way keyA=true keyB=true"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
     }
 }
