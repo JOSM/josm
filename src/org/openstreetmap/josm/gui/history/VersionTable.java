@@ -30,10 +30,13 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
  * VersionTable shows a list of version in a {@link org.openstreetmap.josm.data.osm.history.History}
@@ -160,7 +163,7 @@ public class VersionTable extends JTable implements Observer{
             if (!isEnabled())
                 return;
             String url = createInfoUrl(primitive);
-            launchBrowser(url);
+            OpenBrowser.displayUrl(url);
         }
 
         public void prepare(HistoryOsmPrimitive primitive) {
@@ -169,13 +172,48 @@ public class VersionTable extends JTable implements Observer{
         }
     }
 
+    static class UserInfoAction extends AbstractInfoAction {
+        private HistoryOsmPrimitive primitive;
+
+        public UserInfoAction() {
+            super(true);
+            putValue(NAME, tr("User info"));
+            putValue(SHORT_DESCRIPTION, tr("Launch browser with information about the user"));
+            putValue(SMALL_ICON, ImageProvider.get("about"));
+        }
+
+        @Override
+        protected String createInfoUrl(Object infoObject) {
+            HistoryOsmPrimitive primitive = (HistoryOsmPrimitive) infoObject;
+            return primitive.getUser() == null ? null : getBaseBrowseUrl() + "/user/" + primitive.getUser().getName();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!isEnabled())
+                return;
+            String url = createInfoUrl(primitive);
+            OpenBrowser.displayUrl(url);
+        }
+
+        public void prepare(HistoryOsmPrimitive primitive) {
+            final User user = primitive.getUser();
+            putValue(NAME, "<html>" + tr("Show user {0}", user == null ? "?" :
+                    XmlWriter.encode(user.getName(), true) + " <font color=gray>(" + user.getId() + ")</font>") + "</html>");
+            this.primitive = primitive;
+        }
+    }
+
     static class VersionTablePopupMenu extends JPopupMenu {
 
         private ChangesetInfoAction changesetInfoAction;
+        private UserInfoAction userInfoAction;
 
         protected void build() {
             changesetInfoAction = new ChangesetInfoAction();
             add(changesetInfoAction);
+            userInfoAction = new UserInfoAction();
+            add(userInfoAction);
         }
         public VersionTablePopupMenu() {
             super();
@@ -184,6 +222,7 @@ public class VersionTable extends JTable implements Observer{
 
         public void prepare(HistoryOsmPrimitive primitive) {
             changesetInfoAction.prepare(primitive);
+            userInfoAction.prepare(primitive);
             invalidate();
         }
     }

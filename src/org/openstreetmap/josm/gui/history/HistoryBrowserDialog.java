@@ -88,8 +88,6 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         add(pnl, BorderLayout.SOUTH);
 
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/HistoryBrowser"));
-
-        setSize(800, 500);
     }
 
     /**
