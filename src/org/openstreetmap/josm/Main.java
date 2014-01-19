@@ -213,7 +213,7 @@ abstract public class Main {
     protected static final Map<String, Throwable> networkErrors = new HashMap<String, Throwable>();
 
     /**
-     * Logging level (4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
+     * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
      * @since 6248
      */
     public static int logLevel = 3;
@@ -264,6 +264,19 @@ abstract public class Main {
             return;
         if (msg != null && !msg.isEmpty()) {
             System.out.println(tr("DEBUG: {0}", msg));
+        }
+    }
+
+    /**
+     * Prints a trace message if logging is on.
+     * @param msg The message to print.
+     */
+    public static void trace(String msg) {
+        if (logLevel < 5)
+            return;
+        if (msg != null && !msg.isEmpty()) {
+            System.out.print("TRACE: ");
+            System.out.println(msg);
         }
     }
 

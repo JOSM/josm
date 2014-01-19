@@ -121,6 +121,7 @@ public class MainApplication extends Main {
                 "\t--set=<key>=<value>                       "+tr("Set preference key to value")+"\n\n"+
                 "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
                 "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
+                "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
                 "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
@@ -148,6 +149,8 @@ public class MainApplication extends Main {
         HELP(false),
         /** --version                                 Displays the JOSM version and exits */
         VERSION(false),
+        /** --debug                                   Print debugging messages to console */
+        DEBUG(false),
         /** --language=<language>                     Set the language */
         LANGUAGE(true),
         /** --reset-preferences                       Reset the preferences to default */
@@ -313,6 +316,11 @@ public class MainApplication extends Main {
         if (args.containsKey(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
             System.exit(0);
+        }
+
+        if (args.containsKey(Option.DEBUG)) {
+            logLevel = 4;
+            Main.debug(tr("Print debugging messages to console"));
         }
 
         Main.pref.init(args.containsKey(Option.RESET_PREFERENCES));
