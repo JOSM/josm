@@ -65,7 +65,7 @@ import org.xml.sax.SAXException;
  * It is also able to construct dialogs out of preset definitions.
  * @since 294
  */
-public class TaggingPreset extends AbstractAction implements MapView.LayerChangeListener {
+public class TaggingPreset extends AbstractAction implements MapView.LayerChangeListener, Predicate<OsmPrimitive> {
 
     public static final int DIALOG_ANSWER_APPLY = 1;
     public static final int DIALOG_ANSWER_NEW_RELATION = 2;
@@ -460,6 +460,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     public boolean typeMatches(Collection<TaggingPresetType> t) {
         return t == null || types == null || types.containsAll(t);
+    }
+
+    @Override
+    public boolean evaluate(OsmPrimitive p) {
+        return matches(EnumSet.of(TaggingPresetType.forPrimitive(p)), p.getKeys(), false);
     }
 
     public boolean matches(Collection<TaggingPresetType> t, Map<String, String> tags, boolean onlyShowable) {
