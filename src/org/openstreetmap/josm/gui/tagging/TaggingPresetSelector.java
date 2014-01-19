@@ -200,7 +200,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     /**
      * Constructs a new {@code TaggingPresetSelector}.
      */
-    public TaggingPresetSelector() {
+    public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags) {
         super(new BorderLayout());
         if (TaggingPresetPreference.taggingPresets!=null) {
             loadPresets(TaggingPresetPreference.taggingPresets);
@@ -259,26 +259,30 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         JPanel pnChecks = new JPanel();
         pnChecks.setLayout(new BoxLayout(pnChecks, BoxLayout.Y_AXIS));
 
-        ckOnlyApplicable = new JCheckBox();
-        ckOnlyApplicable.setText(tr("Show only applicable to selection"));
-        pnChecks.add(ckOnlyApplicable);
-        ckOnlyApplicable.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                filterPresets();
-            }
-        });
+        if (displayOnlyApplicable) {
+            ckOnlyApplicable = new JCheckBox();
+            ckOnlyApplicable.setText(tr("Show only applicable to selection"));
+            pnChecks.add(ckOnlyApplicable);
+            ckOnlyApplicable.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    filterPresets();
+                }
+            });
+        }
 
-        ckSearchInTags = new JCheckBox();
-        ckSearchInTags.setText(tr("Search in tags"));
-        ckSearchInTags.setSelected(SEARCH_IN_TAGS.get());
-        ckSearchInTags.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                filterPresets();
-            }
-        });
-        pnChecks.add(ckSearchInTags);
+        if (displaySearchInTags) {
+            ckSearchInTags = new JCheckBox();
+            ckSearchInTags.setText(tr("Search in tags"));
+            ckSearchInTags.setSelected(SEARCH_IN_TAGS.get());
+            ckSearchInTags.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    filterPresets();
+                }
+            });
+            pnChecks.add(ckSearchInTags);
+        }
 
         add(pnChecks, BorderLayout.SOUTH);
 
@@ -316,8 +320,8 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             nameWords = text.split("\\s");
         }
 
-        boolean onlyApplicable = ckOnlyApplicable.isSelected();
-        boolean inTags = ckSearchInTags.isSelected();
+        boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
+        boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
         List<PresetClassification> result = new ArrayList<PresetClassification>();
         PRESET_LOOP:
@@ -401,8 +405,10 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     }
 
     public void init() {
-        ckOnlyApplicable.setEnabled(!getTypesInSelection().isEmpty());
-        ckOnlyApplicable.setSelected(!getTypesInSelection().isEmpty() && ONLY_APPLICABLE.get());
+        if (ckOnlyApplicable != null) {
+            ckOnlyApplicable.setEnabled(!getTypesInSelection().isEmpty());
+            ckOnlyApplicable.setSelected(!getTypesInSelection().isEmpty() && ONLY_APPLICABLE.get());
+        }
         edSearchText.setText("");
         filterPresets();
     }
@@ -422,8 +428,10 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
      * Save checkbox values in preferences for future reuse
      */
     public void savePreferences() {
-        SEARCH_IN_TAGS.put(ckSearchInTags.isSelected());
-        if (ckOnlyApplicable.isEnabled()) {
+        if (ckSearchInTags != null) {
+            SEARCH_IN_TAGS.put(ckSearchInTags.isSelected());
+        }
+        if (ckOnlyApplicable != null && ckOnlyApplicable.isEnabled()) {
             ONLY_APPLICABLE.put(ckOnlyApplicable.isSelected());
         }
     }

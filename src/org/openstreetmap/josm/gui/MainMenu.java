@@ -113,6 +113,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchPrimitiveDialog;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -374,6 +375,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction moveRightAction = new MoveAction(MoveAction.Direction.RIGHT);
 
     public final TaggingPresetSearchAction presetSearchAction = new TaggingPresetSearchAction();
+    public final TaggingPresetSearchPrimitiveDialog.Action presetSearchPrimitiveAction = new TaggingPresetSearchPrimitiveDialog.Action();
     public final DialogsToggleAction dialogsToggleAction = new DialogsToggleAction();
     public FullscreenToggleAction fullscreenToggleAction = null;
 
@@ -639,6 +641,7 @@ public class MainMenu extends JMenuBar {
         add(editMenu,mergeSelected);
         editMenu.addSeparator();
         add(editMenu, search);
+        add(editMenu, presetSearchPrimitiveAction);
         editMenu.addSeparator();
         add(editMenu, preferences);
 
@@ -699,6 +702,7 @@ public class MainMenu extends JMenuBar {
         ExpertToggleAction.getInstance().addButtonModel(expertItem.getModel());
 
         add(presetsMenu, presetSearchAction);
+        add(presetsMenu, presetSearchPrimitiveAction);
         add(presetsMenu, PreferencesAction.forPreferenceSubTab(tr("Preset preferences"),
                 tr("Click to open the tagging presets tab in the preferences"), TaggingPresetPreference.class));
         presetsMenu.addSeparator();
