@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -211,7 +212,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 if (url == null) {
                     break;
                 }
-                launchBrowser(url);
+                OpenBrowser.displayUrl(url);
                 num--;
             }
         }

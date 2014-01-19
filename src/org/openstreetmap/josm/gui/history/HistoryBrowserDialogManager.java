@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
@@ -72,12 +71,14 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         return false;
     }
 
+    final String WINDOW_GEOMETRY_PREF = getClass().getName() + ".geometry";
+
     public void placeOnScreen(HistoryBrowserDialog dialog) {
-        WindowGeometry geometry = WindowGeometry.centerOnScreen(new Dimension(800,500));
+        WindowGeometry geometry = new WindowGeometry(WINDOW_GEOMETRY_PREF, WindowGeometry.centerOnScreen(new Dimension(850, 500)));
         geometry.applySafe(dialog);
         Point p = dialog.getLocation();
         while(hasDialogWithCloseUpperLeftCorner(p)) {
-            p.x +=20;
+            p.x += 20;
             p.y += 20;
         }
         dialog.setLocation(p);
@@ -93,6 +94,9 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         }
         if (id > 0) {
             dialogs.remove(id);
+            if (dialogs.isEmpty()) {
+                new WindowGeometry(dialog).remember(WINDOW_GEOMETRY_PREF);
+            }
         }
         dialog.setVisible(false);
         dialog.dispose();

@@ -44,7 +44,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -438,7 +437,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
                 if (p != null) {
                     User user = p.getUser();
                     if (user != null)
-                        return "<html>" + XmlWriter.encode(user.getName(), true) + " <font color=gray>(" + user.getId() + ")</font></html>";
+                        return user.getName();
                 }
                 return null;
             }

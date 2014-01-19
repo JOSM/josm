@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -72,18 +71,6 @@ public abstract class AbstractInfoAction extends JosmAction {
         return ret;
     }
 
-    protected void launchBrowser(URL url) {
-        OpenBrowser.displayUrl(
-                url.toString()
-        );
-    }
-
-    protected void launchBrowser(String url) {
-        OpenBrowser.displayUrl(
-                url
-        );
-    }
-
     public static boolean confirmLaunchMultiple(int numBrowsers) {
         String msg  = /* for correct i18n of plural forms - see #9110 */ trn(
                 "You are about to launch {0} browser window.<br>"
@@ -148,7 +135,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         if (primitivesToShow.size() > max && ! confirmLaunchMultiple(primitivesToShow.size()))
             return;
         for(int i = 0; i < max; i++) {
-            launchBrowser(createInfoUrl(primitivesToShow.get(i)));
+            OpenBrowser.displayUrl(createInfoUrl(primitivesToShow.get(i)));
         }
     }
 
