@@ -21,8 +21,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -46,6 +44,9 @@ import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+/**
+ * Preference settings for tagging presets.
+ */
 public final class TaggingPresetPreference implements SubPreferenceSetting {
 
     /**
@@ -63,6 +64,10 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
     }
 
     private static final List<SourceProvider> presetSourceProviders = new ArrayList<SourceProvider>();
+    
+    /**
+     * The collection of tagging presets.
+     */
     public static Collection<TaggingPreset> taggingPresets;
     private SourceEditor sources;
     private JCheckBox sortMenu;

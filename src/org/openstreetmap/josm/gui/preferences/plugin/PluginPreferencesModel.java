@@ -20,7 +20,10 @@ import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
-public class PluginPreferencesModel extends Observable{
+/**
+ * The plugin model behind a {@code PluginListPanel}.
+ */
+public class PluginPreferencesModel extends Observable {
     private final List<PluginInformation> availablePlugins = new ArrayList<PluginInformation>();
     private final List<PluginInformation> displayedPlugins = new ArrayList<PluginInformation>();
     private final Map<PluginInformation, Boolean> selectedPluginsMap = new HashMap<PluginInformation, Boolean>();
@@ -36,6 +39,10 @@ public class PluginPreferencesModel extends Observable{
         currentActivePlugins.addAll(Main.pref.getCollection("plugins", currentActivePlugins));
     }
 
+    /**
+     * Filters the list of displayed plugins.
+     * @param filter The filter used against plugin name, description or version
+     */
     public void filterDisplayedPlugins(String filter) {
         if (filter == null) {
             displayedPlugins.clear();
@@ -54,6 +61,10 @@ public class PluginPreferencesModel extends Observable{
         notifyObservers();
     }
 
+    /**
+     * Sets the list of available plugins.
+     * @param available The available plugins
+     */
     public void setAvailablePlugins(Collection<PluginInformation> available) {
         availablePlugins.clear();
         if (available != null) {

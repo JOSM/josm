@@ -11,6 +11,9 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Map preferences, including map paint styles, tagging presets and autosave sub-preferences.
+ */
 public final class MapPreference extends DefaultTabPreferenceSetting {
 
     /**

@@ -66,6 +66,9 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
+/**
+ * Imagery preferences, including imagery providers, settings and offsets.
+ */
 public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
     /**
@@ -128,6 +131,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         p.add(pane,GBC.std().fill(GBC.BOTH));
     }
 
+    /**
+     * Returns the imagery providers panel.
+     * @return The imagery providers panel.
+     */
     public ImageryProvidersPanel getProvidersPanel() {
         return imageryProviders;
     }
@@ -188,19 +195,30 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         return null;
     }
 
+    /**
+     * A panel displaying imagery providers.
+     */
     public static class ImageryProvidersPanel extends JPanel {
         // Public JTables and JMapViewer
+        /** The table of active providers **/
         public final JTable activeTable;
+        /** The table of default providers **/
         public final JTable defaultTable;
+        /** The map displaying imagery bounds of selected default providers **/
         public final JMapViewer defaultMap;
 
         // Public models
+        /** The model of active providers **/
         public final ImageryLayerTableModel activeModel;
+        /** The model of default providers **/
         public final ImageryDefaultLayerTableModel defaultModel;
 
         // Public JToolbars
+        /** The toolbar on the right of active providers **/
         public final JToolBar activeToolbar;
+        /** The toolbar on the middle of the panel **/
         public final JToolBar middleToolbar;
+        /** The toolbar on the right of default providers **/
         public final JToolBar defaultToolbar;
 
         // Private members
@@ -239,6 +257,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             }
         }
 
+        /**
+         * Constructs a new {@code ImageryProvidersPanel}.
+         * @param gui The parent preference tab pane
+         * @param layerInfoArg The list of imagery entries to display
+         */
         public ImageryProvidersPanel(final PreferenceTabbedPane gui, ImageryLayerInfo layerInfoArg) {
             super(new GridBagLayout());
             this.gui = gui;

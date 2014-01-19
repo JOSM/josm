@@ -18,18 +18,9 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
-/*
- * marker.audiosampleminsecs
- * marker.audiosampleminmetres
- * marker.buttonlabels
- * markers.namedtrackpoints
- * audio.forwardbackamount
- * audio.leadin
- * audio.menuinvisible
- * marker.audiotraceVisible
- * audio.toolbar ??
+/**
+ * Audio preferences.
  */
-
 public final class AudioPreference extends DefaultTabPreferenceSetting {
 
     /**

@@ -19,6 +19,9 @@ import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 
+/**
+ * The layer tree of a WMS server.
+ */
 public class WMSLayerTree {
     private final MutableTreeNode treeRootNode = new DefaultMutableTreeNode();
     private final DefaultTreeModel treeData = new DefaultTreeModel(treeRootNode);
@@ -26,14 +29,26 @@ public class WMSLayerTree {
     private final List<WMSImagery.LayerDetails> selectedLayers = new LinkedList<WMSImagery.LayerDetails>();
     private boolean previouslyShownUnsupportedCrsError = false;
 
+    /**
+     * Returns the root node.
+     * @return The root node
+     */
     public MutableTreeNode getTreeRootNode() {
         return treeRootNode;
     }
 
+    /**
+     * Returns the {@code JTree}.
+     * @return The {@code JTree}
+     */
     public JTree getLayerTree() {
         return layerTree;
     }
 
+    /**
+     * Returns the list of selected layers.
+     * @return the list of selected layers
+     */
     public List<WMSImagery.LayerDetails> getSelectedLayers() {
         return selectedLayers;
     }
@@ -54,11 +69,19 @@ public class WMSLayerTree {
         }
     }
 
+    /**
+     * Updates the whole tree with the given WMS imagery info.
+     * @param wms The imagery info for a given WMS server
+     */
     public void updateTree(WMSImagery wms) {
         treeRootNode.setUserObject(wms.getServiceUrl().getHost());
         updateTreeList(wms.getLayers());
     }
 
+    /**
+     * Updates the list of WMS layers.
+     * @param layers The list of layers to add to the root node
+     */
     public void updateTreeList(List<WMSImagery.LayerDetails> layers) {
         addLayersToTreeData(getTreeRootNode(), layers);
         getLayerTree().expandRow(0);

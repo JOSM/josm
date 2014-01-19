@@ -28,7 +28,6 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
-
 /**
  * The base class for OSM objects ({@link Node}, {@link Way}, {@link Relation}).
  *
@@ -973,6 +972,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
             }
         }
     }
+
     /**
      * Find primitives that reference this primitive. Returns only primitives that are included in the same
      * dataset as this primitive. <br>
@@ -987,9 +987,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      *
      * @return a collection of all primitives that reference this primitive.
      */
-
     public final List<OsmPrimitive> getReferrers(boolean allowWithoutDataset) {
-        // Method copied from OsmPrimitive in josm-ng
         // Returns only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
 
