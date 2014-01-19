@@ -301,8 +301,7 @@ public class GenericRelationEditor extends RelationEditor  {
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;
-        gc.gridheight = 1;
-        gc.gridwidth = 3;
+        gc.gridwidth = 2;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 1.0;
@@ -311,7 +310,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
         gc.gridx = 0;
         gc.gridy = 1;
-        gc.gridheight = 1;
+        gc.gridheight = 2;
         gc.gridwidth = 1;
         gc.fill = GridBagConstraints.VERTICAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
@@ -321,6 +320,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
         gc.gridx = 1;
         gc.gridy = 1;
+        gc.gridheight = 1;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.6;
@@ -373,8 +373,8 @@ public class GenericRelationEditor extends RelationEditor  {
 
         gc.gridx = 1;
         gc.gridy = 2;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.LAST_LINE_START;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
         pnl.add(p3, gc);
