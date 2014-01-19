@@ -55,6 +55,8 @@ import org.openstreetmap.josm.tools.Utils;
 public class SearchAction extends JosmAction implements ParameterizedAction {
 
     public static final int DEFAULT_SEARCH_HISTORY_SIZE = 15;
+    /** Maximum number of characters before the search expression is shortened for display purposes. */
+    public static final int MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY = 100;
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
 
@@ -320,7 +322,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             ToolbarPreferences.ActionDefinition aDef =
                     new ToolbarPreferences.ActionDefinition(Main.main.menu.search);
             aDef.getParameters().put(SEARCH_EXPRESSION, initialValues);
-            aDef.setName(initialValues.text); // Display search expression as tooltip instead of generic one
+            aDef.setName(Utils.shortenString(initialValues.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY)); // Display search expression as tooltip instead of generic one
             // parametrized action definition is now composed
             ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
             String res = actionParser.saveAction(aDef);
@@ -587,14 +589,15 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         ds.setSelected(sel);
         if (foundMatches == 0) {
             String msg = null;
+            final String text = Utils.shortenString(s.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY);
             if (s.mode == SearchMode.replace) {
-                msg = tr("No match found for ''{0}''", s.text);
+                msg = tr("No match found for ''{0}''", text);
             } else if (s.mode == SearchMode.add) {
-                msg = tr("Nothing added to selection by searching for ''{0}''", s.text);
+                msg = tr("Nothing added to selection by searching for ''{0}''", text);
             } else if (s.mode == SearchMode.remove) {
-                msg = tr("Nothing removed from selection by searching for ''{0}''", s.text);
+                msg = tr("Nothing removed from selection by searching for ''{0}''", text);
             } else if (s.mode == SearchMode.in_selection) {
-                msg = tr("Nothing found in selection by searching for ''{0}''", s.text);
+                msg = tr("Nothing found in selection by searching for ''{0}''", text);
             }
             Main.map.statusLine.setHelpText(msg);
             JOptionPane.showMessageDialog(
