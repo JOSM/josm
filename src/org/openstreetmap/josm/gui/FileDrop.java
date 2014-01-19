@@ -129,7 +129,7 @@ public class FileDrop
             dropListener = new DropTargetListener()
             {   @Override
                 public void dragEnter( DropTargetDragEvent evt )
-            {       Main.debug("FileDrop: dragEnter event." );
+            {       Main.trace("FileDrop: dragEnter event." );
 
             // Is this an acceptable drag event?
             if( isDragOk( evt ) )
@@ -138,19 +138,19 @@ public class FileDrop
                 if( c instanceof JComponent )
                 {   JComponent jc = (JComponent) c;
                 normalBorder = jc.getBorder();
-                Main.debug("FileDrop: normal border saved." );
+                Main.trace("FileDrop: normal border saved." );
                 jc.setBorder( dragBorder );
-                Main.debug("FileDrop: drag border set." );
+                Main.trace("FileDrop: drag border set." );
                 }   // end if: JComponent
 
                 // Acknowledge that it's okay to enter
                 evt.acceptDrag( DnDConstants.ACTION_COPY );
-                Main.debug("FileDrop: event accepted." );
+                Main.trace("FileDrop: event accepted." );
             }   // end if: drag ok
             else
             {   // Reject the drag event
                 evt.rejectDrag();
-                Main.debug("FileDrop: event rejected." );
+                Main.trace("FileDrop: event rejected." );
             }   // end else: drag not ok
             }   // end dragEnter
 
@@ -162,7 +162,7 @@ public class FileDrop
 
             @Override
             public void drop( DropTargetDropEvent evt )
-            {   Main.debug("FileDrop: drop event." );
+            {   Main.trace("FileDrop: drop event." );
             try
             {   // Get whatever was dropped
                 Transferable tr = evt.getTransferable();
@@ -172,7 +172,7 @@ public class FileDrop
                 {
                     // Say we'll take it.
                     evt.acceptDrop ( DnDConstants.ACTION_COPY );
-                    Main.debug("FileDrop: file list accepted." );
+                    Main.trace("FileDrop: file list accepted." );
 
                     // Get a useful list
                     List<?> fileList = (List<?>)tr.getTransferData(DataFlavor.javaFileListFlavor);
@@ -187,7 +187,7 @@ public class FileDrop
 
                     // Mark that drop is completed.
                     evt.getDropTargetContext().dropComplete(true);
-                    Main.debug("FileDrop: drop complete." );
+                    Main.trace("FileDrop: drop complete." );
                 }   // end if: file list
                 else // this section will check for a reader flavor.
                 {
@@ -199,7 +199,7 @@ public class FileDrop
                         if (flavor.isRepresentationClassReader()) {
                             // Say we'll take it.
                             evt.acceptDrop(DnDConstants.ACTION_COPY);
-                            Main.debug("FileDrop: reader accepted.");
+                            Main.trace("FileDrop: reader accepted.");
 
                             Reader reader = flavor.getReaderForText(tr);
 
@@ -211,13 +211,13 @@ public class FileDrop
 
                             // Mark that drop is completed.
                             evt.getDropTargetContext().dropComplete(true);
-                            Main.debug("FileDrop: drop complete.");
+                            Main.trace("FileDrop: drop complete.");
                             handled = true;
                             break;
                         }
                     }
                     if(!handled){
-                        Main.debug("FileDrop: not a file list or reader - abort." );
+                        Main.trace("FileDrop: not a file list or reader - abort." );
                         evt.rejectDrop();
                     }
                     // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
@@ -340,15 +340,15 @@ public class FileDrop
         c.addHierarchyListener( new HierarchyListener()
         {   @Override
             public void hierarchyChanged( HierarchyEvent evt )
-        {   Main.debug("FileDrop: Hierarchy changed." );
+        {   Main.trace("FileDrop: Hierarchy changed." );
         Component parent = c.getParent();
         if( parent == null )
         {   c.setDropTarget( null );
-        Main.debug("FileDrop: Drop target cleared from component." );
+        Main.trace("FileDrop: Drop target cleared from component." );
         }   // end if: null parent
         else
         {   new DropTarget(c, dropListener);
-        Main.debug("FileDrop: Drop target added to component." );
+        Main.trace("FileDrop: Drop target added to component." );
         }   // end else: parent not null
         }   // end hierarchyChanged
         }); // end hierarchy listener
@@ -395,10 +395,10 @@ public class FileDrop
 
     // show data flavors
     if( flavors.length == 0 ) {
-        Main.debug("FileDrop: no data flavors." );
+        Main.trace("FileDrop: no data flavors." );
     }
     for( i = 0; i < flavors.length; i++ ) {
-        Main.debug(flavors[i].toString() );
+        Main.trace(flavors[i].toString() );
     }
 
     return ok;
@@ -430,7 +430,7 @@ public class FileDrop
     public static boolean remove( Component c, boolean recursive )
     {   // Make sure we support dnd.
         if (supportsDnD()) {
-            Main.debug("FileDrop: Removing drag-and-drop hooks.");
+            Main.trace("FileDrop: Removing drag-and-drop hooks.");
             c.setDropTarget(null);
             if (recursive && (c instanceof Container)) {
                 for (Component comp : ((Container) c).getComponents()) {
