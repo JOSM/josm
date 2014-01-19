@@ -946,4 +946,15 @@ public final class Utils {
         biggerCopy[array.length] = item;
         return biggerCopy;
     }
+
+    /**
+     * If the string {@code s} is longer than {@code maxLength}, the string is cut and "..." is appended.
+     */
+    public static String shortenString(String s, int maxLength) {
+        if (s != null && s.length() > maxLength) {
+            return s.substring(0, maxLength - 3) + "...";
+        } else {
+            return s;
+        }
+    }
 }

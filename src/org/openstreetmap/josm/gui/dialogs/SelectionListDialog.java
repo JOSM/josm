@@ -37,6 +37,7 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
+import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
@@ -73,6 +74,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A small tool dialog for displaying the current selection.
@@ -274,7 +276,7 @@ public class SelectionListDialog extends ToggleDialog  {
         public SearchAction() {
             putValue(NAME, tr("Search"));
             putValue(SHORT_DESCRIPTION,   tr("Search for objects"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs","search"));
             updateEnabledState();
         }
 
@@ -656,7 +658,7 @@ public class SelectionListDialog extends ToggleDialog  {
         final protected SearchSetting s;
 
         public SearchMenuItem(SearchSetting s) {
-            super(s.toString());
+            super(Utils.shortenString(s.toString(), org.openstreetmap.josm.actions.search.SearchAction.MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY));
             this.s = s;
             addActionListener(this);
         }

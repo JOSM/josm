@@ -805,10 +805,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 position = null;
                 selection = null;
             }
-            if (positionString.length() > 20) {
-                positionString = positionString.substring(0, 17) + "...";
-            }
-            return positionString;
+            return Utils.shortenString(positionString, 20);
         }
 
         String getRoleString() {
