@@ -629,24 +629,6 @@ public final class Utils {
     }
 
     /**
-     * Convert Hex String to Color.
-     * @param s Must be of the form "#34a300" or "#3f2", otherwise throws Exception.
-     * Upper/lower case does not matter.
-     * @return The corresponding color.
-     */
-    static public Color hexToColor(String s) {
-        String clr = s.substring(1);
-        if (clr.length() == 3) {
-            clr = new String(new char[] {
-                clr.charAt(0), clr.charAt(0), clr.charAt(1), clr.charAt(1), clr.charAt(2), clr.charAt(2)
-            });
-        }
-        if (clr.length() != 6)
-            throw new IllegalArgumentException();
-        return new Color(Integer.parseInt(clr, 16));
-    }
-
-    /**
      * Opens a HTTP connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param httpURL The HTTP url to open (must use http:// or https://)
      * @return An open HTTP connection to the given URL

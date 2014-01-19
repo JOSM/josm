@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -170,7 +171,7 @@ public final class Cascade implements Cloneable {
             if (c != null)
                 return c;
             if (HEX_COLOR_PATTERN.matcher((String) o).matches()) {
-                return Utils.hexToColor((String) o);
+                return ColorHelper.html2color((String) o);
             }
         }
         return null;

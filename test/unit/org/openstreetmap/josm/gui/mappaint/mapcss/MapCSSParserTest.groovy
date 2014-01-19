@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
+import org.openstreetmap.josm.tools.ColorHelper
 import org.openstreetmap.josm.tools.Utils
 
 import java.awt.Color
@@ -80,7 +81,7 @@ class MapCSSParserTest {
         assert mc2.getCascade("default").get("text-color", null, String.class) == null
         def mc3 = new MultiCascade()
         css.apply(mc3, getPrimitive("highway", "footway"), 1, null, false);
-        assert Utils.hexToColor("#FF6644").equals(mc3.getCascade("default").get("color", null, Color.class))
+        assert ColorHelper.html2color("#FF6644").equals(mc3.getCascade("default").get("color", null, Color.class))
     }
 
     @Test
@@ -215,5 +216,14 @@ class MapCSSParserTest {
         getParser("*[rcn_ref], *[name] {text: join(\" - \", tag(rcn_ref), tag(ref), tag(name)); }").sheet(sheet)
         sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15 ref=1.5 name=Foo"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 - 1.5 - Foo"
+    }
+
+    @Test
+    public void testColorNameTicket9191() throws Exception {
+        def e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null)
+        getParser("{color: testcolour1#88DD22}").declaration().get(0).execute(e)
+        def expected = new Color(0x88DD22)
+        assert e.getCascade(Environment.DEFAULT_LAYER).get("color") == expected
+        assert Main.pref.getDefaultColor("MapCSS.testcolour1") == expected
     }
 }
