@@ -173,8 +173,8 @@ public class RelationChecker extends Test {
                         }
                     }
                     if (ri != null) {
-                        Set<OsmPrimitive> wrongTypes = new HashSet<OsmPrimitive>();
                         if (r.types != null) {
+                            Set<OsmPrimitive> wrongTypes = new HashSet<OsmPrimitive>();
                             if (!r.types.contains(TaggingPresetType.WAY)) {
                                 wrongTypes.addAll(r.types.contains(TaggingPresetType.CLOSEDWAY) ? ri.openways : ri.ways);
                             }
@@ -184,23 +184,32 @@ public class RelationChecker extends Test {
                             if (!r.types.contains(TaggingPresetType.RELATION)) {
                                 wrongTypes.addAll(ri.relations);
                             }
+                            if (!wrongTypes.isEmpty()) {
+                                String s = marktr("Member for role {0} of wrong type");
+                                LinkedList<OsmPrimitive> highlight = new LinkedList<OsmPrimitive>(wrongTypes);
+                                highlight.addFirst(n);
+                                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                                        tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE,
+                                        highlight, wrongTypes));
+                            }
                         }
                         if (r.memberExpression != null) {
+                            Set<OsmPrimitive> notMatching = new HashSet<OsmPrimitive>();
                             for (Collection<OsmPrimitive> c : Arrays.asList(new Collection[]{ri.nodes, ri.ways, ri.relations})) {
                                 for (OsmPrimitive p : c) {
                                     if (p.isUsable() && !r.memberExpression.match(p)) {
-                                        wrongTypes.add(p);
+                                        notMatching.add(p);
                                     }
                                 }
                             }
-                        }
-                        if (!wrongTypes.isEmpty()) {
-                            String s = marktr("Member for role {0} of wrong type");
-                            LinkedList<OsmPrimitive> highlight = new LinkedList<OsmPrimitive>(wrongTypes);
-                            highlight.addFirst(n);
-                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                                    tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE,
-                                    highlight, wrongTypes));
+                            if (!notMatching.isEmpty()) {
+                                String s = marktr("Member for role ''{0}'' does not match ''{1}''");
+                                LinkedList<OsmPrimitive> highlight = new LinkedList<OsmPrimitive>(notMatching);
+                                highlight.addFirst(n);
+                                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                                        tr(s, keyname, r.memberExpression), MessageFormat.format(s, keyname, r.memberExpression), WRONG_TYPE,
+                                        highlight, notMatching));
+                            }
                         }
                     }
                 }
