@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.GeneralPath;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -190,13 +191,15 @@ public class MultipolygonTest extends Test {
                     if (memberInNewMP != null && !memberInNewMP.isEmpty()) {
                         final String roleInNewMP = memberInNewMP.iterator().next().getRole();
                         if (!member.getRole().equals(roleInNewMP)) {
-                            addError(r, new TestError(this, Severity.WARNING, tr("Role for ''{0}'' should be ''{1}''",
-                                    member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
+                            addError(r, new TestError(this, Severity.WARNING, RelationChecker.ROLE_VERIF_PROBLEM_MSG,
+                                    tr("Role for ''{0}'' should be ''{1}''",
+                                            member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
+                                    MessageFormat.format("Role for ''{0}'' should be ''{1}''",
+                                            member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
                                     WRONG_MEMBER_ROLE, Collections.singleton(r), Collections.singleton(member.getMember())));
                         }
                     }
                 }
-
             }
 
             List<List<Node>> innerWays = joinWays(polygon.getInnerWays()); // Side effect - sets nonClosedWays

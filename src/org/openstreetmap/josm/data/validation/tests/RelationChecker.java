@@ -44,6 +44,12 @@ public class RelationChecker extends Test {
     protected static final int ROLE_MISSING      = 1706;
     protected static final int RELATION_UNKNOWN  = 1707;
     protected static final int RELATION_EMPTY    = 1708;
+    
+    /** 
+     * Error message used to group errors related to role problems.
+     * @since 6731
+     */
+    public static final String ROLE_VERIF_PROBLEM_MSG = tr("Role verification problem");
 
     /**
      * Constructor
@@ -141,7 +147,6 @@ public class RelationChecker extends Test {
                         RELATION_EMPTY, n) );
             } else {
                 LinkedList<String> done = new LinkedList<String>();
-                String errorMessage = tr("Role verification problem");
                 for (Role r : allroles) {
                     done.add(r.key);
                     String keyname = r.key;
@@ -154,16 +159,16 @@ public class RelationChecker extends Test {
                     if (count != vc) {
                         if (count == 0) {
                             String s = marktr("Role {0} missing");
-                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
+                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                                     tr(s, keyname), MessageFormat.format(s, keyname), ROLE_MISSING, n));
                         }
                         else if (vc > count) {
                             String s = marktr("Number of {0} roles too low ({1})");
-                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
+                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                                     tr(s, keyname, count), MessageFormat.format(s, keyname, count), LOW_COUNT, n));
                         } else {
                             String s = marktr("Number of {0} roles too high ({1})");
-                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
+                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                                     tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n));
                         }
                     }
@@ -193,7 +198,7 @@ public class RelationChecker extends Test {
                             String s = marktr("Member for role {0} of wrong type");
                             LinkedList<OsmPrimitive> highlight = new LinkedList<OsmPrimitive>(wrongTypes);
                             highlight.addFirst(n);
-                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
+                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                                     tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE,
                                     highlight, wrongTypes));
                         }
@@ -203,11 +208,11 @@ public class RelationChecker extends Test {
                     if (!done.contains(key)) {
                         if (key.length() > 0) {
                             String s = marktr("Role {0} unknown");
-                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
+                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                                     tr(s, key), MessageFormat.format(s, key), ROLE_UNKNOWN, n));
                         } else {
                             String s = marktr("Empty role found");
-                            errors.add(new TestError(this, Severity.WARNING, errorMessage,
+                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                                     tr(s), s, ROLE_EMPTY, n));
                         }
                     }
