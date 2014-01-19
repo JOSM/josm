@@ -173,7 +173,7 @@ public class MapCSSStyleSource extends StyleSource {
     @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
         Environment env = new Environment(osm, mc, null, this);
-        for (MapCSSRule r : rules) {
+        RULE: for (MapCSSRule r : rules) {
             for (Selector s : r.selectors) {
                 env.clearSelectorMatchingInformation();
                 if (s.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
@@ -199,6 +199,7 @@ public class MapCSSStyleSource extends StyleSource {
                     }
                     env.layer = sub;
                     r.execute(env);
+                    continue RULE;
                 }
             }
         }
