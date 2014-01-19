@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -99,12 +100,16 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     public static void saveToHistory(SearchSetting s) {
         if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
             searchHistory.addFirst(new SearchSetting(s));
+        } else if (searchHistory.contains(s)) {
+            // move existing entry to front, fixes #8032 - search history loses entries when re-using queries
+            searchHistory.remove(s);
+            searchHistory.addFirst(new SearchSetting(s));
         }
         int maxsize = Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
         while (searchHistory.size() > maxsize) {
             searchHistory.removeLast();
         }
-        List<String> savedHistory = new ArrayList<String>(searchHistory.size());
+        LinkedHashSet<String> savedHistory = new LinkedHashSet<String>(searchHistory.size());
         for (SearchSetting item: searchHistory) {
             savedHistory.add(item.writeToString());
         }
