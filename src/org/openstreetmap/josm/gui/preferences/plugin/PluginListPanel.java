@@ -11,6 +11,8 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -218,7 +220,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
             String remoteversion = formatPluginRemoteVersion(pi);
             String localversion = formatPluginLocalVersion(model.getPluginInformation(pi.getName()));
 
-            JPluginCheckBox cbPlugin = new JPluginCheckBox(pi, selected);
+            final JPluginCheckBox cbPlugin = new JPluginCheckBox(pi, selected);
             String pluginText = tr("{0}: Version {1} (local: {2})", pi.getName(), remoteversion, localversion);
             if (pi.requires != null && !pi.requires.isEmpty()) {
                 pluginText += tr(" (requires: {0})", pi.requires);
@@ -227,6 +229,12 @@ public class PluginListPanel extends VerticallyScrollablePanel {
                     pluginText,
                     pi.getScaledIcon(),
                     SwingConstants.LEFT);
+            lblPlugin.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    cbPlugin.setSelected(!cbPlugin.isSelected());
+                }
+            });
 
             gbc.gridx = 0;
             gbc.gridy = ++row;
