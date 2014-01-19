@@ -72,8 +72,9 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
                 row++;
             }
             changeSelection(row, col, false, false);
-            editCellAt(getSelectedRow(), getSelectedColumn());
-            getEditorComponent().requestFocusInWindow();
+            if (editCellAt(getSelectedRow(), getSelectedColumn())) {
+                getEditorComponent().requestFocusInWindow();
+            }
         }
     }
 
@@ -103,8 +104,9 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
                 row--;
             }
             changeSelection(row, col, false, false);
-            editCellAt(getSelectedRow(), getSelectedColumn());
-            getEditorComponent().requestFocusInWindow();
+            if (editCellAt(getSelectedRow(), getSelectedColumn())) {
+                getEditorComponent().requestFocusInWindow();
+            }
         }
     }
 
