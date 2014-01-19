@@ -25,6 +25,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.Main;
@@ -584,10 +585,14 @@ Expression function() :
 Object literal() :
 {
     String val;
-    Token t;
+    Token t, t2;
     float f;
 }
 {
+        LOOKAHEAD(2)
+        t2=<IDENT> t=<HEXCOLOR>
+        { return Main.pref.getColor("mappaint." + (sheet == null ? "MapCSS" : sheet.title) + "." + t2.image, ColorHelper.html2color(t.image)); }
+    |
         t=<IDENT> { return new Keyword(t.image); }
     |
         val=string() { return val; }
@@ -596,7 +601,7 @@ Object literal() :
     |
         f=ufloat() { return f; }
     |
-        t=<HEXCOLOR> { return Utils.hexToColor(t.image); }
+        t=<HEXCOLOR> { return ColorHelper.html2color(t.image); }
 }
 
 JAVACODE

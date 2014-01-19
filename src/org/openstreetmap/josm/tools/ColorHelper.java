@@ -20,6 +20,10 @@ public final class ColorHelper {
     public static Color html2color(String html) {
         if (html.length() > 0 && html.charAt(0) == '#')
             html = html.substring(1);
+        if (html.length() == 3) {
+            return html2color(new String(
+                    new char[]{html.charAt(0), html.charAt(0), html.charAt(1), html.charAt(1), html.charAt(2), html.charAt(2)}));
+        }
         if (html.length() != 6 && html.length() != 8)
             return null;
         try {
