@@ -198,4 +198,22 @@ class MapCSSParserTest {
         sheet.apply(mc, TestUtils.createPrimitive("way keyA=true keyB=true"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
     }
+
+    @Test
+    public void testTicket80711() throws Exception {
+        def sheet = new MapCSSStyleSource("")
+        getParser("*[rcn_ref], *[name] {text: concat(tag(rcn_ref), \" \", tag(name)); }").sheet(sheet)
+        def mc = new MultiCascade()
+        sheet.apply(mc, TestUtils.createPrimitive("way name=Foo"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == " Foo"
+        sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 "
+        sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15 name=Foo"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 Foo"
+
+        sheet = new MapCSSStyleSource("")
+        getParser("*[rcn_ref], *[name] {text: join(\" - \", tag(rcn_ref), tag(ref), tag(name)); }").sheet(sheet)
+        sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15 ref=1.5 name=Foo"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 - 1.5 - Foo"
+    }
 }

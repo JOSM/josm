@@ -239,14 +239,20 @@ public final class ExpressionFactory {
 
         /**
          * Assembles the strings to one.
+         * @see Utils#join
          */
         @NullableArguments
         public static String concat(Object... args) {
-            StringBuilder res = new StringBuilder();
-            for (Object f : args) {
-                res.append(String.valueOf(f));
-            }
-            return res.toString();
+            return Utils.join("", Arrays.asList(args));
+        }
+
+        /**
+         * Assembles the strings to one, where the first entry is used as separator.
+         * @see Utils#join
+         */
+        @NullableArguments
+        public static String join(String... args) {
+            return Utils.join(args[0], Arrays.asList(args).subList(1, args.length));
         }
 
         /**
