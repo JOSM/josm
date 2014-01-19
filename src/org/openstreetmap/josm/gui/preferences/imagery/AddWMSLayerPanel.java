@@ -29,6 +29,9 @@ import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * An imagery panel used to add WMS imagery sources
+ */
 public class AddWMSLayerPanel extends AddImageryPanel {
 
     private final WMSImagery wms = new WMSImagery();

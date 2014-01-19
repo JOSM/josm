@@ -31,13 +31,23 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
 
-public class PluginListPanel extends VerticallyScrollablePanel{
+/**
+ * A panel displaying the list of known plugins.
+ */
+public class PluginListPanel extends VerticallyScrollablePanel {
     private PluginPreferencesModel model;
 
+    /**
+     * Constructs a new {@code PluginListPanel} with a default model.
+     */
     public PluginListPanel() {
         this(new PluginPreferencesModel());
     }
 
+    /**
+     * Constructs a new {@code PluginListPanel} with a given model.
+     * @param model The plugin model
+     */
     public PluginListPanel(PluginPreferencesModel model) {
         this.model = model;
         setLayout(new GridBagLayout());
@@ -71,6 +81,9 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             return pi.downloadlink;
     }
 
+    /**
+     * Displays a message when the plugin list is empty.
+     */
     public void displayEmptyPluginListInformation() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -180,6 +193,9 @@ public class PluginListPanel extends VerticallyScrollablePanel{
         );
     }
 
+    /**
+     * Refreshes the list.
+     */
     public void refreshView() {
         final Rectangle visibleRect = getVisibleRect();
         List<PluginInformation> displayedPlugins = model.getDisplayedPlugins();

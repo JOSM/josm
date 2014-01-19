@@ -12,7 +12,7 @@ abstract public class AbstractProjectionChoice implements ProjectionChoice {
     protected String cacheDir;
 
     /**
-     * Constructor.
+     * Constructs a new {@code AbstractProjectionChoice}.
      *
      * @param name short name of the projection choice as shown in the GUI
      * @param id unique identifier for the projection choice
@@ -25,10 +25,12 @@ abstract public class AbstractProjectionChoice implements ProjectionChoice {
     }
 
     /**
-     * Constructor (without cacheDir argument).
+     * Constructs a new {@code AbstractProjectionChoice}.
      *
      * Only for core projection choices, where chacheDir is the same as
      * the second part of the id.
+     * @param name short name of the projection choice as shown in the GUI
+     * @param id unique identifier for the projection choice
      */
     public AbstractProjectionChoice(String name, String id) {
         this(name, id, null);
@@ -62,5 +64,4 @@ abstract public class AbstractProjectionChoice implements ProjectionChoice {
             throw new AssertionError("Error: Unkown projection code");
         return new CustomProjection(getProjectionName(), code, pref, getCacheDir());
     }
-
 }

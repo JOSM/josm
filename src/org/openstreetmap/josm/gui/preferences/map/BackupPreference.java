@@ -27,6 +27,9 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Preference settings for data layer autosave.
+ */
 public class BackupPreference implements SubPreferenceSetting {
 
     /**
