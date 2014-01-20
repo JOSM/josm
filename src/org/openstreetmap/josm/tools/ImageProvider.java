@@ -395,30 +395,15 @@ public class ImageProvider {
             if (name == null)
                 return null;
 
-            try {
-                if (name.startsWith("data:")) {
-                    Matcher m = dataUrlPattern.matcher(name);
-                    if (m.matches()) {
-                        String mediatype = m.group(1);
-                        String base64 = m.group(2);
-                        String data = m.group(3);
-                        byte[] bytes = ";base64".equals(base64)
-                                ? Base64.decodeBase64(data)
-                                        : URLDecoder.decode(data, "utf-8").getBytes();
-                                if (mediatype != null && mediatype.contains("image/svg+xml")) {
-                                    URI uri = getSvgUniverse().loadSVG(new StringReader(new String(bytes)), name);
-                                    return new ImageResource(getSvgUniverse().getDiagram(uri));
-                                } else {
-                                    try {
-                                        return new ImageResource(ImageIO.read(new ByteArrayInputStream(bytes)));
-                                    } catch (IOException e) {
-                                        Main.warn("IOException while reading image: "+e.getMessage());
-                                    }
-                                }
-                    }
+            if (name.startsWith("data:")) {
+                String url = name;
+                ImageResource ir = cache.get(url);
+                if (ir != null) return ir;
+                ir = getIfAvailableDataUrl(url);
+                if (ir != null) {
+                    cache.put(url, ir);
                 }
-            } catch (UnsupportedEncodingException ex) {
-                throw new RuntimeException(ex.getMessage(), ex);
+                return ir;
             }
 
             ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
@@ -534,6 +519,33 @@ public class ImageProvider {
             return null;
         } finally {
             Utils.close(is);
+        }
+    }
+
+    private static ImageResource getIfAvailableDataUrl(String url) {
+        try {
+            Matcher m = dataUrlPattern.matcher(url);
+            if (m.matches()) {
+                String mediatype = m.group(1);
+                String base64 = m.group(2);
+                String data = m.group(3);
+                byte[] bytes = ";base64".equals(base64)
+                        ? Base64.decodeBase64(data)
+                                : URLDecoder.decode(data, "utf-8").getBytes();
+                if (mediatype != null && mediatype.contains("image/svg+xml")) {
+                    URI uri = getSvgUniverse().loadSVG(new StringReader(new String(bytes)), url);
+                    return new ImageResource(getSvgUniverse().getDiagram(uri));
+                } else {
+                    try {
+                        return new ImageResource(ImageIO.read(new ByteArrayInputStream(bytes)));
+                    } catch (IOException e) {
+                        Main.warn("IOException while reading image: "+e.getMessage());
+                    }
+                }
+            }
+            return null;
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 
