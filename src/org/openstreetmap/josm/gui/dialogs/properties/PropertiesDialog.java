@@ -474,7 +474,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         RelationEditor.getEditor(
                 Main.main.getEditLayer(),
                 relation,
-                EditRelationAction.getMembersForCurrentSelection(relation)
+                ((MemberInfo) membershipData.getValueAt(row, 1)).role
         ).setVisible(true);
     }
 
@@ -820,7 +820,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         break;
                     }
                 }
-                role = null;
             }
             return roleString;
         }
