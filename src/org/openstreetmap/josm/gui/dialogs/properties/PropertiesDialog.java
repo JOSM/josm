@@ -52,6 +52,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
+import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.actions.relation.SelectMembersAction;
 import org.openstreetmap.josm.actions.relation.SelectRelationAction;
@@ -206,7 +207,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final JLabel selectSth = new JLabel("<html><p>"
             + tr("Select objects for which to change tags.") + "</p></html>");
 
-    private PresetHandler presetHandler = new PresetHandler() {
+    private final PresetHandler presetHandler = new PresetHandler() {
         @Override public void updateTags(List<Tag> tags) {
             Command command = TaggingPreset.createCommand(getSelection(), tags);
             if (command != null) Main.main.undoRedo.add(command);
@@ -461,7 +462,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         getActionMap().put("onHelp", helpAction);
     }
 
-         /**
+     /**
      * This simply fires up an {@link RelationEditor} for the relation shown; everything else
      * is the editor's business.
      *
@@ -473,7 +474,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         RelationEditor.getEditor(
                 Main.main.getEditLayer(),
                 relation,
-                ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
+                EditRelationAction.getMembersForCurrentSelection(relation)
+        ).setVisible(true);
     }
 
     private int findRow(TableModel model, Object value) {
