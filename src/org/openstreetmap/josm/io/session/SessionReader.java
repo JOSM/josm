@@ -372,7 +372,7 @@ public class SessionReader {
 
                     deps.putVoid(idx);
                     String depStr = e.getAttribute("depends");
-                    if (depStr != null) {
+                    if (depStr != null && !depStr.isEmpty()) {
                         for (String sd : depStr.split(",")) {
                             Integer d = null;
                             try {
