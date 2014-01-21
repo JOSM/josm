@@ -171,7 +171,7 @@ public interface Selector {
                     if (e.child != null) {
                         // abort if first match has been found
                         break;
-                    } else if (!e.osm.equals(p)) {
+                    } else if (!e.osm.equals(p) && p.isUsable()) {
                         p.accept(this);
                     }
                 }
