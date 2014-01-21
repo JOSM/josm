@@ -215,6 +215,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the red color channel in the rgb color model
+         * @return the red color channel in the range [0;1]
          * @see java.awt.Color#getRed()
          */
         public static float red(Color c) {
@@ -223,6 +224,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the green color channel in the rgb color model
+         * @return the green color channel in the range [0;1]
          * @see java.awt.Color#getGreen()
          */
         public static float green(Color c) {
@@ -231,10 +233,20 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the blue color channel in the rgb color model
+         * @return the blue color channel in the range [0;1]
          * @see java.awt.Color#getBlue()
          */
         public static float blue(Color c) {
             return Utils.color_int2float(c.getBlue());
+        }
+
+        /**
+         * Get the value of the alpha channel in the rgba color model
+         * @return the alpha channel in the range [0;1]
+         * @see java.awt.Color#getAlpha()
+         */
+        public static float alpha(Color c) {
+            return Utils.color_int2float(c.getAlpha());
         }
 
         /**
