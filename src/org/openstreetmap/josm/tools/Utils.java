@@ -256,7 +256,8 @@ public final class Utils {
     }
 
     /**
-     * convert back
+     * convert integer range 0..255 to float range 0 <= x <= 1
+     * when dealing with colors and color alpha value
      */
     public static Float color_int2float(Integer val) {
         if (val == null)
