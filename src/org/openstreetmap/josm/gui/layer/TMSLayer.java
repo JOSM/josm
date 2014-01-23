@@ -381,7 +381,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         } else if (info.getImageryType() == ImageryType.BING)
             return new CachedAttributionBingAerialTileSource();
         else if (info.getImageryType() == ImageryType.SCANEX) {
-            return new ScanexTileSource(info.getUrl());
+            return new ScanexTileSource(info.getName(), info.getUrl(), info.getMaxZoom());
         }
         return null;
     }
