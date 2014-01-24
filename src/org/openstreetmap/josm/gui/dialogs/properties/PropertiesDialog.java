@@ -52,7 +52,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
-import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.actions.relation.SelectMembersAction;
 import org.openstreetmap.josm.actions.relation.SelectRelationAction;
@@ -62,7 +61,6 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Node;
@@ -117,7 +115,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener, PreferenceChangedListener {
+public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener {
 
     /**
      * hook for roadsigns plugin to display a small button in the upper right corner of this dialog
@@ -1252,6 +1250,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
+        super.preferenceChanged(e);
         if ("display.discardable-keys".equals(e.getKey()) && Main.main.getCurrentDataSet() != null) {
             // Re-load data when display preference change
             updateSelection();
