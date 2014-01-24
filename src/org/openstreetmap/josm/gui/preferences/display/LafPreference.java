@@ -20,6 +20,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -109,7 +110,7 @@ public class LafPreference implements SubPreferenceSetting {
         panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
 
         dynamicButtons.setToolTipText(tr("Display buttons in right side menus only when mouse is inside the element"));
-        dynamicButtons.setSelected(Main.pref.getBoolean("dialog.dynamic.buttons", true));
+        dynamicButtons.setSelected(ToggleDialog.PROP_DYNAMIC_BUTTONS.get());
         panel.add(dynamicButtons, GBC.eop().insets(20, 0, 0, 0));
 
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
@@ -130,7 +131,7 @@ public class LafPreference implements SubPreferenceSetting {
         Main.pref.put("osm-primitives.showid", showID.isSelected());
         Main.pref.put("osm-primitives.localize-name", showLocalizedName.isSelected());
         Main.pref.put("modeless", modeless.isSelected());
-        Main.pref.put("dialog.dynamic.buttons", dynamicButtons.isSelected());
+        Main.pref.put(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
         mod |= Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
         return mod;
     }
