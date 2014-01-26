@@ -209,6 +209,9 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
+        <copy todir="build" failonerror="no" includeemptydirs="no">
+            <fileset dir="resources"/>
+        </copy>
     </target>
     <target name="init">
         <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >

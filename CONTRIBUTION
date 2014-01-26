@@ -53,9 +53,9 @@ is from Stuart D. Gathman and licensed with GPL.
 The Ellipsoid code (http://www.i3s.unice.fr/~johan/gps/)
 is from Johan Montagnat and licensed with GPL.
 
-The JSON code (https://github.com/douglascrockford/JSON-java)
-is from Douglas Crockford and licensed as follows:
-"The Software shall be used for Good, not Evil."
+The JSON code (https://java.net/projects/jsonp/)
+is from Oracle (RI for JSR 353: Java API for JSON Processing) 
+and licensed with GPL / classpath exception.
 
 The opening hour validation uses code from opening_hour.js
 (https://github.com/ypid/opening_hours.js) which is licensed
@@ -65,8 +65,6 @@ with the New (2-clause) BSD license.
 
 Most icons have been nicked from GNOME and the GIMP, both under GPL. 
 Some are originally LGPL but redistributed here under GPL. 
-
-The world image is from onearth.pl.
 
 The keyboard icon comes fom:
 - source: http://www.iconfinder.net/index.php?q=key&page=icondetails&iconid=8553&size=128&q=key&s12=on&s16=on&s22=on&s32=on&s48=on&s64=on&s128=on
