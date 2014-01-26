@@ -5993,7 +5993,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="name_operator_oh" />
             <reference ref="link_contact" />
         </item>
-        <item name="Gift" icon="http://openclipart.org/people/secretlondon/secretlondon_chocolate_present.svg" type="node,closedway">
+        <item name="Gift" icon="presets/present.svg" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=gift"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=gift"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=gift"
