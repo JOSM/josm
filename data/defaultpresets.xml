@@ -1149,6 +1149,7 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:crossing"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:crossing"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:crossing"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:crossing"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:crossing"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:crossing" />
             <label text="Edit Pedestrian Crossing" />
@@ -4283,6 +4284,7 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=recycling"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=recycling"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=recycling"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=recycling"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=recycling"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=recycling"
                   sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:amenity=recycling" />
@@ -6194,6 +6196,8 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Toys" icon="styles/standard/shop/toys.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=toys"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=toys"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=toys"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=toys"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=toys" />
             <label text="Edit Toy Shop" />
@@ -6877,6 +6881,7 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Name" icon="presets/message.png" type="node,way,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Key:name"
                   ar.href="http://wiki.openstreetmap.org/wiki/Ar:Key:name"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:name"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:name"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Key:name"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:name"
@@ -6982,6 +6987,7 @@ Note that for a match, at least one positive and no negative is required.
     <group name="Relations" icon="presets/relations.png">
         <item name="Multipolygon" icon="presets/multipolygon.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Relation:multipolygon"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:multipolygon"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:multipolygon"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:multipolygon"
