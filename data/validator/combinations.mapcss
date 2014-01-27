@@ -41,7 +41,6 @@ way[junction                   ][!highway],
 *[usage                        ][!railway],
 *[workrules                    ][!railway],
 *[stream                       ][!waterway],
-*[intermittent                 ][!waterway],
 *[length_unit                  ][!waterway],
 *[llid                         ][!waterway],
 *[canal                        ][!waterway],
@@ -108,7 +107,8 @@ way[junction                   ][!highway],
 /* {0.key} without {1.key} or {2.tag} */
 *[segregated                   ][!highway][railway=crossing],
 *[toll                         ][!highway][route!=ferry],
-*[boat                         ][!waterway][natural!=water][natural != water] {
+*[boat                         ][!waterway][natural!=water],
+*[intermittent                 ][!waterway][natural!=water] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
 }
 
