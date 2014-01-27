@@ -307,7 +307,8 @@ public class MapCSSTagChecker extends Test.TagTest {
          */
         String getMessage(OsmPrimitive p) {
             if (errors.isEmpty()) {
-                return null;
+                // Return something to avoid NPEs
+                return rule.declaration.toString();
             } else {
                 final Object val = errors.keySet().iterator().next().val;
                 return String.valueOf(
