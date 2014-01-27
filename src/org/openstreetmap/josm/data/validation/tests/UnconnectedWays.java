@@ -127,7 +127,7 @@ public abstract class UnconnectedWays extends Test {
         
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && p.hasKey("power");
+            return super.isPrimitiveUsable(p) && p.hasTag("power", "line", "minor_line", "cable");
         }
     }
 
