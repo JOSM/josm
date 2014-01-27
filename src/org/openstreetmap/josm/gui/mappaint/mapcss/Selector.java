@@ -229,7 +229,7 @@ public interface Selector {
 
             if (ChildOrParentSelectorType.ELEMENT_OF.equals(type)) {
 
-                if (e.osm instanceof Node) {
+                if (e.osm instanceof Node || e.osm.getDataSet() == null) {
                     // nodes cannot contain elements
                     return false;
                 }
