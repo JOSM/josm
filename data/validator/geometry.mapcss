@@ -57,3 +57,6 @@ node[tag("tourism") = parent_tag("tourism")] ∈ *[tourism] {
 node[tag("shop") = parent_tag("shop")] ∈ *[shop] {
   throwWarning: tr("{0} inside {1}", concat("shop=", tag("shop")), concat("shop=", tag("shop")));
 }
+node[tag("power") = parent_tag("power")] ∈ *[power] {
+  throwWarning: tr("{0} inside {1}", concat("power=", tag("power")), concat("power=", tag("power")));
+}
