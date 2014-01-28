@@ -315,7 +315,7 @@ public class CreateMultipolygonAction extends JosmAction {
         }
     }
 
-    public static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList(new String[] {"barrier", "source"});
+    public static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList("barrier", "fence_type", "source");
 
     /**
      * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary
@@ -324,13 +324,7 @@ public class CreateMultipolygonAction extends JosmAction {
      * @return a list of commands to execute
      */
     private static List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
-        Map<String, String> values = new HashMap<String, String>();
-
-        if( relation.hasKeys() ) {
-            for( String key : relation.keySet() ) {
-                values.put(key, relation.get(key));
-            }
-        }
+        Map<String, String> values = new HashMap<String, String>(relation.getKeys());
 
         List<Way> innerWays = new ArrayList<Way>();
         List<Way> outerWays = new ArrayList<Way>();
@@ -371,7 +365,7 @@ public class CreateMultipolygonAction extends JosmAction {
         for( String linearTag : Main.pref.getCollection("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS) )
             values.remove(linearTag);
 
-        if( values.containsKey("natural") && values.get("natural").equals("coastline") )
+        if ("coastline".equals(values.get("natural")))
             values.remove("natural");
 
         values.put("area", "yes");
@@ -385,7 +379,7 @@ public class CreateMultipolygonAction extends JosmAction {
             String value = entry.getValue();
 
             for (Way way : innerWays) {
-                if (way.hasKey(key) && (value.equals(way.get(key)))) {
+                if (value.equals(way.get(key))) {
                     affectedWays.add(way);
                 }
             }
