@@ -48,6 +48,9 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Color preferences.
+ */
 public class ColorPreference implements SubPreferenceSetting {
 
     /**
@@ -64,9 +67,9 @@ public class ColorPreference implements SubPreferenceSetting {
     private JTable colors;
     private List<String> del = new ArrayList<String>();
 
-    JButton colorEdit;
-    JButton defaultSet;
-    JButton remove;
+    private JButton colorEdit;
+    private JButton defaultSet;
+    private JButton remove;
 
     /**
      * Set the colors to be shown in the preference table. This method creates a table model if
@@ -107,7 +110,7 @@ public class ColorPreference implements SubPreferenceSetting {
             this.colors.repaint();
         }
     }
-    
+
     private void addColorRows(Map<String, String> colorMap, Map<String, String> keyMap) {
         for (String value : keyMap.values()) {
             Vector<Object> row = new Vector<Object>(2);
@@ -138,8 +141,7 @@ public class ColorPreference implements SubPreferenceSetting {
         return colorMap;
     }
 
-    private String getName(String o)
-    {
+    private String getName(String o) {
         return Main.pref.getColorName(o);
     }
 
@@ -250,8 +252,7 @@ public class ColorPreference implements SubPreferenceSetting {
         gui.getDisplayPreference().addSubTab(this, tr("Colors"), panel);
     }
 
-    Boolean isRemoveColor(int row)
-    {
+    Boolean isRemoveColor(int row) {
         return ((String)colors.getValueAt(row, 0)).startsWith("layer ");
     }
 

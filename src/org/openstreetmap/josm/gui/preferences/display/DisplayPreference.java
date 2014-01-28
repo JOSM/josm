@@ -11,6 +11,10 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Display preferences (various settings that influence the visual representation of the whole program).
+ * @since 4969
+ */
 public final class DisplayPreference extends DefaultTabPreferenceSetting {
 
     /**
@@ -22,11 +26,11 @@ public final class DisplayPreference extends DefaultTabPreferenceSetting {
             return new DisplayPreference();
         }
     }
-    
+
     private DisplayPreference() {
         super("display", tr("Display Settings"), tr("Various settings that influence the visual representation of the whole program."), false, new JTabbedPane());
     }
-    
+
     @Override
     public boolean ok() {
         return false;

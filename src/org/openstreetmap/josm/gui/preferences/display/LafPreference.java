@@ -29,6 +29,9 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Look-and-feel preferences.
+ */
 public class LafPreference implements SubPreferenceSetting {
 
     /**
@@ -45,7 +48,7 @@ public class LafPreference implements SubPreferenceSetting {
      * ComboBox with all look and feels.
      */
     private JosmComboBox lafCombo;
-    public JPanel panel;
+    JPanel panel;
     private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
     private JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
