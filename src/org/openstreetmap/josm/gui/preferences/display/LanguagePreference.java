@@ -27,6 +27,9 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 
+/**
+ * Language preferences.
+ */
 public class LanguagePreference implements SubPreferenceSetting {
 
     /**
