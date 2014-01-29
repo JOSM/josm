@@ -4824,6 +4824,13 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,track" values_context="racing" />
         </item>
+        <item name="Raceway" type="closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=raceway" />
+            <label text="Edit Raceway" />
+            <space />
+            <key key="highway" value="raceway" />
+            <text key="name" text="Name" />
+        </item>
     </group> <!-- Motorsport -->
   </group> <!-- Sports -->
   <group name="Man Made" icon="presets/works.png">

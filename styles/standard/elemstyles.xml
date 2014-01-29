@@ -595,6 +595,11 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="highway" v="raceway"/>
+		<line width="1" colour="raceway#ff80ff"/>
+	</rule>
+
+	<rule>
 		<condition k="direction" v="clockwise"/>
 		<icon annotate="true" src="vehicle/restriction/roundabout_left.png" priority="10000"/>
 	</rule>
