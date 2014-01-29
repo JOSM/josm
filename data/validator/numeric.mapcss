@@ -134,3 +134,8 @@ way[incline !~ /^(up|down|-?([0-9]+?(\.[1-9]%)?|100)[%°]?)$/] {
   assertNoMatch: "way incline=-5%";
   assertNoMatch: "way incline=10°";
 }
+
+/* see ticket #9631 */
+*[population !~ /^[0-9]+$/ ] {
+  throwWarning: tr("{0} must be a numeric value", "{0.key}");
+}
