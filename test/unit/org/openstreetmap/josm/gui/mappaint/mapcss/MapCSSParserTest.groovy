@@ -224,6 +224,20 @@ class MapCSSParserTest {
         getParser("{color: testcolour1#88DD22}").declaration().get(0).execute(e)
         def expected = new Color(0x88DD22)
         assert e.getCascade(Environment.DEFAULT_LAYER).get("color") == expected
-        assert Main.pref.getDefaultColor("MapCSS.testcolour1") == expected
+        assert Main.pref.getDefaultColor("mappaint.mapcss.testcolour1") == expected
+    }
+
+    @Test
+    public void testColorNameTicket9191Alpha() throws Exception {
+        def e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null)
+        getParser("{color: testcolour2#12345678}").declaration().get(0).execute(e)
+        def expected = new Color(0x12, 0x34, 0x56, 0x78)
+        assert e.getCascade(Environment.DEFAULT_LAYER).get("color") == expected
+        assert Main.pref.getDefaultColor("mappaint.mapcss.testcolour2") == expected
+    }
+
+    @Test
+    public void testColorParsing() throws Exception {
+        assert ColorHelper.html2color("#12345678") == new Color(0x12, 0x34, 0x56, 0x78)
     }
 }
