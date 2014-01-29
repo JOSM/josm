@@ -7,7 +7,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -360,17 +362,24 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @return an instance of {@link TestError}, or returns null if the primitive does not give rise to an error.
          */
         TestError getErrorForPrimitive(OsmPrimitive p) {
-            return getErrorForPrimitive(p, whichSelectorMatchesPrimitive(p));
+            final Environment env = new Environment().withPrimitive(p);
+            return getErrorForPrimitive(p, whichSelectorMatchesEnvironment(env), env);
         }
 
-        TestError getErrorForPrimitive(OsmPrimitive p, Selector matchingSelector) {
+        TestError getErrorForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env) {
             if (matchingSelector != null && !errors.isEmpty()) {
                 final Command fix = fixPrimitive(p);
                 final String description = getDescriptionForMatchingSelector(p, matchingSelector);
-                if (fix != null) {
-                    return new FixableTestError(null, getSeverity(), description, null, matchingSelector.toString(), 3000, p, fix);
+                final List<OsmPrimitive> primitives;
+                if (env.child != null) {
+                    primitives = Arrays.asList(p, env.child);
                 } else {
-                    return new TestError(null, getSeverity(), description, null, matchingSelector.toString(), 3000, p);
+                    primitives = Collections.singletonList(p);
+                }
+                if (fix != null) {
+                    return new FixableTestError(null, getSeverity(), description, null, matchingSelector.toString(), 3000, primitives, fix);
+                } else {
+                    return new TestError(null, getSeverity(), description, null, matchingSelector.toString(), 3000, primitives);
                 }
             } else {
                 return null;
@@ -406,7 +415,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             final Selector selector = check.whichSelectorMatchesEnvironment(env);
             if (selector != null) {
                 check.rule.execute(env);
-                final TestError error = check.getErrorForPrimitive(p, selector);
+                final TestError error = check.getErrorForPrimitive(p, selector, env);
                 if (error != null) {
                     error.setTester(new MapCSSTagCheckerAndRule(check.rule));
                     r.add(error);
