@@ -34,9 +34,8 @@ public class LoadObjectHandler extends RequestHandler {
     }
     
     @Override
-    public String[] getOptionalParams()
-    {
-        return new String[] {"new_layer", "addtags"};
+    public String[] getOptionalParams() {
+        return new String[] {"new_layer", "addtags", "relation_members", "referrers"};
     }
 
     @Override
@@ -47,7 +46,8 @@ public class LoadObjectHandler extends RequestHandler {
     @Override
     public String[] getUsageExamples() {
         return new String[] {"/load_object?new_layer=true&objects=w106159509",
-            "/load_object?new_layer=true&objects=r2263653&relation_members=true"
+            "/load_object?new_layer=true&objects=r2263653&relation_members=true",
+            "/load_object?objects=n100000&referrers=false"
         };
     }
 
@@ -59,9 +59,10 @@ public class LoadObjectHandler extends RequestHandler {
         if (!ps.isEmpty()) {
             final boolean newLayer = isLoadInNewLayer();
             final boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
+            final boolean referrers = args.containsKey("referrers") ? Boolean.parseBoolean(args.get("referrers")) : true;
             GuiHelper.runInEDTAndWait(new Runnable() {
                 @Override public void run() {
-                    DownloadPrimitiveAction.processItems(newLayer, ps, true, relationMembers);
+                    DownloadPrimitiveAction.processItems(newLayer, ps, referrers, relationMembers);
                 }
             });
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
