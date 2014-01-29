@@ -67,6 +67,7 @@ public class ValidateAction extends JosmAction {
         if (Main.map == null || !Main.map.isVisible())
             return;
 
+        OsmValidator.initializeTests();
         OsmValidator.initializeErrorLayer();
 
         Collection<Test> tests = OsmValidator.getEnabledTests(false);

@@ -137,7 +137,6 @@ public class OsmValidator implements LayerChangeListener {
     public OsmValidator() {
         checkValidatorDir();
         initializeGridDetail();
-        initializeTests(getTests());
         loadIgnoredErrors(); //FIXME: load only when needed
     }
 
@@ -291,6 +290,22 @@ public class OsmValidator implements LayerChangeListener {
             OsmValidator.griddetail = 0.1;
         } else {
             OsmValidator.griddetail = 1.0;
+        }
+    }
+
+    private static boolean testsInitialized = false;
+
+    /**
+     * Initializes all tests if this operations hasn't been performed already.
+     */
+    public static synchronized void initializeTests() {
+        if (!testsInitialized) {
+            Main.debug("Initializing validator tests");
+            final long startTime = System.currentTimeMillis();
+            initializeTests(getTests());
+            testsInitialized = true;
+            final long elapsedTime = System.currentTimeMillis() - startTime;
+            Main.debug("Initializing validator tests completed in " + Utils.getDurationString(elapsedTime));
         }
     }
 
