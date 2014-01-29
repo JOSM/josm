@@ -231,9 +231,16 @@ public class APIDataSet {
         newToAdd.addAll(noProblemRelations);
         relationsToAdd.removeAll(noProblemRelations);
 
-        RelationUploadDependencyGraph graph = new RelationUploadDependencyGraph(relationsToAdd);
+        RelationUploadDependencyGraph graph = new RelationUploadDependencyGraph(relationsToAdd, true);
         newToAdd.addAll(graph.computeUploadOrder());
         toAdd = newToAdd;
+
+        LinkedList<OsmPrimitive> newToDelete = new LinkedList<OsmPrimitive>();
+        newToDelete.addAll(Utils.filteredCollection(toDelete, Node.class));
+        newToDelete.addAll(Utils.filteredCollection(toDelete, Way.class));
+        graph = new RelationUploadDependencyGraph(Utils.filteredCollection(toDelete, Relation.class), false);
+        newToDelete.addAll(graph.computeUploadOrder());
+        toDelete = newToDelete;
     }
 
     /**
@@ -267,30 +274,26 @@ public class APIDataSet {
      *
      */
     private static class RelationUploadDependencyGraph {
-        private Map<Relation, Set<Relation>> children;
+        private Map<Relation, Set<Relation>> children = new HashMap<Relation, Set<Relation>>();
         private Collection<Relation> relations;
-        private Set<Relation> visited;
+        private Set<Relation> visited = new HashSet<Relation>();
         private List<Relation> uploadOrder;
+        private final boolean newOrUndeleted;
 
-        public RelationUploadDependencyGraph() {
-            this.children = new HashMap<Relation, Set<Relation>>();
-            this.visited = new HashSet<Relation>();
-        }
-
-        public RelationUploadDependencyGraph(Collection<Relation> relations) {
-            this();
+        public RelationUploadDependencyGraph(Collection<Relation> relations, boolean newOrUndeleted) {
+            this.newOrUndeleted = newOrUndeleted;
             build(relations);
         }
 
         public void build(Collection<Relation> relations) {
             this.relations = new HashSet<Relation>();
             for(Relation relation: relations) {
-                if (!relation.isNewOrUndeleted() ) {
+                if (newOrUndeleted ? !relation.isNewOrUndeleted() : !relation.isDeleted()) {
                     continue;
                 }
                 this.relations.add(relation);
                 for (RelationMember m: relation.getMembers()) {
-                    if (m.isRelation() && m.getMember().isNewOrUndeleted()) {
+                    if (m.isRelation() && (newOrUndeleted ? m.getMember().isNewOrUndeleted() : m.getMember().isDeleted())) {
                         addDependency(relation, (Relation)m.getMember());
                     }
                 }
