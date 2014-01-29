@@ -1284,25 +1284,26 @@ public class Preferences {
         // Force Java 7 to use old sorting algorithm of Arrays.sort (fix #8712).
         // See Oracle bug database: https://bugs.openjdk.java.net/browse/JDK-7075600
         // and https://bugs.openjdk.java.net/browse/JDK-6923200
-        if (Main.pref.getBoolean("jdk.Arrays.useLegacyMergeSort", !Version.getInstance().isLocalBuild())) {
+        if (getBoolean("jdk.Arrays.useLegacyMergeSort", !Version.getInstance().isLocalBuild())) {
             updateSystemProperty("java.util.Arrays.useLegacyMergeSort", "true");
         }
     }
 
     private void updateSystemProperty(String key, String value) {
         if (value != null) {
-            System.setProperty(key, value);
+            String old = System.setProperty(key, value);
+            Main.debug("System property '"+key+"' set to '"+value+"'. Old value was '"+old+"'");
         }
     }
 
     /**
      * The default plugin site
      */
-    private final static String[] DEFAULT_PLUGIN_SITE = {
-    Main.JOSM_WEBSITE+"/plugin%<?plugins=>"};
+    private final static String[] DEFAULT_PLUGIN_SITE = {Main.JOSM_WEBSITE+"/plugin%<?plugins=>"};
 
     /**
-     * Replies the collection of plugin site URLs from where plugin lists can be downloaded
+     * Replies the collection of plugin site URLs from where plugin lists can be downloaded.
+     * @return the collection of plugin site URLs
      */
     public Collection<String> getPluginSites() {
         return getCollection("pluginmanager.sites", Arrays.asList(DEFAULT_PLUGIN_SITE));
