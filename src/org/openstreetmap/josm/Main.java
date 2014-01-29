@@ -500,65 +500,51 @@ abstract public class Main {
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
 
-        tasks.add(new Callable<Void>() {
+        tasks.add(new InitializationTask(tr("Initializing OSM API")) {
 
             @Override
-            public Void call() throws Exception {
+            public void initialize() throws Exception {
                 // We try to establish an API connection early, so that any API
                 // capabilities are already known to the editor instance. However
                 // if it goes wrong that's not critical at this stage.
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Initializing OSM API"));
-                }
                 try {
                     OsmApi.getOsmApi().initialize(null, true);
                 } catch (Exception e) {
                     Main.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
-                return null;
             }
         });
 
-        tasks.add(new Callable<Void>() {
+        tasks.add(new InitializationTask(tr("Initializing validator")) {
 
             @Override
-            public Void call() throws Exception {
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Initializing presets"));
-                }
-                TaggingPresetPreference.initialize();
-                // some validator tests require the presets to be initialized
-                // TODO remove this dependency for parallel initialization
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Initializing validator"));
-                }
+            public void initialize() throws Exception {
                 validator = new OsmValidator();
                 MapView.addLayerChangeListener(validator);
-                return null;
             }
         });
 
-        tasks.add(new Callable<Void>() {
+        tasks.add(new InitializationTask(tr("Initializing presets")) {
 
             @Override
-            public Void call() throws Exception {
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Initializing map styles"));
-                }
+            public void initialize() throws Exception {
+                TaggingPresetPreference.initialize();
+            }
+        });
+
+        tasks.add(new InitializationTask(tr("Initializing map styles")) {
+
+            @Override
+            public void initialize() throws Exception {
                 MapPaintPreference.initialize();
-                return null;
             }
         });
 
-        tasks.add(new Callable<Void>() {
+        tasks.add(new InitializationTask(tr("Loading imagery preferences")) {
 
             @Override
-            public Void call() throws Exception {
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Loading imagery preferences"));
-                }
+            public void initialize() throws Exception {
                 ImageryPreference.initialize();
-                return null;
             }
         });
 
@@ -589,6 +575,29 @@ abstract public class Main {
         toolbar.control.updateUI();
         contentPanePrivate.updateUI();
 
+    }
+
+    private abstract class InitializationTask implements Callable<Void> {
+
+        private final String name;
+
+        protected InitializationTask(String name) {
+            this.name = name;
+        }
+
+        public abstract void initialize() throws Exception;
+
+        @Override
+        public Void call() throws Exception {
+            if (initListener != null) {
+                initListener.updateStatus(name);
+            }
+            final long startTime = System.currentTimeMillis();
+            initialize();
+            final long elapsedTime = System.currentTimeMillis() - startTime;
+            Main.debug(tr("{0} completed in {1}", name, Utils.getDurationString(elapsedTime)));
+            return null;
+        }
     }
 
     /**

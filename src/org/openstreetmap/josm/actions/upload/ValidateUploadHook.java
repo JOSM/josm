@@ -142,6 +142,7 @@ public class ValidateUploadHook implements UploadHook {
         ed.showDialog();
 
         if (ed.getValue() != 1) {
+            OsmValidator.initializeTests();
             OsmValidator.initializeErrorLayer();
             Main.map.validatorDialog.unfurlDialog();
             Main.main.getCurrentDataSet().fireSelectionChanged();
