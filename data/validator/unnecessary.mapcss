@@ -11,6 +11,16 @@
   assertMatch: "way highway=proposed access=no";
 }
 
+area:closed[amenity ][area?],
+area:closed[building][area?],
+area:closed[landuse ][area?],
+area:closed[leisure ][area?],
+area:closed[natural ][area?],
+area:closed[shop    ][area?] {
+  throwWarning: tr("{0} is unnecessary for {1}", "{2.key}", "{1.key}");
+  fixRemove: "{2.key}";
+}
+
 *[emergency=permissive] {
   /* see #9458 - emergency=permissive makes no sense */
   throwWarning: tr("{0}={1} makes no sense", "emergency", "permissive");
