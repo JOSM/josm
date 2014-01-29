@@ -574,9 +574,10 @@ public class GpxLayer extends Layer {
                                 float vel = (float) (dist / dtime);
                                 int velColor =(int) Math.round(colorModeDynamic ? ((vel-minval)*255/(maxval-minval))
                                         : (vel <= 0 ? 0 : vel / colorTracksTune * 255));
-                                trkPnt.customColoring = colors[Math.max(0, Math.min(velColor, 255))];
+                                final int vIndex = Math.max(0, Math.min(velColor, 255));
+                                trkPnt.customColoring = vIndex == 255 ? neutralColor : colors[vIndex];
                             } else {
-                                trkPnt.customColoring = colors[255];
+                                trkPnt.customColoring = neutralColor;
                             }
                             break;
                         case direction:
@@ -590,7 +591,7 @@ public class GpxLayer extends Layer {
                             break;
                         case time:
                             double t=trkPnt.time;
-                            if (t>0 && t<=now){ // skip bad timestamps
+                            if (t > 0 && t <= now && maxval - minval > 1000) { // skip bad timestamps and very short tracks
                                 int tColor = (int) Math.round((t-minval)*255/(maxval-minval));
                                 trkPnt.customColoring = colors[tColor];
                             } else {
