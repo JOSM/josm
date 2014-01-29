@@ -257,6 +257,10 @@ public class TagConflictResolverModel extends DefaultTableModel {
      *
      */
     public void prepareDefaultTagDecisions() {
+        // Do not suggest to keep all values in order to reduce the wrong usage of semicolon values, see #9104!
+        // Do not suggest to keep the single value in order to avoid long highways to become tunnels+bridges+...
+
+        /*
         for (MultiValueResolutionDecision decision: decisions.values()) {
             List<String> values = decision.getValues();
             values.remove("");
@@ -266,6 +270,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
                 decision.keepAll();
             }
         }
+        */
         rebuild();
     }
     
