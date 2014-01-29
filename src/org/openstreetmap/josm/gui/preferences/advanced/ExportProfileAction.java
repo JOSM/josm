@@ -28,13 +28,16 @@ public class ExportProfileAction extends AbstractAction {
     private final String schemaKey;
     private final Preferences prefs;
 
+    /**
+     * Constructs a new {@code ExportProfileAction}.
+     */
     public ExportProfileAction(Preferences prefs, String schemaKey, String prefPattern) {
         super(tr("Save {0} profile", tr(schemaKey)));
         this.prefs = prefs;
         this.prefPattern = prefPattern;
         this.schemaKey = schemaKey;
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         List<String> keys = new ArrayList<String>();
@@ -53,10 +56,10 @@ public class ExportProfileAction extends AbstractAction {
         if (f!=null)
            CustomConfigurator.exportPreferencesKeysToFile(f.getAbsolutePath(), false, keys);
     }
-    
+
     private File askUserForCustomSettingsFile() {
         String title = tr("Choose profile file");
-        
+
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File f) {
@@ -75,7 +78,7 @@ public class ExportProfileAction extends AbstractAction {
                 sel = new File(sel.getParentFile().getAbsolutePath()+"/"+schemaKey+"_"+sel.getName());
             }
             return sel;
-        } 
+        }
         return null;
     }
 }

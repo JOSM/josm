@@ -47,6 +47,9 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Advanced preferences, allowing to set preference entries directly.
+ */
 public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
     /**

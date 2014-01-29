@@ -24,6 +24,9 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Editor for List preference entries.
+ */
 public class ListEditor extends ExtendedDialog {
 
     List<String> data;
@@ -31,6 +34,7 @@ public class ListEditor extends ExtendedDialog {
 
     /**
      * Constructs a new {@code ListEditor}.
+     * @param gui The parent component
      */
     public ListEditor(final JComponent gui, PrefEntry entry, ListSetting setting) {
         super(gui, tr("Change list setting"), new String[] {tr("OK"), tr("Cancel")});
