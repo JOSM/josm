@@ -59,8 +59,7 @@ public abstract class RequestHandler {
      * @throws RequestHandlerBadRequestException
      * @throws RequestHandlerErrorException
      */
-    public final void handle() throws RequestHandlerForbiddenException, RequestHandlerBadRequestException, RequestHandlerErrorException
-    {
+    public final void handle() throws RequestHandlerForbiddenException, RequestHandlerBadRequestException, RequestHandlerErrorException {
         checkMandatoryParams();
         validateRequest();
         checkPermission();
