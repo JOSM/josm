@@ -166,18 +166,21 @@ public class OsmValidator implements LayerChangeListener {
     private void loadIgnoredErrors() {
         ignoredErrors.clear();
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
-            BufferedReader in = null;
-            try {
-                in = new BufferedReader(new FileReader(getValidatorDir() + "ignorederrors"));
-                for (String line = in.readLine(); line != null; line = in.readLine()) {
-                    ignoredErrors.add(line);
+            File file = new File(getValidatorDir() + "ignorederrors");
+            if (file.exists()) {
+                BufferedReader in = null;
+                try {
+                    in = new BufferedReader(new FileReader(file));
+                    for (String line = in.readLine(); line != null; line = in.readLine()) {
+                        ignoredErrors.add(line);
+                    }
+                } catch (final FileNotFoundException e) {
+                    Main.debug(Main.getErrorMessage(e));
+                } catch (final IOException e) {
+                    Main.error(e);
+                } finally {
+                    Utils.close(in);
                 }
-            } catch (final FileNotFoundException e) {
-                Main.debug(Main.getErrorMessage(e));
-            } catch (final IOException e) {
-                Main.error(e);
-            } finally {
-                Utils.close(in);
             }
         }
     }
