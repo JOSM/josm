@@ -28,6 +28,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -86,9 +87,15 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
         tfId.getKeymap().removeKeyStrokeBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false));
         tfId.setPreferredSize(new Dimension(400, tfId.getPreferredSize().height));
 
-        HtmlPanel help = new HtmlPanel(tr("Object IDs can be separated by comma or space.<br/>"
-                + " Examples: <b><ul><li>1 2 5</li><li>1,2,5</li></ul><br/></b>"
-                + " In mixed mode, specify objects like this: <b>w123, n110, w12, r15</b><br/>"));
+        HtmlPanel help = new HtmlPanel(/* I18n: {0} and {1} contains example strings not meant for translation. {2}=n, {3}=w, {4}=r. */
+                tr("Object IDs can be separated by comma or space.<br/>"
+                        + "Examples: {0}<br/>"
+                        + "In mixed mode, specify objects like this: {1}<br/>"
+                        + "({2} stands for <i>node</i>, {3} for <i>way</i>, and {4} for <i>relation</i>)",
+                        "<b>" + Utils.joinAsHtmlUnorderedList(Arrays.asList("1 2 5", "1,2,5")) + "</b>",
+                        "<b>w123, n110, w12, r15</b>",
+                        "<b>n</b>", "<b>w</b>", "<b>r</b>"
+                ));
         help.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
         cbType.addItemListener(new ItemListener() {
