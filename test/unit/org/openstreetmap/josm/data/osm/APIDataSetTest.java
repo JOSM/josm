@@ -144,6 +144,50 @@ public class APIDataSetTest {
         assertEquals(true, toAdd.indexOf(r3) < toAdd.indexOf(r1));
     }
 
+    @Test // for ticket #9624
+    public void deleteOneParentTwoNewChildren() {
+        DataSet ds = new DataSet();
+        Relation r1 = new Relation(1);
+        ds.addPrimitive(r1);
+        r1.put("name", "r1");
+
+        Relation r2 = new Relation(2);
+        ds.addPrimitive(r2);
+        r2.put("name", "r2");
+
+        Relation r3 = new Relation(3);
+        ds.addPrimitive(r3);
+        r3.put("name", "r3");
+
+        Relation r4 = new Relation(4);
+        ds.addPrimitive(r4);
+        r4.put("name", "unrelated");
+
+
+        r1.addMember(new RelationMember("", r2));
+        r1.addMember(new RelationMember("", r3));
+
+        r1.setDeleted(true);
+        r2.setDeleted(true);
+        r3.setDeleted(true);
+        r4.setDeleted(true);
+
+
+        APIDataSet apiDataSet = new APIDataSet();
+        apiDataSet.init(ds);
+        try {
+            apiDataSet.adjustRelationUploadOrder();
+        } catch(CyclicUploadDependencyException e) {
+            fail("unexpected exception:" + e);
+        }
+        List<OsmPrimitive> toDelete = apiDataSet.getPrimitivesToDelete();
+
+        assertEquals(4, toDelete.size());
+        assertEquals(true, toDelete.indexOf(r2) < toDelete.indexOf(r1));
+        assertEquals(true, toDelete.indexOf(r3) < toDelete.indexOf(r1));
+        assertEquals(true, toDelete.indexOf(r3) < toDelete.indexOf(r1));
+    }
+
     @Test
     public void oneCycle() {
         DataSet ds = new DataSet();
