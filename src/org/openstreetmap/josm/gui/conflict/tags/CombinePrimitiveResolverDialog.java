@@ -281,16 +281,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
     protected void prepareDefaultTagDecisions() {
         TagConflictResolverModel model = getTagConflictResolverModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            MultiValueResolutionDecision decision = model.getDecision(i);
-            List<String> values = decision.getValues();
-            values.remove("");
-            if (values.size() == 1) {
-                decision.keepOne(values.get(0));
-            } else {
-                decision.keepAll();
-            }
-        }
+        model.prepareDefaultTagDecisions();
         model.rebuild();
     }
 
