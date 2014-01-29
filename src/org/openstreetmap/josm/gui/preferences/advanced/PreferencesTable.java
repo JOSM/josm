@@ -33,13 +33,17 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Component for editing list of preferences as a table
- * @since 6021 : extracted from AdvancedPreference class 
+ * Component for editing list of preferences as a table.
+ * @since 6021
  */
 public class PreferencesTable extends JTable {
     private AllSettingsTableModel model;
     private final List<PrefEntry> displayData;
 
+    /**
+     * Constructs a new {@code PreferencesTable}.
+     * @param displayData The list of preferences entries to display
+     */
     public PreferencesTable(List<PrefEntry> displayData) {
         this.displayData = displayData;
         model = new AllSettingsTableModel();
@@ -47,8 +51,8 @@ public class PreferencesTable extends JTable {
         putClientProperty("terminateEditOnFocusLost", true);
         getColumnModel().getColumn(1).setCellRenderer(new SettingCellRenderer());
         getColumnModel().getColumn(1).setCellEditor(new SettingCellEditor());
-        
-        addMouseListener(new MouseAdapter(){
+
+        addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     editPreference(PreferencesTable.this);
@@ -56,15 +60,14 @@ public class PreferencesTable extends JTable {
             }
         });
     }
-    
+
     /**
      * This method should be called when displayed data was changed form external code
      */
     public void fireDataChanged() {
         model.fireTableDataChanged();
     }
-    
-    
+
     /**
      * The list of currently selected rows
      * @return newly created list of PrefEntry
@@ -77,7 +80,7 @@ public class PreferencesTable extends JTable {
         }
         return entries;
     }
-    
+
     /**
      * Call this to edit selected row in preferences table
      * @param gui - parent component for messagebox
@@ -137,7 +140,7 @@ public class PreferencesTable extends JTable {
         }
         return false;
     }
-    
+
     /**
      * Add new preference to the table
      * @param gui - parent component for asking dialogs
@@ -227,9 +230,9 @@ public class PreferencesTable extends JTable {
                 }
             }
         }
-        if (ok) 
-            return pe; 
-        else 
+        if (ok)
+            return pe;
+        else
             return null;
     }
 
@@ -253,7 +256,7 @@ public class PreferencesTable extends JTable {
         }
         fireDataChanged();
     }
-    
+
     private class AllSettingsTableModel extends DefaultTableModel {
 
         public AllSettingsTableModel() {
@@ -298,7 +301,7 @@ public class PreferencesTable extends JTable {
         private Color nonDefaultColor = Main.pref.getColor(
                             marktr("Advanced Background: NonDefault"),
                             new Color(255,255,200));
-        
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null)
@@ -307,7 +310,7 @@ public class PreferencesTable extends JTable {
             Preferences.Setting setting = pe.getValue();
             Object val = setting.getValue();
             String display = val != null ? val.toString() : "<html><i>&lt;"+tr("unset")+"&gt;</i></html>";
-            
+
             JLabel label = (JLabel)super.getTableCellRendererComponent(table,
                     display, isSelected, hasFocus, row, column);
 

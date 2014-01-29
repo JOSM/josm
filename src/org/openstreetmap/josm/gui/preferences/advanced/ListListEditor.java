@@ -32,6 +32,9 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Editor for List of Lists preference entries.
+ */
 public class ListListEditor extends ExtendedDialog {
 
     EntryListModel entryModel;
@@ -44,6 +47,10 @@ public class ListListEditor extends ExtendedDialog {
 
     ListTableModel tableModel;
 
+    /**
+     * Constructs a new {@code ListListEditor}.
+     * @param gui The parent component
+     */
     public ListListEditor(final JComponent gui, PrefEntry entry, ListListSetting setting) {
         super(gui, tr("Change list of lists setting"), new String[] {tr("OK"), tr("Cancel")});
         this.entry = entry;
@@ -59,6 +66,10 @@ public class ListListEditor extends ExtendedDialog {
         setContent(build(), false);
     }
 
+    /**
+     * Returns the data.
+     * @return the preference data
+     */
     public List<List<String>> getData() {
         return data;
     }
@@ -219,5 +230,4 @@ public class ListListEditor extends ExtendedDialog {
             return true;
         }
     }
-
 }

@@ -36,6 +36,9 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Editor for List of Maps preference entries.
+ */
 public class MapListEditor extends ExtendedDialog {
 
     EntryListModel entryModel;
@@ -73,6 +76,10 @@ public class MapListEditor extends ExtendedDialog {
         setContent(build(), false);
     }
 
+    /**
+     * Returns the data.
+     * @return the preference data
+     */
     public List<Map<String,String>> getData() {
         List<Map<String,String>> data = new ArrayList<Map<String,String>>();
         for (int i=0; i < dataKeys.size(); ++i) {
