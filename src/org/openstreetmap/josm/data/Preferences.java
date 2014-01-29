@@ -876,7 +876,7 @@ public class Preferences {
         }
         String colStr = specName != null ? get("color."+specName) : "";
         if (colStr.isEmpty()) {
-            colStr = get("color." + colKey, ColorHelper.color2html(def));
+            colStr = get("color." + colKey, ColorHelper.color2html(def, true));
         }
         if (colStr != null && !colStr.isEmpty()) {
             return ColorHelper.html2color(colStr);
@@ -892,7 +892,7 @@ public class Preferences {
     }
 
     synchronized public boolean putColor(String colKey, Color val) {
-        return put("color."+colKey, val != null ? ColorHelper.color2html(val) : null);
+        return put("color."+colKey, val != null ? ColorHelper.color2html(val, true) : null);
     }
 
     synchronized public int getInteger(String key, int def) {

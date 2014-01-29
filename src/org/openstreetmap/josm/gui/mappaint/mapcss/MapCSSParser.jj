@@ -51,7 +51,7 @@ TOKEN:
 |   < #REGEX_CHAR_WITHOUT_STAR: [" "-")","+"-".","0"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\/" | "\\\\" | "\\[" | "\\]" | "\\+" | "\\." | "\\'" | "\\\"" | <PREDEFINED> >
 |   < REGEX: "/" <REGEX_CHAR_WITHOUT_STAR> ( <REGEX_CHAR_WITHOUT_STAR> | "*" )*  "/" >
 |   < #H: ["0"-"9","a"-"f","A"-"F"] >
-|   < HEXCOLOR: "#" ( <H><H><H><H><H><H> | <H><H><H> ) >
+|   < HEXCOLOR: "#" ( <H><H><H><H><H><H><H><H> | <H><H><H><H><H><H> | <H><H><H> ) >
 |   < S: ( " " | "\t" | "\n" | "\r" | "\f" )+ >
 |   < STAR: "*" >
 |   < SLASH: "/" >
