@@ -64,12 +64,22 @@ public final class Utils {
      */
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
+    /**
+     * Tests whether {@code predicate} applies to at least one elements from {@code collection}.
+     */
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
             if (predicate.evaluate(item))
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Tests whether {@code predicate} applies to all elements from {@code collection}.
+     */
+    public static <T> boolean forAll(Iterable<? extends T> collection, Predicate<? super T> predicate) {
+        return !exists(collection, Predicates.not(predicate));
     }
 
     public static <T> boolean exists(Iterable<T> collection, Class<? extends T> klass) {
