@@ -596,7 +596,7 @@ public final class TaggingPresetItems {
                 }
                 else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default values feature is enabled
-                    if (!"false".equals(use_last_as_default) && lastValue.containsKey(key)) {
+                    if (!"false".equals(use_last_as_default) && lastValue.containsKey(key) && !TaggingPreset.presetInitiallyMatches) {
                         textField.setText(lastValue.get(key));
                     } else {
                         textField.setText(default_);
@@ -1226,7 +1226,7 @@ public final class TaggingPresetItems {
             } else if (usage.unused()) {
                 // all items were unset (and so is default)
                 originalValue = lhm.get("");
-                if ("force".equals(use_last_as_default) && lastValue.containsKey(key)) {
+                if ("force".equals(use_last_as_default) && lastValue.containsKey(key) && !TaggingPreset.presetInitiallyMatches) {
                     combo.setSelectedItem(lhm.get(lastValue.get(key)));
                 } else {
                     combo.setSelectedItem(originalValue);

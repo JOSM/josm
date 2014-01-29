@@ -274,12 +274,15 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return null;
     }
 
+    static boolean presetInitiallyMatches = false;
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (Main.main == null) return;
         if (Main.main.getCurrentDataSet() == null) return;
 
         Collection<OsmPrimitive> sel = createSelection(Main.main.getCurrentDataSet().getSelected());
+        presetInitiallyMatches = !sel.isEmpty() && Utils.forAll(sel, this);
         int answer = showDialog(sel, supportsRelation());
 
         if (!sel.isEmpty() && answer == DIALOG_ANSWER_APPLY) {
