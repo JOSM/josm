@@ -30,7 +30,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
@@ -430,12 +429,8 @@ public class ExtendedDialog extends JDialog {
     protected Dimension findMaxDialogSize() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension x = new Dimension(screenSize.width*2/3, screenSize.height*2/3);
-        try {
-            if(parent != null) {
-                x = JOptionPane.getFrameForComponent(parent).getSize();
-            }
-        } catch(NullPointerException e) {
-            Main.warn(e);
+        if (parent != null) {
+            x = JOptionPane.getFrameForComponent(parent).getSize();
         }
         return x;
     }

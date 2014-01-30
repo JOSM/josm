@@ -282,7 +282,6 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                                         statusBarElementUpdate(ms);
                                     }
 
-
                                     // Popup Information
                                     // display them if the middle mouse button is pressed and
                                     // keep them until the mouse is moved
@@ -327,8 +326,6 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
 
                                     oldMousePos = ms.mousePos;
                                 } catch (ConcurrentModificationException x) {
-                                    Main.warn(x);
-                                } catch (NullPointerException x) {
                                     Main.warn(x);
                                 } finally {
                                     if (ds != null) {

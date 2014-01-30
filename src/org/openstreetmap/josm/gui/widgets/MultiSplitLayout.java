@@ -244,12 +244,6 @@ public class MultiSplitLayout implements LayoutManager {
 
     }
 
-    private Dimension minimumComponentSize(Node node) {
-        Component child = childForNode(node);
-        return (child != null) ? child.getMinimumSize() : new Dimension(0, 0);
-
-    }
-
     private Dimension preferredNodeSize(Node root) {
         if (root instanceof Leaf)
             return preferredComponentSize(root);

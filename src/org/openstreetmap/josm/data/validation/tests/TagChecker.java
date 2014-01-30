@@ -284,9 +284,10 @@ public class TagChecker extends Test.TagTest {
     }
 
     private static void addPresetValue(TaggingPreset p, KeyedItem ky) {
-        if (ky.key != null && ky.getValues() != null) {
+        Collection<String> values = ky.getValues();
+        if (ky.key != null && values != null) {
             try {
-                presetsValueData.putAll(ky.key, ky.getValues());
+                presetsValueData.putAll(ky.key, values);
             } catch (NullPointerException e) {
                 Main.error(p+": Unable to initialize "+ky);
             }

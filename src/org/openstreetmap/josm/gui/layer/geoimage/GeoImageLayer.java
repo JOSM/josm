@@ -195,12 +195,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     File[] children = f.listFiles(JpegFileFilter.getInstance());
                     if (children != null) {
                         progressMonitor.subTask(tr("Scanning directory {0}", f.getPath()));
-                        try {
-                            addRecursiveFiles(files, Arrays.asList(children));
-                        } catch(NullPointerException npe) {
-                            Main.error(npe);
-                            rememberError(tr("Found null file in directory {0}\n", f.getPath()));
-                        }
+                        addRecursiveFiles(files, Arrays.asList(children));
                     } else {
                         rememberError(tr("Error while getting files from directory {0}\n", f.getPath()));
                     }
