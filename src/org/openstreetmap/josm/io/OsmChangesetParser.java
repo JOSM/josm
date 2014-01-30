@@ -153,7 +153,8 @@ public final class OsmChangesetParser {
             }
         }
 
-        @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        @Override
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             if (qName.equals("osm")) {
                 if (atts == null) {
                     throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", "osm"));
@@ -214,7 +215,7 @@ public final class OsmChangesetParser {
         try {
             progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing list of changesets..."));
-            InputSource inputSource = new InputSource(new InputStreamReader(source, Utils.UTF_8));
+            InputSource inputSource = new InputSource(new InvalidXmlCharacterFilter(new InputStreamReader(source, Utils.UTF_8)));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser.new Parser());
             return parser.getChangesets();
         } catch(ParserConfigurationException e) {
