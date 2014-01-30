@@ -44,6 +44,7 @@ public class ValidateUploadHook implements UploadHook {
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
 
+        OsmValidator.initializeTests();
         Collection<Test> tests = OsmValidator.getEnabledTests(true);
         if (tests.isEmpty())
             return true;
