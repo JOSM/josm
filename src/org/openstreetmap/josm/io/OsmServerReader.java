@@ -86,7 +86,7 @@ public abstract class OsmServerReader extends OsmConnection {
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException {
         return getInputStreamRaw(urlStr, progressMonitor, null);
     }
-    
+
     /**
      * Open a connection to the given url and return a reader on the input stream
      * from that connection. In case of user cancel, return <code>null</code>.
@@ -150,9 +150,8 @@ public abstract class OsmServerReader extends OsmConnection {
                 if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     String errorHeader = activeConnection.getHeaderField("Error");
                     StringBuilder errorBody = new StringBuilder();
-                    try
-                    {
-                        InputStream i = FixEncoding(activeConnection.getErrorStream(), encoding);
+                    try {
+                        InputStream i = fixEncoding(activeConnection.getErrorStream(), encoding);
                         if (i != null) {
                             BufferedReader in = new BufferedReader(new InputStreamReader(i));
                             String s;
@@ -169,7 +168,7 @@ public abstract class OsmServerReader extends OsmConnection {
                     throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString(), url.toString());
                 }
 
-                return FixEncoding(new ProgressInputStream(activeConnection, progressMonitor), encoding);
+                return fixEncoding(new ProgressInputStream(activeConnection, progressMonitor), encoding);
             } catch (OsmTransferException e) {
                 throw e;
             } catch (Exception e) {
@@ -180,12 +179,10 @@ public abstract class OsmServerReader extends OsmConnection {
         }
     }
 
-    private InputStream FixEncoding(InputStream stream, String encoding) throws IOException
-    {
+    private InputStream fixEncoding(InputStream stream, String encoding) throws IOException {
         if ("gzip".equalsIgnoreCase(encoding)) {
             stream = new GZIPInputStream(stream);
-        }
-        else if ("deflate".equalsIgnoreCase(encoding)) {
+        } else if ("deflate".equalsIgnoreCase(encoding)) {
             stream = new InflaterInputStream(stream, new Inflater(true));
         }
         return stream;
