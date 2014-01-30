@@ -1,6 +1,7 @@
 *[access][highway=proposed],
 *[motor_vehicle?][highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street/],
 *[bridge=no],
+*[building=no],
 *[elevation="0"],
 *[layer="0"] {
   /* see #9365 - Useless tag layer=0 */
