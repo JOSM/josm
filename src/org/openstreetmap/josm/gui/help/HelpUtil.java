@@ -183,7 +183,7 @@ public final class HelpUtil {
      * @return instance of help action
      */
     private static Action getHelpAction() {
-        if (Main.main.menu != null) {
+        if (Main.main != null && Main.main.menu != null) {
             return Main.main.menu.help;
         }
         return new HelpAction();
