@@ -372,9 +372,9 @@ abstract public class Main {
      * @since 6642
      */
     public static String getErrorMessage(Throwable t) {
-    	if (t == null) {
-    		return null;
-    	}
+        if (t == null) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder(t.getClass().getName());
         String msg = t.getMessage();
         if (msg != null) {

@@ -41,8 +41,6 @@ public class TagEditorPanel extends JPanel {
     private PresetListPanel presetListPanel;
     private final PresetHandler presetHandler;
 
-    private AutoCompletionManager autocomplete;
-
     /**
      * builds the panel with the table for editing tags
      *
@@ -182,7 +180,7 @@ public class TagEditorPanel extends JPanel {
     public void initAutoCompletion(OsmDataLayer layer) throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
 
-        autocomplete = layer.data.getAutoCompletionManager();
+        AutoCompletionManager autocomplete = layer.data.getAutoCompletionManager();
         AutoCompletionList acList = new AutoCompletionList();
 
         TagCellEditor editor = ((TagCellEditor) tagTable.getColumnModel().getColumn(0).getCellEditor());

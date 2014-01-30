@@ -44,12 +44,10 @@ public class LanguagePreference implements SubPreferenceSetting {
 
     /** the combo box with the available locales */
     private JosmComboBox langCombo;
-    /** the model for the combo box */
-    private LanguageComboBoxModel model;
 
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
-        model = new LanguageComboBoxModel();
+        LanguageComboBoxModel model = new LanguageComboBoxModel();
         // Selecting the language BEFORE the JComboBox listens to model changes speed up initialization by ~35ms (see #7386)
         // See http://stackoverflow.com/questions/3194958/fast-replacement-for-jcombobox-basiccomboboxui
         model.selectLanguage(Main.pref.get("language"));

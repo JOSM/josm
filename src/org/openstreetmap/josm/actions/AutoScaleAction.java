@@ -172,14 +172,6 @@ public class AutoScaleAction extends JosmAction {
         autoScale();
     }
 
-    protected Layer getActiveLayer() {
-        try {
-            return Main.map.mapView.getActiveLayer();
-        } catch(NullPointerException e) {
-            return null;
-        }
-    }
-
     /**
      * Replies the first selected layer in the layer list dialog. null, if no
      * such layer exists, either because the layer list dialog is not yet created
@@ -207,7 +199,7 @@ public class AutoScaleAction extends JosmAction {
                 l.visitBoundingBox(v);
             }
         } else if (mode.equals("layer")) {
-            if (getActiveLayer() == null)
+            if (Main.main.getActiveLayer() == null)
                 return null;
             // try to zoom to the first selected layer
             Layer l = getFirstSelectedLayer();

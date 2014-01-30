@@ -108,9 +108,6 @@ public class LayerListDialog extends ToggleDialog {
     /** the model for the layer list */
     private LayerListModel model;
 
-    /** the selection model */
-    private DefaultListSelectionModel selectionModel;
-
     /** the list of layers (technically its a JTable, but appears like a list) */
     private LayerList layerList;
 
@@ -164,7 +161,7 @@ public class LayerListDialog extends ToggleDialog {
 
         // create the models
         //
-        selectionModel = new DefaultListSelectionModel();
+        DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         model = new LayerListModel(selectionModel);
 
