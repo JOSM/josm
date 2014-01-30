@@ -47,55 +47,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         List<TileSource> getTileSources();
     }
 
-    public static class RenamedSourceDecorator implements TileSource {
-
-        private final TileSource source;
-        private final String name;
-
-        public RenamedSourceDecorator(TileSource source, String name) {
-            this.source = source;
-            this.name = name;
-        }
-
-        @Override public String getName() {
-            return name;
-        }
-
-        @Override public int getMaxZoom() { return source.getMaxZoom(); }
-
-        @Override public int getMinZoom() { return source.getMinZoom(); }
-
-        @Override public int getTileSize() { return source.getTileSize(); }
-
-        @Override public String getTileType() { return source.getTileType(); }
-
-        @Override public TileUpdate getTileUpdate() { return source.getTileUpdate(); }
-
-        @Override public String getTileUrl(int zoom, int tilex, int tiley) throws IOException { return source.getTileUrl(zoom, tilex, tiley); }
-
-        @Override public boolean requiresAttribution() { return source.requiresAttribution(); }
-
-        @Override public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) { return source.getAttributionText(zoom, topLeft, botRight); }
-
-        @Override public String getAttributionLinkURL() { return source.getAttributionLinkURL(); }
-
-        @Override public Image getAttributionImage() { return source.getAttributionImage(); }
-
-        @Override public String getAttributionImageURL() { return source.getAttributionImageURL(); }
-
-        @Override public String getTermsOfUseText() { return source.getTermsOfUseText(); }
-
-        @Override public String getTermsOfUseURL() { return source.getTermsOfUseURL(); }
-
-        @Override public double latToTileY(double lat, int zoom) { return source.latToTileY(lat,zoom); }
-
-        @Override public double lonToTileX(double lon, int zoom) { return source.lonToTileX(lon,zoom); }
-
-        @Override public double tileYToLat(int y, int zoom) { return source.tileYToLat(y, zoom); }
-
-        @Override public double tileXToLon(int x, int zoom) { return source.tileXToLon(x, zoom); }
-    }
-
     /**
      * TMS TileSource provider for the slippymap chooser
      */
@@ -153,11 +104,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
             @Override
             public List<TileSource> getTileSources() {
                 return Arrays.<TileSource>asList(
-                        new RenamedSourceDecorator(new OsmTileSource.Mapnik(), "Mapnik"),
-                        new RenamedSourceDecorator(new OsmTileSource.CycleMap(), "Cyclemap"),
-                        new RenamedSourceDecorator(new MapQuestOsmTileSource(), "MapQuest-OSM"),
-                        new RenamedSourceDecorator(new MapQuestOpenAerialTileSource(), "MapQuest Open Aerial")
-                        );
+                        new OsmTileSource.Mapnik(),
+                        new OsmTileSource.CycleMap(),
+                        new MapQuestOsmTileSource(),
+                        new MapQuestOpenAerialTileSource());
             }
         });
         addTileSourceProvider(new TMSTileSourceProvider());
