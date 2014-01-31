@@ -606,7 +606,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         Map<Relation, MemberInfo> roles = new HashMap<Relation, MemberInfo>();
         for (OsmPrimitive primitive: newSel) {
-            for (OsmPrimitive ref: primitive.getReferrers()) {
+            for (OsmPrimitive ref: primitive.getReferrers(true)) {
                 if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
                     Relation r = (Relation) ref;
                     MemberInfo mi = roles.get(r);
