@@ -34,11 +34,14 @@ public abstract class TaggingPresetItem {
     /**
      * Called by {@link TaggingPreset#createPanel} during tagging preset panel creation.
      * All components defining this tagging preset item must be added to given panel.
+     *
      * @param p The panel where components must be added
      * @param sel The related selected OSM primitives
+     * @param presetInitiallyMatches Whether this {@link TaggingPreset} already matched before applying,
+     *                               i.e. whether the map feature already existed on the primitive.
      * @return {@code true} if this item adds semantic tagging elements, {@code false} otherwise.
      */
-    abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel);
+    abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches);
 
     /**
      * Adds the new tags to apply to selected OSM primitives when the preset holding this item is applied.

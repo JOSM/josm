@@ -351,7 +351,7 @@ public final class TaggingPresetItems {
     public static class Label extends TaggingPresetTextItem {
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             initializeLocaleText(null);
             p.add(new JLabel(locale_text), GBC.eol());
             return false;
@@ -371,7 +371,7 @@ public final class TaggingPresetItems {
         public String locale_href;
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             initializeLocaleText(tr("More information about this feature"));
             String url = locale_href;
             if (url == null) {
@@ -396,7 +396,7 @@ public final class TaggingPresetItems {
         public String preset_name = "";
 
         @Override
-        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             final String presetName = preset_name;
             final TaggingPreset t = Utils.filter(TaggingPresetPreference.taggingPresets, new Predicate<TaggingPreset>() {
                 @Override
@@ -426,7 +426,7 @@ public final class TaggingPresetItems {
         public final List<Role> roles = new LinkedList<Role>();
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             p.add(new JLabel(" "), GBC.eol()); // space
             if (!roles.isEmpty()) {
                 JPanel proles = new JPanel(new GridBagLayout());
@@ -451,7 +451,7 @@ public final class TaggingPresetItems {
 
         // TODO: Draw a box around optional stuff
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             initializeLocaleText(tr("Optional Attributes:"));
             p.add(new JLabel(" "), GBC.eol()); // space
             p.add(new JLabel(locale_text), GBC.eol());
@@ -463,7 +463,7 @@ public final class TaggingPresetItems {
     public static class Space extends TaggingPresetItem {
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             p.add(new JLabel(" "), GBC.eol()); // space
             return false;
         }
@@ -485,7 +485,7 @@ public final class TaggingPresetItems {
     public static class ItemSeparator extends TaggingPresetItem {
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             p.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
             return false;
         }
@@ -539,7 +539,7 @@ public final class TaggingPresetItems {
         public String value;
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             return false;
         }
 
@@ -577,7 +577,7 @@ public final class TaggingPresetItems {
 
         private JComponent value;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
 
             // find out if our key is already used in the selection.
             Usage usage = determineTextUsage(sel, key);
@@ -596,7 +596,7 @@ public final class TaggingPresetItems {
                 }
                 else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default values feature is enabled
-                    if (!"false".equals(use_last_as_default) && lastValue.containsKey(key) && !TaggingPreset.presetInitiallyMatches) {
+                    if (!"false".equals(use_last_as_default) && lastValue.containsKey(key) && !presetInitiallyMatches) {
                         textField.setText(lastValue.get(key));
                     } else {
                         textField.setText(default_);
@@ -759,13 +759,13 @@ public final class TaggingPresetItems {
         public final List<Check> checks = new LinkedList<Check>();
 
         @Override
-        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             Integer cols = Integer.valueOf(columns);
             int rows = (int) Math.ceil(checks.size()/cols.doubleValue());
             JPanel panel = new JPanel(new GridLayout(rows, cols));
 
             for (Check check : checks) {
-                check.addToPanel(panel, sel);
+                check.addToPanel(panel, sel, presetInitiallyMatches);
             }
 
             p.add(panel, GBC.eol());
@@ -796,7 +796,7 @@ public final class TaggingPresetItems {
         private QuadStateCheckBox.State initialState;
         private boolean def;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
 
             // find out if our key is already used in the selection.
             Usage usage = determineBooleanUsage(sel, key);
@@ -911,7 +911,7 @@ public final class TaggingPresetItems {
         protected Object originalValue;
 
         protected abstract Object getSelectedItem();
-        protected abstract void addToPanelAnchor(JPanel p, String def);
+        protected abstract void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches);
 
         protected char getDelChar() {
             return delimiter.isEmpty() ? ';' : delimiter.charAt(0);
@@ -934,7 +934,7 @@ public final class TaggingPresetItems {
         }
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
 
             initListEntries();
 
@@ -945,7 +945,7 @@ public final class TaggingPresetItems {
             }
 
             p.add(new JLabel(tr("{0}:", locale_text)), GBC.std().insets(0, 0, 10, 0));
-            addToPanelAnchor(p, default_);
+            addToPanelAnchor(p, default_, presetInitiallyMatches);
 
             return true;
 
@@ -1180,7 +1180,7 @@ public final class TaggingPresetItems {
         }
 
         @Override
-        protected void addToPanelAnchor(JPanel p, String def) {
+        protected void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches) {
             if (!usage.unused()) {
                 for (String s : usage.values) {
                     if (!lhm.containsKey(s)) {
@@ -1226,7 +1226,7 @@ public final class TaggingPresetItems {
             } else if (usage.unused()) {
                 // all items were unset (and so is default)
                 originalValue = lhm.get("");
-                if ("force".equals(use_last_as_default) && lastValue.containsKey(key) && !TaggingPreset.presetInitiallyMatches) {
+                if ("force".equals(use_last_as_default) && lastValue.containsKey(key) && !presetInitiallyMatches) {
                     combo.setSelectedItem(lhm.get(lastValue.get(key)));
                 } else {
                     combo.setSelectedItem(originalValue);
@@ -1259,7 +1259,7 @@ public final class TaggingPresetItems {
         protected ConcatenatingJList list;
 
         @Override
-        protected void addToPanelAnchor(JPanel p, String def) {
+        protected void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches) {
             list = new ConcatenatingJList(delimiter, lhm.values().toArray());
             component = list;
             ListCellRenderer renderer = getListCellRenderer();

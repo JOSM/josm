@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -40,7 +39,6 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
@@ -219,6 +217,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(pp, GBC.eol());
         }
 
+        boolean presetInitiallyMatches = !selected.isEmpty() && Utils.forAll(selected, this);
         JPanel items = new JPanel(new GridBagLayout());
         for (TaggingPresetItem i : data){
             if(i instanceof Link) {
@@ -226,7 +225,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             } else if (i instanceof TaggingPresetItems.PresetLink) {
                 presetLink.add(i);
             } else {
-                if(i.addToPanel(items, selected)) {
+                if(i.addToPanel(items, selected, presetInitiallyMatches)) {
                     p.hasElements = true;
                 }
             }
@@ -239,14 +238,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         // add PresetLink
         if (!presetLink.isEmpty()) {
             p.add(new JLabel(tr("Edit also …")), GBC.eol().insets(0, 8, 0, 0));
-        }
-        for(TaggingPresetItem link : presetLink) {
-            link.addToPanel(p, selected);
+            for(TaggingPresetItem link : presetLink) {
+                link.addToPanel(p, selected, presetInitiallyMatches);
+            }
         }
 
         // add Link
         for(TaggingPresetItem link : l) {
-            link.addToPanel(p, selected);
+            link.addToPanel(p, selected, presetInitiallyMatches);
         }
 
         return p;
@@ -274,15 +273,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return null;
     }
 
-    static boolean presetInitiallyMatches = false;
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (Main.main == null) return;
         if (Main.main.getCurrentDataSet() == null) return;
 
         Collection<OsmPrimitive> sel = createSelection(Main.main.getCurrentDataSet().getSelected());
-        presetInitiallyMatches = !sel.isEmpty() && Utils.forAll(sel, this);
         int answer = showDialog(sel, supportsRelation());
 
         if (!sel.isEmpty() && answer == DIALOG_ANSWER_APPLY) {
