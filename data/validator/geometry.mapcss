@@ -1,6 +1,7 @@
 /* {0} on a node */
 node[oneway],
 node[bridge?],
+node[landuse],
 node[source:geometry],
 node[source:outline] {
   throwWarning: tr("{0} on a node", "{0.key}");
