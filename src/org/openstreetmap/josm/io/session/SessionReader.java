@@ -184,8 +184,7 @@ public class SessionReader {
             } else if (inZipPath != null) {
                 ZipEntry entry = zipFile.getEntry(inZipPath);
                 if (entry != null) {
-                    InputStream is = zipFile.getInputStream(entry);
-                    return is;
+                    return zipFile.getInputStream(entry);
                 }
             }
             throw new IOException(tr("Unable to locate file  ''{0}''.", uriStr));
@@ -310,7 +309,9 @@ public class SessionReader {
                 try {
                     LatLon centerLL = new LatLon(Double.parseDouble(centerEl.getAttribute("lat")), Double.parseDouble(centerEl.getAttribute("lon")));
                     center = Projections.project(centerLL);
-                } catch (NumberFormatException ex) {}
+                } catch (NumberFormatException ex) {
+                    Main.warn(ex);
+                }
             }
             if (center != null) {
                 Element scaleEl = getElementByTagName(viewportEl, "scale");
@@ -328,7 +329,9 @@ public class SessionReader {
                         double meterPerEasting = ll1.greatCircleDistance(ll2) / dist / 2;
                         double scale = meterPerPixel / meterPerEasting; // unit: easting per pixel
                         viewport = new ViewportData(center, scale);
-                    } catch (NumberFormatException ex) {}
+                    } catch (NumberFormatException ex) {
+                        Main.warn(ex);
+                    }
                 }
             }
         }
@@ -343,7 +346,7 @@ public class SessionReader {
             Main.warn("Unsupported value for 'active' layer attribute. Ignoring it. Error was: "+e.getMessage());
             active = -1;
         }
-        
+
         MultiMap<Integer, Integer> deps = new MultiMap<Integer, Integer>();
         Map<Integer, Element> elems = new HashMap<Integer, Element>();
 
@@ -361,7 +364,9 @@ public class SessionReader {
                     Integer idx = null;
                     try {
                         idx = Integer.parseInt(e.getAttribute("index"));
-                    } catch (NumberFormatException ex) {}
+                    } catch (NumberFormatException ex) {
+                        Main.warn(ex);
+                    }
                     if (idx == null) {
                         error(tr("unexpected format of attribute ''index'' for element ''layer''"));
                     }
@@ -590,10 +595,10 @@ public class SessionReader {
     }
 
     private void loadSession(InputStream josIS, URI sessionFileURI, boolean zip, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
-        
+
         this.sessionFileURI = sessionFileURI;
         this.zip = zip;
-        
+
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setValidating(false);

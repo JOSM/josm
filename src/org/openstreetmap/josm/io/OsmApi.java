@@ -171,6 +171,7 @@ public class OsmApi extends OsmConnection {
         try {
             host = (new URL(serverUrl)).getHost();
         } catch (MalformedURLException e) {
+            Main.warn(e);
         }
         return host;
     }

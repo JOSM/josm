@@ -73,8 +73,8 @@ public class CreateMultipolygonAction extends JosmAction {
     private static String getName(boolean update) {
         return update ? tr("Update multipolygon") : tr("Create multipolygon");
     }
-    
-    private class CreateUpdateMultipolygonTask implements Runnable {
+
+    private static class CreateUpdateMultipolygonTask implements Runnable {
         private final Collection<Way> selectedWays;
         private final Relation multipolygonRelation;
 

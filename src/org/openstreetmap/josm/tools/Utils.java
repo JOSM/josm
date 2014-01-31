@@ -293,7 +293,7 @@ public final class Utils {
         }
         return null;
     }
-    
+
     /**
      * Copies the given array. Unlike {@link Arrays#copyOf}, this method is null-safe.
      * @param array The array to copy
@@ -306,7 +306,7 @@ public final class Utils {
         }
         return null;
     }
-    
+
     /**
      * Simple file copy function that will overwrite the target file.<br/>
      * Taken from <a href="http://www.rgagnon.com/javadetails/java-0064.html">this article</a> (CC-NC-BY-SA)
@@ -385,7 +385,7 @@ public final class Utils {
             Main.warn(e);
         }
     }
-    
+
     /**
      * Converts the given file to its URL.
      * @param f The file to get URL from
@@ -456,8 +456,7 @@ public final class Utils {
         }
         try {
             if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                String text = (String) t.getTransferData(DataFlavor.stringFlavor);
-                return text;
+                return (String) t.getTransferData(DataFlavor.stringFlavor);
             }
         } catch (UnsupportedFlavorException ex) {
             Main.error(ex);
@@ -779,9 +778,9 @@ public final class Utils {
 
     /**
      * Runs an external command and returns the standard output.
-     * 
+     *
      * The program is expected to execute fast.
-     * 
+     *
      * @param command the command with arguments
      * @return the output
      * @throws IOException when there was an error, e.g. command does not exist
@@ -944,7 +943,7 @@ public final class Utils {
         }
         return result;
     }
-    
+
     /**
      * Adds the given item at the end of a new copy of given array.
      * @param array The source array

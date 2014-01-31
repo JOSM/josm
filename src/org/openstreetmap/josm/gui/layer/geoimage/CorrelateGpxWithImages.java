@@ -89,6 +89,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
     double timezone;
     long delta;
 
+    /**
+     * Constructs a new {@code CorrelateGpxWithImages} action.
+     * @param layer The image layer
+     */
     public CorrelateGpxWithImages(GeoImageLayer layer) {
         super(tr("Correlate to GPX"), ImageProvider.get("dialogs/geoimage/gpx2img"));
         this.yLayer = layer;
@@ -1014,7 +1018,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         try {
                             firstGPXDate = dateParser.parse(curDateWpStr).getTime()/1000;
                             break outer;
-                        } catch(Exception e) {}
+                        } catch(Exception e) {
+                            Main.warn(e);
+                        }
                     }
                 }
             }
@@ -1169,7 +1175,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
         return null;
     }
-    
+
     private int matchPoints(List<ImageEntry> images, WayPoint prevWp, long prevWpTime,
             WayPoint curWp, long curWpTime, long offset) {
         // Time between the track point and the previous one, 5 sec if first point, i.e. photos take
@@ -1235,7 +1241,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 break;
             }
 
-            if (curImg.tmp.getPos() == null) {
+            if (curImg.tmp.getPos() == null && prevWp != null) {
                 // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless variable
                 double timeDiff = (double)(imgTime - prevWpTime) / interval;
                 curImg.tmp.setPos(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));

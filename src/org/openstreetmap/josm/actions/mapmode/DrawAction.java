@@ -271,6 +271,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         } catch (SecurityException ex) {
+            Main.warn(ex);
         }
 
         // when exiting we let everybody know about the currently selected

@@ -50,8 +50,8 @@ public class ImageDisplay extends JComponent {
 
     private String osdText = null;
 
-    private static int DRAG_BUTTON = Main.pref.getBoolean("geoimage.agpifo-style-drag-and-zoom", false) ? 1 : 3;
-    private static int ZOOM_BUTTON = DRAG_BUTTON == 1 ? 3 : 1;
+    private static final int DRAG_BUTTON = Main.pref.getBoolean("geoimage.agpifo-style-drag-and-zoom", false) ? 1 : 3;
+    private static final int ZOOM_BUTTON = DRAG_BUTTON == 1 ? 3 : 1;
 
     /** The thread that reads the images. */
     private class LoadImageRunnable implements Runnable {

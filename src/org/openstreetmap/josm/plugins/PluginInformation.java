@@ -321,9 +321,8 @@ public class PluginInformation {
     public Class<?> loadClass(ClassLoader classLoader) throws PluginException {
         if (className == null)
             return null;
-        try{
-            Class<?> realClass = Class.forName(className, true, classLoader);
-            return realClass;
+        try {
+            return Class.forName(className, true, classLoader);
         } catch (ClassNotFoundException e) {
             throw new PluginException(name, e);
         } catch (ClassCastException e) {
@@ -380,8 +379,7 @@ public class PluginInformation {
         for (String s : locations) {
             File pluginFile = new File(s, pluginName + ".jar");
             if (pluginFile.exists()) {
-                PluginInformation info = new PluginInformation(pluginFile);
-                return info;
+                return new PluginInformation(pluginFile);
             }
         }
         return null;

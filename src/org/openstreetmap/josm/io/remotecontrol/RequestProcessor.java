@@ -104,8 +104,7 @@ public class RequestProcessor extends Thread {
      */
     private static void addRequestHandlerClass(String command,
                 Class<? extends RequestHandler> handler, boolean silent) {
-        if(command.charAt(0) == '/')
-        {
+        if(command.charAt(0) == '/') {
             command = command.substring(1);
         }
         String commandWithSlash = "/" + command;
@@ -245,6 +244,7 @@ public class RequestProcessor extends Thread {
             try {
                 sendError(out);
             } catch (IOException e1) {
+                Main.warn(e1);
             }
         } finally {
             try {
@@ -362,12 +362,12 @@ public class RequestProcessor extends Thread {
         if (endHeaders)
             out.write("\r\n");
     }
-    
+
     public static String getHandlersInfoAsJSON() {
         StringBuilder r = new StringBuilder();
         boolean first = true;
         r.append("[");
-        
+
         for (Entry<String, Class<? extends RequestHandler>> p : handlers.entrySet()) {
             if (first) {
                 first = false;
@@ -423,7 +423,7 @@ public class RequestProcessor extends Thread {
                 r.append(optional[i]).append('\"');
             }
         }
-        
+
         r.append("], \"examples\" : [");
         String[] examples = handler.getUsageExamples(cmd.substring(1));
         if (examples != null) {
@@ -443,6 +443,7 @@ public class RequestProcessor extends Thread {
             try {
                 w.close();
             } catch (IOException ex) {
+                Main.warn(ex);
             }
         }
     }

@@ -135,7 +135,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     /** The cursor for the 'alwaysCreateNodes' submode. */
     private final Cursor cursorCreateNodes;
 
-    private class ReferenceSegment {
+    private static class ReferenceSegment {
         public final EastNorth en;
         public final EastNorth p1;
         public final EastNorth p2;

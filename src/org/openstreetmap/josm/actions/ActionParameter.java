@@ -41,7 +41,6 @@ public abstract class ActionParameter<T> {
         public String writeToString(String value) {
             return value;
         }
-
     }
 
     public static class SearchSettingsActionParameter extends ActionParameter<SearchSetting> {
@@ -57,8 +56,7 @@ public abstract class ActionParameter<T> {
 
         @Override
         public SearchSetting readFromString(String s) {
-            SearchSetting result = SearchSetting.readFromString(s);
-            return result;
+            return SearchSetting.readFromString(s);
         }
 
         @Override
@@ -67,6 +65,5 @@ public abstract class ActionParameter<T> {
                 return "";
             return value.writeToString();
         }
-
     }
 }

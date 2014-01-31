@@ -391,8 +391,7 @@ public class ElemStyles {
                 s.apply(mc, r, 1, null, false);
             }
         }
-        T res = mc.getCascade("default").get(key, def, c);
-        return res;
+        return mc.getCascade("default").get(key, def, c);
     }
 
     public boolean isDrawMultipolygon() {

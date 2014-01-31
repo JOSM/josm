@@ -18,11 +18,9 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
@@ -34,7 +32,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 3707
  */
 public class LoadAndZoomHandler extends RequestHandler {
-    
+
     /**
      * The remote control command name used to load data and zoom.
      */
@@ -52,7 +50,7 @@ public class LoadAndZoomHandler extends RequestHandler {
     private double maxlon;
 
     // Optional argument 'select'
-    private final HashSet<SimplePrimitiveId> toSelect = new HashSet<SimplePrimitiveId>();
+    private final Set<SimplePrimitiveId> toSelect = new HashSet<SimplePrimitiveId>();
 
     @Override
     public String getPermissionMessage() {
@@ -83,7 +81,7 @@ public class LoadAndZoomHandler extends RequestHandler {
     public String[] getUsageExamples() {
         return getUsageExamples(myCommand);
     }
-    
+
     @Override
     public String[] getUsageExamples(String cmd) {
         if (command.equals(cmd)) {
@@ -162,7 +160,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
                 @Override
                 public void run() {
-                    HashSet<OsmPrimitive> newSel = new HashSet<OsmPrimitive>();
+                    Set<OsmPrimitive> newSel = new HashSet<OsmPrimitive>();
                     DataSet ds = Main.main.getCurrentDataSet();
                     if(ds == null) // e.g. download failed
                         return;
@@ -248,7 +246,7 @@ public class LoadAndZoomHandler extends RequestHandler {
         } catch (NumberFormatException e) {
             throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+")");
         }
-        
+
         // Current API 0.6 check: "The latitudes must be between -90 and 90"
         if (!LatLon.isValidLat(minlat) || !LatLon.isValidLat(maxlat)) {
             throw new RequestHandlerBadRequestException(tr("The latitudes must be between {0} and {1}", -90d, 90d));

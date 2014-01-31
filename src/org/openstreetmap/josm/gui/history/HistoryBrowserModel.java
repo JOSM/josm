@@ -524,8 +524,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             if (latest == null) return null;
             OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer == null) return null;
-            OsmPrimitive p = editLayer.data.getPrimitiveById(latest.getId(), latest.getType());
-            return p;
+            return editLayer.data.getPrimitiveById(latest.getId(), latest.getType());
         }
 
         @Override
