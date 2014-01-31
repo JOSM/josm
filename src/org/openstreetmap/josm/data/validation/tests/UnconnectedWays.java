@@ -166,13 +166,15 @@ public abstract class UnconnectedWays extends Test {
         dsArea = Main.main == null || !Main.main.hasEditLayer() ? null : Main.main.getCurrentDataSet().getDataSourceArea();
     }
 
-    @Override
-    public void endTest() {
+    protected Map<Node, Way> getWayEndNodesNearOtherHighway() {
         Map<Node, Way> map = new HashMap<Node, Way>();
         for (int iter = 0; iter < 1; iter++) {
             for (MyWaySegment s : ways) {
-                Collection<Node> nearbyNodes = s.nearbyNodes(mindist);
-                for (Node en : nearbyNodes) {
+                if (isCanceled()) {
+                    map.clear();
+                    return map;
+                }
+                for (Node en : s.nearbyNodes(mindist)) {
                     if (en == null || !s.highway || !endnodes_highway.contains(en)) {
                         continue;
                     }
@@ -190,21 +192,18 @@ public abstract class UnconnectedWays extends Test {
                     }
                     map.put(en, s.w);
                 }
-                if(isCanceled())
-                    return;
             }
         }
-        for (Map.Entry<Node, Way> error : map.entrySet()) {
-            errors.add(new TestError(this, Severity.WARNING,
-                    tr("Way end node near other highway"),
-                    UNCONNECTED_WAYS,
-                    Arrays.asList(error.getKey(), error.getValue()),
-                    Arrays.asList(error.getKey())));
-        }
-        map.clear();
+        return map;
+    }
+
+    protected Map<Node, Way> getWayEndNodesNearOtherWay() {
+        Map<Node, Way> map = new HashMap<Node, Way>();
         for (MyWaySegment s : ways) {
-            if(isCanceled())
-                return;
+            if (isCanceled()) {
+                map.clear();
+                return map;
+            }
             for (Node en : s.nearbyNodes(mindist)) {
                 if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
                     continue;
@@ -216,57 +215,65 @@ public abstract class UnconnectedWays extends Test {
                 }
             }
         }
-        for (Map.Entry<Node, Way> error : map.entrySet()) {
-            errors.add(new TestError(this, Severity.WARNING,
-                    tr("Way end node near other way"),
-                    UNCONNECTED_WAYS,
+        return map;
+    }
+
+    protected Map<Node, Way> getWayNodesNearOtherWay() {
+        Map<Node, Way> map = new HashMap<Node, Way>();
+        for (MyWaySegment s : ways) {
+            if (isCanceled()) {
+                map.clear();
+                return map;
+            }
+            for (Node en : s.nearbyNodes(minmiddledist)) {
+                if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                    continue;
+                }
+                if (!middlenodes.contains(en)) {
+                    continue;
+                }
+                map.put(en, s.w);
+            }
+        }
+        return map;
+    }
+
+    protected Map<Node, Way> getConnectedWayEndNodesNearOtherWay() {
+        Map<Node, Way> map = new HashMap<Node, Way>();
+        for (MyWaySegment s : ways) {
+            if (isCanceled()) {
+                map.clear();
+                return map;
+            }
+            for (Node en : s.nearbyNodes(minmiddledist)) {
+                if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                    continue;
+                }
+                if (!othernodes.contains(en)) {
+                    continue;
+                }
+                map.put(en, s.w);
+            }
+        }
+        return map;
+    }
+
+    protected final void addErrors(Severity severity, Map<Node, Way> errorMap, String message) {
+        for (Map.Entry<Node, Way> error : errorMap.entrySet()) {
+            errors.add(new TestError(this, severity, message, UNCONNECTED_WAYS,
                     Arrays.asList(error.getKey(), error.getValue()),
                     Arrays.asList(error.getKey())));
         }
+    }
+
+    @Override
+    public void endTest() {
+        addErrors(Severity.WARNING, getWayEndNodesNearOtherHighway(), tr("Way end node near other highway"));
+        addErrors(Severity.WARNING, getWayEndNodesNearOtherWay(), tr("Way end node near other way"));
         /* the following two use a shorter distance */
         if (minmiddledist > 0.0) {
-            map.clear();
-            for (MyWaySegment s : ways) {
-                if(isCanceled())
-                    return;
-                for (Node en : s.nearbyNodes(minmiddledist)) {
-                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                        continue;
-                    }
-                    if (!middlenodes.contains(en)) {
-                        continue;
-                    }
-                    map.put(en, s.w);
-                }
-            }
-            for (Map.Entry<Node, Way> error : map.entrySet()) {
-                errors.add(new TestError(this, Severity.OTHER,
-                        tr("Way node near other way"),
-                        UNCONNECTED_WAYS,
-                        Arrays.asList(error.getKey(), error.getValue()),
-                        Arrays.asList(error.getKey())));
-            }
-            map.clear();
-            for (MyWaySegment s : ways) {
-                for (Node en : s.nearbyNodes(minmiddledist)) {
-                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                        continue;
-                    }
-                    if(isCanceled())
-                        return;
-                    if (!othernodes.contains(en)) {
-                        continue;
-                    }
-                    map.put(en, s.w);
-                }
-            }
-            for (Map.Entry<Node, Way> error : map.entrySet()) {
-                errors.add(new TestError(this, Severity.OTHER,
-                        tr("Connected way end node near other way"),
-                        UNCONNECTED_WAYS,
-                        Arrays.asList(error.getKey(), error.getValue()),
-                        Arrays.asList(error.getKey())));
-            }
+            addErrors(Severity.OTHER, getWayNodesNearOtherWay(), tr("Way node near other way"));
+            addErrors(Severity.OTHER, getConnectedWayEndNodesNearOtherWay(), tr("Connected way end node near other way"));
         }
         ways = null;
         endnodes = null;
