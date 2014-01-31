@@ -272,9 +272,10 @@ public final class I18n {
                 return trans;
         }
         if(pstrings != null) {
+            i = pluralEval(1);
             String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
-            if(trans != null)
-                return trans[0];
+            if(trans != null && trans.length > i)
+                return trans[i];
         }
         return lazy ? gettext(text, null) : text;
     }
