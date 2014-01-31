@@ -68,8 +68,7 @@ public class OsmServerHistoryReader extends OsmServerReader {
                 return null;
             progressMonitor.indeterminateSubTask(tr("Downloading history..."));
             final OsmHistoryReader reader = new OsmHistoryReader(in);
-            HistoryDataSet data = reader.parse(progressMonitor.createSubTaskMonitor(1, true));
-            return data;
+            return reader.parse(progressMonitor.createSubTaskMonitor(1, true));
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {

@@ -40,8 +40,6 @@ public class ThumbsLoader implements Runnable {
         for (int i = 0; i < data.size(); i++) {
             if (stop) return;
 
-            System.err.print("fetching image "+i);
-
             data.get(i).thumbnail = loadThumb(data.get(i));
 
             if (Main.isDisplayingMapView()) {

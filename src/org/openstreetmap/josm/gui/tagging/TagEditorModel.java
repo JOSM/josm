@@ -237,11 +237,11 @@ public class TagEditorModel extends AbstractTableModel {
 
     public TagModel get(int idx) {
         if (idx >= tags.size()) return null;
-        TagModel tagModel = tags.get(idx);
-        return tagModel;
+        return tags.get(idx);
     }
 
-    @Override public boolean isCellEditable(int row, int col) {
+    @Override
+    public boolean isCellEditable(int row, int col) {
         // all cells are editable
         return true;
     }
@@ -483,11 +483,7 @@ public class TagEditorModel extends AbstractTableModel {
         if (tag.getName().trim().isEmpty())
             return null;
 
-        String newkey = tag.getName();
-        String newvalue = tag.getValue();
-
-        ChangePropertyCommand command = new ChangePropertyCommand(primitives,newkey, newvalue);
-        return command;
+        return new ChangePropertyCommand(primitives, tag.getName(), tag.getValue());
     }
 
     protected Command createDeleteTagsCommand(Collection<OsmPrimitive> primitives) {

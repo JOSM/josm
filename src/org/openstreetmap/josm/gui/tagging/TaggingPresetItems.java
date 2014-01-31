@@ -69,7 +69,7 @@ import org.xml.sax.SAXException;
  */
 public final class TaggingPresetItems {
     private TaggingPresetItems() {    }
-    
+
     private static int auto_increment_selected = 0;
     public static final String DIFFERENT = tr("<different>");
 
@@ -78,7 +78,7 @@ public final class TaggingPresetItems {
     // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
     private static final Map<String,EnumSet<TaggingPresetType>> typeCache =
             new LinkedHashMap<String, EnumSet<TaggingPresetType>>(16, 1.1f, true);
-    
+
     /**
      * Last value of each key used in presets, used for prefilling corresponding fields
      */
@@ -278,7 +278,7 @@ public final class TaggingPresetItems {
             throw new IllegalArgumentException(type + " is not allowed");
         }
     }
-    
+
     public static class Usage {
         TreeSet<String> values;
         boolean hadKeys = false;
@@ -309,12 +309,12 @@ public final class TaggingPresetItems {
          * The text to display
          */
         public String text;
-        
+
         /**
          * The context used for translating {@link #text}
          */
         public String text_context;
-        
+
         /**
          * The localized version of {@link #text}
          */
@@ -341,7 +341,7 @@ public final class TaggingPresetItems {
                     + (text_context != null ? "text_context=" + text_context + ", " : "")
                     + (locale_text != null ? "locale_text=" + locale_text : "");
         }
-        
+
         @Override
         public String toString() {
             return getClass().getSimpleName() + " [" + fieldsToString() + "]";
@@ -364,7 +364,7 @@ public final class TaggingPresetItems {
          * The link to display
          */
         public String href;
-        
+
         /**
          * The localized version of {@link #href}
          */
@@ -420,7 +420,7 @@ public final class TaggingPresetItems {
         void addCommands(List<Tag> changedTags) {
         }
     }
-    
+
     public static class Roles extends TaggingPresetItem {
 
         public final List<Role> roles = new LinkedList<Role>();
@@ -525,7 +525,7 @@ public final class TaggingPresetItems {
                 throw new IllegalStateException();
             }
         }
-        
+
         @Override
         public String toString() {
             return "KeyedItem [key=" + key + ", text=" + text
@@ -565,7 +565,7 @@ public final class TaggingPresetItems {
                     + "]";
         }
     }
-    
+
     public static class Text extends KeyedItem {
 
         public String locale_text;
@@ -669,8 +669,8 @@ public final class TaggingPresetItems {
                 clearbutton.setVisible(false);
                 clearbutton.setFocusable(false);
                 bg.add(clearbutton);
-                // and its visible counterpart. - this mechanism allows us to 
-                // have *no* button selected after the X is clicked, instead 
+                // and its visible counterpart. - this mechanism allows us to
+                // have *no* button selected after the X is clicked, instead
                 // of the X remaining selected
                 JButton releasebutton = new JButton("X");
                 releasebutton.setToolTipText(tr("Cancel auto-increment for this field"));
@@ -702,7 +702,7 @@ public final class TaggingPresetItems {
                 return null;
             }
         }
-        
+
         @Override
         public void addCommands(List<Tag> changedTags) {
 
@@ -712,7 +712,7 @@ public final class TaggingPresetItems {
                 Main.error("No 'last value' support for component " + value);
                 return;
             }
-            
+
             v = Tag.removeWhiteSpaces(v);
 
             if (!"false".equals(use_last_as_default) || auto_increment != null) {
@@ -747,12 +747,12 @@ public final class TaggingPresetItems {
      * @since 6114
      */
     public static class CheckGroup extends TaggingPresetItem {
-        
+
         /**
          * Number of columns (positive integer)
          */
         public String columns;
-        
+
         /**
          * List of checkboxes
          */
@@ -763,11 +763,11 @@ public final class TaggingPresetItems {
             Integer cols = Integer.valueOf(columns);
             int rows = (int) Math.ceil(checks.size()/cols.doubleValue());
             JPanel panel = new JPanel(new GridLayout(rows, cols));
-            
+
             for (Check check : checks) {
                 check.addToPanel(panel, sel);
             }
-            
+
             p.add(panel, GBC.eol());
             return false;
         }
@@ -989,7 +989,7 @@ public final class TaggingPresetItems {
             char delChar = getDelChar();
 
             String[] value_array = null;
-            
+
             if (values_from != null) {
                 String[] class_method = values_from.split("#");
                 if (class_method != null && class_method.length == 2) {
@@ -997,7 +997,7 @@ public final class TaggingPresetItems {
                         Method method = Class.forName(class_method[0]).getMethod(class_method[1]);
                         // Check method is public static String[] methodName()
                         int mod = method.getModifiers();
-                        if (Modifier.isPublic(mod) && Modifier.isStatic(mod) 
+                        if (Modifier.isPublic(mod) && Modifier.isStatic(mod)
                                 && method.getReturnType().equals(String[].class) && method.getParameterTypes().length == 0) {
                             value_array = (String[]) method.invoke(null);
                         } else {
@@ -1010,7 +1010,7 @@ public final class TaggingPresetItems {
                     }
                 }
             }
-            
+
             if (value_array == null) {
                 value_array = splitEscaped(delChar, values);
             }
@@ -1105,7 +1105,7 @@ public final class TaggingPresetItems {
             return component.requestFocusInWindow();
         }
 
-        private static ListCellRenderer RENDERER = new ListCellRenderer() {
+        private static final ListCellRenderer RENDERER = new ListCellRenderer() {
 
             JLabel lbl = new JLabel();
 
@@ -1367,11 +1367,11 @@ public final class TaggingPresetItems {
         typeCache.put(types, result);
         return result;
     }
-    
+
     static String fixPresetString(String s) {
         return s == null ? s : s.replaceAll("'","''");
     }
-    
+
     /**
      * allow escaped comma in comma separated list:
      * "A\, B\, C,one\, two" --> ["A, B, C", "one, two"]
@@ -1405,7 +1405,7 @@ public final class TaggingPresetItems {
         return result.toArray(new String[result.size()]);
     }
 
-    
+
     static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
         Usage returnValue = new Usage();
         returnValue.values = new TreeSet<String>();

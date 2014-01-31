@@ -32,10 +32,10 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class CustomProjectionChoice extends AbstractProjectionChoice implements SubPrefsOptions {
 
@@ -188,8 +188,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             s.append(listKeys(Projections.nadgrids)+"<br>");
             s.append("<b>+bounds=</b>minlon,minlat,maxlon,maxlat - <i>"+tr("Projection bounds (in degrees)")+"</i><br>");
 
-            HtmlPanel info = new HtmlPanel(s.toString());
-            return info;
+            return new HtmlPanel(s.toString());
         }
 
         private String listKeys(Map<String, ?> map) {

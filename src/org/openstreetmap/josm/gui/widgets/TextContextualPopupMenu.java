@@ -38,7 +38,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
 
     protected JTextComponent component = null;
     protected UndoAction undoAction = null;
-    
+
     protected final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
         @Override public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals("editable")) {
@@ -47,7 +47,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
             }
         }
     };
-    
+
     /**
      * Creates a new {@link TextContextualPopupMenu}.
      */
@@ -73,7 +73,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
         }
         return this;
     }
-    
+
     private void addMenuEntries() {
         if (component.isEditable()) {
             add(new JMenuItem(undoAction));
@@ -88,7 +88,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
         addSeparator();
         addMenuEntry(component, tr("Select All"), DefaultEditorKit.selectAllAction, null);
     }
-    
+
     /**
      * Detaches this contextual menu from its text component.
      * @return {@code this}
@@ -106,11 +106,11 @@ public class TextContextualPopupMenu extends JPopupMenu {
         }
         return this;
     }
-    
+
     /**
      * Creates a new {@link TextContextualPopupMenu} and enables it for the given text component.
      * @param component The component that will display the menu and handle its actions.
-     * @return The {@link PopupMenuLauncher} responsible of displaying the popup menu. 
+     * @return The {@link PopupMenuLauncher} responsible of displaying the popup menu.
      *         Call {@link #disableMenuFor} with this object if you want to disable the menu later.
      * @see #disableMenuFor(JTextComponent, PopupMenuLauncher)
      */
@@ -121,7 +121,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
     }
 
     /**
-     * Disables the {@link TextContextualPopupMenu} attached to the given popup menu launcher and text component. 
+     * Disables the {@link TextContextualPopupMenu} attached to the given popup menu launcher and text component.
      * @param component The component that currently displays the menu and handles its actions.
      * @param launcher The {@link PopupMenuLauncher} obtained via {@link #enableMenuFor}.
      * @see #enableMenuFor(JTextComponent)
@@ -155,11 +155,11 @@ public class TextContextualPopupMenu extends JPopupMenu {
             add(mi);
         }
     }
-    
-    protected class UndoAction extends AbstractAction implements UndoableEditListener {
-        
+
+    protected static class UndoAction extends AbstractAction implements UndoableEditListener {
+
         private final UndoManager undoManager = new UndoManager();
-        
+
         public UndoAction() {
             super(tr("Undo"));
             setEnabled(false);

@@ -276,8 +276,7 @@ public class RelationNodeMap {
     private Integer findAdjacentWay(NodesWays nw, Node n) {
         Set<Integer> adj = nw.nodes.get(n);
         if (adj == null || adj.isEmpty()) return null;
-        Integer j = adj.iterator().next();
-        return j;
+        return adj.iterator().next();
     }
 
     private void deleteWayNode(NodesWays nw, Integer way, Node n){

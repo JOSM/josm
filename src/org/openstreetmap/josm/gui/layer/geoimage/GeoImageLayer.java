@@ -567,6 +567,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 e.setExifOrientation(orientation);
             }
         } catch (MetadataException ex) {
+            Main.debug(ex.getMessage());
         }
 
         if (dirGps == null) {
@@ -583,6 +584,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             }
             e.setElevation(ele);
         } catch (MetadataException ex) {
+            Main.debug(ex.getMessage());
         }
 
         try {
@@ -602,7 +604,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 e.setExifImgDir(direction.doubleValue());
             }
         } catch (Exception ex) { // (CompoundException and other exceptions, e.g. #5271)
-            // Do nothing
+            Main.debug(ex.getMessage());
         }
 
         // Time and date. We can have these cases:

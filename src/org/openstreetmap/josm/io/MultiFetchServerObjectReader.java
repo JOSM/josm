@@ -62,7 +62,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * which should be safe according to the
      * <a href="http://www.boutell.com/newfaq/misc/urllength.html">WWW FAQ</a>.
      */
-    static private int MAX_IDS_PER_REQUEST = 200;
+    private static final int MAX_IDS_PER_REQUEST = 200;
 
     private Set<Long> nodes;
     private Set<Long> ways;

@@ -71,7 +71,7 @@ public class FixDataHook implements UploadHook {
     /**
      * Data fix to remove spaces at begin or end of tags
      */
-    public class FixDataSpace implements FixData {
+    public static class FixDataSpace implements FixData {
         @Override
         public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
             Map<String, String> newKeys = new HashMap<String, String>(keys);
@@ -104,7 +104,7 @@ public class FixDataHook implements UploadHook {
     /**
      * Data fix to cleanup wrong spelled keys
      */
-    public class FixDataKey implements FixData {
+    public static class FixDataKey implements FixData {
         /** key of wrong data */
         String oldKey;
         /** key of correct data */
@@ -135,7 +135,7 @@ public class FixDataHook implements UploadHook {
     /**
      * Data fix to cleanup wrong spelled tags
      */
-    public class FixDataTag implements FixData {
+    public static class FixDataTag implements FixData {
         /** key of wrong data */
         String oldKey;
         /** value of wrong data */

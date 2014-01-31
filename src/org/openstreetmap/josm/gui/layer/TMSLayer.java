@@ -155,7 +155,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     private Set<Tile> tileRequestsOutstanding = new HashSet<Tile>();
-    
+
     @Override
     public synchronized void tileLoadingFinished(Tile tile, boolean success) {
         if (tile.hasError()) {
@@ -179,7 +179,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return tileCache;
     }
 
-    private class TmsTileClearController implements TileClearController, CancelListener {
+    private static class TmsTileClearController implements TileClearController, CancelListener {
 
         private final ProgressMonitor monitor;
         private boolean cancel = false;
@@ -796,8 +796,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         int max = (1 << zoom);
         if (x < 0 || x >= max || y < 0 || y >= max)
             return null;
-        Tile tile = tileCache.getTile(tileSource, x, y, zoom);
-        return tile;
+        return tileCache.getTile(tileSource, x, y, zoom);
     }
 
     synchronized boolean loadTile(Tile tile, boolean force) {

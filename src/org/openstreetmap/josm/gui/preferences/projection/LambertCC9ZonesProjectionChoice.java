@@ -10,6 +10,7 @@ import java.util.Collections;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -75,7 +76,9 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
                 int zoneval = Integer.parseInt(zonestring)-3942;
                 if(zoneval >= 0 && zoneval <= 8)
                     return Collections.singleton(String.valueOf(zoneval+1));
-            } catch(NumberFormatException ex) {}
+            } catch(NumberFormatException ex) {
+                Main.warn(ex);
+            }
         }
         return null;
     }
@@ -89,7 +92,9 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 1;
-        } catch(NumberFormatException e) {}
+        } catch(NumberFormatException e) {
+            Main.warn(e);
+        }
         return defaultIndex;
     }
 

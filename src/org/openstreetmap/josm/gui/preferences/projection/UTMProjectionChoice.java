@@ -15,11 +15,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 
 public class UTMProjectionChoice extends ListProjectionChoice {
 
-    public enum Hemisphere { North, South }
+    /** Earth emispheres **/
+    public enum Hemisphere {
+        /** North emisphere */
+        North,
+        /** South emisphere */
+        South
+    }
 
     private static final Hemisphere DEFAULT_HEMISPHERE = Hemisphere.North;
 
@@ -128,7 +135,9 @@ public class UTMProjectionChoice extends ListProjectionChoice {
                 int zoneval = Integer.parseInt(zonestring);
                 if(zoneval > 0 && zoneval <= 60)
                     return Arrays.asList(zonestring, hemisphere.toString());
-            } catch(NumberFormatException e) {}
+            } catch(NumberFormatException e) {
+                Main.warn(e);
+            }
         }
         return null;
     }
@@ -157,7 +166,9 @@ public class UTMProjectionChoice extends ListProjectionChoice {
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 1;
-        } catch(NumberFormatException e) {}
+        } catch(NumberFormatException e) {
+            Main.warn(e);
+        }
         return defaultIndex;
     }
 }

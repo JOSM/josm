@@ -46,14 +46,14 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
             return current != null;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public T next() {
             findNext();
             S old = current;
             current = null;
             // we are save because predicate only accepts objects of type T
-            @SuppressWarnings("unchecked") T res = (T) old;
-            return res;
+            return (T) old;
         }
 
         @Override

@@ -42,6 +42,9 @@ public abstract class AbstractMergeAction extends JosmAction {
         }
     }
 
+    /**
+     * Constructs a new {@code AbstractMergeAction}.
+     */
     public AbstractMergeAction() {
         super();
     }
@@ -73,8 +76,7 @@ public abstract class AbstractMergeAction extends JosmAction {
         if (ed.getValue() != 1)
             return null;
 
-        Layer targetLayer = (Layer) layerList.getSelectedItem();
-        return targetLayer;
+        return (Layer) layerList.getSelectedItem();
     }
 
     protected void warnNoTargetLayersForSourceLayer(Layer sourceLayer) {

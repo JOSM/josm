@@ -222,8 +222,7 @@ public class NodeListViewer extends JPanel {
             if (primitiveId == null) return null;
             OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer == null) return null;
-            OsmPrimitive p = editLayer.data.getPrimitiveById(primitiveId);
-            return p;
+            return editLayer.data.getPrimitiveById(primitiveId);
         }
 
         public void updateEnabledState() {

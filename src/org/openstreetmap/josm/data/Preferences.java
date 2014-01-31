@@ -1032,6 +1032,7 @@ public class Preferences {
      * @return the corresponding value if the property has been set before,
      *  def otherwise
      */
+    @SuppressWarnings("unchecked")
     synchronized public <T extends Setting> T getSetting(String key, T def, Class<T> klass) {
         CheckParameterUtil.ensureParameterNotNull(key);
         CheckParameterUtil.ensureParameterNotNull(def);
@@ -1044,9 +1045,7 @@ public class Preferences {
         }
         Setting prop = settingsMap.get(key);
         if (klass.isInstance(prop)) {
-            @SuppressWarnings("unchecked")
-            T prop_cast = (T) prop;
-            return prop_cast;
+            return (T) prop;
         } else {
             return def;
         }
@@ -1074,11 +1073,10 @@ public class Preferences {
      * Used to read a 2-dimensional array of strings from the preference file.
      * If not a single entry could be found, <code>def</code> is returned.
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     synchronized public Collection<Collection<String>> getArray(String key, Collection<Collection<String>> def) {
         ListListSetting val = getSetting(key, ListListSetting.create(def), ListListSetting.class);
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        Collection<Collection<String>> val_cast = (Collection) val.getValue();
-        return val_cast;
+        return (Collection) val.getValue();
     }
 
     public Collection<Collection<String>> getArray(String key) {

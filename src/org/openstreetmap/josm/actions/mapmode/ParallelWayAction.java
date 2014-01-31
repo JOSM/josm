@@ -251,8 +251,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     private boolean updateModifiersState(InputEvent e) {
         boolean oldAlt = alt, oldShift = shift, oldCtrl = ctrl;
         updateKeyModifiers(e);
-        boolean changed = (oldAlt != alt || oldShift != shift || oldCtrl != ctrl);
-        return changed;
+        return (oldAlt != alt || oldShift != shift || oldCtrl != ctrl);
     }
 
     private void updateCursor() {

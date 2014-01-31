@@ -76,7 +76,6 @@ public class SearchCompiler {
         if (unaryMatchFactoryMap.isEmpty()) {
             addMatchFactory(new CoreUnaryMatchFactory());
         }
-
     }
 
     /**
@@ -288,7 +287,8 @@ public class SearchCompiler {
      * Matches every OsmPrimitive.
      */
     public static class Always extends Match {
-        public static Always INSTANCE = new Always();
+        /** The unique instance/ */
+        public static final Always INSTANCE = new Always();
         @Override public boolean match(OsmPrimitive osm) {
             return true;
         }

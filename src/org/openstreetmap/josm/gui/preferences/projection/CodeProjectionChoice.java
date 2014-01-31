@@ -25,8 +25,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Projection choice that lists all known projects by code.
@@ -42,7 +42,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         super(tr("By Code (EPSG)"), "core:code");
     }
 
-    private class CodeSelectionPanel extends JPanel implements ListSelectionListener, DocumentListener {
+    private static class CodeSelectionPanel extends JPanel implements ListSelectionListener, DocumentListener {
 
         public JosmTextField filter;
         private ProjectionCodeListModel model;

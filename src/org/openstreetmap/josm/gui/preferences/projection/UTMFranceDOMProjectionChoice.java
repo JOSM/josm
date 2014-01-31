@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.openstreetmap.josm.Main;
+
 public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
 
     private final static String FortMarigotName = tr("Guadeloupe Fort-Marigot 1949");
@@ -38,7 +40,9 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 1;
-        } catch(NumberFormatException e) {}
+        } catch(NumberFormatException e) {
+            Main.warn(e);
+        }
         return defaultIndex;
     }
 

@@ -115,7 +115,7 @@ public class PrefJPanel extends JPanel {
     public void filter(String substring) {
         filterField.setText(substring);
     }
-    
+
     private static class ScListModel extends AbstractTableModel {
         private String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
         private List<Shortcut> data;
@@ -373,9 +373,11 @@ public class PrefJPanel extends JPanel {
                     sorter.setRowFilter(RowFilter.andFilter(andFilters));
                 }
                 model.fireTableDataChanged();
+            } catch (PatternSyntaxException ex) {
+                Main.warn(ex);
+            } catch (ClassCastException ex2) {
+                Main.warn(ex2);
             }
-            catch (PatternSyntaxException ex) { }
-            catch (ClassCastException ex2) { /* eliminate warning */  }
         }
 
         @Override
@@ -385,5 +387,4 @@ public class PrefJPanel extends JPanel {
         @Override
         public void removeUpdate(DocumentEvent arg0) { filter(); }
     }
-
 }

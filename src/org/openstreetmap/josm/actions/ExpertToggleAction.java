@@ -25,7 +25,7 @@ public class ExpertToggleAction extends ToggleAction {
     private static final List<WeakReference<ExpertModeChangeListener>> listeners = new ArrayList<WeakReference<ExpertModeChangeListener>>();
     private static final List<WeakReference<Component>> visibilityToggleListeners = new ArrayList<WeakReference<Component>>();
 
-    private static ExpertToggleAction INSTANCE = new ExpertToggleAction();
+    private static final ExpertToggleAction INSTANCE = new ExpertToggleAction();
 
     private synchronized static void fireExpertModeChanged(boolean isExpert) {
         {
@@ -132,6 +132,7 @@ public class ExpertToggleAction extends ToggleAction {
         notifySelectedState();
     }
 
+    @Override
     protected void notifySelectedState() {
         super.notifySelectedState();
         fireExpertModeChanged(isSelected());

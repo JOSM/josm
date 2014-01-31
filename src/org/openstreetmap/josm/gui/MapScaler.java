@@ -1,5 +1,4 @@
 // License: GPL. See LICENSE file for details.
-
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
@@ -18,7 +17,7 @@ public class MapScaler extends JComponent implements Helpful {
 
     private final NavigatableComponent mv;
 
-    private static int PADDING_RIGHT = 100;
+    private static final int PADDING_RIGHT = 100;
 
     public MapScaler(NavigatableComponent mv) {
         this.mv = mv;
@@ -26,7 +25,8 @@ public class MapScaler extends JComponent implements Helpful {
         setOpaque(false);
     }
 
-    @Override public void paint(Graphics g) {
+    @Override
+    public void paint(Graphics g) {
         String text = mv.getDist100PixelText();
         Rectangle2D bound = g.getFontMetrics().getStringBounds(text, g);
         g.setColor(getColor());
@@ -40,8 +40,7 @@ public class MapScaler extends JComponent implements Helpful {
         g.drawString("0", 0, 23);
     }
 
-    static public Color getColor()
-    {
+    static public Color getColor() {
         return Main.pref.getColor(marktr("scale"), Color.white);
     }
 

@@ -88,11 +88,10 @@ public abstract class RelationEditor extends ExtendedDialog {
                 Boolean canEdit = (Boolean) m.invoke(null, r);
                 if (canEdit) {
                     Constructor<RelationEditor> con = e.getConstructor(Relation.class, Collection.class);
-                    RelationEditor editor = con.newInstance(layer, r, selectedMembers);
-                    return editor;
+                    return con.newInstance(layer, r, selectedMembers);
                 }
             } catch (Exception ex) {
-                // plod on
+                Main.warn(ex);
             }
         }
         if (RelationDialogManager.getRelationDialogManager().isOpenInEditor(layer, r))
