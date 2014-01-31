@@ -41,7 +41,6 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
@@ -680,10 +679,10 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 min = null;
                 max = null;
             } else {
-                int y1 = OsmMercator.LatToY(bbox.getMinLat(), MAX_ZOOM);
-                int y2 = OsmMercator.LatToY(bbox.getMaxLat(), MAX_ZOOM);
-                int x1 = OsmMercator.LonToX(bbox.getMinLon(), MAX_ZOOM);
-                int x2 = OsmMercator.LonToX(bbox.getMaxLon(), MAX_ZOOM);
+                int y1 = tileSource.LatToY(bbox.getMinLat(), MAX_ZOOM);
+                int y2 = tileSource.LatToY(bbox.getMaxLat(), MAX_ZOOM);
+                int x1 = tileSource.LonToX(bbox.getMinLon(), MAX_ZOOM);
+                int x2 = tileSource.LonToX(bbox.getMaxLon(), MAX_ZOOM);
 
                 min = new Point(Math.min(x1, x2), Math.min(y1, y2));
                 max = new Point(Math.max(x1, x2), Math.max(y1, y2));

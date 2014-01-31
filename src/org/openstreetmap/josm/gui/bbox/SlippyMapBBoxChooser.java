@@ -25,7 +25,6 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -328,10 +327,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
             minLon -= 360.0;
         }
 
-        int y1 = OsmMercator.LatToY(bbox.getMinLat(), MAX_ZOOM);
-        int y2 = OsmMercator.LatToY(bbox.getMaxLat(), MAX_ZOOM);
-        int x1 = OsmMercator.LonToX(minLon, MAX_ZOOM);
-        int x2 = OsmMercator.LonToX(maxLon, MAX_ZOOM);
+        int y1 = tileSource.LatToY(bbox.getMinLat(), MAX_ZOOM);
+        int y2 = tileSource.LatToY(bbox.getMaxLat(), MAX_ZOOM);
+        int x1 = tileSource.LonToX(minLon, MAX_ZOOM);
+        int x2 = tileSource.LonToX(maxLon, MAX_ZOOM);
 
         iSelectionRectStart = new Point(Math.min(x1, x2), Math.min(y1, y2));
         iSelectionRectEnd = new Point(Math.max(x1, x2), Math.max(y1, y2));
