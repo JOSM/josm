@@ -2,9 +2,11 @@
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -46,11 +48,14 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.NavigatableComponent.SoMChangeListener;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
@@ -76,7 +81,35 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-public class MapStatus extends JPanel implements Helpful, Destroyable {
+public class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener {
+
+    /**
+     * Property for map status background color.
+     * @since 6789
+     */
+    public static final ColorProperty PROP_BACKGROUND_COLOR = new ColorProperty(
+            marktr("Status bar background"), Color.decode("#b8cfe5"));
+
+    /**
+     * Property for map status background color (active state).
+     * @since 6789
+     */
+    public static final ColorProperty PROP_ACTIVE_BACKGROUND_COLOR = new ColorProperty(
+            marktr("Status bar background: active"), Color.decode("#aaff5e"));
+
+    /**
+     * Property for map status foreground color.
+     * @since 6789
+     */
+    public static final ColorProperty PROP_FOREGROUND_COLOR = new ColorProperty(
+            marktr("Status bar foreground"), Color.black);
+
+    /**
+     * Property for map status foreground color (active state).
+     * @since 6789
+     */
+    public static final ColorProperty PROP_ACTIVE_FOREGROUND_COLOR = new ColorProperty(
+            marktr("Status bar foreground: active"), Color.black);
 
     /**
      * The MapView this status belongs to.
@@ -136,19 +169,23 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
 
     }
 
-    final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
-    final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
+    final ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20, PROP_BACKGROUND_COLOR.get());
     final JosmTextField helpText = new JosmTextField();
-    final ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11);
-    final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
-    final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
-    final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10);
     final JProgressBar progressBar = new JProgressBar();
     public final BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
 
     private final SoMChangeListener somListener;
 
-    private double distValue; // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
+    // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
+    private double distValue;
+
+    // Determines if angle panel is enabled or not
+    private boolean angleEnabled = false;
 
     /**
      * This is the thread that runs in the background and collects the information displayed.
@@ -770,7 +807,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         });
 
         NavigatableComponent.addSoMChangeListener(somListener = new SoMChangeListener() {
-            @Override public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
+            @Override
+            public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
                 setDist(distValue);
             }
         });
@@ -797,6 +835,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
             }
         });
 
+        Main.pref.addPreferenceChangeListener(this);
+
         // The background thread
         thread = new Thread(collector, "Map Status Collector");
         thread.setDaemon(true);
@@ -822,6 +862,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
     public void setHelpText(String t) {
         setHelpText(null, t);
     }
+
     public void setHelpText(Object id, final String text)  {
 
         StatusTextHistory entry = new StatusTextHistory(id, text);
@@ -837,6 +878,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
             }
         });
     }
+
     public void resetHelpText(Object id) {
         if (statusText.isEmpty())
             return;
@@ -852,12 +894,15 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         }
         statusText.remove(entry);
     }
+
     public void setAngle(double a) {
         angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + " \u00B0");
     }
+
     public void setHeading(double h) {
         headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + " \u00B0");
     }
+
     /**
      * Sets the distance text to the given value
      * @param dist The distance value to display, in meters
@@ -866,6 +911,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         distValue = dist;
         distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist));
     }
+
     /**
      * Sets the distance text to the total sum of given ways length
      * @param ways The ways to consider for the total distance
@@ -884,13 +930,25 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         }
         setDist(dist);
     }
+
+    /**
+     * Activates the angle panel.
+     * @param activeFlag {@code true} to activate it, {@code false} to deactivate it
+     */
     public void activateAnglePanel(boolean activeFlag) {
-        angleText.setBackground(activeFlag ? ImageLabel.backColorActive : ImageLabel.backColor);
+        angleEnabled = activeFlag;
+        refreshAnglePanel();
+    }
+
+    private void refreshAnglePanel() {
+        angleText.setBackground(angleEnabled ? PROP_ACTIVE_BACKGROUND_COLOR.get() : PROP_BACKGROUND_COLOR.get());
+        angleText.setForeground(angleEnabled ? PROP_ACTIVE_FOREGROUND_COLOR.get() : PROP_FOREGROUND_COLOR.get());
     }
 
     @Override
     public void destroy() {
         NavigatableComponent.removeSoMChangeListener(somListener);
+        Main.pref.removePreferenceChangeListener(this);
 
         // MapFrame gets destroyed when the last layer is removed, but the status line background
         // thread that collects the information doesn't get destroyed automatically.
@@ -901,5 +959,33 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                 Main.error(e);
             }
         }
+    }
+
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        String key = e.getKey();
+        if (key.startsWith("color.")) {
+            key = key.substring("color.".length());
+            if (PROP_BACKGROUND_COLOR.getKey().equals(key) || PROP_FOREGROUND_COLOR.getKey().equals(key)) {
+                for (ImageLabel il : new ImageLabel[]{latText, lonText, headingText, distText, nameText}) {
+                    il.setBackground(PROP_BACKGROUND_COLOR.get());
+                    il.setForeground(PROP_FOREGROUND_COLOR.get());
+                }
+                refreshAnglePanel();
+            } else if (PROP_ACTIVE_BACKGROUND_COLOR.getKey().equals(key) || PROP_ACTIVE_FOREGROUND_COLOR.getKey().equals(key)) {
+                refreshAnglePanel();
+            }
+        }
+    }
+
+    /**
+     * Loads all colors from preferences.
+     * @since 6789
+     */
+    public static void getColors() {
+        PROP_BACKGROUND_COLOR.get();
+        PROP_FOREGROUND_COLOR.get();
+        PROP_ACTIVE_BACKGROUND_COLOR.get();
+        PROP_ACTIVE_FOREGROUND_COLOR.get();
     }
 }
