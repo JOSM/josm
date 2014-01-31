@@ -34,6 +34,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.gui.MapScaler;
+import org.openstreetmap.josm.gui.MapStatus;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -268,6 +269,7 @@ public class ColorPreference implements SubPreferenceSetting {
         OsmDataLayer.getOutsideColor();
         ImageryLayer.getFadeColor();
         MapScaler.getColor();
+        MapStatus.getColors();
         ConflictDialog.getColor();
     }
 
