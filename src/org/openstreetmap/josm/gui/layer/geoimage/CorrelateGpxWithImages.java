@@ -918,7 +918,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     try {
                         timezone = parseTimezone(zone);
                     } catch (ParseException pe) {
-                        throw new RuntimeException();
+                        throw new RuntimeException(pe);
                     }
                     delta = sldMinutes.getValue()*60 + sldSeconds.getValue();
 

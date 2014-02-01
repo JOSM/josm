@@ -44,7 +44,7 @@ public class HTMLGrabber extends WMSGrabber {
         try {
             browser = builder.start();
         } catch (IOException ioe) {
-            throw new IOException( "Could not start browser. Please check that the executable path is correct.\n" + ioe.getMessage() );
+            throw new IOException("Could not start browser. Please check that the executable path is correct.\n" + ioe.getMessage(), ioe);
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

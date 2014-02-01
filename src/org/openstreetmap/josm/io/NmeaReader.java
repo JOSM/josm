@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.io;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParsePosition;
@@ -169,7 +168,7 @@ public class NmeaReader {
         return ps.success;
     }
 
-    public NmeaReader(InputStream source, File relativeMarkerPath) {
+    public NmeaReader(InputStream source) {
 
         // create the data tree
         data = new GpxData();

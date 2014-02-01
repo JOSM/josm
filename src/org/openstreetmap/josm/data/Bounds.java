@@ -181,7 +181,7 @@ public class Bounds {
             try {
                 values[i] = Double.parseDouble(components[i]);
             } catch(NumberFormatException e) {
-                throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", components[i]));
+                throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", components[i]), e);
             }
         }
 

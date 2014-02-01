@@ -296,7 +296,7 @@ public class FileDrop
     }   // end supportsDnD
 
     // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
-    private static String ZERO_CHAR_STRING = "" + (char)0;
+    private static final String ZERO_CHAR_STRING = "" + (char)0;
     private static File[] createFileArray(BufferedReader bReader)
     {
         try {

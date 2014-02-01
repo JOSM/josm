@@ -40,7 +40,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * See USAGE String below.
  */
 public final class OrthogonalizeAction extends JosmAction {
-    private String USAGE = tr(
+    private static final String USAGE = tr(
             "<h3>When one or more ways are selected, the shape is adjusted such, that all angles are 90 or 180 degrees.</h3>"+
             "You can add two nodes to the selection. Then, the direction is fixed by these two reference nodes. "+
             "(Afterwards, you can undo the movement for certain nodes:<br>"+
@@ -278,7 +278,7 @@ public final class OrthogonalizeAction extends JosmAction {
         } catch (RejectedAngleException ex) {
             throw new InvalidUserInputException(
                     tr("<html>Please make sure all selected ways head in a similar direction<br>"+
-                    "or orthogonalize them one by one.</html>"));
+                    "or orthogonalize them one by one.</html>"), ex);
         }
 
         // put the nodes of all ways in a set
@@ -438,7 +438,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 try {
                     direction = direction.changeBy(angleToDirectionChange(h2 - h1, TOLERANCE1));
                 } catch (RejectedAngleException ex) {
-                    throw new InvalidUserInputException(tr("Please select ways with angles of approximately 90 or 180 degrees."));
+                    throw new InvalidUserInputException(tr("Please select ways with angles of approximately 90 or 180 degrees."), ex);
                 }
                 segDirections[i+1] = direction;
             }
@@ -572,6 +572,9 @@ public final class OrthogonalizeAction extends JosmAction {
     private static class InvalidUserInputException extends Exception {
         InvalidUserInputException(String message) {
             super(message);
+        }
+        InvalidUserInputException(String message, Throwable cause) {
+            super(message, cause);
         }
         InvalidUserInputException() {
             super();

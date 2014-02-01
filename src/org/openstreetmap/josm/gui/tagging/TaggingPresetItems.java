@@ -1361,7 +1361,7 @@ public final class TaggingPresetItems {
                 TaggingPresetType presetType = TaggingPresetType.fromString(type);
                 result.add(presetType);
             } catch (IllegalArgumentException e) {
-                throw new SAXException(tr("Unknown type: {0}", type));
+                throw new SAXException(tr("Unknown type: {0}", type), e);
             }
         }
         typeCache.put(types, result);

@@ -444,16 +444,16 @@ public class SearchCompiler {
                 try {
                     this.keyPattern = Pattern.compile(key, searchFlags);
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
                 }
                 try {
                     this.valuePattern = Pattern.compile(value, searchFlags);
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
                 }
                 this.key = key;
                 this.value = value;
@@ -695,9 +695,9 @@ public class SearchCompiler {
                 try {
                     this.searchRegex = Pattern.compile(s, regexFlags(caseSensitive));
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, s, e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, s, e.getMessage()), e);
                 }
                 this.search = s;
             } else if (caseSensitive) {
@@ -1170,6 +1170,9 @@ public class SearchCompiler {
     public static class ParseError extends Exception {
         public ParseError(String msg) {
             super(msg);
+        }
+        public ParseError(String msg, Throwable cause) {
+            super(msg, cause);
         }
         public ParseError(Token expected, Token found) {
             this(tr("Unexpected token. Expected {0}, found {1}", expected, found));

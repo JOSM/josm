@@ -1188,9 +1188,9 @@ public class Preferences {
                     }
                 }
             } catch (IllegalArgumentException ex) {
-                throw new RuntimeException();
+                throw new RuntimeException(ex);
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException();
+                throw new RuntimeException(ex);
             }
         }
         return hash;
@@ -1201,9 +1201,9 @@ public class Preferences {
         try {
             struct = klass.newInstance();
         } catch (InstantiationException ex) {
-            throw new RuntimeException();
+            throw new RuntimeException(ex);
         } catch (IllegalAccessException ex) {
-            throw new RuntimeException();
+            throw new RuntimeException(ex);
         }
         for (Entry<String,String> key_value : hash.entrySet()) {
             Object value = null;
@@ -1213,7 +1213,7 @@ public class Preferences {
             } catch (NoSuchFieldException ex) {
                 continue;
             } catch (SecurityException ex) {
-                throw new RuntimeException();
+                throw new RuntimeException(ex);
             }
             if (f.getAnnotation(pref.class) == null) {
                 continue;
@@ -1241,9 +1241,9 @@ public class Preferences {
             try {
                 f.set(struct, value);
             } catch (IllegalArgumentException ex) {
-                throw new AssertionError();
+                throw new AssertionError(ex);
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException();
+                throw new RuntimeException(ex);
             }
         }
         return struct;

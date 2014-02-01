@@ -36,7 +36,7 @@ public class ImportHandler extends RequestHandler {
         } catch (Exception ex) {
             Main.warn("RemoteControl: Error parsing import remote control request:");
             Main.error(ex);
-            throw new RequestHandlerErrorException();
+            throw new RequestHandlerErrorException(ex);
         }
     }
 
@@ -117,7 +117,7 @@ public class ImportHandler extends RequestHandler {
             // Ensure the URL is valid
             url = new URL(urlString);
         } catch (MalformedURLException e) {
-            throw new RequestHandlerBadRequestException("MalformedURLException: "+e.getMessage());
+            throw new RequestHandlerBadRequestException("MalformedURLException: "+e.getMessage(), e);
         }
         // Find download tasks for the given URL
         suitableDownloadTasks = Main.main.menu.openLocation.findDownloadTasks(urlString);
