@@ -5201,23 +5201,23 @@ Note that for a match, at least one positive and no negative is required.
             <text key="ref" text="Reference" />
             <text key="start_date" text="Start date" />
             <combo key="generator:source" text="Source" values_searchable="true">
-                <list_entry value="biofuel" icon="http://wiki.openstreetmap.org/w/images/6/6b/Bahnpirat-power_source-biofuel.svg" />
-                <list_entry value="biogas" icon="http://wiki.openstreetmap.org/w/images/6/6b/Bahnpirat-power_source-biofuel.svg" />
-                <list_entry value="biomass" icon="http://wiki.openstreetmap.org/w/images/6/6b/Bahnpirat-power_source-biofuel.svg" />
-                <list_entry value="coal" icon="http://wiki.openstreetmap.org/w/images/4/4b/Bahnpirat-power_source-coal.svg" />
-                <list_entry value="diesel" icon="http://wiki.openstreetmap.org/w/images/f/f7/Bahnpirat-power_source-oil.svg" />
-                <list_entry value="gas" icon="http://wiki.openstreetmap.org/w/images/e/e6/Bahnpirat-power_source-gas.svg" />
-                <list_entry value="gasoline" icon="http://wiki.openstreetmap.org/w/images/f/f7/Bahnpirat-power_source-oil.svg" />
-                <list_entry value="geothermal" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
-                <list_entry value="hydro" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
-                <list_entry value="nuclear" icon="http://wiki.openstreetmap.org/w/images/3/3e/2020_stBN_powergensource_nuclear.svg" />
-                <list_entry value="oil" icon="http://wiki.openstreetmap.org/w/images/f/f7/Bahnpirat-power_source-oil.svg" />
-                <list_entry value="osmotic" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
-                <list_entry value="solar" icon="http://wiki.openstreetmap.org/w/images/2/22/2020_stBN_powergensource_sun.svg" />
-                <list_entry value="tidal" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
-                <list_entry value="waste" icon="http://wiki.openstreetmap.org/w/images/2/2f/Bahnpirat-power_source-waste.svg" />
-                <list_entry value="wave" icon="http://wiki.openstreetmap.org/w/images/e/ed/2020_stBN_powergensource_water.svg" />
-                <list_entry value="wind" icon="http://wiki.openstreetmap.org/w/images/0/03/2020_stBN_powergensource_wind.svg" />
+                <list_entry value="biofuel"    icon="presets/power_source-biofuel.svg" />
+                <list_entry value="biogas"     icon="presets/power_source-biofuel.svg" />
+                <list_entry value="biomass"    icon="presets/power_source-biofuel.svg" />
+                <list_entry value="coal"       icon="presets/power_source-coal.svg" />
+                <list_entry value="diesel"     icon="presets/power_source-oil.svg" />
+                <list_entry value="gas"        icon="presets/power_source-gas.svg" />
+                <list_entry value="gasoline"   icon="presets/power_source-oil.svg" />
+                <list_entry value="geothermal" icon="presets/power_source-water.svg" />
+                <list_entry value="hydro"      icon="presets/power_source-water.svg" />
+                <list_entry value="nuclear"    icon="presets/power_source-nuclear.svg" />
+                <list_entry value="oil"        icon="presets/power_source-oil.svg" />
+                <list_entry value="osmotic"    icon="presets/power_source-water.svg" />
+                <list_entry value="solar"      icon="presets/power_source-sun.svg" />
+                <list_entry value="tidal"      icon="presets/power_source-water.svg" />
+                <list_entry value="waste"      icon="presets/power_source-waste.svg" />
+                <list_entry value="wave"       icon="presets/power_source-water.svg" />
+                <list_entry value="wind"       icon="presets/power_source-wind.svg" />
             </combo>
             <combo key="generator:method" text="Method" values_context="generator method" values_searchable="true">
                 <list_entry value="anaerobic_digestion" short_description="" /> <!-- Recheck -->
