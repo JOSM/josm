@@ -85,7 +85,7 @@ public class GpxImporter extends FileImporter {
             addLayers(loadLayers(r.getGpxData(), parsedProperly, fileName, tr("Markers from {0}", fileName)));
         } catch (SAXException e) {
             Main.error(e);
-            throw new IOException(tr("Parsing data for layer ''{0}'' failed", fileName));
+            throw new IOException(tr("Parsing data for layer ''{0}'' failed", fileName), e);
         }
     }
 
@@ -160,7 +160,7 @@ public class GpxImporter extends FileImporter {
             return loadLayers(r.getGpxData(), parsedProperly, gpxLayerName, markerLayerName);
         } catch (SAXException e) {
             Main.error(e);
-            throw new IOException(tr("Parsing data for layer ''{0}'' failed", gpxLayerName));
+            throw new IOException(tr("Parsing data for layer ''{0}'' failed", gpxLayerName), e);
         }
     }
 }

@@ -300,7 +300,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                     try {
                         tags = URLDecoder.decode(args.get("addtags"), "UTF-8").split("\\|");
                     } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException();
+                        throw new RuntimeException(e);
                     }
                     Set<String> tagSet = new HashSet<String>();
                     for (String tag : tags) {

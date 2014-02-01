@@ -43,6 +43,9 @@ public class OsmImporter extends FileImporter {
         }
     }
 
+    /**
+     * Constructs a new {@code OsmImporter}.
+     */
     public OsmImporter() {
         super(FILE_FILTER);
     }
@@ -64,7 +67,7 @@ public class OsmImporter extends FileImporter {
             importData(in, file, progressMonitor);
         } catch (FileNotFoundException e) {
             Main.error(e);
-            throw new IOException(tr("File ''{0}'' does not exist.", file.getName()));
+            throw new IOException(tr("File ''{0}'' does not exist.", file.getName()), e);
         } finally {
             Utils.close(in);
         }

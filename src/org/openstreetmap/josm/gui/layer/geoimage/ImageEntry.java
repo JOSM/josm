@@ -190,7 +190,7 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         try {
             c = super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
         return (ImageEntry) c;
     }

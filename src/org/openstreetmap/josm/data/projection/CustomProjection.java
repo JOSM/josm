@@ -112,7 +112,7 @@ public class CustomProjection extends AbstractProjection {
             try {
                 update(null);
             } catch (ProjectionConfigurationException ex1) {
-                throw new RuntimeException();
+                throw new RuntimeException(ex1);
             }
         }
     }
@@ -200,7 +200,7 @@ public class CustomProjection extends AbstractProjection {
             try {
                 initp = parseParameterList(init);
             } catch (ProjectionConfigurationException ex) {
-                throw new ProjectionConfigurationException(tr(initKey+": "+ex.getMessage()));
+                throw new ProjectionConfigurationException(tr(initKey+": "+ex.getMessage()), ex);
             }
             for (Map.Entry<String, String> e : parameters.entrySet()) {
                 initp.put(e.getKey(), e.getValue());
@@ -291,7 +291,7 @@ public class CustomProjection extends AbstractProjection {
             try {
                 towgs84Param.add(Double.parseDouble(str));
             } catch (NumberFormatException e) {
-                throw new ProjectionConfigurationException(tr("Unable to parse value of parameter ''towgs84'' (''{0}'')", str));
+                throw new ProjectionConfigurationException(tr("Unable to parse value of parameter ''towgs84'' (''{0}'')", str), e);
             }
         }
         boolean isCentric = true;
@@ -379,7 +379,7 @@ public class CustomProjection extends AbstractProjection {
             return Double.parseDouble(doubleStr);
         } catch (NumberFormatException e) {
             throw new ProjectionConfigurationException(
-                    tr("Unable to parse value ''{1}'' of parameter ''{0}'' as number.", parameterName, doubleStr));
+                    tr("Unable to parse value ''{1}'' of parameter ''{0}'' as number.", parameterName, doubleStr), e);
         }
     }
 

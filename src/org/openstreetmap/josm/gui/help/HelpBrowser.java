@@ -54,6 +54,9 @@ import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Help browser displaying HTML pages fetched from JOSM wiki.
+ */
 public class HelpBrowser extends JDialog {
     /** the unique instance */
     private static HelpBrowser instance;
@@ -424,7 +427,6 @@ public class HelpBrowser extends JDialog {
 
     class OpenInBrowserAction extends AbstractAction {
         public OpenInBrowserAction() {
-            //putValue(NAME, tr("Open in Browser"));
             putValue(SHORT_DESCRIPTION, tr("Open the current help page in an external browser"));
             putValue(SMALL_ICON, ImageProvider.get("help", "internet"));
         }
@@ -437,7 +439,6 @@ public class HelpBrowser extends JDialog {
 
     class EditAction extends AbstractAction {
         public EditAction() {
-            // putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, tr("Edit the current help page"));
             putValue(SMALL_ICON,ImageProvider.get("dialogs", "edit"));
         }

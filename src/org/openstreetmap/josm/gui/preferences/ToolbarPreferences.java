@@ -1106,7 +1106,5 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         return b;
     }
 
-    private static DataFlavor ACTION_FLAVOR = new DataFlavor(
-            ActionDefinition.class, "ActionItem");
-
+    private static final DataFlavor ACTION_FLAVOR = new DataFlavor(ActionDefinition.class, "ActionItem");
 }

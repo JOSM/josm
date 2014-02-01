@@ -783,11 +783,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         latText.setInheritsPopupMenu(true);
         lonText.setInheritsPopupMenu(true);
         headingText.setInheritsPopupMenu(true);
-        //angleText.setInheritsPopupMenu(true);
         distText.setInheritsPopupMenu(true);
         nameText.setInheritsPopupMenu(true);
-        //helpText.setInheritsPopupMenu(true);
-        //progressBar.setInheritsPopupMenu(true);
 
         add(latText, GBC.std());
         add(lonText, GBC.std().insets(3,0,0,0));

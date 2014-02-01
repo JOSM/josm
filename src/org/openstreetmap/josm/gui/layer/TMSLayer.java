@@ -271,11 +271,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     static int checkMaxZoomLvl(int maxZoomLvl, TileSource ts) {
         if(maxZoomLvl > MAX_ZOOM) {
-            /*Main.debug("Max. zoom level should not be more than 30! Setting to 30.");*/
             maxZoomLvl = MAX_ZOOM;
         }
         if(maxZoomLvl < PROP_MIN_ZOOM_LVL.get()) {
-            /*Main.debug("Max. zoom level should not be more than min. zoom level! Setting to min.");*/
             maxZoomLvl = PROP_MIN_ZOOM_LVL.get();
         }
         if (ts != null && ts.getMaxZoom() != 0 && ts.getMaxZoom() < maxZoomLvl) {

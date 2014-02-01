@@ -24,13 +24,17 @@ public class NMEAImporter extends FileImporter {
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files") + " (*.nmea *.nme *.nma *.log *.txt)");
 
+    /**
+     * Constructs a new {@code NMEAImporter}.
+     */
     public NMEAImporter() {
         super(FILE_FILTER);
     }
 
-    @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
+    @Override
+    public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
         final String fn = file.getName();
-        final NmeaReader r = new NmeaReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
+        final NmeaReader r = new NmeaReader(new FileInputStream(file));
         if (r.getNumberOfCoordinates() > 0) {
             r.data.storageFile = file;
             final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);

@@ -479,7 +479,7 @@ public final class Utils {
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
         byte[] byteDigest = md.digest(byteData);
         return toHexString(byteDigest);

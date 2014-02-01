@@ -1627,7 +1627,6 @@ public class GenericRelationEditor extends RelationEditor  {
         public EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
-            //putValue(NAME, tr("Edit"));
             refreshEnabled();
         }
 

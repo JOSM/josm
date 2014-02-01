@@ -85,7 +85,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     final private Cursor cursorJoinWay;
 
     private Node lastUsedNode = null;
-    private double PHI=Math.toRadians(90);
+    private static final double PHI = Math.toRadians(90);
     private double toleranceMultiplier;
 
     private Node mouseOnExistingNode;

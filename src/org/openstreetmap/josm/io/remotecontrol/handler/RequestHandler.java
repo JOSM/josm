@@ -275,7 +275,7 @@ public abstract class RequestHandler {
         try {
             return URLDecoder.decode(param, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
@@ -288,18 +288,29 @@ public abstract class RequestHandler {
         public RequestHandlerException(String message) {
             super(message);
         }
-
+        public RequestHandlerException(String message, Throwable cause) {
+            super(message, cause);
+        }
+        public RequestHandlerException(Throwable cause) {
+            super(cause);
+        }
         public RequestHandlerException() {
         }
     }
 
     public static class RequestHandlerErrorException extends RequestHandlerException {
+        public RequestHandlerErrorException(Throwable cause) {
+            super(cause);
+        }
     }
 
     public static class RequestHandlerBadRequestException extends RequestHandlerException {
 
         public RequestHandlerBadRequestException(String message) {
             super(message);
+        }
+        public RequestHandlerBadRequestException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 
