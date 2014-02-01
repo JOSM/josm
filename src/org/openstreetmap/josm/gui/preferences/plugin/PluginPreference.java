@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -111,6 +112,36 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             sb.append("</ul>");
         }
         return sb.toString();
+    }
+    
+    /**
+     * Notifies user about result of a finished plugin download task.
+     * @param parent The parent component
+     * @param task The finished plugin download task
+     * @since 6797
+     */
+    public static void notifyDownloadResults(final Component parent, PluginDownloadTask task) {
+        final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
+        final Collection<PluginInformation> failed = task.getFailedPlugins();
+        final StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append(buildDownloadSummary(task));
+        if (!downloaded.isEmpty()) {
+            sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
+        }
+        sb.append("</html>");
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override
+            public void run() {
+                HelpAwareOptionPane.showOptionDialog(
+                        parent,
+                        sb.toString(),
+                        tr("Update plugins"),
+                        !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
+                                HelpUtil.ht("/Preferences/Plugins")
+                        );
+            }
+        });
     }
 
     private JosmTextField tfFilter;
@@ -326,30 +357,6 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
         }
 
-        protected void notifyDownloadResults(PluginDownloadTask task) {
-            final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
-            final Collection<PluginInformation> failed = task.getFailedPlugins();
-            final StringBuilder sb = new StringBuilder();
-            sb.append("<html>");
-            sb.append(buildDownloadSummary(task));
-            if (!downloaded.isEmpty()) {
-                sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
-            }
-            sb.append("</html>");
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    HelpAwareOptionPane.showOptionDialog(
-                            pnlPluginPreferences,
-                            sb.toString(),
-                            tr("Update plugins"),
-                            !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
-                                    HelpUtil.ht("/Preferences/Plugins")
-                            );
-                }
-            });
-        }
-
         protected void alertNothingToUpdate() {
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
@@ -390,7 +397,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 public void run() {
                     if (pluginDownloadTask.isCanceled())
                         return;
-                    notifyDownloadResults(pluginDownloadTask);
+                    notifyDownloadResults(pnlPluginPreferences, pluginDownloadTask);
                     model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
                     model.clearPendingPlugins(pluginDownloadTask.getDownloadedPlugins());
                     GuiHelper.runInEDT(new Runnable() {
