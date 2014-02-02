@@ -53,8 +53,6 @@ public class RelationSorter {
      */
     private static class AssociatedStreetRoleAddressHouseSorter implements AdditionalSorter {
 
-        public static final AlphanumComparator ALPHANUM_COMPARATOR = new AlphanumComparator();
-
         @Override
         public boolean acceptsMember(RelationMember m) {
             return "address".equals(m.getRole()) || "house".equals(m.getRole());
@@ -65,7 +63,7 @@ public class RelationSorter {
             Collections.sort(list, new Comparator<RelationMember>() {
                 @Override
                 public int compare(RelationMember a, RelationMember b) {
-                    final int houseNumber = ALPHANUM_COMPARATOR.compare(
+                    final int houseNumber = AlphanumComparator.getInstance().compare(
                             a.getMember().get("addr:housenumber"),
                             b.getMember().get("addr:housenumber"));
                     if (houseNumber != 0) {
@@ -73,7 +71,7 @@ public class RelationSorter {
                     }
                     final String aDisplayName = a.getMember().getDisplayName(DefaultNameFormatter.getInstance());
                     final String bDisplayName = b.getMember().getDisplayName(DefaultNameFormatter.getInstance());
-                    return ALPHANUM_COMPARATOR.compare(aDisplayName, bDisplayName);
+                    return AlphanumComparator.getInstance().compare(aDisplayName, bDisplayName);
                 }
             });
             return list;
