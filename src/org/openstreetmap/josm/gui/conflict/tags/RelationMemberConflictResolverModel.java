@@ -38,6 +38,16 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     private PropertyChangeSupport support;
 
     /**
+     * Replies true if each {@link MultiValueResolutionDecision} is decided.
+     *
+     * @return true if each {@link MultiValueResolutionDecision} is decided; false
+     * otherwise
+     */
+    public boolean isResolvedCompletely() {
+        return numConflicts == 0;
+    }
+
+    /**
      * Replies the current number of conflicts
      *
      * @return the current number of conflicts
