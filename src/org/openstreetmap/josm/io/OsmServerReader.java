@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -97,6 +99,21 @@ public abstract class OsmServerReader extends OsmConnection {
      * @throws OsmTransferException thrown if data transfer errors occur
      */
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason) throws OsmTransferException {
+        return getInputStreamRaw(urlStr, progressMonitor, reason, false);
+    }
+
+    /**
+     * Open a connection to the given url and return a reader on the input stream
+     * from that connection. In case of user cancel, return <code>null</code>.
+     * @param urlStr The exact url to connect to.
+     * @param progressMonitor progress monitoring and abort handler
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @param uncompressAccordingToContentDisposition Whether to inspect the HTTP header {@code Content-Disposition}
+     *                                                for {@code filename} and uncompress a gzip/bzip2 stream.
+     * @return An reader reading the input stream (servers answer) or <code>null</code>.
+     * @throws OsmTransferException thrown if data transfer errors occur
+     */
+    protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason, boolean uncompressAccordingToContentDisposition) throws OsmTransferException {
         try {
             URL url = null;
             try {
@@ -140,6 +157,7 @@ public abstract class OsmServerReader extends OsmConnection {
                 throw ote;
             }
             try {
+                Main.debug(activeConnection.getHeaderFields().toString());
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
                     throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,null,null);
 
@@ -168,7 +186,11 @@ public abstract class OsmServerReader extends OsmConnection {
                     throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString(), url.toString());
                 }
 
-                return fixEncoding(new ProgressInputStream(activeConnection, progressMonitor), encoding);
+                InputStream in = new ProgressInputStream(activeConnection, progressMonitor);
+                if (uncompressAccordingToContentDisposition) {
+                    in = uncompressAccordingToContentDisposition(in, activeConnection.getHeaderFields());
+                }
+                return fixEncoding(in, encoding);
             } catch (OsmTransferException e) {
                 throw e;
             } catch (Exception e) {
@@ -186,6 +208,16 @@ public abstract class OsmServerReader extends OsmConnection {
             stream = new InflaterInputStream(stream, new Inflater(true));
         }
         return stream;
+    }
+
+    private InputStream uncompressAccordingToContentDisposition(InputStream stream, Map<String, List<String>> headerFields) throws IOException {
+        if (headerFields.get("Content-Disposition").toString().contains(".gz\"")) {
+            return Compression.GZIP.getUncompressedInputStream(stream);
+        } else if (headerFields.get("Content-Disposition").toString().contains(".bz2\"")) {
+            return Compression.BZIP2.getUncompressedInputStream(stream);
+        } else {
+            return stream;
+        }
     }
 
     /**

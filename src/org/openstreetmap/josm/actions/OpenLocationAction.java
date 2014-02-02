@@ -183,7 +183,8 @@ public class OpenLocationAction extends JosmAction {
         if (!tasks.isEmpty()) {
             // TODO: handle multiple suitable tasks ?
             try {
-                future = tasks.iterator().next().loadUrl(new_layer, url, monitor);
+                task = tasks.iterator().next();
+                future = task.loadUrl(new_layer, url, monitor);
             } catch (IllegalArgumentException e) {
                 Main.error(e);
             }
