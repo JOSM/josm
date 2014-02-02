@@ -236,10 +236,10 @@ public class APIDataSet {
         toAdd = newToAdd;
 
         LinkedList<OsmPrimitive> newToDelete = new LinkedList<OsmPrimitive>();
-        newToDelete.addAll(Utils.filteredCollection(toDelete, Node.class));
-        newToDelete.addAll(Utils.filteredCollection(toDelete, Way.class));
         graph = new RelationUploadDependencyGraph(Utils.filteredCollection(toDelete, Relation.class), false);
         newToDelete.addAll(graph.computeUploadOrder());
+        newToDelete.addAll(Utils.filteredCollection(toDelete, Way.class));
+        newToDelete.addAll(Utils.filteredCollection(toDelete, Node.class));
         toDelete = newToDelete;
     }
 

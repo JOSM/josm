@@ -174,7 +174,11 @@ public class APIDataSetTest {
 
 
         APIDataSet apiDataSet = new APIDataSet();
-        apiDataSet.init(ds);
+        // add r1 first to test functionality of APIDataSet#adjustRelationUploadOrder()
+        apiDataSet.getPrimitivesToDelete().add(r1);
+        apiDataSet.getPrimitivesToDelete().add(r2);
+        apiDataSet.getPrimitivesToDelete().add(r3);
+        apiDataSet.getPrimitivesToDelete().add(r4);
         try {
             apiDataSet.adjustRelationUploadOrder();
         } catch(CyclicUploadDependencyException e) {
@@ -185,7 +189,47 @@ public class APIDataSetTest {
         assertEquals(4, toDelete.size());
         assertEquals(true, toDelete.indexOf(r2) < toDelete.indexOf(r1));
         assertEquals(true, toDelete.indexOf(r3) < toDelete.indexOf(r1));
-        assertEquals(true, toDelete.indexOf(r3) < toDelete.indexOf(r1));
+    }
+
+    @Test // for ticket #9656
+    public void deleteWay() {
+        DataSet ds = new DataSet();
+        final Way way = new Way(1, 2);
+        way.put("highway", "unclassified");
+        ds.addPrimitive(way);
+
+        final Node n1 = new Node(2);
+        ds.addPrimitive(n1);
+        way.addNode(n1);
+
+        final Node n2 = new Node(3);
+        ds.addPrimitive(n2);
+        way.addNode(n2);
+
+        Relation r1 = new Relation(4, 2);
+        ds.addPrimitive(r1);
+        r1.put("name", "r1");
+        r1.addMember(new RelationMember("foo", way));
+
+
+        r1.setDeleted(true);
+        way.setDeleted(true);
+        n1.setDeleted(true);
+        n2.setDeleted(true);
+
+        APIDataSet apiDataSet = new APIDataSet();
+        apiDataSet.init(ds);
+        try {
+            apiDataSet.adjustRelationUploadOrder();
+        } catch (CyclicUploadDependencyException e) {
+            fail("unexpected exception:" + e);
+        }
+        List<OsmPrimitive> toDelete = apiDataSet.getPrimitivesToDelete();
+
+        assertEquals(4, toDelete.size());
+        assertEquals(true, toDelete.indexOf(way) < toDelete.indexOf(n1));
+        assertEquals(true, toDelete.indexOf(way) < toDelete.indexOf(n2));
+        assertEquals(true, toDelete.indexOf(r1) < toDelete.indexOf(way));
     }
 
     @Test
