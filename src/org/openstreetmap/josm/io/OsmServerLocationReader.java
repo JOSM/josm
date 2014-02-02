@@ -137,7 +137,7 @@ public class OsmServerLocationReader extends OsmServerReader {
         
         @Override
         public GpxData parse() throws OsmTransferException, IllegalDataException, IOException, SAXException {
-            in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(1, true));
+            in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(1, true), null, true);
             if (in == null)
                 return null;
             progressMonitor.subTask(tr("Downloading OSM data..."));
