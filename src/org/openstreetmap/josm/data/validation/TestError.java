@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 
 /**
  * Validation error
@@ -299,7 +300,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
 
         v1.visit(getPrimitives());
         v2.visit(o.getPrimitives());
-        return v1.toString().compareToIgnoreCase(v2.toString());
+        return AlphanumComparator.getInstance().compare(v1.toString(), v2.toString());
     }
 
     @Override public void primitivesRemoved(PrimitivesRemovedEvent event) {

@@ -355,7 +355,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     private final Comparator<Relation> relationComparator = new Comparator<Relation>() {
-        private final AlphanumComparator ALPHANUM_COMPARATOR = new AlphanumComparator();
         @Override
         public int compare(Relation r1, Relation r2) {
             //TODO This doesn't work correctly with formatHooks
@@ -377,14 +376,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 String type1 = getRelationTypeName(r1);
                 String type2 = getRelationTypeName(r2);
 
-                int comp = ALPHANUM_COMPARATOR.compare(type1, type2);
+                int comp = AlphanumComparator.getInstance().compare(type1, type2);
                 if (comp != 0)
                     return comp;
 
                 String name1 = getRelationName(r1);
                 String name2 = getRelationName(r2);
 
-                comp = ALPHANUM_COMPARATOR.compare(name1, name2);
+                comp = AlphanumComparator.getInstance().compare(name1, name2);
                 if (comp != 0)
                     return comp;
             }
