@@ -257,20 +257,17 @@ public class TagConflictResolverModel extends DefaultTableModel {
      *
      */
     public void prepareDefaultTagDecisions() {
-        // Do not suggest to keep all values in order to reduce the wrong usage of semicolon values, see #9104!
-        // Do not suggest to keep the single value in order to avoid long highways to become tunnels+bridges+...
-
-        /*
         for (MultiValueResolutionDecision decision: decisions.values()) {
             List<String> values = decision.getValues();
             values.remove("");
             if (values.size() == 1) {
+                // TODO: Do not suggest to keep the single value in order to avoid long highways to become tunnels+bridges+... (only if both primitives are tagged)
                 decision.keepOne(values.get(0));
             } else {
-                decision.keepAll();
+                // Do not suggest to keep all values in order to reduce the wrong usage of semicolon values, see #9104!
+                //decision.keepAll();
             }
         }
-        */
         rebuild();
     }
     

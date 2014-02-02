@@ -233,6 +233,16 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         return pnlRelationMemberConflictResolver.getModel();
     }
 
+    /**
+     * Replies true if all tag and relation member conflicts have been decided.
+     *
+     * @return true if all tag and relation member conflicts have been decided; false otherwise
+     */
+    public boolean isResolvedCompletely() {
+        return getTagConflictResolverModel().isResolvedCompletely()
+                && getRelationMemberConflictResolverModel().isResolvedCompletely();
+    }
+
     protected List<Command> buildTagChangeCommand(OsmPrimitive primitive, TagCollection tc) {
         LinkedList<Command> cmds = new LinkedList<Command>();
         for (String key : tc.getKeys()) {
@@ -516,7 +526,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
 
         // Resolve tag conflicts if necessary
-        if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
+        if (!dialog.isResolvedCompletely()) {
             dialog.setVisible(true);
             if (dialog.isCanceled()) {
                 throw new UserCancelException();
