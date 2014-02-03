@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,6 +12,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -522,6 +524,21 @@ public final class ExpressionFactory {
          */
         public static String replace(String s, String target, String replacement) {
             return s == null ? null : s.replace(target, replacement);
+        }
+
+        /**
+         * Percent-encode a string. (See https://en.wikipedia.org/wiki/Percent-encoding)
+         * This is especially useful for data urls, e.g.
+         * <code>icon-image: concat("data:image/svg+xml,", URL_encode("<svg>...</svg>"));</code>
+         * @param s arbitrary string
+         * @return the encoded string
+         */
+        public static String URL_encode(String s) {
+            try {
+                return s == null ? null : URLEncoder.encode(s, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException();
+            }
         }
     }
 
