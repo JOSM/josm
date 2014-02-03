@@ -413,22 +413,34 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
         @Override
         public void setupDialog() {
-            setResizable(false);
             super.setupDialog();
+            final Dimension size = getSize();
+            // Set resizable only in width
+            setMinimumSize(size);
+            setPreferredSize(size);
+            // setMaximumSize does not work, and never worked, but still it seems not to bother Oracle to fix this 10-year-old bug
+            // https://bugs.openjdk.java.net/browse/JDK-6200438
+            // https://bugs.openjdk.java.net/browse/JDK-6464548
             
             setRememberWindowGeometry(getClass().getName() + ".geometry",
-                WindowGeometry.centerInWindow(Main.parent, getSize()));
+                WindowGeometry.centerInWindow(Main.parent, size));
         }
 
         @Override
         public void setVisible(boolean visible) {
-            // Do not want dialog to be resizable, but its size may increase each time because of the recently added tags
+            // Do not want dialog to be resizable in height, as its size may increase each time because of the recently added tags
             // So need to modify the stored geometry (size part only) in order to use the automatic positioning mechanism
             if (visible) {
                 WindowGeometry geometry = initWindowGeometry();
                 Dimension storedSize = geometry.getSize();
-                if (!storedSize.equals(getSize())) {
-                    storedSize.setSize(getSize());
+                Dimension size = getSize();
+                if (!storedSize.equals(size)) {
+                    if (storedSize.width < size.width) {
+                        storedSize.width = size.width;
+                    }
+                    if (storedSize.height != size.height) {
+                        storedSize.height = size.height;
+                    }
                     rememberWindowGeometry(geometry);
                 }
                 keys.setFixedLocale(PROPERTY_FIX_TAG_LOCALE.get());
@@ -616,7 +628,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 Main.warn(ex);
             }
             JOptionPane.showMessageDialog(this, tr("Please enter integer number between 0 and {0}", MAX_LRU_TAGS_NUMBER));
-            
         }
         
         private void suggestRecentlyAddedTags(JPanel mainPanel, int tagsToShow, final FocusAdapter focus) {
@@ -756,6 +767,5 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 }
             }
         }
-
     }
  }
