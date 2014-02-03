@@ -523,10 +523,10 @@ public class MainApplication extends Main {
         }
 
         private boolean handleNetworkErrors() {
-            boolean condition = !networkErrors.isEmpty();
+            boolean condition = !NETWORK_ERRORS.isEmpty();
             if (condition) {
                 Set<String> errors = new TreeSet<String>();
-                for (Throwable t : networkErrors.values()) {
+                for (Throwable t : NETWORK_ERRORS.values()) {
                     errors.add(t.toString());
                 }
                 return handleNetworkOrProxyErrors(condition, tr("Network errors occurred"),
@@ -536,7 +536,7 @@ public class MainApplication extends Main {
                                 "{1}" +
                                 "It may result of a missing proxy configuration.<br>" +
                                 "Would you like to change your proxy settings now?",
-                                Utils.joinAsHtmlUnorderedList(networkErrors.keySet()),
+                                Utils.joinAsHtmlUnorderedList(NETWORK_ERRORS.keySet()),
                                 Utils.joinAsHtmlUnorderedList(errors)
                         ));
             }

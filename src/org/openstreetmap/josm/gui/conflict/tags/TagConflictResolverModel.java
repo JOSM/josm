@@ -265,7 +265,6 @@ public class TagConflictResolverModel extends DefaultTableModel {
                 decision.keepOne(values.get(0));
             } else {
                 // Do not suggest to keep all values in order to reduce the wrong usage of semicolon values, see #9104!
-                //decision.keepAll();
             }
         }
         rebuild();

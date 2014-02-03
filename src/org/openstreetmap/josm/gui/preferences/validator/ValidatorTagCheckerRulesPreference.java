@@ -123,7 +123,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
         /**
          * The unique instance.
          */
-        public final static RulePrefHelper INSTANCE = new RulePrefHelper();
+        public static final RulePrefHelper INSTANCE = new RulePrefHelper();
 
         /**
          * Constructs a new {@code PresetPrefHelper}.

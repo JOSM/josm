@@ -64,6 +64,11 @@ public final class Utils {
      */
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
+    private static final int MILLIS_OF_SECOND = 1000;
+    private static final int MILLIS_OF_MINUTE = 60000;
+    private static final int MILLIS_OF_HOUR = 3600000;
+    private static final int MILLIS_OF_DAY = 86400000;
+
     /**
      * Tests whether {@code predicate} applies to at least one elements from {@code collection}.
      */
@@ -829,10 +834,6 @@ public final class Utils {
      * @since 6354
      */
     public static String getDurationString(long elapsedTime) throws IllegalArgumentException {
-        final int MILLIS_OF_SECOND = 1000;
-        final int MILLIS_OF_MINUTE = 60000;
-        final int MILLIS_OF_HOUR = 3600000;
-        final int MILLIS_OF_DAY = 86400000;
         if (elapsedTime < 0) {
             throw new IllegalArgumentException("elapsedTime must be > 0");
         }

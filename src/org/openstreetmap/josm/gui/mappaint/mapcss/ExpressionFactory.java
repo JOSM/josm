@@ -537,7 +537,7 @@ public final class ExpressionFactory {
             try {
                 return s == null ? null : URLEncoder.encode(s, "UTF-8");
             } catch (UnsupportedEncodingException ex) {
-                throw new RuntimeException();
+                throw new RuntimeException(ex);
             }
         }
     }
