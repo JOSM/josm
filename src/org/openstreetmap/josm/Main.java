@@ -210,7 +210,7 @@ abstract public class Main {
 
     private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<MapFrameListener>();
 
-    protected static final Map<String, Throwable> networkErrors = new HashMap<String, Throwable>();
+    protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<String, Throwable>();
 
     /**
      * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
@@ -1448,7 +1448,7 @@ abstract public class Main {
      */
     public static Throwable addNetworkError(String url, Throwable t) {
         if (url != null && t != null) {
-            return networkErrors.put(url, t);
+            return NETWORK_ERRORS.put(url, t);
         }
         return null;
     }
@@ -1459,6 +1459,6 @@ abstract public class Main {
      * @since 6639
      */
     public static Map<String, Throwable> getNetworkErrors() {
-        return new HashMap<String, Throwable>(networkErrors);
+        return new HashMap<String, Throwable>(NETWORK_ERRORS);
     }
 }

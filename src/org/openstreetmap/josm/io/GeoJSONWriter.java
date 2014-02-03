@@ -70,6 +70,47 @@ public class GeoJSONWriter {
         writer.close();
         return result;
     }
+    
+    private static class GeometryPrimitiveVisitor implements PrimitiveVisitor {
+        
+        private final JsonObjectBuilder geomObj;
+        
+        public GeometryPrimitiveVisitor(JsonObjectBuilder geomObj) {
+            this.geomObj = geomObj;
+        }
+
+        @Override
+        public void visit(INode n) {
+            geomObj.add("type", "Point");
+            LatLon ll = n.getCoor();
+            if (ll != null) {
+                geomObj.add("coordinates", getCoorArray(n.getCoor()));
+            }
+        }
+
+        @Override
+        public void visit(IWay w) {
+            geomObj.add("type", "LineString");
+            if (w instanceof Way) {
+                JsonArrayBuilder array = Json.createArrayBuilder();
+                for (Node n : ((Way)w).getNodes()) {
+                    LatLon ll = n.getCoor();
+                    if (ll != null) {
+                        array.add(getCoorArray(ll));
+                    }
+                }
+                geomObj.add("coordinates", array);
+            }
+        }
+
+        @Override
+        public void visit(IRelation r) {
+        }
+
+        private JsonArrayBuilder getCoorArray(LatLon c) {
+            return Json.createArrayBuilder().add(c.lon()).add(c.lat());
+        }
+    }
 
     protected static void appendPrimitive(OsmPrimitive p, JsonArrayBuilder array) {
         if (p.isIncomplete()) {
@@ -86,39 +127,7 @@ public class GeoJSONWriter {
 
         // Geometry
         final JsonObjectBuilder geomObj = Json.createObjectBuilder();
-        p.accept(new PrimitiveVisitor() {
-            @Override
-            public void visit(INode n) {
-                geomObj.add("type", "Point");
-                LatLon ll = n.getCoor();
-                if (ll != null) {
-                    geomObj.add("coordinates", getCoorArray(n.getCoor()));
-                }
-            }
-
-            @Override
-            public void visit(IWay w) {
-                geomObj.add("type", "LineString");
-                if (w instanceof Way) {
-                    JsonArrayBuilder array = Json.createArrayBuilder();
-                    for (Node n : ((Way)w).getNodes()) {
-                        LatLon ll = n.getCoor();
-                        if (ll != null) {
-                            array.add(getCoorArray(ll));
-                        }
-                    }
-                    geomObj.add("coordinates", array);
-                }
-            }
-
-            @Override
-            public void visit(IRelation r) {
-            }
-
-            private JsonArrayBuilder getCoorArray(LatLon c) {
-                return Json.createArrayBuilder().add(c.lon()).add(c.lat());
-            }
-        });
+        p.accept(new GeometryPrimitiveVisitor(geomObj));
 
         // Build primitive JSON object
         array.add(Json.createObjectBuilder()
