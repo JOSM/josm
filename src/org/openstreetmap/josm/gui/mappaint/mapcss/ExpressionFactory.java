@@ -26,6 +26,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -539,6 +540,18 @@ public final class ExpressionFactory {
             } catch (UnsupportedEncodingException ex) {
                 throw new RuntimeException(ex);
             }
+        }
+
+        /**
+         * XML-encode a string.
+         *
+         * Escapes special characters in xml. Alternative to using <![CDATA[ ... ]]>
+         * blocks.
+         * @param s arbitrary string
+         * @return the encoded string
+         */
+        public static String XML_encode(String s) {
+            return s == null ? null : XmlWriter.encode(s);
         }
     }
 

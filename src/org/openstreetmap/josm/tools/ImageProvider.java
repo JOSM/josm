@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -529,12 +530,26 @@ public class ImageProvider {
                 String mediatype = m.group(1);
                 String base64 = m.group(2);
                 String data = m.group(3);
-                byte[] bytes = ";base64".equals(base64)
-                        ? Base64.decodeBase64(data)
-                                : URLDecoder.decode(data, "utf-8").getBytes();
+                byte[] bytes;
+                if (";base64".equals(base64)) {
+                    bytes = Base64.decodeBase64(data);
+                } else {
+                    try {
+                        bytes = URLDecoder.decode(data, "utf-8").getBytes();
+                    } catch (IllegalArgumentException ex) {
+                        Main.warn("Unable to decode URL data part: "+ex.getMessage() + " (" + data + ")");
+                        return null;
+                    }
+                }
                 if (mediatype != null && mediatype.contains("image/svg+xml")) {
-                    URI uri = getSvgUniverse().loadSVG(new StringReader(new String(bytes)), url);
-                    return new ImageResource(getSvgUniverse().getDiagram(uri));
+                    String s = new String(bytes);
+                    URI uri = getSvgUniverse().loadSVG(new StringReader(s), URLEncoder.encode(s, "UTF-8"));
+                    SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                    if (svg == null) {
+                        Main.warn("Unable to process svg: "+s);
+                        return null;
+                    }
+                    return new ImageResource(svg);
                 } else {
                     try {
                         return new ImageResource(ImageIO.read(new ByteArrayInputStream(bytes)));
