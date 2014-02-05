@@ -7172,11 +7172,11 @@ Note that for a match, at least one positive and no negative is required.
                 </optional>
                 <roles>
                     <role key="" text="route segment" requisite="optional" type="way" />
-                    <role key="forward" text="forward route segment" requisite="optional" type="way" />
-                    <role key="backward" text="backward route segment" requisite="optional" type="way" />
-                    <role key="link" text="link route segment" requisite="optional" type="way" />
-                    <role key="shortcut" text="shortcut route segment" requisite="optional" type="way" />
-                    <role key="variant" text="variant route segment" requisite="optional" type="way" />
+                    <role key="forward" text="forward segment" requisite="optional" type="way" />
+                    <role key="backward" text="backward segment" requisite="optional" type="way" />
+                    <role key="link" text="link segment" requisite="optional" type="way" />
+                    <role key="shortcut" text="shortcut segment" requisite="optional" type="way" />
+                    <role key="variant" text="variant segment" requisite="optional" type="way" />
                     <role key="start" text="entry points" requisite="optional" type="node" />
                 </roles>
             </item>
@@ -7194,11 +7194,11 @@ Note that for a match, at least one positive and no negative is required.
                 </optional>
                 <roles>
                     <role key="" text="route segment" requisite="optional" type="way" />
-                    <role key="forward" text="forward route segment" requisite="optional" type="way" />
-                    <role key="backward" text="backward route segment" requisite="optional" type="way" />
-                    <role key="link" text="link route segment" requisite="optional" type="way" />
-                    <role key="shortcut" text="shortcut route segment" requisite="optional" type="way" />
-                    <role key="variant" text="variant route segment" requisite="optional" type="way" />
+                    <role key="forward" text="forward segment" requisite="optional" type="way" />
+                    <role key="backward" text="backward segment" requisite="optional" type="way" />
+                    <role key="link" text="link segment" requisite="optional" type="way" />
+                    <role key="shortcut" text="shortcut segment" requisite="optional" type="way" />
+                    <role key="variant" text="variant segment" requisite="optional" type="way" />
                     <role key="start" text="entry points" requisite="optional" type="node" />
                 </roles>
             </item>
@@ -7249,10 +7249,10 @@ Note that for a match, at least one positive and no negative is required.
                 <key key="route" value="road"/>
                 <reference ref="name_ref_operator"/>
                 <roles>
-                    <role key="" text="route segment" requisite="optional" type="way" member_expression="highway="/>
-                    <role key="forward" text="forward route segment" requisite="optional" type="way" member_expression="highway="/>
-                    <role key="backward" text="backward route segment" requisite="optional" type="way" member_expression="highway="/>
-                    <role key="link" text="link route segment" requisite="optional" type="way" member_expression="highway="/>
+                    <role key="" text="route segment" requisite="optional" type="way" member_expression="highway"/>
+                    <role key="forward" text="forward segment" requisite="optional" type="way" member_expression="highway"/>
+                    <role key="backward" text="backward segment" requisite="optional" type="way" member_expression="highway"/>
+                    <role key="link" text="link segment" requisite="optional" type="way" member_expression="highway"/>
                 </roles>
             </item>
 
