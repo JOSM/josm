@@ -15,7 +15,12 @@ public abstract class FileExporter implements LayerChangeListener {
     public final ExtensionFileFilter filter;
 
     private boolean enabled;
+    private boolean canceled;
 
+    /**
+     * Constructs a new {@code FileExporter}.
+     * @param filter The extension file filter
+     */
     public FileExporter(ExtensionFileFilter filter) {
         this.filter = filter;
         this.enabled = true;
@@ -60,5 +65,23 @@ public abstract class FileExporter implements LayerChangeListener {
     @Override
     public void layerRemoved(Layer oldLayer) {
         // To be overriden by subclasses if needed
+    }
+
+    /**
+     * Determines if this exporter has been canceled during export.
+     * @return true if this {@code FileExporter} has been canceled
+     * @since 6815
+     */
+    public final boolean isCanceled() {
+        return canceled;
+    }
+
+    /**
+     * Marks this exporter as canceled.
+     * @param canceled true to mark this exporter as canceled, {@code false} otherwise
+     * @since 6815
+     */
+    public final void setCanceled(boolean canceled) {
+        this.canceled = canceled;
     }
 }

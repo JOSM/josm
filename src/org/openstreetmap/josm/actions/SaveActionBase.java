@@ -67,16 +67,20 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
         try {
             boolean exported = false;
+            boolean canceled = false;
             for (FileExporter exporter : ExtensionFileFilter.exporters) {
                 if (exporter.acceptFile(file, layer)) {
                     exporter.exportData(file, layer);
                     exported = true;
+                    canceled = exporter.isCanceled();
                     break;
                 }
             }
             if (!exported) {
                 JOptionPane.showMessageDialog(Main.parent, tr("No Exporter found! Nothing saved."), tr("Warning"),
                         JOptionPane.WARNING_MESSAGE);
+                return false;
+            } else if (canceled) {
                 return false;
             }
             layer.setName(file.getName());
