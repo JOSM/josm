@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -359,7 +358,9 @@ public class ImageProvider {
     }
 
     /**
-     * @see #get(java.lang.String, java.lang.String)
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
+     * @return the requested image or null if the request failed
+     * @see #get(String, String)
      */
     public static ImageIcon get(String name) {
         return new ImageProvider(name).get();
@@ -368,14 +369,20 @@ public class ImageProvider {
     /**
      * Load an image with a given file name, but do not throw an exception
      * when the image cannot be found.
-     * @see #get(java.lang.String, java.lang.String)
+     *
+     * @param subdir subdirectory the image lies in
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
+     * @return the requested image or null if the request failed
+     * @see #get(String, String)
      */
     public static ImageIcon getIfAvailable(String subdir, String name) {
         return new ImageProvider(subdir, name).setOptional(true).get();
     }
 
     /**
-     * @see #getIfAvailable(java.lang.String, java.lang.String)
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
+     * @return the requested image or null if the request failed
+     * @see #getIfAvailable(String, String)
      */
     public static ImageIcon getIfAvailable(String name) {
         return new ImageProvider(name).setOptional(true).get();
@@ -853,7 +860,7 @@ public class ImageProvider {
      *
      * @param img the image to be rotated.
      * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
-     * will mod it with 360 before using it. More over for caching performance, it will be rounded to 
+     * will mod it with 360 before using it. More over for caching performance, it will be rounded to
      * an entire value between 0 and 360.
      *
      * @return the image after rotating.
@@ -862,13 +869,13 @@ public class ImageProvider {
     public static Image createRotatedImage(Image img, double rotatedAngle) {
         return createRotatedImage(img, rotatedAngle, ImageResource.DEFAULT_DIMENSION);
     }
-    
+
     /**
      * Creates a rotated version of the input image, scaled to the given dimension.
      *
      * @param img the image to be rotated.
      * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
-     * will mod it with 360 before using it. More over for caching performance, it will be rounded to 
+     * will mod it with 360 before using it. More over for caching performance, it will be rounded to
      * an entire value between 0 and 360.
      * @param dimension The requested dimensions. Use (-1,-1) for the original size
      * and (width, -1) to set the width, but otherwise scale the image proportionally.
@@ -877,13 +884,13 @@ public class ImageProvider {
      */
     public static Image createRotatedImage(Image img, double rotatedAngle, Dimension dimension) {
         CheckParameterUtil.ensureParameterNotNull(img, "img");
-        
+
         // convert rotatedAngle to an integer value from 0 to 360
         Long originalAngle = Math.round(rotatedAngle % 360);
         if (rotatedAngle != 0 && originalAngle == 0) {
             originalAngle = 360L;
         }
-        
+
         ImageResource imageResource = null;
 
         synchronized (ROTATE_CACHE) {
@@ -891,24 +898,24 @@ public class ImageProvider {
             if (cacheByAngle == null) {
                 ROTATE_CACHE.put(img, cacheByAngle = new HashMap<Long, ImageResource>());
             }
-            
+
             imageResource = cacheByAngle.get(originalAngle);
-            
+
             if (imageResource == null) {
                 // convert originalAngle to a value from 0 to 90
                 double angle = originalAngle % 90;
                 if (originalAngle != 0.0 && angle == 0.0) {
                     angle = 90.0;
                 }
-        
+
                 double radian = Math.toRadians(angle);
-        
+
                 new ImageIcon(img); // load completely
                 int iw = img.getWidth(null);
                 int ih = img.getHeight(null);
                 int w;
                 int h;
-        
+
                 if ((originalAngle >= 0 && originalAngle <= 90) || (originalAngle > 180 && originalAngle <= 270)) {
                     w = (int) (iw * Math.sin(DEGREE_90 - radian) + ih * Math.sin(radian));
                     h = (int) (iw * Math.sin(radian) + ih * Math.sin(DEGREE_90 - radian));
@@ -920,32 +927,32 @@ public class ImageProvider {
                 cacheByAngle.put(originalAngle, imageResource = new ImageResource(image));
                 Graphics g = image.getGraphics();
                 Graphics2D g2d = (Graphics2D) g.create();
-        
+
                 // calculate the center of the icon.
                 int cx = iw / 2;
                 int cy = ih / 2;
-        
+
                 // move the graphics center point to the center of the icon.
                 g2d.translate(w / 2, h / 2);
-        
+
                 // rotate the graphics about the center point of the icon
                 g2d.rotate(Math.toRadians(originalAngle));
-        
+
                 g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
                 g2d.drawImage(img, -cx, -cy, null);
-        
+
                 g2d.dispose();
                 new ImageIcon(image); // load completely
             }
             return imageResource.getImageIcon(dimension).getImage();
         }
     }
-    
+
     /**
      * Creates a scaled down version of the input image to fit maximum dimensions. (Keeps aspect ratio)
      *
      * @param img the image to be scaled down.
-     * @param maxSize the maximum size in pixels (both for width and height) 
+     * @param maxSize the maximum size in pixels (both for width and height)
      *
      * @return the image after scaling.
      * @since 6172

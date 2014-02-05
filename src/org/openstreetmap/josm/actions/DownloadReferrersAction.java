@@ -19,15 +19,20 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * This action loads the set of primitives referring to the current selection from the OSM
- * server.
- *
+ * This action loads the set of primitives referring to the current selection from the OSM server.
+ * @since 1810
  */
-public class DownloadReferrersAction extends JosmAction{
+public class DownloadReferrersAction extends JosmAction {
 
+	/**
+	 * Constructs a new {@code DownloadReferrersAction}.
+	 */
     public DownloadReferrersAction() {
-        super(tr("Download parent ways/relations..."), "downloadreferrers", tr("Download objects referring to one of the selected objects"),
-                Shortcut.registerShortcut("file:downloadreferrers", tr("File: {0}", tr("Download parent ways/relations...")), KeyEvent.VK_D, Shortcut.ALT_CTRL), true);
+        super(tr("Download parent ways/relations..."), "download",
+        		tr("Download objects referring to one of the selected objects"),
+                Shortcut.registerShortcut("file:downloadreferrers",
+                		tr("File: {0}", tr("Download parent ways/relations...")), KeyEvent.VK_D, Shortcut.ALT_CTRL),
+                true, "downloadreferrers", true);
         putValue("help", ht("/Action/DownloadParentWaysAndRelation"));
     }
 
@@ -40,7 +45,7 @@ public class DownloadReferrersAction extends JosmAction{
      * @param children the collection of child primitives.
      * @exception IllegalArgumentException thrown if targetLayer is null
      */
-    static public void downloadReferrers(OsmDataLayer targetLayer, Collection<OsmPrimitive> children) throws IllegalArgumentException {
+    public static void downloadReferrers(OsmDataLayer targetLayer, Collection<OsmPrimitive> children) throws IllegalArgumentException {
         if (children == null || children.isEmpty()) return;
         Main.worker.submit(new DownloadReferrersTask(targetLayer, children));
     }
@@ -54,7 +59,7 @@ public class DownloadReferrersAction extends JosmAction{
      * @param children the collection of primitives, given as map of ids and types
      * @exception IllegalArgumentException thrown if targetLayer is null
      */
-    static public void downloadReferrers(OsmDataLayer targetLayer, Map<Long, OsmPrimitiveType> children) throws IllegalArgumentException {
+    public static void downloadReferrers(OsmDataLayer targetLayer, Map<Long, OsmPrimitiveType> children) throws IllegalArgumentException {
         if (children == null || children.isEmpty()) return;
         Main.worker.submit(new DownloadReferrersTask(targetLayer, children));
     }
@@ -63,7 +68,6 @@ public class DownloadReferrersAction extends JosmAction{
      * Downloads the primitives referring to the primitive given by <code>id</code> and
      * <code>type</code>.
      *
-     *
      * @param targetLayer  the target layer. Must not be null.
      * @param id the primitive id. id > 0 required.
      * @param type the primitive type. type != null required
@@ -71,7 +75,7 @@ public class DownloadReferrersAction extends JosmAction{
      * @exception IllegalArgumentException thrown if id <= 0
      * @exception IllegalArgumentException thrown if type == null
      */
-    static public void downloadReferrers(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) throws IllegalArgumentException {
+    public static void downloadReferrers(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) throws IllegalArgumentException {
         if (id <= 0)
             throw new IllegalArgumentException(MessageFormat.format("Id > 0 required, got {0}", id));
         CheckParameterUtil.ensureParameterNotNull(type, "type");

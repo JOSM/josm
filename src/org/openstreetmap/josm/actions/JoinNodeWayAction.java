@@ -26,6 +26,10 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class JoinNodeWayAction extends JosmAction {
+
+    /**
+     * Constructs a new {@code JoinNodeWayAction}.
+     */
     public JoinNodeWayAction() {
         super(tr("Join Node to Way"), "joinnodeway", tr("Include a node into the nearest way segments"),
                 Shortcut.registerShortcut("tools:joinnodeway", tr("Tool: {0}", tr("Join Node to Way")), KeyEvent.VK_J, Shortcut.DIRECT), true);
@@ -52,7 +56,7 @@ public class JoinNodeWayAction extends JosmAction {
                     Main.map.mapView.getPoint(node), OsmPrimitive.isSelectablePredicate);
             HashMap<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
             for (WaySegment ws : wss) {
-                // Maybe cleaner to pass a "isSelected" predicate to getNearestWaySegements, but this is atm. less invasive.
+                // Maybe cleaner to pass a "isSelected" predicate to getNearestWaySegments, but this is less invasive.
                 if(restrictToSelectedWays && !ws.way.isSelected()) {
                     continue;
                 }

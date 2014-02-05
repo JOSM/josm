@@ -22,11 +22,11 @@ import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.io.ChangesetQuery;
-import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 
 public class UrlBasedQueryPanel extends JPanel {
@@ -165,7 +165,7 @@ public class UrlBasedQueryPanel extends JPanel {
         }
         protected void feedbackValid() {
             if (getCurrentFeedback().equals("valid")) return;
-            lblValid.setIcon(ImageProvider.get("dialogs/changeset", "valid"));
+            lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
             lblValid.setToolTipText("");
             lblValid.putClientProperty("valid", "valid");
         }

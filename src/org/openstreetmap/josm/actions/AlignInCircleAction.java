@@ -31,6 +31,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Aligns all selected nodes within a circle. (Useful for roundabouts)
  *
+ * @since 146
+ *
  * @author Matthew Newton
  * @author Petr Dlouhý
  * @author Teemu Koskinen
@@ -47,14 +49,14 @@ public final class AlignInCircleAction extends JosmAction {
         putValue("help", ht("/Action/AlignInCircle"));
     }
 
-    public double distance(EastNorth n, EastNorth m) {
+    private static double distance(EastNorth n, EastNorth m) {
         double easd, nord;
         easd = n.east() - m.east();
         nord = n.north() - m.north();
         return Math.sqrt(easd * easd + nord * nord);
     }
 
-    public class PolarCoor {
+    public static class PolarCoor {
         double radius;
         double angle;
         EastNorth origin = new EastNorth(0, 0);
@@ -249,7 +251,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @param nodes The nodes collection to check.
      * @return true if all nodes in the given collection are referred by the same object, and no other one (see #8431)
      */
-    protected boolean allowRegularPolygon(Collection<Node> nodes) {
+    protected static boolean allowRegularPolygon(Collection<Node> nodes) {
         Set<OsmPrimitive> allReferrers = new HashSet<OsmPrimitive>();
         for (Node n : nodes) {
             List<OsmPrimitive> referrers = n.getReferrers();
