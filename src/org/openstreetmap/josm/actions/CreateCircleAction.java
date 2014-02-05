@@ -37,6 +37,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * BTW: Someone might want to implement projection corrections for this...
  *
+ * @since 996
+ *
  * @author Henry Loenwind, based on much copy&Paste from other Actions.
  * @author Sebastian Masch
  */
@@ -46,9 +48,9 @@ public final class CreateCircleAction extends JosmAction {
      * Constructs a new {@code CreateCircleAction}.
      */
     public CreateCircleAction() {
-        super(tr("Create Circle"), "createcircle", tr("Create a circle from three selected nodes."),
+        super(tr("Create Circle"), "aligncircle", tr("Create a circle from three selected nodes."),
             Shortcut.registerShortcut("tools:createcircle", tr("Tool: {0}", tr("Create Circle")),
-            KeyEvent.VK_O, Shortcut.SHIFT), true);
+            KeyEvent.VK_O, Shortcut.SHIFT), true, "createcircle", true);
         putValue("help", ht("/Action/CreateCircle"));
     }
 
@@ -275,7 +277,7 @@ public final class CreateCircleAction extends JosmAction {
         Main.main.undoRedo.add(new SequenceCommand(tr("Create Circle"), cmds));
         Main.map.repaint();
     }
-    
+
     private static void notifyNodesNotOnCircle() {
         new Notification(
                 tr("Those nodes are not in a circle. Aborting."))

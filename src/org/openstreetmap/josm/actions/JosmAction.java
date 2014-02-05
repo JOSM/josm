@@ -43,6 +43,10 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
     private LayerChangeAdapter layerChangeAdapter;
     private SelectionChangeAdapter selectionChangeAdapter;
 
+    /**
+     * Returns the shortcut for this action.
+     * @return the shortcut for this action, or "No shortcut" if none is defined
+     */
     public Shortcut getShortcut() {
         if (sc == null) {
             sc = Shortcut.registerShortcut("core:none", tr("No Shortcut"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
@@ -109,18 +113,57 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
                 toolbarId == null ? iconName : toolbarId, installAdapters);
     }
 
+    /**
+     * Constructs a new {@code JosmAction}.
+     *
+     * Use this super constructor to setup your action.
+     *
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName the filename of the icon to use
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip. Please note
+     *           that html is not supported for menu actions on some platforms.
+     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut. But you always
+     *            do want a shortcut, remember you can always register it with group=none, so you
+     *            won't be assigned a shortcut unless the user configures one. If you pass null here,
+     *            the user CANNOT configure a shortcut for your action.
+     * @param registerInToolbar register this action for the toolbar preferences?
+     * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
+     */
     public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar, boolean installAdapters) {
         this(name, iconName, tooltip, shortcut, registerInToolbar, null, installAdapters);
     }
 
+    /**
+     * Constructs a new {@code JosmAction}.
+     *
+     * Use this super constructor to setup your action.
+     *
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName the filename of the icon to use
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip. Please note
+     *           that html is not supported for menu actions on some platforms.
+     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut. But you always
+     *            do want a shortcut, remember you can always register it with group=none, so you
+     *            won't be assigned a shortcut unless the user configures one. If you pass null here,
+     *            the user CANNOT configure a shortcut for your action.
+     * @param registerInToolbar register this action for the toolbar preferences?
+     */
     public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
         this(name, iconName, tooltip, shortcut, registerInToolbar, null, true);
     }
 
+    /**
+     * Constructs a new {@code JosmAction}.
+     */
     public JosmAction() {
         this(true);
     }
 
+    /**
+     * Constructs a new {@code JosmAction}.
+     *
+     * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
+     */
     public JosmAction(boolean installAdapters) {
         setHelpId();
         if (installAdapters) {
@@ -145,6 +188,10 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         putValue("help", helpId);
     }
 
+    /**
+     * Sets the tooltip text of this action.
+     * @param tooltip The text to display in tooltip. Can be {@code null}
+     */
     public void setTooltip(String tooltip) {
         if (tooltip != null) {
             putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));

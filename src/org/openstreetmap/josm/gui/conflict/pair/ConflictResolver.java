@@ -86,8 +86,8 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      * loads the required icons
      */
     protected void loadIcons() {
-        mergeComplete = ImageProvider.get("dialogs/conflict","mergecomplete.png" );
-        mergeIncomplete = ImageProvider.get("dialogs/conflict","mergeincomplete.png" );
+        mergeComplete = ImageProvider.get("dialogs", "valid.png" );
+        mergeIncomplete = ImageProvider.get("dialogs/conflict", "mergeincomplete.png" );
     }
 
     /**
