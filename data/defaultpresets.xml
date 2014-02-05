@@ -233,6 +233,11 @@ Note that for a match, at least one positive and no negative is required.
         <text key="name" text="Name" />
         <text key="ref" text="Reference" />
     </chunk>
+    <chunk id="name_ref_operator">
+        <text key="name" text="Name" />
+        <text key="ref" text="Reference" />
+        <text key="operator" text="Operator" />
+    </chunk>
     <chunk id="name_operator">
         <text key="name" text="Name" />
         <text key="operator" text="Operator" />
@@ -336,6 +341,14 @@ Note that for a match, at least one positive and no negative is required.
         <text key="population" text="Population" />
         <text key="addr:postcode" text="Post code" />
         <text key="website" text="Website" />
+    </chunk>
+    <chunk id="route_hikebike_optionals">
+        <text key="distance" text="Distance (km)"/>
+        <text key="ascent" text="Ascent (m)"/>
+        <text key="descent" text="Descent (m)"/>
+        <check key="roundtrip" text="Roundtrip"/>
+        <text key="symbol" text="Symbol description"/>
+        <text key="description" text="Description"/>
     </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact">
@@ -1901,7 +1914,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="cargo" text="Cargo" values="passengers,vehicle,bicycle,hgv,passengers;vehicle" values_context="cargo" />
         </item>
-        <item name="Ferry Route" icon="presets/ferry.png" type="way,closedway">
+        <item name="Ferry Route" icon="presets/ferry.png" type="way,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ferry"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:route=ferry"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:route=ferry"
@@ -7095,41 +7108,156 @@ Note that for a match, at least one positive and no negative is required.
             </roles>
         </item>
         <separator/>
-        <item name="General route" icon="presets/path.png" type="relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:route"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:route"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Relation:route"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Relation:route"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Relation:route"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:route" />
-            <label text="Edit general route" />
-            <space />
-            <key key="type" value="route" />
-            <combo key="route" text="Route type" values="bicycle,bus,road,ferry,ski,foot,hiking,tram,detour,railway,subway" values_context="route type" values_searchable="true" />
-            <reference ref="name_ref" />
-            <text key="symbol" text="Symbol description" />
-            <text key="description" text="Description" />
-            <optional>
-                <text key="network" text="Network" />
-                <text key="operator" text="Operator" />
-                <combo key="state" text="Route state" values="proposed,alternate,temporary,connection" />
-                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
-            </optional>
-            <roles>
-                <role key="" text="route segment" requisite="optional" type="way" />
-                <role key="forward" text="forward segment" requisite="optional" type="way" />
-                <role key="backward" text="backward segment" requisite="optional" type="way" />
-                <role key="east" text="east segment (North America)" requisite="optional" type="way" />
-                <role key="north" text="north segment (North America)" requisite="optional" type="way" />
-                <role key="west" text="west segment (North America)" requisite="optional" type="way" />
-                <role key="south" text="south segment (North America)" requisite="optional" type="way" />
-                <role key="stop" text="halt point" requisite="optional" type="node" />
-                <role key="forward_stop" text="forward halt point" requisite="optional" type="node" />
-                <role key="backward_stop" text="backward halt point" requisite="optional" type="node" />
-            </roles>
-        </item>
+
+        <group name="Routes">
+            <item name="Bicycle route" icon="presets/path.png" type="relation">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:route=bicycle"/>
+                <label text="Edit bicycle route"/>
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="bicycle"/>
+                <combo key="network" values="icn,ncn,rcn,lcn" match="keyvalue" />
+                <reference ref="name_ref_operator"/>
+                <optional>
+                    <reference ref="route_hikebike_optionals" />
+                </optional>
+                <roles>
+                    <role key="" text="route segment" requisite="required" type="way"/>
+                </roles>
+            </item>
+
+            <item name="MTB route" icon="presets/path.png" type="relation">
+                <link href="http://wiki.openstreetmap.org/wiki/Mountain_biking"/>
+                <label text="Edit MTB route"/>
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="mtb"/>
+                <reference ref="name_ref_operator"/>
+                <optional>
+                    <reference ref="route_hikebike_optionals" />
+                </optional>
+                <roles>
+                    <role key="" text="route segment" requisite="required" type="way" member_expression="highway=path OR highway=track"/>
+                </roles>
+            </item>
+
+            <item name="Hiking route" icon="presets/path.png" type="relation">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:route=hiking#Tagging_walking_and_hiking_Route_Networks"/>
+                <label text="Edit hiking route"/>
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="hiking"/>
+                <combo key="network" values="iwn,nwn,rwn,lwn" match="keyvalue" />
+                <reference ref="name_ref_operator"/>
+                <optional>
+                    <reference ref="route_hikebike_optionals" />
+                </optional>
+                <roles>
+                    <role key="" text="route segment" requisite="required" type="way" member_expression="highway=path OR highway=fooytway OR highway=track"/>
+                    <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
+                    <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
+                </roles>
+            </item>
+
+            <item name="Piste route" icon="presets/path.png" type="relation">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:route=piste"/>
+                <label text="Edit piste route"/>
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="piste"/>
+                <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,snow_park" match="keyvalue" />
+                <reference ref="name_ref_operator"/>
+                <optional>
+                    <reference ref="route_hikebike_optionals" />
+                </optional>
+                <roles>
+                    <role key="" text="route segment" requisite="optional" type="way" />
+                    <role key="forward" text="forward route segment" requisite="optional" type="way" />
+                    <role key="backward" text="backward route segment" requisite="optional" type="way" />
+                    <role key="link" text="link route segment" requisite="optional" type="way" />
+                    <role key="shortcut" text="shortcut route segment" requisite="optional" type="way" />
+                    <role key="variant" text="variant route segment" requisite="optional" type="way" />
+                    <role key="start" text="entry points" requisite="optional" type="node" />
+                </roles>
+            </item>
+
+            <item name="Ski route" icon="presets/path.png" type="relation">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ski"/>
+                <label text="Edit piste ski"/>
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="piste"/>
+                <combo key="piste:type" text="Piste type" values="nordic,alpine" match="keyvalue" />
+                <reference ref="name_ref_operator"/>
+                <optional>
+                    <reference ref="route_hikebike_optionals" />
+                </optional>
+                <roles>
+                    <role key="" text="route segment" requisite="optional" type="way" />
+                    <role key="forward" text="forward route segment" requisite="optional" type="way" />
+                    <role key="backward" text="backward route segment" requisite="optional" type="way" />
+                    <role key="link" text="link route segment" requisite="optional" type="way" />
+                    <role key="shortcut" text="shortcut route segment" requisite="optional" type="way" />
+                    <role key="variant" text="variant route segment" requisite="optional" type="way" />
+                    <role key="start" text="entry points" requisite="optional" type="node" />
+                </roles>
+            </item>
+
+            <separator/>
+            <item name="Detour route" icon="presets/path.png" type="relation">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:route=detour"/>
+                <label text="Edit detour route"/>
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="detour"/>
+                <reference ref="name_ref_operator"/>
+                <optional>
+                    <text key="destination" text="Destination"/>
+                    <text key="deour" text="Ref of the way this is a detour to"/>
+                </optional>
+                <roles>
+                    <role key="" text="route segment" requisite="required" type="way"/>
+                    <role key="fork" text="fork node for alternative routes" requisite="optional" type="node"/>
+                </roles>
+            </item>
+            <item name="Power route" icon="presets/path.png" type="relation">
+                <label text="Edit power route"/>
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="power"/>
+                <reference ref="name_ref_operator"/>
+                <roles>
+                    <role key="" text="route segment" requisite="required" type="way" member_expression="power"/>
+                </roles>
+            </item>
+            <item name="Railway route" icon="presets/path.png" type="relation">
+                <label text="Edit railway route"/>
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:route=railway"/>
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="railway"/>
+                <reference ref="name_ref_operator"/>
+                <roles>
+                    <role key="" text="route segment" requisite="required" type="way" member_expression="railway"/>
+                </roles>
+            </item>
+            <item name="Road route" icon="presets/path.png" type="relation">
+                <label text="Edit road route"/>
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:route=road"/>
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="road"/>
+                <reference ref="name_ref_operator"/>
+                <roles>
+                    <role key="" text="route segment" requisite="optional" type="way" member_expression="highway="/>
+                    <role key="forward" text="forward route segment" requisite="optional" type="way" member_expression="highway="/>
+                    <role key="backward" text="backward route segment" requisite="optional" type="way" member_expression="highway="/>
+                    <role key="link" text="link route segment" requisite="optional" type="way" member_expression="highway="/>
+                </roles>
+            </item>
+
+        </group> <!-- Routes -->
+
         <item name="Route Network" icon="presets/path.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Network" />
             <label text="Edit Route Network" />
