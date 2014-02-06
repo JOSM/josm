@@ -52,16 +52,6 @@ way.major_road[!ref] {
   assertNoMatch: "way highway=primary ref=123";
 }
 
-way.major_road[foot?][!sidewalk] {
-  throwWarning: tr("major road used with {0}", "{1.key}");
-  suggestAlternative: "sidewalk";
-  suggestAlternative: tr("separate footway");
-  assertMatch: "way highway=primary foot=yes";
-  assertNoMatch: "way highway=primary";
-  assertNoMatch: "way highway=primary foot=yes sidewalk=both";
-  assertNoMatch: "way highway=primary foot=no";
-}
-
 way[highway=road] {
   throwWarning: tr("temporary highway type");
   assertMatch: "way highway=road";
