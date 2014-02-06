@@ -196,40 +196,33 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
 
     protected void tryToPasteFromClipboard(OsmIdTextField tfId, OsmPrimitiveTypesComboBox cbType) {
         String buf = Utils.getClipboardContent();
-        if (buf != null) {
-            if (buf.length() <= Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) {
-                final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
-                final String parsedText = Utils.join(", ", Utils.transform(ids, new Utils.Function<SimplePrimitiveId, String>() {
-                    @Override
-                    public String apply(SimplePrimitiveId x) {
-                        return x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId());
-                    }
-                }));
-                tfId.tryToPasteFrom(parsedText);
-                final Set<OsmPrimitiveType> types = new HashSet<OsmPrimitiveType>(Utils.transform(ids, new Utils.Function<SimplePrimitiveId, OsmPrimitiveType>() {
-                    @Override
-                    public OsmPrimitiveType apply(SimplePrimitiveId x) {
-                        return x.getType();
-                    }
-                }));
-                if (types.size() == 1) {
-                    // select corresponding type
-                    cbType.setSelectedItem(types.iterator().next());
-                } else {
-                    // select "mixed"
-                    cbType.setSelectedIndex(3);
+        if (buf == null || buf.length()==0) return;
+        if (buf.length() > Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) return;
+        final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
+        if (!ids.isEmpty()) {
+            final String parsedText = Utils.join(", ", Utils.transform(ids, new Utils.Function<SimplePrimitiveId, String>() {
+                @Override
+                public String apply(SimplePrimitiveId x) {
+                    return x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId());
                 }
+            }));
+            tfId.tryToPasteFrom(parsedText);
+            final Set<OsmPrimitiveType> types = new HashSet<OsmPrimitiveType>(Utils.transform(ids, new Utils.Function<SimplePrimitiveId, OsmPrimitiveType>() {
+                @Override
+                public OsmPrimitiveType apply(SimplePrimitiveId x) {
+                    return x.getType();
+                }
+            }));
+            if (types.size() == 1) {
+                // select corresponding type
+                cbType.setSelectedItem(types.iterator().next());
             } else {
-                if (buf.contains("node")) cbType.setSelectedIndex(0);
-                if (buf.contains("way")) cbType.setSelectedIndex(1);
-                if (buf.contains("relation")) cbType.setSelectedIndex(2);
-                String[] res = buf.split("/");
-                String txt;
-                if (res.length > 0) {
-                    txt = res[res.length - 1];
-                    if (txt.isEmpty() && txt.length() > 1) txt = res[res.length - 2];
-                }
+                // select "mixed"
+                cbType.setSelectedIndex(3);
             }
+        } else if (buf.matches("[\\d,v\\s]+")) { 
+            //fallback solution for id1,id2,id3 format 
+            tfId.tryToPasteFrom(buf);
         }
     }
 
