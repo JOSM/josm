@@ -24,11 +24,14 @@ abstract public class Prototype {
 
     public String getCode() {
         if(code == null) {
-            code = "";
-            if (conditions != null) {
+            if (conditions == null || conditions.isEmpty()) {
+                code = "";
+            } else {
+                final StringBuilder sb = new StringBuilder();
                 for(XmlCondition r: conditions) {
-                    code += r.toCode();
+                    r.appendCode(sb);
                 }
+                code = sb.toString();
             }
         }
         return code;
@@ -41,9 +44,13 @@ abstract public class Prototype {
         for(XmlCondition r : conditions)
         {
             String k = primitive.get(r.key);
+
+            if (k == null || (r.value != null && !k.equals(r.value)))
+                return false;
+
             String bv = OsmUtils.getNamedOsmBoolean(r.boolValue);
-            if(k == null || (r.value != null && !k.equals(r.value))
-                    || (bv != null && !bv.equals(OsmUtils.getNamedOsmBoolean(k))))
+
+            if (bv != null && !bv.equals(OsmUtils.getNamedOsmBoolean(k)))
                 return false;
         }
         return true;
