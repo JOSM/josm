@@ -37,8 +37,16 @@ public class XmlCondition
     {
       return "Rule["+key+","+(boolValue != null ? "b="+boolValue:"v="+value)+"]";
     }
-    public String toCode()
+
+    public void appendCode(StringBuilder sb)
     {
-      return "[k="+key+(boolValue != null ? ",b="+boolValue:",v="+value)+"]";
+        sb.append("[k=").append(key);
+
+        if (boolValue != null)
+            sb.append(",b=").append(boolValue);
+        else
+            sb.append(",v=").append(value);
+
+        sb.append("]");
     }
 }

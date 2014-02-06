@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import org.openstreetmap.josm.tools.Utils;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
@@ -700,16 +702,34 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public String getLocalName() {
-        String key = "name:" + Locale.getDefault().toString();
-        if (get(key) != null)
-            return get(key);
-        key = "name:" + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry();
-        if (get(key) != null)
-            return get(key);
-        key = "name:" + Locale.getDefault().getLanguage();
-        if (get(key) != null)
-            return get(key);
+        final Locale locale = Locale.getDefault();
+        String key = "name:" + locale.toString();
+        String val = get(key);
+        if (val != null)
+            return val;
+
+        final String language = locale.getLanguage();
+        key = "name:" + language + "_" + locale.getCountry();
+        val = get(key);
+        if (val != null)
+            return val;
+
+        key = "name:" + language;
+        val = get(key);
+        if (val != null)
+            return val;
+
         return getName();
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and {@code values}.
+     * @param key the key forming the tag.
+     * @param value value forming the tag.
+     * @return true iff primitive contains a tag consisting of {@code key} and {@code value}.
+     */
+    public boolean hasTag(String key, String value) {
+        return Utils.equal(value, get(key));
     }
 
     /**
