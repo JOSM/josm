@@ -2589,6 +2589,44 @@ For external files the <rules> should have following elements:
 		<area colour="shop#00005f"/>
 	</rule>
 
+<!--craft tags -->
+
+	<rule>
+		<condition k="craft" v="painter"/>
+		<icon annotate="true" src="craft/painter.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="plumber"/>
+		<icon annotate="true" src="craft/plumber.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="pottery"/>
+		<icon annotate="true" src="craft/pottery.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="stonemason"/>
+		<icon annotate="true" src="craft/stonemason.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="tiler"/>
+		<icon annotate="true" src="craft/tiler.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="window_construction"/>
+		<icon annotate="true" src="craft/window_construction.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
 <!--tourism tags -->
 
 	<rule>
