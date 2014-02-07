@@ -73,6 +73,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String name;
     public String name_context;
     public String locale_name;
+    public boolean preset_name_label;
     public final static String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
 
     /**
@@ -215,6 +216,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 pp.add(la);
             }
             p.add(pp, GBC.eol());
+        }
+        if (preset_name_label) {
+            TaggingPresetItems.Label.addLabel(p,/*I18n: {0} is preset name */tr("Edit {0}", getName()));
         }
 
         boolean presetInitiallyMatches = !selected.isEmpty() && Utils.forAll(selected, this);
