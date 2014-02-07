@@ -73,6 +73,7 @@
 		<attribute name="type" type="string" />
 		<attribute name="name_template" type="string"/>
 		<attribute name="name_template_filter" type="string"/>
+		<attribute name="preset_name_label" type="boolean"/>
 
 		<attribute name="text" use="prohibited" />
 		<anyAttribute processContents="skip" />

@@ -353,8 +353,12 @@ public final class TaggingPresetItems {
         @Override
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             initializeLocaleText(null);
-            p.add(new JLabel(locale_text), GBC.eol());
+            addLabel(p, locale_text);
             return false;
+        }
+
+        public static void addLabel(JPanel p, String label) {
+            p.add(new JLabel(label), GBC.eol());
         }
     }
 
