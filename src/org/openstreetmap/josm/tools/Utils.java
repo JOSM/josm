@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipFile;
 
@@ -52,6 +53,8 @@ import org.openstreetmap.josm.io.FileImporter;
  * Basic utils, that can be useful in different parts of the program.
  */
 public final class Utils {
+
+    public static final Pattern WHITE_SPACES_PATTERN = Pattern.compile("\\s+");
 
     private Utils() {
         // Hide default constructor for utils classes
@@ -317,7 +320,7 @@ public final class Utils {
      * Taken from <a href="http://www.rgagnon.com/javadetails/java-0064.html">this article</a> (CC-NC-BY-SA)
      * @param in The source file
      * @param out The destination file
-     * @throws IOException If any I/O error occurs
+     * @throws java.io.IOException If any I/O error occurs
      */
     public static void copyFile(File in, File out) throws IOException  {
         // TODO: remove this function when we move to Java 7 (use Files.copy instead)
@@ -364,7 +367,7 @@ public final class Utils {
     }
 
     /**
-     * <p>Utility method for closing a {@link Closeable} object.</p>
+     * <p>Utility method for closing a {@link java.io.Closeable} object.</p>
      *
      * @param c the closeable object. May be null.
      */
@@ -378,7 +381,7 @@ public final class Utils {
     }
 
     /**
-     * <p>Utility method for closing a {@link ZipFile}.</p>
+     * <p>Utility method for closing a {@link java.util.zip.ZipFile}.</p>
      *
      * @param zip the zip file. May be null.
      */
@@ -576,7 +579,7 @@ public final class Utils {
 
     /**
      * Transforms the collection {@code c} into an unmodifiable collection and
-     * applies the {@link Function} {@code f} on each element upon access.
+     * applies the {@link org.openstreetmap.josm.tools.Utils.Function} {@code f} on each element upon access.
      * @param <A> class of input collection
      * @param <B> class of transformed collection
      * @param c a collection
@@ -618,7 +621,7 @@ public final class Utils {
 
     /**
      * Transforms the list {@code l} into an unmodifiable list and
-     * applies the {@link Function} {@code f} on each element upon access.
+     * applies the {@link org.openstreetmap.josm.tools.Utils.Function} {@code f} on each element upon access.
      * @param <A> class of input collection
      * @param <B> class of transformed collection
      * @param l a collection
@@ -643,15 +646,17 @@ public final class Utils {
         };
     }
 
+    private static final Pattern HTTP_PREFFIX_PATTERN = Pattern.compile("https?");
+
     /**
      * Opens a HTTP connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param httpURL The HTTP url to open (must use http:// or https://)
      * @return An open HTTP connection to the given URL
-     * @throws IOException if an I/O exception occurs.
+     * @throws java.io.IOException if an I/O exception occurs.
      * @since 5587
      */
     public static HttpURLConnection openHttpConnection(URL httpURL) throws IOException {
-        if (httpURL == null || !httpURL.getProtocol().matches("https?")) {
+        if (httpURL == null || !HTTP_PREFFIX_PATTERN.matcher(httpURL.getProtocol()).matches()) {
             throw new IllegalArgumentException("Invalid HTTP url");
         }
         HttpURLConnection connection = (HttpURLConnection) httpURL.openConnection();
@@ -664,7 +669,7 @@ public final class Utils {
      * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param url The url to open
      * @return An stream for the given URL
-     * @throws IOException if an I/O exception occurs.
+     * @throws java.io.IOException if an I/O exception occurs.
      * @since 5867
      */
     public static InputStream openURL(URL url) throws IOException {
@@ -710,7 +715,7 @@ public final class Utils {
      * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param url The url to open
      * @return An buffered stream reader for the given URL (using UTF-8)
-     * @throws IOException if an I/O exception occurs.
+     * @throws java.io.IOException if an I/O exception occurs.
      * @since 5868
      */
     public static BufferedReader openURLReader(URL url) throws IOException {
@@ -735,7 +740,7 @@ public final class Utils {
      * @param httpURL The HTTP url to open (must use http:// or https://)
      * @param keepAlive whether not to set header {@code Connection=close}
      * @return An open HTTP connection to the given URL
-     * @throws IOException if an I/O exception occurs.
+     * @throws java.io.IOException if an I/O exception occurs.
      * @since 5587
      */
     public static HttpURLConnection openHttpConnection(URL httpURL, boolean keepAlive) throws IOException {

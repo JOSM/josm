@@ -668,9 +668,13 @@ public class TagChecker extends Test.TagTest {
             }
         }
 
-        public String getData(String str) {
-            Matcher m = Pattern.compile(" *# *([^#]+) *$").matcher(str);
-            str = m.replaceFirst("").trim();
+        private static final Pattern CLEAN_STR_PATTERN = Pattern.compile(" *# *([^#]+) *$");
+        private static final Pattern SPLIT_TRIMMED_PATTERN = Pattern.compile(" *: *");
+        private static final Pattern SPLIT_ELEMENTS_PATTERN = Pattern.compile(" *&& *");
+
+        public String getData(final String str) {
+            Matcher m = CLEAN_STR_PATTERN.matcher(str);
+            String trimmed = m.replaceFirst("").trim();
             try {
                 description = m.group(1);
                 if (description != null && description.length() == 0) {
@@ -679,7 +683,7 @@ public class TagChecker extends Test.TagTest {
             } catch (IllegalStateException e) {
                 description = null;
             }
-            String[] n = str.split(" *: *", 3);
+            String[] n = SPLIT_TRIMMED_PATTERN.split(trimmed, 3);
             if (n[0].equals("way")) {
                 type = OsmPrimitiveType.WAY;
             } else if (n[0].equals("node")) {
@@ -704,7 +708,7 @@ public class TagChecker extends Test.TagTest {
                 code = TAG_CHECK_INFO;
             } else
                 return tr("Could not find warning level");
-            for (String exp: n[2].split(" *&& *")) {
+            for (String exp: SPLIT_ELEMENTS_PATTERN.split(n[2])) {
                 try {
                     data.add(new CheckerElement(exp));
                 } catch (IllegalStateException e) {

@@ -156,7 +156,7 @@ public class CustomProjection extends AbstractProjection {
 
     private Map<String, String> parseParameterList(String pref) throws ProjectionConfigurationException {
         Map<String, String> parameters = new HashMap<String, String>();
-        String[] parts = pref.trim().split("\\s+");
+        String[] parts = Utils.WHITE_SPACES_PATTERN.split(pref.trim());
         if (pref.trim().isEmpty()) {
             parts = new String[0];
         }
