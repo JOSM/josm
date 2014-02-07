@@ -297,7 +297,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             for (String tzStr : tmp) {
                 TimeZone tz = TimeZone.getTimeZone(tzStr);
 
-                String tzDesc = new StringBuffer(tzStr).append(" (")
+                String tzDesc = new StringBuilder(tzStr).append(" (")
                 .append(formatTimezone(tz.getRawOffset() / 3600000.0))
                 .append(')').toString();
                 vtTimezones.add(tzDesc);
@@ -315,7 +315,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 defaultTz = TimeZone.getTimeZone(tzId);
             }
 
-            cbTimezones.setSelectedItem(new StringBuffer(defaultTz.getID()).append(" (")
+            cbTimezones.setSelectedItem(new StringBuilder(defaultTz.getID()).append(" (")
                     .append(formatTimezone(defaultTz.getRawOffset() / 3600000.0))
                     .append(')').toString());
 
@@ -1294,7 +1294,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private String formatTimezone(double timezone) {
-        StringBuffer ret = new StringBuffer();
+        StringBuilder ret = new StringBuilder();
 
         if (timezone < 0) {
             ret.append('-');
@@ -1320,8 +1320,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
             return 0;
 
         char sgnTimezone = '+';
-        StringBuffer hTimezone = new StringBuffer();
-        StringBuffer mTimezone = new StringBuffer();
+        StringBuilder hTimezone = new StringBuilder();
+        StringBuilder mTimezone = new StringBuilder();
         int state = 1; // 1=start/sign, 2=hours, 3=minutes.
         for (int i = 0; i < timezone.length(); i++) {
             char c = timezone.charAt(i);

@@ -31,7 +31,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     private ConfigurationParameterRequestHandler configHandler;
 
     protected String buildChangesetSummary() {
-        StringBuffer msg = new StringBuffer();
+        StringBuilder msg = new StringBuilder();
         if (selectedChangeset == null || selectedChangeset.isNew()) {
             msg.append(tr("Objects are uploaded to a <strong>new changeset</strong>."));
         } else {
@@ -140,7 +140,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     }
 
     protected void updateSummary() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(buildStrategySummary());
         sb.append("<br><br>");

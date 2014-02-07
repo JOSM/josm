@@ -507,8 +507,8 @@ public class PlaceSelection implements DownloadSelection {
         }
 
         protected String lineWrapDescription(String description) {
-            StringBuffer ret = new StringBuffer();
-            StringBuffer line = new StringBuffer();
+            StringBuilder ret = new StringBuilder();
+            StringBuilder line = new StringBuilder();
             StringTokenizer tok = new StringTokenizer(description, " ");
             while(tok.hasMoreElements()) {
                 String t = tok.nextToken();
@@ -519,7 +519,7 @@ public class PlaceSelection implements DownloadSelection {
                 } else {
                     line.append(" ").append(t).append("<br>");
                     ret.append(line);
-                    line = new StringBuffer();
+                    line = new StringBuilder();
                 }
             }
             ret.insert(0, "<html>");

@@ -398,7 +398,7 @@ public class Bounds {
     }
 
     public String encodeAsString(String separator) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(minLat).append(separator).append(minLon)
         .append(separator).append(maxLat).append(separator)
         .append(maxLon);

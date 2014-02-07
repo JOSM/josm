@@ -53,7 +53,7 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer {
         }
         if (cs != null) {
             setIcon(icon);
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             if (cs.get("comment") != null) {
                 sb.append(cs.getId()).append(" - ").append(cs.get("comment"));
             } else if (cs.get("name") != null) {

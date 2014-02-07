@@ -252,7 +252,7 @@ public class ChangesetQuery {
      * @return the query string
      */
     public String getQueryString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (uid != null) {
             sb.append("user").append("=").append(uid);
         } else if (userName != null) {

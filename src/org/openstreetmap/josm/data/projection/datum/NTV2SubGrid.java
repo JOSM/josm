@@ -295,7 +295,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @return textual details about the sub grid
      */
     public String getDetails() {
-        StringBuffer buf = new StringBuffer("Sub Grid : ");
+        StringBuilder buf = new StringBuilder("Sub Grid : ");
         buf.append(subGridName);
         buf.append("\nParent   : ");
         buf.append(parentSubGridName);

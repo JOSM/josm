@@ -178,7 +178,7 @@ public class NmeaReader {
         try {
             rd = new BufferedReader(new InputStreamReader(source));
 
-            StringBuffer sb = new StringBuffer(1024);
+            StringBuilder sb = new StringBuilder(1024);
             int loopstart_char = rd.read();
             ps = new NMEAParserState();
             if(loopstart_char == -1)

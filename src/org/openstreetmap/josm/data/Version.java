@@ -38,7 +38,7 @@ public class Version {
         String s = null;
         try {
             BufferedReader in = Utils.openURLReader(resource);
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             try {
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
                     sb.append(line).append("\n");
@@ -145,7 +145,7 @@ public class Version {
 
         // the revision info
         //
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for(Entry<String,String> property: properties.entrySet()) {
             sb.append(property.getKey()).append(":").append(property.getValue()).append("\n");
         }

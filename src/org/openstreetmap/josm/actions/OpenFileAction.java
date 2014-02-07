@@ -132,7 +132,7 @@ public class OpenFileAction extends DiskAccessAction {
         }
 
         protected void alertFilesNotMatchingWithImporter(Collection<File> files, FileImporter importer) {
-            final StringBuffer msg = new StringBuffer();
+            final StringBuilder msg = new StringBuilder();
             msg.append("<html>");
             msg.append(
                     trn(
@@ -159,7 +159,7 @@ public class OpenFileAction extends DiskAccessAction {
         }
 
         protected void alertFilesWithUnknownImporter(Collection<File> files) {
-            final StringBuffer msg = new StringBuffer();
+            final StringBuilder msg = new StringBuilder();
             msg.append("<html>");
             msg.append(
                     trn(

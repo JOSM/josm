@@ -31,7 +31,7 @@ public class ChangesetListCellRenderer extends JLabel implements ListCellRendere
     }
 
     protected void renderLabel(Changeset cs) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (cs.isIncomplete()) {
             sb.append(tr("{0} [incomplete]", cs.getId()));
         } else {
