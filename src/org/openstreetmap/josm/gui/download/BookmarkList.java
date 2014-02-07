@@ -276,7 +276,7 @@ public class BookmarkList extends JList {
 
         protected String buildToolTipText(Bookmark b) {
             Bounds area = b.getArea();
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("<html>min[latitude,longitude]=<strong>[")
             .append(area.getMinLat()).append(",").append(area.getMinLon()).append("]</strong>")
             .append("<br>")

@@ -134,7 +134,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
         progressMonitor.beginTask(null, 2);
         try {
             progressMonitor.indeterminateSubTask(tr("Downloading from OSM Server..."));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(primitiveType.getAPIName())
             .append("/").append(id).append("/ways");
 
@@ -168,7 +168,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
         progressMonitor.beginTask(null, 2);
         try {
             progressMonitor.subTask(tr("Contacting OSM Server..."));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(primitiveType.getAPIName())
             .append("/").append(id).append("/relations");
 

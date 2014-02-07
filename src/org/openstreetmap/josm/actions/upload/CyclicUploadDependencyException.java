@@ -18,7 +18,7 @@ public class CyclicUploadDependencyException extends Exception {
     }
 
     protected String formatRelation(Relation r) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (r.getName() != null) {
             sb.append("'").append(r.getName()).append("'");
         } else if (!r.isNew()) {
@@ -31,7 +31,7 @@ public class CyclicUploadDependencyException extends Exception {
 
     @Override
     public String getMessage() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(tr("Cyclic dependency between relations:"));
         sb.append("[");
         for (int i=0; i< cycle.size(); i++) {

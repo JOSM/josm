@@ -139,7 +139,7 @@ public class HelpBrowser extends JDialog {
                         getClass().getResourceAsStream("/data/help-browser.css")
                 )
         );
-        StringBuffer css = new StringBuffer();
+        StringBuilder css = new StringBuilder();
         try {
             String line = null;
             while ((line = reader.readLine()) != null) {

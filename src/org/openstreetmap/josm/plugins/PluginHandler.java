@@ -760,7 +760,7 @@ public final class PluginHandler {
     }
 
     private static void alertFailedPluginUpdate(Component parent, Collection<PluginInformation> plugins) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(trn(
                 "Updating the following plugin has failed:",
@@ -1138,7 +1138,7 @@ public final class PluginHandler {
                 )
         };
 
-        final StringBuffer msg = new StringBuffer();
+        final StringBuilder msg = new StringBuilder();
         msg.append("<html>");
         msg.append(tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.getPluginInformation().name));
         msg.append("<br>");

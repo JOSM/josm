@@ -321,7 +321,7 @@ public class OsmApi extends OsmConnection {
      * @return base URL string
      */
     public String getBaseUrl() {
-        StringBuffer rv = new StringBuffer(serverUrl);
+        StringBuilder rv = new StringBuilder(serverUrl);
         if (version != null) {
             rv.append("/");
             rv.append(version);
@@ -602,7 +602,7 @@ public class OsmApi extends OsmConnection {
      *    been exhausted), or rewrapping a Java exception.
      */
     private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
-        StringBuffer responseBody = new StringBuffer();
+        StringBuilder responseBody = new StringBuilder();
         int retries = fastFail ? 0 : getMaxRetries();
 
         while(true) { // the retry loop

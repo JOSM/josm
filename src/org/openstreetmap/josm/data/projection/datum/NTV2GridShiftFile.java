@@ -278,7 +278,7 @@ public class NTV2GridShiftFile implements Serializable {
 
     @Override
     public String toString() {
-        StringBuffer buf = new StringBuffer("Headers  : ");
+        StringBuilder buf = new StringBuilder("Headers  : ");
         buf.append(overviewHeaderCount);
         buf.append("\nSub Hdrs : ");
         buf.append(subGridHeaderCount);

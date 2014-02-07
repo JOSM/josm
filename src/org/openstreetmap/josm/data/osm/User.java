@@ -219,7 +219,7 @@ public final class User {
 
     @Override
     public String toString() {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append("id:").append(uid);
         if (names.size() == 1) {
             s.append(" name:").append(getName());

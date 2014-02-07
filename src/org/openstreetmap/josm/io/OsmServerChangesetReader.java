@@ -56,7 +56,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
         }
         try {
             monitor.beginTask(tr("Reading changesets..."));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("changesets?").append(query.getQueryString());
             InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
             if (in == null)
@@ -89,7 +89,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
         }
         try {
             monitor.beginTask(tr("Reading changeset {0} ...",id));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("changeset/").append(id);
             InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
             if (in == null)
@@ -133,7 +133,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                     continue;
                 }
                 i++;
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append("changeset/").append(id);
                 InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
                 if (in == null)
@@ -173,7 +173,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
         }
         try {
             monitor.beginTask(tr("Downloading changeset content"));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("changeset/").append(id).append("/download");
             InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
             if (in == null)

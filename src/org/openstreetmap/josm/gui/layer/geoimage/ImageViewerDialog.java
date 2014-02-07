@@ -252,7 +252,7 @@ public final class ImageViewerDialog extends ToggleDialog {
                 imgDisplay.setImage(entry.getFile(), entry.getExifOrientation());
             }
             setTitle("Geotagged Images" + (entry.getFile() != null ? " - " + entry.getFile().getName() : ""));
-            StringBuffer osd = new StringBuffer(entry.getFile() != null ? entry.getFile().getName() : "");
+            StringBuilder osd = new StringBuilder(entry.getFile() != null ? entry.getFile().getName() : "");
             if (entry.getElevation() != null) {
                 osd.append(tr("\nAltitude: {0} m", entry.getElevation().longValue()));
             }

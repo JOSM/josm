@@ -714,7 +714,7 @@ public class SelectionListDialog extends ToggleDialog  {
                     relations++;
                 }
             }
-            StringBuffer text = new StringBuffer();
+            StringBuilder text = new StringBuilder();
             if(ways != 0) {
                 text.append(text.length() > 0 ? ", " : "")
                 .append(trn("{0} way", "{0} ways", ways, ways));

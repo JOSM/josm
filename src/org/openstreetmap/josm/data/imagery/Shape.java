@@ -35,7 +35,7 @@ public class Shape {
     }
 
     public String encodeAsString(String separator) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Coordinate c : coords) {
             if (sb.length() != 0) {
                 sb.append(separator);
