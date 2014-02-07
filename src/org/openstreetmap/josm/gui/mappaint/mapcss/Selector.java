@@ -262,7 +262,7 @@ public interface Selector {
                 e.osm.visitReferrers(collector);
                 if (e.parent != null)
                     return true;
-            } else {
+            } else if (ChildOrParentSelectorType.PARENT.equals(type)) {
                 if (e.osm instanceof Way) {
                     List<Node> wayNodes = ((Way) e.osm).getNodes();
                     for (int i=0; i<wayNodes.size(); i++) {
