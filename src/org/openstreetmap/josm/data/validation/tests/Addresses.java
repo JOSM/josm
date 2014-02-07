@@ -82,34 +82,38 @@ public class Addresses extends Test {
         return list;
     }
 
-    @Override
-    public void visit(Node n) {
-        List<Relation> associatedStreets = getAndCheckAssociatedStreets(n);
+    protected void checkHouseNumbersWithoutStreet(OsmPrimitive p) {
+        List<Relation> associatedStreets = getAndCheckAssociatedStreets(p);
         // Find house number without proper location (neither addr:street, associatedStreet, addr:place or addr:interpolation)
-        if (n.hasKey(ADDR_HOUSE_NUMBER) && !n.hasKey(ADDR_STREET) && !n.hasKey(ADDR_PLACE)) {
+        if (p.hasKey(ADDR_HOUSE_NUMBER) && !p.hasKey(ADDR_STREET) && !p.hasKey(ADDR_PLACE)) {
             for (Relation r : associatedStreets) {
                 if (r.hasTag("type", ASSOCIATED_STREET)) {
                     return;
                 }
             }
-            for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
+            for (Way w : OsmPrimitive.getFilteredList(p.getReferrers(), Way.class)) {
                 if (w.hasKey(ADDR_INTERPOLATION) && w.hasKey(ADDR_STREET)) {
                     return;
                 }
             }
             // No street found
-            errors.add(new AddressError(HOUSE_NUMBER_WITHOUT_STREET, n, tr("House number without street")));
+            errors.add(new AddressError(HOUSE_NUMBER_WITHOUT_STREET, p, tr("House number without street")));
         }
     }
 
     @Override
+    public void visit(Node n) {
+        checkHouseNumbersWithoutStreet(n);
+    }
+
+    @Override
     public void visit(Way w) {
-        getAndCheckAssociatedStreets(w);
+        checkHouseNumbersWithoutStreet(w);
     }
 
     @Override
     public void visit(Relation r) {
-        getAndCheckAssociatedStreets(r);
+        checkHouseNumbersWithoutStreet(r);
         if (r.hasTag("type", ASSOCIATED_STREET)) {
             // Used to count occurences of each house number in order to find duplicates
             Map<String, List<OsmPrimitive>> map = new HashMap<String, List<OsmPrimitive>>();
@@ -201,7 +205,7 @@ public class Addresses extends Test {
                         return;
                     }
                 } else {
-                    Main.warn("Addresses test skipped chunck "+chunk+" for street part "+streetPart+" because p1 or p2 is null"); 
+                    Main.warn("Addresses test skipped chunck "+chunk+" for street part "+streetPart+" because p1 or p2 is null");
                 }
             }
             if (!hasIncompleteWays && streetPart.isIncomplete()) {
