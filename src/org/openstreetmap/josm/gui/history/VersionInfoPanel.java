@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
@@ -40,6 +41,17 @@ public class VersionInfoPanel extends JPanel implements Observer{
     private UrlLabel lblUser;
     private UrlLabel lblChangeset;
     private JTextArea lblChangesetComment;
+    private JTextArea lblChangesetSource;
+
+    protected static JTextArea buildTextArea(String tooltip) {
+        JTextArea lbl = new JTextArea();
+        lbl.setLineWrap(true);
+        lbl.setWrapStyleWord(true);
+        lbl.setEditable(false);
+        lbl.setOpaque(false);
+        lbl.setToolTipText(tooltip);
+        return lbl;
+    }
 
     protected void build() {
         JPanel pnl1 = new JPanel();
@@ -56,11 +68,8 @@ public class VersionInfoPanel extends JPanel implements Observer{
         lblChangeset = new UrlLabel("", 2);
         pnlUserAndChangeset.add(lblChangeset);
 
-        lblChangesetComment = new JTextArea();
-        lblChangesetComment.setLineWrap(true);
-        lblChangesetComment.setWrapStyleWord(true);
-        lblChangesetComment.setEditable(false);
-        lblChangesetComment.setOpaque(false);
+        lblChangesetComment = buildTextArea(tr("Changeset comment"));
+        lblChangesetSource = buildTextArea(tr("Changeset source"));
 
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
@@ -74,6 +83,8 @@ public class VersionInfoPanel extends JPanel implements Observer{
         add(pnlUserAndChangeset, gc);
         gc.gridy = 2;
         add(lblChangesetComment, gc);
+        gc.gridy = 3;
+        add(lblChangesetSource, gc);
     }
 
     protected HistoryOsmPrimitive getPrimitive() {
@@ -133,22 +144,31 @@ public class VersionInfoPanel extends JPanel implements Observer{
         build();
     }
 
+    protected static String getUserUrl(String username) throws UnsupportedEncodingException {
+        return AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(username, "UTF-8").replaceAll("\\+", "%20");
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         lblInfo.setText(getInfoText());
 
-        if (!model.isLatest(getPrimitive())) {
-            String url = AbstractInfoAction.getBaseBrowseUrl() + "/changeset/" + getPrimitive().getChangesetId();
-            lblChangeset.setUrl(url);
-            lblChangeset.setDescription(Long.toString(getPrimitive().getChangesetId()));
-            final String comment = getPrimitive().getChangeset() != null ? getPrimitive().getChangeset().get("comment") : null;
-            lblChangesetComment.setText(comment);
-            lblChangesetComment.setToolTipText(tr("Changeset comment"));
+        HistoryOsmPrimitive primitive = getPrimitive();
+        Changeset cs = primitive.getChangeset();
 
+        if (!model.isLatest(primitive)) {
+            User user = primitive.getUser();
+            String url = AbstractInfoAction.getBaseBrowseUrl() + "/changeset/" + primitive.getChangesetId();
+            lblChangeset.setUrl(url);
+            lblChangeset.setDescription(Long.toString(primitive.getChangesetId()));
+
+            String username = "";
+            if (user != null) {
+                username = user.getName();
+            }
+            lblUser.setDescription(username);
             try {
-                if (getPrimitive().getUser() != null && getPrimitive().getUser() != User.getAnonymous()) {
-                    url = AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(getPrimitive().getUser().getName(), "UTF-8").replaceAll("\\+", "%20");
-                    lblUser.setUrl(url);
+                if (user != null && user != User.getAnonymous()) {
+                    lblUser.setUrl(getUserUrl(username));
                 } else {
                     lblUser.setUrl(null);
                 }
@@ -156,28 +176,32 @@ public class VersionInfoPanel extends JPanel implements Observer{
                 Main.error(e);
                 lblUser.setUrl(null);
             }
-            String username = "";
-            if (getPrimitive().getUser() != null) {
-                username = getPrimitive().getUser().getName();
-            }
-            lblUser.setDescription(username);
         } else {
-            String user = JosmUserIdentityManager.getInstance().getUserName();
-            if (user == null) {
+            String username = JosmUserIdentityManager.getInstance().getUserName();
+            if (username == null) {
                 lblUser.setDescription(tr("anonymous"));
                 lblUser.setUrl(null);
             } else {
+                lblUser.setDescription(username);
                 try {
-                    String url = AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(user, "UTF-8").replaceAll("\\+", "%20");
-                    lblUser.setUrl(url);
+                    lblUser.setUrl(getUserUrl(username));
                 } catch(UnsupportedEncodingException e) {
                     Main.error(e);
                     lblUser.setUrl(null);
                 }
-                lblUser.setDescription(user);
             }
             lblChangeset.setDescription(tr("none"));
             lblChangeset.setUrl(null);
         }
+
+        final String comment = cs != null ? cs.get("comment") : null;
+        final String source = cs != null ? cs.get("source") : null;
+        lblChangesetComment.setText(comment);
+        lblChangesetSource.setText(source);
+
+        // Hide comment / source if both values are empty
+        final Changeset oppCs = model.getPointInTime(pointInTimeType.opposite()).getChangeset();
+        lblChangesetComment.setVisible(comment != null || (oppCs != null && oppCs.get("comment") != null));
+        lblChangesetSource.setVisible(source != null || (oppCs != null && oppCs.get("source") != null));
     }
 }

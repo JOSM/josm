@@ -389,6 +389,7 @@ public class HelpBrowser extends JDialog {
                 history.setCurrentUrl(url);
                 this.url = url;
             } catch(Exception e) {
+                Main.warn(e);
                 HelpAwareOptionPane.showOptionDialog(
                         Main.parent,
                         tr(
