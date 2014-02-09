@@ -293,7 +293,7 @@ public class ElemStyles {
      * From these properties, it generates the different types of styles.
      *
      * @param osm the primitive to create styles for
-     * @param scale the scale (in meters per 100 px), must be > 0
+     * @param scale the scale (in meters per 100 px), must be &gt; 0
      * @param multipolyOuterWay support for a very old multipolygon tagging style
      * where you add the tags both to the outer and the inner way.
      * However, independent inner way style is also possible.

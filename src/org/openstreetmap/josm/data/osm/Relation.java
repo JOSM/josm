@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * An relation, having a set of tags and any number (0...n) of members.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  */
 public final class Relation extends OsmPrimitive implements IRelation {
 
@@ -203,11 +203,11 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     /**
-     * Creates a new relation for the given id. If the id > 0, the way is marked
+     * Creates a new relation for the given id. If the id &gt; 0, the way is marked
      * as incomplete.
      *
-     * @param id the id. > 0 required
-     * @throws IllegalArgumentException thrown if id < 0
+     * @param id the id. &gt; 0 required
+     * @throws IllegalArgumentException thrown if id &lt; 0
      */
     public Relation(long id) throws IllegalArgumentException {
         super(id, false);

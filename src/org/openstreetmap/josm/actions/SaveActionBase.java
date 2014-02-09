@@ -119,7 +119,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     /**
-     * Creates a new "Save" dialog for a single {@link ExtensionFileFilter} and makes it visible.<br/>
+     * Creates a new "Save" dialog for a single {@link ExtensionFileFilter} and makes it visible.<br>
      * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
      *
      * @param title The dialog title
@@ -134,7 +134,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     /**
-     * Creates a new "Save" dialog for a given file extension and makes it visible.<br/>
+     * Creates a new "Save" dialog for a given file extension and makes it visible.<br>
      * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
      *
      * @param title The dialog title

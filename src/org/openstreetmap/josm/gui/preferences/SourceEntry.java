@@ -119,7 +119,7 @@ public class SourceEntry {
 
     /**
      * extract file part from url, e.g.:
-     * http://www.test.com/file.xml?format=text  --> file.xml
+     * http://www.test.com/file.xml?format=text --&gt; file.xml
      */
     public String getFileNamePart() {
         Pattern p = Pattern.compile("([^/\\\\]*?)([?].*)?$");

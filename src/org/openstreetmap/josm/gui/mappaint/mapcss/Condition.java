@@ -137,7 +137,7 @@ abstract public class Condition {
         PRIMITIVE,
 
         /**
-         * link between primitives, e.g. relation >[role=outer] way
+         * link between primitives, e.g. relation &gt;[role=outer] way
          */
         LINK
     }

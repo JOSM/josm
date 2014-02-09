@@ -7,11 +7,11 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -100,9 +100,9 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
      * constructor
      *
      * @param targetLayer  the target layer. Must not be null.
-     * @param id the primitive id. id > 0 required.
+     * @param id the primitive id. id &gt; 0 required.
      * @param type the primitive type. type != null required
-     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if id &lt;= 0
      * @exception IllegalArgumentException thrown if type == null
      * @exception IllegalArgumentException thrown if targetLayer == null
      *
@@ -123,9 +123,9 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
     /**
      * constructor
      *
-     * @param targetLayer  the target layer. Must not be null.
+     * @param targetLayer the target layer. Must not be null.
      * @param primitiveId a PrimitiveId object.
-     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if id &lt;= 0
      * @exception IllegalArgumentException thrown if targetLayer == null
      *
      */

@@ -125,8 +125,8 @@ public final class Way extends OsmPrimitive implements IWay {
      *
      * @param index the position
      * @return  the node at position <code>index</code>
-     * @exception IndexOutOfBoundsException thrown if <code>index</code> < 0
-     * or <code>index</code> >= {@link #getNodesCount()}
+     * @exception IndexOutOfBoundsException thrown if <code>index</code> &lt; 0
+     * or <code>index</code> &gt;= {@link #getNodesCount()}
      * @since 1862
      */
     public Node getNode(int index) {
@@ -253,11 +253,11 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     /**
-     * Contructs a new {@code Way} for the given id. If the id > 0, the way is marked
+     * Contructs a new {@code Way} for the given id. If the id &gt; 0, the way is marked
      * as incomplete. If id == 0 then way is marked as new
      *
-     * @param id the id. >= 0 required
-     * @throws IllegalArgumentException if id < 0
+     * @param id the id. &gt;= 0 required
+     * @throws IllegalArgumentException if id &lt; 0
      * @since 343
      */
     public Way(long id) throws IllegalArgumentException {
@@ -266,9 +266,9 @@ public final class Way extends OsmPrimitive implements IWay {
 
     /**
      * Contructs a new {@code Way} with given id and version.
-     * @param id the id. >= 0 required
+     * @param id the id. &gt;= 0 required
      * @param version the version
-     * @throws IllegalArgumentException if id < 0
+     * @throws IllegalArgumentException if id &lt; 0
      * @since 2620
      */
     public Way(long id, int version) throws IllegalArgumentException {

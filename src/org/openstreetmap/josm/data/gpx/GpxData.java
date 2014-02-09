@@ -13,10 +13,10 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 
 /**
  * Objects of this class represent a gpx file with tracks, waypoints and routes.
- * It uses GPX v1.1, see {@link <a href="http://www.topografix.com/GPX/1/1/">the spec</a>}
+ * It uses GPX v1.1, see <a href="http://www.topografix.com/GPX/1/1/">the spec</a>
  * for details.
  *
- * @author Raphael Mack <ramack@raphael-mack.de>
+ * @author Raphael Mack &lt;ramack@raphael-mack.de&gt;
  */
 public class GpxData extends WithAttributes {
 
@@ -254,7 +254,7 @@ public class GpxData extends WithAttributes {
             }
         };
     }
-    
+
     /**
      * Iterates over all track segments and then over all routes.
      */
@@ -319,5 +319,5 @@ public class GpxData extends WithAttributes {
             throw new UnsupportedOperationException();
         }
     }
-    
+
 }

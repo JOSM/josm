@@ -230,7 +230,7 @@ public class GpxLayer extends Layer {
         });
         return sp;
     }
-    
+
     @Override
     public boolean isInfoResizable() {
         return true;
@@ -392,8 +392,8 @@ public class GpxLayer extends Layer {
 
     /**
      * transition function:
-     *  w(0)=1, w(1)=0, 0<=w(x)<=1
-     * @param x number: 0<=x<=1
+     *  w(0)=1, w(1)=0, 0&lt;=w(x)&lt;=1
+     * @param x number: 0&lt;=x&lt;=1
      * @return the weighted value
      */
     private static float w(float x) {

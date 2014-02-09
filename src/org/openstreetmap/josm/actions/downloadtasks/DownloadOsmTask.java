@@ -95,7 +95,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
      * You can wait for the asynchronous download task to finish by synchronizing on the returned
      * {@link Future}, but make sure not to freeze up JOSM. Example:
      * <pre>
-     *    Future<?> future = task.download(...);
+     *    Future&lt;?&gt; future = task.download(...);
      *    // DON'T run this on the Swing EDT or JOSM will freeze
      *    future.get(); // waits for the dowload task to complete
      * </pre>
@@ -103,7 +103,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
      * The following example uses a pattern which is better suited if a task is launched from
      * the Swing EDT:
      * <pre>
-     *    final Future<?> future = task.download(...);
+     *    final Future&lt;?&gt; future = task.download(...);
      *    Runnable runAfterTask = new Runnable() {
      *       public void run() {
      *           // this is not strictly necessary because of the type of executor service

@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * <pre>
  *     ExecutorService executorService = ...
  *     SaveLayerTask task = new SaveLayerTask(layer, monitor);
- *     Future<?> taskFuture = executorServce.submit(task)
+ *     Future&lt;?&gt; taskFuture = executorServce.submit(task)
  *     try {
  *        // wait for the task to complete
  *        taskFuture.get();

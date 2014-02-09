@@ -128,170 +128,170 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class MainMenu extends JMenuBar {
 
     /* File menu */
-    /** File -> New Layer **/
+    /** File / New Layer **/
     public final NewAction newAction = new NewAction();
-    /** File -> Open... **/
+    /** File / Open... **/
     public final OpenFileAction openFile = new OpenFileAction();
-    /** File -> Open Recent > **/
+    /** File / Open Recent &gt; **/
     public final RecentlyOpenedFilesMenu recentlyOpened = new RecentlyOpenedFilesMenu();
-    /** File -> Open Location... **/
+    /** File / Open Location... **/
     public final OpenLocationAction openLocation = new OpenLocationAction();
-    /** File -> Save **/
+    /** File / Save **/
     public final SaveAction save = SaveAction.getInstance();
-    /** File -> Save As... **/
+    /** File / Save As... **/
     public final SaveAsAction saveAs = SaveAsAction.getInstance();
-    /** File -> Session > Load Session **/
+    /** File / Session &gt; Load Session **/
     public SessionLoadAction sessionLoad;
-    /** File -> Session > Save Session As... **/
+    /** File / Session &gt; Save Session As... **/
     public SessionSaveAsAction sessionSaveAs;
-    /** File -> Export to GPX... **/
+    /** File / Export to GPX... **/
     public final GpxExportAction gpxExport = new GpxExportAction();
-    /** File -> Download from OSM... **/
+    /** File / Download from OSM... **/
     public final DownloadAction download = new DownloadAction();
-    /** File -> Download object... **/
+    /** File / Download object... **/
     public final DownloadPrimitiveAction downloadPrimitive = new DownloadPrimitiveAction();
-    /** File -> Download parent ways/relations... **/
+    /** File / Download parent ways/relations... **/
     public final DownloadReferrersAction downloadReferrers = new DownloadReferrersAction();
-    /** File -> Close open changesets... **/
+    /** File / Close open changesets... **/
     public final CloseChangesetAction closeChangesetAction = new CloseChangesetAction();
-    /** File -> Update data **/
+    /** File / Update data **/
     public final JosmAction update = new UpdateDataAction();
-    /** File -> Update selection **/
+    /** File / Update selection **/
     public final JosmAction updateSelection = new UpdateSelectionAction();
-    /** File -> Update modified **/
+    /** File / Update modified **/
     public final JosmAction updateModified = new UpdateModifiedAction();
-    /** File -> Upload data **/
+    /** File / Upload data **/
     public final JosmAction upload = new UploadAction();
-    /** File -> Upload selection **/
+    /** File / Upload selection **/
     public final JosmAction uploadSelection = new UploadSelectionAction();
-    /** File -> Restart **/
+    /** File / Restart **/
     public final RestartAction restart = new RestartAction();
-    /** File -> Exit **/
+    /** File / Exit **/
     public final ExitAction exit = new ExitAction();
 
     /* Edit menu */
-    /** Edit -> Undo... */
+    /** Edit / Undo... */
     public final UndoAction undo = new UndoAction();
-    /** Edit -> Redo */
+    /** Edit / Redo */
     public final RedoAction redo = new RedoAction();
-    /** Edit -> Copy */
+    /** Edit / Copy */
     public final CopyAction copy = new CopyAction();
-    /** Edit -> Copy Coordinates */
+    /** Edit / Copy Coordinates */
     public final JosmAction copyCoordinates = new CopyCoordinatesAction();
-    /** Edit -> Paste */
+    /** Edit / Paste */
     public final PasteAction paste = new PasteAction();
-    /** Edit -> Paste Tags */
+    /** Edit / Paste Tags */
     public final PasteTagsAction pasteTags = new PasteTagsAction();
-    /** Edit -> Duplicate */
+    /** Edit / Duplicate */
     public final DuplicateAction duplicate = new DuplicateAction();
-    /** Edit -> Delete */
+    /** Edit / Delete */
     public final DeleteAction delete = new DeleteAction();
-    /** Edit -> Purge... */
+    /** Edit / Purge... */
     public final JosmAction purge = new PurgeAction();
-    /** Edit -> Merge layer */
+    /** Edit / Merge layer */
     public final MergeLayerAction merge = new MergeLayerAction();
-    /** Edit -> Merge selection */
+    /** Edit / Merge selection */
     public final MergeSelectionAction mergeSelected = new MergeSelectionAction();
-    /** Edit -> Search... */
+    /** Edit / Search... */
     public final SearchAction search = new SearchAction();
-    /** Edit -> Preferences */
+    /** Edit / Preferences */
     public final PreferencesAction preferences = new PreferencesAction();
 
     /* View menu */
-    /** View -> Wireframe View */
+    /** View / Wireframe View */
     public final WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
     public final JosmAction toggleGPXLines = new ToggleGPXLinesAction();
-    /** View -> Advanced info */
+    /** View / Advanced info */
     public final InfoAction info = new InfoAction();
-    /** View -> Advanced info (web) */
+    /** View / Advanced info (web) */
     public final InfoWebAction infoweb = new InfoWebAction();
-    /** View -> History */
+    /** View / History */
     public final HistoryInfoAction historyinfo = new HistoryInfoAction();
-    /** View -> History (web) */
+    /** View / History (web) */
     public final HistoryInfoWebAction historyinfoweb = new HistoryInfoWebAction();
-    /** View -> "Zoom to"... actions */
+    /** View / "Zoom to"... actions */
     public final Map<String, AutoScaleAction> autoScaleActions = new HashMap<String, AutoScaleAction>();
-    /** View -> Jump to position */
+    /** View / Jump to position */
     public final JumpToAction jumpToAct = new JumpToAction();
 
     /* Tools menu */
-    /** Tools -> Split Way */
+    /** Tools / Split Way */
     public final SplitWayAction splitWay = new SplitWayAction();
-    /** Tools -> Combine Way */
+    /** Tools / Combine Way */
     public final CombineWayAction combineWay = new CombineWayAction();
-    /** Tools -> Reverse Ways */
+    /** Tools / Reverse Ways */
     public final ReverseWayAction reverseWay = new ReverseWayAction();
-    /** Tools -> Simplify Way */
+    /** Tools / Simplify Way */
     public final SimplifyWayAction simplifyWay = new SimplifyWayAction();
-    /** Tools -> Align Nodes in Circle */
+    /** Tools / Align Nodes in Circle */
     public final AlignInCircleAction alignInCircle = new AlignInCircleAction();
-    /** Tools -> Align Nodes in Line */
+    /** Tools / Align Nodes in Line */
     public final AlignInLineAction alignInLine = new AlignInLineAction();
-    /** Tools -> Distribute Nodes */
+    /** Tools / Distribute Nodes */
     public final DistributeAction distribute = new DistributeAction();
-    /** Tools -> Orthogonalize Shape */
+    /** Tools / Orthogonalize Shape */
     public final OrthogonalizeAction ortho = new OrthogonalizeAction();
     /** Orthogonalize undo. Action is not shown in the menu. Only triggered by shortcut */
     public final Undo orthoUndo = new Undo();
-    /** Tools -> Mirror */
+    /** Tools / Mirror */
     public final MirrorAction mirror = new MirrorAction();
-    /** Tools -> Follow line */
+    /** Tools / Follow line */
     public final FollowLineAction followLine = new FollowLineAction();
-    /** Tools -> Add Node... */
+    /** Tools / Add Node... */
     public final AddNodeAction addNode = new AddNodeAction();
-    /** Tools -> Move Node... */
+    /** Tools / Move Node... */
     public final MoveNodeAction moveNode = new MoveNodeAction();
-    /** Tools -> Create Circle */
+    /** Tools / Create Circle */
     public final CreateCircleAction createCircle = new CreateCircleAction();
-    /** Tools -> Merge Nodes */
+    /** Tools / Merge Nodes */
     public final MergeNodesAction mergeNodes = new MergeNodesAction();
-    /** Tools -> Join Node to Way */
+    /** Tools / Join Node to Way */
     public final JoinNodeWayAction joinNodeWay = new JoinNodeWayAction();
-    /** Tools -> Disconnect Node from Way */
+    /** Tools / Disconnect Node from Way */
     public final UnJoinNodeWayAction unJoinNodeWay = new UnJoinNodeWayAction();
-    /** Tools -> Unglue Ways */
+    /** Tools / Unglue Ways */
     public final UnGlueAction unglueNodes = new UnGlueAction();
-    /** Tools -> Join overlapping Areas */
+    /** Tools / Join overlapping Areas */
     public final JoinAreasAction joinAreas = new JoinAreasAction();
-    /** Tools -> Create multipolygon */
+    /** Tools / Create multipolygon */
     public final CreateMultipolygonAction createMultipolygon = new CreateMultipolygonAction(false);
-    /** Tools -> Update multipolygon */
+    /** Tools / Update multipolygon */
     public final CreateMultipolygonAction updateMultipolygon = new CreateMultipolygonAction(true);
 
     /* Selection menu */
-    /** Selection -> Select All */
+    /** Selection / Select All */
     public final SelectAllAction selectAll = new SelectAllAction();
-    /** Selection -> Unselect All */
+    /** Selection / Unselect All */
     public final UnselectAllAction unselectAll = new UnselectAllAction();
-    /** Selection -> Non-branching way sequences */
+    /** Selection / Non-branching way sequences */
     public final SelectNonBranchingWaySequencesAction nonBranchingWaySequences = new SelectNonBranchingWaySequencesAction();
 
     /* Audio menu */
-    /** Audio -> Play/Pause */
+    /** Audio / Play/Pause */
     public final JosmAction audioPlayPause = new AudioPlayPauseAction();
-    /** Audio -> Next marker */
+    /** Audio / Next marker */
     public final JosmAction audioNext = new AudioNextAction();
-    /** Audio -> Previous Marker */
+    /** Audio / Previous Marker */
     public final JosmAction audioPrev = new AudioPrevAction();
-    /** Audio -> Forward */
+    /** Audio / Forward */
     public final JosmAction audioFwd = new AudioFwdAction();
-    /** Audio -> Back */
+    /** Audio / Back */
     public final JosmAction audioBack = new AudioBackAction();
-    /** Audio -> Faster */
+    /** Audio / Faster */
     public final JosmAction audioFaster = new AudioFasterAction();
-    /** Audio -> Slower */
+    /** Audio / Slower */
     public final JosmAction audioSlower = new AudioSlowerAction();
 
     /* Windows Menu */
-    /** Windows -> Changeset Manager */
+    /** Windows / Changeset Manager */
     public final ChangesetManagerToggleAction changesetManager = new ChangesetManagerToggleAction();
-    
+
     /* Help menu */
-    /** Help -> Help */
+    /** Help / Help */
     public final HelpAction help = new HelpAction();
-    /** Help -> About */
+    /** Help / About */
     public final AboutAction about = new AboutAction();
-    /** Help -> Show Status Report */
+    /** Help / Show Status Report */
     public final ShowStatusReportAction statusreport = new ShowStatusReportAction();
 
     /**
@@ -323,8 +323,8 @@ public class MainMenu extends JMenuBar {
     /**
      * dataMenu contains plugin actions that are related to certain tagging schemes (addressing opening hours),
      * importing external data and using external web APIs
-     * @since 6082 
-     */    
+     * @since 6082
+     */
     public final JMenu dataMenu = addMenu(marktr("Data"), KeyEvent.VK_D, 5, ht("/Menu/Data"));
     /**
      * selectionMenu contains all actions related to selecting different objects
@@ -336,7 +336,7 @@ public class MainMenu extends JMenuBar {
      */
     public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 7, ht("/Menu/Presets"));
     /**
-     * submenu in Imagery menu that contains plugin-managed additional imagery layers 
+     * submenu in Imagery menu that contains plugin-managed additional imagery layers
      * @since 6097
      */
     public final JMenu imagerySubMenu = new JMenu(tr("More..."));
@@ -347,7 +347,7 @@ public class MainMenu extends JMenuBar {
     /**
      * gpsMenu contains all plugin actions that are related
      * to using GPS data, including opening, uploading and real-time tracking
-     * @since 6082 
+     * @since 6082
      */
     public final JMenu gpsMenu = addMenu(marktr("GPS"), KeyEvent.VK_G, 9, ht("/Menu/GPS"));
     /** the window menu is split into several groups. The first is for windows that can be opened from
@@ -407,13 +407,13 @@ public class MainMenu extends JMenuBar {
             }
         }
     };
-    
+
     /**
      * @since 6088
      * @return the default position of tnew top-level menus
      */
-    public int getDefaultMenuPos() { 
-         return defaultMenuPos; 
+    public int getDefaultMenuPos() {
+         return defaultMenuPos;
     }
 
     /**
@@ -585,11 +585,11 @@ public class MainMenu extends JMenuBar {
      */
     public MainMenu() {
         JMenuItem current;
-        
+
         moreToolsMenu.setVisible(false);
         dataMenu.setVisible(false);
         gpsMenu.setVisible(false);
-        
+
         add(fileMenu, newAction);
         add(fileMenu, openFile);
         fileMenu.add(recentlyOpened);
@@ -709,7 +709,7 @@ public class MainMenu extends JMenuBar {
 
         add(imageryMenu, PreferencesAction.forPreferenceTab(tr("Imagery preferences"),
                 tr("Click to open the imagery tab in the preferences"), ImageryPreference.class));
-        
+
         add(selectionMenu, selectAll);
         add(selectionMenu, unselectAll);
         add(selectionMenu, nonBranchingWaySequences);

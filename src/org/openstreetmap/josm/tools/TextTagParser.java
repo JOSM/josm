@@ -27,17 +27,17 @@ import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
  * Class that helps to parse tags from arbitrary text
  */
 public final class TextTagParser {
-    
+
     // properties need JOSM restart to apply, modified rarely enough
     protected static final int MAX_KEY_LENGTH = Main.pref.getInteger("tags.paste.max-key-length", 50);
     protected static final int MAX_KEY_COUNT = Main.pref.getInteger("tags.paste.max-key-count", 30);
     protected static final String KEY_PATTERN = Main.pref.get("tags.paste.tag-pattern", "[0-9a-zA-Z:_]*");
     protected static final int MAX_VALUE_LENGTH = 255;
-    
+
     private TextTagParser() {
         // Hide default constructor for utils classes
     }
-    
+
     public static class TextAnalyzer {
         boolean quotesStarted = false;
         boolean esc = false;
@@ -51,7 +51,7 @@ public final class TextTagParser {
             data = text;
             n = data.length();
         }
-        
+
         /**
          * Read tags from "Free format"
          */
@@ -71,7 +71,7 @@ public final class TextTagParser {
             }
             return tags;
         }
-        
+
         private String parseString(String stopChars) {
             char[] stop = stopChars.toCharArray();
             Arrays.sort(stop);
@@ -94,7 +94,7 @@ public final class TextTagParser {
                     quotesStarted = false;
                     pos++;
                     break;
-                } else if (!quotesStarted && (Arrays.binarySearch(stop, c)>=0)) { 
+                } else if (!quotesStarted && (Arrays.binarySearch(stop, c)>=0)) {
                     // stop-symbol found
                     pos++;
                     break;
@@ -109,7 +109,7 @@ public final class TextTagParser {
             s.delete(0, s.length());
             return res.trim();
         }
-        
+
         private void skipSign() {
             char c;
             boolean signFound = false;
@@ -154,7 +154,7 @@ public final class TextTagParser {
     }
 
     /**
-     * Try to find tag-value pairs in given text  
+     * Try to find tag-value pairs in given text
      * @param text - text in which tags are looked for
      * @param splitRegex - text is splitted into parts with this delimiter
      * @param tagRegex - each part is matched against this regex
@@ -174,7 +174,7 @@ public final class TextTagParser {
                      k = unescape(k);
                      v = unescape(v);
                      if (k==null || v==null) return null;
-                 } 
+                 }
                  tags.put(k,v);
             } else {
                 return null;
@@ -184,23 +184,23 @@ public final class TextTagParser {
             return tags;
          }  else {
             return null;
-         }    
+         }
     }
- 
+
     public static Map<String,String> getValidatedTagsFromText(String buf) {
         Map<String,String> tags = readTagsFromText(buf);
         return validateTags(tags) ? tags : null;
     }
-    
+
     /**
      * Apply different methods to extract tag-value pairs from arbitrary text
      * @param buf
      * @return null if no format is suitable
      */
-    
+
     public static Map<String,String> readTagsFromText(String buf) {
         Map<String,String> tags;
-        
+
         // Format
         // tag1\tval1\ntag2\tval2\n
         tags = readTagsByRegexp(buf, "[\\r\\n]+", "(.*?)\\t(.*?)", false);
@@ -208,23 +208,23 @@ public final class TextTagParser {
         if (tags!=null) return tags;
 
         // Format
-        // a=b \n c=d \n "a b"=hello 
+        // a=b \n c=d \n "a b"=hello
         // SORRY: "a=b" = c is not supported fror now, only first = will be considered
         // a = "b=c" is OK
         // a = b=c  - this method of parsing fails intentionally
         tags = readTagsByRegexp(buf, "[\\n\\t\\r]+", "(.*?)=(.*?)", true);
                 // try format  t1=v1\n t2=v2\n ...
         if (tags!=null) return tags;
-        
+
         // JSON-format
         String bufJson = buf.trim();
         // trim { }, if there are any
         if (bufJson.startsWith("{") && bufJson.endsWith("}") ) bufJson = bufJson.substring(1,bufJson.length()-1);
-        tags = readTagsByRegexp(bufJson, "[\\s]*,[\\s]*", 
+        tags = readTagsByRegexp(bufJson, "[\\s]*,[\\s]*",
                 "[\\s]*(\\\".*?[^\\\\]\\\")"+"[\\s]*:[\\s]*"+"(\\\".*?[^\\\\]\\\")[\\s]*", true);
         if (tags!=null) return tags;
 
-        // Free format 
+        // Free format
         // a 1 "b" 2 c=3 d 4 e "5"
         TextAnalyzer parser = new TextAnalyzer(buf);
         tags = parser.getFreeParsedTags();
@@ -233,7 +233,7 @@ public final class TextTagParser {
 
     /**
      * Check tags for correctness and display warnings if needed
-     * @param tags - map key->value to check
+     * @param tags - map key-&gt;value to check
      * @return true if the tags should be pasted
      */
     public static boolean validateTags(Map<String, String> tags) {
@@ -264,7 +264,7 @@ public final class TextTagParser {
         }
         return true;
     }
-    
+
     private static int warning(String text, String data, String code) {
         ExtendedDialog ed = new ExtendedDialog(
                     Main.parent,
@@ -303,9 +303,9 @@ public final class TextTagParser {
                     Main.parent,
                     tr("Warning"),
                     new String[]{tr("Ok"), tr("Clear buffer")});
-        
+
         ed.setButtonIcons(new String[]{"ok.png", "dialogs/delete.png"});
-        
+
         ed.setContent(p);
         ed.setDefaultButton(1);
         ed.setCancelButton(1);

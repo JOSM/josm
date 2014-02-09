@@ -75,11 +75,11 @@ public class OsmServerChangesetReader extends OsmServerReader {
     /**
      * Reads the changeset with id <code>id</code> from the server
      *
-     * @param id  the changeset id. id > 0 required.
+     * @param id  the changeset id. id &gt; 0 required.
      * @param monitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the changeset read
      * @throws OsmTransferException thrown if something goes wrong
-     * @throws IllegalArgumentException if id <= 0
+     * @throws IllegalArgumentException if id &lt;= 0
      */
     public Changeset readChangeset(long id, ProgressMonitor monitor) throws OsmTransferException {
         if (id <= 0)
@@ -111,11 +111,11 @@ public class OsmServerChangesetReader extends OsmServerReader {
     /**
      * Reads the changeset with id <code>id</code> from the server
      *
-     * @param ids  the list of ids. Ignored if null. Only load changesets for ids > 0.
+     * @param ids  the list of ids. Ignored if null. Only load changesets for ids &gt; 0.
      * @param monitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the changeset read
      * @throws OsmTransferException thrown if something goes wrong
-     * @throws IllegalArgumentException if id <= 0
+     * @throws IllegalArgumentException if id &lt;= 0
      */
     public List<Changeset> readChangesets(Collection<Integer> ids, ProgressMonitor monitor) throws OsmTransferException {
         if (ids == null)
@@ -159,10 +159,10 @@ public class OsmServerChangesetReader extends OsmServerReader {
     /**
      * Downloads the content of a changeset
      *
-     * @param id the changeset id. >0 required.
+     * @param id the changeset id. &gt; 0 required.
      * @param monitor the progress monitor. {@link NullProgressMonitor#INSTANCE} assumed if null.
      * @return the changeset content
-     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if id &lt;= 0
      * @throws OsmTransferException thrown if something went wrong
      */
     public ChangesetDataSet downloadChangeset(int id, ProgressMonitor monitor) throws IllegalArgumentException, OsmTransferException {

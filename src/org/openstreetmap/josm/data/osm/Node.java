@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -10,10 +14,6 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
-
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * One node data, consisting of one world coordinate waypoint.
@@ -138,8 +138,8 @@ public final class Node extends OsmPrimitive implements INode {
 
     /**
      * Constructs an incomplete {@code Node} object with the given id.
-     * @param id The id. Must be >= 0
-     * @throws IllegalArgumentException if id < 0
+     * @param id The id. Must be &gt;= 0
+     * @throws IllegalArgumentException if id &lt; 0
      */
     public Node(long id) throws IllegalArgumentException {
         super(id, false);
@@ -147,9 +147,9 @@ public final class Node extends OsmPrimitive implements INode {
 
     /**
      * Constructs a new {@code Node} with the given id and version.
-     * @param id The id. Must be >= 0
+     * @param id The id. Must be &gt;= 0
      * @param version The version
-     * @throws IllegalArgumentException if id < 0
+     * @throws IllegalArgumentException if id &lt; 0
      */
     public Node(long id, int version) throws IllegalArgumentException {
         super(id, version, false);

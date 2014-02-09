@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.io.auth;
 
 import java.awt.Component;
-import java.net.PasswordAuthentication;
 import java.net.Authenticator.RequestorType;
+import java.net.PasswordAuthentication;
 
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 
@@ -38,7 +38,7 @@ public interface CredentialsAgent {
      * for a proxy server
      * @param host the hostname for these credentials
      * @param credentials the credentials
-     * @throws CredentialsManagerException thrown if a problem occurs in a implementation of this interface
+     * @throws CredentialsAgentException thrown if a problem occurs in a implementation of this interface
      */
     void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException;
 

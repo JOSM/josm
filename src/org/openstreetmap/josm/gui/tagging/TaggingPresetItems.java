@@ -239,7 +239,7 @@ public final class TaggingPresetItems {
     }
 
     /**
-     * Enum denoting how a match (see {@link Item#matches}) is performed.
+     * Enum denoting how a match (see {@link TaggingPresetItem#matches}) is performed.
      */
     public static enum MatchType {
 
@@ -1378,7 +1378,7 @@ public final class TaggingPresetItems {
 
     /**
      * allow escaped comma in comma separated list:
-     * "A\, B\, C,one\, two" --> ["A, B, C", "one, two"]
+     * "A\, B\, C,one\, two" --&gt; ["A, B, C", "one, two"]
      * @param delimiter the delimiter, e.g. a comma. separates the entries and
      *      must be escaped within one entry
      * @param s the string

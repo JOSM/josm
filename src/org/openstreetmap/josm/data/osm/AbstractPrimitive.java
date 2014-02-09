@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import org.openstreetmap.josm.tools.Utils;
-
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
@@ -17,6 +15,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.openstreetmap.josm.tools.Utils;
 
 /**
 * Abstract class to represent common features of the datatypes primitives.
@@ -159,7 +159,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      *
-     * @return True if primitive is new (not yet uploaded the server, id <= 0)
+     * @return True if primitive is new (not yet uploaded the server, id &lt;= 0)
      */
     @Override
     public boolean isNew() {
@@ -183,10 +183,10 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Since we know the id and its version it can't be incomplete anymore. incomplete
      * is set to false.
      *
-     * @param id the id. > 0 required
-     * @param version the version > 0 required
-     * @throws IllegalArgumentException thrown if id <= 0
-     * @throws IllegalArgumentException thrown if version <= 0
+     * @param id the id. &gt; 0 required
+     * @param version the version &gt; 0 required
+     * @throws IllegalArgumentException thrown if id &lt;= 0
+     * @throws IllegalArgumentException thrown if version &lt;= 0
      * @throws DataIntegrityProblemException If id is changed and primitive was already added to the dataset
      */
     @Override
@@ -255,9 +255,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Sets the changeset id of this primitive. Can't be set on a new
      * primitive.
      *
-     * @param changesetId the id. >= 0 required.
+     * @param changesetId the id. &gt;= 0 required.
      * @throws IllegalStateException thrown if this primitive is new.
-     * @throws IllegalArgumentException thrown if id < 0
+     * @throws IllegalArgumentException thrown if id &lt; 0
      */
     @Override
     public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {

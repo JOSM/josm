@@ -31,11 +31,11 @@ import org.openstreetmap.josm.Main;
  * @author Immanuel.Scholz
  */
 public final class I18n {
-    
+
     private I18n() {
         // Hide default constructor for utils classes
     }
-    
+
     private enum PluralMode { MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
         MODE_CS/*, MODE_AR*/, MODE_PL/*, MODE_RO*/, MODE_RU, MODE_SK/*, MODE_SL*/}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
@@ -134,9 +134,9 @@ public final class I18n {
      * Translates some text for the current locale.
      * These strings are collected by a script that runs on the source code files.
      * After translation, the localizations are distributed with the main program.
-     * <br/>
+     * <br>
      * For example, {@code tr("JOSM''s default value is ''{0}''.", val)}.
-     * <br/>
+     * <br>
      * Use {@link #trn} for distinguishing singular from plural text, i.e.,
      * do not use {@code tr(size == 1 ? "singular" : "plural")} nor
      * {@code size == 1 ? tr("singular") : tr("plural")}
@@ -206,7 +206,7 @@ public final class I18n {
     /**
      * Translates some text for the current locale and distinguishes between
      * {@code singularText} and {@code pluralText} depending on {@code n}.
-     * <br/>
+     * <br>
      * For instance, {@code trn("There was an error!", "There were errors!", i)} or
      * {@code trn("Found {0} error in {1}!", "Found {0} errors in {1}!", i, Integer.toString(i), url)}.
      *

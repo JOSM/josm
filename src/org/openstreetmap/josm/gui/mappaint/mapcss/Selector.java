@@ -47,11 +47,11 @@ public interface Selector {
      * <p>In addition to the standard CSS notation for child selectors, JOSM also supports
      * an "inverse" notation:</p>
      * <pre>
-     *    selector_a > selector_b { ... }       // the standard notation (child selector)
-     *    relation[type=route] > way { ... }    // example (all ways of a route)
+     *    selector_a &gt; selector_b { ... }       // the standard notation (child selector)
+     *    relation[type=route] &gt; way { ... }    // example (all ways of a route)
      *
-     *    selector_a < selector_b { ... }       // the inverse notation (parent selector)
-     *    node[traffic_calming] < way { ... }   // example (way that has a traffic calming node)
+     *    selector_a &lt; selector_b { ... }       // the inverse notation (parent selector)
+     *    node[traffic_calming] &lt; way { ... }   // example (way that has a traffic calming node)
      * </pre>
      *
      */

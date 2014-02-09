@@ -6,12 +6,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
- * Some unit test cases for basic tag management on {@see OsmPrimitive}. Uses
- * {@see Node} for the tests, {@see OsmPrimitive} is abstract.
+ * Some unit test cases for basic tag management on {@link OsmPrimitive}. Uses
+ * {@link Node} for the tests, {@link OsmPrimitive} is abstract.
  *
  */
 public class OsmPrimitiveKeyHandling {

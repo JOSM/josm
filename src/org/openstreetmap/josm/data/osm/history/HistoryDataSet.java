@@ -82,9 +82,9 @@ public class HistoryDataSet implements LayerChangeListener{
      * Replies the history primitive for the primitive with id <code>id</code>
      * and version <code>version</code>. null, if no such primitive exists.
      *
-     * @param id the id of the primitive. > 0 required.
+     * @param id the id of the primitive. &gt; 0 required.
      * @param type the primitive type. Must not be null.
-     * @param version the version of the primitive. > 0 required
+     * @param version the version of the primitive. &gt; 0 required
      * @return the history primitive for the primitive with id <code>id</code>,
      * type <code>type</code>, and version <code>version</code>
      */
@@ -134,11 +134,11 @@ public class HistoryDataSet implements LayerChangeListener{
      * Replies the history for a given primitive with id <code>id</code>
      * and type <code>type</code>.
      *
-     * @param id the id the if of the primitive. > 0 required
+     * @param id the id the if of the primitive. &gt; 0 required
      * @param type the type of the primitive. Must not be null.
      * @return the history. null, if there isn't a history for <code>id</code> and
      * <code>type</code>.
-     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if id &lt;= 0
      * @throws IllegalArgumentException thrown if type is null
      */
     public History getHistory(long id, OsmPrimitiveType type) throws IllegalArgumentException{

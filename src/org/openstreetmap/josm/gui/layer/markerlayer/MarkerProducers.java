@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
  * When reading a gpx file, all implementations of MarkerMaker registered with
  * the Marker are consecutively called until one returns a Marker object.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  */
 public interface MarkerProducers {
     /**

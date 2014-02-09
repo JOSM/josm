@@ -49,7 +49,7 @@ import org.openstreetmap.josm.tools.Utils;
  * A ListMergeModel is a factory for three {@link TableModel}s and three {@link ListSelectionModel}s:
  * <ol>
  *   <li>the table model and the list selection for for a  {@link JTable} which shows my entries.
- *    See {@link #getMyTableModel()}</li> and {@link ListMergeModel#getMySelectionModel()}</li>
+ *    See {@link #getMyTableModel()} and {@link ListMergeModel#getMySelectionModel()}</li>
  *   <li>dito for their entries and merged entries</li>
  * </ol>
  *
@@ -409,7 +409,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      * @param source the list of nodes to copy from
      * @param rows the indices
      * @param current the row index before which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     protected void copyBeforeCurrent(ListRole source, int [] rows, int current) {
@@ -423,7 +423,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      * @param rows the indices
      * @param current the row index before which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     public void copyMyBeforeCurrent(int [] rows, int current) {
@@ -436,7 +436,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      * @param rows the indices
      * @param current the row index before which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     public void copyTheirBeforeCurrent(int [] rows, int current) {
@@ -450,7 +450,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      * @param source the list of nodes to copy from
      * @param rows the indices
      * @param current the row index after which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     protected void copyAfterCurrent(ListRole source, int [] rows, int current) {
@@ -465,7 +465,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      * @param rows the indices
      * @param current the row index after which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     public void copyMyAfterCurrent(int [] rows, int current) {
@@ -478,7 +478,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      * @param rows the indices
      * @param current the row index after which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     public void copyTheirAfterCurrent(int [] rows, int current) {
@@ -632,7 +632,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
          * @return true, if the if the {@link ListRole} of this {@link EntriesTableModel}
          * participates in the current {@link ComparePairType}
          *
-         * @see ComparePairListModel#getSelectedComparePair()
+         * @see ListMergeModel.ComparePairListModel#getSelectedComparePair()
          */
         public boolean isParticipatingInCurrentComparePair() {
             return getComparePairListModel()
@@ -830,6 +830,9 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         private int selectedIdx;
         private final List<ComparePairType> compareModes;
 
+        /**
+         * Constructs a new {@code ComparePairListModel}.
+         */
         public ComparePairListModel() {
             this.compareModes = new ArrayList<ComparePairType>();
             compareModes.add(MY_WITH_THEIR);

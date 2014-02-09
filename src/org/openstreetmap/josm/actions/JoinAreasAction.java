@@ -299,7 +299,9 @@ public class JoinAreasAction extends JosmAction {
         }
     }
 
-    // Adds the menu entry, Shortcuts, etc.
+    /**
+     * Constructs a new {@code JoinAreasAction}.
+     */
     public JoinAreasAction() {
         super(tr("Join overlapping Areas"), "joinareas", tr("Joins areas that overlap each other"),
         Shortcut.registerShortcut("tools:joinareas", tr("Tool: {0}", tr("Join overlapping Areas")),
@@ -398,7 +400,7 @@ public class JoinAreasAction extends JosmAction {
     /**
      * Tests if the areas have some intersections to join.
      * @param areas Areas to test
-     * @return @{code true} if areas are joinable
+     * @return {@code true} if areas are joinable
      */
     private boolean testJoin(List<Multipolygon> areas) {
         List<Way> allStartingWays = new ArrayList<Way>();

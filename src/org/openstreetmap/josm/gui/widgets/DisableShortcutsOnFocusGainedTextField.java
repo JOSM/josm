@@ -55,11 +55,11 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
      * A default model is created and the initial string is set to
      * <code>null</code>.
      *
-     * @param columns  the number of columns to use to calculate 
+     * @param columns  the number of columns to use to calculate
      *   the preferred width; if columns is set to zero, the
      *   preferred width will be whatever naturally results from
      *   the component implementation
-     */ 
+     */
     public DisableShortcutsOnFocusGainedTextField(int columns) {
         super(columns);
         init();
@@ -70,7 +70,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
      * specified text and columns.  A default model is created.
      *
      * @param text the text to be displayed, or <code>null</code>
-     * @param columns  the number of columns to use to calculate 
+     * @param columns  the number of columns to use to calculate
      *   the preferred width; if columns is set to zero, the
      *   preferred width will be whatever naturally results from
      *   the component implementation
@@ -90,11 +90,11 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
      *      a default will be provided by calling the
      *      <code>createDefaultModel</code> method
      * @param text  the initial string to display, or <code>null</code>
-     * @param columns  the number of columns to use to calculate 
-     *   the preferred width >= 0; if <code>columns</code>
+     * @param columns  the number of columns to use to calculate
+     *   the preferred width &gt;= 0; if <code>columns</code>
      *   is set to zero, the preferred width will be whatever
      *   naturally results from the component implementation
-     * @exception IllegalArgumentException if <code>columns</code> < 0
+     * @exception IllegalArgumentException if <code>columns</code> &lt; 0
      */
     public DisableShortcutsOnFocusGainedTextField(Document doc, String text, int columns) {
         super(doc, text, columns);
@@ -107,7 +107,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
     protected void init() {
         addFocusListener(this);
     }
-    
+
     @Override
     public void focusGained(FocusEvent e) {
         disableMenuActions();
@@ -119,7 +119,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
         restoreActionShortcuts();
         restoreMenuActions();
     }
-    
+
     /**
      * Disables all relevant menu actions.
      * @see #hasToBeDisabled
@@ -148,14 +148,14 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
             }
         }
     }
-        
+
     /**
      * Unregisters all relevant action shortcuts.
      * @see #hasToBeDisabled
      */
     protected void unregisterActionShortcuts() {
         unregisteredActionShortcuts.clear();
-        // Unregister all actions without modifiers to avoid them to be triggered by typing in this text field 
+        // Unregister all actions without modifiers to avoid them to be triggered by typing in this text field
         for (Shortcut shortcut : Shortcut.listAll()) {
             KeyStroke ks = shortcut.getKeyStroke();
             if (hasToBeDisabled(ks)) {
@@ -167,7 +167,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
             }
         }
     }
-    
+
     /**
      * Returns true if the given shortcut has no modifier and is not an actions key.
      * @see KeyEvent#isActionKey()

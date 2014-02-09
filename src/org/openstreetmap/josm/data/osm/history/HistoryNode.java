@@ -21,12 +21,12 @@ public class HistoryNode extends HistoryOsmPrimitive {
     /**
      * Constructs a new {@code HistoryNode}.
      *
-     * @param id the id (> 0 required)
-     * @param version the version (> 0 required)
+     * @param id the id (&gt; 0 required)
+     * @param version the version (&gt; 0 required)
      * @param visible whether the node is still visible
-     * @param user the user (! null required)
-     * @param changesetId the changeset id (> 0 required)
-     * @param timestamp the timestamp (! null required)
+     * @param user the user (!= null required)
+     * @param changesetId the changeset id (&gt; 0 required)
+     * @param timestamp the timestamp (!= null required)
      * @param coords the coordinates
      * @throws IllegalArgumentException if preconditions are violated
      */
@@ -38,12 +38,12 @@ public class HistoryNode extends HistoryOsmPrimitive {
      * Constructs a new {@code HistoryNode} with a configurable checking of historic parameters.
      * This is needed to build virtual HistoryNodes for modified nodes, which do not have a timestamp and a changeset id.
      *
-     * @param id the id (> 0 required)
-     * @param version the version (> 0 required)
+     * @param id the id (&gt; 0 required)
+     * @param version the version (&gt; 0 required)
      * @param visible whether the node is still visible
-     * @param user the user (! null required)
-     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
-     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @param user the user (!= null required)
+     * @param changesetId the changeset id (&gt; 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (!= null required if {@code checkHistoricParams} is true)
      * @param coords the coordinates
      * @param checkHistoricParams if true, checks values of {@code changesetId} and {@code timestamp}
      * @throws IllegalArgumentException if preconditions are violated

@@ -45,9 +45,9 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Class that encapsulates the communications with the <a href="http://wiki.openstreetmap.org/wiki/API_v0.6">OSM API</a>.<br/><br/>
+ * Class that encapsulates the communications with the <a href="http://wiki.openstreetmap.org/wiki/API_v0.6">OSM API</a>.<br><br>
  *
- * All interaction with the server-side OSM API should go through this class.<br/><br/>
+ * All interaction with the server-side OSM API should go through this class.<br><br>
  *
  * It is conceivable to extract this into an interface later and create various
  * classes implementing the interface, to be able to talk to various kinds of servers.
@@ -425,14 +425,14 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Updates a changeset with the keys in  <code>changesetUpdate</code>. The changeset must not
-     * be null and id > 0 must be true.
+     * be null and id &gt; 0 must be true.
      *
      * @param changeset the changeset to update. Must not be null.
      * @param monitor the progress monitor. If null, uses the {@link NullProgressMonitor#INSTANCE}.
      *
      * @throws OsmTransferException if something goes wrong.
      * @throws IllegalArgumentException if changeset is null
-     * @throws IllegalArgumentException if changeset.getId() <= 0
+     * @throws IllegalArgumentException if changeset.getId() &lt;= 0
      *
      */
     public void updateChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
@@ -465,15 +465,14 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Closes a changeset on the server. Sets changeset.setOpen(false) if this operation
-     * succeeds.
+     * Closes a changeset on the server. Sets changeset.setOpen(false) if this operation succeeds.
      *
-     * @param changeset the changeset to be closed. Must not be null. changeset.getId() > 0 required.
+     * @param changeset the changeset to be closed. Must not be null. changeset.getId() &gt; 0 required.
      * @param monitor the progress monitor. If null, uses {@link NullProgressMonitor#INSTANCE}
      *
      * @throws OsmTransferException if something goes wrong.
      * @throws IllegalArgumentException thrown if changeset is null
-     * @throws IllegalArgumentException thrown if changeset.getId() <= 0
+     * @throws IllegalArgumentException thrown if changeset.getId() &lt;= 0
      */
     public void closeChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
@@ -766,11 +765,11 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Sets the changesets to which further data uploads are directed. The changeset
-     * can be null. If it isn't null it must have been created, i.e. id > 0 is required. Furthermore,
+     * can be null. If it isn't null it must have been created, i.e. id &gt; 0 is required. Furthermore,
      * it must be open.
      *
      * @param changeset the changeset
-     * @throws IllegalArgumentException thrown if changeset.getId() <= 0
+     * @throws IllegalArgumentException thrown if changeset.getId() &lt;= 0
      * @throws IllegalArgumentException thrown if !changeset.isOpen()
      */
     public void setChangeset(Changeset changeset) {

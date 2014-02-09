@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Can be used in lists and tables.
  *
  * @author imi
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  */
 public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer {
     private DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();

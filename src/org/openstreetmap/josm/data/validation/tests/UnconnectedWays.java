@@ -32,7 +32,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Tests if there are segments that crosses in the same layer.
- * <br/>
+ * <br>
  * This class is abstract since highway/railway/waterway/… ways must be handled separately.
  * An actual implementation must override {@link #isPrimitiveUsable(OsmPrimitive)}
  * to denote which kind of primitives can be handled.
@@ -52,7 +52,7 @@ public abstract class UnconnectedWays extends Test {
         public UnconnectedHighways() {
             super(tr("Unconnected highways"));
         }
-        
+
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && p.hasKey("highway");
@@ -70,7 +70,7 @@ public abstract class UnconnectedWays extends Test {
         public UnconnectedRailways() {
             super(tr("Unconnected railways"));
         }
-        
+
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && p.hasKey("railway");
@@ -88,7 +88,7 @@ public abstract class UnconnectedWays extends Test {
         public UnconnectedWaterways() {
             super(tr("Unconnected waterways"));
         }
-        
+
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && p.hasKey("waterway");
@@ -106,7 +106,7 @@ public abstract class UnconnectedWays extends Test {
         public UnconnectedNaturalOrLanduse() {
             super(tr("Unconnected natural lands and landuses"));
         }
-        
+
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && (p.hasKey("natural") || p.hasKey("landuse"));
@@ -124,7 +124,7 @@ public abstract class UnconnectedWays extends Test {
         public UnconnectedPower() {
             super(tr("Unconnected power ways"));
         }
-        
+
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && p.hasTag("power", "line", "minor_line", "cable");

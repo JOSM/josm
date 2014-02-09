@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * A Set-like class that allows looking up equivalent preexising instance.
  * It is useful whereever one would use self-mapping construct like
- * <code>Map<T,T>.put(t,t), that is, for caches, uniqueness filters or similar.
+ * <code>Map&lt;T,T&gt;.put(t,t)</code>, that is, for caches, uniqueness filters or similar.
  *
  * The semantics of equivalency can be external to the object, using the
  * {@link Hash} interface. The set also supports querying for entries using
@@ -23,7 +23,7 @@ import java.util.Set;
  * <h2>Examples</h2>
  * <ul><li>A String cache:
  * <pre>
- * Storage<String> cache = new Storage(); // use default Hash
+ * Storage&lt;String&gt; cache = new Storage(); // use default Hash
  * for (String input : data) {
  *     String onlyOne = cache.putIfUnique(input);
  *     ....
@@ -31,7 +31,7 @@ import java.util.Set;
  * </pre></li>
  * <li>Identity-based set:
  * <pre>
- * Storage<Object> identity = new Storage(new Hash<Object,Object> {
+ * Storage&lt;Object&gt; identity = new Storage(new Hash&lt;Object,Object&gt; {
  *     public int getHashCode(Object o) {
  *         return System.identityHashCode(o);
  *     }
@@ -43,7 +43,7 @@ import java.util.Set;
  * <li>An object with int ID and id-based lookup:
  * <pre>
  * class Thing { int id; }
- * Storage<Thing> things = new Storage(new Hash<Thing,Thing>() {
+ * Storage&lt;Thing&gt; things = new Storage(new Hash&lt;Thing,Thing&gt;() {
  *     public int getHashCode(Thing t) {
  *         return t.id;
  *     }
@@ -51,7 +51,7 @@ import java.util.Set;
  *         return t1 == t2;
  *     }
  *  });
- * Map<Integer,Thing> fk = things.foreignKey(new Hash<Integer,Thing>() {
+ * Map&lt;Integer,Thing&gt; fk = things.foreignKey(new Hash&lt;Integer,Thing&gt;() {
  *     public int getHashCode(Integer i) {
  *         return i.getIntValue();
  *     }
@@ -63,7 +63,7 @@ import java.util.Set;
  * things.put(new Thing(3));
  * assert things.get(new Thing(3)) == fk.get(3);
  * </pre></li>
- *
+ * </ul>
  *
  * @author nenik
  */

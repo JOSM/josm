@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Caches styles for a single primitive.
  * Splits the range of possible scale values (0 &lt; scale &lt; +Infinity) into multiple
  * subranges, for each scale range it keeps a list of styles.
- * Immutable class, equals & hashCode is required (the same for StyleList, ElemStyle
+ * Immutable class, equals &amp; hashCode is required (the same for StyleList, ElemStyle
  * and its subclasses).
  */
 public final class StyleCache {

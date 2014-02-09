@@ -449,7 +449,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     }
 
     /**
-     * Replies the savable state of this layer (i.e if it can be saved through a "File->Save" dialog).
+     * Replies the savable state of this layer (i.e if it can be saved through a "File-&gt;Save" dialog).
      * @return true if this layer can be saved to a file
      * @since 5459
      */
@@ -467,7 +467,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     }
 
     /**
-     * Creates a new "Save" dialog for this layer and makes it visible.<br/>
+     * Creates a new "Save" dialog for this layer and makes it visible.<br>
      * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
      * @return The output {@code File}
      * @since 5459

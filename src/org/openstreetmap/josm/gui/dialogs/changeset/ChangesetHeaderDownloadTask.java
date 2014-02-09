@@ -103,7 +103,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * Creates the download task for a collection of changeset ids. Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
      * whose parent is {@link Main#parent}.
      *
-     * Null ids or or ids <= 0 in the id collection are ignored.
+     * Null ids or or ids &lt;= 0 in the id collection are ignored.
      *
      * @param ids the collection of ids. Empty collection assumed if null.
      */
@@ -117,7 +117,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * Creates the download task for a collection of changeset ids. Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
      * whose parent is the parent window of <code>dialogParent</code>.
      *
-     * Null ids or or ids <= 0 in the id collection are ignored.
+     * Null ids or or ids &lt;= 0 in the id collection are ignored.
      *
      * @param dialogParent the parent reference component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be null.
      * @param ids the collection of ids. Empty collection assumed if null.

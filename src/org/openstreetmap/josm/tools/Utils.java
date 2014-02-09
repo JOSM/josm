@@ -260,7 +260,7 @@ public final class Utils {
     }
 
     /**
-     * convert float range 0 <= x <= 1 to integer range 0..255
+     * convert float range 0 &lt;= x &lt;= 1 to integer range 0..255
      * when dealing with colors and color alpha value
      * @return null if val is null, the corresponding int if val is in the
      *         range 0...1. If val is outside that range, return 255
@@ -274,7 +274,7 @@ public final class Utils {
     }
 
     /**
-     * convert integer range 0..255 to float range 0 <= x <= 1
+     * convert integer range 0..255 to float range 0 &lt;= x &lt;= 1
      * when dealing with colors and color alpha value
      */
     public static Float color_int2float(Integer val) {
@@ -316,7 +316,7 @@ public final class Utils {
     }
 
     /**
-     * Simple file copy function that will overwrite the target file.<br/>
+     * Simple file copy function that will overwrite the target file.<br>
      * Taken from <a href="http://www.rgagnon.com/javadetails/java-0064.html">this article</a> (CC-NC-BY-SA)
      * @param in The source file
      * @param out The destination file
@@ -525,7 +525,7 @@ public final class Utils {
     /**
      * Topological sort.
      *
-     * @param dependencies contains mappings (key -> value). In the final list of sorted objects, the key will come
+     * @param dependencies contains mappings (key -&gt; value). In the final list of sorted objects, the key will come
      * after the value. (In other words, the key depends on the value(s).)
      * There must not be cyclic dependencies.
      * @return the list of sorted objects
@@ -835,7 +835,7 @@ public final class Utils {
      * Returns a simple human readable (hours, minutes, seconds) string for a given duration in milliseconds.
      * @param elapsedTime The duration in milliseconds
      * @return A human readable string for the given duration
-     * @throws IllegalArgumentException if elapsedTime is < 0
+     * @throws IllegalArgumentException if elapsedTime is &lt; 0
      * @since 6354
      */
     public static String getDurationString(long elapsedTime) throws IllegalArgumentException {
@@ -866,7 +866,7 @@ public final class Utils {
 
     /**
      * Returns a human readable representation of a list of positions.
-     * <p/>
+     * <p>
      * For instance, {@code [1,5,2,6,7} yields "1-2,5-7
      * @param positionList a list of positions
      * @return a human readable representation

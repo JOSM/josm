@@ -100,9 +100,9 @@ public class DuplicateNode extends Test {
 
     /** The map of potential duplicates.
      *
-     * If there is exactly one node for a given pos, the map includes a pair <pos, Node>.
+     * If there is exactly one node for a given pos, the map includes a pair &lt;pos, Node&gt;.
      * If there are multiple nodes for a given pos, the map includes a pair
-     * <pos, NodesByEqualTagsMap>
+     * &lt;pos, NodesByEqualTagsMap&gt;
      */
     private Storage<Object> potentialDuplicates;
 

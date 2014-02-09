@@ -15,26 +15,26 @@ import org.openstreetmap.josm.Main;
  * Represents the server capabilities
  *
  * Example capabilites document:
- *
- * <osm version="0.6" generator="OpenStreetMap server">
- *   <api>
- *     <version minimum="0.6" maximum="0.6"/>
- *     <area maximum="0.25"/>
- *     <tracepoints per_page="5000"/>
- *     <waynodes maximum="2000"/>
- *     <changesets maximum_elements="50000"/>
- *     <timeout seconds="300"/>
- *   </api>
- *   <policy>
- *     <imagery>
- *       <blacklist regex=".*\.google\.com/.*"/>
- *       <blacklist regex=".*209\.85\.2\d\d.*"/>
- *       <blacklist regex=".*209\.85\.1[3-9]\d.*"/>
- *       <blacklist regex=".*209\.85\.12[89].*"/>
- *     </imagery>
- *   </policy>
- * </osm>
- *
+ * <pre>
+ * &lt;osm version="0.6" generator="OpenStreetMap server"&gt;
+ *   &lt;api&gt;
+ *     &lt;version minimum="0.6" maximum="0.6"/&gt;
+ *     &lt;area maximum="0.25"/&gt;
+ *     &lt;tracepoints per_page="5000"/&gt;
+ *     &lt;waynodes maximum="2000"/&gt;
+ *     &lt;changesets maximum_elements="50000"/&gt;
+ *     &lt;timeout seconds="300"/&gt;
+ *   &lt;/api&gt;
+ *   &lt;policy&gt;
+ *     &lt;imagery&gt;
+ *       &lt;blacklist regex=".*\.google\.com/.*"/&gt;
+ *       &lt;blacklist regex=".*209\.85\.2\d\d.*"/&gt;
+ *       &lt;blacklist regex=".*209\.85\.1[3-9]\d.*"/&gt;
+ *       &lt;blacklist regex=".*209\.85\.12[89].*"/&gt;
+ *     &lt;/imagery&gt;
+ *   &lt;/policy&gt;
+ * &lt;/osm&gt;
+ * </pre>
  * This class is used in conjunction with a very primitive parser
  * and simply stuffs the each tag and its attributes into a hash
  * of hashes, with the exception of the "blacklist" tag which gets

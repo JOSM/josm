@@ -246,7 +246,7 @@ public class AutoCompletionList extends AbstractTableModel {
 
     /**
      * replies the idx-th item from the list of filtered items
-     * @param idx the index; must be in the range 0<= idx < {@link #getFilteredSize()}
+     * @param idx the index; must be in the range 0 &lt;= idx &lt; {@link #getFilteredSize()}
      * @return the item
      *
      * @exception IndexOutOfBoundsException thrown, if idx is out of bounds

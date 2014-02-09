@@ -199,7 +199,6 @@ public class NTV2GridShiftFile implements Serializable {
      *
      * @param gs A GridShift object containing the coordinate to shift
      * @return True if the coordinate is within a Sub Grid, false if not
-     * @throws IOException
      */
     public boolean gridShiftForward(NTV2GridShift gs) {
         // Try the last sub grid first, big chance the coord is still within it
@@ -222,7 +221,6 @@ public class NTV2GridShiftFile implements Serializable {
      *
      * @param gs A GridShift object containing the coordinate to shift
      * @return True if the coordinate is within a Sub Grid, false if not
-     * @throws IOException
      */
     public boolean gridShiftReverse(NTV2GridShift gs) {
         // set up the first estimate

@@ -62,7 +62,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * A OSM data validator.
  *
- * @author Francisco R. Santos <frsantos@gmail.com>
+ * @author Francisco R. Santos &lt;frsantos@gmail.com&gt;
  */
 public class OsmValidator implements LayerChangeListener {
 
@@ -118,7 +118,7 @@ public class OsmValidator implements LayerChangeListener {
         Lanes.class, // 3100 .. 3199
         ConditionalKeys.class, // 3200 .. 3299
     };
-    
+
     private static Map<String, Test> allTestsMap;
     static {
         allTestsMap = new HashMap<String, Test>();
@@ -225,7 +225,7 @@ public class OsmValidator implements LayerChangeListener {
         applyPrefs(allTestsMap, true);
         return new TreeMap<String, Test>(allTestsMap);
     }
-    
+
     /**
      * Returns the instance of the given test class.
      * @param testClass The class of test to retrieve
@@ -280,7 +280,7 @@ public class OsmValidator implements LayerChangeListener {
 
     /**
      * Initialize grid details based on current projection system. Values based on
-     * the original value fixed for EPSG:4326 (10000) using heuristics (that is, test&error
+     * the original value fixed for EPSG:4326 (10000) using heuristics (that is, test&amp;error
      * until most bugs were discovered while keeping the processing time reasonable)
      */
     public void initializeGridDetail() {

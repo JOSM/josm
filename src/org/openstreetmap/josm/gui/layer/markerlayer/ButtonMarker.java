@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 /**
  * Marker class with button look-and-feel.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  *
  */
 public class ButtonMarker extends Marker {

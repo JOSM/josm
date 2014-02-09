@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -56,13 +55,16 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     private HistoryDataSet loadedData;
     private OsmServerHistoryReader reader = null;
 
+    /**
+     * Constructs a new {@code HistoryLoadTask}.
+     */
     public HistoryLoadTask() {
         super(tr("Load history"), true);
         toLoad = new HashSet<PrimitiveId>();
     }
 
     /**
-     * Creates a new task
+     * Constructs a new {@code HistoryLoadTask}.
      *
      * @param parent the component to be used as reference to find the
      * parent for {@link org.openstreetmap.josm.gui.PleaseWaitDialog}.
@@ -94,7 +96,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     /**
      * Adds an object whose history is to be loaded.
      *
-     * @param pid  the primitive id. Must not be null. Id > 0 required.
+     * @param pid  the primitive id. Must not be null. Id &gt; 0 required.
      * @return this task
      */
     public HistoryLoadTask add(PrimitiveId pid) {
@@ -132,10 +134,10 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     /**
      * Adds an object to be loaded, the object is specified by an OSM primitive.
      *
-     * @param primitive the OSM primitive. Must not be null. primitive.getId() > 0 required.
+     * @param primitive the OSM primitive. Must not be null. primitive.getId() &gt; 0 required.
      * @return this task
      * @throws IllegalArgumentException thrown if the primitive is null
-     * @throws IllegalArgumentException thrown if primitive.getId() <= 0
+     * @throws IllegalArgumentException thrown if primitive.getId() &lt;= 0
      */
     public HistoryLoadTask add(OsmPrimitive primitive) {
         CheckParameterUtil.ensureValidPrimitiveId(primitive, "primitive");
@@ -147,7 +149,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * Adds a collection of objects to loaded, specified by a collection of OSM primitives.
      *
      * @param primitives the OSM primitives. Must not be <code>null</code>.
-     * <code>primitive.getId() > 0</code> required.
+     * <code>primitive.getId() &gt; 0</code> required.
      * @return this task
      * @throws IllegalArgumentException thrown if primitives is <code>null</code>
      * @throws IllegalArgumentException thrown if one of the ids in the collection &lt;= 0

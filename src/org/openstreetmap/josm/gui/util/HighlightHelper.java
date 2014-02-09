@@ -70,7 +70,7 @@ public class HighlightHelper {
 
     /**
      * Highlight and remember given primitive
-     * @param prims - primitives to highlight/unhighlight
+     * @param p - primitive to highlight/unhighlight
      * @param flag - true to highlight
      */
     public boolean setHighlight(OsmPrimitive p, boolean flag) {

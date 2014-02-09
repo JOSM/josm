@@ -280,8 +280,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      *
      * With this bug, <code>gv.setGlyphTransform(i, trfm)</code> has a different
      * effect than on most other systems, namely the translation components
-     * ("m02" & "m12", {@link AffineTransform}) appear to be twice as large, as
-     * they actually are. The rotation is unaffected (scale & shear not tested
+     * ("m02" &amp; "m12", {@link AffineTransform}) appear to be twice as large, as
+     * they actually are. The rotation is unaffected (scale &amp; shear not tested
      * so far).
      *
      * This bug has only been observed on Mac OS X, see #7841.
@@ -444,7 +444,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     /**
      * Displays text at specified position including its halo, if applicable.
-     * 
+     *
      * @param gv Text's glyphs to display. If {@code null}, use text from {@code s} instead.
      * @param s text to display if {@code gv} is {@code null}
      * @param x X position
@@ -483,7 +483,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
         }
     }
-    
+
     protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());

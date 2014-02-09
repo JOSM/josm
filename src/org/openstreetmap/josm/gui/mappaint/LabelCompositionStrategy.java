@@ -30,7 +30,6 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  *   content of a tag whose name specified in the MapCSS style file, see the preference
  *   options <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.</li>
  * </ul>
- * </p>
  *
  */
 public abstract class LabelCompositionStrategy {
@@ -201,7 +200,7 @@ public abstract class LabelCompositionStrategy {
             }
             return result;
         }
-        
+
         /**
          * Sets the name tags to be looked up in order to build up the label.
          *
@@ -220,7 +219,7 @@ public abstract class LabelCompositionStrategy {
         public void setNameComplementTags(List<String> nameComplementTags){
             this.nameComplementTags = buildNameTags(nameComplementTags);
         }
-        
+
         /**
          * Replies an unmodifiable list of the name tags used to compose the label.
          *

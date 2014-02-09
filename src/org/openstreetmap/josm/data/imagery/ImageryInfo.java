@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * Class that stores info about an image background layer.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  */
 public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
@@ -82,7 +82,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * Used to display imagery coverage in preferences and to determine relevant imagery entries based on edit location.
      */
     public static class ImageryBounds extends Bounds {
-        
+
         /**
          * Constructs a new {@code ImageryBounds} from string.
          * @param asString The string containing the list of shapes defining this bounds

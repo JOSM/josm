@@ -34,9 +34,9 @@ import org.openstreetmap.josm.tools.Utils;
 public final class ConditionalOptionPaneUtil {
     public static final int DIALOG_DISABLED_OPTION = Integer.MIN_VALUE;
 
-    /** (preference key => return value) mappings valid for the current operation (no, those two maps cannot be combined) */
+    /** (preference key =&gt; return value) mappings valid for the current operation (no, those two maps cannot be combined) */
     protected static final Map<String, Integer> sessionChoices = new HashMap<String, Integer>();
-    /** (preference key => return value) mappings valid for the current session */
+    /** (preference key =&gt; return value) mappings valid for the current session */
     protected static final Map<String, Integer> immediateChoices = new HashMap<String, Integer>();
     /** a set indication that (preference key) is or may be stored for the currently active bulk operation */
     protected static final Set<String> immediateActive = new HashSet<String>();

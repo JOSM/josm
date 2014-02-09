@@ -37,7 +37,7 @@ import org.openstreetmap.josm.io.auth.CredentialsManager;
 
 @SuppressWarnings("CallToThreadDumpStack")
 public final class ExceptionUtil {
-    
+
     private ExceptionUtil() {
         // Hide default constructor for utils classes
     }
@@ -696,7 +696,7 @@ public final class ExceptionUtil {
     }
 
     /**
-     * Replaces some HTML reserved characters (<, > and &) by their equivalent entity (&lt;, &gt; and &amp;);
+     * Replaces some HTML reserved characters (&lt;, &gt; and &amp;) by their equivalent entity (&amp;lt;, &amp;gt; and &amp;amp;);
      * @param s The unescaped string
      * @return The escaped string
      */
