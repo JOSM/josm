@@ -151,13 +151,13 @@ public class MainApplication extends Main {
         VERSION(false),
         /** --debug                                   Print debugging messages to console */
         DEBUG(false),
-        /** --language=<language>                     Set the language */
+        /** --language=&lt;language&gt;               Set the language */
         LANGUAGE(true),
         /** --reset-preferences                       Reset the preferences to default */
         RESET_PREFERENCES(false),
-        /** --load-preferences=<url-to-xml>           Changes preferences according to the XML file */
+        /** --load-preferences=&lt;url-to-xml&gt;     Changes preferences according to the XML file */
         LOAD_PREFERENCES(true),
-        /** --set=<key>=<value>                       Set preference key to value */
+        /** --set=&lt;key&gt;=&lt;value&gt;           Set preference key to value */
         SET(true),
         /** --geometry=widthxheight(+|-)x(+|-)y       Standard unix geometry argument */
         GEOMETRY(true),
@@ -166,13 +166,13 @@ public class MainApplication extends Main {
         /** --maximize                                Launch in maximized mode */
         MAXIMIZE(false),
         /** --download=minlat,minlon,maxlat,maxlon    Download the bounding box <br>
-         *  --download=<URL>                          Download the location at the URL (with lat=x&lon=y&zoom=z) <br>
-         *  --download=<filename>                     Open a file (any file type that can be opened with File/Open) */
+         *  --download=&lt;URL&gt;                    Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) <br>
+         *  --download=&lt;filename&gt;               Open a file (any file type that can be opened with File/Open) */
         DOWNLOAD(true),
         /** --downloadgps=minlat,minlon,maxlat,maxlon Download the bounding box as raw GPS <br>
-         *  --downloadgps=<URL>                       Download the location at the URL (with lat=x&lon=y&zoom=z) as raw GPS */
+         *  --downloadgps=&lt;URL&gt;                 Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) as raw GPS */
         DOWNLOADGPS(true),
-        /** --selection=<searchstring>                Select with the given search */
+        /** --selection=&lt;searchstring&gt;          Select with the given search */
         SELECTION(true);
 
         private String name;
@@ -274,7 +274,7 @@ public class MainApplication extends Main {
         } catch (IllegalArgumentException e) {
             System.exit(1);
         }
-        
+
         final boolean languageGiven = args.containsKey(Option.LANGUAGE);
 
         if (languageGiven) {
@@ -312,7 +312,7 @@ public class MainApplication extends Main {
         Main.platform.preStartupHook();
 
         Main.commandLineArgs = Utils.copyArray(argArray);
-        
+
         if (args.containsKey(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
             System.exit(0);
@@ -427,7 +427,7 @@ public class MainApplication extends Main {
         if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
             RemoteControl.start();
         }
-        
+
         if (MessageNotifier.PROP_NOTIFIER_ENABLED.get()) {
             MessageNotifier.start();
         }

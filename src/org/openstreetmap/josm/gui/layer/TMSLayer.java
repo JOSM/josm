@@ -86,10 +86,10 @@ import org.xml.sax.SAXException;
 /**
  * Class that displays a slippy map layer.
  *
- * @author Frederik Ramm <frederik@remote.org>
- * @author LuVar <lubomir.varga@freemap.sk>
- * @author Dave Hansen <dave@sr71.net>
- * @author Upliner <upliner@gmail.com>
+ * @author Frederik Ramm
+ * @author LuVar &lt;lubomir.varga@freemap.sk&gt;
+ * @author Dave Hansen &lt;dave@sr71.net&gt;
+ * @author Upliner &lt;upliner@gmail.com&gt;
  *
  */
 public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderListener {
@@ -735,7 +735,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     /**
      * Check if zooming out is allowed
      *
-     * @return    true, if zooming out is allowed (currentZoomLevel > minZoomLevel)
+     * @return    true, if zooming out is allowed (currentZoomLevel &gt; minZoomLevel)
      */
     public boolean zoomDecreaseAllowed() {
         return currentZoomLevel > this.getMinZoomLvl();

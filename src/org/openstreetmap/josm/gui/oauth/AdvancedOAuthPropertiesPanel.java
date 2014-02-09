@@ -20,19 +20,21 @@ import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * Panel allowing the user to setup advanced OAuth parameters:
+ * <ul>
  * <li>Consumer key</li>
  * <li>Consumer secret</li>
  * <li>Request token URL</li>
  * <li>Access token URL</li>
  * <li>Authorize URL</li>
+ * </ul>
  *
  * @see OAuthParameters
  * @since 2746

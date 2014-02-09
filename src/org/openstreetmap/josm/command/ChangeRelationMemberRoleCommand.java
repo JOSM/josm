@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * Command that changes the role of a relation member
  *
- * @author Teemu Koskinen <teemu.koskinen@mbnet.fi>
+ * @author Teemu Koskinen &lt;teemu.koskinen@mbnet.fi&gt;
  */
 public class ChangeRelationMemberRoleCommand extends Command {
 

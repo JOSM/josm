@@ -103,7 +103,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * an {@link OsmPrimitive} with id=<code>id</code>. The id will
      * later we fetched as part of a Multi Get request.
      *
-     * Ignore the id if it id <= 0.
+     * Ignore the id if it id &lt;= 0.
      *
      * @param ds  the dataset (must not be null)
      * @param id  the primitive id

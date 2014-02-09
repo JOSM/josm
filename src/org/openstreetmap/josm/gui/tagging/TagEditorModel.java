@@ -193,10 +193,10 @@ public class TagEditorModel extends AbstractTableModel {
     /**
      * adds a tag given by a name/value pair to the tag editor model.
      *
-     * If there is no tag with name <code>name</name> yet, a new {@link TagModel} is created
+     * If there is no tag with name <code>name</code> yet, a new {@link TagModel} is created
      * and append to this model.
      *
-     * If there is a tag with name <code>name</name>, <code>value</code> is merged to the list
+     * If there is a tag with name <code>name</code>, <code>value</code> is merged to the list
      * of values for this tag.
      *
      * @param name the name; converted to "" if null

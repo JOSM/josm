@@ -142,8 +142,8 @@ public class OsmServerWriter {
      *
      * @param primitives the collection of primitives to upload
      * @param progressMonitor  the progress monitor
-     * @param chunkSize the size of the individual upload chunks. > 0 required.
-     * @throws IllegalArgumentException thrown if chunkSize <= 0
+     * @param chunkSize the size of the individual upload chunks. &gt; 0 required.
+     * @throws IllegalArgumentException thrown if chunkSize &lt;= 0
      * @throws OsmTransferException thrown if an exception occurs
      */
     protected void uploadChangesInChunks(Collection<? extends IPrimitive> primitives, ProgressMonitor progressMonitor, int chunkSize) throws OsmTransferException, IllegalArgumentException {

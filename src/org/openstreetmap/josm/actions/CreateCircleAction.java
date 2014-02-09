@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @since 996
  *
- * @author Henry Loenwind, based on much copy&Paste from other Actions.
+ * @author Henry Loenwind
  * @author Sebastian Masch
  */
 public final class CreateCircleAction extends JosmAction {

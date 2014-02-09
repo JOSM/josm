@@ -36,11 +36,11 @@ import org.openstreetmap.josm.data.osm.Way;
  * @author viesturs
  */
 public final class Geometry {
-    
+
     private Geometry() {
         // Hide default constructor for utils classes
     }
-    
+
     public enum PolygonIntersection {FIRST_INSIDE_SECOND, SECOND_INSIDE_FIRST, OUTSIDE, CROSSING}
 
     /**
@@ -770,7 +770,7 @@ public final class Geometry {
     /**
      * Tests if the polygon formed by {@code nodes} is inside the multipolygon {@code multiPolygon}. The nullable argument
      * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
-     * <p/>
+     * <p>
      * If {@code nodes} contains exactly one element, then it is checked whether that one node is inside the multipolygon.
      */
     public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {

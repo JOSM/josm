@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * RotateCommand rotates a number of objects around their centre.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  */
 public class RotateCommand extends TransformNodesCommand {
 

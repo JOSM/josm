@@ -285,10 +285,11 @@ public class UnGlueAction extends JosmAction {
      * dupe the given node of the given way
      *
      * assume that OrginalNode is in the way
-     *
-     * -> the new node will be put into the parameter newNodes.
-     * -> the add-node command will be put into the parameter cmds.
-     * -> the changed way will be returned and must be put into cmds by the caller!
+     * <ul>
+     * <li>the new node will be put into the parameter newNodes.</li>
+     * <li>the add-node command will be put into the parameter cmds.</li>
+     * <li>the changed way will be returned and must be put into cmds by the caller!</li>
+     * </ul>
      */
     private Way modifyWay(Node originalNode, Way w, List<Command> cmds, List<Node> newNodes) {
         // clone the node for the way

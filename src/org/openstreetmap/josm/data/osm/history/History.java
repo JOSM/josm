@@ -42,10 +42,10 @@ public class History{
     /**
      * Creates a new history for an OSM primitive
      *
-     * @param id the id. >0 required.
+     * @param id the id. &gt; 0 required.
      * @param type the primitive type. Must not be null.
      * @param versions a list of versions. Can be null.
-     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if id &lt;= 0
      * @throws IllegalArgumentException if type is null
      *
      */

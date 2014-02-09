@@ -67,11 +67,11 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a component used in the {@link MapFrame} for browsing the map. It use is to
- * provide the MapMode's enough capabilities to operate.<br/><br/>
+ * provide the MapMode's enough capabilities to operate.<br><br>
  *
  * {@code MapView} holds meta-data about the data set currently displayed, as scale level,
  * center point viewed, what scrolling mode or editing mode is selected or with
- * what projection the map is viewed etc..<br/><br/>
+ * what projection the map is viewed etc..<br><br>
  *
  * {@code MapView} is able to administrate several layers.
  *
@@ -731,7 +731,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *
      * Example:
      * <pre>
-     *     List<WMSLayer> wmsLayers = getLayersOfType(WMSLayer.class);
+     *     List&lt;WMSLayer&gt; wmsLayers = getLayersOfType(WMSLayer.class);
      * </pre>
      *
      * @return an unmodifiable list of layers of a certain type.

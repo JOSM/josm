@@ -20,8 +20,8 @@ import javax.swing.JCheckBox;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * Synchronizes scrollbar adjustments between a set of {@link Adjustable}s. 
- * Whenever the adjustment of one of the registered Adjustables is updated 
+ * Synchronizes scrollbar adjustments between a set of {@link Adjustable}s.
+ * Whenever the adjustment of one of the registered Adjustables is updated
  * the adjustment of the other registered Adjustables is adjusted too.
  * @since 6147
  */
@@ -100,12 +100,12 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
 
     /**
      * Wires a {@link JCheckBox} to  the adjustment synchronizer, in such a way that:
-     * <li>
-     *   <ol>state changes in the checkbox control whether the adjustable participates
-     *      in synchronized adjustment</ol>
-     *   <ol>state changes in this {@link AdjustmentSynchronizer} are reflected in the
-     *      {@link JCheckBox}</ol>
-     * </li>
+     * <ol>
+     *   <li>state changes in the checkbox control whether the adjustable participates
+     *      in synchronized adjustment</li>
+     *   <li>state changes in this {@link AdjustmentSynchronizer} are reflected in the
+     *      {@link JCheckBox}</li>
+     * </ol>
      *
      * @param view  the checkbox to control whether an adjustable participates in synchronized adjustment
      * @param adjustable the adjustable

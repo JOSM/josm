@@ -51,7 +51,7 @@ public final class Changeset implements Tagged {
     }
 
     /**
-     * Creates a changeset with id <code>id</code>. If id > 0, sets incomplete to true.
+     * Creates a changeset with id <code>id</code>. If id &gt; 0, sets incomplete to true.
      *
      * @param id the id
      */

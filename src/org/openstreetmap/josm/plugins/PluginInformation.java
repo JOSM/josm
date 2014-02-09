@@ -330,29 +330,27 @@ public class PluginInformation {
         }
     }
 
-
-
     /**
      * Try to find a plugin after some criterias. Extract the plugin-information
      * from the plugin and return it. The plugin is searched in the following way:
-     *
-     *<li>first look after an MANIFEST.MF in the package org.openstreetmap.josm.plugins.<plugin name>
+     *<ol>
+     *<li>first look after an MANIFEST.MF in the package org.openstreetmap.josm.plugins.&lt;plugin name&gt;
      *    (After removing all fancy characters from the plugin name).
-     *    If found, the plugin is loaded using the bootstrap classloader.
+     *    If found, the plugin is loaded using the bootstrap classloader.</li>
      *<li>If not found, look for a jar file in the user specific plugin directory
-     *    (~/.josm/plugins/<plugin name>.jar)
-     *<li>If not found and the environment variable JOSM_RESOURCES + "/plugins/" exist, look there.
-     *<li>Try for the java property josm.resources + "/plugins/" (set via java -Djosm.plugins.path=...)
+     *    (~/.josm/plugins/&lt;plugin name&gt;.jar)</li>
+     *<li>If not found and the environment variable JOSM_RESOURCES + "/plugins/" exist, look there.</li>
+     *<li>Try for the java property josm.resources + "/plugins/" (set via java -Djosm.plugins.path=...)</li>
      *<li>If the environment variable ALLUSERSPROFILE and APPDATA exist, look in
-     *    ALLUSERSPROFILE/<the last stuff from APPDATA>/JOSM/plugins.
+     *    ALLUSERSPROFILE/&lt;the last stuff from APPDATA&gt;/JOSM/plugins.
      *    (*sic* There is no easy way under Windows to get the All User's application
-     *    directory)
+     *    directory)</li>
      *<li>Finally, look in some typical unix paths:<ul>
-     *    <li>/usr/local/share/josm/plugins/
-     *    <li>/usr/local/lib/josm/plugins/
-     *    <li>/usr/share/josm/plugins/
-     *    <li>/usr/lib/josm/plugins/
-     *
+     *    <li>/usr/local/share/josm/plugins/</li>
+     *    <li>/usr/local/lib/josm/plugins/</li>
+     *    <li>/usr/share/josm/plugins/</li>
+     *    <li>/usr/lib/josm/plugins/</li></ul></li>
+     *</ol>
      * If a plugin class or jar file is found earlier in the list but seem not to
      * be working, an PluginException is thrown rather than continuing the search.
      * This is so JOSM can detect broken user-provided plugins and do not go silently

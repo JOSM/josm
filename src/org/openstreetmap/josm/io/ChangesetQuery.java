@@ -55,14 +55,19 @@ public class ChangesetQuery {
     /** a collection of changeset ids to query for */
     private Collection<Long> changesetIds = null;
 
-    public ChangesetQuery() {}
+    /**
+     * Constructs a new {@code ChangesetQuery}.
+     */
+    public ChangesetQuery() {
+
+    }
 
     /**
      * Restricts the query to changesets owned by the user with id <code>uid</code>.
      *
-     * @param uid the uid of the user. >0 expected.
+     * @param uid the uid of the user. &gt; 0 expected.
      * @return the query object with the applied restriction
-     * @throws IllegalArgumentException thrown if uid <= 0
+     * @throws IllegalArgumentException thrown if uid &lt;= 0
      * @see #forUser(String)
      */
     public ChangesetQuery forUser(int uid) throws IllegalArgumentException{
@@ -461,15 +466,14 @@ public class ChangesetQuery {
         }
 
         /**
-         * Parses the changeset query given as URL query parameters and replies a
-         * {@link ChangesetQuery}
+         * Parses the changeset query given as URL query parameters and replies a {@link ChangesetQuery}.
          *
          * <code>query</code> is the query part of a API url for querying changesets,
          * see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_.2Fapi.2F0.6.2Fchangesets">OSM API</a>.
          *
          * Example for an query string:<br>
          * <pre>
-         *    uid=1234&open=true
+         *    uid=1234&amp;open=true
          * </pre>
          *
          * @param query the query string. If null, an empty query (identical to a query for all changesets) is

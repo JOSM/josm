@@ -30,7 +30,7 @@ public final class ExifReader {
     private ExifReader() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * Returns the date/time from the given JPEG file.
      * @param filename The JPEG file to read
@@ -69,15 +69,15 @@ public final class ExifReader {
     /**
      * Returns the image orientation of the given JPEG file.
      * @param filename The JPEG file to read
-     * @return The image orientation as an {@code int}. Default value is 1. Possible values are listed in EXIF spec as follows:<br>
-     * <ul>1. The 0th row is at the visual top of the image, and the 0th column is the visual left-hand side.</ul>
-     * <ul>2. The 0th row is at the visual top of the image, and the 0th column is the visual right-hand side.</ul>
-     * <ul>3. The 0th row is at the visual bottom of the image, and the 0th column is the visual right-hand side.</ul>
-     * <ul>4. The 0th row is at the visual bottom of the image, and the 0th column is the visual left-hand side.</ul>
-     * <ul>5. The 0th row is the visual left-hand side of the image, and the 0th column is the visual top.</ul>
-     * <ul>6. The 0th row is the visual right-hand side of the image, and the 0th column is the visual top.</ul>
-     * <ul>7. The 0th row is the visual right-hand side of the image, and the 0th column is the visual bottom.</ul>
-     * <ul>8. The 0th row is the visual left-hand side of the image, and the 0th column is the visual bottom.</ul>
+     * @return The image orientation as an {@code int}. Default value is 1. Possible values are listed in EXIF spec as follows:<br><ol>
+     * <li>The 0th row is at the visual top of the image, and the 0th column is the visual left-hand side.</li>
+     * <li>The 0th row is at the visual top of the image, and the 0th column is the visual right-hand side.</li>
+     * <li>The 0th row is at the visual bottom of the image, and the 0th column is the visual right-hand side.</li>
+     * <li>The 0th row is at the visual bottom of the image, and the 0th column is the visual left-hand side.</li>
+     * <li>The 0th row is the visual left-hand side of the image, and the 0th column is the visual top.</li>
+     * <li>The 0th row is the visual right-hand side of the image, and the 0th column is the visual top.</li>
+     * <li>The 0th row is the visual right-hand side of the image, and the 0th column is the visual bottom.</li>
+     * <li>The 0th row is the visual left-hand side of the image, and the 0th column is the visual bottom.</li></ol>
      * @see <a href="http://www.impulseadventure.com/photo/exif-orientation.html">http://www.impulseadventure.com/photo/exif-orientation.html</a>
      * @see <a href="http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto">http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto</a>
      */
@@ -132,7 +132,7 @@ public final class ExifReader {
         }
         return null;
     }
-    
+
     /**
      * Returns the direction of the given JPEG file.
      * @param filename The JPEG file to read
@@ -151,7 +151,7 @@ public final class ExifReader {
         }
         return null;
     }
-    
+
     /**
      * Returns the direction of the given EXIF GPS directory.
      * @param dirGps The EXIF GPS directory
@@ -175,12 +175,12 @@ public final class ExifReader {
             double deg = components[0].doubleValue();
             double min = components[1].doubleValue();
             double sec = components[2].doubleValue();
-   
+
             if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
                 throw new IllegalArgumentException();
-   
+
             value = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
-   
+
             if (dirGps.getString(gpsTagRef).charAt(0) == cRef) {
                 value = -value;
             }

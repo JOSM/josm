@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.AudioPlayer;
 /**
  * Singleton marker class to track position of audio.
  *
- * @author David Earl<david@frankieandshadow.com>
+ * @author David Earl &lt;david@frankieandshadow.com&gt;
  * @since 572
  */
 public final class PlayHeadMarker extends Marker {

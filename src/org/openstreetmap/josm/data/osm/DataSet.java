@@ -777,7 +777,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * returns a  primitive with a given id from the data set. null, if no such primitive
      * exists
      *
-     * @param id  uniqueId of the primitive. Might be < 0 for newly created primitives
+     * @param id  uniqueId of the primitive. Might be &lt; 0 for newly created primitives
      * @param type the type of  the primitive. Must not be null.
      * @return the primitive
      * @exception NullPointerException thrown, if type is null

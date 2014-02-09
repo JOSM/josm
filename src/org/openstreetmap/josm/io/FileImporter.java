@@ -80,7 +80,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
             return false;
         }
     }
-    
+
     private static void displayError(File f, Exception e) {
         Main.error(e);
         HelpAwareOptionPane.showMessageDialogInEDT(
@@ -90,7 +90,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
                 JOptionPane.ERROR_MESSAGE, null
         );
     }
-    
+
     private static void displayCancel(final Throwable t) {
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
@@ -102,7 +102,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
             }
         });
     }
-    
+
     public boolean importDataHandleExceptions(List<File> files, ProgressMonitor progressMonitor) {
         try {
             Main.info("Open "+files.size()+" files");
@@ -156,7 +156,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
     }
 
     /**
-     * Returns the enabled state of this {@code FileImporter}. When enabled, it is listed and usable in "File->Open" dialog.
+     * Returns the enabled state of this {@code FileImporter}. When enabled, it is listed and usable in "File-&gt;Open" dialog.
      * @return true if this {@code FileImporter} is enabled
      * @since 5459
      */
@@ -165,7 +165,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
     }
 
     /**
-     * Sets the enabled state of the {@code FileImporter}. When enabled, it is listed and usable in "File->Open" dialog.
+     * Sets the enabled state of the {@code FileImporter}. When enabled, it is listed and usable in "File-&gt;Open" dialog.
      * @param enabled true to enable this {@code FileImporter}, false to disable it
      * @since 5459
      */

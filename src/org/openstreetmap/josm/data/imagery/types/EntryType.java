@@ -24,22 +24,21 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="entry">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="pixelPerDegree" type="{http://www.w3.org/2001/XMLSchema}double"/>
- *         &lt;element name="east" type="{http://www.w3.org/2001/XMLSchema}double"/>
- *         &lt;element name="north" type="{http://www.w3.org/2001/XMLSchema}double"/>
- *         &lt;element name="lastUsed" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *         &lt;element name="lastModified" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *         &lt;element name="filename" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="entry"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="pixelPerDegree" type="{http://www.w3.org/2001/XMLSchema}double"/&gt;
+ *         &lt;element name="east" type="{http://www.w3.org/2001/XMLSchema}double"/&gt;
+ *         &lt;element name="north" type="{http://www.w3.org/2001/XMLSchema}double"/&gt;
+ *         &lt;element name="lastUsed" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
+ *         &lt;element name="lastModified" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
+ *         &lt;element name="filename" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
- *
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)

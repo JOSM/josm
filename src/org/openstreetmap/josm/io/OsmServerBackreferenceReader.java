@@ -46,10 +46,10 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     /**
      * constructor
      *
-     * @param primitive  the primitive to be read. Must not be null. primitive.id > 0 expected
+     * @param primitive  the primitive to be read. Must not be null. primitive.id &gt; 0 expected
      *
      * @exception IllegalArgumentException thrown if primitive is null
-     * @exception IllegalArgumentException thrown if primitive.id <= 0
+     * @exception IllegalArgumentException thrown if primitive.id &lt;= 0
      */
     public OsmServerBackreferenceReader(OsmPrimitive primitive) throws IllegalArgumentException {
         CheckParameterUtil.ensureValidPrimitiveId(primitive, "primitive");
@@ -61,10 +61,10 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     /**
      * constructor
      *
-     * @param id  the id of the primitive. > 0 expected
+     * @param id  the id of the primitive. &gt; 0 expected
      * @param type the type of the primitive. Must not be null.
      *
-     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if id &lt;= 0
      * @exception IllegalArgumentException thrown if type is null
      *
      */
@@ -96,7 +96,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @param type the type of the primitive
      * @param readFull true, if referers should be read fully (i.e. including their immediate children)
      *
-     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if id &lt;= 0
      * @exception IllegalArgumentException thrown if type is null
      *
      */

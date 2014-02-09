@@ -110,10 +110,10 @@ public class SelectNonBranchingWaySequences {
 
     /**
      * Finds out if the current selection can be extended.
-     * <p/>
+     * <p>
      * The members outerNodes, nodes must have been initialized.
      * How to update these members when extending the selection, @see extend().
-     *
+     * </p>
      * @param selection current selection
      * @return a way by which to extend the selection, or null
      */

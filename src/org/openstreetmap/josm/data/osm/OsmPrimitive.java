@@ -240,13 +240,13 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     /**
      * Creates a new primitive for the given id.
      *
-     * If allowNegativeId is set, provided id can be < 0 and will be set to primitive without any processing.
+     * If allowNegativeId is set, provided id can be &lt; 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
      *
      * @param id the id
      * @param allowNegativeId
-     * @throws IllegalArgumentException thrown if id < 0 and allowNegativeId is false
+     * @throws IllegalArgumentException thrown if id &lt; 0 and allowNegativeId is false
      */
     protected OsmPrimitive(long id, boolean allowNegativeId) throws IllegalArgumentException {
         if (allowNegativeId) {
@@ -268,16 +268,16 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     /**
      * Creates a new primitive for the given id and version.
      *
-     * If allowNegativeId is set, provided id can be < 0 and will be set to primitive without any processing.
+     * If allowNegativeId is set, provided id can be &lt; 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
      *
-     * If id is not > 0 version is ignored and set to 0.
+     * If id is not &gt; 0 version is ignored and set to 0.
      *
      * @param id
      * @param version
      * @param allowNegativeId
-     * @throws IllegalArgumentException thrown if id < 0 and allowNegativeId is false
+     * @throws IllegalArgumentException thrown if id &lt; 0 and allowNegativeId is false
      */
     protected OsmPrimitive(long id, int version, boolean allowNegativeId) throws IllegalArgumentException {
         this(id, allowNegativeId);
@@ -355,10 +355,10 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Since we know the id and its version it can't be incomplete anymore. incomplete
      * is set to false.
      *
-     * @param id the id. > 0 required
-     * @param version the version > 0 required
-     * @throws IllegalArgumentException thrown if id <= 0
-     * @throws IllegalArgumentException thrown if version <= 0
+     * @param id the id. &gt; 0 required
+     * @param version the version &gt; 0 required
+     * @throws IllegalArgumentException thrown if id &lt;= 0
+     * @throws IllegalArgumentException thrown if version &lt;= 0
      * @throws DataIntegrityProblemException If id is changed and primitive was already added to the dataset
      */
     @Override
@@ -1142,7 +1142,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Replies true if this primitive and other are equal with respect to their
      * semantic attributes.
      * <ol>
-     *   <li>equal id</ol>
+     *   <li>equal id</li>
      *   <li>both are complete or both are incomplete</li>
      *   <li>both have the same tags</li>
      * </ol>
@@ -1164,12 +1164,12 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Replies true if this primitive and other are equal with respect to their
      * technical attributes. The attributes:
      * <ol>
-     *   <li>deleted</ol>
-     *   <li>modified</ol>
-     *   <li>timestamp</ol>
-     *   <li>version</ol>
-     *   <li>visible</ol>
-     *   <li>user</ol>
+     *   <li>deleted</li>
+     *   <li>modified</li>
+     *   <li>timestamp</li>
+     *   <li>version</li>
+     *   <li>visible</li>
+     *   <li>user</li>
      * </ol>
      * have to be equal
      * @param other the other primitive

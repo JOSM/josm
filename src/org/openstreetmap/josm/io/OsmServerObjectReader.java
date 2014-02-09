@@ -36,11 +36,11 @@ public class OsmServerObjectReader extends OsmServerReader {
     /**
      * Creates a new server object reader for a given id and a primitive type.
      *
-     * @param id the object id. > 0 required.
+     * @param id the object id. &gt; 0 required.
      * @param type the type. Must not be null.
      * @param full true, if a full download is requested (i.e. a download including
      * immediate children); false, otherwise
-     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if id &lt;= 0
      * @throws IllegalArgumentException thrown if type is null
      */
     public OsmServerObjectReader(long id, OsmPrimitiveType type, boolean full) throws IllegalArgumentException {
@@ -50,10 +50,10 @@ public class OsmServerObjectReader extends OsmServerReader {
     /**
      * Creates a new server object reader for a given id and a primitive type.
      *
-     * @param id the object id. > 0 required.
+     * @param id the object id. &gt; 0 required.
      * @param type the type. Must not be null.
      * @param version the specific version number, if required; -1, otherwise
-     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if id &lt;= 0
      * @throws IllegalArgumentException thrown if type is null
      */
     public OsmServerObjectReader(long id, OsmPrimitiveType type, int version) throws IllegalArgumentException {
@@ -72,11 +72,11 @@ public class OsmServerObjectReader extends OsmServerReader {
     /**
      * Creates a new server object reader for an object with the given <code>id</code>
      *
-     * @param id the object id. Must not be null. Unique id > 0 required.
+     * @param id the object id. Must not be null. Unique id &gt; 0 required.
      * @param full true, if a full download is requested (i.e. a download including
      * immediate children); false, otherwise
      * @throws IllegalArgumentException thrown if id is null
-     * @throws IllegalArgumentException thrown if id.getUniqueId() <= 0
+     * @throws IllegalArgumentException thrown if id.getUniqueId() &lt;= 0
      */
     public OsmServerObjectReader(PrimitiveId id, boolean full) {
         this(id, full, -1);
@@ -85,10 +85,10 @@ public class OsmServerObjectReader extends OsmServerReader {
     /**
      * Creates a new server object reader for an object with the given <code>id</code>
      *
-     * @param id the object id. Must not be null. Unique id > 0 required.
+     * @param id the object id. Must not be null. Unique id &gt; 0 required.
      * @param version the specific version number, if required; -1, otherwise
      * @throws IllegalArgumentException thrown if id is null
-     * @throws IllegalArgumentException thrown if id.getUniqueId() <= 0
+     * @throws IllegalArgumentException thrown if id.getUniqueId() &lt;= 0
      */
     public OsmServerObjectReader(PrimitiveId id, int version) {
         this(id, false, version);

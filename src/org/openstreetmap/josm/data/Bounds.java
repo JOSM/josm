@@ -29,7 +29,7 @@ public class Bounds {
 
     /**
      * Returns min latitude of bounds. Efficient shortcut for {@code getMin().lat()}.
-     * 
+     *
      * @return min latitude of bounds.
      * @since 6203
      */
@@ -39,7 +39,7 @@ public class Bounds {
 
     /**
      * Returns min longitude of bounds. Efficient shortcut for {@code getMin().lon()}.
-     * 
+     *
      * @return min longitude of bounds.
      * @since 6203
      */
@@ -53,7 +53,7 @@ public class Bounds {
 
     /**
      * Returns max latitude of bounds. Efficient shortcut for {@code getMax().lat()}.
-     * 
+     *
      * @return max latitude of bounds.
      * @since 6203
      */
@@ -63,7 +63,7 @@ public class Bounds {
 
     /**
      * Returns max longitude of bounds. Efficient shortcut for {@code getMax().lon()}.
-     * 
+     *
      * @return max longitude of bounds.
      * @since 6203
      */
@@ -94,18 +94,18 @@ public class Bounds {
     /**
      * Single point Bounds defined by lat/lon {@code b}.
      * Coordinates will be rounded to osm precision if {@code roundToOsmPrecision} is true.
-     * 
+     *
      * @param b lat/lon of given point.
      * @param roundToOsmPrecision defines if lat/lon will be rounded.
      */
     public Bounds(LatLon b, boolean roundToOsmPrecision) {
         this(b.lat(), b.lon(), roundToOsmPrecision);
     }
-    
+
     /**
      * Single point Bounds defined by point [lat,lon].
      * Coordinates will be rounded to osm precision if {@code roundToOsmPrecision} is true.
-     * 
+     *
      * @param lat latitude of given point.
      * @param lon longitude of given point.
      * @param roundToOsmPrecision defines if lat/lon will be rounded.
@@ -231,18 +231,18 @@ public class Bounds {
      * and in longitude direction of <code>lonExtent</code>.
      *
      * @param center  the center coordinate pair. Must not be null.
-     * @param latExtent the latitude extent. > 0 required.
-     * @param lonExtent the longitude extent. > 0 required.
+     * @param latExtent the latitude extent. &gt; 0 required.
+     * @param lonExtent the longitude extent. &gt; 0 required.
      * @throws IllegalArgumentException thrown if center is null
-     * @throws IllegalArgumentException thrown if latExtent <= 0
-     * @throws IllegalArgumentException thrown if lonExtent <= 0
+     * @throws IllegalArgumentException thrown if latExtent &lt;= 0
+     * @throws IllegalArgumentException thrown if lonExtent &lt;= 0
      */
     public Bounds(LatLon center, double latExtent, double lonExtent) {
         CheckParameterUtil.ensureParameterNotNull(center, "center");
         if (latExtent <= 0.0)
-            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0.0 exptected, got {1}", "latExtent", latExtent));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0.0 expected, got {1}", "latExtent", latExtent));
         if (lonExtent <= 0.0)
-            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0.0 exptected, got {1}", "lonExtent", lonExtent));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0.0 expected, got {1}", "lonExtent", lonExtent));
 
         this.minLat = LatLon.roundToOsmPrecision(LatLon.toIntervalLat(center.lat() - latExtent / 2));
         this.minLon = LatLon.roundToOsmPrecision(LatLon.toIntervalLon(center.lon() - lonExtent / 2));
@@ -252,14 +252,14 @@ public class Bounds {
 
     /**
      * Creates BBox with same coordinates.
-     * 
+     *
      * @return BBox with same coordinates.
      * @since 6203
      */
     public BBox toBBox() {
         return new BBox(minLon, minLat, maxLon, maxLat);
     }
-    
+
     @Override public String toString() {
         return "Bounds["+minLat+","+minLon+","+maxLat+","+maxLon+"]";
     }
@@ -276,7 +276,7 @@ public class Bounds {
      * @return Center of the bounding box.
      */
     public LatLon getCenter() {
-        if (crosses180thMeridian()) {            
+        if (crosses180thMeridian()) {
             double lat = (minLat + maxLat) / 2;
             double lon = (minLon + maxLon - 360.0) / 2;
             if (lon < -180.0){
@@ -295,7 +295,7 @@ public class Bounds {
     public void extend(LatLon ll) {
         extend(ll.lat(), ll.lon());
     }
-    
+
     /**
      * Extend the bounds if necessary to include the given point [lat,lon].
      * Good to use if you know coordinates to avoid creation of LatLon object.
@@ -357,7 +357,7 @@ public class Bounds {
 
     /**
      * The two bounds intersect? Compared to java Shape.intersects, if does not use
-     * the interior but the closure. (">=" instead of ">")
+     * the interior but the closure. ("&gt;=" instead of "&gt;")
      */
     public boolean intersects(Bounds b) {
         if (b.maxLat < minLat || b.minLat > maxLat)
@@ -412,7 +412,7 @@ public class Bounds {
      * @return true, if this bounds are <em>collapsed</em>
      */
     public boolean isCollapsed() {
-        return Double.doubleToLongBits(minLat) == Double.doubleToLongBits(maxLat) 
+        return Double.doubleToLongBits(minLat) == Double.doubleToLongBits(maxLat)
             && Double.doubleToLongBits(minLon) == Double.doubleToLongBits(maxLon);
     }
 

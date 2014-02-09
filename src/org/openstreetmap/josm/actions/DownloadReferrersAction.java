@@ -69,10 +69,10 @@ public class DownloadReferrersAction extends JosmAction {
      * <code>type</code>.
      *
      * @param targetLayer  the target layer. Must not be null.
-     * @param id the primitive id. id > 0 required.
+     * @param id the primitive id. id &gt; 0 required.
      * @param type the primitive type. type != null required
      * @exception IllegalArgumentException thrown if targetLayer is null
-     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if id &lt;= 0
      * @exception IllegalArgumentException thrown if type == null
      */
     public static void downloadReferrers(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) throws IllegalArgumentException {

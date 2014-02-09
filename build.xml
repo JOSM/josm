@@ -223,6 +223,7 @@ Build-Date: ${build.tstamp}
     <target name="javadoc">
         <javadoc destdir="javadoc" 
                 sourcepath="src"
+                encoding="UTF-8"    
                 packagenames="org.openstreetmap.josm.*,org.openstreetmap.gui.jmapviewer.*"
                 windowtitle="JOSM"
                 use="true"

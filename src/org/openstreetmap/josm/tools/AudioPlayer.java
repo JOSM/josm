@@ -18,7 +18,7 @@ import org.openstreetmap.josm.Main;
 /**
  * Creates and controls a separate audio player thread.
  *
- * @author David Earl <david@frankieandshadow.com>
+ * @author David Earl &lt;david@frankieandshadow.com&gt;
  * @since 547
  */
 public final class AudioPlayer extends Thread {
@@ -123,7 +123,7 @@ public final class AudioPlayer extends Thread {
      * Plays a WAV audio file from a specified position at variable speed.
      * @param url The resource to play, which must be a WAV file or stream
      * @param seconds The number of seconds into the audio to start playing
-     * @param speed Rate at which audio playes (1.0 = real time, > 1 is faster)
+     * @param speed Rate at which audio playes (1.0 = real time, &gt; 1 is faster)
      * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void play(URL url, double seconds, double speed) throws Exception {

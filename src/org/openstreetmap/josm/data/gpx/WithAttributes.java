@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * Base class for various classes in the GPX model.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  * @since 444
  */
 public class WithAttributes implements IWithAttributes, GpxConstants {

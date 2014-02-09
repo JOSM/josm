@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * Abstract class with common services for nodes rotation and scaling commands.
  *
- * @author Olivier Croquette <ocroquette@free.fr>
+ * @author Olivier Croquette &lt;ocroquette@free.fr&gt;
  */
 public abstract class TransformNodesCommand extends Command {
 

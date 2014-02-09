@@ -87,7 +87,7 @@ public final class ExpressionFactory {
             throw new RuntimeException(ex);
         }
     }
-    
+
     private ExpressionFactory() {
         // Hide default constructor for utils classes
     }
@@ -530,7 +530,7 @@ public final class ExpressionFactory {
         /**
          * Percent-encode a string. (See https://en.wikipedia.org/wiki/Percent-encoding)
          * This is especially useful for data urls, e.g.
-         * <code>icon-image: concat("data:image/svg+xml,", URL_encode("<svg>...</svg>"));</code>
+         * <code>icon-image: concat("data:image/svg+xml,", URL_encode("&lt;svg&gt;...&lt;/svg&gt;"));</code>
          * @param s arbitrary string
          * @return the encoded string
          */
@@ -545,8 +545,7 @@ public final class ExpressionFactory {
         /**
          * XML-encode a string.
          *
-         * Escapes special characters in xml. Alternative to using <![CDATA[ ... ]]>
-         * blocks.
+         * Escapes special characters in xml. Alternative to using &lt;![CDATA[ ... ]]&gt; blocks.
          * @param s arbitrary string
          * @return the encoded string
          */

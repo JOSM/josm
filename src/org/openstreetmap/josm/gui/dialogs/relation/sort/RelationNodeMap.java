@@ -25,7 +25,7 @@ import org.openstreetmap.josm.data.osm.Way;
  * Note that normal ways have 2 nodes (beginning and end) but roundabouts can have less or more
  * (that are shared by other members).
  *
- * @author Christiaan Welvaart <cjw@time4t.net>
+ * @author Christiaan Welvaart &lt;cjw@time4t.net&gt;
  *
  */
 public class RelationNodeMap {

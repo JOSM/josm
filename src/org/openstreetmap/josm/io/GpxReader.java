@@ -396,7 +396,7 @@ public class GpxReader implements GpxConstants {
         }
 
         /**
-         * convert url/urlname to link element (GPX 1.0 -> GPX 1.1).
+         * convert url/urlname to link element (GPX 1.0 -&gt; GPX 1.1).
          */
         private void convertUrlToLink(Map<String, Object> attr) {
             String url = (String) attr.get("url");

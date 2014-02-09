@@ -27,10 +27,13 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * Note: If a ways are selected, their nodes are mirrored
  *
- * @author Teemu Koskinen, based on much copy&Paste from other Actions.
+ * @author Teemu Koskinen
  */
 public final class MirrorAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code MirrorAction}.
+     */
     public MirrorAction() {
         super(tr("Mirror"), "mirror", tr("Mirror selected nodes and ways."),
                 Shortcut.registerShortcut("tools:mirror", tr("Tool: {0}", tr("Mirror")),

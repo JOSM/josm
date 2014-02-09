@@ -513,7 +513,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     /**
      *
      * @param request
-     * @return -1 if request is no longer needed, otherwise priority of request (lower number <=> more important request)
+     * @return -1 if request is no longer needed, otherwise priority of request (lower number &lt;=&gt; more important request)
      */
     private int getRequestPriority(WMSRequest request) {
         if (request.getPixelPerDegree() != info.getPixelPerDegree())
@@ -737,7 +737,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public static class ChangeResolutionAction extends AbstractAction implements LayerAction {
-        
+
         /**
          * Constructs a new {@code ChangeResolutionAction}
          */

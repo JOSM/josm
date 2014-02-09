@@ -25,12 +25,12 @@ public class HistoryWay extends HistoryOsmPrimitive {
     /**
      * Constructs a new {@code HistoryWay}.
      *
-     * @param id the id (> 0 required)
-     * @param version the version (> 0 required)
+     * @param id the id (&gt; 0 required)
+     * @param version the version (&gt; 0 required)
      * @param visible whether the node is still visible
-     * @param user the user (! null required)
-     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
-     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @param user the user (!= null required)
+     * @param changesetId the changeset id (&gt; 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (!= null required if {@code checkHistoricParams} is true)
      * @throws IllegalArgumentException if preconditions are violated
      */
     public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp) throws IllegalArgumentException {
@@ -41,12 +41,12 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * Constructs a new {@code HistoryWay} with a configurable checking of historic parameters.
      * This is needed to build virtual HistoryWays for modified ways, which do not have a timestamp and a changeset id.
      *
-     * @param id the id (> 0 required)
-     * @param version the version (> 0 required)
+     * @param id the id (&gt; 0 required)
+     * @param version the version (&gt; 0 required)
      * @param visible whether the node is still visible
-     * @param user the user (! null required)
-     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
-     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @param user the user (!= null required)
+     * @param changesetId the changeset id (&gt; 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (!= null required if {@code checkHistoricParams} is true)
      * @param checkHistoricParams if true, checks values of {@code changesetId} and {@code timestamp}
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
@@ -58,13 +58,13 @@ public class HistoryWay extends HistoryOsmPrimitive {
     /**
      * Constructs a new {@code HistoryWay} with a given list of node ids.
      *
-     * @param id the id (> 0 required)
-     * @param version the version (> 0 required)
+     * @param id the id (&gt; 0 required)
+     * @param version the version (&gt; 0 required)
      * @param visible whether the node is still visible
-     * @param user the user (! null required)
-     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
-     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
-     * @param nodeIdList the node ids (! null required)
+     * @param user the user (!= null required)
+     * @param changesetId the changeset id (&gt; 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (!= null required if {@code checkHistoricParams} is true)
+     * @param nodeIdList the node ids (!= null required)
      * @throws IllegalArgumentException if preconditions are violated
      */
     public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, List<Long> nodeIdList) throws IllegalArgumentException {
@@ -94,7 +94,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      *
      * @param idx the index
      * @return the idx-th node id
-     * @exception IndexOutOfBoundsException thrown, if  idx <0 || idx >= {#see {@link #getNumNodes()}
+     * @exception IndexOutOfBoundsException thrown, if  idx &lt; 0 || idx &gt;= {#see {@link #getNumNodes()}
      */
     public long getNodeId(int idx) throws IndexOutOfBoundsException {
         if (idx < 0 || idx >= nodeIds.size())

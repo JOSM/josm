@@ -10,7 +10,7 @@ import java.io.IOException;
  * @since 1023
  */
 public interface PlatformHook {
-    
+
     /**
       * The preStartupHook will be called extremly early. It is
       * guaranteed to be called before the GUI setup has started.
@@ -46,7 +46,7 @@ public interface PlatformHook {
       * Plese note that you are not allowed to register any
       * shortuts from this hook, but only "systemCuts"!
       *
-      * BTW: SystemCuts should be named "system:<whatever>",
+      * BTW: SystemCuts should be named "system:&lt;whatever&gt;",
       * and it'd be best if sou'd recycle the names already used
       * by the Windows and OSX hooks. Especially the later has
       * really many of them.
@@ -68,8 +68,8 @@ public interface PlatformHook {
       *
       * Another reason not to use the implementation in the *nix
       * hook are LAFs that don't understand HTML, such as the OSX LAFs.
-      * 
-     * @param name Tooltip text to display 
+      *
+     * @param name Tooltip text to display
      * @param sc Shortcut associated (to display accelerator between parenthesis)
      * @return Full tooltip text (name + accelerator)
       */

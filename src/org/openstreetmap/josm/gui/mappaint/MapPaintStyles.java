@@ -48,7 +48,7 @@ public final class MapPaintStyles {
     public static ElemStyles getStyles() {
         return styles;
     }
-    
+
     private MapPaintStyles() {
         // Hide default constructor for utils classes
     }
@@ -387,7 +387,7 @@ public final class MapPaintStyles {
     }
 
     /***********************************
-     * MapPaintSylesUpdateListener & related code
+     * MapPaintSylesUpdateListener &amp; related code
      *  (get informed when the list of MapPaint StyleSources changes)
      */
 

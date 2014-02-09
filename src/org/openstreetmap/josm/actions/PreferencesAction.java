@@ -43,7 +43,7 @@ public class PreferencesAction extends JosmAction implements Runnable {
     }
 
     /**
-     * Create the preference action with "&Preferences" as label.
+     * Create the preference action with "Preferences" as label.
      */
     public PreferencesAction() {
         super(tr("Preferences..."), "preference", tr("Open a preferences dialog for global settings."),

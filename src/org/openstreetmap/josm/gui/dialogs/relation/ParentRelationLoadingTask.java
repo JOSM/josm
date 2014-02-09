@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
  *          public void run() {
  *              if (task.isCanceled() || task.hasError())
  *                  return;
- *              List<Relation> parents = task.getParents();
+ *              List&lt;Relation&gt; parents = task.getParents();
  *              // do something with the parent relations
  *       }
  *   );
@@ -63,7 +63,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
     /**
      * Creates a new task for asynchronously downloading the parents of a child relation.
      *
-     * @param child the child relation. Must not be null. Must have an id > 0.
+     * @param child the child relation. Must not be null. Must have an id &gt; 0.
      * @param layer  the OSM data layer. Must not be null.
      * @param full if true, parent relations are fully downloaded (i.e. with their members)
      * @param monitor the progress monitor to be used

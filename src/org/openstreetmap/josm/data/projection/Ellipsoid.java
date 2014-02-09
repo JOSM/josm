@@ -183,7 +183,7 @@ public final class Ellipsoid {
     }
 
     /**
-     *  Returns the <i>radius of curvature in the meridian<i>
+     *  Returns the <i>radius of curvature in the meridian</i>
      *  for this reference ellipsoid at the specified latitude.
      *
      * @param phi The local latitude (in radians).

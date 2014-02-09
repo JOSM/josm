@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Geometry;
 
 /**
- * Checks for nodes in power lines/minor_lines that do not have a power=tower/pole tag.<br/>
+ * Checks for nodes in power lines/minor_lines that do not have a power=tower/pole tag.<br>
  * See #7812 for discussions about this test.
  */
 public class PowerLines extends Test {

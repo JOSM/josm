@@ -51,7 +51,7 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * @author Alexander Kachkaev <alexander@kachkaev.ru>, 2011
+ * @author Alexander Kachkaev &lt;alexander@kachkaev.ru&gt;, 2011
  */
 public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintable,
         SelectionChangedListener, AWTEventListener {

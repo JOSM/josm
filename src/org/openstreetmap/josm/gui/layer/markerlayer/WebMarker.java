@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
 /**
  * Marker class with Web URL activation.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  *
  */
 public class WebMarker extends ButtonMarker {
@@ -40,7 +40,7 @@ public class WebMarker extends ButtonMarker {
         if (error != null) {
             setErroneous(true);
             new Notification(
-                    "<b>" + tr("There was an error while trying to display the URL for this marker") + "</b><br>" + 
+                    "<b>" + tr("There was an error while trying to display the URL for this marker") + "</b><br>" +
                                   tr("(URL was: ") + webUrl.toString() + ")" + "<br>" + error)
                     .setIcon(JOptionPane.ERROR_MESSAGE)
                     .setDuration(Notification.TIME_LONG)
@@ -58,7 +58,7 @@ public class WebMarker extends ButtonMarker {
         wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
         return wpt;
     }
-    
+
     private final void updateErroneous() {
         if ("file".equals(webUrl.getProtocol())) {
             String path = webUrl.getPath();

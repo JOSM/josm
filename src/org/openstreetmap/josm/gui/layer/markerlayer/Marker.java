@@ -59,11 +59,11 @@ import org.openstreetmap.josm.tools.template_engine.TemplateParser;
  * By default, one the list contains one default "Maker" implementation that
  * will create AudioMarkers for .wav files, ImageMarkers for .png/.jpg/.jpeg
  * files, and WebMarkers for everything else. (The creation of a WebMarker will
- * fail if there's no valid URL in the <link> tag, so it might still make sense
+ * fail if there's no valid URL in the &lt;link&gt; tag, so it might still make sense
  * to add Makers for such waypoints at the end of the list.)
  *
- * The default implementation only looks at the value of the <link> tag inside
- * the <wpt> tag of the GPX file.
+ * The default implementation only looks at the value of the &lt;link&gt; tag inside
+ * the &lt;wpt&gt; tag of the GPX file.
  *
  * <h2>HowTo implement a new Marker</h2>
  * <ul>
@@ -77,7 +77,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateParser;
  *      if you only add a new marker style.</li>
  * </ul>
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  */
 public class Marker implements TemplateEngineDataProvider {
 
@@ -287,12 +287,12 @@ public class Marker implements TemplateEngineDataProvider {
     /** Absolute time of marker in seconds since epoch */
     public double time;
     /** Time offset in seconds from the gpx point from which it was derived, may be adjusted later to sync with other data, so not final */
-    public double offset; 
+    public double offset;
 
     private String cachedText;
     private int textVersion = -1;
     private CachedLatLon coor;
-    
+
     private boolean erroneous = false;
 
     public Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String iconName, MarkerLayer parentLayer, double time, double offset) {
@@ -415,7 +415,7 @@ public class Marker implements TemplateEngineDataProvider {
             g.drawString(labelText, screen.x+4, screen.y+2);
         }
     }
-    
+
     protected void paintIcon(MapView mv, Graphics g, int x, int y) {
         if (!erroneous) {
             symbol.paintIcon(mv, g, x, y);
@@ -423,7 +423,7 @@ public class Marker implements TemplateEngineDataProvider {
             if (redSymbol == null) {
                 int width = symbol.getIconWidth();
                 int height = symbol.getIconHeight();
-                                
+
                 redSymbol = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D gbi = redSymbol.createGraphics();
                 gbi.drawImage(symbol.getImage(), 0, 0, null);
@@ -500,7 +500,7 @@ public class Marker implements TemplateEngineDataProvider {
     public boolean evaluateCondition(Match condition) {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
      * Determines if this marker is erroneous.
      * @return {@code true} if this markers has any kind of error, {@code false} otherwise
@@ -509,7 +509,7 @@ public class Marker implements TemplateEngineDataProvider {
     public final boolean isErroneous() {
         return erroneous;
     }
-    
+
     /**
      * Sets this marker erroneous or not.
      * @param erroneous {@code true} if this markers has any kind of error, {@code false} otherwise

@@ -13,7 +13,7 @@ import org.openstreetmap.josm.Main;
 /**
  * Utils functions for audio.
  *
- * @author David Earl <david@frankieandshadow.com>
+ * @author David Earl &lt;david@frankieandshadow.com&gt;
  * @since 1462
  */
 public final class AudioUtil {
@@ -21,7 +21,7 @@ public final class AudioUtil {
     private AudioUtil() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * Returns calibrated length of recording in seconds.
      * @param wavFile the recording file (WAV format)
