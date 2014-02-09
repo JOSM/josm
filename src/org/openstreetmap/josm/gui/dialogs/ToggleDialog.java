@@ -87,7 +87,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         /** Buttons are dynamically hidden, i.e. only shown when mouse cursor is in dialog */
         DYNAMIC
     }
-    
+
     /**
      * Property to enable dyanmic buttons globally.
      * @since 6752
@@ -761,7 +761,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         PROP_BUTTON_HIDING.put(val);
         refreshHidingButtons();
     }
-    
+
     public int getPreferredHeight() {
         return preferredHeight;
     }
@@ -892,25 +892,27 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     @Override
     public void eventDispatched(AWTEvent event) {
         if(isShowing() && !isCollapsed && isDocked && buttonHiding == ButtonHidingType.DYNAMIC) {
-            Rectangle b = this.getBounds();
-            b.setLocation(getLocationOnScreen());
-            if (b.contains(((MouseEvent)event).getLocationOnScreen())) {
-                if(!buttonsPanel.isVisible()) {
-                    buttonsPanel.setVisible(true);
+            if (buttonsPanel != null) {
+                Rectangle b = this.getBounds();
+                b.setLocation(getLocationOnScreen());
+                if (b.contains(((MouseEvent)event).getLocationOnScreen())) {
+                    if(!buttonsPanel.isVisible()) {
+                        buttonsPanel.setVisible(true);
+                    }
+                } else if (buttonsPanel.isVisible()) {
+                    buttonsPanel.setVisible(false);
                 }
-            } else if (buttonsPanel.isVisible()) {
-                buttonsPanel.setVisible(false);
             }
         }
     }
-    
+
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         if (e.getKey().equals(PROP_DYNAMIC_BUTTONS.getKey())) {
             dynamicButtonsPropertyChanged();
         }
     }
-    
+
     private void dynamicButtonsPropertyChanged() {
         boolean propEnabled = PROP_DYNAMIC_BUTTONS.get();
         if (propEnabled) {
