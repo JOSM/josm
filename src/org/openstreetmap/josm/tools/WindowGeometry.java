@@ -322,18 +322,34 @@ public class WindowGeometry {
 
         Rectangle maxbounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
-        deltax = size.width - maxbounds.width;
-        if (deltax > 0) {
-            size.width -= deltax;
-        }
+        if (!isBugInMaximumWindowBounds(maxbounds)) {
+            deltax = size.width - maxbounds.width;
+            if (deltax > 0) {
+                size.width -= deltax;
+            }
 
-        deltay = size.height - maxbounds.height;
-        if (deltay > 0) {
-            size.height -= deltay;
+            deltay = size.height - maxbounds.height;
+            if (deltay > 0) {
+                size.height -= deltay;
+            }
         }
-
         window.setLocation(p);
         window.setSize(size);
+    }
+
+    /**
+     * Determines if the bug affecting getMaximumWindowBounds() occured.
+     *
+     * @param maxbounds result of getMaximumWindowBounds()
+     * @return {@code true} if the bug happened, {@code false otherwise}
+     *
+     * @see <a href="https://josm.openstreetmap.de/ticket/9699">JOSM-9699</a>
+     * @see <a href="https://bugs.launchpad.net/ubuntu/+source/openjdk-7/+bug/1171563">Ubuntu-1171563</a>
+     * @see <a href="http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1669">IcedTea-1669</a>
+     * @see <a href="https://bugs.openjdk.java.net/browse/JI-9010334">JI-9010334</a>
+     */
+    protected static boolean isBugInMaximumWindowBounds(Rectangle maxbounds) {
+        return maxbounds.width <= 0 || maxbounds.height <= 0;
     }
 
     /**
