@@ -63,6 +63,7 @@ public class Lanes extends Test.TagTest {
 
     protected void checkNumberOfLanes(final OsmPrimitive p) {
         final String lanes = p.get("lanes");
+        if (lanes == null) return;
         final String forward = Utils.firstNonNull(p.get("lanes:forward"), "0");
         final String backward = Utils.firstNonNull(p.get("lanes:backward"), "0");
         try {
