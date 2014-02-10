@@ -537,12 +537,14 @@ public class SearchCompiler {
         @Override
         public boolean match(OsmPrimitive osm) {
             int compareResult;
+            String currentValue = osm.get(key);
+            if (currentValue == null) return false;
             try {
                 compareResult = Double.compare(
-                        Double.parseDouble(osm.get(key)),
+                        Double.parseDouble(currentValue),
                         Double.parseDouble(referenceValue)
                 );
-            } catch (Exception ignore) {
+            } catch (NumberFormatException ignore) {
                 compareResult = osm.get(key).compareTo(referenceValue);
             }
             return compareMode < 0 ? compareResult < 0 : compareMode > 0 ? compareResult > 0 : compareResult == 0;
