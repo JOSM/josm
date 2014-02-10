@@ -218,7 +218,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(pp, GBC.eol());
         }
         if (preset_name_label) {
-            TaggingPresetItems.Label.addLabel(p,/*I18n: {0} is preset name */tr("Edit {0}", getName()));
+            TaggingPresetItems.Label.addLabel(p, getName());
         }
 
         boolean presetInitiallyMatches = !selected.isEmpty() && Utils.forAll(selected, this);
