@@ -224,7 +224,6 @@ public class JosmComboBox extends JComboBox {
         }
 
         @Override public void mousePressed(MouseEvent e) { processEvent(e); }
-        @Override public void mouseClicked(MouseEvent e) { processEvent(e); }
         @Override public void mouseReleased(MouseEvent e) { processEvent(e); }
 
         private void processEvent(MouseEvent e) {
