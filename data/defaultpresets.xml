@@ -17,7 +17,7 @@ item:
   type: the data types - way,node,relation,closedway (separated by comma)
   name_template: define custom formatting for OSM primitives
                  see http://josm.openstreetmap.de/wiki/NameTemplate
-  preset_name_label: whether to insert "Edit [preset name]" label in dialog
+  preset_name_label: whether to insert "[preset name]" label in dialog
                      (defaults to "false" for backward-compatibility on external presets)
 
 group: a group of items (same syntax as "item")
