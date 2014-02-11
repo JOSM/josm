@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,11 +26,13 @@ public class MultipolygonCreate {
         public final List<Way> ways;
         public final List<Boolean> reversed;
         public final List<Node> nodes;
+        public final Area area;
 
         public JoinedPolygon(List<Way> ways, List<Boolean> reversed) {
             this.ways = ways;
             this.reversed = reversed;
             this.nodes = this.getNodes();
+            this.area = Geometry.getArea(nodes);
         }
 
         /**
@@ -37,11 +40,8 @@ public class MultipolygonCreate {
          * @param way the way to form the polygon
          */
         public JoinedPolygon(Way way) {
-            this.ways = Collections.singletonList(way);
-            this.reversed = Collections.singletonList(Boolean.FALSE);
-            this.nodes = this.getNodes();
+            this(Collections.singletonList(way), Collections.singletonList(Boolean.FALSE));
         }
-
 
         /**
          * Builds a list of nodes for this polygon. First node is not duplicated as last node.
@@ -232,7 +232,7 @@ public class MultipolygonCreate {
                     continue;
                 }
 
-                PolygonIntersection intersection = Geometry.polygonIntersection(outerWay.nodes, innerWay.nodes);
+                PolygonIntersection intersection = Geometry.polygonIntersection(outerWay.area, innerWay.area);
 
                 if (intersection == PolygonIntersection.FIRST_INSIDE_SECOND) {
                     outerGood = false;  // outer is inside another polygon
