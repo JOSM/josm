@@ -329,7 +329,7 @@ public class OsmApi extends OsmConnection {
         rv.append("/");
         // this works around a ruby (or lighttpd) bug where two consecutive slashes in
         // an URL will cause a "404 not found" response.
-        int p; while ((p = rv.indexOf("//", 6)) > -1) { rv.delete(p, p + 1); }
+        int p; while ((p = rv.indexOf("//", rv.indexOf("://")+2)) > -1) { rv.delete(p, p + 1); }
         return rv.toString();
     }
 
