@@ -1053,6 +1053,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
         control.setFocusTraversalKeysEnabled(!unregisterTab);
         control.setVisible(control.getComponentCount() != 0);
+        control.repaint();
     }
 
     private JButton addButtonAndShortcut(ActionDefinition action) {
