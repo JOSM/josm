@@ -121,7 +121,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("wayselector", IN_CORE),
         });
     }
-    
+
     private PluginHandler() {
         // Hide default constructor for utils classes
     }
@@ -209,7 +209,7 @@ public final class PluginHandler {
             sources.add(ImageProvider.class.getClassLoader());
         }
     }
-    
+
     private static PluginDownloadTask pluginDownloadTask = null;
 
     public static Collection<ClassLoader> getResourceClassLoaders() {
@@ -824,10 +824,11 @@ public final class PluginHandler {
      * @param parent the parent component for message boxes
      * @param pluginsWanted the collection of plugins to update. Updates all plugins if {@code null}
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
+     * @param displayErrMsg if {@code true}, a blocking error message is displayed in case of I/O exception.
      * @throws IllegalArgumentException thrown if plugins is null
      */
     public static Collection<PluginInformation> updatePlugins(Component parent,
-            Collection<PluginInformation> pluginsWanted, ProgressMonitor monitor)
+            Collection<PluginInformation> pluginsWanted, ProgressMonitor monitor, boolean displayErrMsg)
             throws IllegalArgumentException {
         Collection<PluginInformation> plugins = null;
         pluginDownloadTask = null;
@@ -842,7 +843,7 @@ public final class PluginHandler {
             //
             ReadRemotePluginInformationTask task1 = new ReadRemotePluginInformationTask(
                     monitor.createSubTaskMonitor(1,false),
-                    Main.pref.getPluginSites()
+                    Main.pref.getPluginSites(), displayErrMsg
             );
             Future<?> future = service.submit(task1);
             List<PluginInformation> allPlugins = null;
@@ -851,7 +852,7 @@ public final class PluginHandler {
                 future.get();
                 allPlugins = task1.getAvailablePlugins();
                 plugins = buildListOfPluginsToLoad(parent,monitor.createSubTaskMonitor(1, false));
-                // If only some plugins have to be updated, filter the list 
+                // If only some plugins have to be updated, filter the list
                 if (pluginsWanted != null && !pluginsWanted.isEmpty()) {
                     for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
                         PluginInformation pi = it.next();
@@ -950,7 +951,7 @@ public final class PluginHandler {
 
     /**
      * Ask the user for confirmation that a plugin shall be disabled.
-     * 
+     *
      * @param parent The parent component to be used for the displayed dialog
      * @param reason the reason for disabling the plugin
      * @param name the plugin name
@@ -1232,7 +1233,7 @@ public final class PluginHandler {
         switch (askUpdateDisableKeepPluginAfterException(plugin)) {
         case 0:
             // update the plugin
-            updatePlugins(Main.parent, Collections.singleton(pluginInfo), null);
+            updatePlugins(Main.parent, Collections.singleton(pluginInfo), null, true);
             return pluginDownloadTask;
         case 1:
             // deactivate the plugin

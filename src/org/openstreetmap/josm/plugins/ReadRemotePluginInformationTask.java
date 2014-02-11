@@ -54,16 +54,17 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     private boolean canceled;
     private HttpURLConnection connection;
     private List<PluginInformation> availablePlugins;
+    private boolean displayErrMsg;
 
     protected enum CacheType {PLUGIN_LIST, ICON_LIST}
 
-    protected void init(Collection<String> sites){
+    protected void init(Collection<String> sites, boolean displayErrMsg){
         this.sites = sites;
         if (sites == null) {
             this.sites = Collections.emptySet();
         }
-        availablePlugins = new LinkedList<PluginInformation>();
-
+        this.availablePlugins = new LinkedList<PluginInformation>();
+        this.displayErrMsg = displayErrMsg;
     }
     /**
      * Creates the task
@@ -72,7 +73,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      */
     public ReadRemotePluginInformationTask(Collection<String> sites) {
         super(tr("Download plugin list..."), false /* don't ignore exceptions */);
-        init(sites);
+        init(sites, true);
     }
 
     /**
@@ -80,10 +81,11 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      *
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @param sites the collection of download sites. Defaults to the empty collection if null.
+     * @param displayErrMsg if {@code true}, a blocking error message is displayed in case of I/O exception.
      */
-    public ReadRemotePluginInformationTask(ProgressMonitor monitor, Collection<String> sites) {
+    public ReadRemotePluginInformationTask(ProgressMonitor monitor, Collection<String> sites, boolean displayErrMsg) {
         super(tr("Download plugin list..."), monitor == null ? NullProgressMonitor.INSTANCE: monitor, false /* don't ignore exceptions */);
-        init(sites);
+        init(sites, displayErrMsg);
     }
 
 
@@ -152,17 +154,17 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      */
     protected String downloadPluginList(String site, final ProgressMonitor monitor) {
         BufferedReader in = null;
-        String line;
-        try {
-            /* replace %<x> with empty string or x=plugins (separated with comma) */
-            String pl = Utils.join(",", Main.pref.getCollection("plugins"));
-            String printsite = site.replaceAll("%<(.*)>", "");
-            if(pl != null && pl.length() != 0) {
-                site = site.replaceAll("%<(.*)>", "$1"+pl);
-            } else {
-                site = printsite;
-            }
 
+        /* replace %<x> with empty string or x=plugins (separated with comma) */
+        String pl = Utils.join(",", Main.pref.getCollection("plugins"));
+        String printsite = site.replaceAll("%<(.*)>", "");
+        if (pl != null && pl.length() != 0) {
+            site = site.replaceAll("%<(.*)>", "$1"+pl);
+        } else {
+            site = printsite;
+        }
+
+        try {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", printsite));
 
@@ -174,6 +176,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             }
             in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8));
             StringBuilder sb = new StringBuilder();
+            String line;
             while ((line = in.readLine()) != null) {
                 sb.append(line).append("\n");
             }
@@ -184,7 +187,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             return null;
         } catch (IOException e) {
             if (canceled) return null;
-            handleIOException(monitor, e, tr("Plugin list download error"), tr("JOSM failed to download plugin list:"));
+            Main.addNetworkError(site, e);
+            handleIOException(monitor, e, tr("Plugin list download error"), tr("JOSM failed to download plugin list:"), displayErrMsg);
             return null;
         } finally {
             synchronized(this) {
@@ -197,8 +201,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             monitor.finishTask();
         }
     }
-    
-    private void handleIOException(final ProgressMonitor monitor, IOException e, final String title, String firstMessage) {
+
+    private void handleIOException(final ProgressMonitor monitor, IOException e, final String title, final String firstMessage, boolean displayMsg) {
         InputStream errStream = connection.getErrorStream();
         StringBuilder sb = new StringBuilder();
         if (errStream != null) {
@@ -218,12 +222,22 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
         final String msg = e.getMessage();
         final String details = sb.toString();
-        Main.error(details.isEmpty() ? msg : msg + " - Details:\n" + details);
-        
+        if (details.isEmpty()) {
+            Main.error(e.getClass().getSimpleName()+": " + msg);
+        } else {
+            Main.error(msg + " - Details:\n" + details);
+        }
+
+        if (displayMsg) {
+            displayErrorMessage(monitor, msg, details, title, firstMessage);
+        }
+    }
+
+    private void displayErrorMessage(final ProgressMonitor monitor, final String msg, final String details, final String title, final String firstMessage) {
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override public void run() {
                 JPanel panel = new JPanel(new GridBagLayout());
-                panel.add(new JLabel(tr("JOSM failed to download plugin list:")), GBC.eol().insets(0, 0, 0, 10));
+                panel.add(new JLabel(firstMessage), GBC.eol().insets(0, 0, 0, 10));
                 StringBuilder b = new StringBuilder();
                 for (String part : msg.split("(?<=\\G.{200})")) {
                     b.append(part).append("\n");
@@ -276,7 +290,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             return;
         } catch (IOException e) {
             if (canceled) return;
-            handleIOException(monitor, e, tr("Plugin icons download error"), tr("JOSM failed to download plugin icons:"));
+            handleIOException(monitor, e, tr("Plugin icons download error"), tr("JOSM failed to download plugin icons:"), displayErrMsg);
             return;
         } finally {
             Utils.close(out);
