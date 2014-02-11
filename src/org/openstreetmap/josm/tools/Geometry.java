@@ -440,7 +440,13 @@ public final class Geometry {
         return dy1 * dx2 - dx1 * dy2 > 0;
     }
 
-    private static Area getArea(List<Node> polygon) {
+    /**
+     * Returns the Area of a polygon, from its list of nodes.
+     * @param polygon List of nodes forming polygon
+     * @return Area for the given list of nodes
+     * @since 6841
+     */
+    public static Area getArea(List<Node> polygon) {
         Path2D path = new Path2D.Double();
 
         boolean begin = true;
@@ -461,14 +467,24 @@ public final class Geometry {
 
     /**
      * Tests if two polygons intersect.
-     * @param first
-     * @param second
+     * @param first List of nodes forming first polygon
+     * @param second List of nodes forming second polygon
      * @return intersection kind
      */
     public static PolygonIntersection polygonIntersection(List<Node> first, List<Node> second) {
-
         Area a1 = getArea(first);
         Area a2 = getArea(second);
+        return polygonIntersection(a1, a2);
+    }
+
+    /**
+     * Tests if two polygons intersect.
+     * @param a1 Area of first polygon
+     * @param a2 Area of second polygon
+     * @return intersection kind
+     * @since 6841
+     */
+    public static PolygonIntersection polygonIntersection(Area a1, Area a2) {
 
         Area inter = new Area(a1);
         inter.intersect(a2);
