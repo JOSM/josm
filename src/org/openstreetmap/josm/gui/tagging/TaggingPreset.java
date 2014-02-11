@@ -23,6 +23,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -41,6 +42,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Link;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
@@ -251,7 +253,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         for(TaggingPresetItem link : l) {
             link.addToPanel(p, selected, presetInitiallyMatches);
         }
-
+        
+        // "Add toolbar button"
+        JToggleButton tb = new JToggleButton(new ToolbarButtonAction());
+        tb.setFocusable(false);
+        p.add(tb, GBC.std(0,0).anchor(GBC.LINE_END));
         return p;
     }
 
@@ -494,5 +500,43 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 return object.matches(t, tags, onlyShowable);
             }
         });
+    }
+    
+    /**
+     * Action that adds or removes the button on main toolbar
+     */
+    public class ToolbarButtonAction extends AbstractAction {
+        private final int toolbarIndex;
+        public ToolbarButtonAction() {
+            super("", ImageProvider.get("styles\\standard\\waypoint","pin"));
+            putValue(SHORT_DESCRIPTION, tr("Add or remove toolbar button"));
+            LinkedList<String> t = new LinkedList<String>(ToolbarPreferences.getToolString());
+            toolbarIndex = t.indexOf(getToolbarString());
+            putValue(SELECTED_KEY, toolbarIndex >= 0);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            String res = getToolbarString();
+            LinkedList<String> t = new LinkedList<String>(ToolbarPreferences.getToolString());
+            if (t.contains(res)) {
+                t.remove(res);
+            } else {
+                if (toolbarIndex>=0) {
+                    t.add(toolbarIndex, res); // add to the old place
+                } else {
+                    t.add(res); // add to the end
+                }
+            }
+            Main.pref.putCollection("toolbar", t);
+            Main.toolbar.refreshToolbarControl();
+            }
+    }
+    
+    public String getToolbarString() {
+        ToolbarPreferences.ActionDefinition aDef
+            = new ToolbarPreferences.ActionDefinition(this);
+        ToolbarPreferences.ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
+        return actionParser.saveAction(aDef);
     }
 }
