@@ -170,7 +170,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     public void saveToPreferences() {
         OAuthAccessTokenHolder.getInstance().setSaveToPreferences(cbSaveToPreferences.isSelected());
         OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
-        pnlAdvancedProperties.getAdvancedParameters().saveToPreferences(Main.pref);
+        pnlAdvancedProperties.rememberPreferences(Main.pref);
     }
 
     /**

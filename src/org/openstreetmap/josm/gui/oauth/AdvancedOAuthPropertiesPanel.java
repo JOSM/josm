@@ -245,11 +245,11 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             resetToDefaultSettings();
         } else {
             cbUseDefaults.setSelected(false);
-            tfConsumerKey.setText(pref.get("oauth.settings.consumer-key", ""));
-            tfConsumerSecret.setText(pref.get("oauth.settings.consumer-secret", ""));
-            tfRequestTokenURL.setText(pref.get("oauth.settings.request-token-url", ""));
-            tfAccessTokenURL.setText(pref.get("oauth.settings.access-token-url", ""));
-            tfAuthoriseURL.setText(pref.get("oauth.settings.authorise-url", ""));
+            tfConsumerKey.setText(pref.get("oauth.settings.consumer-key", OAuthParameters.DEFAULT_JOSM_CONSUMER_KEY));
+            tfConsumerSecret.setText(pref.get("oauth.settings.consumer-secret", OAuthParameters.DEFAULT_JOSM_CONSUMER_SECRET));
+            tfRequestTokenURL.setText(pref.get("oauth.settings.request-token-url", OAuthParameters.DEFAULT_REQUEST_TOKEN_URL));
+            tfAccessTokenURL.setText(pref.get("oauth.settings.access-token-url", OAuthParameters.DEFAULT_ACCESS_TOKEN_URL));
+            tfAuthoriseURL.setText(pref.get("oauth.settings.authorise-url", OAuthParameters.DEFAULT_AUTHORISE_URL));
             setChildComponentsEnabled(true);
         }
         ilUseDefault.setEnabled(true);
