@@ -518,19 +518,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override
         public void actionPerformed(ActionEvent ae) {
             String res = getToolbarString();
-            LinkedList<String> t = new LinkedList<String>(ToolbarPreferences.getToolString());
-            if (t.contains(res)) {
-                t.remove(res);
-            } else {
-                if (toolbarIndex>=0) {
-                    t.add(toolbarIndex, res); // add to the old place
-                } else {
-                    t.add(res); // add to the end
-                }
-            }
-            Main.pref.putCollection("toolbar", t);
-            Main.toolbar.refreshToolbarControl();
-            }
+            Main.toolbar.addCustomButton(res, toolbarIndex, true);
+        }
     }
     
     public String getToolbarString() {
