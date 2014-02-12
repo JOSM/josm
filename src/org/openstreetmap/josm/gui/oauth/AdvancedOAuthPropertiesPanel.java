@@ -238,7 +238,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      */
     public void initFromPreferences(Preferences pref) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
-        setApiUrl(pref.get("osm-server-url"));
+        setApiUrl(pref.get("osm-server.url"));
         boolean useDefault = pref.getBoolean("oauth.settings.use-default", true);
         ilUseDefault.setEnabled(false);
         if (useDefault) {
