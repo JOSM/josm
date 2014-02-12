@@ -234,18 +234,6 @@ public class OAuthParameters {
         );
     }
 
-    /**
-     * Saves these OAuth parameters to the given {@code Preferences}.
-     * @param pref The Preferences into which are saved these OAuth parameters with the prefix "oauth.settings"
-     */
-    public void saveToPreferences(Preferences pref) {
-        pref.put("oauth.settings.consumer-key", consumerKey);
-        pref.put("oauth.settings.consumer-secret", consumerSecret);
-        pref.put("oauth.settings.request-token-url", requestTokenUrl);
-        pref.put("oauth.settings.access-token-url", accessTokenUrl);
-        pref.put("oauth.settings.authorise-url", authoriseUrl);
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
