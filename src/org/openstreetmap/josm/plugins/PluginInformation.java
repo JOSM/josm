@@ -39,23 +39,40 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public class PluginInformation {
+
+    /** The plugin jar file. */
     public File file = null;
+    /** The plugin name. */
     public String name = null;
+    /** The lowest JOSM version required by this plugin (from plugin list). **/
     public int mainversion = 0;
+    /** The lowest JOSM version required by this plugin (from locally available jar). **/
     public int localmainversion = 0;
+    /** The plugin class name. */
     public String className = null;
     public boolean oldmode = false;
+    /** The list of required plugins, separated by ';' (from plugin list). */
     public String requires = null;
+    /** The list of required plugins, separated by ';' (from locally available jar). */
     public String localrequires = null;
+    /** The plugin link (for documentation). */
     public String link = null;
+    /** The plugin description. */
     public String description = null;
+    /** Determines if the plugin must be loaded early or not. */
     public boolean early = false;
+    /** The plugin author. */
     public String author = null;
+    /** The plugin stage, determining the loading sequence order of plugins. */
     public int stage = 50;
+    /** The plugin version (from plugin list). **/
     public String version = null;
+    /** The plugin version (from locally available jar). **/
     public String localversion = null;
+    /** The plugin download link. */
     public String downloadlink = null;
     public String iconPath;
+    /** The plugin icon. */
     public ImageIcon icon;
     public List<URL> libraries = new LinkedList<URL>();
     public final Map<String, String> attr = new TreeMap<String, String>();
@@ -135,8 +152,7 @@ public class PluginInformation {
      * plugin information in a plugin information object retrieved from a plugin
      * update site.
      *
-     * @param other the plugin information object retrieved from the update
-     * site
+     * @param other the plugin information object retrieved from the update site
      */
     public void updateFromPluginSite(PluginInformation other) {
         this.mainversion = other.mainversion;
@@ -175,15 +191,15 @@ public class PluginInformation {
         this.stage = other.stage;
     }
 
-    private void scanManifest(Manifest manifest, boolean oldcheck){
+    private void scanManifest(Manifest manifest, boolean oldcheck) {
         String lang = LanguageInfo.getLanguageCodeManifest();
         Attributes attr = manifest.getMainAttributes();
         className = attr.getValue("Plugin-Class");
         String s = attr.getValue(lang+"Plugin-Link");
-        if(s == null) {
+        if (s == null) {
             s = attr.getValue("Plugin-Link");
         }
-        if(s != null) {
+        if (s != null) {
             try {
                 new URL(s);
             } catch (MalformedURLException e) {
@@ -194,10 +210,9 @@ public class PluginInformation {
         link = s;
         requires = attr.getValue("Plugin-Requires");
         s = attr.getValue(lang+"Plugin-Description");
-        if(s == null)
-        {
+        if (s == null) {
             s = attr.getValue("Plugin-Description");
-            if(s != null) {
+            if (s != null) {
                 try {
                     s = tr(s);
                 } catch (IllegalArgumentException e) {
@@ -212,10 +227,15 @@ public class PluginInformation {
         String stageStr = attr.getValue("Plugin-Stage");
         stage = stageStr == null ? 50 : Integer.parseInt(stageStr);
         version = attr.getValue("Plugin-Version");
-        try {
-            mainversion = Integer.parseInt(attr.getValue("Plugin-Mainversion"));
-        } catch(NumberFormatException e) {
-            Main.warn(e);
+        s = attr.getValue("Plugin-Mainversion");
+        if (s != null) {
+            try {
+                mainversion = Integer.parseInt(s);
+            } catch(NumberFormatException e) {
+                Main.warn(tr("Invalid plugin main version ''{0}'' in plugin {1}", s, name));
+            }
+        } else {
+            Main.warn(tr("Missing plugin main version in plugin {0}", name));
         }
         author = attr.getValue("Author");
         iconPath = attr.getValue("Plugin-Icon");
@@ -223,22 +243,17 @@ public class PluginInformation {
             // extract icon from the plugin jar file
             icon = new ImageProvider(iconPath).setArchive(file).setMaxWidth(24).setMaxHeight(24).setOptional(true).get();
         }
-        if(oldcheck && mainversion > Version.getInstance().getVersion())
-        {
+        if (oldcheck && mainversion > Version.getInstance().getVersion()) {
             int myv = Version.getInstance().getVersion();
-            for(Map.Entry<Object, Object> entry : attr.entrySet())
-            {
+            for (Map.Entry<Object, Object> entry : attr.entrySet()) {
                 try {
                     String key = ((Attributes.Name)entry.getKey()).toString();
-                    if(key.endsWith("_Plugin-Url"))
-                    {
+                    if (key.endsWith("_Plugin-Url")) {
                         int mv = Integer.parseInt(key.substring(0,key.length()-11));
-                        if(mv <= myv && (mv > mainversion || mainversion > myv))
-                        {
+                        if (mv <= myv && (mv > mainversion || mainversion > myv)) {
                             String v = (String)entry.getValue();
                             int i = v.indexOf(';');
-                            if(i > 0)
-                            {
+                            if (i > 0) {
                                 downloadlink = v.substring(i+1);
                                 mainversion = mv;
                                 version = v.substring(0,i);
@@ -247,7 +262,9 @@ public class PluginInformation {
                         }
                     }
                 }
-                catch(Exception e) { Main.error(e); }
+                catch(Exception e) {
+                    Main.error(e);
+                }
             }
         }
 
@@ -291,12 +308,13 @@ public class PluginInformation {
     }
 
     /**
-     * Load and instantiate the plugin
+     * Loads and instantiates the plugin.
      *
      * @param klass the plugin class
      * @return the instantiated and initialized plugin
+     * @throws PluginException if the plugin cannot be loaded or instanciated
      */
-    public PluginProxy load(Class<?> klass) throws PluginException{
+    public PluginProxy load(Class<?> klass) throws PluginException {
         try {
             Constructor<?> c = klass.getConstructor(PluginInformation.class);
             Object plugin = c.newInstance(this);
@@ -313,10 +331,11 @@ public class PluginInformation {
     }
 
     /**
-     * Load the class of the plugin
+     * Loads the class of the plugin.
      *
      * @param classLoader the class loader to use
      * @return the loaded class
+     * @throws PluginException if the class cannot be loaded
      */
     public Class<?> loadClass(ClassLoader classLoader) throws PluginException {
         if (className == null)
