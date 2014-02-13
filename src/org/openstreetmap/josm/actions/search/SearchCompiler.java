@@ -829,10 +829,13 @@ public class SearchCompiler {
         private final boolean modulo;
 
         public Nth(PushbackTokenizer tokenizer, boolean modulo) throws ParseError {
-            this((int) tokenizer.readNumber(tr("Primitive id expected")), modulo);
+            this((int) tokenizer.readNumber(tr("Positive integer expected")), modulo);
         }
 
-        private Nth(int nth, boolean modulo) {
+        private Nth(int nth, boolean modulo) throws ParseError {
+            if (nth <= 0) {
+                throw new ParseError(tr("Positive integer expected"));
+            }
             this.nth = nth;
             this.modulo = modulo;
         }
