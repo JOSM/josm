@@ -12,24 +12,25 @@ import java.lang.reflect.Proxy;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 
 /**
  * {@code PlatformHook} implementation for Apple Mac OS X systems.
  * @since 1023
  */
 public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook, InvocationHandler {
-    
+
     private static PlatformHookOsx ivhandler = new PlatformHookOsx();
-    
+
     @Override
     public void preStartupHook() {
         // This will merge our MenuBar into the system menu.
         // MUST be set before Swing is initialized!
         // And will not work when one of the system independent LAFs is used.
         // They just insist on painting themselves...
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        Preferences.updateSystemProperty("apple.laf.useScreenMenuBar", "true");
     }
-    
+
     @Override
     public void startupHook() {
         // Here we register callbacks for the menu entries in the system menu
@@ -47,7 +48,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Main.warn("Failed to register with OSX: " + ex);
         }
     }
-    
+
     @Override
     public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {
         Boolean handled = Boolean.TRUE;
@@ -68,7 +69,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         }
         return null;
     }
-    
+
     @Override
     public void openUrl(String url) throws IOException {
         Runtime.getRuntime().exec("open " + url);
@@ -211,7 +212,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         Shortcut.registerSystemShortcut("view:zoomin", tr("reserved"), KeyEvent.VK_ADD, KeyEvent.META_DOWN_MASK); // Zoom in
         Shortcut.registerSystemShortcut("view:zoomout", tr("reserved"), KeyEvent.VK_SUBTRACT, KeyEvent.META_DOWN_MASK); // Zoom out
     }
-    
+
     @Override
     public String makeTooltip(String name, Shortcut sc) {
         String lafid = UIManager.getLookAndFeel().getID();
