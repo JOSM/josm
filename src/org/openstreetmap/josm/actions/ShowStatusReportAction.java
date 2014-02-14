@@ -68,8 +68,7 @@ public final class ShowStatusReportAction extends JosmAction {
      * Replies the report header (software and system info)
      * @return The report header (software and system info)
      */
-    public static String getReportHeader()
-    {
+    public static String getReportHeader() {
         StringBuilder text = new StringBuilder();
         text.append(Version.getInstance().getReleaseAttributes());
         text.append("\n");
@@ -86,11 +85,21 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("Java version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + ", " + System.getProperty("java.vm.name"));
         text.append("\n");
         if (Main.platform.getClass() == PlatformHookUnixoid.class) {
+            // Add Java package details for Debian/Ubuntu 
             String packageDetails = ((PlatformHookUnixoid) Main.platform).getJavaPackageDetails();
             if (packageDetails != null) {
                 text.append("Java package: ");
                 text.append(packageDetails);
                 text.append("\n");
+            }
+            // Add WebStart package details for Debian/Ubuntu, if run from JNLP 
+            if (Package.getPackage("javax.jnlp") != null) {
+                String webStartDetails = ((PlatformHookUnixoid) Main.platform).getWebStartPackageDetails();
+                if (webStartDetails != null) {
+                    text.append("WebStart package: ");
+                    text.append(webStartDetails);
+                    text.append("\n");
+                }
             }
         }
         try {

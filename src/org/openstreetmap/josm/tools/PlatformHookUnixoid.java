@@ -109,6 +109,35 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     /**
+     * Determines if the distribution is Debian or Ubuntu.
+     * @return {@code true} if the distribution is Debian or Ubuntu, {@code false} otherwise
+     */
+    public static boolean isDebianOrUbuntu() {
+        try {
+            String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
+            return "Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist);
+        } catch (IOException e) {
+            Main.warn(e);
+            return false;
+        }
+    }
+    
+    /**
+     * Get the package name including detailed version.
+     * @param packageName The package name
+     * @return The package name and package version if it can be identified, null otherwise
+     */
+    public String getPackageDetails(String packageName) {
+        try {
+            String version = Utils.execOutput(Arrays.asList("dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", packageName));
+            return packageName + ":" + version;
+        } catch (IOException e) {
+            Main.warn(e);
+            return null;
+        }
+    }
+    
+    /**
      * Get the Java package name including detailed version.
      *
      * Some Java bugs are specific to a certain security update, so in addition
@@ -122,24 +151,40 @@ public class PlatformHookUnixoid implements PlatformHook {
      * otherwise
      */
     public String getJavaPackageDetails() {
-        try {
-            String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
-            if ("Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist)) {
-                String javaHome = System.getProperty("java.home");
-                if ("/usr/lib/jvm/java-6-openjdk-amd64/jre".equals(javaHome) ||
-                        "/usr/lib/jvm/java-6-openjdk-i386/jre".equals(javaHome) ||
-                        "/usr/lib/jvm/java-6-openjdk/jre".equals(javaHome)) {
-                    String version = Utils.execOutput(Arrays.asList("dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", "openjdk-6-jre"));
-                    return "openjdk-6-jre:" + version;
-                }
-                if ("/usr/lib/jvm/java-7-openjdk-amd64/jre".equals(javaHome) ||
-                        "/usr/lib/jvm/java-7-openjdk-i386/jre".equals(javaHome)) {
-                    String version = Utils.execOutput(Arrays.asList("dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", "openjdk-7-jre"));
-                    return "openjdk-7-jre:" + version;
-                }
+        if (isDebianOrUbuntu()) {
+            String javaHome = System.getProperty("java.home");
+            if ("/usr/lib/jvm/java-6-openjdk-amd64/jre".equals(javaHome) ||
+                    "/usr/lib/jvm/java-6-openjdk-i386/jre".equals(javaHome) ||
+                    "/usr/lib/jvm/java-6-openjdk/jre".equals(javaHome)) {
+                return getPackageDetails("openjdk-6-jre");
             }
-        } catch (IOException e) {
-            Main.warn(e);
+            if ("/usr/lib/jvm/java-7-openjdk-amd64/jre".equals(javaHome) ||
+                    "/usr/lib/jvm/java-7-openjdk-i386/jre".equals(javaHome)) {
+                return getPackageDetails("openjdk-7-jre");
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Get the Web Start package name including detailed version.
+     *
+     * Debian and Ubuntu OpenJDK packages are shipped with icedtea-web package, 
+     * but its version does not match main java package version.
+     * 
+     * Only Debian based distributions are covered at the moment.
+     * This can be extended to other distributions if needed.
+     * 
+     * Simply return {@code null} if there's no separate package for Java WebStart.
+     *
+     * @return The package name and package version if it can be identified, null otherwise
+     */
+    public String getWebStartPackageDetails() {
+        if (isDebianOrUbuntu()) {
+            String javaHome = System.getProperty("java.home");
+            if (javaHome != null && javaHome.contains("openjdk")) {
+                return getPackageDetails("icedtea-netx");
+            }
         }
         return null;
     }
