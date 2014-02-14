@@ -39,6 +39,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.CustomConfigurator;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
@@ -304,7 +305,7 @@ public class MainApplication extends Main {
         Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
         // http://stackoverflow.com/q/75218/2257172
         // To be replaced with official API when switching to Java 7: https://bugs.openjdk.java.net/browse/JDK-4714232
-        System.setProperty("sun.awt.exception.handler", BugReportExceptionHandler.class.getName());
+        Preferences.updateSystemProperty("sun.awt.exception.handler", BugReportExceptionHandler.class.getName());
 
         // initialize the platform hook, and
         Main.determinePlatformHook();
@@ -319,7 +320,10 @@ public class MainApplication extends Main {
         }
 
         if (args.containsKey(Option.DEBUG)) {
+            // Enable JOSM debug level
             logLevel = 4;
+            // Enable debug in OAuth signpost
+            Preferences.updateSystemProperty("debug", "true");
             Main.debug(tr("Print debugging messages to console"));
         }
 
