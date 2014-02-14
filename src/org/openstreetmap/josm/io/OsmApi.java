@@ -686,10 +686,14 @@ public class OsmApi extends OsmConnection {
                 if (activeConnection.getHeaderField("Error") != null) {
                     errorHeader = activeConnection.getHeaderField("Error");
                     Main.error("Error header: " + errorHeader);
-                } else if (retCode != 200 && responseBody.length()>0) {
+                } else if (retCode != HttpURLConnection.HTTP_OK && responseBody.length()>0) {
                     Main.error("Error body: " + responseBody);
                 }
                 activeConnection.disconnect();
+
+                if (Main.isDebugEnabled()) {
+                    Main.debug("RESPONSE: "+ activeConnection.getHeaderFields());
+                }
 
                 errorHeader = errorHeader == null? null : errorHeader.trim();
                 String errorBody = responseBody.length() == 0? null : responseBody.toString().trim();
@@ -722,9 +726,9 @@ public class OsmApi extends OsmConnection {
                     continue;
                 }
                 throw new OsmTransferException(e);
-            } catch(IOException e){
+            } catch(IOException e) {
                 throw new OsmTransferException(e);
-            } catch(OsmTransferCanceledException e){
+            } catch(OsmTransferCanceledException e) {
                 throw e;
             } catch(OsmTransferException e) {
                 throw e;

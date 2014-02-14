@@ -748,6 +748,13 @@ public final class Utils {
         if (!keepAlive) {
             connection.setRequestProperty("Connection", "close");
         }
+        if (Main.isDebugEnabled()) {
+            try {
+                Main.debug("REQUEST: "+ connection.getRequestProperties());
+            } catch (IllegalStateException e) {
+                Main.warn(e);
+            }
+        }
         return connection;
     }
 

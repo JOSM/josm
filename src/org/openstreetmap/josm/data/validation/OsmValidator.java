@@ -307,8 +307,10 @@ public class OsmValidator implements LayerChangeListener {
             final long startTime = System.currentTimeMillis();
             initializeTests(getTests());
             testsInitialized = true;
-            final long elapsedTime = System.currentTimeMillis() - startTime;
-            Main.debug("Initializing validator tests completed in " + Utils.getDurationString(elapsedTime));
+            if (Main.isDebugEnabled()) {
+                final long elapsedTime = System.currentTimeMillis() - startTime;
+                Main.debug("Initializing validator tests completed in " + Utils.getDurationString(elapsedTime));
+            }
         }
     }
 
