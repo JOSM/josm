@@ -281,6 +281,26 @@ abstract public class Main {
     }
 
     /**
+     * Determines if debug log level is enabled.
+     * Useful to avoid costly construction of debug messages when not enabled.
+     * @return {@code true} if log level is at least debug, {@code false} otherwise
+     * @since 6852
+     */
+    public static boolean isDebugEnabled() {
+        return logLevel >= 4;
+    }
+
+    /**
+     * Determines if trace log level is enabled.
+     * Useful to avoid costly construction of trace messages when not enabled.
+     * @return {@code true} if log level is at least trace, {@code false} otherwise
+     * @since 6852
+     */
+    public static boolean isTraceEnabled() {
+        return logLevel >= 5;
+    }
+
+    /**
      * Prints a formatted error message if logging is on. Calls {@link MessageFormat#format}
      * function to format text.
      * @param msg The formatted message to print.
@@ -594,8 +614,10 @@ abstract public class Main {
             }
             final long startTime = System.currentTimeMillis();
             initialize();
-            final long elapsedTime = System.currentTimeMillis() - startTime;
-            Main.debug(tr("{0} completed in {1}", name, Utils.getDurationString(elapsedTime)));
+            if (isDebugEnabled()) {
+                final long elapsedTime = System.currentTimeMillis() - startTime;
+                Main.debug(tr("{0} completed in {1}", name, Utils.getDurationString(elapsedTime)));
+            }
             return null;
         }
     }
@@ -659,13 +681,13 @@ abstract public class Main {
         if (!hasEditLayer()) return null;
         return getEditLayer().data;
     }
-    
+
     /**
      * Replies the current selected primitives, from a end-user point of view.
      * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
      * Indeed, if the user is currently in drawing mode, only the way currently being drawn is returned,
      * see {@link DrawAction#getInProgressSelection()}.
-     * 
+     *
      * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
      * @since 6546
      */
@@ -1420,7 +1442,7 @@ abstract public class Main {
     /**
      * Adds a new network error that occur to give a hint about broken Internet connection.
      * Do not use this method for errors known for sure thrown because of a bad proxy configuration.
-     * 
+     *
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}
@@ -1440,7 +1462,7 @@ abstract public class Main {
     /**
      * Adds a new network error that occur to give a hint about broken Internet connection.
      * Do not use this method for errors known for sure thrown because of a bad proxy configuration.
-     * 
+     *
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}

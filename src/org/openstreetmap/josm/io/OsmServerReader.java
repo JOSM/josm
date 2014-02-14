@@ -157,7 +157,9 @@ public abstract class OsmServerReader extends OsmConnection {
                 throw ote;
             }
             try {
-                Main.debug(activeConnection.getHeaderFields().toString());
+                if (Main.isDebugEnabled()) {
+                    Main.debug("RESPONSE: "+activeConnection.getHeaderFields());
+                }
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
                     throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,null,null);
 
