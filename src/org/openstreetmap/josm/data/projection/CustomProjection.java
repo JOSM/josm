@@ -67,7 +67,8 @@ public class CustomProjection extends AbstractProjection {
         units("units", true),     // ignored
         no_defs("no_defs", false),
         init("init", true),
-        // JOSM extension, not present in PROJ.4
+        // JOSM extensions, not present in PROJ.4
+        wmssrs("wmssrs", true),
         bounds("bounds", true);
 
         public String key;
@@ -151,6 +152,10 @@ public class CustomProjection extends AbstractProjection {
             if (s != null) {
                 this.bounds = parseBounds(s);
             }
+            s = parameters.get(Param.wmssrs.key);
+            if (s != null) {
+                this.code = s;
+            }
         }
     }
 
@@ -173,7 +178,7 @@ public class CustomProjection extends AbstractProjection {
                 String value = null;
                 if (m.groupCount() >= 3) {
                     value = m.group(3);
-                    // same aliases
+                    // some aliases
                     if (key.equals(Param.proj.key)) {
                         if (value.equals("longlat") || value.equals("latlon") || value.equals("latlong")) {
                             value = "lonlat";
