@@ -5871,6 +5871,19 @@ Note that for a match, at least one positive and no negative is required.
             <key key="shop" value="variety_store" />
             <reference ref="name_operator_oh" />
         </item>
+        <item name="Bookmaker" icon="presets/lottery.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bookmaker" />
+            <space />
+            <key key="shop" value="bookmaker" />
+            <reference ref="name_operator_oh" />
+        </item>
+        <item name="Lottery" icon="presets/lottery.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=lottery"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=lottery" />
+            <space />
+            <key key="shop" value="lottery" />
+            <reference ref="name_operator_oh" />
+        </item>
     </group> <!-- Other -->
     <item name="Vending machine" icon="presets/vending_machine.png" type="node" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
@@ -5967,6 +5980,7 @@ Note that for a match, at least one positive and no negative is required.
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:place=town"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=town"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:place=town"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:place=town"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:place=town"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:place=town" />
             <space />

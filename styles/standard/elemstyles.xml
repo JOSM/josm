@@ -2582,6 +2582,18 @@ For external files the <rules> should have following elements:
 		<area colour="shop#00005f"/>
 	</rule>
 
+    <rule>
+        <condition k="shop" v="bookmaker"/>
+        <icon annotate="true" src="presets/lottery.svg"/>
+        <area colour="shop#00005f"/>
+    </rule>
+
+    <rule>
+        <condition k="shop" v="lottery"/>
+        <icon annotate="true" src="presets/lottery.svg"/>
+        <area colour="shop#00005f"/>
+    </rule>
+
 	<!-- duplicate of shopping_centre? -->
 	<rule>
 		<condition k="shop" v="shopping_centre"/>
