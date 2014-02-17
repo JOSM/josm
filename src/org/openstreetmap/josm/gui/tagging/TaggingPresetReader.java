@@ -34,6 +34,12 @@ import org.xml.sax.SAXException;
  */
 public final class TaggingPresetReader {
 
+    /**
+     * The accepted MIME types sent in the HTTP Accept header.
+     * @since 6867
+     */
+    public static final String PRESET_MIME_TYPES = "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
+    
     private TaggingPresetReader() {
         // Hide default constructor for utils classes
     }
@@ -218,7 +224,7 @@ public final class TaggingPresetReader {
     
     public static Collection<TaggingPreset> readAll(String source, boolean validate) throws SAXException, IOException {
         Collection<TaggingPreset> tp;
-        MirroredInputStream s = new MirroredInputStream(source);
+        MirroredInputStream s = new MirroredInputStream(source, null, PRESET_MIME_TYPES);
         try {
             InputStream zip = s.findZipEntryInputStream("xml","preset");
             if(zip != null) {

@@ -35,30 +35,98 @@ public class MirroredInputStream extends InputStream {
 
     public final static long DEFAULT_MAXTIME = -1L;
 
+    /**
+     * Constructs an input stream from a given filename, URL or internal resource.
+     * 
+     * @param name can be:<ul>
+     *  <li>relative or absolute file name</li>
+     *  <li>{@code file:///SOME/FILE} the same as above</li>
+     *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
+     * @throws IOException when the resource with the given name could not be retrieved
+     */
     public MirroredInputStream(String name) throws IOException {
-        this(name, null, DEFAULT_MAXTIME);
-    }
-
-    public MirroredInputStream(String name, long maxTime) throws IOException {
-        this(name, null, maxTime);
-    }
-
-    public MirroredInputStream(String name, String destDir) throws IOException {
-        this(name, destDir, DEFAULT_MAXTIME);
+        this(name, null, DEFAULT_MAXTIME, null);
     }
 
     /**
-     * Get an inputstream from a given filename, url or internal resource.
-     * @param name can be
-     *  - relative or absolute file name
-     *  - file:///SOME/FILE the same as above
-     *  - resource://SOME/FILE file from the classpath (usually in the current *.jar)
-     *  - http://... a url. It will be cached on disk.
-     * @param destDir the destination directory for the cache file. only applies for urls.
+     * Constructs an input stream from a given filename, URL or internal resource.
+     * 
+     * @param name can be:<ul>
+     *  <li>relative or absolute file name</li>
+     *  <li>{@code file:///SOME/FILE} the same as above</li>
+     *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
+     * @param maxTime the maximum age of the cache file (in seconds)
+     * @throws IOException when the resource with the given name could not be retrieved
+     */
+    public MirroredInputStream(String name, long maxTime) throws IOException {
+        this(name, null, maxTime, null);
+    }
+
+    /**
+     * Constructs an input stream from a given filename, URL or internal resource.
+     * 
+     * @param name can be:<ul>
+     *  <li>relative or absolute file name</li>
+     *  <li>{@code file:///SOME/FILE} the same as above</li>
+     *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
+     * @param destDir the destination directory for the cache file. Only applies for URLs.
+     * @throws IOException when the resource with the given name could not be retrieved
+     */
+    public MirroredInputStream(String name, String destDir) throws IOException {
+        this(name, destDir, DEFAULT_MAXTIME, null);
+    }
+
+    /**
+     * Constructs an input stream from a given filename, URL or internal resource.
+     * 
+     * @param name can be:<ul>
+     *  <li>relative or absolute file name</li>
+     *  <li>{@code file:///SOME/FILE} the same as above</li>
+     *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
+     * @param destDir the destination directory for the cache file. Only applies for URLs.
      * @param maxTime the maximum age of the cache file (in seconds)
      * @throws IOException when the resource with the given name could not be retrieved
      */
     public MirroredInputStream(String name, String destDir, long maxTime) throws IOException {
+        this(name, destDir, maxTime, null);
+    }
+
+    /**
+     * Constructs an input stream from a given filename, URL or internal resource.
+     * 
+     * @param name can be:<ul>
+     *  <li>relative or absolute file name</li>
+     *  <li>{@code file:///SOME/FILE} the same as above</li>
+     *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
+     * @param destDir the destination directory for the cache file. Only applies for URLs.
+     * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Only applies for URLs.
+     * @throws IOException when the resource with the given name could not be retrieved
+     * @since 6867
+     */
+    public MirroredInputStream(String name, String destDir, String httpAccept) throws IOException {
+        this(name, destDir, DEFAULT_MAXTIME, httpAccept);
+    }
+
+    /**
+     * Constructs an input stream from a given filename, URL or internal resource.
+     * 
+     * @param name can be:<ul>
+     *  <li>relative or absolute file name</li>
+     *  <li>{@code file:///SOME/FILE} the same as above</li>
+     *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
+     * @param destDir the destination directory for the cache file. Only applies for URLs.
+     * @param maxTime the maximum age of the cache file (in seconds)
+     * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Only applies for URLs.
+     * @throws IOException when the resource with the given name could not be retrieved
+     * @since 6867
+     */
+    public MirroredInputStream(String name, String destDir, long maxTime, String httpAccept) throws IOException {
         URL url;
         try {
             url = new URL(name);
@@ -72,7 +140,7 @@ public class MirroredInputStream extends InputStream {
                     fs = new BufferedInputStream(Utils.openURL(url));
                     file = new File(url.getFile());
                 } else {
-                    file = checkLocal(url, destDir, maxTime);
+                    file = checkLocal(url, destDir, maxTime, httpAccept);
                 }
             }
         } catch (java.net.MalformedURLException e) {
@@ -200,7 +268,7 @@ public class MirroredInputStream extends InputStream {
         return prefKey.toString().replaceAll("=","_");
     }
 
-    private File checkLocal(URL url, String destDir, long maxTime) throws IOException {
+    private File checkLocal(URL url, String destDir, long maxTime, String httpAccept) throws IOException {
         String prefKey = getPrefKey(url, destDir);
         long age = 0L;
         File localFile = null;
@@ -236,7 +304,7 @@ public class MirroredInputStream extends InputStream {
         BufferedOutputStream bos = null;
         BufferedInputStream bis = null;
         try {
-            HttpURLConnection con = connectFollowingRedirect(url);
+            HttpURLConnection con = connectFollowingRedirect(url, httpAccept);
             bis = new BufferedInputStream(con.getInputStream());
             FileOutputStream fos = new FileOutputStream(destDirFile);
             bos = new BufferedOutputStream(fos);
@@ -283,12 +351,13 @@ public class MirroredInputStream extends InputStream {
      * This can causes problems when downloading from certain GitHub URLs.
      * 
      * @param downloadUrl The resource URL to download
+     * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Can be {@code null}
      * @return The HTTP connection effectively linked to the resource, after all potential redirections
      * @throws MalformedURLException If a redirected URL is wrong
      * @throws IOException If any I/O operation goes wrong
-     * @since 6073
+     * @since 6867
      */
-    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl) throws MalformedURLException, IOException {
+    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept) throws MalformedURLException, IOException {
         HttpURLConnection con = null;
         int numRedirects = 0;
         while(true) {
@@ -296,6 +365,11 @@ public class MirroredInputStream extends InputStream {
             con.setInstanceFollowRedirects(false);
             con.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
             con.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
+            Main.debug("GET "+downloadUrl);
+            if (httpAccept != null) {
+                Main.debug("Accept: "+httpAccept);
+                con.setRequestProperty("Accept", httpAccept);
+            }
             try {
                 con.connect();
             } catch (IOException e) {
