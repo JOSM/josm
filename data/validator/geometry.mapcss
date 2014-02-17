@@ -12,8 +12,8 @@ node[source:outline] {
 }
 
 /* Building inside building (spatial test) */
-*[building!~/no|entrance/][coalesce(tag("layer"),"0") = coalesce(parent_tag("layer"),"0")] ∈
-*[building!~/no|entrance/] {
+*[building][building!~/no|entrance/][coalesce(tag("layer"),"0") = coalesce(parent_tag("layer"),"0")] ∈
+*[building][building!~/no|entrance/] {
   throwWarning: tr("Building inside building");
 }
 
@@ -31,7 +31,6 @@ area:closed:areaStyle ⧉ area:closed:areaStyle {
 }
 
 /* see ticket #9311 */
-node[amenity=parking][!"capacity:disabled"] ∈ *[amenity=parking],
 node[amenity=parking]["capacity:disabled" !~ /^(yes|[0-9]+)$/] ∈ *[amenity=parking] {
   throwWarning: tr("{0} inside {1}", "amenity=parking", "amenity=parking");
 }
