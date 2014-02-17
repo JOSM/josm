@@ -35,6 +35,13 @@ import org.xml.sax.SAXException;
  *
  */
 public class PluginDownloadTask extends PleaseWaitRunnable{
+
+    /**
+     * The accepted MIME types sent in the HTTP Accept header.
+     * @since 6867
+     */
+    public static final String PLUGIN_MIME_TYPES = "application/java-archive, application/zip; q=0.9, application/octet-stream; q=0.5";
+    
     private final Collection<PluginInformation> toUpdate = new LinkedList<PluginInformation>();
     private final Collection<PluginInformation> failed = new LinkedList<PluginInformation>();
     private final Collection<PluginInformation> downloaded = new LinkedList<PluginInformation>();
@@ -119,7 +126,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             }
             URL url = new URL(pi.downloadlink);
             synchronized(this) {
-                downloadConnection = MirroredInputStream.connectFollowingRedirect(url);
+                downloadConnection = MirroredInputStream.connectFollowingRedirect(url, PLUGIN_MIME_TYPES);
             }
             in = downloadConnection.getInputStream();
             out = new FileOutputStream(file);

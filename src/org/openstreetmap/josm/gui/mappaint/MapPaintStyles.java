@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.ImageIcon;
@@ -216,7 +218,10 @@ public final class MapPaintStyles {
     private static StyleSource fromSourceEntry(SourceEntry entry) {
         MirroredInputStream in = null;
         try {
-            in = new MirroredInputStream(entry.url);
+            Set<String> mimes = new HashSet<String>();
+            mimes.addAll(Arrays.asList(XmlStyleSource.XML_STYLE_MIME_TYPES.split(", ")));
+            mimes.addAll(Arrays.asList(MapCSSStyleSource.MAPCSS_STYLE_MIME_TYPES.split(", ")));
+            in = new MirroredInputStream(entry.url, null, Utils.join(", ", mimes));
             String zipEntryPath = in.findZipEntryPath("mapcss", "style");
             if (zipEntryPath != null) {
                 entry.isZip = true;

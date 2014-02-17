@@ -34,6 +34,12 @@ import org.xml.sax.SAXParseException;
 
 public class XmlStyleSource extends StyleSource implements StyleKeys {
 
+    /**
+     * The accepted MIME types sent in the HTTP Accept header.
+     * @since 6867
+     */
+    public static final String XML_STYLE_MIME_TYPES = "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
+
     protected final Map<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
     protected final Map<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
     protected final Map<String, LinemodPrototype> modifiers = new HashMap<String, LinemodPrototype>();
@@ -97,7 +103,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
 
     @Override
     public InputStream getSourceInputStream() throws IOException {
-        MirroredInputStream in = new MirroredInputStream(url);
+        MirroredInputStream in = new MirroredInputStream(url, null, XML_STYLE_MIME_TYPES);
         InputStream zip = in.findZipEntryInputStream("xml", "style");
         if (zip != null) {
             zipIcons = in.getFile();
