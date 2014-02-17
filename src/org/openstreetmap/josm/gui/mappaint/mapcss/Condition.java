@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.text.MessageFormat;
 import java.util.EnumSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -77,8 +78,10 @@ abstract public class Condition {
         EQ, NEQ, GREATER_OR_EQUAL, GREATER, LESS_OR_EQUAL, LESS,
         REGEX, NREGEX, ONE_OF, BEGINS_WITH, ENDS_WITH, CONTAINS;
 
+        private static Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
+
         public boolean eval(String testString, String prototypeString) {
-            if (testString == null && this != NEQ)
+            if (testString == null && !NEGATED_OPS.contains(this))
                 return false;
             switch (this) {
             case EQ:
@@ -201,9 +204,13 @@ abstract public class Condition {
         @Override
         public boolean applies(Environment env) {
             final String value = env.osm.get(k);
-            return value != null && (op.equals(Op.REGEX)
-                    ? pattern.matcher(value).find()
-                    : !pattern.matcher(value).find());
+            if (Op.REGEX.equals(op)) {
+                return value != null && pattern.matcher(value).find();
+            } else if (Op.NREGEX.equals(op)) {
+                return value == null || !pattern.matcher(value).find();
+            } else {
+                throw new IllegalStateException();
+            }
         }
     }
 
