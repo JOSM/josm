@@ -165,6 +165,17 @@ class MapCSSParserTest {
     }
 
     @Test
+    public void testNRegexKeyConditionSelector() throws Exception {
+        def s1 = getParser("*[sport][tourism != hotel]").selector()
+        assert s1.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar")))
+        assert !s1.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar tourism=hotel")))
+        def s2 = getParser("*[sport][tourism != hotel][leisure !~ /^(sports_centre|stadium|)\$/]").selector()
+        assert s2.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar")))
+        assert !s2.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar tourism=hotel")))
+        assert !s2.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar leisure=stadium")))
+    }
+
+    @Test
     public void testKeyKeyCondition() throws Exception {
         def c1 = (Condition.KeyValueCondition) getParser("[foo = *bar]").condition(Condition.Context.PRIMITIVE)
         def w1 = new Way()
