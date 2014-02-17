@@ -236,20 +236,42 @@ public final class TaggingPresetReader {
         return tp;
     }
 
+    /**
+     * Reads all tagging presets from the given sources.
+     * @param sources Collection of tagging presets sources.
+     * @param validate if {@code true}, presets will be validated against XML schema
+     * @return Collection of all presets successfully read
+     */
     public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate) {
+        return readAll(sources, validate, true);
+    }
+
+    /**
+     * Reads all tagging presets from the given sources.
+     * @param sources Collection of tagging presets sources.
+     * @param validate if {@code true}, presets will be validated against XML schema
+     * @param displayErrMsg if {@code true}, a blocking error message is displayed in case of I/O exception.
+     * @return Collection of all presets successfully read
+     */
+    public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate, boolean displayErrMsg) {
         LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
         for(String source : sources)  {
             try {
                 allPresets.addAll(readAll(source, validate));
             } catch (IOException e) {
-                Main.error(e);
+                Main.error(e, false);
                 Main.error(source);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Could not read tagging preset source: {0}",source),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                        );
+                if (source.startsWith("http")) {
+                    Main.addNetworkError(source, e);
+                }
+                if (displayErrMsg) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("Could not read tagging preset source: {0}",source),
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
+                            );
+                }
             } catch (SAXException e) {
                 Main.error(e);
                 Main.error(source);
@@ -264,8 +286,14 @@ public final class TaggingPresetReader {
         return allPresets;
     }
     
-    public static Collection<TaggingPreset> readFromPreferences(boolean validate) {
-        return readAll(getPresetSources(), validate);
+    /**
+     * Reads all tagging presets from sources stored in preferences.
+     * @param validate if {@code true}, presets will be validated against XML schema
+     * @param displayErrMsg if {@code true}, a blocking error message is displayed in case of I/O exception.
+     * @return Collection of all presets successfully read
+     */
+    public static Collection<TaggingPreset> readFromPreferences(boolean validate, boolean displayErrMsg) {
+        return readAll(getPresetSources(), validate, displayErrMsg);
     }
     
     public static File getZipIcons() {
