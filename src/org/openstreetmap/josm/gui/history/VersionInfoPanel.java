@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -14,6 +13,7 @@ import java.text.DateFormat;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -43,9 +43,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
     private JMultilineLabel lblInfo;
     private UrlLabel lblUser;
     private UrlLabel lblChangeset;
-    private JPanel pnlChangesetComment;
     private JPanel pnlChangesetSource;
-    private JLabel lblComment;
     private JLabel lblSource;
     private JTextArea lblChangesetComment;
     private JTextArea lblChangesetSource;
@@ -92,10 +90,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         lblChangesetComment = buildTextArea(tr("Changeset comment"));
         lblChangesetSource = buildTextArea(tr("Changeset source"));
 
-        lblComment = buildLabel(trc("comment", "<b>c</b>:"), tr("Changeset comment"), lblChangesetComment);
-        lblSource = buildLabel(trc("source", "<b>s</b>:"), tr("Changeset source"), lblChangesetSource);
-
-        pnlChangesetComment = buildTextPanel(lblComment, lblChangesetComment);
+        lblSource = buildLabel(tr("<b>Source</b>:"), tr("Changeset source"), lblChangesetSource);
         pnlChangesetSource = buildTextPanel(lblSource, lblChangesetSource);
 
         setLayout(new GridBagLayout());
@@ -109,7 +104,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         gc.weighty = 0.0;
         add(pnlUserAndChangeset, gc);
         gc.gridy = 2;
-        add(pnlChangesetComment, gc);
+        add(lblChangesetComment, gc);
         gc.gridy = 3;
         add(pnlChangesetSource, gc);
     }
@@ -222,16 +217,18 @@ public class VersionInfoPanel extends JPanel implements Observer{
         }
 
         final Changeset oppCs = model.getPointInTime(pointInTimeType.opposite()).getChangeset();
-        updateText(cs, "comment", lblChangesetComment, lblComment, oppCs, pnlChangesetComment);
+        updateText(cs, "comment", lblChangesetComment, null, oppCs, lblChangesetComment);
         updateText(cs, "source", lblChangesetSource, lblSource, oppCs, pnlChangesetSource);
     }
     
-    protected static void updateText(Changeset cs, String attr, JTextArea textArea, JLabel label, Changeset oppCs, JPanel panel) {
+    protected static void updateText(Changeset cs, String attr, JTextArea textArea, JLabel label, Changeset oppCs, JComponent container) {
         final String text = cs != null ? cs.get(attr) : null;
         // Update text, hide prefixing label if empty
-        label.setVisible(text != null && !Utils.strip(text).isEmpty());
+        if (label != null) {
+            label.setVisible(text != null && !Utils.strip(text).isEmpty());
+        }
         textArea.setText(text);
-        // Hide panel if values of both versions are empty
-        panel.setVisible(text != null || (oppCs != null && oppCs.get(attr) != null));
+        // Hide container if values of both versions are empty
+        container.setVisible(text != null || (oppCs != null && oppCs.get(attr) != null));
     }
 }
