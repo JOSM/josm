@@ -73,6 +73,7 @@ public class OverlappingWays extends Test {
     public void endTest() {
         Map<List<Way>, Set<WaySegment>> seenWays = new HashMap<List<Way>, Set<WaySegment>>(500);
 
+        Collection<TestError> preliminaryErrors = new ArrayList<TestError>();
         for (Set<WaySegment> duplicated : nodePairs.values()) {
             int ways = duplicated.size();
 
@@ -136,7 +137,7 @@ public class OverlappingWays extends Test {
                         type = OVERLAPPING_WAY;
                     }
 
-                    errors.add(new TestError(this,
+                    preliminaryErrors.add(new TestError(this,
                             type < OVERLAPPING_HIGHWAY_AREA ? Severity.WARNING : Severity.OTHER,
                                     errortype, type, prims, duplicated));
                     seenWays.put(currentWays, duplicated);
@@ -147,6 +148,14 @@ public class OverlappingWays extends Test {
                 }
             }
         }
+
+        // see ticket #9598 - only report if at least 3 segments are shared
+        for (TestError error : preliminaryErrors) {
+            if (error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
+                errors.add(error);
+            }
+        }
+
         super.endTest();
         nodePairs = null;
     }
