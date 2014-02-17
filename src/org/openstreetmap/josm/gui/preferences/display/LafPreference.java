@@ -15,6 +15,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -28,6 +29,7 @@ import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.PlatformHookOsx;
 
 /**
  * Look-and-feel preferences.
@@ -60,16 +62,18 @@ public class LafPreference implements SubPreferenceSetting {
         lafCombo = new JosmComboBox(UIManager.getInstalledLookAndFeels());
 
         // let's try to load additional LookAndFeels and put them into the list
-        try {
-            Class<?> Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-            Object Oquaqua = Cquaqua.getConstructor((Class[])null).newInstance((Object[])null);
-            // no exception? Then Go!
-            lafCombo.addItem(
-                    new UIManager.LookAndFeelInfo(((javax.swing.LookAndFeel)Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
-            );
-        } catch (Exception ex) {
-            // just debug, Quaqua may not even be installed...
-            Main.debug(ex.getMessage());
+        if (Main.platform instanceof PlatformHookOsx) {
+            try {
+                Class<?> Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+                Object Oquaqua = Cquaqua.getConstructor((Class[])null).newInstance((Object[])null);
+                // no exception? Then Go!
+                lafCombo.addItem(
+                        new UIManager.LookAndFeelInfo(((LookAndFeel)Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
+                );
+            } catch (Exception ex) {
+                // just debug, Quaqua may not even be installed...
+                Main.debug(ex.getMessage());
+            }
         }
 
         String laf = Main.pref.get("laf", Main.platform.getDefaultStyle());
