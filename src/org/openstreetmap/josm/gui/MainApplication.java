@@ -402,7 +402,8 @@ public class MainApplication extends Main {
         PluginHandler.loadLatePlugins(splash,pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
         toolbar.refreshToolbarControl();
 
-        GuiHelper.runInEDT(new Runnable() {
+        // Wait for splash disappearance (fix #9714)
+        GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
             public void run() {
                 splash.setVisible(false);
