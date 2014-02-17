@@ -276,7 +276,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
      * Initializes tagging presets from preferences.
      */
     public static void readFromPreferences() {
-        taggingPresets = TaggingPresetReader.readFromPreferences(false);
+        taggingPresets = TaggingPresetReader.readFromPreferences(false, false);
     }
 
     /**
