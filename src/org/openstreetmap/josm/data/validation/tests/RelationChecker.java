@@ -114,7 +114,12 @@ public class RelationChecker extends Test {
                 allroles.addAll(r.roles);
             }
         }
-        if (allroles.isEmpty()) {
+        if (allroles.isEmpty() && n.hasTag("type", "route")
+                && n.hasTag("route", "train", "subway", "monorail", "tram", "bus", "trolleybus", "aerialway", "ferry")) {
+            errors.add(new TestError(this, Severity.WARNING,
+                    tr("Route scheme (public_transport or legacy) is unspecified. Add {0}", "public_transport:version"),
+                    RELATION_UNKNOWN, n));
+        } else if (allroles.isEmpty()) {
             errors.add( new TestError(this, Severity.WARNING, tr("Relation type is unknown"),
                     RELATION_UNKNOWN, n) );
         } else {
