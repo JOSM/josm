@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -90,10 +91,10 @@ public class VersionInfoPanel extends JPanel implements Observer{
 
         lblChangesetComment = buildTextArea(tr("Changeset comment"));
         lblChangesetSource = buildTextArea(tr("Changeset source"));
-        
-        lblComment = buildLabel(/*I18n: comment*/tr("<b>c</b>:"), tr("comment"), lblChangesetComment);
-        lblSource = buildLabel(/*I18n: source*/tr("<b>s</b>:"), tr("source"), lblChangesetSource);
-        
+
+        lblComment = buildLabel(trc("comment", "<b>c</b>:"), tr("Changeset comment"), lblChangesetComment);
+        lblSource = buildLabel(trc("source", "<b>s</b>:"), tr("Changeset source"), lblChangesetSource);
+
         pnlChangesetComment = buildTextPanel(lblComment, lblChangesetComment);
         pnlChangesetSource = buildTextPanel(lblSource, lblChangesetSource);
 
