@@ -140,3 +140,14 @@ way[highway][barrier],
   /* see #6932 */
   throwWarning: tr("natural water used for swimming pool");
 }
+
+/* see ticket #9593 */
+*[sport][tourism != hotel][leisure !~ /^(sports_centre|stadium|pitch|golf_course|water_park|swimming_pool)$/][natural !~ /^(beach|bare_rock)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste)$/] {
+    throwWarning: tr("sport without physical feature");
+    assertMatch: "node sport=tennis";
+    assertNoMatch: "node sport=tennis leisure=pitch";
+    assertNoMatch: "node sport=beachvolleyball natural=beach";
+    assertNoMatch: "node sport=skiiing landuse=piste";
+    assertNoMatch: "node sport=swimming tourism=hotel";
+    assertNoMatch: "node sport=10pin amenity=restaurant";
+}
