@@ -27,6 +27,8 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tests if there are overlapping ways
@@ -151,7 +153,8 @@ public class OverlappingWays extends Test {
 
         // see ticket #9598 - only report if at least 3 segments are shared
         for (TestError error : preliminaryErrors) {
-            if (error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
+            if (error.getHighlighted().size() / error.getPrimitives().size() >= 3
+                    && !Utils.exists(error.getPrimitives(), Predicates.hasKey("building"))) {
                 errors.add(error);
             }
         }

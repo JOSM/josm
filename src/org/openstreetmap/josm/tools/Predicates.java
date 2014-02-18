@@ -86,6 +86,18 @@ public final class Predicates {
     }
 
     /**
+     * Returns a {@link Predicate} executing {@link OsmPrimitive#hasKey(String)}.
+     */
+    public static Predicate<OsmPrimitive> hasKey(final String key) {
+        return new Predicate<OsmPrimitive>() {
+            @Override
+            public boolean evaluate(OsmPrimitive p) {
+                return p.hasKey(key);
+            }
+        };
+    }
+
+    /**
      * Returns a {@link Predicate} executing {@link Collection#contains(Object)}.
      */
     public static <T> Predicate<T> inCollection(final Collection<? extends T> target) {
