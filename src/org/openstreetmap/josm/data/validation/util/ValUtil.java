@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.OsmValidator;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Utility class
@@ -19,11 +21,11 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
  * @author frsantos
  */
 public final class ValUtil {
-    
+
     private ValUtil() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * Returns the start and end cells of a way.
      * @param w The way
@@ -102,21 +104,40 @@ public final class ValUtil {
     }
 
     /**
-     * Returns the coordinates of all cells in a grid that a line between 2
-     * nodes intersects with.
+     * Returns the coordinates of all cells in a grid that a line between 2 nodes intersects with.
      *
      * @param n1 The first node.
      * @param n2 The second node.
      * @param gridDetail The detail of the grid. Bigger values give smaller
      * cells, but a bigger number of them.
      * @return A list with the coordinates of all cells
+     * @throws IllegalArgumentException if n1 or n2 is {@code null} or without coordinates
      */
-    public static List<Point2D> getSegmentCells(Node n1, Node n2, double gridDetail) {
+    public static List<Point2D> getSegmentCells(Node n1, Node n2, double gridDetail) throws IllegalArgumentException {
+        CheckParameterUtil.ensureParameterNotNull(n1, "n1");
+        CheckParameterUtil.ensureParameterNotNull(n1, "n2");
+        return getSegmentCells(n1.getEastNorth(), n2.getEastNorth(), gridDetail);
+    }
+
+    /**
+     * Returns the coordinates of all cells in a grid that a line between 2 nodes intersects with.
+     *
+     * @param en1 The first EastNorth.
+     * @param en2 The second EastNorth.
+     * @param gridDetail The detail of the grid. Bigger values give smaller
+     * cells, but a bigger number of them.
+     * @return A list with the coordinates of all cells
+     * @throws IllegalArgumentException if en1 or en2 is {@code null}
+     * @since 6869
+     */
+    public static List<Point2D> getSegmentCells(EastNorth en1, EastNorth en2, double gridDetail) throws IllegalArgumentException {
+        CheckParameterUtil.ensureParameterNotNull(en1, "en1");
+        CheckParameterUtil.ensureParameterNotNull(en2, "en2");
         List<Point2D> cells = new ArrayList<Point2D>();
-        double x0 = n1.getEastNorth().east() * gridDetail;
-        double x1 = n2.getEastNorth().east() * gridDetail;
-        double y0 = n1.getEastNorth().north() * gridDetail + 1;
-        double y1 = n2.getEastNorth().north() * gridDetail + 1;
+        double x0 = en1.east() * gridDetail;
+        double x1 = en2.east() * gridDetail;
+        double y0 = en1.north() * gridDetail + 1;
+        double y1 = en2.north() * gridDetail + 1;
 
         if (x0 > x1) {
             // Move to 1st-4th cuadrants
