@@ -38,7 +38,7 @@ public class MapCSSStyleSource extends StyleSource {
      * The accepted MIME types sent in the HTTP Accept header.
      * @since 6867
      */
-    public static final String MAPCSS_STYLE_MIME_TYPES = "text/mapcss, text/css; q=0.9, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
+    public static final String MAPCSS_STYLE_MIME_TYPES = "text/x-mapcss, text/mapcss, text/css; q=0.9, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
     public final List<MapCSSRule> rules;
     private Color backgroundColorOverride;
