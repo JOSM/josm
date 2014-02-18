@@ -415,28 +415,22 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
         int width = getWidth()/2;
         int height = getHeight()/2;
-        if (width == 0 || height == 0) {
-            throw new IllegalStateException("Cannot zoom into undimensioned NavigatableComponent");
-        }
         LatLon l1 = new LatLon(b.getMinLat(), lon);
         LatLon l2 = new LatLon(b.getMaxLat(), lon);
         EastNorth e1 = getProjection().latlon2eastNorth(l1);
         EastNorth e2 = getProjection().latlon2eastNorth(l2);
         double d = e2.north() - e1.north();
-        if(d < height*newScale)
-        {
+        if (height > 0 && d < height*newScale) {
             double newScaleH = d/height;
             e1 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMinLon()));
             e2 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMaxLon()));
             d = e2.east() - e1.east();
-            if(d < width*newScale) {
+            if (width > 0 && d < width*newScale) {
                 newScale = Math.max(newScaleH, d/width);
             }
-        }
-        else
-        {
+        } else if (height > 0) {
             d = d/(l1.greatCircleDistance(l2)*height*10);
-            if(newScale < d) {
+            if (newScale < d) {
                 newScale = d;
             }
         }
