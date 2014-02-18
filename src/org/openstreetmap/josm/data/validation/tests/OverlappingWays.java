@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -31,7 +32,7 @@ import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Tests if there are overlapping ways
+ * Tests if there are overlapping ways.
  *
  * @author frsantos
  */
@@ -48,6 +49,9 @@ public class OverlappingWays extends Test {
     protected static final int OVERLAPPING_WAY_AREA = 113;
     protected static final int OVERLAPPING_AREA = 120;
     protected static final int DUPLICATE_WAY_SEGMENT = 121;
+
+    protected static final CollectionProperty IGNORED_KEYS = new CollectionProperty(
+            "overlapping-ways.ignored-keys", Arrays.asList("barrier", "building"));
 
     /** Constructor */
     public OverlappingWays() {
@@ -153,9 +157,17 @@ public class OverlappingWays extends Test {
 
         // see ticket #9598 - only report if at least 3 segments are shared
         for (TestError error : preliminaryErrors) {
-            if (error.getHighlighted().size() / error.getPrimitives().size() >= 3
-                    && !Utils.exists(error.getPrimitives(), Predicates.hasKey("building"))) {
-                errors.add(error);
+            if (error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
+                boolean ignore = false;
+                for (String ignoredKey : IGNORED_KEYS.get()) {
+                    if (Utils.exists(error.getPrimitives(), Predicates.hasKey(ignoredKey))) {
+                        ignore = true;
+                        break;
+                    }
+                }
+                if (!ignore) {
+                    errors.add(error);
+                }
             }
         }
 
