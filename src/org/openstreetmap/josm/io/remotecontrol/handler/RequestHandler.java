@@ -47,8 +47,8 @@ public abstract class RequestHandler {
     protected String myCommand;
 
     /**
-     * who send th request?
-     * the host from refrerer header or IP of request sender
+     * who sent the request?
+     * the host from referer header or IP of request sender
      */
     protected String sender;
 
@@ -107,7 +107,7 @@ public abstract class RequestHandler {
     abstract public PermissionPrefWithDefault getPermissionPref();
 
     abstract public String[] getMandatoryParams();
-    
+
     public String[] getOptionalParams() {
         return null;
     }
@@ -241,7 +241,6 @@ public abstract class RequestHandler {
                     "The following keys are mandatory, but have not been provided: "
                     + Utils.join(", ", missingKeys));
         }
-        
     }
 
     /**

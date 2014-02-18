@@ -182,7 +182,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
             }));
         }
-        
+
         private static void removeMetaRules(MapCSSStyleSource source) {
             for (Iterator<MapCSSRule> it = source.rules.iterator(); it.hasNext(); ) {
                 MapCSSRule x = it.next();
@@ -269,7 +269,11 @@ public class MapCSSTagChecker extends Test.TagTest {
             final StringBuffer sb = new StringBuffer();
             while (m.find()) {
                 final String argument = determineArgument((Selector.GeneralSelector) matchingSelector, Integer.parseInt(m.group(1)), m.group(2));
-                m.appendReplacement(sb, String.valueOf(argument));
+                try {
+                    m.appendReplacement(sb, String.valueOf(argument));
+                } catch (IndexOutOfBoundsException e) {
+                    Main.error(tr("Unable to replace argument {0} in {1}: {2}", argument, sb, e.getMessage()));
+                }
             }
             m.appendTail(sb);
             return sb.toString();

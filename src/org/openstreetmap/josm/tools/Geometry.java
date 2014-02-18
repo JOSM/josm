@@ -451,11 +451,14 @@ public final class Geometry {
 
         boolean begin = true;
         for (Node n : polygon) {
-            if (begin) {
-                path.moveTo(n.getEastNorth().getX(), n.getEastNorth().getY());
-                begin = false;
-            } else {
-                path.lineTo(n.getEastNorth().getX(), n.getEastNorth().getY());
+            EastNorth en = n.getEastNorth();
+            if (en != null) {
+                if (begin) {
+                    path.moveTo(en.getX(), en.getY());
+                    begin = false;
+                } else {
+                    path.lineTo(en.getX(), en.getY());
+                }
             }
         }
         if (!begin) {
