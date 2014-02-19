@@ -577,7 +577,7 @@ public class OsmApi extends OsmConnection {
         return "oauth".equals(Main.pref.get("osm-server.auth-method", "basic"));
     }
 
-    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
+    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
         return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true, false);
     }
 
@@ -600,7 +600,7 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if the HTTP return code was not 200 (and retries have
      *    been exhausted), or rewrapping a Java exception.
      */
-    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
+    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
         StringBuilder responseBody = new StringBuilder();
         int retries = fastFail ? 0 : getMaxRetries();
 
