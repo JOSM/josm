@@ -12,7 +12,7 @@
   assertMatch: "way highway=proposed access=no";
 }
 
-area:closed[amenity ][area?],
+area:closed[amenity ][area?][!highway],
 area:closed[building][area?],
 area:closed[landuse ][area?],
 area:closed[leisure ][area?],
