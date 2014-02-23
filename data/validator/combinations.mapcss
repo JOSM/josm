@@ -14,7 +14,6 @@ way[junction                   ][!highway],
 *[sac_scale                    ][!highway],
 *[sidewalk                     ][!highway],
 *[smoothness                   ][!highway],
-*[snowplowing                  ][!highway],
 *[step_count                   ][!highway],
 *[tracktype                    ][!highway],
 *[trail_visibility             ][!highway],
@@ -110,6 +109,11 @@ way[junction                   ][!highway],
 *[boat                         ][!waterway][natural!=water],
 *[intermittent                 ][!waterway][natural!=water] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
+}
+
+/* {0.key} without {1.key}, {2.key} or {3.key} */
+*[snowplowing                  ][!highway][!amenity][!leisure] {
+  throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.key}");
 }
 
 /* {0} on suspicious object */
