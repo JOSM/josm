@@ -3149,7 +3149,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="cave_entrance"/>
-		<icon src="misc/landmark/cave_entrance.png"/>
+		<icon annotate="true" src="misc/landmark/cave_entrance.png"/>
 		<area colour="natural#002f00"/>
 	</rule>
 
