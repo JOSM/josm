@@ -2709,7 +2709,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="tourism" v="attraction"/>
-		<icon annotate="true" src="sightseeing.png"/>
+		<icon annotate="true" src="sightseeing.png" priority="-5"/>
 		<area colour="tourism#e180a2"/>
 	</rule>
 
