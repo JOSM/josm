@@ -11,7 +11,6 @@ import java.util.Collection;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -34,6 +33,9 @@ public class MergeSourceBuildingVisitorTest {
         return null;
     }
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void setUp() {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator

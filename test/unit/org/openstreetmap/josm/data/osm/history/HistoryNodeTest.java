@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.Date;

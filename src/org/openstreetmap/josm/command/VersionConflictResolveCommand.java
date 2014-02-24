@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents a command for resolving a version conflict between two {@link OsmPrimitive}
+ * Represents the resolution of a version conflict between two {@link OsmPrimitive}s.
  *
  *
  */

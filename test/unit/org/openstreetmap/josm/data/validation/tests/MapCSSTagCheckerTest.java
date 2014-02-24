@@ -27,6 +27,9 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class MapCSSTagCheckerTest {
 
+    /**
+     * Setup test.
+     */
     @Before
     public void setUp() throws Exception {
         Main.initApplicationPreferences();

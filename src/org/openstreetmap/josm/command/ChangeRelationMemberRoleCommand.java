@@ -32,14 +32,20 @@ public class ChangeRelationMemberRoleCommand extends Command {
     // Old value of modified
     private Boolean oldModified;
 
+    /**
+     * Constructs a new {@code ChangeRelationMemberRoleCommand}.
+     * @param relation The relation to be changed
+     * @param position Member position
+     * @param newRole New role
+     */
     public ChangeRelationMemberRoleCommand(Relation relation, int position, String newRole) {
-        super();
         this.relation = relation;
         this.position = position;
         this.newRole = newRole;
     }
 
-    @Override public boolean executeCommand() {
+    @Override
+    public boolean executeCommand() {
         if (position < 0 || position >= relation.getMembersCount())
             return false;
 
@@ -52,12 +58,14 @@ public class ChangeRelationMemberRoleCommand extends Command {
         return true;
     }
 
-    @Override public void undoCommand() {
+    @Override
+    public void undoCommand() {
         relation.setMember(position, new RelationMember(oldRole, relation.getMember(position).getMember()));
         relation.setModified(oldModified);
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         modified.add(relation);
     }
 

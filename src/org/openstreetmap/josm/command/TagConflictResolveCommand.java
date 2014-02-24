@@ -1,14 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
 import java.util.List;
-import javax.swing.Icon;
 
+import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -18,7 +16,7 @@ import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItem;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents a the resolution of a tag conflict in an {@link OsmPrimitive}
+ * Represents the resolution of a tag conflict in an {@link OsmPrimitive}.
  *
  */
 public class TagConflictResolveCommand extends ConflictResolveCommand {

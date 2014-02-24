@@ -34,6 +34,9 @@ public class PropertiesMergerTest extends JFrame{
         merger.getModel().populate(new Conflict<OsmPrimitive>(my, their));
     }
 
+    /**
+     * Constructs a new {@code PropertiesMergerTest}.
+     */
     public PropertiesMergerTest() {
         build();
         populate();
@@ -44,5 +47,4 @@ public class PropertiesMergerTest extends JFrame{
         app.setSize(600, 400);
         app.setVisible(true);
     }
-
 }

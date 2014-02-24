@@ -12,6 +12,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 public class SwissGridTest {
     private boolean debug = false;
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void setUp() {
         Main.setProjection(Projections.getProjectionByCode("EPSG:21781")); // Swiss grid

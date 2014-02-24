@@ -35,8 +35,7 @@ public class OsmPrimitiveKeyHandling {
     }
 
     /**
-     * Add a tag to an empty node and test the query and get methods.
-     *
+     * Adds a tag to an empty node and test the query and get methods.
      */
     @Test
     public void put() {
@@ -50,7 +49,7 @@ public class OsmPrimitiveKeyHandling {
     }
 
     /**
-     * Add two tags to an empty node and test the query and get methods.
+     * Adds two tags to an empty node and test the query and get methods.
      */
     @Test
     public void put2() {
@@ -67,8 +66,7 @@ public class OsmPrimitiveKeyHandling {
     }
 
     /**
-     * Remove tags from a node with two tags and test the state of the node.
-     *
+     * Removes tags from a node with two tags and test the state of the node.
      */
     @Test
     public void remove() {
@@ -95,8 +93,7 @@ public class OsmPrimitiveKeyHandling {
     }
 
     /**
-     * Remove all tags from a node
-     *
+     * Removes all tags from a node.
      */
     @Test
     public void removeAll() {
@@ -131,7 +128,6 @@ public class OsmPrimitiveKeyHandling {
     /**
      * Test hasEqualSemanticAttributes on two nodes with different tags.
      */
-
     @Test
     public void hasEqualSemanticAttributes_2() {
         Node n1 = new Node(1);
@@ -146,5 +142,4 @@ public class OsmPrimitiveKeyHandling {
 
         assertTrue(!n1.hasEqualSemanticAttributes(n2));
     }
-
 }

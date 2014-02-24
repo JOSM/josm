@@ -5,12 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.List;
+
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -27,20 +28,26 @@ public class ChangeNodesCommand extends Command {
     private final Way way;
     private final List<Node> newNodes;
 
+    /**
+     * Constructs a new {@code ChangeNodesCommand}.
+     * @param way The way to modify
+     * @param newNodes The new list of nodes for the given way
+     */
     public ChangeNodesCommand(Way way, List<Node> newNodes) {
-        super();
         this.way = way;
         this.newNodes = newNodes;
     }
 
-    @Override public boolean executeCommand() {
+    @Override
+    public boolean executeCommand() {
         super.executeCommand();
         way.setNodes(newNodes);
         way.setModified(true);
         return true;
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         modified.add(way);
     }
 

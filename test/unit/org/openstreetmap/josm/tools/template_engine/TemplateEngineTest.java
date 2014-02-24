@@ -18,8 +18,11 @@ import org.unitils.reflectionassert.ReflectionAssert;
 
 public class TemplateEngineTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
-    public static void before() {
+    public static void setUp() {
         Main.initApplicationPreferences();
     }
 

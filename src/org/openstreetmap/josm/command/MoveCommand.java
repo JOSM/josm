@@ -52,23 +52,40 @@ public class MoveCommand extends Command {
      */
     private List<OldNodeState> oldState = new LinkedList<OldNodeState>();
 
+    /**
+     * Constructs a new {@code MoveCommand} to move a primitive.
+     * @param osm The primitive to move
+     * @param x X difference movement. Coordinates are in northern/eastern
+     * @param y Y difference movement. Coordinates are in northern/eastern
+     */
     public MoveCommand(OsmPrimitive osm, double x, double y) {
         this(Collections.singleton(osm), x, y);
     }
 
+    /**
+     * Constructs a new {@code MoveCommand} to move a node.
+     * @param node The node to move
+     */
     public MoveCommand(Node node, LatLon position) {
         this(Collections.singleton((OsmPrimitive) node), node.getEastNorth().sub(Projections.project(position)));
     }
 
+    /**
+     * Constructs a new {@code MoveCommand} to move a collection of primitives.
+     * @param objects The primitives to move
+     * @param offset The movement vector
+     */
     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth offset) {
         this(objects, offset.getX(), offset.getY());
     }
 
     /**
-     * Create a MoveCommand and assign the initial object set and movement vector.
+     * Constructs a new {@code MoveCommand} and assign the initial object set and movement vector.
+     * @param objects The primitives to move
+     * @param x X difference movement. Coordinates are in northern/eastern
+     * @param y Y difference movement. Coordinates are in northern/eastern
      */
     public MoveCommand(Collection<OsmPrimitive> objects, double x, double y) {
-        super();
         startEN = null;
         saveCheckpoint(); // (0,0) displacement will be saved
         this.x = x;
@@ -96,6 +113,9 @@ public class MoveCommand extends Command {
      *
      * The move is immediately executed and any undo will undo both vectors to
      * the original position the objects had before first moving.
+     *
+     * @param x X difference movement. Coordinates are in northern/eastern
+     * @param y Y difference movement. Coordinates are in northern/eastern
      */
     public void moveAgain(double x, double y) {
         for (Node n : nodes) {
@@ -156,7 +176,8 @@ public class MoveCommand extends Command {
         }
     }
 
-    @Override public boolean executeCommand() {
+    @Override
+    public boolean executeCommand() {
         for (Node n : nodes) {
             // in case #3892 happens again
             if (n == null)
@@ -170,7 +191,8 @@ public class MoveCommand extends Command {
         return true;
     }
 
-    @Override public void undoCommand() {
+    @Override
+    public void undoCommand() {
         Iterator<OldNodeState> it = oldState.iterator();
         for (Node n : nodes) {
             OldNodeState os = it.next();
@@ -179,7 +201,8 @@ public class MoveCommand extends Command {
         }
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         for (OsmPrimitive osm : nodes) {
             modified.add(osm);
         }

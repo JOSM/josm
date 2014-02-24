@@ -5,19 +5,19 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItem;
-import org.openstreetmap.josm.gui.conflict.pair.tags.TagMerger;
-
 public class TagMergerTest extends JFrame {
 
     private TagMerger tagMerger;
-    
+
     protected void build() {
         tagMerger = new TagMerger();
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(tagMerger, BorderLayout.CENTER);        
+        getContentPane().add(tagMerger, BorderLayout.CENTER);
     }
-    
+
+    /**
+     * Constructs a new {@code TagMergerTest}.
+     */
     public TagMergerTest() {
         build();
         tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", "theirvalue"));
@@ -28,11 +28,10 @@ public class TagMergerTest extends JFrame {
           tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", "theirvalue"));
         }
     }
-    
+
     public static void main(String args[]) {
         TagMergerTest test  = new TagMergerTest();
         test.setSize(600,600);
         test.setVisible(true);
     }
-    
 }

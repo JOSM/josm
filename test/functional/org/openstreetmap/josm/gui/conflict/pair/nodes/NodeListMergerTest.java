@@ -59,6 +59,9 @@ public class NodeListMergerTest extends JFrame {
         getContentPane().add(nodeListMerger, BorderLayout.CENTER);
     }
 
+    /**
+     * Constructs a new {@code NodeListMergerTest}.
+     */
     public NodeListMergerTest() {
         build();
         populate();
@@ -69,6 +72,4 @@ public class NodeListMergerTest extends JFrame {
         test.setSize(600,600);
         test.setVisible(true);
     }
-
-
 }

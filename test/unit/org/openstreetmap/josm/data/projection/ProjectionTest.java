@@ -11,7 +11,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 
 public class ProjectionTest {
 
-    private static final boolean debug = false;
     private static Random rand = new Random(System.currentTimeMillis());
 
     boolean error;
@@ -63,15 +62,15 @@ public class ProjectionTest {
         if (p != null) {
             double maxErrLat = 0, maxErrLon = 0;
             Bounds b = p.getWorldBoundsLatLon();
-    
+
             text += String.format("*** %s %s%n", p.toString(), p.toCode());
             for (int num=0; num < 1000; ++num) {
-    
+
                 double lat = rand.nextDouble() * (b.getMax().lat() - b.getMin().lat()) + b.getMin().lat();
                 double lon = rand.nextDouble() * (b.getMax().lon() - b.getMin().lon()) + b.getMin().lon();
-    
+
                 LatLon ll = new LatLon(lat, lon);
-    
+
                 for (int i=0; i<10; ++i) {
                     EastNorth en = p.latlon2eastNorth(ll);
                     ll = p.eastNorth2latlon(en);
@@ -79,7 +78,7 @@ public class ProjectionTest {
                 maxErrLat = Math.max(maxErrLat, Math.abs(lat - ll.lat()));
                 maxErrLon = Math.max(maxErrLon, Math.abs(lon - ll.lon()));
             }
-    
+
             String mark = "";
             if (maxErrLat + maxErrLon > 1e-5) {
                 mark = "--FAILED-- ";

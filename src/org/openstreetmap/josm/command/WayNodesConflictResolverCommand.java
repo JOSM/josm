@@ -16,8 +16,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represent a command for resolving conflicts in the node list of two
- * {@link Way}s.
+ * Represents the resolution of conflicts in the node list of two {@link Way}s.
  *
  */
 public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
@@ -38,6 +37,7 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
         this.conflict = (Conflict<Way>) conflict;
         this.mergedNodeList = mergedNodeList;
     }
+
     @Override
     public String getDescriptionText() {
         return tr("Resolve conflicts in node list of way {0}", conflict.getMy().getId());

@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.command;
 
 import java.awt.GridBagLayout;
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -159,7 +158,7 @@ abstract public class Command extends PseudoCommand {
      * Replies the layer this command is (or was) applied to.
      *
      */
-    protected  OsmDataLayer getLayer() {
+    protected OsmDataLayer getLayer() {
         return layer;
     }
 

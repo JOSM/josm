@@ -9,11 +9,14 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 
 public class TextTagParserTest {
+
+    /**
+     * Setup test.
+     */
     @BeforeClass
-    public static void before() {
+    public static void setUp() {
         Main.initApplicationPreferences();
     }
 
@@ -25,14 +28,14 @@ public class TextTagParserTest {
 
         s = "\"2 \\\"3\\\" 4\"";       s1 = "2 \"3\" 4";
         Assert.assertEquals(s1, TextTagParser.unescape(s));
-        
+
         s = "\"2 3 ===4===\"";       s1 = "2 3 ===4===";
         Assert.assertEquals(s1, TextTagParser.unescape(s));
 
         s = "\"2 3 \\\\\\\\===4===\"";       s1 = "2 3 \\\\===4===";
         Assert.assertEquals(s1, TextTagParser.unescape(s));
     }
-    
+
     @Test
     public void testTNformat() {
         String txt = "   a  \t  1   \n\n\n  b=2 \t the value with \"quotes\"";
@@ -62,18 +65,18 @@ public class TextTagParserTest {
         correctTags= new HashMap<String, String>() { {  put("a", "1"); put("b", "2 3 4"); }};
         tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
-        
+
         txt = "\"a\"  :     \"1 1 1\", \"b2\"  :\"2 \\\"3 qwe\\\" 4\"";
         correctTags= new HashMap<String, String>() { { put("a", "1 1 1"); put("b2", "2 \"3 qwe\" 4");}};
         tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
-        
+
         txt = " \"aыыы\"   :    \"val\\\"\\\"\\\"ue1\"";
         correctTags= new HashMap<String, String>() { { put("aыыы", "val\"\"\"ue1");} };
         tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
     }
-    
+
     @Test
     public void testFreeformat() {
         String txt = "a 1 b=2 c=\"hello === \\\"\\\"world\"";
@@ -83,12 +86,12 @@ public class TextTagParserTest {
         Map<String, String> tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(correctTags, tags);
     }
-    
+
     @Test
     public void errorDetect() {
         String txt = "a=2 b=3 4";
         Map<String, String> tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(Collections.EMPTY_MAP, tags);
-        
+
     }
 }

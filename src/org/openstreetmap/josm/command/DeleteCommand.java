@@ -347,8 +347,7 @@ public class DeleteCommand extends Command {
         Collection<Way> waysToBeChanged = new HashSet<Way>();
 
         if (alsoDeleteNodesInWay) {
-            // delete untagged nodes only referenced by primitives in primitivesToDelete,
-            // too
+            // delete untagged nodes only referenced by primitives in primitivesToDelete, too
             Collection<Node> nodesToDelete = computeNodesToDelete(layer, primitivesToDelete);
             primitivesToDelete.addAll(nodesToDelete);
         }
@@ -370,8 +369,7 @@ public class DeleteCommand extends Command {
             }
         }
 
-        // get a confirmation that the objects to delete can be removed from their parent
-        // relations
+        // get a confirmation that the objects to delete can be removed from their parent relations
         //
         if (!silent) {
             Set<RelationToChildReference> references = RelationToChildReference.getRelationToChildReferences(primitivesToDelete);
