@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipOutputStream;
 
 /**
  * An enum representing the compression type of a resource.
@@ -28,16 +29,24 @@ public enum Compression {
     /**
      * gzip compression
      */
-    GZIP;
+    GZIP,
+    /**
+     * zip compression
+     */
+    ZIP;
 
     /**
      * Determines the compression type depending on the suffix of {@code name}.
+     * @param name File name including extension
+     * @return the compression type
      */
     public static Compression byExtension(String name) {
         return name != null && name.endsWith(".gz")
                 ? GZIP
                 : name != null && (name.endsWith(".bz2") || name.endsWith(".bz"))
                 ? BZIP2
+                : name != null && name.endsWith(".zip")
+                ? ZIP
                 : NONE;
     }
 
@@ -52,6 +61,8 @@ public enum Compression {
                 return FileImporter.getBZip2InputStream(in);
             case GZIP:
                 return FileImporter.getGZipInputStream(in);
+            case ZIP:
+                return FileImporter.getZipInputStream(in);
             case NONE:
             default:
                 return in;
@@ -89,6 +100,8 @@ public enum Compression {
                 return new CBZip2OutputStream(out);
             case GZIP:
                 return new GZIPOutputStream(out);
+            case ZIP:
+                return new ZipOutputStream(out);
             case NONE:
             default:
                 return out;

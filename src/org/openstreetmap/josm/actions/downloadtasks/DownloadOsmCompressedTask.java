@@ -18,11 +18,11 @@ import org.openstreetmap.josm.io.OsmTransferException;
  */
 public class DownloadOsmCompressedTask extends DownloadOsmTask {
 
-    static final String PATTERN_GZ =  "https?://.*/.*\\.osm.(gz|bz2?)";
+    static final String PATTERN_COMPRESS =  "https?://.*/.*\\.osm.(gz|bz2?|zip)";
 
     @Override
     public String[] getPatterns() {
-        return new String[]{PATTERN_GZ};
+        return new String[]{PATTERN_COMPRESS};
     }
 
     @Override
@@ -30,9 +30,6 @@ public class DownloadOsmCompressedTask extends DownloadOsmTask {
         return tr("Download Compressed OSM");
     }
     
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask#download(boolean, org.openstreetmap.josm.data.Bounds, org.openstreetmap.josm.gui.progress.ProgressMonitor)
-     */
     @Override
     public Future<?> download(boolean newLayer, Bounds downloadArea,
             ProgressMonitor progressMonitor) {
@@ -53,14 +50,16 @@ public class DownloadOsmCompressedTask extends DownloadOsmTask {
                 ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
                 if (url.matches("https?://.*/.*\\.osm.bz2?")) {
                     return reader.parseOsmBzip2(subTaskMonitor);
-                } else {
+                } else if (url.matches("https?://.*/.*\\.osm.gz")) {
                     return reader.parseOsmGzip(subTaskMonitor);
+                } else {
+                    return reader.parseOsmZip(subTaskMonitor);
                 }
             }
         };
         currentBounds = null;
-        // Extract .osm.gz/bz/bz2 filename from URL to set the new layer name
-        extractOsmFilename("https?://.*/(.*\\.osm.(gz|bz2?))", url);
+        // Extract .osm.gz/bz/bz2/zip filename from URL to set the new layer name
+        extractOsmFilename("https?://.*/(.*\\.osm.(gz|bz2?|zip))", url);
         return Main.worker.submit(downloadTask);
     }
 }
