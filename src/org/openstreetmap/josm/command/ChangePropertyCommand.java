@@ -48,7 +48,6 @@ public class ChangePropertyCommand extends Command {
      * @param tags the tags to set
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, AbstractMap<String, String> tags) {
-        super();
         this.objects = new LinkedList<OsmPrimitive>();
         this.tags = tags;
         init(objects);
@@ -183,7 +182,7 @@ public class ChangePropertyCommand extends Command {
             }
 
             if (allnull) {
-                /* I18n: plural form detected for objects only (but value < 2 not possible!), try to do your best for tags */ 
+                /* I18n: plural form detected for objects only (but value < 2 not possible!), try to do your best for tags */
                 text = trn("Deleted {0} tags for {1} object", "Deleted {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
             } else {
                 /* I18n: plural form detected for objects only (but value < 2 not possible!), try to do your best for tags */
@@ -221,6 +220,10 @@ public class ChangePropertyCommand extends Command {
         return children;
     }
 
+    /**
+     * Returns the tags to set (key/value pairs).
+     * @return the tags to set (key/value pairs)
+     */
     public Map<String, String> getTags() {
         return Collections.unmodifiableMap(tags);
     }

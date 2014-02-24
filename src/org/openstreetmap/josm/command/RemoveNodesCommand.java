@@ -11,9 +11,9 @@ import java.util.Set;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -29,20 +29,26 @@ public class RemoveNodesCommand extends Command {
     private final Way way;
     private final Set<Node> rmNodes;
 
+    /**
+     * Constructs a new {@code RemoveNodesCommand}.
+     * @param way The way to modify
+     * @param rmNodes The list of nodes to remove
+     */
     public RemoveNodesCommand(Way way, List<Node> rmNodes) {
-        super();
         this.way = way;
         this.rmNodes = new HashSet<Node>(rmNodes);
     }
 
-    @Override public boolean executeCommand() {
+    @Override
+    public boolean executeCommand() {
         super.executeCommand();
         way.removeNodes(rmNodes);
         way.setModified(true);
         return true;
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         modified.add(way);
     }
 

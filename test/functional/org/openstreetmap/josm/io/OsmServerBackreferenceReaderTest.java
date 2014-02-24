@@ -235,6 +235,9 @@ public class OsmServerBackreferenceReaderTest {
 
     private DataSet ds;
 
+    /**
+     * Setup test.
+     */
     @Before
     public void setUp() throws IOException, IllegalDataException {
         File f = new File(testProperties.getProperty("test.functional.tempdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");

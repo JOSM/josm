@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.Tag;
 
 /**
@@ -20,7 +19,7 @@ public class ReverseWayTagCorrectorTest {
     public static void setUp() {
         Main.initApplicationPreferences();
     }
-    
+
     /**
      * Test of {@link ReverseWayTagCorrector.TagSwitcher#apply} method.
      */
@@ -92,7 +91,7 @@ public class ReverseWayTagCorrectorTest {
         // #8499
         assertSwitch(new Tag("type", "drawdown"), new Tag("type", "drawdown"));
     }
-    
+
     private void assertSwitch(Tag oldTag, Tag newTag) {
         Assert.assertEquals(ReverseWayTagCorrector.TagSwitcher.apply(oldTag), newTag);
     }

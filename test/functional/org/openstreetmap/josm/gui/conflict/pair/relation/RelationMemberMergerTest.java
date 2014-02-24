@@ -38,6 +38,9 @@ public class RelationMemberMergerTest extends JFrame {
         getContentPane().add(merger, BorderLayout.CENTER);
     }
 
+    /**
+     * Constructs a new {@code RelationMemberMergerTest}.
+     */
     public RelationMemberMergerTest() {
         build();
         populate();

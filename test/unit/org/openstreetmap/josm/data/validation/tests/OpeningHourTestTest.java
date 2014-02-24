@@ -1,17 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.validation.Severity;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
+import static org.CustomMatchers.hasSize;
+import static org.CustomMatchers.isEmpty;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,19 +13,26 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.CustomMatchers.hasSize;
-import static org.CustomMatchers.isEmpty;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.Test;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.validation.Severity;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
 
 /**
- * JUnit Test of "Opening hours" validation test. 
+ * JUnit Test of "Opening hours" validation test.
  */
 public class OpeningHourTestTest {
 
     private static final OpeningHourTest OPENING_HOUR_TEST = new OpeningHourTest();
 
+    /**
+     * Setup test.
+     */
     @Before
     public void setUp() throws Exception {
         Main.initApplicationPreferences();

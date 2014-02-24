@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -50,6 +49,9 @@ public class PropertiesMergeModelTest {
         Main.initApplicationPreferences();
     }
 
+    /**
+     * Setup test.
+     */
     @Before
     public void setUp() {
         model = new PropertiesMergeModel();
@@ -140,6 +142,4 @@ public class PropertiesMergeModelTest {
         observerTest.assertNumInvocations(1);
         model.deleteObserver(observerTest);
     }
-
-
 }

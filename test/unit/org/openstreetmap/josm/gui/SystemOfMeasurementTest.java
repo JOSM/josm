@@ -1,16 +1,15 @@
 package org.openstreetmap.josm.gui;
 
-import static org.junit.Assert.*;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.gui.NavigatableComponent.SystemOfMeasurement;
+import static org.junit.Assert.assertEquals;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.NavigatableComponent.SystemOfMeasurement;
 
 /**
  * Unit tests of {@link SystemOfMeasurement} class.
@@ -24,20 +23,20 @@ public class SystemOfMeasurementTest {
     public static void setUp() {
         Main.initApplicationPreferences();
     }
-    
+
     /**
      * Test of {@link SystemOfMeasurement#getDistText} method.
      */
     @Test
     public void testGetDistText() {
-        
+
         assertEquals("< 0.01 m", NavigatableComponent.METRIC_SOM.getDistText(-1));
         assertEquals("< 0.01 m", NavigatableComponent.METRIC_SOM.getDistText(-0.99));
         assertEquals("< 0.01 m", NavigatableComponent.METRIC_SOM.getDistText(-0));
         assertEquals("< 0.01 m", NavigatableComponent.METRIC_SOM.getDistText(0));
 
         assertEquals("0.01 m", NavigatableComponent.METRIC_SOM.getDistText(0.01));
-        
+
         assertEquals("0.99 m", NavigatableComponent.METRIC_SOM.getDistText(0.99));
         assertEquals("1.00 m", NavigatableComponent.METRIC_SOM.getDistText(1.0));
         assertEquals("1.01 m", NavigatableComponent.METRIC_SOM.getDistText(1.01));
@@ -66,6 +65,9 @@ public class SystemOfMeasurementTest {
         assertEquals("100.0 km", NavigatableComponent.METRIC_SOM.getDistText(100000.01));
     }
 
+    /**
+     * Test of {@link SystemOfMeasurement#getDistText} method with a non-English locale.
+     */
     @Test
     public void testGetDistTextLocalized() {
         final DecimalFormat format = new DecimalFormat("0.000", DecimalFormatSymbols.getInstance(Locale.GERMAN));
@@ -87,7 +89,7 @@ public class SystemOfMeasurementTest {
         assertEquals("< 0.01 m²", NavigatableComponent.METRIC_SOM.getAreaText(0));
 
         assertEquals("0.01 m²", NavigatableComponent.METRIC_SOM.getAreaText(0.01));
-        
+
         assertEquals("0.99 m²", NavigatableComponent.METRIC_SOM.getAreaText(0.99));
         assertEquals("1.00 m²", NavigatableComponent.METRIC_SOM.getAreaText(1.0));
         assertEquals("1.01 m²", NavigatableComponent.METRIC_SOM.getAreaText(1.01));

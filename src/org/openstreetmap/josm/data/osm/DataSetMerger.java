@@ -392,6 +392,7 @@ public class DataSetMerger {
      * {@link #getTargetDataSet()}.
      *
      * See {@link #getConflicts()} for a map of conflicts after the merge operation.
+     * @param progressMonitor The progress monitor
      */
     public void merge(ProgressMonitor progressMonitor) {
         if (sourceDataSet == null)

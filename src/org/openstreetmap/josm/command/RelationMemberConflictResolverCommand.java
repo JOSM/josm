@@ -16,11 +16,10 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represent a command for resolving conflicts in the member lists of two
- * {@link Relation}s.
+ * Represents the resolution of conflicts in the member list of two {@link Relation}s.
  *
  */
-public class RelationMemberConflictResolverCommand extends Command {
+public class RelationMemberConflictResolverCommand extends ConflictResolveCommand {
     /** my relation */
     private final Relation my;
     /** their relation */
@@ -29,9 +28,6 @@ public class RelationMemberConflictResolverCommand extends Command {
      *  command is executed
      */
     private final List<RelationMember> mergedMembers;
-
-    /** the layer this conflict is resolved in */
-    private OsmDataLayer layer;
 
     /**
      *
@@ -61,13 +57,10 @@ public class RelationMemberConflictResolverCommand extends Command {
         //
         super.executeCommand();
 
-        // replace the list of members of 'my' relation by the list of merged
-        // members
+        // replace the list of members of 'my' relation by the list of merged members
         //
         my.setMembers(mergedMembers);
 
-        // remember the layer
-        layer = Main.main.getEditLayer();
         return true;
     }
 
@@ -79,6 +72,7 @@ public class RelationMemberConflictResolverCommand extends Command {
 
     @Override
     public void undoCommand() {
+        OsmDataLayer layer = getLayer();
         if (! Main.map.mapView.hasLayer(layer)) {
             Main.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),

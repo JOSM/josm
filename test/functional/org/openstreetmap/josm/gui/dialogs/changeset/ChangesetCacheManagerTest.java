@@ -7,9 +7,6 @@ public class ChangesetCacheManagerTest extends JFrame {
 
     private ChangesetCacheManager manager;
 
-    public ChangesetCacheManagerTest() {
-    }
-
     public void start() {
         manager = new ChangesetCacheManager();
         manager.setVisible(true);

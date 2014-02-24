@@ -40,6 +40,5 @@ public class EllipsoidTest {
             maxErrLat = Math.max(maxErrLat, Math.abs(lat - ll.lat()));
             maxErrLon = Math.max(maxErrLon, Math.abs(lon - ll.lon()));
         }
-        //System.err.println(String.format("maxerror lat: %s maxerror lon: %s", maxErrLat, maxErrLon));
     }
 }

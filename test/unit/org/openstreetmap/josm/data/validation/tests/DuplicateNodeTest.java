@@ -6,7 +6,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -14,12 +13,12 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
 /**
- * JUnit Test of "Duplicate node" validation test. 
+ * JUnit Test of "Duplicate node" validation test.
  */
 public class DuplicateNodeTest {
 
     /**
-     * Setup test by initializing JOSM preferences and projection. 
+     * Setup test by initializing JOSM preferences and projection.
      */
     @BeforeClass
     public static void setUp() {
@@ -43,7 +42,7 @@ public class DuplicateNodeTest {
         test.startTest(NullProgressMonitor.INSTANCE);
         test.visit(ds.allPrimitives());
         test.endTest();
-        
+
         assertEquals(1, test.getErrors().size());
     }
 }

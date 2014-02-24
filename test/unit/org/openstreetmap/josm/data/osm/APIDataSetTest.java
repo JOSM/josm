@@ -11,8 +11,6 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.APIDataSet;
-import org.openstreetmap.josm.data.Preferences;
-
 
 public class APIDataSetTest {
 

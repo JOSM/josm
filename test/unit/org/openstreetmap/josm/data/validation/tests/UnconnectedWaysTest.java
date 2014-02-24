@@ -18,6 +18,9 @@ public class UnconnectedWaysTest {
 
     UnconnectedWays bib;
 
+    /**
+     * Setup test.
+     */
     @Before
     public void setUp() throws Exception {
         bib = new UnconnectedWays.UnconnectedHighways();

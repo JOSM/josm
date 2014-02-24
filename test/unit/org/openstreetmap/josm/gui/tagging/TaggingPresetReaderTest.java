@@ -1,6 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import static org.CustomMatchers.hasSize;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -9,28 +17,23 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-
-import static org.CustomMatchers.hasSize;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 /**
  * Unit tests of {@link TaggingPresetReader} class.
  */
 public class TaggingPresetReaderTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUp() {
         Main.initApplicationPreferences();
     }
 
     /**
      * Gets path to test data directory for given ticketid.
-     * @param ticketid 
-     * @return 
+     * @param ticketid
+     * @return
      */
     protected static String getRegressionDataDir(int ticketid) {
         return TestUtils.getTestDataRoot() + "/regress/" + ticketid;
@@ -40,7 +43,7 @@ public class TaggingPresetReaderTest {
      * Gets path to given file in test data directory for given ticketid.
      * @param ticketid
      * @param filename
-     * @return 
+     * @return
      */
     protected static String getRegressionDataFile(int ticketid, String filename) {
         return getRegressionDataDir(ticketid) + '/' + filename;
@@ -84,5 +87,4 @@ public class TaggingPresetReaderTest {
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(presetfile, true);
         Assert.assertTrue("Default presets are empty", presets.size()>0);
     }
-    
 }

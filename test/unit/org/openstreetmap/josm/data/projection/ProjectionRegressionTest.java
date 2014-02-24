@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,7 +23,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
@@ -146,6 +144,9 @@ public class ProjectionRegressionTest {
         return Pair.create(a, b);
     }
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void setUp() {
         Main.initApplicationPreferences();
@@ -197,6 +198,5 @@ public class ProjectionRegressionTest {
             System.err.println(fail.toString());
             throw new AssertionError(fail.toString());
         }
-
     }
 }

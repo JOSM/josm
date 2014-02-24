@@ -20,11 +20,18 @@ public abstract class ConflictResolveCommand extends Command {
     /** the list of resolved conflicts */
     private ConflictCollection resolvedConflicts;
 
+    /**
+     * Constructs a new {@code ConflictResolveCommand} in the context of the current edit layer, if any.
+     */
     public ConflictResolveCommand() {
         super();
         resolvedConflicts = new ConflictCollection();
     }
 
+    /**
+     * Constructs a new {@code ConflictResolveCommand} in the context of a given data layer.
+     * @param layer the data layer. Must not be null.
+     */
     public ConflictResolveCommand(OsmDataLayer layer) {
         super(layer);
         resolvedConflicts = new ConflictCollection();

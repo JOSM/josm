@@ -8,14 +8,13 @@ import java.util.Collection;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents a the resolution of a conflict between the coordinates of two {@link Node}s
+ * Represents the resolution of a conflict between the deleted flag of two {@link OsmPrimitive}s.
  *
  */
 public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
