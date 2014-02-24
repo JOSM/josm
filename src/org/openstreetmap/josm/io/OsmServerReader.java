@@ -302,6 +302,17 @@ public abstract class OsmServerReader extends OsmConnection {
     }
 
     /**
+     * Download Zip-compressed OSM files from somewhere
+     * @param progressMonitor The progress monitor
+     * @return The corresponding dataset
+     * @throws OsmTransferException if any error occurs
+     * @since 6882
+     */
+    public DataSet parseOsmZip(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+
+    /**
      * Returns true if this reader is adding authentication credentials to the read
      * request sent to the server.
      *

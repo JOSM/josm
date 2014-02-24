@@ -76,6 +76,11 @@ public class OsmServerLocationReader extends OsmServerReader {
     }
 
     @Override
+    public DataSet parseOsmZip(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new OsmParser(progressMonitor, Compression.ZIP), progressMonitor);
+    }
+
+    @Override
     public DataSet parseOsmChange(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return doParse(new OsmChangeParser(progressMonitor, Compression.NONE), progressMonitor);
     }

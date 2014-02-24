@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.swing.JOptionPane;
 
@@ -153,6 +155,19 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
             return null;
         }
         return new GZIPInputStream(in);
+    }
+
+    public static ZipInputStream getZipInputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        ZipInputStream zis = new ZipInputStream(in);
+        // Positions the stream at the beginning of first entry
+        ZipEntry ze = zis.getNextEntry();
+        if (ze != null && Main.isDebugEnabled()) {
+            Main.debug("Zip entry: "+ze.getName());
+        }
+        return zis;
     }
 
     /**
