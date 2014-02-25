@@ -287,11 +287,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             if (!enabled) return;
             switch (e.getStateChange()) {
             case ItemEvent.SELECTED:
-                if (hasCustomSettings()) {
-                    if (!confirmOverwriteCustomSettings()) {
-                        cbUseDefaults.setSelected(false);
-                        return;
-                    }
+                if (hasCustomSettings() && !confirmOverwriteCustomSettings()) {
+                    cbUseDefaults.setSelected(false);
+                    return;
                 }
                 resetToDefaultSettings();
                 break;

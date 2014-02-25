@@ -25,14 +25,17 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class RelationMemberListTableCellRenderer extends JLabel implements TableCellRenderer {
 
-    public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
-    public final static Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255,197,197);
-    public final static Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
-    public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
+    public static final Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
+    public static final Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255,197,197);
+    public static final Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
+    public static final Color BGCOLOR_SELECTED = new Color(143,170,255);
 
     private Map<OsmPrimitiveType, ImageIcon> icons;
 
-    public RelationMemberListTableCellRenderer(){
+    /**
+     * Constructs a new {@code RelationMemberListTableCellRenderer}.
+     */
+    public RelationMemberListTableCellRenderer() {
         setOpaque(true);
         icons = new HashMap<OsmPrimitiveType, ImageIcon>();
         icons.put(OsmPrimitiveType.NODE, ImageProvider.get("data", "node"));

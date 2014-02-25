@@ -27,7 +27,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  */
 public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /** the property name for the number conflicts managed by this model */
-    static public final String NUM_CONFLICTS_PROP = RelationMemberConflictResolverModel.class.getName() + ".numConflicts";
+    public static final String NUM_CONFLICTS_PROP = RelationMemberConflictResolverModel.class.getName() + ".numConflicts";
 
     /** the list of conflict decisions */
     private List<RelationMemberConflictDecision> decisions;

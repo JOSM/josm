@@ -38,8 +38,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class PropertiesMergeModel extends Observable {
 
-    static public final String RESOLVED_COMPLETELY_PROP = PropertiesMergeModel.class.getName() + ".resolvedCompletely";
-    static public final String DELETE_PRIMITIVE_PROP = PropertiesMergeModel.class.getName() + ".deletePrimitive";
+    public static final String RESOLVED_COMPLETELY_PROP = PropertiesMergeModel.class.getName() + ".resolvedCompletely";
+    public static final String DELETE_PRIMITIVE_PROP = PropertiesMergeModel.class.getName() + ".deletePrimitive";
 
     private OsmPrimitive my;
 

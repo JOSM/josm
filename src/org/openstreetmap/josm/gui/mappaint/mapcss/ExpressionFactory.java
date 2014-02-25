@@ -588,7 +588,10 @@ public final class ExpressionFactory {
      */
     public static class NullExpression implements Expression {
 
-        final public static NullExpression INSTANCE = new NullExpression();
+        /**
+         * The unique instance.
+         */
+        public static final NullExpression INSTANCE = new NullExpression();
 
         @Override
         public Object evaluate(Environment env) {

@@ -7,7 +7,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.mappaint.Range;
 
-abstract public class Prototype {
+public abstract class Prototype {
     // zoom range to display the feature
     public Range range;
 

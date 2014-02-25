@@ -374,28 +374,28 @@ public abstract class SourceEditor extends JPanel {
     /**
      * Load the list of source entries that the user has configured.
      */
-    abstract public Collection<? extends SourceEntry> getInitialSourcesList();
+    public abstract Collection<? extends SourceEntry> getInitialSourcesList();
 
     /**
      * Load the list of configured icon paths.
      */
-    abstract public Collection<String> getInitialIconPathsList();
+    public abstract Collection<String> getInitialIconPathsList();
 
     /**
      * Get the default list of entries (used when resetting the list).
      */
-    abstract public Collection<ExtendedSourceEntry> getDefault();
+    public abstract Collection<ExtendedSourceEntry> getDefault();
 
     /**
      * Save the settings after user clicked "Ok".
      * @return true if restart is required
      */
-    abstract public boolean finish();
+    public abstract boolean finish();
 
     /**
      * Provide the GUI strings. (There are differences for MapPaint and Preset)
      */
-    abstract protected String getStr(I18nString ident);
+    protected abstract String getStr(I18nString ident);
 
     /**
      * Identifiers for strings that need to be provided.
@@ -1542,7 +1542,7 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
-    abstract public static class SourcePrefHelper {
+    public abstract static class SourcePrefHelper {
 
         private final String pref;
 
@@ -1558,11 +1558,11 @@ public abstract class SourceEditor extends JPanel {
          * Returns the default sources provided by JOSM core.
          * @return the default sources provided by JOSM core
          */
-        abstract public Collection<ExtendedSourceEntry> getDefault();
+        public abstract Collection<ExtendedSourceEntry> getDefault();
 
-        abstract public Map<String, String> serialize(SourceEntry entry);
+        public abstract Map<String, String> serialize(SourceEntry entry);
 
-        abstract public SourceEntry deserialize(Map<String, String> entryStr);
+        public abstract SourceEntry deserialize(Map<String, String> entryStr);
 
         /**
          * Returns the list of sources.

@@ -55,16 +55,16 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     /** name of the property indicating whether all conflicts are resolved,
      *  {@link #isResolvedCompletely()}
      */
-    static public final String RESOLVED_COMPLETELY_PROP = ConflictResolver.class.getName() + ".resolvedCompletely";
+    public static final String RESOLVED_COMPLETELY_PROP = ConflictResolver.class.getName() + ".resolvedCompletely";
     /**
      * name of the property for the {@link OsmPrimitive} in the role "my"
      */
-    static public final String MY_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".myPrimitive";
+    public static final String MY_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".myPrimitive";
 
     /**
      * name of the property for the {@link OsmPrimitive} in the role "my"
      */
-    static public final String THEIR_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".theirPrimitive";
+    public static final String THEIR_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".theirPrimitive";
 
     private JTabbedPane tabbedPane = null;
     private TagMerger tagMerger;

@@ -324,10 +324,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         PrintWriter writer = null;
         try {
             File pluginDir = Main.pref.getPluginsDirectory();
-            if (!pluginDir.exists()) {
-                if (! pluginDir.mkdirs()) {
-                    Main.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
-                }
+            if (!pluginDir.exists() && !pluginDir.mkdirs()) {
+                Main.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
             }
             File cacheFile = createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST);
             getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));

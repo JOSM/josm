@@ -86,17 +86,17 @@ public class DuplicateNode extends Test {
         }
     }
 
-    protected final static int DUPLICATE_NODE = 1;
-    protected final static int DUPLICATE_NODE_MIXED = 2;
-    protected final static int DUPLICATE_NODE_OTHER = 3;
-    protected final static int DUPLICATE_NODE_BUILDING = 10;
-    protected final static int DUPLICATE_NODE_BOUNDARY = 11;
-    protected final static int DUPLICATE_NODE_HIGHWAY = 12;
-    protected final static int DUPLICATE_NODE_LANDUSE = 13;
-    protected final static int DUPLICATE_NODE_NATURAL = 14;
-    protected final static int DUPLICATE_NODE_POWER = 15;
-    protected final static int DUPLICATE_NODE_RAILWAY = 16;
-    protected final static int DUPLICATE_NODE_WATERWAY = 17;
+    protected static final int DUPLICATE_NODE = 1;
+    protected static final int DUPLICATE_NODE_MIXED = 2;
+    protected static final int DUPLICATE_NODE_OTHER = 3;
+    protected static final int DUPLICATE_NODE_BUILDING = 10;
+    protected static final int DUPLICATE_NODE_BOUNDARY = 11;
+    protected static final int DUPLICATE_NODE_HIGHWAY = 12;
+    protected static final int DUPLICATE_NODE_LANDUSE = 13;
+    protected static final int DUPLICATE_NODE_NATURAL = 14;
+    protected static final int DUPLICATE_NODE_POWER = 15;
+    protected static final int DUPLICATE_NODE_RAILWAY = 16;
+    protected static final int DUPLICATE_NODE_WATERWAY = 17;
 
     /** The map of potential duplicates.
      *

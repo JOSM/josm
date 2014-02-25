@@ -37,7 +37,7 @@ public final class PlayHeadMarker extends Marker {
 
     private Timer timer = null;
     private double animationInterval = 0.0; // seconds
-    static private PlayHeadMarker playHead = null;
+    private static PlayHeadMarker playHead = null;
     private MapMode oldMode = null;
     private LatLon oldCoor;
     private boolean enabled;
@@ -151,16 +151,14 @@ public final class PlayHeadMarker extends Marker {
         /* Find the prior audio marker (there should always be one in the
          * layer, even if it is only one at the start of the track) to
          * offset the audio from */
-        if (cw != null) {
-            if (recent != null && recent.parentLayer != null) {
-                for (Marker m : recent.parentLayer.data) {
-                    if (m instanceof AudioMarker) {
-                        AudioMarker a = (AudioMarker) m;
-                        if (a.time > cw.time) {
-                            break;
-                        }
-                        ca = a;
+        if (cw != null && recent != null && recent.parentLayer != null) {
+            for (Marker m : recent.parentLayer.data) {
+                if (m instanceof AudioMarker) {
+                    AudioMarker a = (AudioMarker) m;
+                    if (a.time > cw.time) {
+                        break;
                     }
+                    ca = a;
                 }
             }
         }

@@ -7,7 +7,7 @@ import org.openstreetmap.josm.data.imagery.GeorefImage.State;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 
-abstract public class Grabber implements Runnable {
+public abstract class Grabber implements Runnable {
     protected final MapView mv;
     protected final WMSLayer layer;
     private final boolean localOnly;
@@ -26,6 +26,7 @@ abstract public class Grabber implements Runnable {
     int width(){
         return layer.getBaseImageWidth();
     }
+
     int height(){
         return layer.getBaseImageHeight();
     }
@@ -80,10 +81,9 @@ abstract public class Grabber implements Runnable {
         return (int)(Math.random() * ((max+1)-min) ) + min;
     }
 
-    abstract public boolean loadFromCache(WMSRequest request);
+    public abstract boolean loadFromCache(WMSRequest request);
 
     public void cancel() {
         canceled = true;
     }
-
 }

@@ -142,7 +142,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
     // all created tabs
     private final List<PreferenceTab> tabs = new ArrayList<PreferenceTab>();
-    private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
+    private static final Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
     private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
 
     // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)

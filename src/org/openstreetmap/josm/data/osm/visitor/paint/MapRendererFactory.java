@@ -41,9 +41,9 @@ public final class MapRendererFactory {
     /** preference key for the renderer class name. Default: class name for {@link StyledMapRenderer}
      *
      */
-    static public final String PREF_KEY_RENDERER_CLASS_NAME = "mappaint.renderer-class-name";
+    public static final String PREF_KEY_RENDERER_CLASS_NAME = "mappaint.renderer-class-name";
 
-    static public class MapRendererFactoryException extends RuntimeException {
+    public static class MapRendererFactoryException extends RuntimeException {
         public MapRendererFactoryException() {
         }
 
@@ -60,7 +60,7 @@ public final class MapRendererFactory {
         }
     }
 
-    static public class Descriptor {
+    public static class Descriptor {
         private Class<? extends AbstractMapRenderer> renderer;
         private String displayName;
         private String description;
@@ -84,7 +84,7 @@ public final class MapRendererFactory {
         }
     }
 
-    static private MapRendererFactory instance;
+    private static MapRendererFactory instance;
 
     /**
      * Replies the unique instance

@@ -279,7 +279,7 @@ public class NodeListViewer extends JPanel {
         }
     }
 
-    static private PrimitiveId primitiveIdAtRow(TableModel model, int row) {
+    private static PrimitiveId primitiveIdAtRow(TableModel model, int row) {
         DiffTableModel castedModel = (DiffTableModel) model;
         Long id = (Long)castedModel.getValueAt(row, 0).value;
         if(id == null) return null;

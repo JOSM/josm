@@ -43,7 +43,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * @param changesets the collection of changesets. Assumes an empty collection if null.
      * @return the download task
      */
-    static public ChangesetHeaderDownloadTask buildTaskForChangesets(Collection<Changeset> changesets) {
+    public static ChangesetHeaderDownloadTask buildTaskForChangesets(Collection<Changeset> changesets) {
         return buildTaskForChangesets(Main.parent, changesets);
     }
 
@@ -58,7 +58,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * @return the download task
      * @throws IllegalArgumentException thrown if parent is null
      */
-    static public ChangesetHeaderDownloadTask buildTaskForChangesets(Component parent, Collection<Changeset> changesets) {
+    public static ChangesetHeaderDownloadTask buildTaskForChangesets(Component parent, Collection<Changeset> changesets) {
         CheckParameterUtil.ensureParameterNotNull(parent, "parent");
         if (changesets == null) {
             changesets = Collections.emptyList();

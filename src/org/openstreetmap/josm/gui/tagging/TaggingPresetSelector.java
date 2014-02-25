@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -17,8 +19,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
@@ -35,6 +37,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
@@ -42,16 +45,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Key;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * GUI component to select tagging preset: the list with filter and two checkboxes
@@ -76,7 +76,6 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     private boolean typesInSelectionDirty = true;
     private final List<PresetClassification> classifications = new ArrayList<PresetClassification>();
     private ResultListModel lsResultModel = new ResultListModel();
-    private JPopupMenu popupMenu;
 
     private ActionListener dblClickListener;
     private ActionListener clickListener;
@@ -296,7 +295,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
         setPreferredSize(new Dimension(400, 300));
         filterPresets();
-        popupMenu = new JPopupMenu();
+        JPopupMenu popupMenu = new JPopupMenu();
         popupMenu.add(new AbstractAction(tr("Add toolbar button")) {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -434,7 +433,6 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         loadPresets(presets);
         init();
     }
-
     
     public void clearSelection() {
         lsResult.getSelectionModel().clearSelection();

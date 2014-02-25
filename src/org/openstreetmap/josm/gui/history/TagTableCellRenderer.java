@@ -17,8 +17,11 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
-    public final static Color BGCOLOR_DIFFERENCE = new Color(255,197,197);
+    public static final Color BGCOLOR_DIFFERENCE = new Color(255,197,197);
 
+    /**
+     * Constructs a new {@code TagTableCellRenderer}.
+     */
     public TagTableCellRenderer() {
         setOpaque(true);
     }

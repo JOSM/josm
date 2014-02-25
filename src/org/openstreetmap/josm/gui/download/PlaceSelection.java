@@ -69,11 +69,10 @@ public class PlaceSelection implements DownloadSelection {
     private NamedResultTableColumnModel columnmodel;
     private JTable tblSearchResults;
     private DownloadDialog parent;
-    private final static Server[] servers = new Server[]{
-        new Server("Nominatim","http://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds")),
-        //new Server("Namefinder","http://gazetteer.openstreetmap.org/namefinder/search.xml?find=",tr("Near"),trc("placeselection", "Zoom"))
+    private static final Server[] SERVERS = new Server[] {
+        new Server("Nominatim","http://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds"))
     };
-    private final JosmComboBox server = new JosmComboBox(servers);
+    private final JosmComboBox server = new JosmComboBox(SERVERS);
 
     private static class Server {
         public String name;
@@ -100,9 +99,9 @@ public class PlaceSelection implements DownloadSelection {
 
         lpanel.add(new JLabel(tr("Choose the server for searching:")));
         lpanel.add(server);
-        String s = Main.pref.get("namefinder.server", servers[0].name);
-        for (int i = 0; i < servers.length; ++i) {
-            if (servers[i].name.equals(s)) {
+        String s = Main.pref.get("namefinder.server", SERVERS[0].name);
+        for (int i = 0; i < SERVERS.length; ++i) {
+            if (SERVERS[i].name.equals(s)) {
                 server.setSelectedIndex(i);
             }
         }
@@ -171,7 +170,7 @@ public class PlaceSelection implements DownloadSelection {
     /**
      * Data storage for search results.
      */
-    static private class SearchResult {
+    private static class SearchResult {
         public String name;
         public String info;
         public String nearestPlace;
@@ -449,7 +448,7 @@ public class PlaceSelection implements DownloadSelection {
 
             // column 2 - Near
             col3 = new TableColumn(2);
-            col3.setHeaderValue(servers[0].thirdcol);
+            col3.setHeaderValue(SERVERS[0].thirdcol);
             col3.setResizable(true);
             col3.setPreferredWidth(100);
             col3.setCellRenderer(renderer);
@@ -457,7 +456,7 @@ public class PlaceSelection implements DownloadSelection {
 
             // column 3 - Zoom
             col4 = new TableColumn(3);
-            col4.setHeaderValue(servers[0].fourthcol);
+            col4.setHeaderValue(SERVERS[0].fourthcol);
             col4.setResizable(true);
             col4.setPreferredWidth(50);
             col4.setCellRenderer(renderer);

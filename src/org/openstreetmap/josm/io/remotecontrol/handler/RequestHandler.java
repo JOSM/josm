@@ -92,7 +92,7 @@ public abstract class RequestHandler {
      *
      * @return the message
      */
-    abstract public String getPermissionMessage();
+    public abstract String getPermissionMessage();
 
     /**
      * Get a PermissionPref object containing the name of a special permission
@@ -104,9 +104,9 @@ public abstract class RequestHandler {
      *
      * @return the preference name and error message or null
      */
-    abstract public PermissionPrefWithDefault getPermissionPref();
+    public abstract PermissionPrefWithDefault getPermissionPref();
 
-    abstract public String[] getMandatoryParams();
+    public abstract String[] getMandatoryParams();
 
     public String[] getOptionalParams() {
         return null;
@@ -136,8 +136,7 @@ public abstract class RequestHandler {
      *
      * @throws RequestHandlerForbiddenException
      */
-    final public void checkPermission() throws RequestHandlerForbiddenException
-    {
+    public final void checkPermission() throws RequestHandlerForbiddenException {
         /*
          * If the subclass defines a specific preference and if this is set
          * to false, abort with an error message.
@@ -146,8 +145,7 @@ public abstract class RequestHandler {
          * older versions of WMSPlugin.
          */
         PermissionPrefWithDefault permissionPref = getPermissionPref();
-        if((permissionPref != null) && (permissionPref.pref != null))
-        {
+        if (permissionPref != null && permissionPref.pref != null) {
             if (!Main.pref.getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
                 String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by preferences", myCommand);
                 Main.info(err);

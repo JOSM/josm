@@ -31,19 +31,19 @@ public class Multipolygon {
     /** preference key for a collection of roles which indicate that the respective member belongs to an
      * <em>outer</em> polygon. Default is <tt>outer</tt>.
      */
-    static public final String PREF_KEY_OUTER_ROLES = "mappaint.multipolygon.outer.roles";
+    public static final String PREF_KEY_OUTER_ROLES = "mappaint.multipolygon.outer.roles";
     /** preference key for collection of role prefixes which indicate that the respective
      *  member belongs to an <em>outer</em> polygon. Default is empty.
      */
-    static public final String PREF_KEY_OUTER_ROLE_PREFIXES = "mappaint.multipolygon.outer.role-prefixes";
+    public static final String PREF_KEY_OUTER_ROLE_PREFIXES = "mappaint.multipolygon.outer.role-prefixes";
     /** preference key for a collection of roles which indicate that the respective member belongs to an
      * <em>inner</em> polygon. Default is <tt>inner</tt>.
      */
-    static public final String PREF_KEY_INNER_ROLES = "mappaint.multipolygon.inner.roles";
+    public static final String PREF_KEY_INNER_ROLES = "mappaint.multipolygon.inner.roles";
     /** preference key for collection of role prefixes which indicate that the respective
      *  member belongs to an <em>inner</em> polygon. Default is empty.
      */
-    static public final String PREF_KEY_INNER_ROLE_PREFIXES = "mappaint.multipolygon.inner.role-prefixes";
+    public static final String PREF_KEY_INNER_ROLE_PREFIXES = "mappaint.multipolygon.inner.role-prefixes";
 
     /**
      * <p>Kind of strategy object which is responsible for deciding whether a given

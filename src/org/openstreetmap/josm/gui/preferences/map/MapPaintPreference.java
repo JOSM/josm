@@ -188,7 +188,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         /**
          * The unique instance.
          */
-        public final static MapPaintPrefHelper INSTANCE = new MapPaintPrefHelper();
+        public static final MapPaintPrefHelper INSTANCE = new MapPaintPrefHelper();
 
         /**
          * Constructs a new {@code MapPaintPrefHelper}.

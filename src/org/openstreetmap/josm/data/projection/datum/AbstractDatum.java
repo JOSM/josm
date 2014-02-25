@@ -3,12 +3,18 @@ package org.openstreetmap.josm.data.projection.datum;
 
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 
-abstract public class AbstractDatum implements Datum {
+public abstract class AbstractDatum implements Datum {
 
     protected String name;
     protected String proj4Id;
     protected Ellipsoid ellps;
 
+    /**
+     * Constructs a new {@code AbstractDatum}.
+     * @param name The name
+     * @param proj4Id The Proj4 identifier
+     * @param ellps The ellipsoid
+     */
     public AbstractDatum(String name, String proj4Id, Ellipsoid ellps) {
         this.name = name;
         this.proj4Id = proj4Id;

@@ -27,7 +27,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 public class ChangesetCacheManagerModel extends AbstractTableModel implements ChangesetCacheListener{
 
     /** the name of the property for the currently selected changeset in the detail view */
-    public final static String CHANGESET_IN_DETAIL_VIEW_PROP = ChangesetCacheManagerModel.class.getName() + ".changesetInDetailView";
+    public static final String CHANGESET_IN_DETAIL_VIEW_PROP = ChangesetCacheManagerModel.class.getName() + ".changesetInDetailView";
 
     private final List<Changeset> data = new ArrayList<Changeset>();
     private DefaultListSelectionModel selectionModel;

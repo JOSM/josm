@@ -87,7 +87,7 @@ public class Marker implements TemplateEngineDataProvider {
         // so per layer settings is useless. Anyway it's possible to specify marker layer pattern in Einstein preferences and maybe somebody
         // will make gui for it so I'm keeping it here
 
-        private final static Map<String, TemplateEntryProperty> cache = new HashMap<String, TemplateEntryProperty>();
+        private static final Map<String, TemplateEntryProperty> CACHE = new HashMap<String, TemplateEntryProperty>();
 
         // Legacy code - convert label from int to template engine expression
         private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0 );
@@ -110,13 +110,13 @@ public class Marker implements TemplateEngineDataProvider {
             if (layerName != null) {
                 key += "." + layerName;
             }
-            TemplateEntryProperty result = cache.get(key);
+            TemplateEntryProperty result = CACHE.get(key);
             if (result == null) {
                 String defaultValue = layerName == null ? getDefaultLabelPattern():"";
                 TemplateEntryProperty parent = layerName == null ? null : forMarker(null);
                 try {
                     result = new TemplateEntryProperty(key, defaultValue, parent);
-                    cache.put(key, result);
+                    CACHE.put(key, result);
                 } catch (ParseError e) {
                     Main.warn("Unable to parse template engine pattern ''{0}'' for property {1}", defaultValue, key);
                 }
@@ -129,13 +129,13 @@ public class Marker implements TemplateEngineDataProvider {
             if (layerName != null) {
                 key += "." + layerName;
             }
-            TemplateEntryProperty result = cache.get(key);
+            TemplateEntryProperty result = CACHE.get(key);
             if (result == null) {
                 String defaultValue = layerName == null?"?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }":"";
                 TemplateEntryProperty parent = layerName == null ? null : forAudioMarker(null);
                 try {
                     result = new TemplateEntryProperty(key, defaultValue, parent);
-                    cache.put(key, result);
+                    CACHE.put(key, result);
                 } catch (ParseError e) {
                     Main.warn("Unable to parse template engine pattern ''{0}'' for property {1}", defaultValue, key);
                 }

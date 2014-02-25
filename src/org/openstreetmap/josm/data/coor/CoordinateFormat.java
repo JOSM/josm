@@ -55,7 +55,7 @@ public enum CoordinateFormat {
      *
      * @return the default coordinate format
      */
-    static public CoordinateFormat getDefaultFormat() {
+    public static CoordinateFormat getDefaultFormat() {
         return defaultCoordinateFormat;
     }
 
@@ -64,7 +64,7 @@ public enum CoordinateFormat {
      *
      * @param format the default coordinate format
      */
-    static public void setCoordinateFormat(CoordinateFormat format) {
+    public static void setCoordinateFormat(CoordinateFormat format) {
         if (format != null) {
             defaultCoordinateFormat = format;
         }

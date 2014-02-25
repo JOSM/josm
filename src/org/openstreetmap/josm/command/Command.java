@@ -35,7 +35,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  * @author imi
  */
-abstract public class Command extends PseudoCommand {
+public abstract class Command extends PseudoCommand {
 
     private static final class CloneVisitor extends AbstractVisitor {
         public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<OsmPrimitive, PrimitiveData>();
@@ -170,7 +170,7 @@ abstract public class Command extends PseudoCommand {
      * @param deleted The deleted primitives
      * @param added The added primitives
      */
-    abstract public void fillModifiedData(Collection<OsmPrimitive> modified,
+    public abstract void fillModifiedData(Collection<OsmPrimitive> modified,
             Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added);
 

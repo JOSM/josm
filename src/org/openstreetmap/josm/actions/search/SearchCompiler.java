@@ -207,9 +207,9 @@ public class SearchCompiler {
     /**
      * Base class for all search operators.
      */
-    abstract public static class Match implements Predicate<OsmPrimitive> {
+    public abstract static class Match implements Predicate<OsmPrimitive> {
 
-        abstract public boolean match(OsmPrimitive osm);
+        public abstract boolean match(OsmPrimitive osm);
 
         /**
          * Tests whether one of the primitives matches.
@@ -242,7 +242,7 @@ public class SearchCompiler {
     /**
      * A unary search operator which may take data parameters.
      */
-    abstract public static class UnaryMatch extends Match {
+    public abstract static class UnaryMatch extends Match {
 
         protected final Match match;
 
@@ -264,7 +264,7 @@ public class SearchCompiler {
     /**
      * A binary search operator which may take data parameters.
      */
-    abstract public static class BinaryMatch extends Match {
+    public abstract static class BinaryMatch extends Match {
 
         protected final Match lhs;
         protected final Match rhs;

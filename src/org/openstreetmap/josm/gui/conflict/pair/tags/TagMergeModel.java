@@ -29,7 +29,7 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
  *
  */
 public class TagMergeModel extends DefaultTableModel {
-    static public final String PROP_NUM_UNDECIDED_TAGS = TagMergeModel.class.getName() + ".numUndecidedTags";
+    public static final String PROP_NUM_UNDECIDED_TAGS = TagMergeModel.class.getName() + ".numUndecidedTags";
 
     /** the list of tag merge items */
     private final List<TagMergeItem> tagMergeItems;

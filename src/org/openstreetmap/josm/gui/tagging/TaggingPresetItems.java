@@ -303,7 +303,7 @@ public final class TaggingPresetItems {
      * A tagging preset item displaying a localizable text.
      * @since 6190
      */
-    public static abstract class TaggingPresetTextItem extends TaggingPresetItem {
+    public abstract static class TaggingPresetTextItem extends TaggingPresetItem {
 
         /**
          * The text to display
@@ -504,7 +504,7 @@ public final class TaggingPresetItems {
         }
     }
 
-    public static abstract class KeyedItem extends TaggingPresetItem {
+    public abstract static class KeyedItem extends TaggingPresetItem {
 
         public String key;
         public String text;
@@ -892,7 +892,7 @@ public final class TaggingPresetItems {
         }
     }
 
-    public static abstract class ComboMultiSelect extends KeyedItem {
+    public abstract static class ComboMultiSelect extends KeyedItem {
 
         public String locale_text;
         public String values;
@@ -1356,7 +1356,8 @@ public final class TaggingPresetItems {
             return builder.toString();
         }
     }
-    static public EnumSet<TaggingPresetType> getType(String types) throws SAXException {
+
+    public static EnumSet<TaggingPresetType> getType(String types) throws SAXException {
         if (typeCache.containsKey(types))
             return typeCache.get(types);
         EnumSet<TaggingPresetType> result = EnumSet.noneOf(TaggingPresetType.class);

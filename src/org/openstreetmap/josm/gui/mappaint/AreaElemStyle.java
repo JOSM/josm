@@ -16,8 +16,8 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
-public class AreaElemStyle extends ElemStyle
-{
+public class AreaElemStyle extends ElemStyle {
+
     /**
      * If fillImage == null, color is the fill-color, otherwise
      * an arbitrary color value sampled from the fillImage
@@ -78,22 +78,16 @@ public class AreaElemStyle extends ElemStyle
 
     @Override
     public void paintPrimitive(OsmPrimitive osm, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member) {
-        if (osm instanceof Way)
-        {
+        if (osm instanceof Way) {
             Color myColor = color;
-            if (color != null) {
-                if (osm.isSelected()) {
-                    myColor = paintSettings.getSelectedColor(color.getAlpha());
-                }
+            if (color != null && osm.isSelected()) {
+                myColor = paintSettings.getSelectedColor(color.getAlpha());
             }
             painter.drawArea((Way) osm, myColor, fillImage, text);
-        } else if (osm instanceof Relation)
-        {
+        } else if (osm instanceof Relation) {
             Color myColor = color;
-            if (color != null) {
-                if (selected) {
-                    myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
-                }
+            if (color != null && selected) {
+                myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
             }
             painter.drawArea((Relation) osm, myColor, fillImage, text);
         }

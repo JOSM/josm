@@ -24,14 +24,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class DownloadReferrersAction extends JosmAction {
 
-	/**
-	 * Constructs a new {@code DownloadReferrersAction}.
-	 */
+    /**
+     * Constructs a new {@code DownloadReferrersAction}.
+     */
     public DownloadReferrersAction() {
         super(tr("Download parent ways/relations..."), "download",
-        		tr("Download objects referring to one of the selected objects"),
+                tr("Download objects referring to one of the selected objects"),
                 Shortcut.registerShortcut("file:downloadreferrers",
-                		tr("File: {0}", tr("Download parent ways/relations...")), KeyEvent.VK_D, Shortcut.ALT_CTRL),
+                        tr("File: {0}", tr("Download parent ways/relations...")), KeyEvent.VK_D, Shortcut.ALT_CTRL),
                 true, "downloadreferrers", true);
         putValue("help", ht("/Action/DownloadParentWaysAndRelation"));
     }

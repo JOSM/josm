@@ -44,7 +44,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     /**
      * OSM API URL property key.
      */
-    static public final String API_URL_PROP = OsmApiUrlInputPanel.class.getName() + ".apiUrl";
+    public static final String API_URL_PROP = OsmApiUrlInputPanel.class.getName() + ".apiUrl";
 
     private JLabel lblValid;
     private JLabel lblApiUrl;
@@ -240,7 +240,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         btnTest.setEnabled(enabled);
     }
 
-    static private class ApiUrlValidator extends AbstractTextComponentValidator {
+    private static class ApiUrlValidator extends AbstractTextComponentValidator {
         public ApiUrlValidator(JTextComponent tc) throws IllegalArgumentException {
             super(tc);
         }

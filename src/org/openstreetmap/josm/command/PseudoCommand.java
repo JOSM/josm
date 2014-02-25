@@ -12,11 +12,12 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  * as subcommand of real commands but it is just an empty shell and can not be
  * executed or undone.
  */
-abstract public class PseudoCommand {
+public abstract class PseudoCommand {
+
     /**
      * Provides a description text representing this command.
      */
-    abstract public String getDescriptionText();
+    public abstract String getDescriptionText();
 
     /**
      * Provides a descriptive icon of this command.
@@ -28,7 +29,7 @@ abstract public class PseudoCommand {
     /**
      * Return the primitives that take part in this command.
      */
-    abstract public Collection<? extends OsmPrimitive> getParticipatingPrimitives();
+    public abstract Collection<? extends OsmPrimitive> getParticipatingPrimitives();
 
     /**
      * Returns the subcommands of this command.

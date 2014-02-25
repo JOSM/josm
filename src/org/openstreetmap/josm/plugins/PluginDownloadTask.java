@@ -89,7 +89,8 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
         this.toUpdate.addAll(toUpdate);
     }
 
-    @Override protected void cancel() {
+    @Override
+    protected void cancel() {
         this.canceled = true;
         synchronized(this) {
             if (downloadConnection != null) {
@@ -98,7 +99,8 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
         }
     }
 
-    @Override protected void finish() {}
+    @Override
+    protected void finish() {}
 
     protected void download(PluginInformation pi, File file) throws PluginDownloadException{
         if (pi.mainversion > Version.getInstance().getVersion()) {
@@ -151,14 +153,13 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
         }
     }
 
-    @Override protected void realRun() throws SAXException, IOException {
+    @Override
+    protected void realRun() throws SAXException, IOException {
         File pluginDir = Main.pref.getPluginsDirectory();
-        if (!pluginDir.exists()) {
-            if (!pluginDir.mkdirs()) {
-                lastException = new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
-                failed.addAll(toUpdate);
-                return;
-            }
+        if (!pluginDir.exists() && !pluginDir.mkdirs()) {
+            lastException = new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
+            failed.addAll(toUpdate);
+            return;
         }
         getProgressMonitor().setTicksCount(toUpdate.size());
         for (PluginInformation d : toUpdate) {

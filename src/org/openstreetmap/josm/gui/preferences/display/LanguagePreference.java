@@ -108,7 +108,7 @@ public class LanguagePreference implements SubPreferenceSetting {
         }
     }
 
-    static private class LanguageCellRenderer extends DefaultListCellRenderer {
+    private static class LanguageCellRenderer extends DefaultListCellRenderer {
         private ListCellRenderer dispatch;
         public LanguageCellRenderer(ListCellRenderer dispatch) {
             this.dispatch = dispatch;
