@@ -26,8 +26,8 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HistoryBrowserDialogManager implements MapView.LayerChangeListener {
-    static private HistoryBrowserDialogManager instance;
-    static public HistoryBrowserDialogManager getInstance() {
+    private static HistoryBrowserDialogManager instance;
+    public static HistoryBrowserDialogManager getInstance() {
         if (instance == null) {
             instance = new HistoryBrowserDialogManager();
         }

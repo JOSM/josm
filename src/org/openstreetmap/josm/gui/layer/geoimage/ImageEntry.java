@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 /**
  * Stores info about each image
  */
-final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
+public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     private File file;
     private Integer exifOrientation;
     private LatLon exifCoor;

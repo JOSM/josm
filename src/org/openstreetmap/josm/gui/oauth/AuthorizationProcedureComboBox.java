@@ -14,13 +14,16 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
 public class AuthorizationProcedureComboBox extends JosmComboBox {
 
+    /**
+     * Constructs a new {@code AuthorizationProcedureComboBox}.
+     */
     public AuthorizationProcedureComboBox() {
         super(AuthorizationProcedure.values());
         setRenderer(new AuthorisationProcedureCellRenderer());
         setSelectedItem(AuthorizationProcedure.FULLY_AUTOMATIC);
     }
 
-    static private class AuthorisationProcedureCellRenderer extends JLabel implements ListCellRenderer {
+    private static class AuthorisationProcedureCellRenderer extends JLabel implements ListCellRenderer {
         public AuthorisationProcedureCellRenderer() {
             setOpaque(true);
         }

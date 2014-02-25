@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class PasteTagsConflictResolverDialog extends JDialog  implements PropertyChangeListener {
-    static private final Map<OsmPrimitiveType, String> PANE_TITLES;
+    private static final Map<OsmPrimitiveType, String> PANE_TITLES;
     static {
         PANE_TITLES = new HashMap<OsmPrimitiveType, String>();
         PANE_TITLES.put(OsmPrimitiveType.NODE, tr("Tags from nodes"));
@@ -353,7 +353,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    static public class StatisticsInfo {
+    public static class StatisticsInfo {
         public int numTags;
         public Map<OsmPrimitiveType, Integer> sourceInfo;
         public Map<OsmPrimitiveType, Integer> targetInfo;
@@ -364,7 +364,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    static private class StatisticsTableColumnModel extends DefaultTableColumnModel {
+    private static class StatisticsTableColumnModel extends DefaultTableColumnModel {
         public StatisticsTableColumnModel() {
             TableCellRenderer renderer = new StatisticsInfoRenderer();
             TableColumn col = null;
@@ -392,7 +392,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    static private class StatisticsTableModel extends DefaultTableModel {
+    private static class StatisticsTableModel extends DefaultTableModel {
         private static final String[] HEADERS = new String[] {tr("Paste ..."), tr("From ..."), tr("To ...") };
         private List<StatisticsInfo> data;
 
@@ -431,7 +431,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    static private class StatisticsInfoRenderer extends JLabel implements TableCellRenderer {
+    private static class StatisticsInfoRenderer extends JLabel implements TableCellRenderer {
         protected void reset() {
             setIcon(null);
             setText("");

@@ -216,8 +216,8 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * when the user successfully enters a valid tile grid specification.
      *
      */
-    static private class TileGridInputPanel extends JPanel implements PropertyChangeListener{
-        static public final String TILE_BOUNDS_PROP = TileGridInputPanel.class.getName() + ".tileBounds";
+    private static class TileGridInputPanel extends JPanel implements PropertyChangeListener{
+        public static final String TILE_BOUNDS_PROP = TileGridInputPanel.class.getName() + ".tileBounds";
 
         private JosmTextField tfMaxY;
         private JosmTextField tfMinY;
@@ -436,9 +436,9 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * A panel for entering the address of a single OSM tile at a given zoom level.
      *
      */
-    static private class TileAddressInputPanel extends JPanel {
+    private static class TileAddressInputPanel extends JPanel {
 
-        static public final String TILE_BOUNDS_PROP = TileAddressInputPanel.class.getName() + ".tileBounds";
+        public static final String TILE_BOUNDS_PROP = TileAddressInputPanel.class.getName() + ".tileBounds";
 
         private JosmTextField tfTileAddress;
         private TileAddressValidator valTileAddress;
@@ -525,7 +525,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     /**
      * Validates a tile address
      */
-    static private class TileAddressValidator extends AbstractTextComponentValidator {
+    private static class TileAddressValidator extends AbstractTextComponentValidator {
 
         private TileBounds tileBounds = null;
 
@@ -584,7 +584,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * Validates the x- or y-coordinate of a tile at a given zoom level.
      *
      */
-    static private class TileCoordinateValidator extends AbstractTextComponentValidator {
+    private static class TileCoordinateValidator extends AbstractTextComponentValidator {
         private int zoomLevel;
         private int tileIndex;
 
@@ -632,7 +632,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * Represents a rectangular area of tiles at a given zoom level.
      *
      */
-    static private class TileBounds {
+    private static class TileBounds {
         public Point min;
         public Point max;
         public int zoomLevel;
@@ -662,7 +662,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     /**
      * The map view used in this bounding box chooser
      */
-    static private class TileBoundsMapView extends JMapViewer {
+    private static class TileBoundsMapView extends JMapViewer {
         private Point min;
         private Point max;
 

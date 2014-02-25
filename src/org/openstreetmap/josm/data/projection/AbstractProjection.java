@@ -20,7 +20,7 @@ import org.openstreetmap.josm.data.projection.proj.Proj;
  * Subclasses of AbstractProjection must set ellps and proj to a non-null value.
  * In addition, either datum or nadgrid has to be initialized to some value.
  */
-abstract public class AbstractProjection implements Projection {
+public abstract class AbstractProjection implements Projection {
 
     protected Ellipsoid ellps;
     protected Datum datum;

@@ -71,7 +71,7 @@ public class HelpBrowser extends JDialog {
      *
      * @return the unique instance of the help browser
      */
-    static public HelpBrowser getInstance() {
+    public static HelpBrowser getInstance() {
         if (instance == null) {
             instance = new HelpBrowser();
         }
@@ -102,7 +102,7 @@ public class HelpBrowser extends JDialog {
      *
      * @param helpTopic the help topic
      */
-    static public void launchBrowser(String helpTopic) {
+    public static void launchBrowser(String helpTopic) {
         HelpBrowser browser = getInstance();
         browser.openHelpTopic(helpTopic);
         browser.setVisible(true);

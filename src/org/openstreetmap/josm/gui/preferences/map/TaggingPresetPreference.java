@@ -324,7 +324,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         /**
          * The unique instance.
          */
-        public final static PresetPrefHelper INSTANCE = new PresetPrefHelper();
+        public static final PresetPrefHelper INSTANCE = new PresetPrefHelper();
 
         /**
          * Constructs a new {@code PresetPrefHelper}.

@@ -105,7 +105,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * Abstract class holding various static global variables and methods used in large parts of JOSM application.
  * @since 98
  */
-abstract public class Main {
+public abstract class Main {
 
     /**
      * The JOSM website URL.
@@ -125,7 +125,7 @@ abstract public class Main {
      *
      * @return <code>true</code> if JOSM currently displays a map view
      */
-    static public boolean isDisplayingMapView() {
+    public static boolean isDisplayingMapView() {
         if (map == null) return false;
         if (map.mapView == null) return false;
         return true;
@@ -151,7 +151,7 @@ abstract public class Main {
      * calculations. The executed runnables are guaranteed to be executed separately
      * and sequential.
      */
-    public final static ExecutorService worker = new ProgressMonitorExecutor();
+    public static final ExecutorService worker = new ProgressMonitorExecutor();
 
     /**
      * Global application preferences

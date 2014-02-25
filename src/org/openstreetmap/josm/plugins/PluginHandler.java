@@ -77,7 +77,7 @@ public final class PluginHandler {
     /**
      * Deprecated plugins that are removed on start
      */
-    public final static Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
+    public static final Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
     static {
         String IN_CORE = tr("integrated into main program");
 
@@ -194,7 +194,7 @@ public final class PluginHandler {
     /**
      * All installed and loaded plugins (resp. their main classes)
      */
-    public final static Collection<PluginProxy> pluginList = new LinkedList<PluginProxy>();
+    public static final Collection<PluginProxy> pluginList = new LinkedList<PluginProxy>();
 
     /**
      * Add here all ClassLoader whose resource should be searched.
@@ -1034,12 +1034,10 @@ public final class PluginHandler {
             final String filePath = updatedPlugin.getPath();
             File plugin = new File(filePath.substring(0, filePath.length() - 4));
             String pluginName = updatedPlugin.getName().substring(0, updatedPlugin.getName().length() - 8);
-            if (plugin.exists()) {
-                if (!plugin.delete() && dowarn) {
-                    Main.warn(tr("Failed to delete outdated plugin ''{0}''.", plugin.toString()));
-                    Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
-                    continue;
-                }
+            if (plugin.exists() && !plugin.delete() && dowarn) {
+                Main.warn(tr("Failed to delete outdated plugin ''{0}''.", plugin.toString()));
+                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
+                continue;
             }
             try {
                 // Check the plugin is a valid and accessible JAR file before installing it (fix #7754)
@@ -1323,7 +1321,7 @@ public final class PluginHandler {
         return pluginTab;
     }
 
-    static private class UpdatePluginsMessagePanel extends JPanel {
+    private static class UpdatePluginsMessagePanel extends JPanel {
         private JMultilineLabel lblMessage;
         private JCheckBox cbDontShowAgain;
 

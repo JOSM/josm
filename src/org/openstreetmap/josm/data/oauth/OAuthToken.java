@@ -13,7 +13,7 @@ public class OAuthToken {
      * @param consumer the consumer
      * @return the token
      */
-    static public OAuthToken createToken(OAuthConsumer consumer) {
+    public static OAuthToken createToken(OAuthConsumer consumer) {
         return new OAuthToken(consumer.getToken(), consumer.getTokenSecret());
     }
 

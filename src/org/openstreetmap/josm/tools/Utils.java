@@ -830,10 +830,8 @@ public final class Utils {
             return null;
         }
         File josmTmpDir = new File(tmpDir, "JOSM");
-        if (!josmTmpDir.exists()) {
-            if (!josmTmpDir.mkdirs()) {
-                Main.warn("Unable to create temp directory "+josmTmpDir);
-            }
+        if (!josmTmpDir.exists() && !josmTmpDir.mkdirs()) {
+            Main.warn("Unable to create temp directory "+josmTmpDir);
         }
         return josmTmpDir;
     }

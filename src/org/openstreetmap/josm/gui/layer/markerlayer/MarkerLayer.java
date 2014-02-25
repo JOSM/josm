@@ -171,24 +171,24 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     /**
      * Return a static icon.
      */
-    @Override public Icon getIcon() {
+    @Override
+    public Icon getIcon() {
         return ImageProvider.get("layer", "marker_small");
     }
 
     @Override
-    public Color getColor(boolean ignoreCustom)
-    {
+    public Color getColor(boolean ignoreCustom) {
         String name = getName();
         return Main.pref.getColor(marktr("gps marker"), name != null ? "layer "+name : null, Color.gray);
     }
 
     /* for preferences */
-    static public Color getGenericColor()
-    {
+    public static Color getGenericColor() {
         return Main.pref.getColor(marktr("gps marker"), Color.gray);
     }
 
-    @Override public void paint(Graphics2D g, MapView mv, Bounds box) {
+    @Override
+    public void paint(Graphics2D g, MapView mv, Bounds box) {
         boolean showTextOrIcon = isTextOrIconShown();
         g.setColor(getColor(true));
 

@@ -21,9 +21,9 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
-abstract public class Condition {
+public abstract class Condition {
 
-    abstract public boolean applies(Environment e);
+    public abstract boolean applies(Environment e);
 
     public static Condition createKeyValueCondition(String k, String v, Op op, Context context, boolean considerValAsKey) {
         switch (context) {
@@ -131,7 +131,7 @@ abstract public class Condition {
     }
 
     /**
-     * context, where the condition applies
+     * Context, where the condition applies.
      */
     public static enum Context {
         /**
@@ -145,7 +145,7 @@ abstract public class Condition {
         LINK
     }
 
-    public final static EnumSet<Op> COMPARISON_OPERATERS =
+    public static final EnumSet<Op> COMPARISON_OPERATERS =
         EnumSet.of(Op.GREATER_OR_EQUAL, Op.GREATER, Op.LESS_OR_EQUAL, Op.LESS);
 
     /**

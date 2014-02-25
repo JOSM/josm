@@ -79,9 +79,9 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
 
     private  JLabel lblFrozenState;
 
-    abstract protected JScrollPane buildMyElementsTable();
-    abstract protected JScrollPane buildMergedElementsTable();
-    abstract protected JScrollPane buildTheirElementsTable();
+    protected abstract JScrollPane buildMyElementsTable();
+    protected abstract JScrollPane buildMergedElementsTable();
+    protected abstract JScrollPane buildTheirElementsTable();
 
     protected JScrollPane embeddInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
@@ -769,7 +769,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
     }
 
-    static public interface FreezeActionProperties {
+    public static interface FreezeActionProperties {
         String PROP_SELECTED = FreezeActionProperties.class.getName() + ".selected";
     }
 

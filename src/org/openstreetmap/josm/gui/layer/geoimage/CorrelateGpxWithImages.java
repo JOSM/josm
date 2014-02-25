@@ -656,10 +656,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
         syncDialog.setContentPane(outerPanel);
         syncDialog.pack();
         syncDialog.addWindowListener(new WindowAdapter() {
-            final static int CANCEL = -1;
-            final static int DONE = 0;
-            final static int AGAIN = 1;
-            final static int NOTHING = 2;
+            static final int CANCEL = -1;
+            static final int DONE = 0;
+            static final int AGAIN = 1;
+            static final int NOTHING = 2;
             private int checkAndSave() {
                 if (syncDialog.isVisible())
                     // nothing happened: JOSM was minimized or similar
@@ -685,16 +685,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     return AGAIN;
                 }
 
-                if (lastNumMatched == 0) {
-                    if (new ExtendedDialog(
+                if (lastNumMatched == 0 && new ExtendedDialog(
                             Main.parent,
                             tr("Correlate images with GPX track"),
                             new String[] { tr("OK"), tr("Try Again") }).
                             setContent(tr("No images could be matched!")).
                             setButtonIcons(new String[] { "ok.png", "dialogs/refresh.png"}).
                             showDialog().getValue() == 2)
-                        return AGAIN;
-                }
+                    return AGAIN;
                 return DONE;
             }
 
@@ -1083,16 +1081,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 continue;
             }
 
-            if (e.getExifCoor() != null) {
-                if (!exif) {
-                    continue;
-                }
+            if (e.getExifCoor() != null && !exif) {
+                continue;
             }
 
-            if (e.isTagged() && e.getExifCoor() == null) {
-                if (!tagged) {
-                    continue;
-                }
+            if (e.isTagged() && e.getExifCoor() == null && !tagged) {
+                continue;
             }
 
             dateImgLst.add(e);

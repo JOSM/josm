@@ -26,7 +26,7 @@ public class CredentialsManager implements CredentialsAgent {
      *
      * @return the single credential agent used in JOSM
      */
-    static public CredentialsManager getInstance() {
+    public static CredentialsManager getInstance() {
         if (instance == null) {
             CredentialsAgent delegate;
             if (agentFactory == null) {

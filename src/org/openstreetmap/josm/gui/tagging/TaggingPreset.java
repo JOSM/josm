@@ -76,7 +76,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String name_context;
     public String locale_name;
     public boolean preset_name_label;
-    public final static String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
+    public static final String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
 
     /**
      * The types as preparsed collection.

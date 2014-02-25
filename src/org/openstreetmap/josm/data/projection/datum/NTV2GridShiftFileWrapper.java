@@ -19,7 +19,7 @@ public class NTV2GridShiftFileWrapper {
      * @see <a href="http://crs.bkg.bund.de/crseu/crs/descrtrans/eu-descrtrans.php?crs_id=REVfREhETiAvIEdLXzM=&op_id=REVfREhETiAoQmVUQSwgMjAwNykgdG8gRVRSUzg5">
      * Description of Transformation - DE_DHDN (BeTA, 2007) to ETRS89</a>
      */
-    public final static NTV2GridShiftFileWrapper BETA2007 = new NTV2GridShiftFileWrapper("resource://data/projection/BETA2007.gsb");
+    public static final NTV2GridShiftFileWrapper BETA2007 = new NTV2GridShiftFileWrapper("resource://data/projection/BETA2007.gsb");
 
     /**
      * Used in France to convert coordinates between the NTF (<i>Nouvelle triangulation de la France</i>)
@@ -27,8 +27,7 @@ public class NTV2GridShiftFileWrapper {
      * @see <a href="http://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NT111_V1_HARMEL_TransfoNTF-RGF93_FormatGrilleNTV2.pdf">
      * [French] Transformation de coordonnées NTF – RGF93 / Format de grille NTv2</a>
      */
-    public final static NTV2GridShiftFileWrapper ntf_rgf93 = new NTV2GridShiftFileWrapper("resource://data/projection/ntf_r93_b.gsb");
-
+    public static final NTV2GridShiftFileWrapper ntf_rgf93 = new NTV2GridShiftFileWrapper("resource://data/projection/ntf_r93_b.gsb");
 
     private NTV2GridShiftFile instance = null;
     private String gridFileName;

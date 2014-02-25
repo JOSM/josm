@@ -145,7 +145,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
      * The cell renderer used in the combo box
      *
      */
-    static private class EditorCellRenderer extends JLabel implements ListCellRenderer {
+    private static class EditorCellRenderer extends JLabel implements ListCellRenderer {
 
         public EditorCellRenderer() {
             setOpaque(true);

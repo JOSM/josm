@@ -372,7 +372,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * user
      *
      */
-    static private class UserRestrictionPanel extends JPanel {
+    private static class UserRestrictionPanel extends JPanel {
         private ButtonGroup bgUserRestrictions;
         private JRadioButton rbRestrictToMyself;
         private JRadioButton rbRestrictToUid;
@@ -634,7 +634,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     /**
      * This is the panel to apply a time restriction to the changeset query
      */
-    static private class TimeRestrictionPanel extends JPanel {
+    private static class TimeRestrictionPanel extends JPanel {
 
         private JRadioButton rbClosedAfter;
         private JRadioButton rbClosedAfterAndCreatedBefore;
@@ -967,8 +967,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * Validator for user ids entered in in a {@link JTextComponent}.
      *
      */
-    static private class UidInputFieldValidator extends AbstractTextComponentValidator {
-        static public UidInputFieldValidator decorate(JTextComponent tc) {
+    private static class UidInputFieldValidator extends AbstractTextComponentValidator {
+        public static UidInputFieldValidator decorate(JTextComponent tc) {
             return new UidInputFieldValidator(tc);
         }
 
@@ -1014,8 +1014,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
     }
 
-    static private class UserNameInputValidator extends AbstractTextComponentValidator {
-        static public UserNameInputValidator decorate(JTextComponent tc) {
+    private static class UserNameInputValidator extends AbstractTextComponentValidator {
+        public static UserNameInputValidator decorate(JTextComponent tc) {
             return new UserNameInputValidator(tc);
         }
 
@@ -1045,8 +1045,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      *
      * Dates can be entered in one of four standard formats defined for the current locale.
      */
-    static private class DateValidator extends AbstractTextComponentValidator {
-        static public DateValidator decorate(JTextComponent tc) {
+    private static class DateValidator extends AbstractTextComponentValidator {
+        public static DateValidator decorate(JTextComponent tc) {
             return new DateValidator(tc);
         }
 
@@ -1108,8 +1108,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      *
      * Time values can be entered in one of four standard formats defined for the current locale.
      */
-    static private class TimeValidator extends AbstractTextComponentValidator {
-        static public TimeValidator decorate(JTextComponent tc) {
+    private static class TimeValidator extends AbstractTextComponentValidator {
+        public static TimeValidator decorate(JTextComponent tc) {
             return new TimeValidator(tc);
         }
 

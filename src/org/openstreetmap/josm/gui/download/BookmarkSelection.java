@@ -46,7 +46,7 @@ public class BookmarkSelection implements DownloadSelection {
 
     /** displays information about the current download area */
     private JMultilineLabel lblCurrentDownloadArea;
-    final private JosmTextArea bboxDisplay = new JosmTextArea();
+    private final JosmTextArea bboxDisplay = new JosmTextArea();
     /** the add action */
     private AddAction actAdd;
 

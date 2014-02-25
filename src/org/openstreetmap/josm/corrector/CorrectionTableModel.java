@@ -8,15 +8,13 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-public abstract class CorrectionTableModel<C extends Correction> extends
-        AbstractTableModel {
+public abstract class CorrectionTableModel<C extends Correction> extends AbstractTableModel {
 
     private List<C> corrections;
     private boolean[] apply;
     private int applyColumn;
 
     public CorrectionTableModel(List<C> corrections) {
-        super();
         this.corrections = corrections;
         apply = new boolean[this.corrections.size()];
         Arrays.fill(apply, true);
@@ -24,11 +22,11 @@ public abstract class CorrectionTableModel<C extends Correction> extends
     }
 
     @Override
-    abstract public int getColumnCount();
+    public abstract int getColumnCount();
 
-    abstract protected boolean isBoldCell(int row, int column);
-    abstract public String getCorrectionColumnName(int colIndex);
-    abstract public Object getCorrectionValueAt(int rowIndex, int colIndex);
+    protected abstract boolean isBoldCell(int row, int column);
+    public abstract String getCorrectionColumnName(int colIndex);
+    public abstract Object getCorrectionValueAt(int rowIndex, int colIndex);
 
     public List<C> getCorrections() {
         return corrections;

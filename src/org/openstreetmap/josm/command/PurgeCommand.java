@@ -41,7 +41,7 @@ public class PurgeCommand extends Command {
 
     protected final ConflictCollection purgedConflicts = new ConflictCollection();
 
-    final protected DataSet ds;
+    protected final DataSet ds;
 
     /**
      * This command relies on a number of consistency conditions:

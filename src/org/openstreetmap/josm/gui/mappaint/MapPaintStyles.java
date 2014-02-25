@@ -205,11 +205,9 @@ public final class MapPaintStyles {
         }
         for (StyleSource source : styles.getStyleSources()) {
             source.loadStyleSource();
-            if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true)) {
-                if (source.isLocal()) {
-                    File f = new File(source.url);
-                    source.setLastMTime(f.lastModified());
-                }
+            if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true) && source.isLocal()) {
+                File f = new File(source.url);
+                source.setLastMTime(f.lastModified());
             }
         }
         fireMapPaintSylesUpdated();

@@ -71,7 +71,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
          * @param policyName The policy name
          * @return The proxy policy matching the given name, or {@code null}
          */
-        static public ProxyPolicy fromName(String policyName) {
+        public static ProxyPolicy fromName(String policyName) {
             if (policyName == null) return null;
             policyName = policyName.trim().toLowerCase();
             for(ProxyPolicy pp: values()) {

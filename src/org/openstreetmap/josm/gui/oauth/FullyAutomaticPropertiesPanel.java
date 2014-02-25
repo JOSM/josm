@@ -54,7 +54,9 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
         return pnl;
     }
 
-
+    /**
+     * Constructs a new {@code FullyAutomaticPropertiesPanel}.
+     */
     public FullyAutomaticPropertiesPanel() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
@@ -71,7 +73,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
         add(new JPanel(), gc);
     }
 
-    static private class UserNameValidator extends AbstractTextComponentValidator {
+    private static class UserNameValidator extends AbstractTextComponentValidator {
 
         public UserNameValidator(JTextComponent tc) {
             super(tc);

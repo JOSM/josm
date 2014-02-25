@@ -47,18 +47,18 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
- *
+ * Dialog displayed to download OSM and/or GPS data from OSM server.
  */
 public class DownloadDialog extends JDialog  {
     /** the unique instance of the download dialog */
-    static private DownloadDialog instance;
+    private static DownloadDialog instance;
 
     /**
      * Replies the unique instance of the download dialog
      *
      * @return the unique instance of the download dialog
      */
-    static public DownloadDialog getInstance() {
+    public static DownloadDialog getInstance() {
         if (instance == null) {
             instance = new DownloadDialog(Main.parent);
         }

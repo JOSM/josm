@@ -23,23 +23,23 @@ public class OAuthParameters {
     /**
      * The default JOSM OAuth consumer key (created by user josmeditor).
      */
-    static public final String DEFAULT_JOSM_CONSUMER_KEY = "F7zPYlVCqE2BUH9Hr4SsWZSOnrKjpug1EgqkbsSb";
+    public static final String DEFAULT_JOSM_CONSUMER_KEY = "F7zPYlVCqE2BUH9Hr4SsWZSOnrKjpug1EgqkbsSb";
     /**
      * The default JOSM OAuth consumer secret (created by user josmeditor).
      */
-    static public final String DEFAULT_JOSM_CONSUMER_SECRET = "rIkjpPcBNkMQxrqzcOvOC4RRuYupYr7k8mfP13H5";
+    public static final String DEFAULT_JOSM_CONSUMER_SECRET = "rIkjpPcBNkMQxrqzcOvOC4RRuYupYr7k8mfP13H5";
     /**
      * The default OSM OAuth request token URL.
      */
-    static public final String DEFAULT_REQUEST_TOKEN_URL = Main.OSM_WEBSITE + "/oauth/request_token";
+    public static final String DEFAULT_REQUEST_TOKEN_URL = Main.OSM_WEBSITE + "/oauth/request_token";
     /**
      * The default OSM OAuth access token URL.
      */
-    static public final String DEFAULT_ACCESS_TOKEN_URL = Main.OSM_WEBSITE + "/oauth/access_token";
+    public static final String DEFAULT_ACCESS_TOKEN_URL = Main.OSM_WEBSITE + "/oauth/access_token";
     /**
      * The default OSM OAuth authorize URL.
      */
-    static public final String DEFAULT_AUTHORISE_URL = Main.OSM_WEBSITE + "/oauth/authorize";
+    public static final String DEFAULT_AUTHORISE_URL = Main.OSM_WEBSITE + "/oauth/authorize";
 
 
     /**
@@ -48,7 +48,7 @@ public class OAuthParameters {
      *
      * @return a set of default parameters
      */
-    static public OAuthParameters createDefault() {
+    public static OAuthParameters createDefault() {
         return createDefault(null);
     }
 
@@ -61,7 +61,7 @@ public class OAuthParameters {
      * @return a set of default parameters for the given {@code apiUrl}
      * @since 5422
      */
-    static public OAuthParameters createDefault(String apiUrl) {
+    public static OAuthParameters createDefault(String apiUrl) {
         OAuthParameters parameters = new OAuthParameters();
         parameters.setConsumerKey(DEFAULT_JOSM_CONSUMER_KEY);
         parameters.setConsumerSecret(DEFAULT_JOSM_CONSUMER_SECRET);
@@ -89,7 +89,7 @@ public class OAuthParameters {
      * @param pref the preferences
      * @return the parameters
      */
-    static public OAuthParameters createFromPreferences(Preferences pref) {
+    public static OAuthParameters createFromPreferences(Preferences pref) {
         OAuthParameters parameters = createDefault(pref.get("osm-server.url"));
         parameters.setConsumerKey(pref.get("oauth.settings.consumer-key", parameters.getConsumerKey()));
         parameters.setConsumerSecret(pref.get("oauth.settings.consumer-secret", parameters.getConsumerSecret()));

@@ -195,7 +195,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
         }
     }
 
-    static private class AccessTokenSecretValidator extends AbstractTextComponentValidator {
+    private static class AccessTokenSecretValidator extends AbstractTextComponentValidator {
         public AccessTokenSecretValidator(JTextComponent tc) throws IllegalArgumentException {
             super(tc);
         }

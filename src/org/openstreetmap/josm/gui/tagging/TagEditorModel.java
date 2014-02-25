@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 @SuppressWarnings("serial")
 public class TagEditorModel extends AbstractTableModel {
-    static public final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
+    public static final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
     /** the list holding the tags */
     protected final List<TagModel> tags =new ArrayList<TagModel>();

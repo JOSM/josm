@@ -27,7 +27,7 @@ public class LambertConformalConic implements Proj {
     protected Ellipsoid ellps;
     protected double e;
 
-    public static abstract class Parameters {
+    public abstract static class Parameters {
         public final double latitudeOrigin;
         public Parameters(double latitudeOrigin) {
             this.latitudeOrigin = latitudeOrigin;

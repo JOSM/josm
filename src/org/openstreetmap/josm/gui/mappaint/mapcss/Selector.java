@@ -310,10 +310,10 @@ public interface Selector {
     }
 
     /**
-     * Super class of {@link GeneralSelector} and {@link LinkSelector}
+     * Super class of {@link GeneralSelector} and {@link LinkSelector}.
      * @since 5841
      */
-    public static abstract class AbstractSelector implements Selector {
+    public abstract static class AbstractSelector implements Selector {
 
         protected final List<Condition> conds;
 
@@ -465,7 +465,7 @@ public interface Selector {
             return new Range(lower, upper);
         }
 
-        final static double R = 6378135;
+        static final double R = 6378135;
 
         public static double level2scale(int lvl) {
             if (lvl < 0)
