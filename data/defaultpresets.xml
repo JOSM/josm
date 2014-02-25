@@ -2001,7 +2001,8 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Abandoned Rail" icon="presets/railway.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=abandoned"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=abandoned" />
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=abandoned"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:railway=abandoned" />
             <key key="railway" value="abandoned" />
             <optional>
                 <reference ref="railway_service" />
@@ -2632,6 +2633,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=vending_machine"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=vending_machine"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=vending_machine"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine" />
             <space />
@@ -2661,9 +2663,9 @@ Note that for a match, at least one positive and no negative is required.
                 <role key="" text="route segment" requisite="optional" type="way" />
                 <role key="forward" text="forward segment" requisite="optional" type="way" />
                 <role key="backward" text="backward segment" requisite="optional" type="way" />
-                <role key="stop" text="halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt railway=tram_stop" />
-                <role key="forward_stop" text="forward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt railway=tram_stop" />
-                <role key="backward_stop" text="backward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt railway=tram_stop" />
+                <role key="stop" text="halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
+                <role key="forward_stop" text="forward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
+                <role key="backward_stop" text="backward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
                 <role key="platform" text="platform" requisite="optional" type="node,way,closedway" member_expression="highway=platform OR railway=platform" />
             </roles>
         </item>
@@ -6519,6 +6521,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Addresses" icon="presets/addresses.png" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:addr"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:addr"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:addr"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Key:addr"
                   et.href="http://wiki.openstreetmap.org/wiki/Et:Key:addr"
