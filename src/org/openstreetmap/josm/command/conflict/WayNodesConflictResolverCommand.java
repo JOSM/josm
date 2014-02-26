@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.command;
+package org.openstreetmap.josm.command.conflict;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 

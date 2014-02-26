@@ -1,9 +1,10 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.command;
+package org.openstreetmap.josm.command.conflict;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;

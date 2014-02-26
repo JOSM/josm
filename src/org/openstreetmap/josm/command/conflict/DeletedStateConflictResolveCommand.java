@@ -1,23 +1,23 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.command;
+package org.openstreetmap.josm.command.conflict;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+import java.util.Set;
 
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Represents the resolution of a conflict between the coordinates of two {@link Node}s.
- *
+ * Represents the resolution of a conflict between the deleted flag of two {@link OsmPrimitive}s.
+ * @since 1654
  */
-public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
+public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
 
     /** the conflict to resolve */
     private Conflict<? extends OsmPrimitive> conflict;
@@ -26,19 +26,19 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
     private final MergeDecisionType decision;
 
     /**
-     * constructor for coordinate conflict
+     * Constructs a new {@code DeletedStateConflictResolveCommand}.
      *
      * @param conflict the conflict data set
      * @param decision the merge decision
      */
-    public CoordinateConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, MergeDecisionType decision) {
+    public DeletedStateConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, MergeDecisionType decision) {
         this.conflict = conflict;
         this.decision = decision;
     }
 
     @Override
     public String getDescriptionText() {
-        return tr("Resolve conflicts in coordinates in {0}", conflict.getMy().getId());
+        return tr("Resolve conflicts in deleted state in {0}", conflict.getMy().getId());
     }
 
     @Override
@@ -48,31 +48,43 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public boolean executeCommand() {
-        // remember the current state of modified primitives, i.e. of
-        // OSM primitive 'my'
-        //
+        // remember the current state of modified primitives, i.e. of OSM primitive 'my'
         super.executeCommand();
 
         if (decision.equals(MergeDecisionType.KEEP_MINE)) {
-            // do nothing
+            if (conflict.getMy().isDeleted() || conflict.isMyDeleted()) {
+                // because my was involved in a conflict it my still be referred
+                // to from a way or a relation. Fix this now.
+                deleteMy();
+            }
         } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
-            Node my = (Node)conflict.getMy();
-            Node their = (Node)conflict.getTheir();
-            my.setCoor(their.getCoor());
+            if (conflict.getTheir().isDeleted()) {
+                deleteMy();
+            } else {
+                conflict.getMy().setDeleted(false);
+            }
         } else
             // should not happen
             throw new IllegalStateException(tr("Cannot resolve undecided conflict."));
 
-        // remember the layer this command was applied to
-        //
         rememberConflict(conflict);
-
         return true;
+    }
+    
+    private void deleteMy() {
+        Set<OsmPrimitive> referrers = getLayer().data.unlinkReferencesToPrimitive(conflict.getMy());
+        for (OsmPrimitive p : referrers) {
+            if (!p.isNew() && !p.isDeleted()) {
+                p.setModified(true);
+            }
+        }
+        conflict.getMy().setDeleted(true);
     }
 
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
         modified.add(conflict.getMy());
+        modified.addAll(conflict.getMy().getReferrers());
     }
 }

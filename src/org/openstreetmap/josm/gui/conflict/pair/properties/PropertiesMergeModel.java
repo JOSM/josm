@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Observable;
 
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.CoordinateConflictResolveCommand;
-import org.openstreetmap.josm.command.DeletedStateConflictResolveCommand;
+import org.openstreetmap.josm.command.conflict.CoordinateConflictResolveCommand;
+import org.openstreetmap.josm.command.conflict.DeletedStateConflictResolveCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
