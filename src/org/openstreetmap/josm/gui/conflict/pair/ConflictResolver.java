@@ -15,9 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.ModifiedConflictResolveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.command.VersionConflictResolveCommand;
+import org.openstreetmap.josm.command.conflict.ModifiedConflictResolveCommand;
+import org.openstreetmap.josm.command.conflict.VersionConflictResolveCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;

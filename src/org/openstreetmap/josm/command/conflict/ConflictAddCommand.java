@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.command;
+package org.openstreetmap.josm.command.conflict;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -9,15 +9,25 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * Command used to add a new conflict.
+ * @since 1857
+ */
 public class ConflictAddCommand extends Command {
     private Conflict<? extends OsmPrimitive> conflict;
 
+    /**
+     * Constructs a new {@code ConflictAddCommand}.
+     * @param layer the data layer. Must not be null.
+     * @param conflict the conflict to add
+     */
     public ConflictAddCommand(OsmDataLayer layer, Conflict<? extends OsmPrimitive> conflict) {
         super(layer);
         this.conflict  = conflict;
@@ -36,7 +46,9 @@ public class ConflictAddCommand extends Command {
                 JOptionPane.ERROR_MESSAGE
         );
     }
-    @Override public boolean executeCommand() {
+
+    @Override
+    public boolean executeCommand() {
         try {
             getLayer().getConflicts().add(conflict);
         } catch(IllegalStateException e) {
@@ -46,7 +58,8 @@ public class ConflictAddCommand extends Command {
         return true;
     }
 
-    @Override public void undoCommand() {
+    @Override
+    public void undoCommand() {
         if (! Main.map.mapView.hasLayer(getLayer())) {
             Main.warn(tr("Layer ''{0}'' does not exist any more. Cannot remove conflict for object ''{1}''.",
                     getLayer().getName(),
@@ -57,7 +70,8 @@ public class ConflictAddCommand extends Command {
         getLayer().getConflicts().remove(conflict);
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         // nothing to fill
     }
 
