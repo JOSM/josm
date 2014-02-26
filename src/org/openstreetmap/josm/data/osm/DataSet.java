@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -813,11 +814,13 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
-     * removes all references from ways in this dataset to a particular node
+     * Removes all references from ways in this dataset to a particular node.
      *
      * @param node the node
+     * @return The set of ways that have been modified
      */
-    public void unlinkNodeFromWays(Node node) {
+    public Set<Way> unlinkNodeFromWays(Node node) {
+        Set<Way> result = new HashSet<Way>();
         beginUpdate();
         try {
             for (Way way: ways) {
@@ -828,19 +831,23 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
                     } else {
                         way.setNodes(wayNodes);
                     }
+                    result.add(way);
                 }
             }
         } finally {
             endUpdate();
         }
+        return result;
     }
 
     /**
      * removes all references from relations in this dataset  to this primitive
      *
      * @param primitive the primitive
+     * @return The set of relations that have been modified
      */
-    public void unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
+    public Set<Relation> unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
+        Set<Relation> result = new HashSet<Relation>();
         beginUpdate();
         try {
             for (Relation relation : relations) {
@@ -858,31 +865,33 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
 
                 if (removed) {
                     relation.setMembers(members);
+                    result.add(relation);
                 }
             }
         } finally {
             endUpdate();
         }
+        return result;
     }
 
     /**
-     * removes all references from other primitives to the
-     * referenced primitive
+     * Removes all references from other primitives to the referenced primitive.
      *
      * @param referencedPrimitive the referenced primitive
+     * @return The set of primitives that have been modified
      */
-    public void unlinkReferencesToPrimitive(OsmPrimitive referencedPrimitive) {
+    public Set<OsmPrimitive> unlinkReferencesToPrimitive(OsmPrimitive referencedPrimitive) {
+        Set<OsmPrimitive> result = new HashSet<OsmPrimitive>();
         beginUpdate();
         try {
             if (referencedPrimitive instanceof Node) {
-                unlinkNodeFromWays((Node)referencedPrimitive);
-                unlinkPrimitiveFromRelations(referencedPrimitive);
-            } else {
-                unlinkPrimitiveFromRelations(referencedPrimitive);
+                result.addAll(unlinkNodeFromWays((Node)referencedPrimitive));
             }
+            result.addAll(unlinkPrimitiveFromRelations(referencedPrimitive));
         } finally {
             endUpdate();
         }
+        return result;
     }
 
     /**
