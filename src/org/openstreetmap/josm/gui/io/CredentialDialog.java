@@ -247,6 +247,16 @@ public class CredentialDialog extends JDialog {
         public boolean isSaveCredentials() {
             return cbSaveCredentials.isSelected();
         }
+
+        protected final void updateWarningLabel(String url) {
+            boolean https = url != null && url.startsWith("https");
+            if (https) {
+                lblWarning.setText(null);
+            } else {
+                lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
+            }
+            lblWarning.setVisible(!https);
+        }
     }
 
     private static class OsmApiCredentialsPanel extends CredentialPanel {
@@ -256,10 +266,11 @@ public class CredentialDialog extends JDialog {
             super.build();
             tfUserName.setToolTipText(tr("Please enter the user name of your OSM account"));
             tfPassword.setToolTipText(tr("Please enter the password of your OSM account"));
+            String apiUrl = OsmApi.getOsmApi().getBaseUrl();
             lblHeading.setText(
                     "<html>" + tr("Authenticating at the OSM API ''{0}'' failed. Please enter a valid username and a valid password.",
-                            OsmApi.getOsmApi().getBaseUrl()) + "</html>");
-            lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
+                            apiUrl) + "</html>");
+            updateWarningLabel(apiUrl);
         }
 
         public OsmApiCredentialsPanel(CredentialDialog owner) {
@@ -280,7 +291,7 @@ public class CredentialDialog extends JDialog {
             lblHeading.setText(
                     "<html>" + tr("Authenticating at the host ''{0}'' failed. Please enter a valid username and a valid password.",
                             host) + "</html>");
-            lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
+            updateWarningLabel(host);
         }
 
         public OtherHostCredentialsPanel(CredentialDialog owner, String host) {
