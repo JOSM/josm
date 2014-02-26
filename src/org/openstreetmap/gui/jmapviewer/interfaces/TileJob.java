@@ -1,6 +1,5 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.interfaces;
-
-//License: GPL. Copyright 2012 by Dirk Stöcker
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 

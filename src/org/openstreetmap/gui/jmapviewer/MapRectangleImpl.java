@@ -1,4 +1,4 @@
-// License: GPL. For details, see LICENSE file.
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.BasicStroke;
@@ -10,10 +10,6 @@ import java.awt.Stroke;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 
-/**
- * @author Vincent
- *
- */
 public class MapRectangleImpl extends MapObjectImpl implements MapRectangle {
 
     private Coordinate topLeft;
@@ -37,25 +33,16 @@ public class MapRectangleImpl extends MapObjectImpl implements MapRectangle {
         this.bottomRight = bottomRight;
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle#getTopLeft()
-     */
     @Override
     public Coordinate getTopLeft() {
         return topLeft;
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle#getBottomRight()
-     */
     @Override
     public Coordinate getBottomRight() {
         return bottomRight;
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle#paint(java.awt.Graphics, java.awt.Point, java.awt.Point)
-     */
     @Override
     public void paint(Graphics g, Point topLeft, Point bottomRight) {
         // Prepare graphics
@@ -79,9 +66,11 @@ public class MapRectangleImpl extends MapObjectImpl implements MapRectangle {
         Point p= new Point(topLeft.x+(width/2), topLeft.y+(height/2));
         if(getLayer()==null||getLayer().isVisibleTexts()) paintText(g, p);
     }
+
     public static Style getDefaultStyle(){
         return new Style(Color.BLUE, null, new BasicStroke(2), getDefaultFont());
     }
+
     @Override
     public String toString() {
         return "MapRectangle from " + getTopLeft() + " to " + getBottomRight();

@@ -1,14 +1,9 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
-//License: GPL.
-
-import java.awt.Image;
 import java.io.IOException;
 
-import javax.swing.ImageIcon;
-
-import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.gui.jmapviewer.OsmMercator;
 
 public abstract class AbstractTMSTileSource extends AbstractTileSource {
 
@@ -68,30 +63,56 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         return "png";
     }
 
+    /*
+     * Most tilesources use OsmMercator projection.
+     */
     @Override
     public int getTileSize() {
-        return 256;
+        return OsmMercator.TILE_SIZE;
+    }
+
+    @Override
+    public double getDistance(double lat1, double lon1, double lat2, double lon2) {
+        return OsmMercator.getDistance(lat1, lon1, lat2, lon2);
+    }
+
+    @Override
+    public int LonToX(double lon, int zoom) {
+        return (int )OsmMercator.LonToX(lon, zoom);
+    }
+
+    @Override
+    public int LatToY(double lat, int zoom) {
+        return (int )OsmMercator.LatToY(lat, zoom);
+    }
+
+    @Override
+    public double XToLon(int x, int zoom) {
+        return OsmMercator.XToLon(x, zoom);
+    }
+
+    @Override
+    public double YToLat(int y, int zoom) {
+        return OsmMercator.YToLat(y, zoom);
     }
 
     @Override
     public double latToTileY(double lat, int zoom) {
-        double l = lat / 180 * Math.PI;
-        double pf = Math.log(Math.tan(l) + (1 / Math.cos(l)));
-        return Math.pow(2.0, zoom - 1) * (Math.PI - pf) / Math.PI;
+        return OsmMercator.LatToY(lat, zoom) / OsmMercator.TILE_SIZE;
     }
 
     @Override
     public double lonToTileX(double lon, int zoom) {
-        return Math.pow(2.0, zoom - 3) * (lon + 180.0) / 45.0;
+        return OsmMercator.LonToX(lon, zoom) / OsmMercator.TILE_SIZE;
     }
 
     @Override
     public double tileYToLat(int y, int zoom) {
-        return Math.atan(Math.sinh(Math.PI - (Math.PI * y / Math.pow(2.0, zoom - 1)))) * 180 / Math.PI;
+        return OsmMercator.YToLat(y * OsmMercator.TILE_SIZE, zoom);
     }
 
     @Override
     public double tileXToLon(int x, int zoom) {
-        return x * 45.0 / Math.pow(2.0, zoom - 3) - 180.0;
+        return OsmMercator.XToLon(x * OsmMercator.TILE_SIZE, zoom);
     }
 }

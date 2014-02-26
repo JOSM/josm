@@ -1,6 +1,5 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
-
-//License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -31,7 +30,6 @@ import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOsmTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 /**
- *
  * Demonstrates the usage of {@link JMapViewer}
  *
  * @author Jan Peter Stotz
@@ -206,7 +204,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         Layer wales = treeMap.addLayer("UK");
         map().addMapRectangle(new MapRectangleImpl(wales, "Wales", c(53.35,-4.57), c(51.64,-2.63)));
 
-        // map.setDisplayPositionByLatLon(49.807, 8.6, 11);
+        // map.setDisplayPosition(new Coordinate(49.807, 8.6), 11);
         // map.setTileGridVisible(true);
 
         map().addMouseListener(new MouseAdapter() {

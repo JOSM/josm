@@ -1,6 +1,5 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
-
-//License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;

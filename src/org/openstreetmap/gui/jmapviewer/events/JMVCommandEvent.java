@@ -1,6 +1,5 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.events;
-
-//License: GPL.
 
 import java.util.EventObject;
 

@@ -1,3 +1,4 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ public class AbstractLayer {
     private Style style;
     private Boolean visible;
     private Boolean visibleTexts=true;
-    
+
     public AbstractLayer(String name){
         this(name, (String)null);
     }

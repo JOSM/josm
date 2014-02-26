@@ -1,3 +1,4 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 /**
@@ -42,7 +43,7 @@ public class OsmTileSource {
          * Constructs a new {@code CycleMap} tile source.
          */
         public CycleMap() {
-            super("OSM Cycle Map", PATTERN);
+            super("Cyclemap", PATTERN);
         }
 
         @Override

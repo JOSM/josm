@@ -1,6 +1,5 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.interfaces;
-
-//License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.awt.Graphics;
 import java.awt.Point;
@@ -17,7 +16,7 @@ import org.openstreetmap.gui.jmapviewer.JMapViewer;
  */
 public interface MapMarker extends MapObject, ICoordinate{
 
-    public static enum STYLE {FIXED, VARIABLE};
+    public static enum STYLE {FIXED, VARIABLE}
 
     /**
      * @return Latitude and Longitude of the map marker position

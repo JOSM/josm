@@ -1,3 +1,4 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
 
 import org.openstreetmap.gui.jmapviewer.JobDispatcher.JobThread;

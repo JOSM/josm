@@ -1,3 +1,4 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.Color;
@@ -98,7 +99,7 @@ public abstract class MapObjectImpl {
     public void paintText(Graphics g, Point position) {
         if(name!=null && g!=null && position!=null){
             if(getFont()==null){
-                Font f = getDefaultFont(); // g.getFont();
+                Font f = getDefaultFont();
                 setFont(new Font(f.getName(), Font.BOLD, f.getSize()));
             }
             g.setColor(Color.DARK_GRAY);

@@ -1,4 +1,4 @@
-// License: GPL. For details, see LICENSE file.
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.AlphaComposite;
@@ -17,10 +17,6 @@ import java.util.List;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 
-/**
- * @author Vincent
- *
- */
 public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
 
     private List<? extends ICoordinate> points;
@@ -51,17 +47,11 @@ public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
         this.points = points;
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon#getPoints()
-     */
     @Override
     public List<? extends ICoordinate> getPoints() {
         return this.points;
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon#paint(java.awt.Graphics, java.util.List)
-     */
     @Override
     public void paint(Graphics g, List<Point> points) {
         Polygon polygon = new Polygon();
@@ -71,9 +61,6 @@ public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
         paint(g, polygon);
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon#paint(java.awt.Graphics, java.awt.Polygon)
-     */
     @Override
     public void paint(Graphics g, Polygon polygon) {
         // Prepare graphics
@@ -110,9 +97,7 @@ public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
     public static Style getDefaultStyle(){
         return new Style(Color.BLUE, new Color(100,100,100,50), new BasicStroke(2), getDefaultFont());
     }
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         return "MapPolygon [points=" + points + "]";

@@ -1,21 +1,16 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer;
 
-// License: GPL. Copyright 2007 by Tim Haussmann
-
 /**
- * This class implements the Mercator Projection as it is used by Openstreetmap
+ * This class implements the Mercator Projection as it is used by OpenStreetMap
  * (and google). It provides methods to translate coordinates from 'map space'
  * into latitude and longitude (on the WGS84 ellipsoid) and vice versa. Map
  * space is measured in pixels. The origin of the map space is the top left
- * corner. The map space origin (0,0) has latitude ~85 and longitude -180
- *
- * @author Tim Haussmann
- *
+ * corner. The map space origin (0,0) has latitude ~85 and longitude -180.
  */
-
 public class OsmMercator {
 
-    private static int TILE_SIZE = 256;
+    public static int TILE_SIZE = 256;
     public static final double MAX_LAT = 85.05112877980659;
     public static final double MIN_LAT = -85.05112877980659;
     private static double EARTH_RADIUS = 6378137; // equatorial earth radius for EPSG:3857 (Mercator)
@@ -105,11 +100,10 @@ public class OsmMercator {
      * @return [0..2^Zoomlevel*TILE_SIZE[
      * @author Jan Peter Stotz
      */
-    public static int LonToX(double aLongitude, int aZoomlevel) {
+    public static double LonToX(double aLongitude, int aZoomlevel) {
         int mp = getMaxPixels(aZoomlevel);
-        int x = (int) ((mp * (aLongitude + 180l)) / 360l);
-        x = Math.min(x, mp - 1);
-        return x;
+        double x = (mp * (aLongitude + 180l)) / 360l;
+        return Math.min(x, mp - 1);
     }
 
     /**
@@ -130,7 +124,7 @@ public class OsmMercator {
      * @return [0..2^Zoomlevel*TILE_SIZE[
      * @author Jan Peter Stotz
      */
-    public static int LatToY(double aLat, int aZoomlevel) {
+    public static double LatToY(double aLat, int aZoomlevel) {
         if (aLat < MIN_LAT)
             aLat = MIN_LAT;
         else if (aLat > MAX_LAT)
@@ -138,9 +132,8 @@ public class OsmMercator {
         double sinLat = Math.sin(Math.toRadians(aLat));
         double log = Math.log((1.0 + sinLat) / (1.0 - sinLat));
         int mp = getMaxPixels(aZoomlevel);
-        int y = (int) (mp * (0.5 - (log / (4.0 * Math.PI))));
-        y = Math.min(y, mp - 1);
-        return y;
+        double y = mp * (0.5 - (log / (4.0 * Math.PI)));
+        return Math.min(y, mp - 1);
     }
 
     /**

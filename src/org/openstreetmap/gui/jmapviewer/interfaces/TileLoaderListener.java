@@ -1,8 +1,7 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
-
-//License: GPL. Copyright 2008 by Jan Peter Stotz
 
 public interface TileLoaderListener {
 

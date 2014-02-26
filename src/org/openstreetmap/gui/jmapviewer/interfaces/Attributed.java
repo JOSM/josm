@@ -1,10 +1,9 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
 import java.awt.Image;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
-
-//License: GPL.
 
 public interface Attributed {
     /**

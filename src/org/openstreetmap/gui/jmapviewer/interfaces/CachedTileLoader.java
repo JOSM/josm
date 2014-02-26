@@ -1,4 +1,4 @@
-// License: GPL
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
 /**

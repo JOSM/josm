@@ -28,7 +28,7 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * Based on the public domain ("beer-ware") C implementation from Poul-Henning Kamp which was found at: <a
  * href="http://www.freebsd.org/cgi/cvsweb.cgi/src/lib/libcrypt/crypt-md5.c?rev=1.1;content-type=text%2Fplain">
- * crypt-md5.c @ freebsd.org</a><br/>
+ * crypt-md5.c @ freebsd.org</a><br>
  * <p>
  * Source:
  *
@@ -42,7 +42,7 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * This class is immutable and thread-safe.
  *
- * @version $Id: Md5Crypt.java 1552918 2013-12-21 16:26:59Z ggregory $
+ * @version $Id: Md5Crypt.java 1563226 2014-01-31 19:38:06Z ggregory $
  * @since 1.7
  */
 public class Md5Crypt {

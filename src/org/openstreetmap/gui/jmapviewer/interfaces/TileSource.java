@@ -1,10 +1,9 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
 import java.io.IOException;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-
-//License: GPL. Copyright 2008 by Jan Peter Stotz
 
 /**
  *
@@ -94,11 +93,57 @@ public interface TileSource extends Attributed {
      */
     int getTileSize();
 
-    double latToTileY(double lat, int zoom);
+    /**
+     * Gets the distance using Spherical law of cosines.
+     *  @return the distance, m.
+     */
+    double getDistance(double la1, double lo1, double la2, double lo2);
 
+    /**
+     * Transform longitude to pixelspace.
+     * @return [0..2^Zoomlevel*TILE_SIZE[
+     */
+    int LonToX(double aLongitude, int aZoomlevel);
+
+    /**
+     * Transforms latitude to pixelspace.
+     * @return [0..2^Zoomlevel*TILE_SIZE[
+     */
+    int LatToY(double aLat, int aZoomlevel);
+
+    /**
+     * Transforms pixel coordinate X to longitude
+     * @return ]-180..180[
+     */
+    double XToLon(int aX, int aZoomlevel);
+
+    /**
+     * Transforms pixel coordinate Y to latitude.
+     * @return [MIN_LAT..MAX_LAT]
+     */
+    double YToLat(int aY, int aZoomlevel);
+
+    /**
+     * Transforms longitude to X tile coordinate.
+     * @return [0..2^Zoomlevel[
+     */
     double lonToTileX(double lon, int zoom);
 
-    double tileYToLat(int y, int zoom);
+    /**
+     * Transforms latitude to Y tile coordinate.
+     * @return [0..2^Zoomlevel[
+     */
+    double latToTileY(double lat, int zoom);
 
+    /**
+     * Transforms tile X coordinate to longitude.
+     * @return ]-180..180[
+     */
     double tileXToLon(int x, int zoom);
+
+    /**
+     * Transforms tile Y coordinate to latitude.
+     * @return [MIN_LAT..MAX_LAT]
+     */
+    double tileYToLat(int y, int zoom);
 }

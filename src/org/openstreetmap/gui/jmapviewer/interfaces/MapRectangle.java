@@ -1,6 +1,5 @@
+// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.interfaces;
-
-//License: GPL. Copyright 2009 by Stefan Zeller
 
 import java.awt.Graphics;
 import java.awt.Point;

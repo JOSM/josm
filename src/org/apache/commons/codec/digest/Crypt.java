@@ -25,7 +25,7 @@ import org.apache.commons.codec.Charsets;
  * <p>
  * This class is immutable and thread-safe.
  *
- * @version $Id: Crypt.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: Crypt.java 1563226 2014-01-31 19:38:06Z ggregory $
  * @since 1.7
  */
 public class Crypt {
@@ -127,8 +127,8 @@ public class Crypt {
      * Example:
      *
      * <pre>
-     *      crypt("secret", "$1$xxxx") => "$1$xxxx$aMkevjfEIpa35Bh3G4bAc."
-     *      crypt("secret", "xx") => "xxWAum7tHdIUw"
+     *      crypt("secret", "$1$xxxx") =&gt; "$1$xxxx$aMkevjfEIpa35Bh3G4bAc."
+     *      crypt("secret", "xx") =&gt; "xxWAum7tHdIUw"
      * </pre>
      * <p>
      * This method comes in a variation that accepts a byte[] array to support input strings that are not encoded in
