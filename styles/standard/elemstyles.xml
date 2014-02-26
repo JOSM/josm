@@ -2427,6 +2427,12 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="shop" v="gift"/>
+		<icon annotate="true" src="presets/present.svg"/>
+		<area colour="shop#00005f"/>
+	</rule>
+
+	<rule>
 		<condition k="shop" v="greengrocer"/>
 		<icon annotate="true" src="shop/groceries/greengrocer.png"/>
 		<area colour="shop#00005f"/>
@@ -2582,17 +2588,17 @@ For external files the <rules> should have following elements:
 		<area colour="shop#00005f"/>
 	</rule>
 
-    <rule>
-        <condition k="shop" v="bookmaker"/>
-        <icon annotate="true" src="presets/lottery.svg"/>
-        <area colour="shop#00005f"/>
-    </rule>
+	<rule>
+		<condition k="shop" v="bookmaker"/>
+		<icon annotate="true" src="presets/lottery.svg"/>
+		<area colour="shop#00005f"/>
+	</rule>
 
-    <rule>
-        <condition k="shop" v="lottery"/>
-        <icon annotate="true" src="presets/lottery.svg"/>
-        <area colour="shop#00005f"/>
-    </rule>
+	<rule>
+		<condition k="shop" v="lottery"/>
+		<icon annotate="true" src="presets/lottery.svg"/>
+		<area colour="shop#00005f"/>
+	</rule>
 
 	<!-- duplicate of shopping_centre? -->
 	<rule>
