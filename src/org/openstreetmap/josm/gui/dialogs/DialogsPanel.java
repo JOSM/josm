@@ -26,7 +26,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
      */
     private List<JPanel> panels = new ArrayList<JPanel>();
 
-    final private JSplitPane parent;
+    private final JSplitPane parent;
     public DialogsPanel(JSplitPane parent) {
         this.parent = parent;
     }

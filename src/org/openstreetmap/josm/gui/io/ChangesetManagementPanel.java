@@ -47,8 +47,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * </ul>
  */
 public class ChangesetManagementPanel extends JPanel implements ListDataListener{
-    public final static String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
-    public final static String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
+    public static final String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
+    public static final String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
 
     private JRadioButton rbUseNew;
     private JRadioButton rbExisting;

@@ -28,14 +28,14 @@ public class CacheFiles {
     /**
      * Common expirey dates
      */
-    final static public int EXPIRE_NEVER = -1;
-    final static public int EXPIRE_DAILY = 60 * 60 * 24;
-    final static public int EXPIRE_WEEKLY = EXPIRE_DAILY * 7;
-    final static public int EXPIRE_MONTHLY = EXPIRE_WEEKLY * 4;
+    public static final int EXPIRE_NEVER = -1;
+    public static final int EXPIRE_DAILY = 60 * 60 * 24;
+    public static final int EXPIRE_WEEKLY = EXPIRE_DAILY * 7;
+    public static final int EXPIRE_MONTHLY = EXPIRE_WEEKLY * 4;
 
-    final private File dir;
-    final private String ident;
-    final private boolean enabled;
+    private final File dir;
+    private final String ident;
+    private final boolean enabled;
 
     private long expire;  // in seconds
     private long maxsize; // in megabytes
@@ -272,9 +272,10 @@ public class CacheFiles {
         writes = 0;
     }
 
-    final static public int CLEAN_ALL = 0;
-    final static public int CLEAN_SMALL_FILES = 1;
-    final static public int CLEAN_BY_DATE = 2;
+    public static final int CLEAN_ALL = 0;
+    public static final int CLEAN_SMALL_FILES = 1;
+    public static final int CLEAN_BY_DATE = 2;
+
     /**
      * Performs a non-default, specified clean up
      * @param type any of the CLEAN_XX constants.

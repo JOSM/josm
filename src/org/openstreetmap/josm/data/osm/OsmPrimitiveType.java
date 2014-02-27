@@ -18,7 +18,7 @@ public enum OsmPrimitiveType {
     CLOSEDWAY  (marktr(/* ICON(data/) */"closedway"), null, WayData.class),
     MULTIPOLYGON (marktr(/* ICON(data/) */"multipolygon"), null, RelationData.class);
 
-    private final static Collection<OsmPrimitiveType> DATA_VALUES = Arrays.asList(NODE, WAY, RELATION);
+    private static final Collection<OsmPrimitiveType> DATA_VALUES = Arrays.asList(NODE, WAY, RELATION);
 
     private final String apiTypeName;
     private final Class<? extends OsmPrimitive> osmClass;

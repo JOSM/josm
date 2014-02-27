@@ -18,8 +18,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class SelectionTableCellRenderer extends JLabel implements TableCellRenderer {
-    public final static Color BGCOLOR_DOUBLE_ENTRY = new Color(254,226,214);
-    public final static Color BGCOLOR_SINGLE_ENTRY = new Color(235,255,177);
+    public static final Color BGCOLOR_DOUBLE_ENTRY = new Color(254,226,214);
+    public static final Color BGCOLOR_SINGLE_ENTRY = new Color(235,255,177);
 
     /**
      * reference to the member table model; required, in order to check whether a

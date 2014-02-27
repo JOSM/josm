@@ -27,7 +27,7 @@ public final class AudioUtil {
      * @param wavFile the recording file (WAV format)
      * @return the calibrated length of recording in seconds.
      */
-    static public double getCalibratedDuration(File wavFile) {
+    public static double getCalibratedDuration(File wavFile) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
                 new URL("file:".concat(wavFile.getAbsolutePath())));

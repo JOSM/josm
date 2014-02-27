@@ -51,14 +51,13 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class SaveLayersDialog extends JDialog implements TableModelListener {
-    static public enum UserAction {
+    public static enum UserAction {
         /**
          * save/upload layers was successful, proceed with operation
          */
         PROCEED,
         /**
-         * save/upload of layers was not successful or user canceled
-         * operation
+         * save/upload of layers was not successful or user canceled operation
          */
         CANCEL
     }

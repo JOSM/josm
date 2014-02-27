@@ -27,8 +27,8 @@ public class ChangesetDataSet {
         public HistoryOsmPrimitive getPrimitive();
     }
 
-    final private Map<PrimitiveId, HistoryOsmPrimitive> primitives = new HashMap<PrimitiveId, HistoryOsmPrimitive>();
-    final private Map<PrimitiveId, ChangesetModificationType> modificationTypes = new HashMap<PrimitiveId, ChangesetModificationType>();
+    private final Map<PrimitiveId, HistoryOsmPrimitive> primitives = new HashMap<PrimitiveId, HistoryOsmPrimitive>();
+    private final Map<PrimitiveId, ChangesetModificationType> modificationTypes = new HashMap<PrimitiveId, ChangesetModificationType>();
 
     /**
      * Remembers a history primitive with the given modification type

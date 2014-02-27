@@ -14,7 +14,7 @@ package org.openstreetmap.josm.gui.io;
  */
 public class UploadStrategySpecification  {
     /** indicates that the chunk size isn't specified */
-    static public final int UNSPECIFIED_CHUNK_SIZE = -1;
+    public static final int UNSPECIFIED_CHUNK_SIZE = -1;
 
     private UploadStrategy strategy;
     private int chunkSize;

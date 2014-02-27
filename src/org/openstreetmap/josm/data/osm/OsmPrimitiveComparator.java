@@ -9,8 +9,8 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 
 /** Comparator, comparing by type and objects display names */
 public class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
-    final private Map<OsmPrimitive, String> cache= new HashMap<OsmPrimitive, String>();
-    final private DefaultNameFormatter df = DefaultNameFormatter.getInstance();
+    private final Map<OsmPrimitive, String> cache= new HashMap<OsmPrimitive, String>();
+    private final DefaultNameFormatter df = DefaultNameFormatter.getInstance();
     public boolean relationsFirst = false;
 
     private String cachedName(OsmPrimitive p) {
@@ -25,8 +25,7 @@ public class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
     private int compareName(OsmPrimitive a, OsmPrimitive b) {
         String an = cachedName(a);
         String bn = cachedName(b);
-        // make sure display names starting with digits are the end of the
-        // list
+        // make sure display names starting with digits are the end of the list
         if (Character.isDigit(an.charAt(0)) && Character.isDigit(bn.charAt(0)))
             return an.compareTo(bn);
         else if (Character.isDigit(an.charAt(0)) && !Character.isDigit(bn.charAt(0)))

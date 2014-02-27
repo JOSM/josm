@@ -404,13 +404,13 @@ public final class OrthogonalizeAction extends JosmAction {
      * Class contains everything we need to know about a singe way.
      */
     private static class WayData {
-        final public Way way;             // The assigned way
-        final public int nSeg;            // Number of Segments of the Way
-        final public int nNode;           // Number of Nodes of the Way
+        public final Way way;             // The assigned way
+        public final int nSeg;            // Number of Segments of the Way
+        public final int nNode;           // Number of Nodes of the Way
         public Direction[] segDirections; // Direction of the segments
         // segment i goes from node i to node (i+1)
         public EastNorth segSum;          // (Vector-)sum of all horizontal segments plus the sum of all vertical
-        //     segments turned by 90 degrees
+        // segments turned by 90 degrees
         public double heading;            // heading of segSum == approximate heading of the way
         public WayData(Way pWay) {
             way = pWay;

@@ -24,7 +24,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
  *
  */
 public class UploadedObjectsSummaryPanel extends JPanel {
-    static public final String NUM_OBJECTS_TO_UPLOAD_PROP = UploadedObjectsSummaryPanel.class.getName() + ".numObjectsToUpload";
+    public static final String NUM_OBJECTS_TO_UPLOAD_PROP = UploadedObjectsSummaryPanel.class.getName() + ".numObjectsToUpload";
 
     /** the list with the added primitives */
     private PrimitiveList lstAdd;

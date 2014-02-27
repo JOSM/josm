@@ -24,12 +24,12 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Common intervals
      */
-    final static public int INTERVAL_ALWAYS = -1;
-    final static public int INTERVAL_HOURLY = 60*60;
-    final static public int INTERVAL_DAILY = INTERVAL_HOURLY * 24;
-    final static public int INTERVAL_WEEKLY = INTERVAL_DAILY * 7;
-    final static public int INTERVAL_MONTHLY = INTERVAL_WEEKLY * 4;
-    final static public int INTERVAL_NEVER = Integer.MAX_VALUE;
+    public static final int INTERVAL_ALWAYS = -1;
+    public static final int INTERVAL_HOURLY = 60*60;
+    public static final int INTERVAL_DAILY = INTERVAL_HOURLY * 24;
+    public static final int INTERVAL_WEEKLY = INTERVAL_DAILY * 7;
+    public static final int INTERVAL_MONTHLY = INTERVAL_WEEKLY * 4;
+    public static final int INTERVAL_NEVER = Integer.MAX_VALUE;
 
     /**
      * Where the data will be stored
@@ -39,17 +39,17 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * The ident that identifies the stored file. Includes file-ending.
      */
-    final private String ident;
+    private final String ident;
 
     /**
      * The (file-)path where the data will be stored
      */
-    final private File path;
+    private final File path;
 
     /**
      * How often to update the cached version
      */
-    final private int updateInterval;
+    private final int updateInterval;
 
     /**
      * This function will be executed when an update is required. It has to be implemented by the

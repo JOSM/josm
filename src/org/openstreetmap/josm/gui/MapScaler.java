@@ -40,7 +40,7 @@ public class MapScaler extends JComponent implements Helpful {
         g.drawString("0", 0, 23);
     }
 
-    static public Color getColor() {
+    public static Color getColor() {
         return Main.pref.getColor(marktr("scale"), Color.white);
     }
 

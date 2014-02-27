@@ -79,14 +79,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class LayerListDialog extends ToggleDialog {
     /** the unique instance of the dialog */
-    static private LayerListDialog instance;
+    private static LayerListDialog instance;
 
     /**
      * Creates the instance of the dialog. It's connected to the map frame <code>mapFrame</code>
      *
      * @param mapFrame the map frame
      */
-    static public void createInstance(MapFrame mapFrame) {
+    public static void createInstance(MapFrame mapFrame) {
         if (instance != null)
             throw new IllegalStateException("Dialog was already created");
         instance = new LayerListDialog(mapFrame);
@@ -99,7 +99,7 @@ public class LayerListDialog extends ToggleDialog {
      * @throws IllegalStateException thrown, if the dialog is not created yet
      * @see #createInstance(MapFrame)
      */
-    static public LayerListDialog getInstance() throws IllegalStateException {
+    public static LayerListDialog getInstance() throws IllegalStateException {
         if (instance == null)
             throw new IllegalStateException("Dialog not created yet. Invoke createInstance() first");
         return instance;

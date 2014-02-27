@@ -33,7 +33,7 @@ public class MirroredInputStream extends InputStream {
     InputStream fs = null;
     File file = null;
 
-    public final static long DEFAULT_MAXTIME = -1L;
+    public static final long DEFAULT_MAXTIME = -1L;
 
     /**
      * Constructs an input stream from a given filename, URL or internal resource.

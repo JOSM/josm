@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
 
 public class OsmServerUserInfoReader extends OsmServerReader {
 
-    static protected String getAttribute(Node node, String name) {
+    protected static String getAttribute(Node node, String name) {
         return node.getAttributes().getNamedItem(name).getNodeValue();
     }
 
@@ -34,7 +34,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
      * @return The user info
      * @throws OsmDataParsingException if parsing goes wrong
      */
-    static public UserInfo buildFromXML(Document document) throws OsmDataParsingException {
+    public static UserInfo buildFromXML(Document document) throws OsmDataParsingException {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xpath = factory.newXPath();

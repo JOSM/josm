@@ -49,7 +49,7 @@ public enum UploadStrategy {
     /**
      * the default upload strategy
      */
-    public final static UploadStrategy DEFAULT_UPLOAD_STRATEGY = SINGLE_REQUEST_STRATEGY;
+    public static final UploadStrategy DEFAULT_UPLOAD_STRATEGY = SINGLE_REQUEST_STRATEGY;
 
     /**
      * Replies the upload strategy currently configured in the preferences.

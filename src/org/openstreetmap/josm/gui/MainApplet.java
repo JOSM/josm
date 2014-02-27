@@ -35,7 +35,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class MainApplet extends JApplet {
 
-    final static JFrame frame = new JFrame("Java OpenStreetMap Editor");
+    static final JFrame frame = new JFrame("Java OpenStreetMap Editor");
 
     public static final class UploadPreferencesAction extends JosmAction {
         /**
@@ -60,7 +60,7 @@ public class MainApplet extends JApplet {
         }
     }
 
-    private final static String[][] paramInfo = {
+    private static final String[][] paramInfo = {
         {"username", tr("string"), tr("Name of the user.")},
         {"password", tr("string"), tr("OSM Password.")},
         {"geometry", tr("string"), tr("Resize the applet to the given geometry (format: WIDTHxHEIGHT)")},

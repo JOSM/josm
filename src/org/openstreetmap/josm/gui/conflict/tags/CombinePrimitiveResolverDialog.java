@@ -86,7 +86,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class CombinePrimitiveResolverDialog extends JDialog {
 
     /** the unique instance of the dialog */
-    static private CombinePrimitiveResolverDialog instance;
+    private static CombinePrimitiveResolverDialog instance;
 
     /**
      * Replies the unique instance of the dialog

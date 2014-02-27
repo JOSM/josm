@@ -31,20 +31,19 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
-    private final static Color colorError = new Color(255,197,197);
-    private final static String separator = System.getProperty("file.separator");
-    private final static String ellipsis = "…" + separator;
+    private static final Color colorError = new Color(255,197,197);
+    private static final String separator = System.getProperty("file.separator");
+    private static final String ellipsis = "…" + separator;
 
     private final JLabel lblLayerName = new JLabel();
     private final JLabel lblFilename = new JLabel("");
     private final JosmTextField tfFilename = new JosmTextField();
     private final JButton btnFileChooser = new JButton(new LaunchFileChooserAction());
 
-    private final static GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
+    private static final GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
     private CopyOnWriteArrayList<CellEditorListener> listeners;
     private File value;
-
 
     /** constructor that sets the default on each element **/
     public LayerNameAndFilePathTableCell() {
@@ -60,7 +59,8 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         tfFilename.setPreferredSize(new Dimension(tfFilename.getPreferredSize().width, 19));
         tfFilename.addFocusListener(
                 new FocusAdapter() {
-                    @Override public void focusGained(FocusEvent e) {
+                    @Override
+                    public void focusGained(FocusEvent e) {
                         tfFilename.selectAll();
                     }
                 }

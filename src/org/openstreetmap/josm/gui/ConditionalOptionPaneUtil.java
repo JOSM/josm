@@ -112,7 +112,7 @@ public final class ConditionalOptionPaneUtil {
      *
      * @return the option selected by user. {@link JOptionPane#CLOSED_OPTION} if the dialog was closed.
      */
-    static public int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, Object [] options, Object defaultOption) throws HeadlessException {
+    public static int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, Object [] options, Object defaultOption) throws HeadlessException {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret;
@@ -155,7 +155,7 @@ public final class ConditionalOptionPaneUtil {
      * @see JOptionPane#WARNING_MESSAGE
      * @see JOptionPane#ERROR_MESSAGE
      */
-    static public boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
+    public static boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret == trueOption;
@@ -189,7 +189,7 @@ public final class ConditionalOptionPaneUtil {
      * @see JOptionPane#WARNING_MESSAGE
      * @see JOptionPane#ERROR_MESSAGE
      */
-    static public void showMessageDialog(String preferenceKey, Component parent, Object message, String title,int messageType) {
+    public static void showMessageDialog(String preferenceKey, Component parent, Object message, String title,int messageType) {
         if (getDialogReturnValue(preferenceKey) == Integer.MAX_VALUE)
             return;
         MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));

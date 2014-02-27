@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class Version {
     /** constant to indicate that the current build isn't assigned a JOSM version number */
-    static public final int JOSM_UNKNOWN_VERSION = 0;
+    public static final int JOSM_UNKNOWN_VERSION = 0;
 
     /** the unique instance */
     private static Version instance;
@@ -33,7 +33,7 @@ public class Version {
      * @param resource the resource url to load
      * @return  the content of the resource file; null, if an error occurred
      */
-    static public String loadResourceFile(URL resource) {
+    public static String loadResourceFile(URL resource) {
         if (resource == null) return null;
         String s = null;
         try {
@@ -59,8 +59,7 @@ public class Version {
      *
      * @return the unique instance of the version information
      */
-
-    static public Version getInstance() {
+    public static Version getInstance() {
         if (instance == null) {
             instance = new Version();
             instance.init();

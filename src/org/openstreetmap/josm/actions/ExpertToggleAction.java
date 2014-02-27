@@ -27,7 +27,7 @@ public class ExpertToggleAction extends ToggleAction {
 
     private static final ExpertToggleAction INSTANCE = new ExpertToggleAction();
 
-    private synchronized static void fireExpertModeChanged(boolean isExpert) {
+    private static synchronized void fireExpertModeChanged(boolean isExpert) {
         {
             Iterator<WeakReference<ExpertModeChangeListener>> it = listeners.iterator();
             while (it.hasNext()) {
@@ -63,7 +63,7 @@ public class ExpertToggleAction extends ToggleAction {
         addExpertModeChangeListener(listener, false);
     }
 
-    public synchronized static void addExpertModeChangeListener(ExpertModeChangeListener listener, boolean fireWhenAdding) {
+    public static synchronized void addExpertModeChangeListener(ExpertModeChangeListener listener, boolean fireWhenAdding) {
         if (listener == null) return;
         for (WeakReference<ExpertModeChangeListener> wr : listeners) {
             // already registered ? => abort
@@ -80,7 +80,7 @@ public class ExpertToggleAction extends ToggleAction {
      *
      * @param listener the listener. Ignored if null.
      */
-    public synchronized static void removeExpertModeChangeListener(ExpertModeChangeListener listener) {
+    public static synchronized void removeExpertModeChangeListener(ExpertModeChangeListener listener) {
         if (listener == null) return;
         Iterator<WeakReference<ExpertModeChangeListener>> it = listeners.iterator();
         while (it.hasNext()) {
@@ -93,7 +93,7 @@ public class ExpertToggleAction extends ToggleAction {
         }
     }
 
-    public synchronized static void addVisibilitySwitcher(Component c) {
+    public static synchronized void addVisibilitySwitcher(Component c) {
         if (c == null) return;
         for (WeakReference<Component> wr : visibilityToggleListeners) {
             // already registered ? => abort
@@ -103,7 +103,7 @@ public class ExpertToggleAction extends ToggleAction {
         c.setVisible(isExpert());
     }
 
-    public synchronized static void removeVisibilitySwitcher(Component c) {
+    public static synchronized void removeVisibilitySwitcher(Component c) {
         if (c == null) return;
         Iterator<WeakReference<Component>> it = visibilityToggleListeners.iterator();
         while (it.hasNext()) {

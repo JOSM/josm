@@ -513,13 +513,13 @@ public class FileDrop
      * @author  rob@iharder.net
      * @version 1.2
      */
-    public static class TransferableObject implements Transferable
-    {
+    public static class TransferableObject implements Transferable {
+
         /**
          * The MIME type for {@link #DATA_FLAVOR} is
          * <tt>application/x-net.iharder.dnd.TransferableObject</tt>.
          */
-        public final static String MIME_TYPE = "application/x-net.iharder.dnd.TransferableObject";
+        public static final String MIME_TYPE = "application/x-net.iharder.dnd.TransferableObject";
 
         /**
          * The default {@link java.awt.datatransfer.DataFlavor} for
@@ -528,7 +528,7 @@ public class FileDrop
          * and the MIME type
          * <tt>application/x-net.iharder.dnd.TransferableObject</tt>.
          */
-        public final static DataFlavor DATA_FLAVOR =
+        public static final DataFlavor DATA_FLAVOR =
             new DataFlavor( FileDrop.TransferableObject.class, MIME_TYPE );
 
         private Fetcher fetcher;

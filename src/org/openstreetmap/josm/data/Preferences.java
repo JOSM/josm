@@ -153,7 +153,7 @@ public class Preferences {
      *
      * @param <T> The setting type
      */
-    abstract public static class AbstractSetting<T> implements Setting<T> {
+    public abstract static class AbstractSetting<T> implements Setting<T> {
         protected final T value;
         /**
          * Constructs a new {@code AbstractSetting} with the given value
@@ -1306,7 +1306,7 @@ public class Preferences {
     /**
      * The default plugin site
      */
-    private final static String[] DEFAULT_PLUGIN_SITE = {Main.JOSM_WEBSITE+"/plugin%<?plugins=>"};
+    private static final String[] DEFAULT_PLUGIN_SITE = {Main.JOSM_WEBSITE+"/plugin%<?plugins=>"};
 
     /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded.

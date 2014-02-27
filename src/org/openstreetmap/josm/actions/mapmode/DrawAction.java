@@ -81,8 +81,8 @@ import org.openstreetmap.josm.tools.Utils;
  * Mapmode to add nodes, create and extend ways.
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
-    final private Cursor cursorJoinNode;
-    final private Cursor cursorJoinWay;
+    private final Cursor cursorJoinNode;
+    private final Cursor cursorJoinWay;
 
     private Node lastUsedNode = null;
     private static final double PHI = Math.toRadians(90);

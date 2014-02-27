@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * A projection choice, that offers a list of projections in a combo-box.
  */
-abstract public class ListProjectionChoice extends AbstractProjectionChoice {
+public abstract class ListProjectionChoice extends AbstractProjectionChoice {
 
     protected int index;        // 0-based index
     protected int defaultIndex;
@@ -53,12 +53,12 @@ abstract public class ListProjectionChoice extends AbstractProjectionChoice {
     /**
      * Convert 0-based index to preference value.
      */
-    abstract protected String indexToZone(int index);
+    protected abstract String indexToZone(int index);
 
     /**
      * Convert preference value to 0-based index.
      */
-    abstract protected int zoneToIndex(String zone);
+    protected abstract int zoneToIndex(String zone);
 
     @Override
     public void setPreferences(Collection<String> args) {

@@ -822,7 +822,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * @param unitvector A unit vector denoting the direction of the line
      * @param g the Graphics2D object  it will be used on
      */
-    static private Line2D createSemiInfiniteLine(Point2D start, Point2D unitvector, Graphics2D g) {
+    private static Line2D createSemiInfiniteLine(Point2D start, Point2D unitvector, Graphics2D g) {
         Rectangle bounds = g.getDeviceConfiguration().getBounds();
         try {
             AffineTransform invtrans = g.getTransform().createInverse();

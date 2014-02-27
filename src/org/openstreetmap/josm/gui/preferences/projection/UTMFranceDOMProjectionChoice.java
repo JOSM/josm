@@ -10,19 +10,19 @@ import org.openstreetmap.josm.Main;
 
 public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
 
-    private final static String FortMarigotName = tr("Guadeloupe Fort-Marigot 1949");
-    private final static String SainteAnneName = tr("Guadeloupe Ste-Anne 1948");
-    private final static String MartiniqueName = tr("Martinique Fort Desaix 1952");
-    private final static String Reunion92Name = tr("Reunion RGR92");
-    private final static String Guyane92Name = tr("Guyane RGFG95");
-    private final static String[] utmGeodesicsNames = { FortMarigotName, SainteAnneName, MartiniqueName, Reunion92Name, Guyane92Name};
+    private static final String FortMarigotName = tr("Guadeloupe Fort-Marigot 1949");
+    private static final String SainteAnneName = tr("Guadeloupe Ste-Anne 1948");
+    private static final String MartiniqueName = tr("Martinique Fort Desaix 1952");
+    private static final String Reunion92Name = tr("Reunion RGR92");
+    private static final String Guyane92Name = tr("Guyane RGFG95");
+    private static final String[] utmGeodesicsNames = { FortMarigotName, SainteAnneName, MartiniqueName, Reunion92Name, Guyane92Name};
 
-    private final static Integer FortMarigotEPSG = 2969;
-    private final static Integer SainteAnneEPSG = 2970;
-    private final static Integer MartiniqueEPSG = 2973;
-    private final static Integer ReunionEPSG = 2975;
-    private final static Integer GuyaneEPSG = 2972;
-    private final static Integer[] utmEPSGs = { FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG, ReunionEPSG, GuyaneEPSG };
+    private static final Integer FortMarigotEPSG = 2969;
+    private static final Integer SainteAnneEPSG = 2970;
+    private static final Integer MartiniqueEPSG = 2973;
+    private static final Integer ReunionEPSG = 2975;
+    private static final Integer GuyaneEPSG = 2972;
+    private static final Integer[] utmEPSGs = { FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG, ReunionEPSG, GuyaneEPSG };
 
     /**
      * Constructs a new {@code UTMFranceDOMProjectionChoice}.

@@ -27,7 +27,7 @@ public abstract class AbstractMergeAction extends JosmAction {
      * the list cell renderer used to render layer list entries
      *
      */
-    static public class LayerListCellRenderer extends DefaultListCellRenderer {
+    public static class LayerListCellRenderer extends DefaultListCellRenderer {
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,

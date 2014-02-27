@@ -110,7 +110,7 @@ public class SplashScreen extends JFrame {
         return progressMonitor;
     }
 
-    static private class SplashScreenProgressRenderer extends JPanel implements ProgressRenderer {
+    private static class SplashScreenProgressRenderer extends JPanel implements ProgressRenderer {
         private JLabel lblTaskTitle;
         private JLabel lblCustomText;
         private JProgressBar progressBar;

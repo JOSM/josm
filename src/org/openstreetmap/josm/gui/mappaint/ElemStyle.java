@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
-abstract public class ElemStyle implements StyleKeys {
+public abstract class ElemStyle implements StyleKeys {
 
     protected static final String[] ICON_KEYS = {"icon-image", "icon-width", "icon-height", "icon-opacity"};
     protected static final String[] REPEAT_IMAGE_KEYS = {"repeat-image", "repeat-image-width", "repeat-image-height", "repeat-image-opacity"};
@@ -90,15 +90,15 @@ abstract public class ElemStyle implements StyleKeys {
      * FIXME: cached preference values are not updated if the user changes them during
      * a JOSM session. Should have a listener listening to preference changes.
      */
-    static private String DEFAULT_FONT_NAME = null;
-    static private Float DEFAULT_FONT_SIZE = null;
-    static private void initDefaultFontParameters() {
+    private static String DEFAULT_FONT_NAME = null;
+    private static Float DEFAULT_FONT_SIZE = null;
+    private static void initDefaultFontParameters() {
         if (DEFAULT_FONT_NAME != null) return; // already initialized - skip initialization
         DEFAULT_FONT_NAME = Main.pref.get("mappaint.font", "Helvetica");
         DEFAULT_FONT_SIZE = (float) Main.pref.getInteger("mappaint.fontsize", 8);
     }
 
-    static private class FontDescriptor {
+    private static class FontDescriptor {
         public String name;
         public int style;
         public int size;
@@ -140,8 +140,8 @@ abstract public class ElemStyle implements StyleKeys {
         }
     }
 
-    static private final Map<FontDescriptor, Font> FONT_MAP = new HashMap<FontDescriptor, Font>();
-    static private Font getCachedFont(FontDescriptor fd) {
+    private static final Map<FontDescriptor, Font> FONT_MAP = new HashMap<FontDescriptor, Font>();
+    private static Font getCachedFont(FontDescriptor fd) {
         Font f = FONT_MAP.get(fd);
         if (f != null) return f;
         f = new Font(fd.name, fd.style, fd.size);
@@ -149,7 +149,7 @@ abstract public class ElemStyle implements StyleKeys {
         return f;
     }
 
-    static private Font getCachedFont(String name, int style, int size){
+    private static Font getCachedFont(String name, int style, int size){
         return getCachedFont(new FontDescriptor(name, style, size));
     }
 

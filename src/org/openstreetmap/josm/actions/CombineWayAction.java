@@ -3,7 +3,6 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
@@ -257,7 +256,7 @@ public class CombineWayAction extends JosmAction {
     /**
      * A pair of nodes.
      */
-    static public class NodePair {
+    public static class NodePair {
         private final Node a;
         private final Node b;
         
@@ -375,8 +374,8 @@ public class CombineWayAction extends JosmAction {
         }
     }
 
-    static public class NodeGraph {
-        static public List<NodePair> buildNodePairs(Way way, boolean directed) {
+    public static class NodeGraph {
+        public static List<NodePair> buildNodePairs(Way way, boolean directed) {
             List<NodePair> pairs = new ArrayList<NodePair>();
             for (Pair<Node,Node> pair: way.getNodePairs(false /* don't sort */)) {
                 pairs.add(new NodePair(pair));
@@ -387,7 +386,7 @@ public class CombineWayAction extends JosmAction {
             return pairs;
         }
 
-        static public List<NodePair> buildNodePairs(List<Way> ways, boolean directed) {
+        public static List<NodePair> buildNodePairs(List<Way> ways, boolean directed) {
             List<NodePair> pairs = new ArrayList<NodePair>();
             for (Way w: ways) {
                 pairs.addAll(buildNodePairs(w, directed));
@@ -395,7 +394,7 @@ public class CombineWayAction extends JosmAction {
             return pairs;
         }
 
-        static public List<NodePair> eliminateDuplicateNodePairs(List<NodePair> pairs) {
+        public static List<NodePair> eliminateDuplicateNodePairs(List<NodePair> pairs) {
             List<NodePair> cleaned = new ArrayList<NodePair>();
             for(NodePair p: pairs) {
                 if (!cleaned.contains(p) && !cleaned.contains(p.swap())) {
@@ -405,7 +404,7 @@ public class CombineWayAction extends JosmAction {
             return cleaned;
         }
 
-        static public NodeGraph createDirectedGraphFromNodePairs(List<NodePair> pairs) {
+        public static NodeGraph createDirectedGraphFromNodePairs(List<NodePair> pairs) {
             NodeGraph graph = new NodeGraph();
             for (NodePair pair: pairs) {
                 graph.add(pair);
@@ -413,7 +412,7 @@ public class CombineWayAction extends JosmAction {
             return graph;
         }
 
-        static public NodeGraph createDirectedGraphFromWays(Collection<Way> ways) {
+        public static NodeGraph createDirectedGraphFromWays(Collection<Way> ways) {
             NodeGraph graph = new NodeGraph();
             for (Way w: ways) {
                 graph.add(buildNodePairs(w, true /* directed */));
@@ -421,7 +420,7 @@ public class CombineWayAction extends JosmAction {
             return graph;
         }
 
-        static public NodeGraph createUndirectedGraphFromNodeList(List<NodePair> pairs) {
+        public static NodeGraph createUndirectedGraphFromNodeList(List<NodePair> pairs) {
             NodeGraph graph = new NodeGraph();
             for (NodePair pair: pairs) {
                 graph.add(pair);

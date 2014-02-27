@@ -16,7 +16,7 @@ public class OsmApiPrimitiveGoneException extends OsmApiException{
     /**
      * The regexp pattern for the error header replied by the OSM API
      */
-    static public final String ERROR_HEADER_PATTERN = "The (\\S+) with the id (\\d+) has already been deleted";
+    public static final String ERROR_HEADER_PATTERN = "The (\\S+) with the id (\\d+) has already been deleted";
     /** the type of the primitive which is gone on the server */
     private OsmPrimitiveType type;
     /** the id of the primitive */

@@ -34,7 +34,7 @@ public final class LanguageInfo {
      * base language is identical to default or english
      * @since 5915
      */
-    static public String getWikiLanguagePrefix(LocaleType type) {
+    public static String getWikiLanguagePrefix(LocaleType type) {
         if(type == LocaleType.ENGLISH)
           return "";
 
@@ -59,7 +59,7 @@ public final class LanguageInfo {
      * @see Locale#getDefault()
      * @see #getWikiLanguagePrefix(LocaleType)
      */
-    static public String getWikiLanguagePrefix() {
+    public static String getWikiLanguagePrefix() {
         return getWikiLanguagePrefix(LocaleType.DEFAULT);
     }
 
@@ -69,7 +69,7 @@ public final class LanguageInfo {
      * @return the JOSM locale code for the default locale
      * @see #getJOSMLocaleCode(Locale)
      */
-    static public String getJOSMLocaleCode() {
+    public static String getJOSMLocaleCode() {
         return getJOSMLocaleCode(Locale.getDefault());
     }
 
@@ -83,7 +83,7 @@ public final class LanguageInfo {
      * @param locale the locale. Replies "en" if null.
      * @return the JOSM code for the given locale
      */
-    static public String getJOSMLocaleCode(Locale locale) {
+    public static String getJOSMLocaleCode(Locale locale) {
         if (locale == null) return "en";
         String full = locale.toString();
         if (full.equals("iw_IL"))
@@ -105,7 +105,7 @@ public final class LanguageInfo {
      * @param localeName the locale code.
      * @return the resulting locale
      */
-    static public Locale getLocale(String localeName) {
+    public static Locale getLocale(String localeName) {
         if (localeName.equals("he")) {
             localeName = "iw_IL";
         }
@@ -122,11 +122,11 @@ public final class LanguageInfo {
         return l;
     }
 
-    static public String getLanguageCodeXML() {
+    public static String getLanguageCodeXML() {
         return getJOSMLocaleCode()+".";
     }
     
-    static public String getLanguageCodeManifest() {
+    public static String getLanguageCodeManifest() {
         return getJOSMLocaleCode()+"_";
     }
 }

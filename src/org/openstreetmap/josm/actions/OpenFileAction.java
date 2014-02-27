@@ -82,17 +82,17 @@ public class OpenFileAction extends DiskAccessAction {
      * Open a list of files. The complete list will be passed to batch importers.
      * @param fileList A list of files
      */
-    static public void openFiles(List<File> fileList) {
+    public static void openFiles(List<File> fileList) {
         openFiles(fileList, false);
     }
 
-    static public void openFiles(List<File> fileList, boolean recordHistory) {
+    public static void openFiles(List<File> fileList, boolean recordHistory) {
         OpenFileTask task = new OpenFileTask(fileList, null);
         task.setRecordHistory(recordHistory);
         Main.worker.submit(task);
     }
 
-    static public class OpenFileTask extends PleaseWaitRunnable {
+    public static class OpenFileTask extends PleaseWaitRunnable {
         private List<File> files;
         private List<File> successfullyOpenedFiles = new ArrayList<File>();
         private FileFilter fileFilter;

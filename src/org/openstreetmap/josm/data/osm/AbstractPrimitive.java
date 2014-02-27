@@ -674,7 +674,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     /**
      * What to do, when the tags have changed by one of the tag-changing methods.
      */
-    abstract protected void keysChangedImpl(Map<String, String> originalKeys);
+    protected abstract void keysChangedImpl(Map<String, String> originalKeys);
 
     /**
      * Replies the name of this primitive. The default implementation replies the value

@@ -24,9 +24,9 @@ public final class StyleCache {
     /* styles for each scale range */
     private final List<StyleList> data;
 
-    private final static Storage<StyleCache> internPool = new Storage<StyleCache>(); // TODO: clean up the intern pool from time to time (after purge or layer removal)
+    private static final Storage<StyleCache> internPool = new Storage<StyleCache>(); // TODO: clean up the intern pool from time to time (after purge or layer removal)
 
-    public final static StyleCache EMPTY_STYLECACHE = (new StyleCache()).intern();
+    public static final StyleCache EMPTY_STYLECACHE = (new StyleCache()).intern();
 
     private StyleCache() {
         bd = new ArrayList<Double>();

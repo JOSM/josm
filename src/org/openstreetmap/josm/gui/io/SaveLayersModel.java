@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public class SaveLayersModel extends DefaultTableModel {
-    static final public String MODE_PROP = SaveLayerInfo.class.getName() + ".mode";
+    public static final String MODE_PROP = SaveLayerInfo.class.getName() + ".mode";
     public enum Mode {
         EDITING_DATA,
         UPLOADING_AND_SAVING
@@ -28,6 +28,9 @@ public class SaveLayersModel extends DefaultTableModel {
     private static final int columnFilename = 0;
     private static final int columnActions = 2;
 
+    /**
+     * Constructs a new {@code SaveLayersModel}.
+     */
     public SaveLayersModel() {
         mode = Mode.EDITING_DATA;
         support = new PropertyChangeSupport(this);

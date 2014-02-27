@@ -45,7 +45,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     /**
      * The property for the upload strategy
      */
-    public final static String UPLOAD_STRATEGY_SPECIFICATION_PROP =
+    public static final String UPLOAD_STRATEGY_SPECIFICATION_PROP =
         UploadStrategySelectionPanel.class.getName() + ".uploadStrategySpecification";
 
     private static final Color BG_COLOR_ERROR = new Color(255,224,224);

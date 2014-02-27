@@ -58,7 +58,7 @@ public class OsmApi extends OsmConnection {
     /**
      * Maximum number of retries to send a request in case of HTTP 500 errors or timeouts
      */
-    static public final int DEFAULT_MAX_NUM_RETRIES = 5;
+    public static final int DEFAULT_MAX_NUM_RETRIES = 5;
 
     /**
      * Maximum number of concurrent download threads, imposed by
@@ -66,13 +66,13 @@ public class OsmApi extends OsmConnection {
      * OSM API usage policy.</a>
      * @since 5386
      */
-    static public final int MAX_DOWNLOAD_THREADS = 2;
+    public static final int MAX_DOWNLOAD_THREADS = 2;
 
     /**
      * Default URL of the standard OSM API.
      * @since 5422
      */
-    static public final String DEFAULT_API_URL = "http://api.openstreetmap.org/api";
+    public static final String DEFAULT_API_URL = "http://api.openstreetmap.org/api";
 
     // The collection of instantiated OSM APIs
     private static Map<String, OsmApi> instances = new HashMap<String, OsmApi>();
@@ -87,7 +87,7 @@ public class OsmApi extends OsmConnection {
      * @throws IllegalArgumentException thrown, if serverUrl is null
      *
      */
-    static public OsmApi getOsmApi(String serverUrl) {
+    public static OsmApi getOsmApi(String serverUrl) {
         OsmApi api = instances.get(serverUrl);
         if (api == null) {
             api = new OsmApi(serverUrl);
@@ -101,7 +101,7 @@ public class OsmApi extends OsmConnection {
      *
      * @return the OsmApi
      */
-    static public OsmApi getOsmApi() {
+    public static OsmApi getOsmApi() {
         String serverUrl = Main.pref.get("osm-server.url", DEFAULT_API_URL);
         return getOsmApi(serverUrl);
     }

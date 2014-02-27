@@ -119,7 +119,8 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         }
     }
 
-    @Override public void exitMode() {
+    @Override
+    public void exitMode() {
         super.exitMode();
         Main.map.mapView.removeMouseListener(this);
         Main.map.mapView.removeMouseMotionListener(this);
@@ -131,12 +132,13 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         removeHighlighting();
     }
 
-    @Override public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         doActionPerformed(e);
     }
 
-    static public void doActionPerformed(ActionEvent e) {
+    public static void doActionPerformed(ActionEvent e) {
         if(!Main.map.mapView.isActiveLayerDrawable())
             return;
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;

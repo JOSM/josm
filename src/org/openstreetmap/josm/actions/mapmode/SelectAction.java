@@ -74,7 +74,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     enum Mode { move, rotate, scale, select }
 
     // contains all possible cases the cursor can be in the SelectAction
-    static private enum SelectActionCursor {
+    private static enum SelectActionCursor {
         rect("normal", "selection"),
         rect_add("normal", "select_add"),
         rect_rm("normal", "select_remove"),
@@ -665,10 +665,9 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      * thresholds have been exceeded) and is still in progress (i.e. mouse button
      * still pressed)
      */
-    final private boolean dragInProgress() {
+    private final boolean dragInProgress() {
         return didMouseDrag && startingDraggingPos != null;
     }
-
 
     /**
      * Create or update data modification command while dragging mouse - implementation of
@@ -831,7 +830,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      * key is pressed. If there is no such node, no action will be done and no error will be
      * reported. If there is, it will execute the merge and add it to the undo buffer.
      */
-    final private void mergePrims(Point p) {
+    private final void mergePrims(Point p) {
         Collection<Node> selNodes = getCurrentDataSet().getSelectedNodes();
         if (selNodes.isEmpty())
             return;
@@ -849,7 +848,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      * Tries to find a node to merge to when in move-merge mode for the current mouse
      * position. Either returns the node or null, if no suitable one is nearby.
      */
-    final private Node findNodeToMergeTo(Point p) {
+    private final Node findNodeToMergeTo(Point p) {
         Collection<Node> target = mv.getNearestNodes(p,
                 getCurrentDataSet().getSelectedNodes(),
                 OsmPrimitive.isSelectablePredicate);

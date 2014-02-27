@@ -28,7 +28,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      *
      * @return the singleton {@link RelationDialogManager}
      */
-    static public RelationDialogManager getRelationDialogManager() {
+    public static RelationDialogManager getRelationDialogManager() {
         if (RelationDialogManager.relationDialogManager == null) {
             RelationDialogManager.relationDialogManager = new RelationDialogManager();
             MapView.addLayerChangeListener(RelationDialogManager.relationDialogManager);
@@ -41,7 +41,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      * is open for a specific relation managed by a specific {@link OsmDataLayer}
      *
      */
-    static private class DialogContext {
+    private static class DialogContext {
         public final Relation relation;
         public final OsmDataLayer layer;
 

@@ -35,7 +35,7 @@ public class ChangesetQuery {
      * @throws ChangesetQueryUrlException thrown if query doesn't consist of valid query parameters
      *
      */
-    static public ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException{
+    public static ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException{
         return new ChangesetQueryUrlParser().parse(query);
     }
 

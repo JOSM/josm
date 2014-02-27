@@ -187,7 +187,7 @@ public class ParallelWays {
         return commands;
     }
 
-    static private Node copyNode(Node source, boolean copyTags) {
+    private static Node copyNode(Node source, boolean copyTags) {
         if (copyTags)
             return new Node(source, true);
         else {

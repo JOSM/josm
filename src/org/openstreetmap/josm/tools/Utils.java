@@ -411,7 +411,7 @@ public final class Utils {
         return null;
     }
 
-    private final static double EPSILON = 1e-11;
+    private static final double EPSILON = 1e-11;
 
     /**
      * Determines if the two given double values are equal (their delta being smaller than a fixed epsilon)
