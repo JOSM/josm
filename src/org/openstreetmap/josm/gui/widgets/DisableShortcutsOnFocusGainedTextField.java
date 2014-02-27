@@ -104,7 +104,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
     private final List<Pair<Action,Shortcut>> unregisteredActionShortcuts = new ArrayList<Pair<Action,Shortcut>>();
     private final Set<JosmAction> disabledMenuActions = new HashSet<JosmAction>();
 
-    protected void init() {
+    protected final void init() {
         addFocusListener(this);
     }
 

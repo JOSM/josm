@@ -19,8 +19,7 @@ public class AreaPrototype extends Prototype {
 
     public AreaPrototype() { init(); }
 
-    public void init()
-    {
+    public final void init() {
         priority = 0;
         range = Range.ZERO_TO_INFINITY;
         closed = false;

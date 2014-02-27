@@ -102,7 +102,7 @@ public class Capabilities {
         }
     }
 
-    public void clear() {
+    public final void clear() {
         capabilities = new HashMap<String, HashMap<String,String>>();
         imageryBlacklist = new ArrayList<String>();
     }

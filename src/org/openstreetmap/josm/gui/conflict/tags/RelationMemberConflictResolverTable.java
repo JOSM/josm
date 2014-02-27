@@ -22,7 +22,7 @@ public class RelationMemberConflictResolverTable extends JTable implements Multi
         build();
     }
 
-    protected void build() {
+    protected final void build() {
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);

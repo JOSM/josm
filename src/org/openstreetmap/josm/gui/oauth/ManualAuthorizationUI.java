@@ -152,7 +152,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
         }
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         add(buildTabbedPreferencesPanel(), BorderLayout.CENTER);
@@ -262,7 +262,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
             Main.worker.submit(task);
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(hasAccessToken());
         }
 

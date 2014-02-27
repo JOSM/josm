@@ -191,7 +191,7 @@ public class PluginInformation {
         this.stage = other.stage;
     }
 
-    private void scanManifest(Manifest manifest, boolean oldcheck) {
+    private final void scanManifest(Manifest manifest, boolean oldcheck) {
         String lang = LanguageInfo.getLanguageCodeManifest();
         Attributes attr = manifest.getMainAttributes();
         className = attr.getValue("Plugin-Class");
@@ -499,7 +499,7 @@ public class PluginInformation {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getName();
     }
 

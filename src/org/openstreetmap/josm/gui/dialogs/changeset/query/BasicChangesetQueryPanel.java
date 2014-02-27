@@ -128,13 +128,16 @@ public class BasicChangesetQueryPanel extends JPanel {
         return pnlInfos;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout(0,5));
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         add(buildInfoPanel(), BorderLayout.NORTH);
         add(buildQueriesPanel(), BorderLayout.CENTER);
     }
 
+    /**
+     * Constructs a new {@code BasicChangesetQueryPanel}.
+     */
     public BasicChangesetQueryPanel() {
         build();
     }

@@ -133,7 +133,7 @@ public class ExpertToggleAction extends ToggleAction {
     }
 
     @Override
-    protected void notifySelectedState() {
+    protected final void notifySelectedState() {
         super.notifySelectedState();
         fireExpertModeChanged(isSelected());
     }

@@ -22,7 +22,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
     private JosmTextField tfUserName;
     private JosmPasswordField tfPassword;
 
-    protected JPanel buildUserNamePasswordPanel() {
+    protected final JPanel buildUserNamePasswordPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 

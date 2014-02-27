@@ -46,7 +46,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     /**
      * builds the UI
      */
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 

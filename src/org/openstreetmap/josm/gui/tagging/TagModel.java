@@ -46,7 +46,7 @@ public class TagModel {
      * sets the name. Converts name to "" if null.
      * @param name the tag name
      */
-    public void setName(String name) {
+    public final void setName(String name) {
         name = (name == null) ? "" : name;
         this.name = name;
     }
@@ -69,7 +69,7 @@ public class TagModel {
      * sets a unique value for this tag. Converts value to "", if null.
      * @param value the value.
      */
-    public void setValue(String value) {
+    public final void setValue(String value) {
         value = (value == null) ? "" : value;
         clearValues();
         this.values.add(value);

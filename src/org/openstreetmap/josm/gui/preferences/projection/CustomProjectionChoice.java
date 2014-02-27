@@ -57,7 +57,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             build(initialText, listener);
         }
 
-        private void build(String initialText, final ActionListener listener) {
+        private final void build(String initialText, final ActionListener listener) {
             input = new JosmTextField(30);
             cbInput = new HistoryComboBox();
             cbInput.setPrototypeDisplayValue(new AutoCompletionListItem("xxxx"));
@@ -95,7 +95,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
                 }
 
                 @Override
-                public boolean isValid() {
+                public final boolean isValid() {
                     try {
                         CustomProjection test = new CustomProjection();
                         test.update(input.getText());

@@ -225,7 +225,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         }
     }
 
-    public void setFileCacheEnabled(boolean enabled) {
+    public final void setFileCacheEnabled(boolean enabled) {
         if (enabled) {
             setTileLoader(cachedLoader);
         } else {
@@ -233,10 +233,9 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         }
     }
 
-    public void setMaxTilesInMemory(int tiles) {
+    public final void setMaxTilesInMemory(int tiles) {
         ((MemoryTileCache) getTileCache()).setCacheSize(tiles);
     }
-
 
     /**
      * Callback for the OsmMapControl. (Re-)Sets the start and end point of the

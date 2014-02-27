@@ -21,7 +21,7 @@ public class TileSelection implements DownloadSelection, PropertyChangeListener 
     private TileSelectionBBoxChooser chooser;
     private DownloadDialog parent;
 
-    protected void build() {
+    protected final void build() {
         chooser = new TileSelectionBBoxChooser();
         chooser.addPropertyChangeListener(this);
     }

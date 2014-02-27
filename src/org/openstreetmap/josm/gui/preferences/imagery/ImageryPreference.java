@@ -495,7 +495,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 updateEnabledState();
             }
 
-            protected void updateEnabledState() {
+            protected final void updateEnabledState() {
                 setEnabled(activeTable.getSelectedRowCount() > 0);
             }
 

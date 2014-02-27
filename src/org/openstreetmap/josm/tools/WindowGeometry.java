@@ -160,7 +160,7 @@ public class WindowGeometry {
         }
     }
 
-    protected void initFromPreferences(String preferenceKey) throws WindowGeometryException {
+    protected final void initFromPreferences(String preferenceKey) throws WindowGeometryException {
         String value = Main.pref.get(preferenceKey);
         if (value == null || value.isEmpty())
             throw new WindowGeometryException(tr("Preference with key ''{0}'' does not exist. Cannot restore window geometry from preferences.", preferenceKey));
@@ -172,7 +172,7 @@ public class WindowGeometry {
         extent.height = parseField(preferenceKey, value, "height");
     }
 
-    protected void initFromWindowGeometry(WindowGeometry other) {
+    protected final void initFromWindowGeometry(WindowGeometry other) {
         this.topLeft = other.topLeft;
         this.extent = other.extent;
     }

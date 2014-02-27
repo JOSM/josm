@@ -63,7 +63,7 @@ public class ListEditor extends ExtendedDialog {
         }));
     }
 
-    protected JPanel build() {
+    protected final JPanel build() {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0,0,5,0));
         ListSettingTableModel listModel = new ListSettingTableModel();

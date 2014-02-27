@@ -192,7 +192,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * Sets the tooltip text of this action.
      * @param tooltip The text to display in tooltip. Can be {@code null}
      */
-    public void setTooltip(String tooltip) {
+    public final void setTooltip(String tooltip) {
         if (tooltip != null) {
             putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
         }

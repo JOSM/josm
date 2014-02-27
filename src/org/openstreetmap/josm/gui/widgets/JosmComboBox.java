@@ -106,7 +106,7 @@ public class JosmComboBox extends JComboBox {
      * @return The value that needs the largest display height on screen.
      * @since 5558
      */
-    protected Object findPrototypeDisplayValue(Collection<?> possibleValues) {
+    protected final Object findPrototypeDisplayValue(Collection<?> possibleValues) {
         Object result = null;
         int maxHeight = -1;
         if (possibleValues != null) {
@@ -153,7 +153,7 @@ public class JosmComboBox extends JComboBox {
         return null;
     }
 
-    protected void init(Object prototype) {
+    protected final void init(Object prototype) {
         if (prototype != null) {
             setPrototypeDisplayValue(prototype);
             int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;

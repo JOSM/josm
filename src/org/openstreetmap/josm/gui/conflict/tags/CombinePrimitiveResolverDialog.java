@@ -165,7 +165,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
     }
 
-    protected void build() {
+    protected final void build() {
         getContentPane().setLayout(new BorderLayout());
         updateTitle();
         spTagConflictTypes = new AutoAdjustingSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -411,7 +411,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             pnlTagConflictResolver.rememberPreferences();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(pnlTagConflictResolver.getModel().getNumConflicts() == 0
                     && pnlRelationMemberConflictResolver.getModel().getNumConflicts() == 0);
         }

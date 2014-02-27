@@ -113,7 +113,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      *
      * @return panel with HTTP proxy configuration
      */
-    protected JPanel buildHttpProxyConfigurationPanel() {
+    protected final JPanel buildHttpProxyConfigurationPanel() {
         JPanel pnl = new JPanel(new GridBagLayout()) {
             @Override
             public Dimension getMinimumSize() {
@@ -189,7 +189,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      *
      * @return panel with SOCKS proxy configuration
      */
-    protected JPanel buildSocksProxyConfigurationPanel() {
+    protected final JPanel buildSocksProxyConfigurationPanel() {
         JPanel pnl = new JPanel(new GridBagLayout()) {
             @Override
             public Dimension getMinimumSize() {
@@ -229,7 +229,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         return pnl;
     }
 
-    protected JPanel buildProxySettingsPanel() {
+    protected final JPanel buildProxySettingsPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -313,7 +313,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     /**
      * Initializes the panel with the values from the preferences
      */
-    public void initFromPreferences() {
+    public final void initFromPreferences() {
         String policy = Main.pref.get(PROXY_POLICY, null);
         ProxyPolicy pp = ProxyPolicy.fromName(policy);
         if (pp == null) {
@@ -364,7 +364,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         }
     }
 
-    protected void updateEnabledState() {
+    protected final void updateEnabledState() {
         boolean isHttpProxy = rbProxyPolicy.get(ProxyPolicy.USE_HTTP_PROXY).isSelected();
         for (Component c: pnlHttpProxyConfigurationPanel.getComponents()) {
             c.setEnabled(isHttpProxy);

@@ -63,7 +63,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         return cbUseDefaultServerUrl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -204,7 +204,7 @@ public class OsmApiUrlInputPanel extends JPanel {
             Main.worker.submit(r);
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             String url = getStrippedApiUrl();
             boolean enabled = !url.isEmpty() && !url.equals(lastTestedUrl);
             if (enabled) {

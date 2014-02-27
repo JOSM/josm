@@ -25,7 +25,7 @@ public class AccessTokenInfoPanel extends JPanel {
     private JosmTextField tfAccessTokenSecret;
     private JCheckBox cbSaveAccessTokenInPreferences;
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 

@@ -97,7 +97,7 @@ public class TagEditorPanel extends JPanel {
     /**
      * builds the GUI
      */
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         JPanel tablePanel = buildTagTableEditorPanel();
         JPanel buttonPanel = buildButtonsPanel();

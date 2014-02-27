@@ -47,7 +47,7 @@ public class RelationMemberConflictResolver extends JPanel {
     private RelationMemberConflictResolverTable tblResolver;
     private JMultilineLabel lblHeader;
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());

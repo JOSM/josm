@@ -443,7 +443,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return types == null || types.contains(TaggingPresetType.RELATION);
     }
 
-    protected void updateEnabledState() {
+    protected final void updateEnabledState() {
         setEnabled(Main.main != null && Main.main.getCurrentDataSet() != null);
     }
 

@@ -569,7 +569,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     @Override
-    protected void setIncomplete(boolean incomplete) {
+    protected final void setIncomplete(boolean incomplete) {
         boolean locked = writeLock();
         try {
             if (dataSet != null && incomplete != this.isIncomplete()) {

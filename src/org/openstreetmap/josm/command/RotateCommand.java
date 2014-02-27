@@ -51,7 +51,7 @@ public class RotateCommand extends TransformNodesCommand {
     /**
      * Get angle between the horizontal axis and the line formed by the pivot and give points.
      **/
-    protected double getAngle(EastNorth currentEN) {
+    protected final double getAngle(EastNorth currentEN) {
         if ( pivot == null )
             return 0.0; // should never happen by contract
         return Math.atan2(currentEN.east()-pivot.east(), currentEN.north()-pivot.north());
@@ -61,7 +61,7 @@ public class RotateCommand extends TransformNodesCommand {
      * Compute new rotation angle and transform nodes accordingly.
      */
     @Override
-    public void handleEvent(EastNorth currentEN) {
+    public final void handleEvent(EastNorth currentEN) {
         double currentAngle = getAngle(currentEN);
         rotationAngle = currentAngle - startAngle;
         transformNodes();

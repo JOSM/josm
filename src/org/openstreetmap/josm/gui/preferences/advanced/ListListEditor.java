@@ -74,7 +74,7 @@ public class ListListEditor extends ExtendedDialog {
         return data;
     }
 
-    protected JPanel build() {
+    protected final JPanel build() {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.std(0,0).span(2).weight(1, 0).insets(0,0,5,10));
 
@@ -157,7 +157,7 @@ public class ListListEditor extends ExtendedDialog {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(entryList.getSelectedIndices().length == 1);
         }
 

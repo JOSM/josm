@@ -72,7 +72,7 @@ public class HistoryNode extends HistoryOsmPrimitive {
      * Replies the coordinates. May be null.
      * @return the coordinates. May be null.
      */
-    public LatLon getCoords() {
+    public final LatLon getCoords() {
         return coords;
     }
 
@@ -80,7 +80,7 @@ public class HistoryNode extends HistoryOsmPrimitive {
      * Sets the coordinates. Can be null.
      * @param coords the coordinates. Can be null.
      */
-    public void setCoords(LatLon coords) {
+    public final void setCoords(LatLon coords) {
         this.coords = coords;
     }
 

@@ -223,7 +223,8 @@ public class BookmarkSelection implements DownloadSelection {
             }
             bookmarks.save();
         }
-        protected void updateEnabledState() {
+
+        protected final void updateEnabledState() {
             setEnabled(bookmarks.getSelectedIndices().length > 0);
         }
         @Override
@@ -260,9 +261,11 @@ public class BookmarkSelection implements DownloadSelection {
                 bookmarks.repaint();
             }
         }
-        protected void updateEnabledState() {
+
+        protected final void updateEnabledState() {
             setEnabled(bookmarks.getSelectedIndices().length == 1);
         }
+
         @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();

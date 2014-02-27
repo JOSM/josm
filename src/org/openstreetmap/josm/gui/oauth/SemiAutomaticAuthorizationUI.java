@@ -50,7 +50,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * build the UI
      */
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         pnlRetrieveRequestToken = new RetrieveRequestTokenPanel();
@@ -186,7 +186,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             return pnl;
 
         }
-        protected void build() {
+        protected final void build() {
             setLayout(new BorderLayout(0,5));
             JLabel lbl = new JLabel(tr("<html>Step 1/3: Retrieve an OAuth Request Token</html>"));
             lbl.setFont(lbl.getFont().deriveFont(16f));
@@ -260,7 +260,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             return pnl;
         }
 
-        protected void build() {
+        protected final void build() {
             setLayout(new BorderLayout());
             add(buildTitlePanel(), BorderLayout.NORTH);
             add(buildContentPanel(), BorderLayout.CENTER);
@@ -339,7 +339,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             return pnl;
         }
 
-        protected void build() {
+        protected final void build() {
             setLayout(new BorderLayout());
             add(buildTitlePanel(), BorderLayout.NORTH);
             add(buildContentPanel(), BorderLayout.CENTER);

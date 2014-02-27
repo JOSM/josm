@@ -9,18 +9,17 @@ public class XmlCondition
     public String value;
     public String boolValue;
 
-    public XmlCondition()
-    {
+    public XmlCondition() {
       init();
     }
-    public XmlCondition(XmlCondition c)
-    {
+
+    public XmlCondition(XmlCondition c) {
       key = c.key;
       value = c.value;
       boolValue = c.boolValue;
     }
-    public String getKey()
-    {
+
+    public String getKey() {
         if(value != null)
             return "n" + key + "=" + value;
         else if(boolValue != null)
@@ -28,18 +27,16 @@ public class XmlCondition
         else
             return "x" + key;
     }
-    public void init()
-    {
+
+    public final void init() {
       key = value = boolValue = null;
     }
 
-    public String toString()
-    {
+    public String toString() {
       return "Rule["+key+","+(boolValue != null ? "b="+boolValue:"v="+value)+"]";
     }
 
-    public void appendCode(StringBuilder sb)
-    {
+    public void appendCode(StringBuilder sb) {
         sb.append("[k=").append(key);
 
         if (boolValue != null)

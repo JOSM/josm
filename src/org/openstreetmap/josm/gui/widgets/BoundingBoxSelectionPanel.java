@@ -43,7 +43,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
         LongitudeValidator.decorate(tfLatLon[3]);
     }
 
-    protected void build() {
+    protected final void build() {
         buildInputFields();
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         setLayout(new GridBagLayout());

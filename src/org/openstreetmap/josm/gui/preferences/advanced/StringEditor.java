@@ -41,7 +41,7 @@ public class StringEditor extends ExtendedDialog {
         return tvalue.getText();
     }
 
-    protected JPanel build(String orig) {
+    protected final JPanel build(String orig) {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0,0,5,0));
 

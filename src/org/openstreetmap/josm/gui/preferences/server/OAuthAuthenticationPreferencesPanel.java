@@ -103,7 +103,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     /**
      * builds the UI
      */
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         GridBagConstraints gc = new GridBagConstraints();
@@ -289,7 +289,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         }
 
-        public void refreshView() {
+        public final void refreshView() {
             String v = OAuthAccessTokenHolder.getInstance().getAccessTokenKey();
             tfAccessTokenKey.setText(v == null? "" : v);
             v = OAuthAccessTokenHolder.getInstance().getAccessTokenSecret();

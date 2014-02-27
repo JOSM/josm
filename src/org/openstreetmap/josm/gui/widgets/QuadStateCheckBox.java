@@ -90,13 +90,14 @@ public class QuadStateCheckBox extends JCheckBox {
     }
 
     /** Do not let anyone add mouse listeners */
-    @Override public void addMouseListener(MouseListener l) { }
+    @Override
+    public void addMouseListener(MouseListener l) { }
     
     /**
      * Set the new state.
      * @param state The new state
      */
-    public void setState(State state) {
+    public final void setState(State state) {
         model.setState(state);
     }
     

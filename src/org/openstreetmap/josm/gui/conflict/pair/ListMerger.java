@@ -259,7 +259,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         return p;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 

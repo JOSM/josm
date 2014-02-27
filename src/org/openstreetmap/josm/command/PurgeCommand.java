@@ -66,7 +66,7 @@ public class PurgeCommand extends Command {
         saveIncomplete(makeIncomplete);
     }
 
-    protected void saveIncomplete(Collection<OsmPrimitive> makeIncomplete) {
+    protected final void saveIncomplete(Collection<OsmPrimitive> makeIncomplete) {
         makeIncompleteData = new Storage<PrimitiveData>(new Storage.PrimitiveIdHash());
         makeIncompleteData_byPrimId = makeIncompleteData.foreignKey(new Storage.PrimitiveIdHash());
 
