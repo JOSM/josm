@@ -853,7 +853,7 @@ public class ImageProvider {
     }
 
     /** 90 degrees in radians units */
-    final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
+    static final double DEGREE_90 = 90.0 * Math.PI / 180.0;
 
     /**
      * Creates a rotated version of the input image.

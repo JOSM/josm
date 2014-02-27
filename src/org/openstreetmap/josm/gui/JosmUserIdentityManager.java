@@ -50,14 +50,14 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public final class JosmUserIdentityManager implements PreferenceChangedListener{
 
-    static private JosmUserIdentityManager instance;
+    private static JosmUserIdentityManager instance;
 
     /**
      * Replies the unique instance of the JOSM user identity manager
      *
      * @return the unique instance of the JOSM user identity manager
      */
-    static public JosmUserIdentityManager getInstance() {
+    public static JosmUserIdentityManager getInstance() {
         if (instance == null) {
             instance = new JosmUserIdentityManager();
             if (OsmApi.isUsingOAuth() && OAuthAccessTokenHolder.getInstance().containsAccessToken()) {

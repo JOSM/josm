@@ -470,7 +470,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * Function to set the maximum number of workers for tile loading to the value defined
      * in preferences.
      */
-    static public void setMaxWorkers() {
+    public static void setMaxWorkers() {
         JobDispatcher.setMaxWorkers(PROP_TMS_JOBS.get());
         JobDispatcher.getInstance().setLIFO(true);
     }

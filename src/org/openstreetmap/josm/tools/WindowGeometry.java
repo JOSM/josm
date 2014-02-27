@@ -30,7 +30,7 @@ public class WindowGeometry {
      * @param extent  the size
      * @return the geometry object
      */
-    static public WindowGeometry centerOnScreen(Dimension extent) {
+    public static WindowGeometry centerOnScreen(Dimension extent) {
         return centerOnScreen(extent, "gui.geometry");
     }
 
@@ -43,7 +43,7 @@ public class WindowGeometry {
      * for whole virtual screen
      * @return the geometry object
      */
-    static public WindowGeometry centerOnScreen(Dimension extent, String preferenceKey) {
+    public static WindowGeometry centerOnScreen(Dimension extent, String preferenceKey) {
         Rectangle size = preferenceKey != null ? getScreenInfo(preferenceKey)
             : getFullScreenInfo();
         Point topLeft = new Point(
@@ -61,7 +61,7 @@ public class WindowGeometry {
      * @param extent the size
      * @return the geometry object
      */
-    static public WindowGeometry centerInWindow(Component reference, Dimension extent) {
+    public static WindowGeometry centerInWindow(Component reference, Dimension extent) {
         Window parentWindow = null;
         while(reference != null && ! (reference instanceof Window) ) {
             reference = reference.getParent();
@@ -81,7 +81,7 @@ public class WindowGeometry {
     /**
      * Exception thrown by the WindowGeometry class if something goes wrong
      */
-    static public class WindowGeometryException extends Exception {
+    public static class WindowGeometryException extends Exception {
         public WindowGeometryException(String message, Throwable cause) {
             super(message, cause);
         }
@@ -177,7 +177,7 @@ public class WindowGeometry {
         this.extent = other.extent;
     }
 
-    static public WindowGeometry mainWindow(String preferenceKey, String arg, boolean maximize) {
+    public static WindowGeometry mainWindow(String preferenceKey, String arg, boolean maximize) {
         Rectangle screenDimension = getScreenInfo("gui.geometry");
         if (arg != null) {
             final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(arg);

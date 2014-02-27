@@ -279,7 +279,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * This is the panel for selecting whether the changeset query should be restricted to
      * open or closed changesets
      */
-    static private class OpenAndCloseStateRestrictionPanel extends JPanel {
+    private static class OpenAndCloseStateRestrictionPanel extends JPanel {
 
         private JRadioButton rbOpenOnly;
         private JRadioButton rbClosedOnly;
@@ -927,7 +927,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
     }
 
-    static private class BBoxRestrictionPanel extends BoundingBoxSelectionPanel {
+    private static class BBoxRestrictionPanel extends BoundingBoxSelectionPanel {
         public BBoxRestrictionPanel() {
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createEmptyBorder(3,3,3,3),

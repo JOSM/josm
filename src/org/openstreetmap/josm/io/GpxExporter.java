@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
 public class GpxExporter extends FileExporter implements GpxConstants {
-    private final static String warningGpl = "<html><font color='red' size='-2'>"
+    private static final String warningGpl = "<html><font color='red' size='-2'>"
         + tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.") + "</html>";
 
     /**

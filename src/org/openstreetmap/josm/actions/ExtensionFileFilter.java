@@ -94,7 +94,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
     private final String description;
     private final String defaultExtension;
 
-    static protected void sort(List<ExtensionFileFilter> filters) {
+    protected static void sort(List<ExtensionFileFilter> filters) {
         Collections.sort(
                 filters,
                 new Comparator<ExtensionFileFilter>() {

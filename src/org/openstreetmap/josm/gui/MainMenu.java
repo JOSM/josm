@@ -384,7 +384,7 @@ public class MainMenu extends JMenuBar {
      * usage is make menus not look broken if separators are used to group the menu and some of
      * these groups are empty.
      */
-    public final static MenuListener menuSeparatorHandler = new MenuListener() {
+    public static final MenuListener menuSeparatorHandler = new MenuListener() {
         @Override
         public void menuCanceled(MenuEvent arg0) {}
         @Override

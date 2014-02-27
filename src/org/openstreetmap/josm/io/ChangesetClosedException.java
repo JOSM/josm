@@ -30,7 +30,7 @@ public class ChangesetClosedException extends OsmTransferException {
     /** the error header pattern for in case of HTTP response 409 indicating
      * that a changeset was closed
      */
-    final static public String ERROR_HEADER_PATTERN = "The changeset (\\d+) was closed at (.*)";
+    public static final String ERROR_HEADER_PATTERN = "The changeset (\\d+) was closed at (.*)";
 
     public static enum Source {
         /**
@@ -56,7 +56,7 @@ public class ChangesetClosedException extends OsmTransferException {
      * @param errorHeader the error header
      * @return true if <code>errorHeader</code> matches with {@link #ERROR_HEADER_PATTERN}
      */
-    static public boolean errorHeaderMatchesPattern(String errorHeader) {
+    public static boolean errorHeaderMatchesPattern(String errorHeader) {
         if (errorHeader == null)
             return false;
         Pattern p = Pattern.compile(ERROR_HEADER_PATTERN);

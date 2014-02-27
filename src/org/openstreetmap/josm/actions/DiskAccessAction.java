@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Helper class for all actions that access the disk.
  * @since 78
  */
-abstract public class DiskAccessAction extends JosmAction {
+public abstract class DiskAccessAction extends JosmAction {
 
     /**
      * Constructs a new {@code DiskAccessAction}.

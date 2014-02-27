@@ -249,7 +249,7 @@ public final class OsmUrlToBounds {
      * @param b bounds of the area
      * @return matching zoom level for area
      */
-    static public int getZoom(Bounds b) {
+    public static int getZoom(Bounds b) {
         // convert to mercator (for calculation of zoom only)
         double latMin = Math.log(Math.tan(Math.PI/4.0+b.getMinLat()/180.0*Math.PI/2.0))*180.0/Math.PI;
         double latMax = Math.log(Math.tan(Math.PI/4.0+b.getMaxLat()/180.0*Math.PI/2.0))*180.0/Math.PI;

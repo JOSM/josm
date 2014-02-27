@@ -46,7 +46,7 @@ import org.openstreetmap.josm.tools.Utils.Function;
  */
 public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter {
 
-    static private DefaultNameFormatter instance;
+    private static DefaultNameFormatter instance;
 
     private static final List<NameFormatterHook> formatHooks = new LinkedList<NameFormatterHook>();
 
@@ -55,7 +55,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      *
      * @return the unique instance of this formatter
      */
-    static public DefaultNameFormatter getInstance() {
+    public static DefaultNameFormatter getInstance() {
         if (instance == null) {
             instance = new DefaultNameFormatter();
         }
@@ -90,11 +90,11 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     /** The default list of tags which are used as naming tags in relations.
      * A ? prefix indicates a boolean value, for which the key (instead of the value) is used.
      */
-    static public final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
+    public static final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
         "public_transport", ":LocationCode", "note", "?building"};
 
     /** the current list of tags used as naming tags in relations */
-    static private List<String> namingTagsForRelations =  null;
+    private static List<String> namingTagsForRelations =  null;
 
     /**
      * Replies the list of naming tags used in relations. The list is given (in this order) by:
@@ -105,7 +105,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      *
      * @return the list of naming tags used in relations
      */
-    static public List<String> getNamingtagsForRelations() {
+    public static List<String> getNamingtagsForRelations() {
         if (namingTagsForRelations == null) {
             namingTagsForRelations = new ArrayList<String>(
                     Main.pref.getCollection("relation.nameOrder", Arrays.asList(DEFAULT_NAMING_TAGS_FOR_RELATIONS))

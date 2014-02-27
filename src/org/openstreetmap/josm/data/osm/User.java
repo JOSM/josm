@@ -24,13 +24,13 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class User {
 
-    static private AtomicLong uidCounter = new AtomicLong();
+    private static AtomicLong uidCounter = new AtomicLong();
 
     /**
      * the map of known users
      */
     private static Map<Long,User> userMap = new HashMap<Long,User>();
-    private final static User anonymous = createLocalUser(tr("<anonymous>"));
+    private static final User anonymous = createLocalUser(tr("<anonymous>"));
 
     private static long getNextLocalUid() {
         return uidCounter.decrementAndGet();

@@ -17,11 +17,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  *
  */
 public abstract class MemberTableCellRenderer extends JLabel implements TableCellRenderer {
-    public final static Color BGCOLOR_EMPTY_ROW = new Color(234, 234, 234);
-    public final static Color BGCOLOR_IN_JOSM_SELECTION = new Color(235,255,177);
+    public static final Color BGCOLOR_EMPTY_ROW = new Color(234, 234, 234);
+    public static final Color BGCOLOR_IN_JOSM_SELECTION = new Color(235,255,177);
 
-    public final static Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255, 197, 197);
-    public final static Color BGCOLOR_DOUBLE_ENTRY = new Color(254,226,214);
+    public static final Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255, 197, 197);
+    public static final Color BGCOLOR_DOUBLE_ENTRY = new Color(254,226,214);
 
     /**
      * constructor
@@ -65,7 +65,7 @@ public abstract class MemberTableCellRenderer extends JLabel implements TableCel
     }
 
     @Override
-    abstract public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+    public abstract Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column);
 
     /**

@@ -20,7 +20,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
-abstract public class StyleSource extends SourceEntry {
+public abstract class StyleSource extends SourceEntry {
 
     private List<Throwable> errors = new ArrayList<Throwable>();
     public File zipIcons;
@@ -43,9 +43,9 @@ abstract public class StyleSource extends SourceEntry {
         super(entry);
     }
 
-    abstract public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed);
+    public abstract void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed);
 
-    abstract public void loadStyleSource();
+    public abstract void loadStyleSource();
 
     /**
      * Returns a new {@code InputStream} to the style source. When finished, {@link #closeSourceInputStream(InputStream)} must be called.
@@ -53,7 +53,7 @@ abstract public class StyleSource extends SourceEntry {
      * @throws IOException if any I/O error occurs.
      * @see #closeSourceInputStream(InputStream)
      */
-    abstract public InputStream getSourceInputStream() throws IOException;
+    public abstract InputStream getSourceInputStream() throws IOException;
 
     /**
      * Closes the source input stream previously returned by {@link #getSourceInputStream()} and other linked resources, if applicable.
@@ -100,7 +100,7 @@ abstract public class StyleSource extends SourceEntry {
         return imageIcon;
     }
 
-    final public ImageIcon getIcon() {
+    public final ImageIcon getIcon() {
         if (getErrors().isEmpty())
             return getSourceIcon();
         else

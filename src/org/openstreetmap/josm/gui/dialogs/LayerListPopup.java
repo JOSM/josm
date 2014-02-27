@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class LayerListPopup extends JPopupMenu {
 
-    public final static class InfoAction extends AbstractAction {
+    public static final class InfoAction extends AbstractAction {
         private final Layer layer;
         
         /**

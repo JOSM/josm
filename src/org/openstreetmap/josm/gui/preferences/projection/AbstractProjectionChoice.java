@@ -5,7 +5,7 @@ import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 
-abstract public class AbstractProjectionChoice implements ProjectionChoice {
+public abstract class AbstractProjectionChoice implements ProjectionChoice {
 
     protected String name;
     protected String id;
@@ -52,9 +52,9 @@ abstract public class AbstractProjectionChoice implements ProjectionChoice {
         return name;
     }
 
-    abstract public String getCurrentCode();
+    public abstract String getCurrentCode();
 
-    abstract public String getProjectionName();
+    public abstract String getProjectionName();
 
     @Override
     public Projection getProjection() {

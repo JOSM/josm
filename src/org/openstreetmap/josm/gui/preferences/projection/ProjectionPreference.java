@@ -252,14 +252,14 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * Combobox with all projections available
      */
-    private JosmComboBox projectionCombo = new JosmComboBox(projectionChoices.toArray());
+    private final JosmComboBox projectionCombo = new JosmComboBox(projectionChoices.toArray());
 
     /**
      * Combobox with all coordinate display possibilities
      */
-    private JosmComboBox coordinatesCombo = new JosmComboBox(CoordinateFormat.values());
+    private final JosmComboBox coordinatesCombo = new JosmComboBox(CoordinateFormat.values());
 
-    private JosmComboBox unitsCombo = new JosmComboBox(unitsValuesTr);
+    private final JosmComboBox unitsCombo = new JosmComboBox(unitsValuesTr);
 
     /**
      * This variable holds the JPanel with the projection's preferences. If the
@@ -280,14 +280,14 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * This is the panel holding all projection preferences
      */
-    private JPanel projPanel = new JPanel(new GridBagLayout());
+    private final JPanel projPanel = new JPanel(new GridBagLayout());
 
     /**
      * The GridBagConstraints for the Panel containing the ProjectionSubPrefs.
      * This is required twice in the code, creating it here keeps both occurrences
      * in sync
      */
-    static private GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
+    private static final GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
@@ -379,11 +379,11 @@ public class ProjectionPreference implements SubPreferenceSetting {
         return false;
     }
 
-    static public void setProjection() {
+    public static void setProjection() {
         setProjection(PROP_PROJECTION.get(), PROP_SUB_PROJECTION.get());
     }
 
-    static public void setProjection(String id, Collection<String> pref) {
+    public static void setProjection(String id, Collection<String> pref) {
         ProjectionChoice pc = projectionChoicesById.get(id);
 
         if (pc == null) {

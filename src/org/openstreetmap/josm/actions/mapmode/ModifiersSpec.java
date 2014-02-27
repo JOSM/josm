@@ -7,7 +7,7 @@ package org.openstreetmap.josm.actions.mapmode;
  * @author Ole Jørgen Brønner (olejorgenb)
  */
 public class ModifiersSpec {
-    static public final int ON = 1, OFF = 0, UNKNOWN = 2;
+    public static final int ON = 1, OFF = 0, UNKNOWN = 2;
     public int alt = UNKNOWN;
     public int shift = UNKNOWN;
     public int ctrl = UNKNOWN;

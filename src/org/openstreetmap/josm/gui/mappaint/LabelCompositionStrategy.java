@@ -42,9 +42,9 @@ public abstract class LabelCompositionStrategy {
      * @return the text value to be rendered or null, if primitive is null or
      * if no suitable value could be composed
      */
-    abstract public String compose(OsmPrimitive primitive);
+    public abstract String compose(OsmPrimitive primitive);
 
-    static public class StaticLabelCompositionStrategy extends LabelCompositionStrategy {
+    public static class StaticLabelCompositionStrategy extends LabelCompositionStrategy {
         private String defaultLabel;
 
         public StaticLabelCompositionStrategy(String defaultLabel){
@@ -91,7 +91,7 @@ public abstract class LabelCompositionStrategy {
         }
     }
 
-    static public class TagLookupCompositionStrategy extends LabelCompositionStrategy {
+    public static class TagLookupCompositionStrategy extends LabelCompositionStrategy {
 
         private String defaultLabelTag;
         public TagLookupCompositionStrategy(String defaultLabelTag){
@@ -146,7 +146,7 @@ public abstract class LabelCompositionStrategy {
         }
     }
 
-    static public class DeriveLabelFromNameTagsCompositionStrategy extends LabelCompositionStrategy {
+    public static class DeriveLabelFromNameTagsCompositionStrategy extends LabelCompositionStrategy {
 
         /**
          * The list of default name tags from which a label candidate is derived.

@@ -23,12 +23,12 @@ public abstract class RelationEditor extends ExtendedDialog {
      * @see #setRelation(Relation)
      * @see #getRelation()
      */
-    static public final String RELATION_PROP = RelationEditor.class.getName() + ".relation";
+    public static final String RELATION_PROP = RelationEditor.class.getName() + ".relation";
 
     /** the property name for the current relation snapshot
      * @see #getRelationSnapshot()
      */
-    static public final String RELATION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".relationSnapshot";
+    public static final String RELATION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".relationSnapshot";
 
     /** the list of registered relation editor classes */
     private static List<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
@@ -206,7 +206,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     /* ----------------------------------------------------------------------- */
     /* property change support                                                 */
     /* ----------------------------------------------------------------------- */
-    final private PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {

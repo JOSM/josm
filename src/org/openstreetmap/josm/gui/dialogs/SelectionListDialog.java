@@ -37,7 +37,6 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
-import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
@@ -407,7 +406,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * JOSM selection.
      *
      */
-    static private class SelectionListModel extends AbstractListModel implements EditLayerChangeListener, SelectionChangedListener, DataSetListener{
+    private static class SelectionListModel extends AbstractListModel implements EditLayerChangeListener, SelectionChangedListener, DataSetListener{
 
         private static final int SELECTION_HISTORY_SIZE = 10;
 
@@ -655,7 +654,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * @author Jan Peter Stotz
      */
     protected static class SearchMenuItem extends JMenuItem implements ActionListener {
-        final protected SearchSetting s;
+        protected final SearchSetting s;
 
         public SearchMenuItem(SearchSetting s) {
             super(Utils.shortenString(s.toString(), org.openstreetmap.josm.actions.search.SearchAction.MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY));
@@ -674,7 +673,7 @@ public class SelectionListDialog extends ToggleDialog  {
      *
      */
     protected static class SearchPopupMenu extends JPopupMenu {
-        static public void launch(Component parent) {
+        public static void launch(Component parent) {
             if (org.openstreetmap.josm.actions.search.SearchAction.getSearchHistory().isEmpty())
                 return;
             JPopupMenu menu = new SearchPopupMenu();
@@ -695,7 +694,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * @author Jan Peter Stotz
      */
     protected static class SelectionMenuItem extends JMenuItem implements ActionListener {
-        final private DefaultNameFormatter df = DefaultNameFormatter.getInstance();
+        private final DefaultNameFormatter df = DefaultNameFormatter.getInstance();
         protected Collection<? extends OsmPrimitive> sel;
 
         public SelectionMenuItem(Collection<? extends OsmPrimitive> sel) {
@@ -754,7 +753,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * The popup menu for the JOSM selection history entries
      */
     protected static class SelectionHistoryPopup extends JPopupMenu {
-        static public void launch(Component parent, Collection<Collection<? extends OsmPrimitive>> history) {
+        public static void launch(Component parent, Collection<Collection<? extends OsmPrimitive>> history) {
             if (history == null || history.isEmpty()) return;
             JPopupMenu menu = new SelectionHistoryPopup(history);
             Rectangle r = parent.getBounds();
@@ -769,7 +768,7 @@ public class SelectionListDialog extends ToggleDialog  {
     }
 
     /** Quicker comparator, comparing just by type and ID's */
-    static private class OsmPrimitiveQuickComparator implements Comparator<OsmPrimitive> {
+    private static class OsmPrimitiveQuickComparator implements Comparator<OsmPrimitive> {
 
         private int compareId(OsmPrimitive a, OsmPrimitive b) {
             long id_a=a.getUniqueId();

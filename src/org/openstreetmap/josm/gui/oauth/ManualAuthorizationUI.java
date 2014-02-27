@@ -174,7 +174,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
         return cbSaveToPreferences.isSelected();
     }
 
-    static private class AccessTokenKeyValidator extends AbstractTextComponentValidator {
+    private static class AccessTokenKeyValidator extends AbstractTextComponentValidator {
 
         public AccessTokenKeyValidator(JTextComponent tc) throws IllegalArgumentException {
             super(tc);

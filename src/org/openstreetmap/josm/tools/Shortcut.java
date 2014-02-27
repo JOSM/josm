@@ -431,7 +431,7 @@ public final class Shortcut {
      *
      * @return the platform specific key stroke for the  'Copy' command
      */
-    static public KeyStroke getCopyKeyStroke() {
+    public static KeyStroke getCopyKeyStroke() {
         Shortcut sc = shortcuts.get("system:copy");
         if (sc == null) return null;
         return sc.getKeyStroke();
@@ -444,7 +444,7 @@ public final class Shortcut {
      *
      * @return the platform specific key stroke for the 'Paste' command
      */
-    static public KeyStroke getPasteKeyStroke() {
+    public static KeyStroke getPasteKeyStroke() {
         Shortcut sc = shortcuts.get("system:paste");
         if (sc == null) return null;
         return sc.getKeyStroke();
@@ -457,7 +457,7 @@ public final class Shortcut {
      *
      * @return the platform specific key stroke for the 'Cut' command
      */
-    static public KeyStroke getCutKeyStroke() {
+    public static KeyStroke getCutKeyStroke() {
         Shortcut sc = shortcuts.get("system:cut");
         if (sc == null) return null;
         return sc.getKeyStroke();

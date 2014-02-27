@@ -70,7 +70,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      * @since 1221
      * @see #paintConflicts
      */
-    static public Color getColor() {
+    public static Color getColor() {
         return Main.pref.getColor(marktr("conflict"), Color.gray);
     }
 

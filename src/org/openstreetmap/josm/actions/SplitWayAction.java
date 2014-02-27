@@ -258,7 +258,7 @@ public class SplitWayAction extends JosmAction {
      * @param splitPoints the nodes where the way is split. Must not be null.
      * @return the list of chunks
      */
-    static public List<List<Node>> buildSplitChunks(Way wayToSplit, List<Node> splitPoints){
+    public static List<List<Node>> buildSplitChunks(Way wayToSplit, List<Node> splitPoints){
         CheckParameterUtil.ensureParameterNotNull(wayToSplit, "wayToSplit");
         CheckParameterUtil.ensureParameterNotNull(splitPoints, "splitPoints");
 
@@ -531,7 +531,7 @@ public class SplitWayAction extends JosmAction {
      * @param selection The list of currently selected primitives
      * @return the result from the split operation
      */
-    static public SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection) {
+    public static SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection) {
         List<List<Node>> chunks = buildSplitChunks(way, atNodes);
         if (chunks == null) return null;
         return splitWay(layer,way, chunks, selection);

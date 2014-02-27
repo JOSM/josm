@@ -114,7 +114,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     /** The action to toggle this dialog */
     protected final ToggleDialogAction toggleAction;
     protected String preferencePrefix;
-    final protected String name;
+    protected final String name;
 
     /** DialogsPanel that manages all ToggleDialogs */
     protected DialogsPanel dialogsPanel;

@@ -40,9 +40,9 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     private GpxData data;
     private String indent = "";
 
-    private final static int WAY_POINT = 0;
-    private final static int ROUTE_POINT = 1;
-    private final static int TRACK_POINT = 2;
+    private static final int WAY_POINT = 0;
+    private static final int ROUTE_POINT = 1;
+    private static final int TRACK_POINT = 2;
 
     public void write(GpxData data) {
         this.data = data;

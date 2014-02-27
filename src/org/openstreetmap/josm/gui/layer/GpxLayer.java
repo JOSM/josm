@@ -254,7 +254,7 @@ public class GpxLayer extends Layer {
     }
 
     /* for preferences */
-    static public Color getGenericColor() {
+    public static Color getGenericColor() {
         return Main.pref.getColor(marktr("gps point"), Color.gray);
     }
 
@@ -362,14 +362,14 @@ public class GpxLayer extends Layer {
         computeCacheInSync = false;
     }
 
-    private final static Color[] colors = new Color[256];
+    private static final Color[] colors = new Color[256];
     static {
         for (int i = 0; i < colors.length; i++) {
             colors[i] = Color.getHSBColor(i / 300.0f, 1, 1);
         }
     }
 
-    private final static Color[] colors_cyclic = new Color[256];
+    private static final Color[] colors_cyclic = new Color[256];
     static {
         for (int i = 0; i < colors_cyclic.length; i++) {
             //                    red   yellow  green   blue    red
@@ -404,10 +404,10 @@ public class GpxLayer extends Layer {
     }
 
     // lookup array to draw arrows without doing any math
-    private final static int ll0 = 9;
-    private final static int sl4 = 5;
-    private final static int sl9 = 3;
-    private final static int[][] dir = { { +sl4, +ll0, +ll0, +sl4 }, { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 },
+    private static final int ll0 = 9;
+    private static final int sl4 = 5;
+    private static final int sl9 = 3;
+    private static final int[][] dir = { { +sl4, +ll0, +ll0, +sl4 }, { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 },
         { -ll0, -sl9, -ll0, +sl9 }, { -sl4, -ll0, -ll0, -sl4 }, { +sl9, -ll0, -sl9, -ll0 },
         { +ll0, -sl4, +sl4, -ll0 }, { +ll0, +sl9, +ll0, -sl9 }, { +sl4, +ll0, +ll0, +sl4 },
         { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 }, { -ll0, -sl9, -ll0, +sl9 } };
@@ -813,7 +813,7 @@ public class GpxLayer extends Layer {
     /** ensures the trackVisibility array has the correct length without losing data.
      * additional entries are initialized to true;
      */
-    final private void ensureTrackVisibilityLength() {
+    private final void ensureTrackVisibilityLength() {
         final int l = data.tracks.size();
         if (l == trackVisibility.length)
             return;

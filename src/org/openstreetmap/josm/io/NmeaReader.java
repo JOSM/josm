@@ -131,15 +131,14 @@ public class NmeaReader {
 
     public GpxData data;
 
-    //  private final static SimpleDateFormat GGATIMEFMT =
+    //  private static final SimpleDateFormat GGATIMEFMT =
     //      new SimpleDateFormat("HHmmss.SSS");
-    private final static SimpleDateFormat RMCTIMEFMT =
+    private static final SimpleDateFormat RMCTIMEFMT =
         new SimpleDateFormat("ddMMyyHHmmss.SSS");
-    private final static SimpleDateFormat RMCTIMEFMTSTD =
+    private static final SimpleDateFormat RMCTIMEFMTSTD =
         new SimpleDateFormat("ddMMyyHHmmss");
 
-    private Date readTime(String p)
-    {
+    private Date readTime(String p) {
         Date d = RMCTIMEFMT.parse(p, new ParsePosition(0));
         if (d == null) {
             d = RMCTIMEFMTSTD.parse(p, new ParsePosition(0));

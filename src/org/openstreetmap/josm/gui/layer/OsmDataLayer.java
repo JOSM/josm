@@ -90,8 +90,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class OsmDataLayer extends Layer implements Listener, SelectionChangedListener {
-    static public final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
-    static public final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
+    public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
+    public static final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 
     private boolean requiresSaveToFile = false;
     private boolean requiresUploadToServer = false;
@@ -121,19 +121,19 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     /** the global counter for created data layers */
-    static private int dataLayerCounter = 0;
+    private static int dataLayerCounter = 0;
 
     /**
      * Replies a new unique name for a data layer
      *
      * @return a new unique name for a data layer
      */
-    static public String createNewName() {
+    public static String createNewName() {
         dataLayerCounter++;
         return tr("Data Layer {0}", dataLayerCounter);
     }
 
-    public final static class DataCountVisitor extends AbstractVisitor {
+    public static final class DataCountVisitor extends AbstractVisitor {
         public int nodes;
         public int ways;
         public int relations;

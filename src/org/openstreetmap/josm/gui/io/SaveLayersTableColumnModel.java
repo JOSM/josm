@@ -22,7 +22,7 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
         private final JPanel pnlEmpty = new JPanel();
         private final JLabel needsUpload = new JLabel(tr("should be uploaded"));
         private final JLabel needsSave = new JLabel(tr("should be saved"));
-        private final static GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
+        private static final GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
         public RecommendedActionsTableCell() {
             pnlEmpty.setPreferredSize(new Dimension(1, 19));

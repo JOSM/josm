@@ -62,19 +62,19 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class UploadDialog extends JDialog implements PropertyChangeListener, PreferenceChangedListener{
     /**  the unique instance of the upload dialog */
-    static private UploadDialog uploadDialog;
+    private static UploadDialog uploadDialog;
 
     /**
      * List of custom components that can be added by plugins at JOSM startup.
      */
-    static private final Collection<Component> customComponents = new ArrayList<Component>();
+    private static final Collection<Component> customComponents = new ArrayList<Component>();
 
     /**
      * Replies the unique instance of the upload dialog
      *
      * @return the unique instance of the upload dialog
      */
-    static public UploadDialog getUploadDialog() {
+    public static UploadDialog getUploadDialog() {
         if (uploadDialog == null) {
             uploadDialog = new UploadDialog();
         }

@@ -33,7 +33,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  */
 public final class ChangesetCache implements PreferenceChangedListener{
     /** the unique instance */
-    static private final ChangesetCache instance = new ChangesetCache();
+    private static final ChangesetCache instance = new ChangesetCache();
 
     /**
      * Replies the unique instance of the cache

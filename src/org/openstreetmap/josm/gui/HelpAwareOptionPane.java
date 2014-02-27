@@ -105,7 +105,7 @@ public final class HelpAwareOptionPane {
         }
     }
 
-    static private class DefaultAction extends AbstractAction {
+    private static class DefaultAction extends AbstractAction {
         private JDialog dialog;
         private JOptionPane pane;
         private int value;
@@ -131,7 +131,7 @@ public final class HelpAwareOptionPane {
      * to the context sensitive help of the whole dialog
      * @return the list of buttons
      */
-    static private List<JButton> createOptionButtons(ButtonSpec[] options, String helpTopic) {
+    private static List<JButton> createOptionButtons(ButtonSpec[] options, String helpTopic) {
         List<JButton> buttons = new ArrayList<JButton>();
         if (options == null) {
             JButton b = new JButton(tr("OK"));
@@ -166,7 +166,7 @@ public final class HelpAwareOptionPane {
      * @param helpTopic the help topic
      * @return the help button
      */
-    static private JButton createHelpButton(final String helpTopic) {
+    private static JButton createHelpButton(final String helpTopic) {
         JButton b = new JButton(tr("Help"));
         b.setIcon(ImageProvider.get("help"));
         b.setToolTipText(tr("Show help information"));
@@ -210,7 +210,7 @@ public final class HelpAwareOptionPane {
      * @param helpTopic the help topic. Can be null.
      * @return the index of the selected option or {@link JOptionPane#CLOSED_OPTION}
      */
-    static public int showOptionDialog(Component parentComponent, Object msg, String title, int messageType, Icon icon, final ButtonSpec[] options, final ButtonSpec defaultOption, final String helpTopic)  {
+    public static int showOptionDialog(Component parentComponent, Object msg, String title, int messageType, Icon icon, final ButtonSpec[] options, final ButtonSpec defaultOption, final String helpTopic)  {
         final List<JButton> buttons = createOptionButtons(options, helpTopic);
         if (helpTopic != null) {
             buttons.add(createHelpButton(helpTopic));
@@ -317,7 +317,7 @@ public final class HelpAwareOptionPane {
      * @return the index of the selected option or {@link JOptionPane#CLOSED_OPTION}
      * @see #showOptionDialog(Component, Object, String, int, Icon, ButtonSpec[], ButtonSpec, String)
      */
-    static public int showOptionDialog(Component parentComponent, Object msg, String title, int messageType,final String helpTopic)  {
+    public static int showOptionDialog(Component parentComponent, Object msg, String title, int messageType,final String helpTopic)  {
         return showOptionDialog(parentComponent, msg, title, messageType, null,null,null, helpTopic);
     }
 
@@ -328,7 +328,7 @@ public final class HelpAwareOptionPane {
      * It can be used, when you need to show a message dialog from a worker thread,
      * e.g. from PleaseWaitRunnable
      */
-    static public void showMessageDialogInEDT(final Component parentComponent, final Object msg, final String title, final int messageType, final String helpTopic)  {
+    public static void showMessageDialogInEDT(final Component parentComponent, final Object msg, final String title, final int messageType, final String helpTopic)  {
         GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {

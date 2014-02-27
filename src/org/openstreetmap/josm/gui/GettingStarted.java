@@ -74,9 +74,9 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             super("motd.html", CacheCustomContent.INTERVAL_DAILY);
         }
 
-        final private int myVersion = Version.getInstance().getVersion();
-        final private String myJava = System.getProperty("java.version");
-        final private String myLang = LanguageInfo.getWikiLanguagePrefix();
+        private final int myVersion = Version.getInstance().getVersion();
+        private final String myJava = System.getProperty("java.version");
+        private final String myLang = LanguageInfo.getWikiLanguagePrefix();
 
         /**
          * This function gets executed whenever the cached files need updating

@@ -32,7 +32,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
 
     private Hemisphere hemisphere;
 
-    private final static List<String> cbEntries = new ArrayList<String>();
+    private static final List<String> cbEntries = new ArrayList<String>();
     static {
         for (int i = 1; i <= 60; i++) {
             cbEntries.add(Integer.toString(i));

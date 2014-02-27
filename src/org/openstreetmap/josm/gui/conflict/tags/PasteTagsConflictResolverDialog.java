@@ -502,7 +502,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    static private class StatisticsInfoTable extends JPanel {
+    private static class StatisticsInfoTable extends JPanel {
 
         private JTable infoTable;
 

@@ -73,13 +73,13 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     private Point mousePos = null;
     private boolean dragging = false;
 
-    final private Cursor cursorSelect;
-    final private Cursor cursorSelectHover;
-    final private Cursor cursorImprove;
-    final private Cursor cursorImproveAdd;
-    final private Cursor cursorImproveDelete;
-    final private Cursor cursorImproveAddLock;
-    final private Cursor cursorImproveLock;
+    private final Cursor cursorSelect;
+    private final Cursor cursorSelectHover;
+    private final Cursor cursorImprove;
+    private final Cursor cursorImproveAdd;
+    private final Cursor cursorImproveDelete;
+    private final Cursor cursorImproveAddLock;
+    private final Cursor cursorImproveLock;
 
     private Color guideColor;
     private Stroke selectTargetWayStroke;

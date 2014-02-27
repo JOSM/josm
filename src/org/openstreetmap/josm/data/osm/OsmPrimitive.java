@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
  *
  * @author imi
  */
-abstract public class OsmPrimitive extends AbstractPrimitive implements Comparable<OsmPrimitive>, TemplateEngineDataProvider {
+public abstract class OsmPrimitive extends AbstractPrimitive implements Comparable<OsmPrimitive>, TemplateEngineDataProvider {
     private static final String SPECIAL_VALUE_ID = "id";
     private static final String SPECIAL_VALUE_LOCAL_NAME = "localname";
 
@@ -118,7 +118,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param type the type to filter for
      * @return the sub-list of OSM primitives of type <code>type</code>
      */
-    static public <T extends OsmPrimitive>  List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
+    public static <T extends OsmPrimitive>  List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
         if (list == null) return Collections.emptyList();
         List<T> ret = new LinkedList<T>();
         for(OsmPrimitive p: list) {
@@ -140,7 +140,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param type the type to filter for
      * @return the sub-set of OSM primitives of type <code>type</code>
      */
-    static public <T extends OsmPrimitive> Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
+    public static <T extends OsmPrimitive> Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
         Set<T> ret = new LinkedHashSet<T>();
         if (set != null) {
             for(OsmPrimitive p: set) {
@@ -159,7 +159,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @return the collection of referring primitives for the primitives in <code>primitives</code>;
      * empty set if primitives is null or if there are no referring primitives
      */
-    static public Set<OsmPrimitive> getReferrer(Collection<? extends OsmPrimitive> primitives) {
+    public static Set<OsmPrimitive> getReferrer(Collection<? extends OsmPrimitive> primitives) {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         if (primitives == null || primitives.isEmpty()) return ret;
         for (OsmPrimitive p: primitives) {
@@ -1076,7 +1076,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * visitor function.
      * @param visitor The visitor from which the visit() function must be called.
      */
-    abstract public void accept(Visitor visitor);
+    public abstract void accept(Visitor visitor);
 
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so

@@ -31,7 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class DiffResultProcessor  {
 
-    static private class DiffResultEntry {
+    private static class DiffResultEntry {
         public long new_id;
         public int new_version;
     }
