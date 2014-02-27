@@ -283,7 +283,7 @@ public class AutoScaleAction extends JosmAction {
     }
 
     @Override
-    protected void installAdapters() {
+    protected final void installAdapters() {
         super.installAdapters();
         // make this action listen to zoom and mapframe change events
         //

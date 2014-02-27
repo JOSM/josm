@@ -92,7 +92,7 @@ public class UrlBasedQueryPanel extends JPanel {
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
@@ -112,8 +112,11 @@ public class UrlBasedQueryPanel extends JPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         add(new JPanel(),gc);
-
     }
+
+    /**
+     * Constructs a new {@code UrlBasedQueryPanel}.
+     */
     public UrlBasedQueryPanel() {
         build();
     }

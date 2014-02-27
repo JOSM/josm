@@ -19,16 +19,14 @@ public class LinemodPrototype extends LinePrototype implements Comparable<Linemo
     public LinemodPrototype() { init(); }
 
     @Override
-    public void init()
-    {
+    public final void init() {
         super.init();
         over = true;
         widthMode = WidthMode.ABSOLUTE;
     }
 
-    // get width for overlays
-    public float getWidth(float ref)
-    {
+    /** get width for overlays */
+    public float getWidth(float ref) {
         float res;
         if(widthMode == WidthMode.ABSOLUTE) {
             res = width;

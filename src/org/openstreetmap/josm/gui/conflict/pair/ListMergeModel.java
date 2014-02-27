@@ -226,13 +226,13 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         }
     }
 
-    public void setFrozen(boolean isFrozen) {
+    public final void setFrozen(boolean isFrozen) {
         boolean oldValue = this.isFrozen;
         this.isFrozen = isFrozen;
         fireFrozenChanged(oldValue, this.isFrozen);
     }
 
-    public boolean isFrozen() {
+    public final boolean isFrozen() {
         return isFrozen;
     }
 

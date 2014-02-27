@@ -165,7 +165,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         /**
          * Initializes action.
          */
-        public void initialize() {
+        public final void initialize() {
             layers = new ArrayList<Layer>(Main.map.mapView.getAllLayersAsList());
             exporters = new HashMap<Layer, SessionLayerExporter>();
             dependencies = new MultiMap<Layer, Layer>();
@@ -204,7 +204,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             }
         }
 
-        protected Component build() {
+        protected final Component build() {
             JPanel p = new JPanel(new GridBagLayout());
             JPanel ip = new JPanel(new GridBagLayout());
             for (Layer layer : layers) {

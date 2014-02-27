@@ -225,13 +225,13 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             }
         }
 
-        public void updateOffset() {
+        public final void updateOffset() {
             ignoreListener = true;
             updateOffsetIntl();
             ignoreListener = false;
         }
 
-        public void updateOffsetIntl() {
+        public final void updateOffsetIntl() {
             // Support projections with very small numbers (e.g. 4326)
             int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
             // US locale to force decimal separator to be '.'

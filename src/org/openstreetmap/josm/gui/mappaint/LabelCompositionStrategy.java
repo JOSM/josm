@@ -245,7 +245,7 @@ public abstract class LabelCompositionStrategy {
          * and from name tags configured in the preferences using the keys
          * <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.
          */
-        public void initNameTagsFromPreferences() {
+        public final void initNameTagsFromPreferences() {
             if (Main.pref == null){
                 this.nameTags = new ArrayList<String>(Arrays.asList(DEFAULT_NAME_TAGS));
                 this.nameComplementTags = new ArrayList<String>(Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS));

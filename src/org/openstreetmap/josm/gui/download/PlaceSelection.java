@@ -298,7 +298,7 @@ public class PlaceSelection implements DownloadSelection {
             Main.worker.submit(task);
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(cbSearchExpression.getText().trim().length() > 0);
         }
 
@@ -426,7 +426,7 @@ public class PlaceSelection implements DownloadSelection {
     static class NamedResultTableColumnModel extends DefaultTableColumnModel {
         TableColumn col3 = null;
         TableColumn col4 = null;
-        protected void createColumns() {
+        protected final void createColumns() {
             TableColumn col = null;
             NamedResultCellRenderer renderer = new NamedResultCellRenderer();
 

@@ -89,7 +89,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         model = new RelationMemberTableModel();
         model.addTableModelListener(this);
         getContentPane().setLayout(new BorderLayout());
@@ -274,7 +274,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     private static class RelationMemberTableColumnModel extends DefaultTableColumnModel{
 
-        protected void createColumns() {
+        protected final void createColumns() {
             TableColumn col = null;
 
             // column 0 - To Delete

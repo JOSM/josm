@@ -267,7 +267,7 @@ public class TagTable extends JTable  {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             if (isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
                 setEnabled(true);
             } else if (!isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
@@ -307,7 +307,7 @@ public class TagTable extends JTable  {
             requestFocusInCell(model.getRowCount()-1, 0);
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(TagTable.this.isEnabled());
         }
 
@@ -356,7 +356,7 @@ public class TagTable extends JTable  {
             }
         }
         
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(TagTable.this.isEnabled());
         }
 
@@ -394,7 +394,7 @@ public class TagTable extends JTable  {
     /**
      * initialize the table
      */
-    protected void init() {
+    protected final void init() {
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         setRowSelectionAllowed(true);
         setColumnSelectionAllowed(true);

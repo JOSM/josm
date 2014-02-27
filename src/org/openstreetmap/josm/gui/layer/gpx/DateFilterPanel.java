@@ -128,14 +128,10 @@ public class DateFilterPanel extends JPanel {
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
+    public final void setEnabled(boolean enabled) {
         super.setEnabled(enabled); 
         for (Component c: getComponents()) {
             c.setEnabled(enabled);
         }
     }
-    
-    
-    
- 
 }

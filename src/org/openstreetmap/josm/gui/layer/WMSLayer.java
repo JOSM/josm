@@ -268,7 +268,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    public void initializeImages() {
+    public final void initializeImages() {
         GeorefImage[][] old = images;
         images = new GeorefImage[dax][day];
         if (old != null) {

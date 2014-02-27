@@ -103,7 +103,7 @@ public class DefaultProxySelector extends ProxySelector {
      * Initializes the proxy selector from the setting in the preferences.
      *
      */
-    public void initFromPreferences() {
+    public final void initFromPreferences() {
         String value = Main.pref.get(ProxyPreferencesPanel.PROXY_POLICY);
         if (value.length() == 0) {
             proxyPolicy = ProxyPolicy.NO_PROXY;

@@ -58,7 +58,7 @@ public class APIDataSet {
         init(ds.allPrimitives());
     }
 
-    public void init(Collection<OsmPrimitive> primitives) {
+    public final void init(Collection<OsmPrimitive> primitives) {
         toAdd.clear();
         toUpdate.clear();
         toDelete.clear();
@@ -285,7 +285,7 @@ public class APIDataSet {
             build(relations);
         }
 
-        public void build(Collection<Relation> relations) {
+        public final void build(Collection<Relation> relations) {
             this.relations = new HashSet<Relation>();
             for(Relation relation: relations) {
                 if (newOrUndeleted ? !relation.isNewOrUndeleted() : !relation.isDeleted()) {

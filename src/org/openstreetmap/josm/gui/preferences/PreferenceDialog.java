@@ -62,7 +62,7 @@ public class PreferenceDialog extends JDialog {
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         Container c = getContentPane();
         c.setLayout(new BorderLayout());
         c.add(tpPreferences = new PreferenceTabbedPane(), BorderLayout.CENTER);

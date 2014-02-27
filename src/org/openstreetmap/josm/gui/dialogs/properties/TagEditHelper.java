@@ -741,7 +741,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         /**
          * Read tags from comboboxes and add it to all selected objects
          */
-        public void performTagAdding() {
+        public final void performTagAdding() {
             String key = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
             String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
             if (key.isEmpty() || value.isEmpty()) return;

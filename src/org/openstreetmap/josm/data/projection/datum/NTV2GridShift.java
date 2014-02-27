@@ -48,6 +48,9 @@ public class NTV2GridShift implements Serializable {
     boolean lonAccuracyAvailable;
     private String subGridName;
 
+    /**
+     * Constructs a new {@code NTV2GridShift}.
+     */
     public NTV2GridShift() {
     }
 
@@ -232,7 +235,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for latitude
      * @param d latitude value in seconds
      */
-    public void setLatSeconds(double d) {
+    public final void setLatSeconds(double d) {
         lat = d;
     }
 
@@ -240,7 +243,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for latitude
      * @param d latitude value in degree
      */
-    public void setLatDegrees(double d) {
+    public final void setLatDegrees(double d) {
         lat = d * 3600.0;
     }
 
@@ -248,7 +251,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for latitude accuracy availability
      * @param b availability of latitude accuracy
      */
-    public void setLatAccuracyAvailable(boolean b) {
+    public final void setLatAccuracyAvailable(boolean b) {
         latAccuracyAvailable = b;
     }
 
@@ -256,7 +259,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for latitude accuracy
      * @param d latitude accuracy in seconds
      */
-    public void setLatAccuracySeconds(double d) {
+    public final void setLatAccuracySeconds(double d) {
         latAccuracy = d;
     }
 
@@ -264,7 +267,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for latitude shift
      * @param d latitude shift in seconds
      */
-    public void setLatShiftSeconds(double d) {
+    public final void setLatShiftSeconds(double d) {
         latShift = d;
     }
 
@@ -272,7 +275,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for longitude
      * @param d latitude value in seconds, west direction is positive
      */
-    public void setLonPositiveWestSeconds(double d) {
+    public final void setLonPositiveWestSeconds(double d) {
         lon = d;
     }
 
@@ -280,7 +283,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for longitude
      * @param d latitude value in degree, est direction is positive
      */
-    public void setLonPositiveEastDegrees(double d) {
+    public final void setLonPositiveEastDegrees(double d) {
         lon = d * -3600.0;
     }
 
@@ -288,7 +291,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for longitude accuracy availability
      * @param b availability of longitude accuracy
      */
-    public void setLonAccuracyAvailable(boolean b) {
+    public final void setLonAccuracyAvailable(boolean b) {
         lonAccuracyAvailable = b;
     }
 
@@ -296,7 +299,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for longitude accuracy
      * @param d longitude accuracy in seconds
      */
-    public void setLonAccuracySeconds(double d) {
+    public final void setLonAccuracySeconds(double d) {
         lonAccuracy = d;
     }
 
@@ -304,7 +307,7 @@ public class NTV2GridShift implements Serializable {
      * Data store function for longitude shift value
      * @param d longitude shift in seconds, west direction is positive
      */
-    public void setLonShiftPositiveWestSeconds(double d) {
+    public final void setLonShiftPositiveWestSeconds(double d) {
         lonShift = d;
     }
 

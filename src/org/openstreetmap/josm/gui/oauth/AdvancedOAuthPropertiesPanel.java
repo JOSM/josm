@@ -50,7 +50,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     private UseDefaultItemListener ilUseDefault;
     private String apiUrl;
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
         GridBagConstraints gc = new GridBagConstraints();

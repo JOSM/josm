@@ -169,7 +169,7 @@ public class HelpBrowser extends JDialog {
         return tb;
     }
 
-    protected void build() {
+    protected final void build() {
         help = new JosmEditorPane();
         JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
         kit.setStyleSheet(buildStyleSheet());

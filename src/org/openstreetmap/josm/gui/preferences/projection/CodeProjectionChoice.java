@@ -130,7 +130,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
             return filteredData.get(selectionList.getSelectedIndex());
         }
 
-        public void setCode(String code) {
+        public final void setCode(String code) {
             int idx = filteredData.indexOf(code);
             if (idx != -1) {
                 selectionList.setSelectedIndex(idx);

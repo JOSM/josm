@@ -204,7 +204,7 @@ public class OpenLocationAction extends JosmAction {
      * @param taskClass The new download task to add
      * @return <tt>true</tt> (as specified by {@link Collection#add})
      */
-    public boolean addDownloadTaskClass(Class<? extends DownloadTask> taskClass) {
+    public final boolean addDownloadTaskClass(Class<? extends DownloadTask> taskClass) {
         return this.downloadTasks.add(taskClass);
     }
 }

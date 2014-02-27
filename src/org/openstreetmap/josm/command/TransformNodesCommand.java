@@ -37,7 +37,7 @@ public abstract class TransformNodesCommand extends Command {
     /**
      * Stores the state of the nodes before the command.
      */
-    protected void storeOldState() {
+    protected final void storeOldState() {
         for (Node n : this.nodes) {
             oldStates.put(n, new OldNodeState(n));
         }

@@ -71,7 +71,7 @@ public class ChangesetClosedException extends OsmTransferException {
     /** the source */
     private Source source;
 
-    protected void parseErrorHeader(String errorHeader) {
+    protected final void parseErrorHeader(String errorHeader) {
         Pattern p = Pattern.compile(ERROR_HEADER_PATTERN);
         Matcher m = p.matcher(errorHeader);
         if (m.matches()) {

@@ -23,7 +23,7 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel{
     private JCheckBox cbReadPrefs;
     private JCheckBox cbModifyNotes;
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
@@ -85,6 +85,9 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel{
         add(new JPanel(), gc);
     }
 
+    /**
+     * Constructs a new {@code OsmPrivilegesPanel}.
+     */
     public OsmPrivilegesPanel() {
         build();
     }

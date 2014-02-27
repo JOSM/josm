@@ -160,7 +160,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * builds the UI
      */
-    protected void build() {
+    protected final void build() {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(buildHeaderInfoPanel(), BorderLayout.NORTH);
 
@@ -347,7 +347,7 @@ public class OAuthAuthorizationWizard extends JDialog {
             setVisible(false);
         }
 
-        public void updateEnabledState(OAuthToken token) {
+        public final void updateEnabledState(OAuthToken token) {
             setEnabled(token != null);
         }
 

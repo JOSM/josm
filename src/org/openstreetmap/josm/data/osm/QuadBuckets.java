@@ -355,7 +355,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
          * This gives the coordinate of the bottom-left
          * corner of the box
          */
-        LatLon coor() {
+        final LatLon coor() {
             return QuadTiling.tile2LatLon(this.quad);
         }
 
@@ -403,7 +403,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     }
 
     @Override
-    public void clear() {
+    public final void clear() {
         root = new QBLevel<T>(this);
         search_cache = null;
         size = 0;
@@ -499,7 +499,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         int content_index;
         int iterated_over;
 
-        QBLevel<T> next_content_node(QBLevel<T> q) {
+        final QBLevel<T> next_content_node(QBLevel<T> q) {
             if (q == null)
                 return null;
             QBLevel<T> orig = q;

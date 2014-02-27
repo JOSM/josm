@@ -74,7 +74,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         iconUnresolved = ImageProvider.get("dialogs/conflict", "tagconflictunresolved");
     }
 
-    protected void build() {
+    protected final void build() {
         setTitle(tr("Conflicts in pasted tags"));
         allPrimitivesResolver = new TagConflictResolver();
         resolvers = new HashMap<OsmPrimitiveType, TagConflictResolver>();

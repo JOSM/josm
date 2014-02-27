@@ -136,7 +136,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;
@@ -166,7 +166,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
      * Loads the relevant preference values from the JOSM preferences
      *
      */
-    public void initFromPreferences() {
+    public final void initFromPreferences() {
         String pref = Main.pref.get("pluginmanager.version-based-update.policy", "ask");
         Policy p = Policy.fromPreferenceValue(pref);
         if (p == null) {

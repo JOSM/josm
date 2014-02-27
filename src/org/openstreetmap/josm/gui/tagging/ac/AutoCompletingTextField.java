@@ -134,7 +134,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
         return new AutoCompletionDocument();
     }
 
-    protected void init() {
+    protected final void init() {
         addFocusListener(
                 new FocusAdapter() {
                     @Override public void focusGained(FocusEvent e) {

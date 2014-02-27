@@ -8,7 +8,7 @@ import javax.swing.table.TableColumn;
 
 public class RelationMemberListColumnModel extends DefaultTableColumnModel{
 
-    protected void createColumns() {
+    protected final void createColumns() {
         TableColumn col = null;
         RelationMemberTableCellRenderer renderer = new RelationMemberTableCellRenderer();
 

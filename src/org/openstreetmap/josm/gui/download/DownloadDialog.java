@@ -85,7 +85,7 @@ public class DownloadDialog extends JDialog  {
         cb.getActionMap().put("doDownload", actDownload);
     }
 
-    protected JPanel buildMainPanel() {
+    protected final JPanel buildMainPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
 
@@ -162,7 +162,7 @@ public class DownloadDialog extends JDialog  {
         super.paint(g);
     }
 
-    protected JPanel buildButtonPanel() {
+    protected final JPanel buildButtonPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new FlowLayout());
 

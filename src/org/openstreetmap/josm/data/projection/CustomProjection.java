@@ -118,7 +118,7 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
-    public void update(String pref) throws ProjectionConfigurationException {
+    public final void update(String pref) throws ProjectionConfigurationException {
         this.pref = pref;
         if (pref == null) {
             ellps = Ellipsoid.WGS84;

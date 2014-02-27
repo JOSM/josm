@@ -79,7 +79,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
             updateEnabledState();
         }
 
-        public void updateEnabledState() {
+        public final void updateEnabledState() {
             setEnabled(layer.requiresSaveToFile());
         }
     }

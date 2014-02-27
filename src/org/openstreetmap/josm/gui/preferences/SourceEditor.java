@@ -870,7 +870,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(tblActiveSources.getSelectedRowCount() > 0);
         }
 
@@ -893,7 +893,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(tblActiveSources.getSelectedRowCount() == 1);
         }
 
@@ -941,7 +941,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        public void updateEnabledState() {
+        public final void updateEnabledState() {
             setEnabled(activeSourcesModel.canMove(increment));
         }
 
@@ -968,7 +968,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(lstAvailableSources.getSelectedIndices().length > 0);
         }
 
@@ -1170,7 +1170,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(tblIconPaths.getSelectedRowCount() > 0);
         }
 
@@ -1193,7 +1193,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(tblIconPaths.getSelectedRowCount() == 1);
         }
 
@@ -1393,7 +1393,7 @@ public abstract class SourceEditor extends JPanel {
         /**
          * build the GUI
          */
-        protected void build() {
+        protected final void build() {
             setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
             gc.gridx = 0;

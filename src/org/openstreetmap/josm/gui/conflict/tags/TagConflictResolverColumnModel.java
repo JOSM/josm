@@ -8,7 +8,7 @@ import javax.swing.table.TableColumn;
 
 public class TagConflictResolverColumnModel extends DefaultTableColumnModel{
 
-    protected void createColumns() {
+    protected final void createColumns() {
         TableColumn col = null;
         MultiValueCellRenderer renderer = new MultiValueCellRenderer();
         MultiValueCellEditor editor = new MultiValueCellEditor();

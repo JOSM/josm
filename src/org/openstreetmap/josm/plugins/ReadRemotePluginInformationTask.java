@@ -58,7 +58,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
 
     protected enum CacheType {PLUGIN_LIST, ICON_LIST}
 
-    protected void init(Collection<String> sites, boolean displayErrMsg){
+    protected final void init(Collection<String> sites, boolean displayErrMsg){
         this.sites = sites;
         if (sites == null) {
             this.sites = Collections.emptySet();
@@ -87,7 +87,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         super(tr("Download plugin list..."), monitor == null ? NullProgressMonitor.INSTANCE: monitor, false /* don't ignore exceptions */);
         init(sites, displayErrMsg);
     }
-
 
     @Override
     protected void cancel() {

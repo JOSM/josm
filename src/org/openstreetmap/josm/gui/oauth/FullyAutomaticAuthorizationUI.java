@@ -262,7 +262,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout());
         pnlPropertiesPanel = buildPropertiesPanel();
         pnlActionButtonsPanel = buildActionButtonPanel();
@@ -344,7 +344,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             Main.worker.submit(new FullyAutomaticAuthorisationTask(FullyAutomaticAuthorizationUI.this));
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(valPassword.isValid() && valUserName.isValid());
         }
 

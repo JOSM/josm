@@ -451,7 +451,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return screenPixels/tilePixels;
     }
 
-    private int getBestZoom() {
+    private final int getBestZoom() {
         double factor = getScaleFactor(1);
         double result = Math.log(factor)/Math.log(2)/2+1;
         // In general, smaller zoom levels are more readable.  We prefer big,
@@ -1501,12 +1501,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     @Override
-    public boolean isProjectionSupported(Projection proj) {
+    public final boolean isProjectionSupported(Projection proj) {
         return "EPSG:3857".equals(proj.toCode()) || "EPSG:4326".equals(proj.toCode());
     }
 
     @Override
-    public String nameSupportedProjections() {
+    public final String nameSupportedProjections() {
         return tr("EPSG:4326 and Mercator projection are supported");
     }
 }

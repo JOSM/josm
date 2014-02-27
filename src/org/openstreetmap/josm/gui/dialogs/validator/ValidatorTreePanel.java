@@ -291,7 +291,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      * Sets the errors list used by a data layer
      * @param errors The error list that is used by a data layer
      */
-    public void setErrorList(List<TestError> errors) {
+    public final void setErrorList(List<TestError> errors) {
         this.errors = errors;
         if (isVisible()) {
             buildTree();

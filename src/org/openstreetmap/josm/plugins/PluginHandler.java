@@ -1325,7 +1325,7 @@ public final class PluginHandler {
         private JMultilineLabel lblMessage;
         private JCheckBox cbDontShowAgain;
 
-        protected void build() {
+        protected final void build() {
             setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
             gc.anchor = GridBagConstraints.NORTHWEST;

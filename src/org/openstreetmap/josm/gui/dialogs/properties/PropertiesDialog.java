@@ -941,7 +941,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
 
         @Override
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(
                     (tagTable != null && tagTable.getSelectedRowCount() >= 1)
                     || (membershipTable != null && membershipTable.getSelectedRowCount() > 0)

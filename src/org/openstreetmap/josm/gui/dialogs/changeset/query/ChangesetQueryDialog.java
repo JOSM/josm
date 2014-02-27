@@ -77,8 +77,7 @@ public class ChangesetQueryDialog extends JDialog {
         return pnl;
     }
 
-
-    protected void build() {
+    protected final void build() {
         setTitle(tr("Query changesets"));
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
@@ -94,7 +93,6 @@ public class ChangesetQueryDialog extends JDialog {
 
         addWindowListener(new WindowEventHandler());
     }
-
 
     public ChangesetQueryDialog(Dialog parent) {
         super(parent, ModalityType.DOCUMENT_MODAL);

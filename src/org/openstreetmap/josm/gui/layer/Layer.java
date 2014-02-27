@@ -230,7 +230,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      *@param name the name. If null, the name is set to the empty string.
      *
      */
-    public void setName(String name) {
+    public final void setName(String name) {
         if (name == null) {
             name = "";
         }

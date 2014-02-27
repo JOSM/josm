@@ -192,7 +192,7 @@ public class TagCollection implements Iterable<Tag> {
      *
      * @param tag the tag to add
      */
-    public void add(Tag tag){
+    public final void add(Tag tag){
         if (tag == null) return;
         if (tags.contains(tag)) return;
         tags.add(tag);
@@ -204,7 +204,7 @@ public class TagCollection implements Iterable<Tag> {
      *
      * @param tags the collection of tags
      */
-    public void add(Collection<Tag> tags) {
+    public final void add(Collection<Tag> tags) {
         if (tags == null) return;
         for (Tag tag: tags){
             add(tag);
@@ -217,7 +217,7 @@ public class TagCollection implements Iterable<Tag> {
      *
      * @param tags the other tag collection
      */
-    public void add(TagCollection tags) {
+    public final void add(TagCollection tags) {
         if (tags == null) return;
         this.tags.addAll(tags.tags);
     }

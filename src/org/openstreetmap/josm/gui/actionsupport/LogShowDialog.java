@@ -28,7 +28,7 @@ public class LogShowDialog extends ExtendedDialog {
         setContent(build(msg, log));
     }
 
-    protected JPanel build(String msg, String log) {
+    protected final JPanel build(String msg, String log) {
         JPanel p = new JPanel(new GridBagLayout());
         JLabel lbl = new JLabel(msg);
         

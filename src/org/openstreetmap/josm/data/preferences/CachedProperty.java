@@ -18,7 +18,7 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
         updateValue();
     }
 
-    protected void updateValue() {
+    protected final void updateValue() {
         if (!Main.pref.get(key).isEmpty()) {
             this.value = fromString(Main.pref.get(key));
         } else {

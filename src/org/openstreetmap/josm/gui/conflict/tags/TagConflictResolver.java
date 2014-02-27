@@ -85,7 +85,7 @@ public class TagConflictResolver extends JPanel {
         Main.pref.put(getClass().getName() + ".showTagsWithMultiValuesOnly", cbShowTagsWithMultiValuesOnly.isSelected());
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout());
         add(buildInfoPanel(), BorderLayout.NORTH);
         add(new JScrollPane(new TagConflictResolverTable(model)), BorderLayout.CENTER);

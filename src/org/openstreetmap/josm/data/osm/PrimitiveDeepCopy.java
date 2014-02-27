@@ -75,7 +75,7 @@ public class PrimitiveDeepCopy {
                 }
             }
 
-            public void visitAll() {
+            public final void visitAll() {
                 for (OsmPrimitive osm : primitives) {
                     firstIteration = true;
                     osm.accept(this);

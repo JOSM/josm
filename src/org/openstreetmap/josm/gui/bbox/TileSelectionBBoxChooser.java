@@ -95,7 +95,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     /**
      * builds the UI
      */
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gc = new GridBagConstraints();

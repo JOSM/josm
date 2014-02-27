@@ -60,7 +60,7 @@ public class MultiValueResolutionDecision {
     /**
      * Tries to find the best decision based on the current values.
      */
-    protected void autoDecide() {
+    protected final void autoDecide() {
         this.type = MultiValueDecisionType.UNDECIDED;
         // exactly one empty value ? -> delete the tag
         if (tags.size() == 1 && tags.getValues().contains("")) {

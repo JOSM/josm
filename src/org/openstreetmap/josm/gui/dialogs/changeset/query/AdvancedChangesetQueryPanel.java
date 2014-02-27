@@ -150,7 +150,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout());
         JScrollPane spQueryPanel = GuiHelper.embedInVerticalScrollPane(buildQueryPanel());
         add(spQueryPanel, BorderLayout.CENTER);
