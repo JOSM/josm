@@ -730,6 +730,20 @@ public final class ExpressionFactory {
             }
             return result;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder b = new StringBuilder("ParameterFunction~");
+            b.append(m.getName()).append("(");
+            for (int i = 0; i < args.size(); ++i) {
+                if (i > 0) b.append(",");
+                b.append(expectedParameterTypes[i]);
+                b.append(" ").append(args.get(i));
+            }
+            b.append(')');
+            return b.toString();
+        }
+
     }
 
     /**
@@ -779,6 +793,19 @@ public final class ExpressionFactory {
             }
             return result;
         }
+        @Override
+        public String toString() {
+            StringBuilder b = new StringBuilder("ArrayFunction~");
+            b.append(m.getName()).append("(");
+            for (int i = 0; i < args.size(); ++i) {
+                if (i > 0) b.append(",");
+                b.append(arrayComponentType);
+                b.append(" ").append(args.get(i));
+            }
+            b.append(')');
+            return b.toString();
+        }
+
     }
 
 }
