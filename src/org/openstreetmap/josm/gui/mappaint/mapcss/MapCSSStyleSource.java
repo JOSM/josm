@@ -15,6 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
@@ -210,6 +211,22 @@ public class MapCSSStyleSource extends StyleSource {
                 }
             }
         }
+    }
+
+    public boolean evalMediaExpression(String feature, Object val) {
+        if ("user-agent".equals(feature)) {
+            String s = Cascade.convertTo(val, String.class);
+            if ("josm".equals(s)) return true;
+        }
+        if ("min-josm-version".equals(feature)) {
+            Float v = Cascade.convertTo(val, Float.class);
+            if (v != null) return Math.round(v) <= Version.getInstance().getVersion();
+        }
+        if ("max-josm-version".equals(feature)) {
+            Float v = Cascade.convertTo(val, Float.class);
+            if (v != null) return Math.round(v) >= Version.getInstance().getVersion();
+        }
+        return false;
     }
 
     @Override

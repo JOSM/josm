@@ -40,10 +40,22 @@ PARSER_END(MapCSSParser)
  */
 
 <DEFAULT>
+TOKEN [IGNORE_CASE]:
+{
+ /* Special keywords in some contexts, ordinary identifiers in other contexts.
+    Don't use the javacc token contexts (except DEFAULT and COMMENT) because
+    they complicate error handling. Instead simply add a parsing rule <code>ident()</code>
+    that parses the IDENT token and in addition all the keyword tokens. */
+    < AND: "and" >
+|   < SET: "set" >
+|   < NOT: "not" >
+|   < MEDIA: "@media" >
+}
+
+<DEFAULT>
 TOKEN:
 {
-    < SET: ("set" | "SET") >
-|   < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
+    < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
 |   < UINT: ["1"-"9"] ( ["0"-"9"] )* >
 |   < UFLOAT: ( ["0"-"9"] )+ ( "." ( ["0"-"9"] )+ )? >
 |   < STRING: "\"" ( [" ","!","#"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
@@ -121,6 +133,15 @@ SKIP:
  *
  * 'val' can be a literal, or an expression like "prop(width, default) + 0.8".
  *
+ * @media { ... } queries are supported, following http://www.w3.org/TR/css3-mediaqueries/#syntax
+ *
+ *                               media_query
+ *         ___________________________|_______________________________
+ *        |                                                           |
+ * @media all and (min-josm-version: 7789) and (max-josm-version: 7790), all and (user-agent: xyz) { ... }
+ *                |______________________|
+ *                          |
+ *                    media_expression
  */
 
 int uint() :
@@ -165,13 +186,22 @@ String string() :
     { return t.image.substring(1, t.image.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\"); }
 }
 
+String ident():
+{
+    Token t;
+    String s;
+}
+{
+    ( t=<IDENT> | t=<SET> | t=<NOT> | t=<AND> ) { return t.image; }
+}
+
 String string_or_ident() :
 {
     Token t;
     String s;
 }
 {
-    t=<IDENT> { return t.image; } | s=string() { return s; }
+    ( s=ident() | s=string() ) { return s; }
 }
 
 String regex() :
@@ -228,14 +258,74 @@ List<Float> float_array() :
 void sheet(MapCSSStyleSource sheet):
 {
     MapCSSRule r;
-    Token com = null;
 }
 {
     { this.sheet = sheet; }
     w()
+    rules(true) ( media() w() rules(true) )*
+    <EOF>
+}
+
+void media():
+{
+    boolean pass = false;
+    boolean q;
+    boolean empty = true;
+}
+{
+    <MEDIA> w()
+    ( q=media_query() { pass = pass || q; empty = false; }
+        ( <COMMA> w() q=media_query() { pass = pass || q; } )*
+    )?
+    <LBRACE> w()
+    rules(empty || pass)
+    <RBRACE>
+}
+
+boolean media_query():
+{
+    Token t;
+    String mediatype = "all";
+    boolean pass = true;
+    boolean invert = false;
+    boolean e;
+}
+{
+    ( <NOT> { invert = true; } w() )?
+    (
+            t=<IDENT> { mediatype = t.image.toLowerCase(); } w()
+            ( <AND> w() e=media_expression() { pass = pass && e; } w() )*
+        |
+            e=media_expression() { pass = pass && e; } w()
+            ( <AND> w() e=media_expression() { pass = pass && e; } w() )*
+    )
+    { 
+        if (!"all".equals(mediatype)) {
+            pass = false;
+        }
+        return invert ? (!pass) : pass;
+    }
+}
+
+boolean media_expression():
+{
+    Token t;
+    String feature;
+    Object val = null;
+}
+{
+    <LPAR> w() t=<IDENT> { feature = t.image; } w() ( <COLON> w() val=literal() )? <RPAR>
+    { return this.sheet.evalMediaExpression(feature, val); }
+}
+
+void rules(boolean add):
+{
+    MapCSSRule r;
+}
+{
     (
         try {
-                r=rule() { if (r != null) { sheet.rules.add(r); } } w()
+            r=rule() { if (add && r != null) { sheet.rules.add(r); } } w()
         } catch (MapCSSException mex) {
             error_skipto(RBRACE, mex);
             w();
@@ -244,7 +334,6 @@ void sheet(MapCSSStyleSource sheet):
             w();
         }
     )*
-    <EOF>
 }
 
 MapCSSRule rule():
@@ -344,13 +433,13 @@ Condition condition(Context context) :
 
 String tag_key() :
 {
-    String s;
+    String s, s2;
     Token t;
 }
 {
         s=string() { return s; }
     |
-        t=<IDENT> { s = t.image; } ( <COLON> t=<IDENT> { s += ':' + t.image; } )* { return s; }
+        s=ident() ( <COLON> s2=ident() { s += ':' + s2; } )* { return s; }
 }
 
 Condition simple_key_condition(Context context) :
@@ -434,7 +523,7 @@ Condition simple_key_value_condition(Context context) :
 
 Condition class_or_pseudoclass(Context context) :
 {
-    Token t;
+    String s;
     boolean not = false;
     boolean pseudo;
 }
@@ -445,20 +534,19 @@ Condition class_or_pseudoclass(Context context) :
     |
         <COLON> { pseudo = true; }
     )
-    t=<IDENT>
+    s=ident()
     { return pseudo
-        ? Condition.createPseudoClassCondition(t.image, not, context)
-        : Condition.createClassCondition(t.image, not, context); }
+        ? Condition.createPseudoClassCondition(s, not, context)
+        : Condition.createClassCondition(s, not, context); }
 }
 
 String subpart() :
 {
-    Token t;
+    String s;
 }
 {
     <DCOLON>
-    ( t=<IDENT> | t=<STAR> )
-    { return t.image; }
+    ( s=ident() { return s; } | <STAR> { return "*"; } )
 }
 
 List<Instruction> declaration() :
@@ -572,7 +660,7 @@ Expression function() :
     List<Expression> args = new ArrayList<Expression>();
 }
 {
-    tmp=<IDENT> { name = tmp.image; } w()
+    name=ident() w()
     <LPAR> w()
     (
         arg=expression() { args.add(arg); }

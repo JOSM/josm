@@ -183,7 +183,7 @@ public class LineElemStyle extends ElemStyle {
             color = PaintColors.UNTAGGED.get();
         }
 
-        int alpha = 255;
+        int alpha = color.getAlpha();
         Integer pAlpha = Utils.color_float2int(c.get(type.prefix + OPACITY, null, Float.class));
         if (pAlpha != null) {
             alpha = pAlpha;

@@ -20,6 +20,12 @@ import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * A mappaint style (abstract class).
+ *
+ * Handles everything from parsing the style definition to application
+ * of the style to an osm primitive.
+ */
 public abstract class StyleSource extends SourceEntry {
 
     private List<Throwable> errors = new ArrayList<Throwable>();
@@ -43,6 +49,22 @@ public abstract class StyleSource extends SourceEntry {
         super(entry);
     }
 
+    /**
+     * Apply style to osm primitive.
+     *
+     * Adds properties to a MultiCascade. All active {@link StyleSource}s add
+     * their properties on after the other. At a later stage, concrete painting
+     * primitives (lines, icons, text, ...) are derived from the MultiCascade.
+     * @param mc the current MultiCascade, empty for the first StyleSource
+     * @param osm the primitive
+     * @param scale the map scale
+     * @param multipolyOuterWay support for a very old multipolygon tagging style
+     * where you add the tags both to the outer and the inner way.
+     * However, independent inner way style is also possible.
+     * @param pretendWayIsClosed For styles that require the way to be closed,
+     * we pretend it is. This is useful for generating area styles from the (segmented)
+     * outer ways of a multipolygon.
+     */
     public abstract void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed);
 
     public abstract void loadStyleSource();
