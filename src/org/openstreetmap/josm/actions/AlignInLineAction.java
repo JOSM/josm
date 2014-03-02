@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -68,10 +70,13 @@ public final class AlignInLineAction extends JosmAction {
     }
 
     private void showWarning() {
-        new Notification(
-                tr("Please select at least three nodes."))
-                .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                .show();
+        showWarning(tr("Please select at least three nodes."));
+    }
+
+    private void showWarning(String msg) {
+        new Notification(msg)
+            .setIcon(JOptionPane.INFORMATION_MESSAGE)
+            .show();
     }
 
     private static int indexWrap(int size, int i) {
@@ -113,13 +118,10 @@ public final class AlignInLineAction extends JosmAction {
 
         //// Decide what to align based on selection:
 
-        /// Only ways selected -> Align their nodes.
-        if ((selectedNodes.isEmpty()) && (selectedWays.size() == 1)) { // TODO: handle multiple ways
-            for (Way way : selectedWays) {
-                nodes.addAll(way.getNodes());
-            }
-            // use the nodes furthest apart as anchors
-            nodePairFurthestApart(nodes, anchors);
+        /// Only ways selected -> For each way align their nodes taking care of intersection
+        if(selectedNodes.isEmpty() && !selectedWays.isEmpty()) {
+            alignMultiWay(selectedWays);
+            return;
         }
         /// More than 3 nodes selected -> align those nodes
         else if(selectedNodes.size() >= 3) {
@@ -217,6 +219,111 @@ public final class AlignInLineAction extends JosmAction {
             double newY = ny - n.getEastNorth().north();
             // Add the command to move the node to its new position.
             cmds.add(new MoveCommand(n, newX, newY));
+        }
+    }
+
+    /**
+     * Align way in case of multiple way #6819
+     * @param ways Collection of way to align
+     */
+    private void alignMultiWay(Collection<Way> ways) {
+        // Collect all nodes and compute line equation
+        HashSet<Node> nodes = new HashSet<Node>();
+        HashMap<Way, Line> lines = new HashMap<Way, Line>();
+        for(Way w: ways) {
+            if(w.firstNode() == w.lastNode()) {
+                showWarning(tr("Can not align a polygon. Abort."));
+                return;
+            }
+            nodes.addAll(w.getNodes());
+            lines.put(w, new Line(w));
+        }
+        Collection<Command> cmds = new ArrayList<Command>(nodes.size());
+        List<Way> referers = new ArrayList<Way>(ways.size());
+        for(Node n: nodes) {
+            referers.clear();
+            for(OsmPrimitive o: n.getReferrers())
+                if(ways.contains(o))
+                    referers.add((Way) o);
+            if(referers.size() == 1) {
+                Way way = referers.get(0);
+                if(n == way.firstNode() || n == way.lastNode()) continue;
+                cmds.add(lines.get(way).projectionCommand(n));
+            }
+            else if(referers.size() == 2) {
+                Command cmd = lines.get(referers.get(0)).intersectionCommand(n, lines.get(referers.get(1)));
+                if(cmd == null) {
+                    showWarning(tr("Two parallels ways found. Abort."));
+                    return;
+                }
+                cmds.add(cmd);
+            }
+            else {
+                showWarning(tr("Intersection of three or more ways can not be solved. Abort."));
+                return;
+            }
+        }
+        Main.main.undoRedo.add(new SequenceCommand(tr("Align Nodes in Line"), cmds));
+        Main.map.repaint();
+    }
+
+    /**
+     * Class that describe a line
+     */
+    private class Line {
+
+        /**
+         * Line equation ax + by + c = 0
+         * Such as a^2 + b^2 = 1, ie (-b, a) is a unit vector of line
+         */
+        private double a, b, c; // Line equation ax+by+c=0
+        /**
+         * (xM, yM) are coordinate of a point of the line
+         */
+        private double xM, yM; // Coordinate of a point of the line 
+
+        /**
+         * Init a line equation from a way.
+         * @param way
+         */
+        public Line(Way way) {
+            xM = way.firstNode().getEastNorth().getX();
+            yM = way.firstNode().getEastNorth().getY();
+            double xB = way.lastNode().getEastNorth().getX();
+            double yB = way.lastNode().getEastNorth().getY();
+            a = yB - yM;
+            b = xM - xB;
+            double norm = Math.sqrt(a*a + b*b);
+            if (norm == 0) {
+                norm = 1;
+            }
+            a /= norm;
+            b /= norm;
+            c = -(a*xM + b*yM);
+        }
+
+        /**
+         * Orthogonal projection of a node N along this line.
+         * @param n Node to be projected
+         * @return The command that do the projection of this node
+         */
+        public Command projectionCommand(Node n) {
+            double s = (xM - n.getEastNorth().getX()) * a + (yM - n.getEastNorth().getY()) * b;
+            return new MoveCommand(n, a*s, b*s);
+        }
+
+        /**
+         * Intersection of two line.
+         * @param n Node to move to the intersection
+         * @param other Second line for intersection
+         * @return The command that move the node or null if line are parallels
+         */
+        public Command intersectionCommand(Node n, Line other) {
+            double d = this.a * other.b - other.a * this.b;
+            if(d == 0) return null;
+            double x = (this.b * other.c - other.b * this.c) / d;
+            double y = (other.a * this.c - this.a * other.c) / d;
+            return new MoveCommand(n, x - n.getEastNorth().getX(), y - n.getEastNorth().getY());
         }
     }
 
