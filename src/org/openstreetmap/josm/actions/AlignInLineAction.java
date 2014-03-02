@@ -42,26 +42,56 @@ public final class AlignInLineAction extends JosmAction {
         putValue("help", ht("/Action/AlignInLine"));
     }
 
-    // the joy of single return values only...
+    /**
+     * Compute 2 anchor points to align a set of nodes.
+     * If all nodes are part of a same way anchor points are choose farthest relative to this way,
+     * else choose farthest nodes.
+     * @param nodes Nodes to be aligned
+     * @param resultOut Array of size >= 2
+     */
     private void nodePairFurthestApart(List<Node> nodes, Node[] resultOut) {
         if(resultOut.length < 2)
             throw new IllegalArgumentException();
-        // Find from the selected nodes two that are the furthest apart.
-        // Let's call them A and B.
-        double distance = 0;
-
+        
         Node nodea = null;
         Node nodeb = null;
 
-        for (int i = 0; i < nodes.size()-1; i++) {
-            Node n = nodes.get(i);
-            for (int j = i+1; j < nodes.size(); j++) {
-                Node m = nodes.get(j);
-                double dist = Math.sqrt(n.getEastNorth().distance(m.getEastNorth()));
-                if (dist > distance) {
-                    nodea = n;
-                    nodeb = m;
-                    distance = dist;
+        // Intersection of all ways referred by each node
+        HashSet<Way> waysRef = null;
+        for(Node n: nodes) {
+            Collection<Way> ref = OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
+            if(waysRef == null)
+                waysRef = new HashSet<Way>(ref);
+            else
+                waysRef.retainAll(ref);
+        }
+        if(waysRef.size() == 1) {
+            // All nodes are part of the same way. See #9605
+            HashSet<Node> remainNodes = new HashSet<Node>(nodes);
+            Way way = waysRef.iterator().next();
+            for(Node n: way.getNodes()) {
+                if(!remainNodes.contains(n)) continue;
+                if(nodea == null) nodea = n;
+                if(remainNodes.size() == 1) {
+                    nodeb = remainNodes.iterator().next();
+                    break;
+                }
+                remainNodes.remove(n);
+            }
+        } else {
+            // Find from the selected nodes two that are the furthest apart.
+            // Let's call them A and B.
+            double distance = 0;
+            for (int i = 0; i < nodes.size()-1; i++) {
+                Node n = nodes.get(i);
+                for (int j = i+1; j < nodes.size(); j++) {
+                    Node m = nodes.get(j);
+                    double dist = Math.sqrt(n.getEastNorth().distance(m.getEastNorth()));
+                    if (dist > distance) {
+                        nodea = n;
+                        nodeb = m;
+                        distance = dist;
+                    }
                 }
             }
         }
