@@ -24,6 +24,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
 
     public double time;
     public Color customColoring;
+    public Color customColoringTransparent;
     public boolean drawLine;
     public int dir;
 
@@ -35,6 +36,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         north = p.north;
         time = p.time;
         customColoring = p.customColoring;
+        customColoringTransparent = p.customColoringTransparent;
         drawLine = p.drawLine;
         dir = p.dir;
     }

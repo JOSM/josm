@@ -368,6 +368,19 @@ public class GpxLayer extends Layer {
             colors[i] = Color.getHSBColor(i / 300.0f, 1, 1);
         }
     }
+    /** Colors (with custom alpha channel, if given) for HDOP painting. */
+    private final Color[] hdopColors;
+    private final int hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
+    {
+        if (hdopAlpha >= 0) {
+            hdopColors = new Color[256];
+            for (int i = 0; i < hdopColors.length; i++) {
+                hdopColors[i] = new Color((colors[i].getRGB() & 0xFFFFFF) | ((hdopAlpha & 0xFF) << 24), true);
+            }
+        } else {
+            hdopColors = colors;
+        }
+    }
 
     private static final Color[] colors_cyclic = new Color[256];
     static {
@@ -555,14 +568,20 @@ public class GpxLayer extends Layer {
                         continue;
                     }
                     trkPnt.customColoring = neutralColor;
-                    if(colored == colorModes.dilution && trkPnt.attr.get("hdop") != null) {
-                        float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
-                        int hdoplvl =(int) Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
-                                : (hdop <= 0 ? 0 : hdop * hdopfactor));
-                        // High hdop is bad, but high values in colors are green.
-                        // Therefore inverse the logic
-                        int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
-                        trkPnt.customColoring = colors[hdopcolor];
+                    if (trkPnt.attr.get("hdop") != null) {
+                        if (colored == colorModes.dilution) {
+                            float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
+                            int hdoplvl =(int) Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
+                                    : (hdop <= 0 ? 0 : hdop * hdopfactor));
+                            // High hdop is bad, but high values in colors are green.
+                            // Therefore inverse the logic
+                            int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
+                            trkPnt.customColoring = colors[hdopcolor];
+                            trkPnt.customColoringTransparent = hdopColors[hdopcolor];
+                        } else {
+                            trkPnt.customColoringTransparent = new Color(
+                                    neutralColor.getRed(), neutralColor.getGreen(), neutralColor.getBlue(), hdopAlpha & 0xFF);
+                        }
                     }
                     if (oldWp != null) {
                         double dist = c.greatCircleDistance(oldWp.getCoor());
@@ -739,7 +758,7 @@ public class GpxLayer extends Layer {
                     continue;
                 }
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
-                g.setColor(trkPnt.customColoring);
+                g.setColor(trkPnt.customColoringTransparent);
                 if (hdopcircle && trkPnt.attr.get("hdop") != null) {
                     // hdop value
                     float hdop = ((Float)trkPnt.attr.get("hdop")).floatValue();
