@@ -57,7 +57,7 @@ public class ImportHandler extends RequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        return new String[] { "/import?url="+Main.JOSM_WEBSITE+"/browser/josm/trunk/data_nodist/direction-arrows.osm" };
+        return new String[] { "/import?url="+Main.getJOSMWebsite()+"/browser/josm/trunk/data_nodist/direction-arrows.osm" };
     }
     
     @Override

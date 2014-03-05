@@ -1306,7 +1306,7 @@ public class Preferences {
     /**
      * The default plugin site
      */
-    private static final String[] DEFAULT_PLUGIN_SITE = {Main.JOSM_WEBSITE+"/plugin%<?plugins=>"};
+    private static final String[] DEFAULT_PLUGIN_SITE = {Main.getJOSMWebsite()+"/plugin%<?plugins=>"};
 
     /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded.
@@ -1553,7 +1553,7 @@ public class Preferences {
     public String toXML(boolean nopass) {
         StringBuilder b = new StringBuilder(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<preferences xmlns=\""+Main.JOSM_WEBSITE+"/preferences-1.0\" version=\""+
+                "<preferences xmlns=\""+Main.getXMLBase()+"/preferences-1.0\" version=\""+
                 Version.getInstance().getVersion() + "\">\n");
         SettingToXml toXml = new SettingToXml(b, nopass);
         for (Entry<String, Setting> e : settingsMap.entrySet()) {

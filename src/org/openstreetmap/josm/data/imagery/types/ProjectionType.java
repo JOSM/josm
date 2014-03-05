@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="entry" type="{http://josm.openstreetmap.de/wms-cache}entry" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="entry" type="{http://josm.openstreetmap.de/wms-cache-1.0}entry" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="cache-directory" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;

@@ -161,7 +161,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             p.add(new JMultilineLabel(
                     tr("You have encountered an error in JOSM. Before you file a bug report " +
                             "make sure you have updated to the latest version of JOSM here:")), GBC.eol());
-            p.add(new UrlLabel(Main.JOSM_WEBSITE,2), GBC.eop().insets(8,0,0,0));
+            p.add(new UrlLabel(Main.getJOSMWebsite(),2), GBC.eop().insets(8,0,0,0));
             p.add(new JMultilineLabel(
                     tr("You should also update your plugins. If neither of those help please " +
                             "file a bug report in our bugtracker using this link:")), GBC.eol());
@@ -173,7 +173,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             p.add(new JMultilineLabel(
                     tr("Alternatively, if that does not work you can manually fill in the information " +
                             "below at this URL:")), GBC.eol());
-            p.add(new UrlLabel(Main.JOSM_WEBSITE+"/newticket",2), GBC.eop().insets(8,0,0,0));
+            p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket",2), GBC.eop().insets(8,0,0,0));
             if (Utils.copyToClipboard(text)) {
                 p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")), GBC.eop());
             }
@@ -216,7 +216,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             gzip.write(debugText.getBytes(Utils.UTF_8));
             Utils.close(gzip);
 
-            return new URL(Main.JOSM_WEBSITE+"/josmticket?" +
+            return new URL(Main.getJOSMWebsite()+"/josmticket?" +
                     "gdata="+Base64.encode(ByteBuffer.wrap(out.toByteArray()), true));
         } catch (IOException e) {
             Main.error(e);
@@ -233,7 +233,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     public static final UrlLabel getBugReportUrlLabel(String debugText) {
         URL url = getBugReportUrl(debugText);
         if (url != null) {
-            return new UrlLabel(url.toString(), Main.JOSM_WEBSITE+"/josmticket?...", 2);
+            return new UrlLabel(url.toString(), Main.getJOSMWebsite()+"/josmticket?...", 2);
         }
         return null;
     }

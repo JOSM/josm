@@ -229,7 +229,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      *
      * @param monitor
      * @see MemoryTileCache#clear()
-     * @see OsmFileCacheTileLoader#clearCache(org.openstreetmap.gui.jmapviewer.interfaces.TileSource, org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader.TileClearController)
+     * @see OsmFileCacheTileLoader#clearCache(org.openstreetmap.gui.jmapviewer.interfaces.TileSource, org.openstreetmap.gui.jmapviewer.interfaces.TileClearController)
      */
     void clearTileCache(ProgressMonitor monitor) {
         tileCache.clear();

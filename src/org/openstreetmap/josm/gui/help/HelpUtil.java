@@ -27,7 +27,7 @@ public final class HelpUtil {
      * @return the base wiki URL
      */
     public static String getWikiBaseUrl() {
-        return Main.pref.get("help.baseurl", Main.JOSM_WEBSITE);
+        return Main.pref.get("help.baseurl", Main.getJOSMWebsite());
     }
 
     /**

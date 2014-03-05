@@ -159,7 +159,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
     }
 
     private String fixImageLinks(String s) {
-        Matcher m = Pattern.compile("src=\""+Main.JOSM_WEBSITE+"/browser/trunk(/images/.*?\\.png)\\?format=raw\"").matcher(s);
+        Matcher m = Pattern.compile("src=\""+Main.getJOSMWebsite()+"/browser/trunk(/images/.*?\\.png)\\?format=raw\"").matcher(s);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String im = m.group(1);

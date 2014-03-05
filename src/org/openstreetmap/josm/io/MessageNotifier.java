@@ -66,7 +66,7 @@ public final class MessageNotifier {
                         public void run() {
                             JPanel panel = new JPanel(new GridBagLayout());
                             panel.add(new JLabel(trn("You have {0} unread message.", "You have {0} unread messages.", unread, unread)), GBC.eol());
-                            panel.add(new UrlLabel(Main.OSM_WEBSITE + "/user/"+userInfo.getDisplayName()+"/inbox", tr("Click here to see your inbox.")), GBC.eol());
+                            panel.add(new UrlLabel(Main.getOSMWebsite() + "/user/"+userInfo.getDisplayName()+"/inbox", tr("Click here to see your inbox.")), GBC.eol());
                             panel.setOpaque(false);
                             new Notification().setContent(panel)
                                 .setIcon(JOptionPane.INFORMATION_MESSAGE)

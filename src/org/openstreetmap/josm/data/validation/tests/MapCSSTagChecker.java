@@ -230,7 +230,8 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         /**
-         * Determines the {@code index}-th key/value/tag (depending on {@code type}) of the {@link Selector.GeneralSelector}.
+         * Determines the {@code index}-th key/value/tag (depending on {@code type}) of the
+         * {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector}.
          */
         static String determineArgument(Selector.GeneralSelector matchingSelector, int index, String type) {
             try {

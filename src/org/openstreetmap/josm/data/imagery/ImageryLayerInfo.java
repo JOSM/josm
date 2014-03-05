@@ -25,7 +25,7 @@ public class ImageryLayerInfo {
     static List<ImageryInfo> defaultLayers = new ArrayList<ImageryInfo>();
 
     private static final String[] DEFAULT_LAYER_SITES = {
-        Main.JOSM_WEBSITE+"/maps"
+        Main.getJOSMWebsite()+"/maps"
     };
 
     private ImageryLayerInfo() {

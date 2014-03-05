@@ -5,5 +5,5 @@
 // Generated on: 2011.01.09 at 07:33:18 PM CET
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://josm.openstreetmap.de/wms-cache", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://josm.openstreetmap.de/wms-cache-1.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.openstreetmap.josm.data.imagery.types;
