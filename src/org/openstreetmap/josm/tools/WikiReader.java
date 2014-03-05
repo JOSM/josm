@@ -29,7 +29,7 @@ public class WikiReader {
      * Constructs a new {@code WikiReader}.
      */
     public WikiReader() {
-        this.baseurl = Main.pref.get("help.baseurl", Main.JOSM_WEBSITE);
+        this.baseurl = Main.pref.get("help.baseurl", Main.getJOSMWebsite());
     }
 
     /**
@@ -113,6 +113,8 @@ public class WikiReader {
         boolean skip = false;
         String b = "";
         String full = "";
+        String baseurlus = baseurl.replace("https:","http:");
+        String baseurlse = baseurlus.replace("http:","https:");
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             full += line;
             if (line.contains("<div id=\"searchable\">")) {
@@ -135,7 +137,8 @@ public class WikiReader {
                 // will render a thick  border around images inside an <a> element
                 b += line.replaceAll("<img ", "<img border=\"0\" ")
                          .replaceAll("<span class=\"icon\">.</span>", "")
-                         .replaceAll("href=\"/", "href=\"" + baseurl + "/")
+                         .replaceAll("href=\"/", "href=\"" + baseurlus + "/")
+                         .replaceAll("href=\"/", "href=\"" + baseurlse + "/")
                          .replaceAll(" />", ">")
                          + "\n";
             } else if (transl && line.contains("</div>")) {

@@ -57,7 +57,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
     static class TagCheckerRulesSourceEditor extends SourceEditor {
 
         public TagCheckerRulesSourceEditor() {
-            super(SourceType.TAGCHECKER_RULE, Main.JOSM_WEBSITE+"/rules", ruleSourceProviders, false);
+            super(SourceType.TAGCHECKER_RULE, Main.getJOSMWebsite()+"/rules", ruleSourceProviders, false);
         }
 
         @Override

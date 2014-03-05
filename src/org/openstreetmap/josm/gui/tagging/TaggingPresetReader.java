@@ -104,7 +104,7 @@ public final class TaggingPresetReader {
         final Stack<Iterator<Object>> lastIdIterators = new Stack<Iterator<Object>>();
 
         if (validate) {
-            parser.startWithValidation(in, Main.JOSM_WEBSITE+"/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
+            parser.startWithValidation(in, Main.getXMLBase()+"/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
         } else {
             parser.start(in);
         }

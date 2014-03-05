@@ -31,15 +31,15 @@ public class OAuthParameters {
     /**
      * The default OSM OAuth request token URL.
      */
-    public static final String DEFAULT_REQUEST_TOKEN_URL = Main.OSM_WEBSITE + "/oauth/request_token";
+    public static final String DEFAULT_REQUEST_TOKEN_URL = Main.getOSMWebsite() + "/oauth/request_token";
     /**
      * The default OSM OAuth access token URL.
      */
-    public static final String DEFAULT_ACCESS_TOKEN_URL = Main.OSM_WEBSITE + "/oauth/access_token";
+    public static final String DEFAULT_ACCESS_TOKEN_URL = Main.getOSMWebsite() + "/oauth/access_token";
     /**
      * The default OSM OAuth authorize URL.
      */
-    public static final String DEFAULT_AUTHORISE_URL = Main.OSM_WEBSITE + "/oauth/authorize";
+    public static final String DEFAULT_AUTHORISE_URL = Main.getOSMWebsite() + "/oauth/authorize";
 
 
     /**

@@ -30,6 +30,41 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.Main;
 
+/*************
+ * <pre>
+ * Parser definitions
+ *
+ *                       rule
+ *  _______________________|______________________________
+ * |                                                      |
+ *        selector                      declaration
+ *  _________|___________________   _________|____________
+ * |                             | |                      |
+ *
+ * way|z11-12[highway=residential] { color: red; width: 3 }
+ *
+ *    |_____||___________________|   |_________|
+ *       |            |                   |
+ *     zoom       condition          instruction
+ *
+ * more general:
+ *
+ * way|z13-[a=b][c=d]::subpart, way|z-3[u=v]:closed::subpart2 { p1 : val; p2 : val; }
+ *
+ * 'val' can be a literal, or an expression like "prop(width, default) + 0.8".
+ *
+ * {@literal @media} { ... } queries are supported, following http://www.w3.org/TR/css3-mediaqueries/#syntax
+ *
+ *                               media_query
+ *         ___________________________|_______________________________
+ *        |                                                           |
+ * {@literal @media} all and (min-josm-version: 7789) and (max-josm-version: 7790), all and (user-agent: xyz) { ... }
+ *                |______________________|
+ *                          |
+ *                    media_expression
+ * </pre>
+ */
+
 public class MapCSSParser {
     MapCSSStyleSource sheet;
 }
@@ -110,39 +145,6 @@ SKIP:
 {
     < ~[] >
 }
-
-/*************
- * Parser definitions
- *
- *                       rule
- *  _______________________|______________________________
- * |                                                      |
- *        selector                      declaration
- *  _________|___________________   _________|____________
- * |                             | |                      |
- *
- * way|z11-12[highway=residential] { color: red; width: 3 }
- *
- *    |_____||___________________|   |_________|
- *       |            |                   |
- *     zoom       condition          instruction
- *
- * more general:
- *
- * way|z13-[a=b][c=d]::subpart, way|z-3[u=v]:closed::subpart2 { p1 : val; p2 : val; }
- *
- * 'val' can be a literal, or an expression like "prop(width, default) + 0.8".
- *
- * @media { ... } queries are supported, following http://www.w3.org/TR/css3-mediaqueries/#syntax
- *
- *                               media_query
- *         ___________________________|_______________________________
- *        |                                                           |
- * @media all and (min-josm-version: 7789) and (max-josm-version: 7790), all and (user-agent: xyz) { ... }
- *                |______________________|
- *                          |
- *                    media_expression
- */
 
 int uint() :
 {

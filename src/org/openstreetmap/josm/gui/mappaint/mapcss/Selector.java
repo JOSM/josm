@@ -310,7 +310,8 @@ public interface Selector {
     }
 
     /**
-     * Super class of {@link GeneralSelector} and {@link LinkSelector}.
+     * Super class of {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector} and
+     * {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector}.
      * @since 5841
      */
     public abstract static class AbstractSelector implements Selector {

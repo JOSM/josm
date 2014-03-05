@@ -109,15 +109,15 @@ public abstract class Main {
 
     /**
      * The JOSM website URL.
-     * @since 6143
+     * @since 6897 (was public from 6143 to 6896)
      */
-    public static final String JOSM_WEBSITE = "http://josm.openstreetmap.de";
+    private static final String JOSM_WEBSITE = "http://josm.openstreetmap.de";
 
     /**
      * The OSM website URL.
-     * @since 6453
+     * @since 6897 (was public from 6453 to 6896)
      */
-    public static final String OSM_WEBSITE = "http://www.openstreetmap.org";
+    private static final String OSM_WEBSITE = "http://www.openstreetmap.org";
 
     /**
      * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
@@ -1482,5 +1482,38 @@ public abstract class Main {
      */
     public static Map<String, Throwable> getNetworkErrors() {
         return new HashMap<String, Throwable>(NETWORK_ERRORS);
+    }
+
+    /**
+     * Returns the JOSM website URL.
+     * @return the josm website URL
+     * @since 6897
+     */
+    public static String getJOSMWebsite() {
+        if(Main.pref != null)
+            return Main.pref.get("josm.url", JOSM_WEBSITE);
+        return JOSM_WEBSITE;
+    }
+
+    /**
+     * Returns the JOSM XML URL.
+     * @return the josm XML URL
+     * @since 6897
+     */
+    public static String getXMLBase() {
+        if(Main.pref != null)
+            return Main.pref.get("xml.url", JOSM_WEBSITE);
+        return JOSM_WEBSITE;
+    }
+
+    /**
+     * Returns the OSM website URL.
+     * @return the OSM website URL
+     * @since 6897
+     */
+    public static String getOSMWebsite() {
+        if(Main.pref != null)
+            return Main.pref.get("osm.url", OSM_WEBSITE);
+        return OSM_WEBSITE;
     }
 }

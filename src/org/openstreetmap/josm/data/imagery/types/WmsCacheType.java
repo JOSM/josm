@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="projection" type="{http://josm.openstreetmap.de/wms-cache}projection" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="projection" type="{http://josm.openstreetmap.de/wms-cache-1.0}projection" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *       &lt;attribute name="tileSize" use="required" type="{http://www.w3.org/2001/XMLSchema}int" /&gt;
  *       &lt;attribute name="totalFileSize" use="required" type="{http://www.w3.org/2001/XMLSchema}int" /&gt;

@@ -678,7 +678,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     /**
      * Finds the most suitable resolution for the current zoom level, but prefers
      * higher resolutions. Snaps to values defined in snapLevels.
-     * @return
+     * @return best zoom level
      */
     private static double getBestZoom() {
         // not sure why getDist100Pixel returns values corresponding to

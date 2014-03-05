@@ -79,7 +79,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
                 InputStreamReader reader = new InputStreamReader(in);
                 XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(this));
                 parser.startWithValidation(reader,
-                        Main.JOSM_WEBSITE+"/mappaint-style-1.0",
+                        Main.getXMLBase()+"/mappaint-style-1.0",
                         "resource://data/mappaint-style.xsd");
                 while (parser.hasNext());
             } finally {

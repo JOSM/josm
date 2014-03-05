@@ -303,6 +303,6 @@ public final class OsmUrlToBounds {
         lat /= decimals;
         double lon = (Math.round(dlon * decimals));
         lon /= decimals;
-        return Main.OSM_WEBSITE + "/#map="+zoom+"/"+lat+"/"+lon;
+        return Main.getOSMWebsite() + "/#map="+zoom+"/"+lat+"/"+lon;
     }
 }
