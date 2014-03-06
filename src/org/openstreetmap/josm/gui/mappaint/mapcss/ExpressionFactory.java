@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.CRC32;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
@@ -200,6 +201,21 @@ public final class ExpressionFactory {
                 return null;
             }
             return c;
+        }
+
+        /**
+         * Create color from hsb color model. (arguments form 0.0 to 1.0)
+         * @param h hue
+         * @param s saturation
+         * @param b brightness
+         * @return the corresponding color
+         */
+        public static Color hsb_color(float h, float s, float b) {
+            try {
+                return Color.getHSBColor(h, s, b);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
 
         /**
@@ -551,6 +567,17 @@ public final class ExpressionFactory {
          */
         public static String XML_encode(String s) {
             return s == null ? null : XmlWriter.encode(s);
+        }
+
+        /**
+         * Calculate the CRC32 checksum from a string
+         * @param s the string
+         * @return long value from 0 to 2^32-1
+         */
+        public static long CRC32_checksum(String s) {
+            CRC32 cs = new CRC32();
+            cs.update(s.getBytes());
+            return cs.getValue();
         }
     }
 
