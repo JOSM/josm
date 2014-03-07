@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -270,7 +270,7 @@ public final class ConditionalOptionPaneUtil {
             if (message instanceof Component) {
                 add((Component) message, GBC.eop());
             } else if (message != null) {
-                add(new JLabel(message.toString()), GBC.eop());
+                add(new JMultilineLabel(message.toString()), GBC.eop());
             }
             add(cbShowPermanentDialog, GBC.eol());
             add(cbShowSessionDialog, GBC.eol());

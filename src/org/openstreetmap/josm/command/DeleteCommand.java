@@ -19,7 +19,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.Icon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -37,6 +36,7 @@ import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.actionsupport.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -463,7 +463,7 @@ public class DeleteCommand extends Command {
 
     private static boolean confirmRelationDeletion(Collection<Relation> relations) {
         JPanel msg = new JPanel(new GridBagLayout());
-        msg.add(new JLabel("<html>" + trn(
+        msg.add(new JMultilineLabel("<html>" + trn(
                 "You are about to delete {0} relation: {1}"
                 + "<br/>"
                 + "This step is rarely necessary and cannot be undone easily after being uploaded to the server."

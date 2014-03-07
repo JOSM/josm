@@ -36,7 +36,6 @@ import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -87,6 +86,7 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
@@ -1122,7 +1122,7 @@ public abstract class Main {
                     version.startsWith("1.9") || version.startsWith("9"))
                 return;
             if (version.startsWith("1.5") || version.startsWith("5")) {
-                JLabel ho = new JLabel("<html>"+
+                JMultilineLabel ho = new JMultilineLabel("<html>"+
                         tr("<h2>JOSM requires Java version 6.</h2>"+
                                 "Detected Java version: {0}.<br>"+
                                 "You can <ul><li>update your Java (JRE) or</li>"+
