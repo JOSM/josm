@@ -18,6 +18,7 @@ import javax.swing.JTabbedPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -73,16 +74,17 @@ public class AboutAction extends JosmAction {
         license.setCaretPosition(0);
 
         JPanel info = new JPanel(new GridBagLayout());
-        JLabel caption = new JLabel("JOSM – " + tr("Java OpenStreetMap Editor"));
-        caption.setFont(GuiHelper.getTitleFont());
-        info.add(caption, GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
-        info.add(GBC.glue(0,10), GBC.eol());
-        info.add(new JLabel(tr("Version {0}", version.getVersionString())), GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
-        info.add(GBC.glue(0,5), GBC.eol());
-        info.add(new JLabel(tr("Last change at {0}",version.getTime())), GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
-        info.add(GBC.glue(0,5), GBC.eol());
-        info.add(new JLabel(tr("Java Version {0}",System.getProperty("java.version"))), GBC.eol().fill(GBC.HORIZONTAL).insets(10,0,0,0));
-        info.add(GBC.glue(0,10), GBC.eol());
+        final JMultilineLabel label = new JMultilineLabel("<html>" +
+                "<h1>" + "JOSM – " + tr("Java OpenStreetMap Editor") + "</h1>" +
+                "<p style='font-size:75%'></p>" +
+                "<p>" + tr("Version {0}", version.getVersionString()) + "</p>" +
+                "<p style='font-size:50%'></p>" +
+                "<p>" + tr("Last change at {0}", version.getTime()) + "</p>" +
+                "<p style='font-size:50%'></p>" +
+                "<p>" + tr("Java Version {0}", System.getProperty("java.version")) + "</p>" +
+                "<p style='font-size:50%'></p>" +
+                "</html>");
+        info.add(label, GBC.eol().fill(GBC.HORIZONTAL).insets(10, 0, 0, 0));
         info.add(new JLabel(tr("Homepage")), GBC.std().insets(10,0,10,0));
         info.add(new UrlLabel(Main.getJOSMWebsite(),2), GBC.eol().fill(GBC.HORIZONTAL));
         info.add(GBC.glue(0,5), GBC.eol());

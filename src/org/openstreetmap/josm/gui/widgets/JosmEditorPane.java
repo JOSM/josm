@@ -12,6 +12,7 @@ import javax.swing.JEditorPane;
 import javax.swing.UIManager;
 import javax.swing.text.html.StyleSheet;
 
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -80,28 +81,30 @@ public class JosmEditorPane extends JEditorPane {
     }
 
     /**
-     * Creates a {@link JosmEditorPane} which is meant to be used as a powerful replacement of {@link javax.swing.JLabel}.
+     * Adapts an {@link JEditorPane} to be used as a powerful replacement of {@link javax.swing.JLabel}.
      */
-    public static JosmEditorPane createJLabelLikePane() {
-        final JosmEditorPane pane = new JosmEditorPane("text/html", "");
+    public static void makeJLabelLike(JEditorPane pane, boolean allBold) {
+        pane.setContentType("text/html");
         pane.setOpaque(false);
         pane.setEditable(false);
 
         JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
         final Font f = UIManager.getFont("Label.font");
         final StyleSheet ss = new StyleSheet();
-        final String rule = MessageFormat.format(
+        ss.addRule((allBold ? "html" : "strong, b") + " {" + getFontRule(f) + "}");
+        ss.addRule("a {text-decoration: underline; color: blue}");
+        ss.addRule("h1 {" + getFontRule(GuiHelper.getTitleFont()) + "}");
+        kit.setStyleSheet(ss);
+        pane.setEditorKit(kit);
+    }
+
+    private static String getFontRule(Font f) {
+        return MessageFormat.format(
                 "font-family: ''{0}'';font-size: {1,number}pt; font-weight: {2}; font-style: {3}",
                 f.getName(),
                 f.getSize(),
                 "bold",
                 f.isItalic() ? "italic" : "normal"
         );
-        ss.addRule("strong {" + rule + "}");
-        ss.addRule("a {text-decoration: underline; color: blue}");
-        kit.setStyleSheet(ss);
-        pane.setEditorKit(kit);
-
-        return pane;
     }
 }

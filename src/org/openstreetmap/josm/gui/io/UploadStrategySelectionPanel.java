@@ -1,5 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -29,10 +30,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.io.OsmApi;
 
 /**
  * UploadStrategySelectionPanel is a panel for selecting an upload strategy.
@@ -107,7 +107,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.gridwidth = 2;
-        JLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
+        JMultilineLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
         lbl.setText(tr("Upload data in one request"));
         pnl.add(lbl, gc);
         gc.gridx = 3;
@@ -319,8 +319,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
         if (maxChunkSize > 0 && numUploadedObjects > maxChunkSize) {
             rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setEnabled(false);
-            JLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
-            lbl.setIcon(ImageProvider.get("warning-small.png"));
+            JMultilineLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
             lbl.setText(tr("Upload in one request not possible (too many objects to upload)"));
             lbl.setToolTipText(tr("<html>Cannot upload {0} objects in one request because the<br>"
                     + "max. changeset size {1} on server ''{2}'' is exceeded.</html>",
@@ -340,9 +339,8 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
         } else {
             rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setEnabled(true);
-            JLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
+            JMultilineLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
             lbl.setText(tr("Upload data in one request"));
-            lbl.setIcon(null);
             lbl.setToolTipText("");
             lblNumRequests.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setVisible(true);
 

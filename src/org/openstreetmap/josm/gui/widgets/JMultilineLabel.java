@@ -4,7 +4,7 @@ package org.openstreetmap.josm.gui.widgets;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
-import javax.swing.JLabel;
+import javax.swing.JEditorPane;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.View;
 
@@ -15,10 +15,10 @@ import javax.swing.text.View;
  *
  * Note that this won't work if JMultilineLabel is put into a JScrollBox or
  * similar as the bounds will never change. Instead scrollbars will be displayed.
- * 
+ *
  * @since 6340
  */
-public class JMultilineLabel extends JLabel {
+public class JMultilineLabel extends JEditorPane {
     private int maxWidth = Integer.MAX_VALUE;
     private Rectangle oldbounds = null;
     private Dimension oldPreferred = null;
@@ -32,7 +32,11 @@ public class JMultilineLabel extends JLabel {
      * @param text The text to display
      */
     public JMultilineLabel(String text) {
-        super();
+        this(text, true);
+    }
+
+    public JMultilineLabel(String text, boolean allBold) {
+        JosmEditorPane.makeJLabelLike(this, allBold);
         String html = text.trim().replaceAll("\n", "<br>");
         if (!html.startsWith("<html>")) {
             html = "<html>" + html + "</html>";

@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -25,6 +24,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -209,7 +209,7 @@ public abstract class Command extends PseudoCommand {
         }
         if (outside) {
             JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JLabel("<html>" + outsideDialogMessage + "</html>"));
+            msg.add(new JMultilineLabel("<html>" + outsideDialogMessage + "</html>"));
             boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
                     operation + "_outside_nodes",
                     Main.parent,
@@ -223,7 +223,7 @@ public abstract class Command extends PseudoCommand {
         }
         if (incomplete) {
             JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JLabel("<html>" + incompleteDialogMessage + "</html>"));
+            msg.add(new JMultilineLabel("<html>" + incompleteDialogMessage + "</html>"));
             boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
                     operation + "_incomplete",
                     Main.parent,

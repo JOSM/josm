@@ -64,7 +64,7 @@ public class SplashScreen extends JFrame {
         innerContentPane.add(logo, gbc);
 
         // Add the name of this application
-        JLabel caption = new JLabel("JOSM - " + tr("Java OpenStreetMap Editor"));
+        JLabel caption = new JLabel("JOSM – " + tr("Java OpenStreetMap Editor"));
         caption.setFont(GuiHelper.getTitleFont());
         gbc.gridheight = 1;
         gbc.gridx = 1;
@@ -106,6 +106,10 @@ public class SplashScreen extends JFrame {
         });
     }
 
+    /**
+     * Returns the progress monitor.
+     * @return The progress monitor
+     */
     public ProgressMonitor getProgressMonitor() {
         return progressMonitor;
     }
