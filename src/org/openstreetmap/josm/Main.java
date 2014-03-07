@@ -1501,9 +1501,7 @@ public abstract class Main {
      * @since 6897
      */
     public static String getXMLBase() {
-        if(Main.pref != null)
-            return Main.pref.get("xml.url", JOSM_WEBSITE);
-        return JOSM_WEBSITE;
+        return "http://josm.openstreetmap.de";
     }
 
     /**
