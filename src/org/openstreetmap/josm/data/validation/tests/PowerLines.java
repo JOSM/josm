@@ -60,7 +60,7 @@ public class PowerLines extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (isPowerLine(w)) {
+            if (isPowerLine(w) && !w.hasTag("location", "underground")) {
                 String fixValue = null;
                 boolean erroneous = false;
                 boolean canFix = false;
