@@ -72,8 +72,13 @@ public class ImageryHandler extends RequestHandler {
             }
         }
         GuiHelper.runInEDT(new Runnable() {
-            @Override public void run() {
-                Main.main.addLayer(ImageryLayer.create(imgInfo));
+            @Override
+            public void run() {
+                try {
+                    Main.main.addLayer(ImageryLayer.create(imgInfo));
+                } catch (IllegalArgumentException e) {
+                    Main.error(e, false);
+                }
             }
         });
     }
@@ -109,7 +114,13 @@ public class ImageryHandler extends RequestHandler {
     
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
-        // Nothing to do
+        String url = args.get("url");
+        String type = args.get("type");
+        try {
+            ImageryLayer.create(new ImageryInfo(null, url, type, null, null));
+        } catch (IllegalArgumentException e) {
+            throw new RequestHandlerBadRequestException(e.getMessage(), e);
+        }
     }
 
     @Override
