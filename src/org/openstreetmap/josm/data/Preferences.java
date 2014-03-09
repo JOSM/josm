@@ -1304,16 +1304,11 @@ public class Preferences {
     }
 
     /**
-     * The default plugin site
-     */
-    private static final String[] DEFAULT_PLUGIN_SITE = {Main.getJOSMWebsite()+"/plugin%<?plugins=>"};
-
-    /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded.
      * @return the collection of plugin site URLs
      */
     public Collection<String> getPluginSites() {
-        return getCollection("pluginmanager.sites", Arrays.asList(DEFAULT_PLUGIN_SITE));
+        return getCollection("pluginmanager.sites", Collections.singleton(Main.getJOSMWebsite()+"/plugin%<?plugins=>"));
     }
 
     /**
