@@ -751,6 +751,7 @@ public class GpxLayer extends Layer {
          ********** STEP 3d - DRAW LARGE POINTS AND HDOP CIRCLE *********
          ****************************************************************/
         if (large || hdopcircle) {
+            final int halfSize = largesize/2;
             g.setColor(neutralColor);
             for (WayPoint trkPnt : visibleSegments) {
                 LatLon c = trkPnt.getCoor();
@@ -770,7 +771,7 @@ public class GpxLayer extends Layer {
                     g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
                 }
                 if (large) {
-                    g.fillRect(screen.x-1, screen.y-1, largesize, largesize);
+                    g.fillRect(screen.x-halfSize, screen.y-halfSize, largesize, largesize);
                 }
             } // end for trkpnt
         } // end if large || hdopcircle
