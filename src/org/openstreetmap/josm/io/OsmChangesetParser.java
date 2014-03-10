@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -45,6 +46,10 @@ public final class OsmChangesetParser {
         changesets = new LinkedList<Changeset>();
     }
 
+    /**
+     * Returns the parsed changesets.
+     * @return the parsed changesets
+     */
     public List<Changeset> getChangesets() {
         return changesets;
     }
@@ -57,15 +62,14 @@ public final class OsmChangesetParser {
             this.locator = locator;
         }
 
-        protected void throwException(String msg) throws OsmDataParsingException{
-            throw new OsmDataParsingException(msg).rememberLocation(locator);
+        protected void throwException(String msg) throws XmlParsingException {
+            throw new XmlParsingException(msg).rememberLocation(locator);
         }
-        /**
-         * The current changeset
-         */
+
+        /** The current changeset */
         private Changeset current = null;
 
-        protected void parseChangesetAttributes(Changeset cs, Attributes atts) throws OsmDataParsingException {
+        protected void parseChangesetAttributes(Changeset cs, Attributes atts) throws XmlParsingException {
             // -- id
             String value = atts.getValue("id");
             if (value == null) {
@@ -185,7 +189,7 @@ public final class OsmChangesetParser {
             }
         }
 
-        protected User createUser(String uid, String name) throws OsmDataParsingException {
+        protected User createUser(String uid, String name) throws XmlParsingException {
             if (uid == null) {
                 if (name == null)
                     return null;

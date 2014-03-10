@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -70,11 +71,11 @@ public class DiffResultProcessor  {
      *
      * @param diffUploadResponse the response. Must not be null.
      * @param progressMonitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
-     * @throws IllegalArgumentException thrown if diffUploadRequest is null
-     * @throws OsmDataParsingException thrown if the diffUploadRequest can't be parsed successfully
+     * @throws IllegalArgumentException if diffUploadRequest is null
+     * @throws XmlParsingException if the diffUploadRequest can't be parsed successfully
      *
      */
-    public  void parse(String diffUploadResponse, ProgressMonitor progressMonitor) throws OsmDataParsingException {
+    public  void parse(String diffUploadResponse, ProgressMonitor progressMonitor) throws XmlParsingException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
@@ -84,13 +85,13 @@ public class DiffResultProcessor  {
             InputSource inputSource = new InputSource(new StringReader(diffUploadResponse));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new Parser());
         } catch(IOException e) {
-            throw new OsmDataParsingException(e);
+            throw new XmlParsingException(e);
         } catch(ParserConfigurationException e) {
-            throw new OsmDataParsingException(e);
-        } catch(OsmDataParsingException e) {
+            throw new XmlParsingException(e);
+        } catch(XmlParsingException e) {
             throw e;
         } catch(SAXException e) {
-            throw new OsmDataParsingException(e);
+            throw new XmlParsingException(e);
         } finally {
             progressMonitor.finishTask();
         }
@@ -146,8 +147,8 @@ public class DiffResultProcessor  {
             this.locator = locator;
         }
 
-        protected void throwException(String msg) throws OsmDataParsingException{
-            throw new OsmDataParsingException(msg).rememberLocation(locator);
+        protected void throwException(String msg) throws XmlParsingException {
+            throw new XmlParsingException(msg).rememberLocation(locator);
         }
 
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
@@ -172,7 +173,7 @@ public class DiffResultProcessor  {
                     throwException(tr("Unexpected XML element with name ''{0}''", qName));
                 }
             } catch (NumberFormatException e) {
-                throw new OsmDataParsingException(e).rememberLocation(locator);
+                throw new XmlParsingException(e).rememberLocation(locator);
             }
         }
     }

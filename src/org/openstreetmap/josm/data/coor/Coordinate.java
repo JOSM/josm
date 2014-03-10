@@ -112,16 +112,20 @@ abstract class Coordinate implements Serializable {
         return new BBox(x - r, y - r, x + r, y + r);
     }
 
-    @Override
-    public int hashCode() {
+    protected final int computeHashCode(int init) {
         final int prime = 31;
-        int result = 1;
+        int result = init;
         long temp;
         temp = java.lang.Double.doubleToLongBits(x);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         temp = java.lang.Double.doubleToLongBits(y);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return computeHashCode(1);
     }
 
     @Override

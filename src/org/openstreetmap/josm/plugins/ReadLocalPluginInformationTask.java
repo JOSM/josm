@@ -39,6 +39,9 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     private Map<String, PluginInformation> availablePlugins;
     private boolean canceled;
 
+    /**
+     * Constructs a new {@code ReadLocalPluginInformationTask}.
+     */
     public ReadLocalPluginInformationTask() {
         super(tr("Reading local plugin information.."), false);
         availablePlugins = new HashMap<String, PluginInformation>();
@@ -71,15 +74,19 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
-    protected void scanSiteCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
-        File[] siteCacheFiles = pluginsDirectory.listFiles(
+    private File[] listFiles(File pluginsDirectory, final String regex) {
+        return pluginsDirectory.listFiles(
                 new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
-                        return name.matches("^([0-9]+-)?site.*\\.txt$");
+                        return name.matches(regex);
                     }
                 }
         );
+    }
+
+    protected void scanSiteCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
+        File[] siteCacheFiles = listFiles(pluginsDirectory, "^([0-9]+-)?site.*\\.txt$");
         if (siteCacheFiles == null || siteCacheFiles.length == 0)
             return;
         monitor.subTask(tr("Processing plugin site cache files..."));
@@ -96,16 +103,8 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             monitor.worked(1);
         }
     }
-
     protected void scanIconCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
-        File[] siteCacheFiles = pluginsDirectory.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.matches("^([0-9]+-)?site.*plugin-icons\\.zip$");
-                    }
-                }
-        );
+        File[] siteCacheFiles = listFiles(pluginsDirectory, "^([0-9]+-)?site.*plugin-icons\\.zip$");
         if (siteCacheFiles == null || siteCacheFiles.length == 0)
             return;
         monitor.subTask(tr("Processing plugin site cache icon files..."));

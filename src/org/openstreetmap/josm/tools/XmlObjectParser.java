@@ -42,57 +42,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * @author Imi
  */
 public class XmlObjectParser implements Iterable<Object> {
-    public static class PresetParsingException extends SAXException {
-        private int columnNumber;
-        private int lineNumber;
-
-        /**
-         * Constructs a new {@code PresetParsingException}.
-         */
-        public PresetParsingException() {
-            super();
-        }
-
-        public PresetParsingException(Exception e) {
-            super(e);
-        }
-
-        public PresetParsingException(String message, Exception e) {
-            super(message, e);
-        }
-
-        public PresetParsingException(String message) {
-            super(message);
-        }
-
-        public PresetParsingException rememberLocation(Locator locator) {
-            if (locator == null) return this;
-            this.columnNumber = locator.getColumnNumber();
-            this.lineNumber = locator.getLineNumber();
-            return this;
-        }
-
-        @Override
-        public String getMessage() {
-            String msg = super.getMessage();
-            if (lineNumber == 0 && columnNumber == 0)
-                return msg;
-            if (msg == null) {
-                msg = getClass().getName();
-            }
-            msg = msg + " " + tr("(at line {0}, column {1})", lineNumber, columnNumber);
-            return msg;
-        }
-
-        public int getColumnNumber() {
-            return columnNumber;
-        }
-
-        public int getLineNumber() {
-            return lineNumber;
-        }
-    }
-
     public static final String lang = LanguageInfo.getLanguageCodeXML();
 
     private static class AddNamespaceFilter extends XMLFilterImpl {
@@ -126,11 +75,12 @@ public class XmlObjectParser implements Iterable<Object> {
             this.locator = locator;
         }
 
-        protected void throwException(Exception e) throws PresetParsingException{
-            throw new PresetParsingException(e).rememberLocation(locator);
+        protected void throwException(Exception e) throws XmlParsingException {
+            throw new XmlParsingException(e).rememberLocation(locator);
         }
 
-        @Override public void startElement(String ns, String lname, String qname, Attributes a) throws SAXException {
+        @Override
+        public void startElement(String ns, String lname, String qname, Attributes a) throws SAXException {
             if (mapping.containsKey(qname)) {
                 Class<?> klass = mapping.get(qname).klass;
                 try {
@@ -149,7 +99,9 @@ public class XmlObjectParser implements Iterable<Object> {
                 }
             }
         }
-        @Override public void endElement(String ns, String lname, String qname) throws SAXException {
+
+        @Override
+        public void endElement(String ns, String lname, String qname) throws SAXException {
             if (mapping.containsKey(qname) && !mapping.get(qname).onStart) {
                 report();
             } else if (mapping.containsKey(qname) && characters != null && !current.isEmpty()) {
@@ -157,7 +109,9 @@ public class XmlObjectParser implements Iterable<Object> {
                 characters  = new StringBuilder(64);
             }
         }
-        @Override public void characters(char[] ch, int start, int length) {
+
+        @Override
+        public void characters(char[] ch, int start, int length) {
             characters.append(ch, start, length);
         }
 
@@ -280,6 +234,9 @@ public class XmlObjectParser implements Iterable<Object> {
     private List<Object> queue = new LinkedList<Object>();
     private Iterator<Object> queueIterator = null;
 
+    /**
+     * Constructs a new {@code XmlObjectParser}.
+     */
     public XmlObjectParser() {
         parser = new Parser();
     }

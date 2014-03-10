@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.XmlParsingException;
 
 /**
  * Reads the history of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} from the OSM API server.
@@ -181,7 +182,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
             monitor.setCustomText(tr("Downloading content for changeset {0} ...", id));
             OsmChangesetContentParser parser = new OsmChangesetContentParser(in);
             return parser.parse(monitor.createSubTaskMonitor(1, true));
-        } catch(OsmDataParsingException e) {
+        } catch(XmlParsingException e) {
             throw new OsmTransferException(e);
         } finally {
             monitor.finishTask();
