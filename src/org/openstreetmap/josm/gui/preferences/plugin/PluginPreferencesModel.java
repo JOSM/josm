@@ -70,6 +70,10 @@ public class PluginPreferencesModel extends Observable {
         if (available != null) {
             availablePlugins.addAll(available);
         }
+        availablePluginsModified();
+    }
+
+    protected final void availablePluginsModified() {
         sort();
         filterDisplayedPlugins(filterExpression);
         Set<String> activePlugins = new HashSet<String>();
@@ -85,7 +89,7 @@ public class PluginPreferencesModel extends Observable {
         notifyObservers();
     }
 
-    protected  void updateAvailablePlugin(PluginInformation other) {
+    protected void updateAvailablePlugin(PluginInformation other) {
         if (other == null) return;
         PluginInformation pi = getPluginInformation(other.name);
         if (pi == null) {
@@ -105,19 +109,7 @@ public class PluginPreferencesModel extends Observable {
         for (PluginInformation other: fromPluginSite) {
             updateAvailablePlugin(other);
         }
-        sort();
-        filterDisplayedPlugins(filterExpression);
-        Set<String> activePlugins = new HashSet<String>();
-        activePlugins.addAll(Main.pref.getCollection("plugins", activePlugins));
-        for (PluginInformation pi: availablePlugins) {
-            if (selectedPluginsMap.get(pi) == null) {
-                if (activePlugins.contains(pi.name)) {
-                    selectedPluginsMap.put(pi, true);
-                }
-            }
-        }
-        clearChanged();
-        notifyObservers();
+        availablePluginsModified();
     }
 
     /**

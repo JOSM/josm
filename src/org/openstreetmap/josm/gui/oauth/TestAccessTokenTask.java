@@ -24,12 +24,12 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.OsmApiException;
-import org.openstreetmap.josm.io.OsmDataParsingException;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlParsingException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -97,7 +97,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
         return url;
     }
 
-    protected UserInfo getUserDetails() throws OsmOAuthAuthorizationException, OsmDataParsingException,OsmTransferException {
+    protected UserInfo getUserDetails() throws OsmOAuthAuthorizationException, XmlParsingException, OsmTransferException {
         boolean authenticatorEnabled = true;
         try {
             URL url = new URL(normalizeApiUrl(apiUrl) + "/0.6/user/details");
@@ -123,9 +123,9 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connection.getInputStream());
             return OsmServerUserInfoReader.buildFromXML(d);
         } catch(SAXException e) {
-            throw new OsmDataParsingException(e);
+            throw new XmlParsingException(e);
         } catch(ParserConfigurationException e){
-            throw new OsmDataParsingException(e);
+            throw new XmlParsingException(e);
         } catch(MalformedURLException e) {
             throw new OsmTransferException(e);
         } catch(IOException e){

@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -534,7 +535,7 @@ public class OsmApi extends OsmConnection {
             );
         } catch(OsmTransferException e) {
             throw e;
-        } catch(OsmDataParsingException e) {
+        } catch(XmlParsingException e) {
             throw new OsmTransferException(e);
         } finally {
             monitor.finishTask();
