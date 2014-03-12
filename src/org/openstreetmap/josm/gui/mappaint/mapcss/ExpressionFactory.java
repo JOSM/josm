@@ -570,13 +570,13 @@ public final class ExpressionFactory {
         }
 
         /**
-         * Calculate the CRC32 checksum from a string
+         * Calculates the CRC32 checksum from a string (based on RFC 1952).
          * @param s the string
          * @return long value from 0 to 2^32-1
          */
         public static long CRC32_checksum(String s) {
             CRC32 cs = new CRC32();
-            cs.update(s.getBytes());
+            cs.update(s.getBytes(Utils.UTF_8));
             return cs.getValue();
         }
     }
