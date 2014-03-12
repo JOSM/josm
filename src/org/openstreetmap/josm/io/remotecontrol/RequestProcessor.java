@@ -269,7 +269,7 @@ public class RequestProcessor extends Thread {
         out.write("<HEAD><TITLE>Internal Error</TITLE>\r\n");
         out.write("</HEAD>\r\n");
         out.write("<BODY>");
-        out.write("<H1>HTTP Error 500: Internal Server Error</h2>\r\n");
+        out.write("<H1>HTTP Error 500: Internal Server Error</H1>\r\n");
         out.write("</BODY></HTML>\r\n");
         out.flush();
     }
