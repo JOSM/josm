@@ -32,9 +32,18 @@ public class JMultilineLabel extends JEditorPane {
      * @param text The text to display
      */
     public JMultilineLabel(String text) {
-        this(text, true);
+        this(text, false);
     }
 
+    /**
+     * Constructs a normal label but adds HTML tags if not already done so.
+     * Supports both newline characters (<code>\n</code>) as well as the HTML
+     * <code>&lt;br&gt;</code> to insert new lines.
+     *
+     * Use setMaxWidth to limit the width of the label.
+     * @param text The text to display
+     * @param allBold If {@code true}, makes all text to be displayed in bold
+     */
     public JMultilineLabel(String text, boolean allBold) {
         JosmEditorPane.makeJLabelLike(this, allBold);
         String html = text.trim().replaceAll("\n", "<br>");
@@ -48,7 +57,7 @@ public class JMultilineLabel extends JEditorPane {
      * Set the maximum width. Use this method instead of setMaximumSize because
      * this saves a little bit of overhead and is actually taken into account.
      *
-     * @param width
+     * @param width the maximum width
      */
     public void setMaxWidth(int width) {
         this.maxWidth = width;

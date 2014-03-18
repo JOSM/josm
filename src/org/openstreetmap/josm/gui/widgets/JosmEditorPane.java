@@ -82,6 +82,8 @@ public class JosmEditorPane extends JEditorPane {
 
     /**
      * Adapts an {@link JEditorPane} to be used as a powerful replacement of {@link javax.swing.JLabel}.
+     * @param pane The editor pane to adapt
+     * @param allBold If {@code true}, makes all text to be displayed in bold
      */
     public static void makeJLabelLike(JEditorPane pane, boolean allBold) {
         pane.setContentType("text/html");
