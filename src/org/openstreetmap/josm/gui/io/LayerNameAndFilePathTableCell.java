@@ -13,7 +13,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.File;
 import java.util.EventObject;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -22,13 +21,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.actions.SaveActionBase;
-import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.GBC;
 
 class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
     private static final Color colorError = new Color(255,197,197);
@@ -42,7 +41,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
     private static final GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
-    private CopyOnWriteArrayList<CellEditorListener> listeners;
+    private final CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
     private File value;
 
     /** constructor that sets the default on each element **/
@@ -70,8 +69,6 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
         btnFileChooser.setPreferredSize(new Dimension(20, 19));
         btnFileChooser.setOpaque(true);
-
-        listeners = new CopyOnWriteArrayList<CellEditorListener>();
     }
 
     /** renderer used while not editing the file path **/
@@ -92,10 +89,8 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         return this;
     }
 
-    /** renderer used while the file path is being edited **/
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
-            int row, int column) {
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         removeAll();
         SaveLayerInfo info = (SaveLayerInfo)value;
         value = info.getFile();
@@ -181,26 +176,12 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
     @Override
     public void addCellEditorListener(CellEditorListener l) {
-        if (l != null) {
-            listeners.addIfAbsent(l);
-        }
-    }
-
-    protected void fireEditingCanceled() {
-        for (CellEditorListener l: listeners) {
-            l.editingCanceled(new ChangeEvent(this));
-        }
-    }
-
-    protected void fireEditingStopped() {
-        for (CellEditorListener l: listeners) {
-            l.editingStopped(new ChangeEvent(this));
-        }
+        cellEditorSupport.addCellEditorListener(l);
     }
 
     @Override
     public void cancelCellEditing() {
-        fireEditingCanceled();
+        cellEditorSupport.fireEditingCanceled();
     }
 
     @Override
@@ -215,7 +196,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
     @Override
     public void removeCellEditorListener(CellEditorListener l) {
-        listeners.remove(l);
+        cellEditorSupport.removeCellEditorListener(l);
     }
 
     @Override
@@ -230,7 +211,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         } else {
             value = new File(tfFilename.getText());
         }
-        fireEditingStopped();
+        cellEditorSupport.fireEditingStopped();
         return true;
     }
 

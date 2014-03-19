@@ -19,18 +19,17 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
+import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
-
 /**
- * AutoCompletingTextField is an text field with autocompletion behaviour. It
+ * AutoCompletingTextField is a text field with autocompletion behaviour. It
  * can be used as table cell editor in {@link JTable}s.
  *
  * Autocompletion is controlled by a list of {@link AutoCompletionListItem}s
  * managed in a {@link AutoCompletionList}.
  *
- *
+ * @since 1762
  */
 public class AutoCompletingTextField extends JosmTextField implements ComboBoxEditor, TableCellEditor {
 
@@ -41,10 +40,6 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
      */
     class AutoCompletionDocument extends PlainDocument {
 
-        /**
-         * inserts a string at a specific position
-         *
-         */
         @Override
         public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
 
@@ -125,10 +120,6 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
     /** the auto completion list user input is matched against */
     protected AutoCompletionList autoCompletionList = null;
 
-    /**
-     * creates the default document model for this editor
-     *
-     */
     @Override
     protected Document createDefaultModel() {
         return new AutoCompletionDocument();
@@ -155,16 +146,21 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
                     }
                 }
         );
-        tableCellEditorSupport = new TableCellEditorSupport(this);
+        tableCellEditorSupport = new CellEditorSupport(this);
     }
 
     /**
-     * constructor
+     * Constructs a new {@code AutoCompletingTextField}.
      */
     public AutoCompletingTextField() {
         init();
     }
 
+    /**
+     * Constructs a new {@code AutoCompletingTextField}.
+     * @param columns the number of columns to use to calculate the preferred width; 
+     * if columns is set to zero, the preferred width will be whatever naturally results from the component implementation
+     */
     public AutoCompletingTextField(int columns) {
         super(columns);
         init();
@@ -177,7 +173,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
     }
 
     /**
-     *
+     * Returns the auto completion list.
      * @return the auto completion list; may be null, if no auto completion list is set
      */
     public AutoCompletionList getAutoCompletionList() {
@@ -185,7 +181,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
     }
 
     /**
-     * sets the auto completion list
+     * Sets the auto completion list.
      * @param autoCompletionList the auto completion list; if null, auto completion is
      *   disabled
      */
@@ -225,7 +221,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
     /* TableCellEditor interface                                                            */
     /* ------------------------------------------------------------------------------------ */
 
-    private TableCellEditorSupport tableCellEditorSupport;
+    private CellEditorSupport tableCellEditorSupport;
     private String originalValue;
 
     @Override
@@ -245,11 +241,11 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
     public void removeCellEditorListener(CellEditorListener l) {
         tableCellEditorSupport.removeCellEditorListener(l);
     }
+
     @Override
     public void cancelCellEditing() {
         restoreOriginalValue();
         tableCellEditorSupport.fireEditingCanceled();
-
     }
 
     @Override
