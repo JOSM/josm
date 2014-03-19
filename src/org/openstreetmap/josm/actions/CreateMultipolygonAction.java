@@ -323,7 +323,7 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param relation the multipolygon style relation to process
      * @return a list of commands to execute
      */
-    private static List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
+    public static List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
         Map<String, String> values = new HashMap<String, String>(relation.getKeys());
 
         List<Way> innerWays = new ArrayList<Way>();
