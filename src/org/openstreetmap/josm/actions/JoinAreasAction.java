@@ -51,8 +51,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class JoinAreasAction extends JosmAction {
     // This will be used to commit commands and unite them into one large command sequence at the end
-    private LinkedList<Command> cmds = new LinkedList<Command>();
+    private final LinkedList<Command> cmds = new LinkedList<Command>();
     private int cmdsCount = 0;
+    private final LinkedList<Relation> addedRelations = new LinkedList<Relation>();
 
     /**
      * This helper class describes join ares action result.
@@ -315,7 +316,8 @@ public class JoinAreasAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LinkedList<Way> ways = new LinkedList<Way>(Main.main.getCurrentDataSet().getSelectedWays());
-
+        addedRelations.clear();
+        
         if (ways.isEmpty()) {
             new Notification(
                     tr("Please select at least one closed way that should be joined."))
@@ -372,7 +374,13 @@ public class JoinAreasAction extends JosmAction {
             JoinAreasResult result = joinAreas(areas);
 
             if (result.hasChanges) {
-
+                // move tags from ways to newly created relations
+                // TODO: do we need to also move tags for the modified relations?
+                for (Relation r: addedRelations) {
+                    cmds.addAll(CreateMultipolygonAction.removeTagsFromWaysIfNeeded(r));
+                }
+                commitCommands(tr("Move tags from ways to relations"));
+                
                 List<Way> allWays = new ArrayList<Way>();
                 for (Multipolygon pol : result.polygons) {
                     allWays.add(pol.outerWay);
@@ -1306,6 +1314,7 @@ public class JoinAreasAction extends JosmAction {
             newRel.addMember(new RelationMember("inner", w));
         }
         cmds.add(new AddCommand(newRel));
+        addedRelations.add(newRel);
 
         // We don't add outer to the relation because it will be handed to fixRelations()
         // which will then do the remaining work.
