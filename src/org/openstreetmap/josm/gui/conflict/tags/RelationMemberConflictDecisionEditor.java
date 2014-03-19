@@ -8,17 +8,21 @@ import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 
-import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
+import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
 public class RelationMemberConflictDecisionEditor extends JosmComboBox implements TableCellEditor {
 
+    /**
+     * Constructs a new {@code RelationMemberConflictDecisionEditor}.
+     */
     public RelationMemberConflictDecisionEditor() {
         super(RelationMemberConflictDecisionType.values());
         setOpaque(true);
         setRenderer(new RelationMemberConflictDecisionRenderer());
-        tableCellEditorSupport = new TableCellEditorSupport(this);
+        tableCellEditorSupport = new CellEditorSupport(this);
     }
+
     /* --------------------------------------------------------------------------------- */
     /* TableCellEditor                                                                   */
     /* --------------------------------------------------------------------------------- */
@@ -29,7 +33,7 @@ public class RelationMemberConflictDecisionEditor extends JosmComboBox implement
         return this;
     }
 
-    private TableCellEditorSupport tableCellEditorSupport;
+    private final CellEditorSupport tableCellEditorSupport;
     private RelationMemberConflictDecisionType originalValue;
 
     @Override
