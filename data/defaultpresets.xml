@@ -6747,7 +6747,7 @@ Note that for a match, at least one positive and no negative is required.
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way" member_expression="highway=path OR highway=fooytway OR highway=track"/>
+                    <role key="" text="route segment" requisite="required" type="way" member_expression="highway=path OR highway=footway OR highway=track"/>
                     <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
                     <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
                 </roles>
