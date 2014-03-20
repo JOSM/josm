@@ -185,7 +185,7 @@ public class VersionTable extends JTable implements Observer{
         @Override
         protected String createInfoUrl(Object infoObject) {
             HistoryOsmPrimitive hp = (HistoryOsmPrimitive) infoObject;
-            return hp.getUser() == null ? null : getBaseBrowseUrl() + "/user/" + hp.getUser().getName();
+            return hp.getUser() == null ? null : getBaseUserUrl() + "/" + hp.getUser().getName();
         }
 
         @Override
