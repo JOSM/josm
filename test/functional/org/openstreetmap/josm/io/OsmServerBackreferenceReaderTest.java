@@ -195,11 +195,10 @@ public class OsmServerBackreferenceReaderTest {
         // make sure we don't upload to production
         //
         String url = OsmApi.getOsmApi().getBaseUrl().toLowerCase().trim();
-        if (url.startsWith("http://www.openstreetmap.org")
-                || url.startsWith("http://api.openstreetmap.org")) {
+        if (url.startsWith("http://www.openstreetmap.org") || url.startsWith("http://api.openstreetmap.org")
+            || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org")) {
             fail(MessageFormat.format("configured url ''{0}'' seems to be a productive url, aborting.", url));
         }
-
 
         String p = System.getProperties().getProperty("useCachedDataset");
         if (p != null && Boolean.parseBoolean(p.trim().toLowerCase())) {

@@ -1,6 +1,6 @@
 /*
  * Import from fr.geo.convert package, a geographic coordinates converter.
- * (http://www.i3s.unice.fr/~johan/gps/)
+ * (https://www.i3s.unice.fr/~johan/gps/)
  * License: GPL. For details, see LICENSE file.
  * Copyright (C) 2002 Johan Montagnat (johan@creatis.insa-lyon.fr)
  */

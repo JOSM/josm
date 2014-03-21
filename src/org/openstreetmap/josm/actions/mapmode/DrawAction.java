@@ -305,7 +305,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     // events for crossplatform key holding processing
-    // thanks to http://www.arco.in-berlin.de/keyevent.html
     private final Set<Integer> set = new TreeSet<Integer>();
     private KeyEvent releaseEvent;
     private Timer timer;

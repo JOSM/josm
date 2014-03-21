@@ -294,7 +294,7 @@ public class OpenFileAction extends DiskAccessAction {
                         BufferedReader reader = new BufferedReader(new FileReader(urlFile));
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            Matcher m = Pattern.compile(".*(http://.*)").matcher(line);
+                            Matcher m = Pattern.compile(".*(https?://.*)").matcher(line);
                             if (m.matches()) {
                                 String url = m.group(1);
                                 Main.main.menu.openLocation.openUrl(false, url);

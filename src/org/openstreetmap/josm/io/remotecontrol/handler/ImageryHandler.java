@@ -34,7 +34,7 @@ public class ImageryHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"url"};
     }
-    
+
     @Override
     public String[] getOptionalParams() {
         return new String[] { "title", "type", "cookies", "min_zoom", "max_zoom"};
@@ -111,7 +111,7 @@ public class ImageryHandler extends RequestHandler {
         }
         this.args = args;
     }
-    
+
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
         String url = args.get("url");
@@ -136,7 +136,7 @@ public class ImageryHandler extends RequestHandler {
                 return x.getTypeString();
             }
         }));
-        return new String[] { "/imagery?title=osm&type=tms&url=http://tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
+        return new String[] { "/imagery?title=osm&type=tms&url=https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
             "/imagery?title=landsat&type=wms&url=http://irs.gis-lab.info/?layers=landsat&SRS=%7Bproj%7D&WIDTH=%7Bwidth%7D&HEIGHT=%7Bheight%7D&BBOX=%7Bbbox%7D",
             "/imagery?title=...&type={"+types+"}&url=....[&cookies=...][&min_zoom=...][&max_zoom=...]"};
     }

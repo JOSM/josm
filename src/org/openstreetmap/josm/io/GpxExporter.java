@@ -210,7 +210,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             if (copyright.getText().length()==0) {
                 String sCopyright = (String) data.attr.get(META_COPYRIGHT_LICENSE);
                 if (sCopyright == null) {
-                    sCopyright = Main.pref.get("lastCopyright", "http://creativecommons.org/licenses/by-sa/2.5");
+                    sCopyright = Main.pref.get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5");
                 }
                 copyright.setText(sCopyright);
                 copyright.setCaretPosition(0);
@@ -302,10 +302,10 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                 if (answer != JOptionPane.OK_OPTION || l.getSelectedIndex() == -1)
                     return;
                 final String[] urls = {
-                        "http://creativecommons.org/licenses/by-sa/2.5",
+                        "https://creativecommons.org/licenses/by-sa/2.5",
                         "http://opendatacommons.org/licenses/odbl/1.0",
                         "public domain",
-                        "http://www.gnu.org/copyleft/lesser.html",
+                        "https://www.gnu.org/copyleft/lesser.html",
                         "http://www.opensource.org/licenses/bsd-license.php"};
                 String license = "";
                 for (int i : l.getSelectedIndices()) {

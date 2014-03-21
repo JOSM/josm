@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  *   <li>.jar files, assuming that they represent plugin jars</li>
  *   <li>.jar.new files, assuming that these are downloaded but not yet installed plugins</li>
  *   <li>cached lists of available plugins, downloaded for instance from
- *   <a href="http://josm.openstreetmap.de/plugins">http://josm.openstreetmap.de/plugins</a></li>
+ *   <a href="https://josm.openstreetmap.de/plugin">https://josm.openstreetmap.de/plugin</a></li>
  * </ul>
  *
  */

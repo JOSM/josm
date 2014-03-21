@@ -18,8 +18,8 @@ import org.openstreetmap.josm.Main;
  * This class can be deleted after Oracle decides to fix this bug...
  *
  * @since 5752
- * @see <a href="http://josm.openstreetmap.de/ticket/8404">http://josm.openstreetmap.de/ticket/8404</a>
- * @see <a href="http://hg.netbeans.org/main/rev/33cb2e81b640">http://hg.netbeans.org/main/rev/33cb2e81b640</a>
+ * @see <a href="https://josm.openstreetmap.de/ticket/8404">https://josm.openstreetmap.de/ticket/8404</a>
+ * @see <a href="https://hg.netbeans.org/main/rev/33cb2e81b640">https://hg.netbeans.org/main/rev/33cb2e81b640</a>
  */
 public class JosmPasswordField extends JPasswordField {
 

@@ -142,7 +142,7 @@ public class MainApplication extends Main {
 
     /**
      * JOSM command line options.
-     * @see <a href="http://josm.openstreetmap.de/wiki/Help/CommandLineOptions">Help/CommandLineOptions</a>
+     * @see <a href="https://josm.openstreetmap.de/wiki/Help/CommandLineOptions">Help/CommandLineOptions</a>
      * @since 5279
      */
     public enum Option {
@@ -303,7 +303,7 @@ public class MainApplication extends Main {
         });
 
         Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
-        // http://stackoverflow.com/q/75218/2257172
+        // https://stackoverflow.com/q/75218/2257172
         // To be replaced with official API when switching to Java 7: https://bugs.openjdk.java.net/browse/JDK-4714232
         Preferences.updateSystemProperty("sun.awt.exception.handler", BugReportExceptionHandler.class.getName());
 

@@ -6,7 +6,7 @@ import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IWay;
 
 /**
- * OSM primitives interfaces visitor, following conventional <a href="http://en.wikipedia.org/wiki/Visitor_pattern">visitor design pattern</a>.
+ * OSM primitives interfaces visitor, following conventional <a href="https://en.wikipedia.org/wiki/Visitor_pattern">visitor design pattern</a>.
  * @since 4100
  */
 public interface PrimitiveVisitor {

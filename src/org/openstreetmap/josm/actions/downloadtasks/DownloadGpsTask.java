@@ -36,9 +36,9 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
     private DownloadTask downloadTask;
 
-    private static final String PATTERN_TRACE_ID = "http://.*(osm|openstreetmap).org/trace/\\p{Digit}+/data";
+    private static final String PATTERN_TRACE_ID = "https?://.*(osm|openstreetmap).org/trace/\\p{Digit}+/data";
 
-    private static final String PATTERN_TRACKPOINTS_BBOX = "http://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*";
+    private static final String PATTERN_TRACKPOINTS_BBOX = "https?://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*";
 
     private static final String PATTERN_EXTERNAL_GPX_SCRIPT = "https?://.*exportgpx.*";
     private static final String PATTERN_EXTERNAL_GPX_FILE = "https?://.*/(.*\\.gpx)";

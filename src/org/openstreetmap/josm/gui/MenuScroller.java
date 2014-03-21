@@ -1,6 +1,6 @@
 /**
  * MenuScroller.java    1.5.0 04/02/12
- * License: use / modify without restrictions (see http://tips4java.wordpress.com/about/)
+ * License: use / modify without restrictions (see https://tips4java.wordpress.com/about/)
  */
 package org.openstreetmap.josm.gui;
 
@@ -33,7 +33,7 @@ import javax.swing.event.PopupMenuListener;
  * <B>Implementation note:</B>  The default number of items to display
  * at a time is 15, and the default scrolling interval is 125 milliseconds.
  * <P>
- * @author Darryl, http://tips4java.wordpress.com/2009/02/01/menu-scroller/
+ * @author Darryl, https://tips4java.wordpress.com/2009/02/01/menu-scroller/
  */
 public class MenuScroller {
 
