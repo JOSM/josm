@@ -234,7 +234,7 @@ public final class GuiHelper {
     public static Font getTitleFont() {
         List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         // Helvetica is the preferred choice but is not available by default on Windows
-        // (http://www.microsoft.com/typography/fonts/product.aspx?pid=161)
+        // (https://www.microsoft.com/typography/fonts/product.aspx?pid=161)
         if (fonts.contains("Helvetica")) {
             return new Font("Helvetica", Font.BOLD, 20);
         // Calibri is the default Windows font since Windows Vista but is not available on older versions of Windows, where Arial is preferred

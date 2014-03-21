@@ -42,7 +42,7 @@ public class OpeningHourTestTest {
     @Test
     public void testCheckOpeningHourSyntax1() throws Exception {
         final String key = "opening_hours";
-        // frequently used tags according to http://taginfo.openstreetmap.org/keys/opening_hours#values
+        // frequently used tags according to https://taginfo.openstreetmap.org/keys/opening_hours#values
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "24/7"), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Fr 08:30-20:00"), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "09:00-21:00"), isEmpty());
@@ -116,7 +116,7 @@ public class OpeningHourTestTest {
     @Test
     public void testCheckServiceTimeSyntax1() throws Exception {
         final String key = "service_times";
-        // frequently used tags according to http://taginfo.openstreetmap.org/keys/service_times#values
+        // frequently used tags according to https://taginfo.openstreetmap.org/keys/service_times#values
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Su 10:00", OpeningHourTest.CheckMode.BOTH), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "automatic", OpeningHourTest.CheckMode.BOTH), not(isEmpty()));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Sa 09:00-18:00", OpeningHourTest.CheckMode.BOTH), isEmpty());
@@ -130,7 +130,7 @@ public class OpeningHourTestTest {
     @Test
     public void testCheckCollectionTimeSyntax1() throws Exception {
         final String key = "collection_times";
-        // frequently used tags according to http://taginfo.openstreetmap.org/keys/collection_times#values
+        // frequently used tags according to https://taginfo.openstreetmap.org/keys/collection_times#values
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Sa 09:00", OpeningHourTest.CheckMode.BOTH), isEmpty());
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "fixme", OpeningHourTest.CheckMode.BOTH), not(isEmpty()));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "daily", OpeningHourTest.CheckMode.BOTH), not(isEmpty()));

@@ -71,7 +71,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         Shortcut.registerSystemShortcut("system:reset", tr("reserved"), KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
         Shortcut.registerSystemShortcut("system:resetX", tr("reserved"), KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
     }
-    
+
     /**
      * This should work for all platforms. Yeah, should.
      * See PlatformHook.java for a list of reasons why
@@ -121,7 +121,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             return false;
         }
     }
-    
+
     /**
      * Get the package name including detailed version.
      * @param packageName The package name
@@ -136,7 +136,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             return null;
         }
     }
-    
+
     /**
      * Get the Java package name including detailed version.
      *
@@ -165,16 +165,16 @@ public class PlatformHookUnixoid implements PlatformHook {
         }
         return null;
     }
-    
+
     /**
      * Get the Web Start package name including detailed version.
      *
-     * Debian and Ubuntu OpenJDK packages are shipped with icedtea-web package, 
+     * Debian and Ubuntu OpenJDK packages are shipped with icedtea-web package,
      * but its version does not match main java package version.
-     * 
+     *
      * Only Debian based distributions are covered at the moment.
      * This can be extended to other distributions if needed.
-     * 
+     *
      * Simply return {@code null} if there's no separate package for Java WebStart.
      *
      * @return The package name and package version if it can be identified, null otherwise
@@ -322,7 +322,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             return result;
         }
     }
-    
+
     protected void askUpdateJava(String version) {
         try {
             ExtendedDialog ed = new ExtendedDialog(
@@ -338,9 +338,9 @@ public class PlatformHookUnixoid implements PlatformHook {
                         "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.", "Oracle", tr("February 2013"))+"</b><br><br>"+
                         "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "7")+"</b><br><br>"+
                         tr("Would you like to update now ?"));
-   
+
                 if (ed.showDialog().getValue() == 1) {
-                    openUrl("http://www.java.com/download");
+                    openUrl("https://www.java.com/download");
                 }
             }
         } catch (IOException e) {

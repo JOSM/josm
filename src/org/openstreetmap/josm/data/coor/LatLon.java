@@ -283,11 +283,10 @@ public class LatLon extends Coordinate {
     }
 
     /**
-     * Returns the heading, in radians, that you have to use to get from
-     * this lat/lon to another.
+     * Returns the heading, in radians, that you have to use to get from this lat/lon to another.
      *
      * (I don't know the original source of this formula, but see
-     * http://math.stackexchange.com/questions/720/how-to-calculate-a-heading-on-the-earths-surface
+     * <a href="https://math.stackexchange.com/questions/720/how-to-calculate-a-heading-on-the-earths-surface">this question</a>
      * for some hints how it is derived.)
      *
      * @param other the "destination" position

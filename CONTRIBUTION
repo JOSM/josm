@@ -47,6 +47,9 @@ is from Peter Yuill and licensed with LGPL.
 The MultiSplitPane is from Hans Muller and licensed with LGPL
 (https://today.java.net/pub/a/today/2006/03/23/multi-split-pane.html).
 
+The Alphanum Algorithm is from David Koelle and license with LGPL
+(http://www.davekoelle.com/alphanum.html)
+
 The Diff code (http://www.bmsi.com/java/#diff) 
 is from Stuart D. Gathman and licensed with GPL.
 

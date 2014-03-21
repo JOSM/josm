@@ -278,7 +278,7 @@ public final class ExceptionDialogUtil {
         Matcher m;
         String msg;
         String url = e.getAccessedUrl();
-        Pattern p = Pattern.compile("http://.*/api/0.6/(node|way|relation)/(\\d+)/(\\d+)");
+        Pattern p = Pattern.compile("https?://.*/api/0.6/(node|way|relation)/(\\d+)/(\\d+)");
 
         // Special case for individual access to redacted versions
         // See http://wiki.openstreetmap.org/wiki/Open_Database_License/Changes_in_the_API

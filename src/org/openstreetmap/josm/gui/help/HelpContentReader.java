@@ -24,9 +24,9 @@ import org.openstreetmap.josm.tools.WikiReader;
 public class HelpContentReader extends WikiReader {
 
     /**
-     * constructor
+     * Constructs a new {@code HelpContentReader}.
      *
-     * @param baseUrl the base url of the JOSM help wiki, i.e. http://josm.openstreetmap.org
+     * @param baseUrl the base url of the JOSM help wiki, i.e. https://josm.openstreetmap.org
      */
     public HelpContentReader(String baseUrl) {
         super(baseUrl);

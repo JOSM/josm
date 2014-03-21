@@ -626,7 +626,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             JPanel p = new JPanel(new GridBagLayout());
             StringBuilder text = new StringBuilder("<table cellpadding=3>");
             text.append(tableRow(tr("Title:"), s.getDisplayString()));
-            if (s.url.startsWith("http://")) {
+            if (s.url.startsWith("http://") || s.url.startsWith("https://")) {
                 text.append(tableRow(tr("URL:"), s.url));
             } else if (s.url.startsWith("resource://")) {
                 text.append(tableRow(tr("Built-in Style, internal path:"), s.url));

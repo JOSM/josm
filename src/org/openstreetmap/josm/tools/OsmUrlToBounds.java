@@ -84,7 +84,7 @@ public final class OsmUrlToBounds {
     /**
      * Openstreetmap.org changed it's URL scheme in August 2013, which breaks the URL parsing.
      * The following function, called by the old parse function if necessary, provides parsing new URLs
-     * the new URLs follow the scheme http://www.openstreetmap.org/#map=18/51.71873/8.76164&amp;layers=CN
+     * the new URLs follow the scheme https://www.openstreetmap.org/#map=18/51.71873/8.76164&amp;layers=CN
      * @param url string for parsing
      * @return Bounds if hashurl, {@code null} otherwise
      */

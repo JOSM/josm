@@ -111,13 +111,13 @@ public abstract class Main {
      * The JOSM website URL.
      * @since 6897 (was public from 6143 to 6896)
      */
-    private static final String JOSM_WEBSITE = "http://josm.openstreetmap.de";
+    private static final String JOSM_WEBSITE = "https://josm.openstreetmap.de";
 
     /**
      * The OSM website URL.
      * @since 6897 (was public from 6453 to 6896)
      */
-    private static final String OSM_WEBSITE = "http://www.openstreetmap.org";
+    private static final String OSM_WEBSITE = "https://www.openstreetmap.org";
 
     /**
      * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
@@ -986,7 +986,7 @@ public abstract class Main {
      * @return The guessed parameter type
      */
     private static DownloadParamType paramType(String s) {
-        if(s.startsWith("http:")) return DownloadParamType.httpUrl;
+        if(s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
         if(s.startsWith("file:")) return DownloadParamType.fileUrl;
         String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
         if(s.matches(coorPattern+"(,"+coorPattern+"){3}")) return DownloadParamType.bounds;
@@ -1490,7 +1490,7 @@ public abstract class Main {
      * @since 6897
      */
     public static String getJOSMWebsite() {
-        if(Main.pref != null)
+        if (Main.pref != null)
             return Main.pref.get("josm.url", JOSM_WEBSITE);
         return JOSM_WEBSITE;
     }
@@ -1501,6 +1501,7 @@ public abstract class Main {
      * @since 6897
      */
     public static String getXMLBase() {
+        // Always return HTTP (issues reported with HTTPS)
         return "http://josm.openstreetmap.de";
     }
 
@@ -1510,7 +1511,7 @@ public abstract class Main {
      * @since 6897
      */
     public static String getOSMWebsite() {
-        if(Main.pref != null)
+        if (Main.pref != null)
             return Main.pref.get("osm.url", OSM_WEBSITE);
         return OSM_WEBSITE;
     }

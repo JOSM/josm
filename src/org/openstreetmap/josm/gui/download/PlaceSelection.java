@@ -70,7 +70,7 @@ public class PlaceSelection implements DownloadSelection {
     private JTable tblSearchResults;
     private DownloadDialog parent;
     private static final Server[] SERVERS = new Server[] {
-        new Server("Nominatim","http://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds"))
+        new Server("Nominatim","https://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds"))
     };
     private final JosmComboBox server = new JosmComboBox(SERVERS);
 

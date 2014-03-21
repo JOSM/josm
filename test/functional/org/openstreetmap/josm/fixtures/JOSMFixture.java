@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
@@ -72,8 +71,8 @@ public class JOSMFixture {
         // make sure we don't upload to or test against production
         //
         String url = OsmApi.getOsmApi().getBaseUrl().toLowerCase().trim();
-        if (url.startsWith("http://www.openstreetmap.org")
-                || url.startsWith("http://api.openstreetmap.org")) {
+        if (url.startsWith("http://www.openstreetmap.org") || url.startsWith("http://api.openstreetmap.org")
+            || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org")) {
             fail(MessageFormat.format("configured server url ''{0}'' seems to be a productive url, aborting.", url));
         }
     }

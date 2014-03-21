@@ -416,7 +416,7 @@ public class ImageProvider {
 
             ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
 
-            if (name.startsWith("http://")) {
+            if (name.startsWith("http://") || name.startsWith("https://")) {
                 String url = name;
                 ImageResource ir = cache.get(url);
                 if (ir != null) return ir;

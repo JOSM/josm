@@ -89,9 +89,9 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * coordinate.
          *
          * See also USGS Bulletin 1532
-         * (http://egsc.usgs.gov/isb/pubs/factsheets/fs08799.html)
+         * (http://pubs.usgs.gov/bul/1532/report.pdf)
          * initially EPSG used 3785 but that has been superseded by 3857,
-         * see http://www.epsg-registry.org/
+         * see https://www.epsg-registry.org/
          */
         mercator = registerProjectionChoice(tr("Mercator"), "core:mercator", 3857);
 
@@ -113,6 +113,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * @author Don-vip
          */
         registerProjectionChoice(tr("Belgian Lambert 1972"), "core:belgianLambert1972", 31370);     // BE
+
         /**
          * Belgian Lambert 2008 projection.
          *
@@ -124,7 +125,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         registerProjectionChoice(tr("Belgian Lambert 2008"), "core:belgianLambert2008", 3812);      // BE
 
         /**
-         * SwissGrid CH1903 / L03, see http://de.wikipedia.org/wiki/Swiss_Grid.
+         * SwissGrid CH1903 / L03, see https://en.wikipedia.org/wiki/Swiss_coordinate_system.
          *
          * Actually, what we have here, is CH1903+ (EPSG:2056), but without
          * the additional false easting of 2000km and false northing 1000 km.
@@ -140,7 +141,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * Estonian Coordinate System of 1997.
          *
          * Thanks to Johan Montagnat and its geoconv java converter application
-         * (http://www.i3s.unice.fr/~johan/gps/ , published under GPL license)
+         * (https://www.i3s.unice.fr/~johan/gps/ , published under GPL license)
          * from which some code and constants have been reused here.
          */
         registerProjectionChoice(tr("Lambert Zone (Estonia)"), "core:lambertest", 3301);            // EE
@@ -151,32 +152,35 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * This newer version uses the grid translation NTF<->RGF93 provided by IGN for a submillimetric accuracy.
          * (RGF93 is the French geodetic system similar to WGS84 but not mathematically equal)
          *
-         * Source: http://professionnels.ign.fr/DISPLAY/000/526/700/5267002/transformation.pdf
+         * Source: http://geodesie.ign.fr/contenu/fichiers/Changement_systeme_geodesique.pdf
          * @author Pieren
          */
         registerProjectionChoice(lambert = new LambertProjectionChoice());                          // FR
+
         /**
          * Lambert 93 projection.
          *
          * As specified by the IGN in this document
-         * http://professionnels.ign.fr/DISPLAY/000/526/702/5267026/NTG_87.pdf
+         * http://geodesie.ign.fr/contenu/fichiers/documentation/rgf93/Lambert-93.pdf
          * @author Don-vip
          */
         registerProjectionChoice(tr("Lambert 93 (France)"), "core:lambert93", 2154);                // FR
+
         /**
          * Lambert Conic Conform 9 Zones projection.
          *
          * As specified by the IGN in this document
-         * http://professionnels.ign.fr/DISPLAY/000/526/700/5267002/transformation.pdf
+         * http://geodesie.ign.fr/contenu/fichiers/documentation/rgf93/cc9zones.pdf
          * @author Pieren
          */
-        registerProjectionChoice(lambert_cc9 = new LambertCC9ZonesProjectionChoice());                            // FR
+        registerProjectionChoice(lambert_cc9 = new LambertCC9ZonesProjectionChoice());              // FR
+
         /**
          * French departements in the Caribbean Sea and Indian Ocean.
          *
          * Using the UTM transvers Mercator projection and specific geodesic settings.
          */
-        registerProjectionChoice(utm_france_dom = new UTMFranceDOMProjectionChoice());                            // FR
+        registerProjectionChoice(utm_france_dom = new UTMFranceDOMProjectionChoice());              // FR
 
         /**
          * LKS-92/ Latvia TM projection.

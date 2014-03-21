@@ -142,7 +142,7 @@ public class SourceEntry {
     }
 
     public boolean isLocal() {
-        if (url.startsWith("http://") || url.startsWith("resource://"))
+        if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("resource://"))
             return false;
         return true;
     }

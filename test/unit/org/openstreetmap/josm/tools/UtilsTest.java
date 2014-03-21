@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.BufferedReader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Locale;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import org.junit.Assert;
+import org.junit.Test;
+import org.openstreetmap.josm.Main;
 
 /**
  * Unit tests of {@link Utils} class.
@@ -23,7 +23,7 @@ public class UtilsTest {
      */
     @Test
     public void testStrip() {
-        final String someWhite = 
+        final String someWhite =
             "\u00A0"+ // SPACE_SEPARATOR
             "\u2007"+ // LINE_SEPARATOR
             "\u202F"+ // PARAGRAPH_SEPARATOR
@@ -78,7 +78,7 @@ public class UtilsTest {
     @Test
     public void testOpenUrlGzip() throws Exception {
         Main.initApplicationPreferences();
-        final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("http://www.openstreetmap.org/trace/1613906/data"), true);
+        final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("https://www.openstreetmap.org/trace/1613906/data"), true);
         Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         x.close();
     }
@@ -86,7 +86,7 @@ public class UtilsTest {
     @Test
     public void testOpenUrlBzip() throws Exception {
         Main.initApplicationPreferences();
-        final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("http://www.openstreetmap.org/trace/785544/data"), true);
+        final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("https://www.openstreetmap.org/trace/785544/data"), true);
         Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         x.close();
     }

@@ -43,7 +43,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
 
     @Override
     public String[] getPatterns() {
-        return new String[]{"http://.*/api/0.6/changeset/\\p{Digit}+/download", // OSM API 0.6 changesets
+        return new String[]{"https?://.*/api/0.6/changeset/\\p{Digit}+/download", // OSM API 0.6 changesets
             "https?://.*/.*\\.osc" // Remote .osc files
         };
     }
@@ -52,7 +52,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
     public String getTitle() {
         return tr("Download OSM Change");
     }
-        
+
     /* (non-Javadoc)
      * @see org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask#download(boolean, org.openstreetmap.josm.data.Bounds, org.openstreetmap.josm.gui.progress.ProgressMonitor)
      */
@@ -124,7 +124,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
             }
         }
     }
-    
+
     /**
      * Loads history and updates incomplete primitives.
      */

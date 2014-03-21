@@ -42,7 +42,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
                 Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.CTRL), true);
         putValue("help", ht("/Action/Paste"));
-        // CUA shortcut for paste (http://en.wikipedia.org/wiki/IBM_Common_User_Access#Description)
+        // CUA shortcut for paste (https://en.wikipedia.org/wiki/IBM_Common_User_Access#Description)
         Main.registerActionShortcut(this,
                 Shortcut.registerShortcut("system:paste:cua", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_INSERT, Shortcut.SHIFT));
         Main.pasteBuffer.addPasteBufferChangedListener(this);

@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
+import static java.awt.geom.Rectangle2D.OUT_BOTTOM;
 import static java.awt.geom.Rectangle2D.OUT_LEFT;
 import static java.awt.geom.Rectangle2D.OUT_RIGHT;
 import static java.awt.geom.Rectangle2D.OUT_TOP;
-import static java.awt.geom.Rectangle2D.OUT_BOTTOM;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 
@@ -41,17 +42,16 @@ public class LineClip {
     /**
      * @return end point of the clipped line
      */
-    public Point getP2()
-    {
+    public Point getP2() {
         return p2;
     }
 
     /**
-     * see http://en.wikipedia.org/wiki/Cohen-Sutherland
+     * Cohen–Sutherland algorithm.
+     * See <a href="https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm">Wikipedia article</a>
      * @return true, if line is visible in the given clip region
      */
-    private boolean cohenSutherland( long x1, long y1, long x2, long y2, long xmin, long ymin, long xmax, long ymax)
-    {
+    private boolean cohenSutherland( long x1, long y1, long x2, long y2, long xmin, long ymin, long xmax, long ymax) {
         int outcode0, outcode1, outcodeOut;
         boolean accept = false;
         boolean done = false;

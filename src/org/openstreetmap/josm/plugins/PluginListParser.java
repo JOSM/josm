@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * A parser for the plugin list provided by a JOSM Plugin Download Site.
  *
- * See <a href="http://josm.openstreetmap.de/plugin">http://josm.openstreetmap.de/plugin</a>
+ * See <a href="https://josm.openstreetmap.de/plugin">https://josm.openstreetmap.de/plugin</a>
  * for a sample of the document. The format is a custom format, kind of mix of CSV and RFC822 style
  * name/value-pairs.
  *
@@ -48,7 +48,7 @@ public class PluginListParser {
     /**
      * Parses a plugin information document and replies a list of plugin information objects.
      *
-     * See <a href="http://josm.openstreetmap.de/plugin">http://josm.openstreetmap.de/plugin</a>
+     * See <a href="https://josm.openstreetmap.de/plugin">https://josm.openstreetmap.de/plugin</a>
      * for a sample of the document. The format is a custom format, kind of mix of CSV and RFC822 style
      * name/value-pairs.
      *

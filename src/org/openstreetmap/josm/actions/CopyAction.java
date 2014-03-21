@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 404
  */
 public final class CopyAction extends JosmAction {
-    
+
     // regular expression that matches text clipboard contents after copying
     public static final String CLIPBOARD_REGEXP = "((node|way|relation)\\s\\d+,)*(node|way|relation)\\s\\d+";
 
@@ -35,7 +35,7 @@ public final class CopyAction extends JosmAction {
                 tr("Copy selected objects to paste buffer."),
                 Shortcut.registerShortcut("system:copy", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_C, Shortcut.CTRL), true);
         putValue("help", ht("/Action/Copy"));
-        // CUA shortcut for copy (http://en.wikipedia.org/wiki/IBM_Common_User_Access#Description)
+        // CUA shortcut for copy (https://en.wikipedia.org/wiki/IBM_Common_User_Access#Description)
         Main.registerActionShortcut(this,
                 Shortcut.registerShortcut("system:copy:cua", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_INSERT, Shortcut.CTRL));
     }

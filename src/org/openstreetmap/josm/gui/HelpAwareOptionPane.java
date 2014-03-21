@@ -38,7 +38,7 @@ public final class HelpAwareOptionPane {
     private HelpAwareOptionPane() {
         // Hide default constructor for utils classes
     }
-    
+
     public static class ButtonSpec {
         public final String text;
         public final Icon icon;
@@ -189,7 +189,7 @@ public final class HelpAwareOptionPane {
      * browser.
      *
      * <code>helpTopic</code> is the trailing part of a JOSM online help URL, i.e. the part after the leading
-     * <code>http://josm.openstreetmap.de/wiki/Help</code>. It should start with a leading '/' and it
+     * <code>https://josm.openstreetmap.de/wiki/Help</code>. It should start with a leading '/' and it
      * may include an anchor after a '#'.
      *
      * <strong>Examples</strong>
