@@ -6,13 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.math.BigDecimal;
-import java.math.MathContext;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -36,6 +34,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author Matthew Newton
  * @author Petr Dlouhý
  * @author Teemu Koskinen
+ * @author Alain Delplanque
  */
 public final class AlignInCircleAction extends JosmAction {
 
@@ -110,8 +109,8 @@ public final class AlignInCircleAction extends JosmAction {
         List<Way> ways = new LinkedList<Way>();
         EastNorth center = null;
         double radius = 0;
-        boolean regular = false;
-
+        boolean isPolygon = false;
+        
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Node) {
                 nodes.add((Node) osm);
@@ -131,13 +130,6 @@ public final class AlignInCircleAction extends JosmAction {
             // When one way and one node is selected, set center to position of that node.
             // When one more node, part of the way, is selected, set the radius equal to the
             // distance between two nodes.
-            if (nodes.size() == 1 && ways.size() == 1) {
-                // Regular polygons are allowed only if there is just one way
-                // Should be remove regular are now default for all nodes with no more than 1 referrer.
-                Way way = ways.get(0);
-                if (nodes.size() == 1 && way.containsNode(nodes.get(0)) && allowRegularPolygon(way.getNodes()))
-                    regular = true;
-            }
             if (nodes.size() >= 1) {
                 boolean[] isContained = new boolean[nodes.size()];
                 for(int i = 0; i < nodes.size(); i++) {
@@ -174,14 +166,8 @@ public final class AlignInCircleAction extends JosmAction {
                     }
                 }
             }
-            nodes.clear();
-
-            for(Way way: ways)
-                for (Node n : way.getNodes()) {
-                    if (!nodes.contains(n)) {
-                        nodes.add(n);
-                    }
-                }
+            nodes = collectNodesAnticlockwise(ways);
+            isPolygon = true;
         }
 
         if (nodes.size() < 4) {
@@ -193,32 +179,20 @@ public final class AlignInCircleAction extends JosmAction {
             return;
         }
 
-        // Reorder the nodes if they didn't come from a single way
-        if (ways.size() != 1) {
-            // First calculate the average point
+        if (center == null) {
+            // Compute the centroid of nodes
+            center = Geometry.getCentroid(nodes);
+        }
+        // Node "center" now is central to all selected nodes.
 
-            BigDecimal east = BigDecimal.ZERO;
-            BigDecimal north = BigDecimal.ZERO;
-
-            for (Node n : nodes) {
-                BigDecimal x = new BigDecimal(n.getEastNorth().east());
-                BigDecimal y = new BigDecimal(n.getEastNorth().north());
-                east = east.add(x, MathContext.DECIMAL128);
-                north = north.add(y, MathContext.DECIMAL128);
-            }
-            BigDecimal nodesSize = new BigDecimal(nodes.size());
-            east = east.divide(nodesSize, MathContext.DECIMAL128);
-            north = north.divide(nodesSize, MathContext.DECIMAL128);
-
-            EastNorth average = new EastNorth(east.doubleValue(), north.doubleValue());
+        if (!isPolygon) {
+            // Then reorder them based on heading from the center point
             List<Node> newNodes = new LinkedList<Node>();
-
-            // Then reorder them based on heading from the average point
             while (!nodes.isEmpty()) {
                 double maxHeading = -1.0;
                 Node maxNode = null;
                 for (Node n : nodes) {
-                    double heading = average.heading(n.getEastNorth());
+                    double heading = center.heading(n.getEastNorth());
                     if (heading > maxHeading) {
                         maxHeading = heading;
                         maxNode = n;
@@ -227,16 +201,9 @@ public final class AlignInCircleAction extends JosmAction {
                 newNodes.add(maxNode);
                 nodes.remove(maxNode);
             }
-
             nodes = newNodes;
         }
-
-        if (center == null) {
-            // Compute the centroid of nodes
-            center = Geometry.getCentroid(nodes);
-        }
-        // Node "center" now is central to all selected nodes.
-
+    
         // Now calculate the average distance to each node from the
         // centre. This method is ok as long as distances are short
         // relative to the distance from the N or S poles.
@@ -251,59 +218,88 @@ public final class AlignInCircleAction extends JosmAction {
 
         Collection<Command> cmds = new LinkedList<Command>();
 
-        PolarCoor pc;
-
-        if (regular) { // Make a regular polygon
-            double angle = Math.PI * 2 / nodes.size();
-            pc = new PolarCoor(nodes.get(0).getEastNorth(), center, 0);
-
-            if (pc.angle > (new PolarCoor(nodes.get(1).getEastNorth(), center, 0).angle)) {
-                angle *= -1;
-            }
-
-            pc.radius = radius;
-            for (Node n : nodes) {
-                EastNorth no = pc.toEastNorth();
-                cmds.add(new MoveCommand(n, no.east() - n.getEastNorth().east(), no.north() - n.getEastNorth().north()));
-                pc.angle += angle;
-            }
-        } else { // Move each node to that distance from the center.
-            int nodeCount = nodes.size();
-            // Search first fixed node
-            int startPosition = 0;
-            for(startPosition = 0; startPosition < nodeCount; startPosition++)
-                if(isFixNode(nodes.get(startPosition % nodeCount), sel)) break;
-            int i = startPosition; // Start position for current arc
-            int j; // End position for current arc
-            while(i < startPosition + nodeCount) {
-                for(j = i + 1; j < startPosition + nodeCount; j++)
-                    if(isFixNode(nodes.get(j % nodeCount), sel)) break;
-                Node first = nodes.get(i % nodeCount);
-                PolarCoor pcFirst = new PolarCoor(first.getEastNorth(), center, 0);
-                pcFirst.radius = radius;
-                cmds.add(pcFirst.createMoveCommand(first));
-                if(j > i + 1) {
-                    double delta;
-                    if(j == i + nodeCount) {
-                        delta = 2 * Math.PI / nodeCount;
-                    } else {
-                        PolarCoor pcLast = new PolarCoor(nodes.get(j % nodeCount).getEastNorth(), center, 0);
-                        delta = pcLast.angle - pcFirst.angle;
-                        if(delta < 0) // Assume each PolarCoor.angle is in range ]-pi; pi]
-                            delta +=  2*Math.PI;
-                        delta /= j - i;
-                    }
-                    for(int k = i+1; k < j; k++) {
-                        PolarCoor p = new PolarCoor(radius, pcFirst.angle + (k-i)*delta, center, 0);
-                        cmds.add(p.createMoveCommand(nodes.get(k % nodeCount)));
-                    }
+        // Move each node to that distance from the center.
+        // Nodes that are not "fix" will be adjust making regular arcs. 
+        int nodeCount = nodes.size();
+        // Search first fixed node
+        int startPosition = 0;
+        for(startPosition = 0; startPosition < nodeCount; startPosition++)
+            if(isFixNode(nodes.get(startPosition % nodeCount), sel)) break;
+        int i = startPosition; // Start position for current arc
+        int j; // End position for current arc
+        while(i < startPosition + nodeCount) {
+            for(j = i + 1; j < startPosition + nodeCount; j++)
+                if(isFixNode(nodes.get(j % nodeCount), sel)) break;
+            Node first = nodes.get(i % nodeCount);
+            PolarCoor pcFirst = new PolarCoor(first.getEastNorth(), center, 0);
+            pcFirst.radius = radius;
+            cmds.add(pcFirst.createMoveCommand(first));
+            if(j > i + 1) {
+                double delta;
+                if(j == i + nodeCount) {
+                    delta = 2 * Math.PI / nodeCount;
+                } else {
+                    PolarCoor pcLast = new PolarCoor(nodes.get(j % nodeCount).getEastNorth(), center, 0);
+                    delta = pcLast.angle - pcFirst.angle;
+                    if(delta < 0) // Assume each PolarCoor.angle is in range ]-pi; pi]
+                        delta +=  2*Math.PI;
+                    delta /= j - i;
                 }
-                i = j; // Update start point for next iteration
+                for(int k = i+1; k < j; k++) {
+                    PolarCoor p = new PolarCoor(radius, pcFirst.angle + (k-i)*delta, center, 0);
+                    cmds.add(p.createMoveCommand(nodes.get(k % nodeCount)));
+                }
             }
+            i = j; // Update start point for next iteration
         }
         
         Main.main.undoRedo.add(new SequenceCommand(tr("Align Nodes in Circle"), cmds));
         Main.map.repaint();
+    }
+
+    /**
+     * Assuming all ways can be joined into polygon, create an ordered list of node.
+     * @param ways List of ways to be joined
+     * @return Nodes anticlockwise ordered
+     */
+    private List<Node> collectNodesAnticlockwise(List<Way> ways) {
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        Node firstNode = ways.get(0).firstNode();
+        Node lastNode = null;
+        Way lastWay = null;
+        while(firstNode != lastNode) {
+            if(lastNode == null) lastNode = firstNode;
+            for(Way way: ways) {
+                if(way == lastWay) continue;
+                if(way.firstNode() == lastNode) {
+                    List<Node> wayNodes = way.getNodes();
+                    for(int i = 0; i < wayNodes.size() - 1; i++)
+                        nodes.add(wayNodes.get(i));
+                    lastNode = way.lastNode();
+                    lastWay = way;
+                    break;
+                }
+                if(way.lastNode() == lastNode) {
+                    List<Node> wayNodes = way.getNodes();
+                    for(int i = wayNodes.size() - 1; i > 0; i--)
+                        nodes.add(wayNodes.get(i));
+                    lastNode = way.firstNode();
+                    lastWay = way;
+                    break;
+                }
+            }
+        }
+        // Check if nodes are in anticlockwise order
+        int nc = nodes.size();
+        double area = 0;
+        for(int i = 0; i < nc; i++) {
+            EastNorth p1 = nodes.get(i).getEastNorth();
+            EastNorth p2 = nodes.get((i+1) % nc).getEastNorth();
+            area += p1.east()*p2.north() - p2.east()*p1.north();
+        }
+        if(area < 0)
+            Collections.reverse(nodes);
+        return nodes;
     }
 
     /**
@@ -348,22 +344,6 @@ public final class AlignInCircleAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         setEnabled(selection != null && !selection.isEmpty());
-    }
-
-    /**
-     * Determines if a regular polygon is allowed to be created with the given nodes collection.
-     * @param nodes The nodes collection to check.
-     * @return true if all nodes in the given collection are referred by the same object, and no other one (see #8431)
-     */
-    protected static boolean allowRegularPolygon(Collection<Node> nodes) {
-        Set<OsmPrimitive> allReferrers = new HashSet<OsmPrimitive>();
-        for (Node n : nodes) {
-            List<OsmPrimitive> referrers = n.getReferrers();
-            if (referrers.size() > 1 || (allReferrers.addAll(referrers) && allReferrers.size() > 1)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
