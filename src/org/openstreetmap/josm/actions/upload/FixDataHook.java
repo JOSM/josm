@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 
 /**
  * Fixes defective data entries for all modified objects before upload
+ * @since 5621
  */
 public class FixDataHook implements UploadHook {
 
