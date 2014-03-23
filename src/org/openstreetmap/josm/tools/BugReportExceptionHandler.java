@@ -181,7 +181,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             JosmTextArea info = new JosmTextArea(text, 18, 60);
             info.setCaretPosition(0);
             info.setEditable(false);
-            p.add(new JScrollPane(info), GBC.eop());
+            p.add(new JScrollPane(info), GBC.eop().fill());
 
             for (Component c: p.getComponents()) {
                 if (c instanceof JMultilineLabel) {
