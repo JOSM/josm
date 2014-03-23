@@ -38,7 +38,7 @@ public interface Selector {
     public Range getRange();
 
     public static enum ChildOrParentSelectorType {
-        CHILD, PARENT, ELEMENT_OF, CROSSING
+        CHILD, PARENT, ELEMENT_OF, CROSSING, SIBLING
     }
 
     /**
@@ -257,6 +257,24 @@ public interface Selector {
                     crossingFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
                 }
                 return e.child != null;
+            } else if (ChildOrParentSelectorType.SIBLING.equals(type)) {
+                if (e.osm instanceof Node) {
+                    for (Way w : Utils.filteredCollection(e.osm.getReferrers(), Way.class)) {
+                        final int i = w.getNodes().indexOf(e.osm);
+                        if (i - 1 >= 0) {
+                            final Node n = w.getNode(i - 1);
+                            final Environment e2 = e.withPrimitive(n).withParent(w).withChild(e.osm);
+                            if (left.matches(e2)) {
+                                if (link.matches(e2.withLinkContext())) {
+                                    e.child = n;
+                                    e.index = i;
+                                    e.parent = w;
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
             } else if (ChildOrParentSelectorType.CHILD.equals(type)) {
                 MatchingReferrerFinder collector = new MatchingReferrerFinder(e);
                 e.osm.visitReferrers(collector);

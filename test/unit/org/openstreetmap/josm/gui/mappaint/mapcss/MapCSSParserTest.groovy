@@ -4,14 +4,15 @@ import org.junit.Before
 import org.junit.Test
 import org.openstreetmap.TestUtils
 import org.openstreetmap.josm.Main
-import org.openstreetmap.josm.data.Preferences
+import org.openstreetmap.josm.data.coor.LatLon
+import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.OsmPrimitive
 import org.openstreetmap.josm.data.osm.Way
+import org.openstreetmap.josm.data.projection.Projections
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
 import org.openstreetmap.josm.tools.ColorHelper
-import org.openstreetmap.josm.tools.Utils
 
 import java.awt.Color
 
@@ -33,7 +34,8 @@ class MapCSSParserTest {
 
     @Before
     public void setUp() throws Exception {
-        Main.pref = new Preferences()
+        Main.initApplicationPreferences()
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
     }
 
     @Test
@@ -250,5 +252,60 @@ class MapCSSParserTest {
     @Test
     public void testColorParsing() throws Exception {
         assert ColorHelper.html2color("#12345678") == new Color(0x12, 0x34, 0x56, 0x78)
+    }
+
+    @Test
+    public void testSiblingSelector() throws Exception {
+        def s1 = (Selector.ChildOrParentSelector) getParser("*[a?][parent_tag(\"highway\")=\"unclassified\"] + *[b?]").child_selector()
+        def ds = new DataSet()
+        def n1 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1, 2))
+        n1.put("a", "true")
+        def n2 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1.1, 2.2))
+        n2.put("b", "true")
+        def w = new Way()
+        w.put("highway", "unclassified")
+        ds.addPrimitive(n1)
+        ds.addPrimitive(n2)
+        ds.addPrimitive(w)
+        w.addNode(n1)
+        w.addNode(n2)
+
+        def e = new Environment().withPrimitive(n2)
+        assert s1.matches(e)
+        assert e.osm == n2
+        assert e.child == n1
+        assert e.parent == w
+        assert !s1.matches(new Environment().withPrimitive(n1))
+        assert !s1.matches(new Environment().withPrimitive(w))
+    }
+
+    @Test
+    public void testSiblingSelectorInterpolation() throws Exception {
+        def s1 = (Selector.ChildOrParentSelector) getParser(
+                "*[tag(\"addr:housenumber\") > child_tag(\"addr:housenumber\")][regexp_test(\"even|odd\", parent_tag(\"addr:interpolation\"))]" +
+                        " + *[addr:housenumber]").child_selector()
+        def ds = new DataSet()
+        def n1 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1, 2))
+        n1.put("addr:housenumber", "10")
+        def n2 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1.1, 2.2))
+        n2.put("addr:housenumber", "100")
+        def n3 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1.2, 2.3))
+        n3.put("addr:housenumber", "20")
+        def w = new Way()
+        w.put("addr:interpolation", "even")
+        ds.addPrimitive(n1)
+        ds.addPrimitive(n2)
+        ds.addPrimitive(n3)
+        ds.addPrimitive(w)
+        w.addNode(n1)
+        w.addNode(n2)
+        w.addNode(n3)
+
+        assert s1.right.matches(new Environment().withPrimitive(n3))
+        assert s1.left.matches(new Environment().withPrimitive(n2).withChild(n3).withParent(w))
+        assert s1.matches(new Environment().withPrimitive(n3))
+        assert !s1.matches(new Environment().withPrimitive(n1))
+        assert !s1.matches(new Environment().withPrimitive(n2))
+        assert !s1.matches(new Environment().withPrimitive(w))
     }
 }
