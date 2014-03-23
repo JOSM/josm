@@ -1,11 +1,12 @@
 /* power related stuff (incomplete) */
 
-*[power =~ /line|minor_line|cable/][!voltage],
+*[power =~ /^(line|minor_line|cable)$/][!voltage],
 *[substation][power!=substation],
 *[transformer][!power] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
   assertMatch: "way power=line";
   assertNoMatch: "way power=line voltage=1";
+  assertNoMatch: "way power=cable_distribution_cabinet";
 }
 
 *[power=substation][!substation],
