@@ -340,6 +340,10 @@ public final class ExpressionFactory {
             return env.parent.get(key);
         }
 
+        public String child_tag(String key) {
+            return env.child == null ? null : env.child.get(key);
+        }
+
         /**
          * Determines whether the object has a tag with the given key.
          */

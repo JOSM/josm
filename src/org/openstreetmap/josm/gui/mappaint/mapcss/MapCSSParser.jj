@@ -367,7 +367,13 @@ Selector child_selector() :
     selLeft=selector() w()
     (
         (
-            ( <GREATER> { type = Selector.ChildOrParentSelectorType.CHILD; } | <LESS> { type = Selector.ChildOrParentSelectorType.PARENT; } )
+            (
+                <GREATER> { type = Selector.ChildOrParentSelectorType.CHILD; }
+            |
+                <LESS> { type = Selector.ChildOrParentSelectorType.PARENT; }
+            |
+                <PLUS> { type = Selector.ChildOrParentSelectorType.SIBLING; }
+            )
             ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
         |
             <ELEMENT_OF> { type = Selector.ChildOrParentSelectorType.ELEMENT_OF; }

@@ -136,6 +136,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
         public Collection<ExtendedSourceEntry> getDefault() {
             List<ExtendedSourceEntry> def = new ArrayList<ExtendedSourceEntry>();
             
+            addDefault(def, "addresses",    tr("Addresses"),           tr("Checks for errors on addresses"));
             addDefault(def, "combinations", tr("Tag combinations"),    tr("Checks for missing tag or suspicious combinations"));
             addDefault(def, "deprecated",   tr("Deprecated features"), tr("Checks for deprecated features"));
             addDefault(def, "geometry",     tr("Geometry"),            tr("Checks for geometry errors"));
