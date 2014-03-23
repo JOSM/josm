@@ -111,7 +111,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             if (idx == nodes.size() - 1) {
                 ++idx;
-                return new Point(x_prev0 + current.x - prev.x, y_prev0 + current.y - prev.y);
+                if (prev != null) {
+                    return new Point(x_prev0 + current.x - prev.x, y_prev0 + current.y - prev.y);
+                } else {
+                    return current;
+                }
             }
 
             Point next = nc.getPoint(nodes.get(idx+1));
