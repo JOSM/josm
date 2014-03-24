@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -99,6 +100,30 @@ public final class AlignInCircleAction extends JosmAction {
         }
     }
 
+    
+    /**
+     * Perform AlignInCircle action.
+     *
+     * A fixed node is a node for which it is forbidden to change the angle relative to center of the circle.
+     * All other nodes are uniformly distributed.
+     *
+     * Case 1: One unclosed way.
+     * --> allow action, and align selected way nodes
+     * If nodes contained by this way are selected, there are fix.
+     * If nodes outside from the way are selected there are ignored.
+     *
+     * Case 2: One or more ways are selected and can be joined into a polygon
+     * --> allow action, and align selected ways nodes
+     * If 1 node outside of way is selected, it became center
+     * If 1 node outside and 1 node inside are selected there define center and radius
+     * If no outside node and 2 inside nodes are selected those 2 nodes define diameter
+     * In all other cases outside nodes are ignored
+     * In all cases, selected nodes are fix, nodes with more than one referrers are fix
+     * (first referrer is the selected way)
+     *
+     * Case 3: Only nodes are selected
+     * --> Align these nodes, all are fix
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
@@ -106,10 +131,11 @@ public final class AlignInCircleAction extends JosmAction {
 
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
         List<Node> nodes = new LinkedList<Node>();
+        // fixNodes: All nodes for which the angle relative to center should not be modified
+        HashSet<Node> fixNodes = new HashSet<Node>();
         List<Way> ways = new LinkedList<Way>();
         EastNorth center = null;
         double radius = 0;
-        boolean isPolygon = false;
         
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Node) {
@@ -119,58 +145,68 @@ public final class AlignInCircleAction extends JosmAction {
             }
         }
 
-        // special case if no single nodes are selected and exactly one way is:
-        // then use the way's nodes
-        if ((nodes.size() <= 2) && checkWaysArePolygon(ways)) {
-            // some more special combinations:
-            // When is selected node that is part of the way, then make a regular polygon, selected
-            // node doesn't move.
-            // I haven't got better idea, how to activate that function.
-            //
-            // When one way and one node is selected, set center to position of that node.
-            // When one more node, part of the way, is selected, set the radius equal to the
-            // distance between two nodes.
-            if (nodes.size() >= 1) {
-                boolean[] isContained = new boolean[nodes.size()];
-                for(int i = 0; i < nodes.size(); i++) {
-                    Node n = nodes.get(i);
-                    isContained[i] = false;
-                    for(Way way: ways)
-                        if(way.containsNode(n)) {
-                            isContained[i] = true;
-                            break;
-                        }
-                }
-                if(nodes.size() == 1) {
-                    if(!isContained[0])
-                        center = nodes.get(0).getEastNorth();
-                } else {
-                    if(!isContained[0] && !isContained[1]) {
-                        // 2 nodes outside of way, can't choose one as center
-                        new Notification(
-                                tr("Please select only one node as center."))
-                                .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                                .setDuration(Notification.TIME_SHORT)
-                                .show();
-                        return;
-                    } else if (!isContained[0] || !isContained[1]) {
-                        // 1 node inside and 1 outside, outside is center, inside node define radius
-                        center = nodes.get(isContained[0] ? 1 : 0).getEastNorth();
-                        radius = distance(nodes.get(0).getEastNorth(), nodes.get(1).getEastNorth());
-                    } else {
-                        // 2 nodes inside, define diameter
-                        EastNorth en0 = nodes.get(0).getEastNorth();
-                        EastNorth en1 = nodes.get(1).getEastNorth();
-                        center = new EastNorth((en0.east() + en1.east()) / 2, (en0.north() + en1.north()) / 2);
-                        radius = distance(en0, en1) / 2;
+        if (ways.size() == 1 && ways.get(0).firstNode() != ways.get(0).lastNode()) {
+            // Case 1
+            Way w = ways.get(0);
+            fixNodes.add(w.firstNode());
+            fixNodes.add(w.lastNode());
+            fixNodes.addAll(nodes);
+            fixNodes.addAll(collectNodesWithExternReferers(ways));
+            // Temporary closed way used to reorder nodes
+            Way closedWay = new Way(w);
+            closedWay.addNode(w.firstNode());
+            ArrayList<Way> usedWays = new ArrayList<Way>(1);
+            usedWays.add(closedWay);
+            nodes = collectNodesAnticlockwise(usedWays);
+        } else if (!ways.isEmpty() && checkWaysArePolygon(ways)) {
+            // Case 2
+            ArrayList<Node> inside = new ArrayList<Node>();
+            ArrayList<Node> outside = new ArrayList<Node>();
+            
+            for(Node n: nodes) {
+                boolean isInside = false;
+                for(Way w: ways) {
+                    if(w.getNodes().contains(n)) {
+                        isInside = true;
+                        break;
                     }
                 }
+                if(isInside)
+                    inside.add(n);
+                else
+                    outside.add(n);
             }
+            
+            if(outside.size() == 1 && inside.isEmpty()) {
+                center = outside.get(0).getEastNorth();
+            } else if(outside.size() == 1 && inside.size() == 1) {
+                center = outside.get(0).getEastNorth();
+                radius = distance(center, inside.get(0).getEastNorth());
+            } else if(inside.size() == 2 && outside.isEmpty()) {
+                // 2 nodes inside, define diameter
+                EastNorth en0 = inside.get(0).getEastNorth();
+                EastNorth en1 = inside.get(1).getEastNorth();
+                center = new EastNorth((en0.east() + en1.east()) / 2, (en0.north() + en1.north()) / 2);
+                radius = distance(en0, en1) / 2;
+            }
+            
+            fixNodes.addAll(inside);
+            fixNodes.addAll(collectNodesWithExternReferers(ways));
             nodes = collectNodesAnticlockwise(ways);
-            isPolygon = true;
-        }
-
-        if (nodes.size() < 4) {
+            if (nodes.size() < 4) {
+                new Notification(
+                        tr("Not enough nodes in selected ways."))
+                .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                .setDuration(Notification.TIME_SHORT)
+                .show();
+                return;
+            }
+        } else if (ways.isEmpty() && nodes.size() > 3) {
+            // Case 3
+            fixNodes.addAll(nodes);
+            // No need to reorder nodes since all are fix
+        } else {
+            // Invalid action
             new Notification(
                     tr("Please select at least four nodes."))
                     .setIcon(JOptionPane.INFORMATION_MESSAGE)
@@ -184,28 +220,9 @@ public final class AlignInCircleAction extends JosmAction {
             center = Geometry.getCentroid(nodes);
         }
         // Node "center" now is central to all selected nodes.
-
-        if (!isPolygon) {
-            // Then reorder them based on heading from the center point
-            List<Node> newNodes = new LinkedList<Node>();
-            while (!nodes.isEmpty()) {
-                double maxHeading = -1.0;
-                Node maxNode = null;
-                for (Node n : nodes) {
-                    double heading = center.heading(n.getEastNorth());
-                    if (heading > maxHeading) {
-                        maxHeading = heading;
-                        maxNode = n;
-                    }
-                }
-                newNodes.add(maxNode);
-                nodes.remove(maxNode);
-            }
-            nodes = newNodes;
-        }
     
         // Now calculate the average distance to each node from the
-        // centre. This method is ok as long as distances are short
+        // center. This method is ok as long as distances are short
         // relative to the distance from the N or S poles.
         if (radius == 0) {
             for (Node n : nodes) {
@@ -224,12 +241,12 @@ public final class AlignInCircleAction extends JosmAction {
         // Search first fixed node
         int startPosition = 0;
         for(startPosition = 0; startPosition < nodeCount; startPosition++)
-            if(isFixNode(nodes.get(startPosition % nodeCount), sel)) break;
+            if(fixNodes.contains(nodes.get(startPosition % nodeCount))) break;
         int i = startPosition; // Start position for current arc
         int j; // End position for current arc
         while(i < startPosition + nodeCount) {
             for(j = i + 1; j < startPosition + nodeCount; j++)
-                if(isFixNode(nodes.get(j % nodeCount), sel)) break;
+                if(fixNodes.contains(nodes.get(j % nodeCount))) break;
             Node first = nodes.get(i % nodeCount);
             PolarCoor pcFirst = new PolarCoor(first.getEastNorth(), center, 0);
             pcFirst.radius = radius;
@@ -257,6 +274,20 @@ public final class AlignInCircleAction extends JosmAction {
         Main.map.repaint();
     }
 
+    /**
+     * Collect all nodes with more than one referrer.
+     * @param ways Ways from witch nodes are selected
+     * @return List of nodes with more than one referrer
+     */
+    private List<Node> collectNodesWithExternReferers(List<Way> ways) {
+        ArrayList<Node> withReferrers = new ArrayList<Node>();
+        for(Way w: ways)
+            for(Node n: w.getNodes())
+                if(n.getReferrers().size() > 1)
+                    withReferrers.add(n);
+        return withReferrers;
+    }
+    
     /**
      * Assuming all ways can be joined into polygon, create an ordered list of node.
      * @param ways List of ways to be joined
@@ -321,19 +352,6 @@ public final class AlignInCircleAction extends JosmAction {
                     .setDuration(Notification.TIME_SHORT)
                     .show();
         return true;
-    }
-    
-    /**
-     * Test if angle of a node can be change.
-     * @param n Node
-     * @param sel Selection which action is apply
-     * @return true is this node does't have a fix angle 
-     */
-    private boolean isFixNode(Node n, Collection<OsmPrimitive> sel) {
-        List<OsmPrimitive> referrers = n.getReferrers();
-        if(referrers.isEmpty()) return false;
-        if(sel.contains(n) || referrers.size() > 1 || !sel.contains(referrers.get(0))) return true;
-        return false;
     }
     
     @Override
