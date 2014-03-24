@@ -14,7 +14,7 @@
 
 area:closed[amenity ][area?][!highway],
 area:closed[building][area?],
-area:closed[landuse ][area?],
+area:closed[landuse ][area?][!highway],
 area:closed[leisure ][area?][!highway],
 area:closed[natural ][area?],
 area:closed[shop    ][area?] {
