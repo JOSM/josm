@@ -232,7 +232,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
             lblPlugin.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    cbPlugin.setSelected(!cbPlugin.isSelected());
+                    cbPlugin.doClick();
                 }
             });
 
