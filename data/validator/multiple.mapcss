@@ -1,0 +1,11 @@
+/* see #9757 - Better handling of semicolon in values
+*/
+*["addr:street" =~ /.+;(.+)?/],
+*[highway =~ /.+;(.+)?/],
+*[lanes =~ /.+;(.+)?/],
+*[maxspeed =~ /.+;(.+)?/],
+*[name =~ /.+;(.+)?/],
+*[surface =~ /.+;(.+)?/],
+*[water =~ /.+;(.+)?/] {
+    throwWarning: tr("{0} with multiple values", "{0.key}");
+}
