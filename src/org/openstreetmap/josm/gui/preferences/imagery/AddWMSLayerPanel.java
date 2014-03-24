@@ -77,6 +77,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                     wms.attemptGetCapabilities(rawUrl.getText());
                     tree.updateTree(wms);
                     formats.setModel(new DefaultComboBoxModel(wms.getFormats().toArray()));
+                    formats.setSelectedItem(wms.getPreferredFormats());
                 } catch (MalformedURLException ex) {
                     JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
                             tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
