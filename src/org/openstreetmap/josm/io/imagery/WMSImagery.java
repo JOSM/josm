@@ -11,11 +11,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -25,6 +27,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -62,7 +65,14 @@ public class WMSImagery {
     }
 
     public List<String> getFormats() {
-        return formats;
+        return Collections.unmodifiableList(formats);
+    }
+
+    public String getPreferredFormats() {
+        return formats.contains("image/jpeg") ? "image/jpeg"
+                : formats.contains("image/png") ? "image/png"
+                : formats.isEmpty() ? null
+                : formats.get(0);
     }
 
     String buildRootUrl() {
@@ -164,12 +174,24 @@ public class WMSImagery {
             child = getChild(child, "Request");
             child = getChild(child, "GetMap");
 
-            formats = new ArrayList<String>(Utils.transform(getChildren(child, "Format"), new Utils.Function<Element, String>() {
-                @Override
-                public String apply(Element x) {
-                    return x.getTextContent();
-                }
-            }));
+            formats = new ArrayList<String>(Utils.filter(Utils.transform(getChildren(child, "Format"),
+                    new Utils.Function<Element, String>() {
+                        @Override
+                        public String apply(Element x) {
+                            return x.getTextContent();
+                        }
+                    }
+                    ), new Predicate<String>() {
+                        @Override
+                        public boolean evaluate(String format) {
+                            boolean isFormatSupported = isImageFormatSupported(format);
+                            if (!isFormatSupported) {
+                                Main.info("Skipping unsupported image format {0}", format);
+                            }
+                            return isFormatSupported;
+                        }
+                    }
+            ));
 
             child = getChild(child, "DCPType");
             child = getChild(child, "HTTP");
@@ -190,6 +212,14 @@ public class WMSImagery {
             throw new WMSGetCapabilitiesException(e, incomingData);
         }
 
+    }
+
+    static boolean isImageFormatSupported(final String format) {
+        return ImageIO.getImageReadersByMIMEType(format).hasNext()
+                || (format.startsWith("image/tiff") || format.startsWith("image/geotiff")) && ImageIO.getImageReadersBySuffix("tiff").hasNext() // handles image/tiff image/tiff8 image/geotiff image/geotiff8
+                || format.startsWith("image/png") && ImageIO.getImageReadersBySuffix("png").hasNext()
+                || format.startsWith("image/svg") && ImageIO.getImageReadersBySuffix("svg").hasNext()
+                || format.startsWith("image/bmp") && ImageIO.getImageReadersBySuffix("bmp").hasNext();
     }
 
     public ImageryInfo toImageryInfo(String name, Collection<LayerDetails> selectedLayers) {
