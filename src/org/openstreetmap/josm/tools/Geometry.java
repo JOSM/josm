@@ -687,6 +687,7 @@ public final class Geometry {
      * Compute the centroid/barycenter of nodes
      * @param nodes Nodes for which the centroid is wanted
      * @return the centroid of nodes
+     * @see Geometry#getCenter
      */
     public static EastNorth getCentroid(List<Node> nodes) {
 
@@ -723,6 +724,70 @@ public final class Geometry {
         return new EastNorth(east.doubleValue(), north.doubleValue());
     }
 
+    /**
+     * Compute center of the circle closest to different nodes.
+     * 
+     * Ensure exact center computation in case nodes are already aligned in circle.
+     * This is done by least square method.
+     * Let be a_i x + b_i y + c_i = 0 equations of bisectors of each edges.
+     * Center must be intersection of all bisectors.
+     * <pre>
+     *          [ a1  b1  ]         [ -c1 ]
+     * With A = [ ... ... ] and Y = [ ... ]
+     *          [ an  bn  ]         [ -cn ]
+     * </pre>
+     * An approximation of center of circle is (At.A)^-1.At.Y
+     * @param nodes Nodes parts of the circle (at least 3)
+     * @return An approximation of the center, of null if there is no solution.
+     * @see Geometry#getCentroid
+     * @since 6934
+     */
+    public static EastNorth getCenter(List<Node> nodes) {
+        int nc = nodes.size();
+        if(nc < 3) return null;
+        /**
+         * Equation of each bisector ax + by + c = 0
+         */
+        double[] a = new double[nc];
+        double[] b = new double[nc];
+        double[] c = new double[nc];
+        // Compute equation of bisector
+        for(int i = 0; i < nc; i++) {
+            EastNorth pt1 = nodes.get(i).getEastNorth();
+            EastNorth pt2 = nodes.get((i+1) % nc).getEastNorth();
+            a[i] = pt1.east() - pt2.east();
+            b[i] = pt1.north() - pt2.north();
+            double d = Math.sqrt(a[i]*a[i] + b[i]*b[i]);
+            if(d == 0) return null;
+            a[i] /= d;
+            b[i] /= d;
+            double xC = (pt1.east() + pt2.east()) / 2;
+            double yC = (pt1.north() + pt2.north()) / 2;
+            c[i] = -(a[i]*xC + b[i]*yC);
+        }
+        // At.A = [aij]
+        double a11 = 0, a12 = 0, a22 = 0;
+        // At.Y = [bi]
+        double b1 = 0, b2 = 0;
+        for(int i = 0; i < nc; i++) {
+            a11 += a[i]*a[i];
+            a12 += a[i]*b[i];
+            a22 += b[i]*b[i];
+            b1 -= a[i]*c[i];
+            b2 -= b[i]*c[i];
+        }
+        // (At.A)^-1 = [invij]
+        double det = a11*a22 - a12*a12;
+        if(Math.abs(det) < 1e-5) return null;
+        double inv11 = a22/det;
+        double inv12 = -a12/det;
+        double inv22 = a11/det;
+        // center (xC, yC) = (At.A)^-1.At.y
+        double xC = inv11*b1 + inv12*b2;
+        double yC = inv12*b1 + inv22*b2;
+        return new EastNorth(xC, yC);
+    }
+    
     /**
      * Returns the coordinate of intersection of segment sp1-sp2 and an altitude
      * to it starting at point ap. If the line defined with sp1-sp2 intersects
