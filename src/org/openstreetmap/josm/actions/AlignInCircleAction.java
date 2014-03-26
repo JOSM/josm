@@ -216,10 +216,16 @@ public final class AlignInCircleAction extends JosmAction {
         }
 
         if (center == null) {
-            // Compute the centroid of nodes
-            center = Geometry.getCentroid(nodes);
+            // Compute the center of nodes
+            center = Geometry.getCenter(nodes);
+            if (center == null) {
+                new Notification(tr("Cannot determine center of selected nodes."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setDuration(Notification.TIME_SHORT)
+                    .show();
+                return;
+            }
         }
-        // Node "center" now is central to all selected nodes.
     
         // Now calculate the average distance to each node from the
         // center. This method is ok as long as distances are short
