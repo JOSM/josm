@@ -56,6 +56,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             setEditable(false);
             setOpaque(false);
             addHyperlinkListener(this);
+            adaptForNimbus(this);
         }
 
         @Override
