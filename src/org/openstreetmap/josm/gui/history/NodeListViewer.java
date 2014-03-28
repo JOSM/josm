@@ -275,7 +275,7 @@ public class NodeListViewer extends JPanel {
         }
 
         public void updateEnabledState() {
-            setEnabled(primitiveId != null && primitiveId.getUniqueId() > 0);
+            setEnabled(primitiveId != null && !primitiveId.isNew());
         }
     }
 
@@ -313,7 +313,7 @@ public class NodeListViewer extends JPanel {
             int row = table.rowAtPoint(e.getPoint());
             if(row <= 0) return;
             PrimitiveId pid = primitiveIdAtRow(table.getModel(), row);
-            if (pid == null)
+            if (pid == null || pid.isNew())
                 return;
             showHistoryAction.setPrimitiveId(pid);
             showHistoryAction.run();

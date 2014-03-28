@@ -447,17 +447,17 @@ public class OsmReader extends AbstractReader {
                 throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString), e);
             }
             if (ds.getVersion().equals("0.6")){
-                if (version <= 0 && current.getUniqueId() > 0) {
+                if (version <= 0 && !current.isNew()) {
                     throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString));
-                } else if (version < 0 && current.getUniqueId() <= 0) {
+                } else if (version < 0 && current.isNew()) {
                     Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 0, "0.6"));
                     version = 0;
                 }
             } else if (ds.getVersion().equals("0.5")) {
-                if (version <= 0 && current.getUniqueId() > 0) {
+                if (version <= 0 && !current.isNew()) {
                     Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 1, "0.5"));
                     version = 1;
-                } else if (version < 0 && current.getUniqueId() <= 0) {
+                } else if (version < 0 && current.isNew()) {
                     Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 0, "0.5"));
                     version = 0;
                 }
@@ -468,13 +468,13 @@ public class OsmReader extends AbstractReader {
         } else {
             // version expected for OSM primitives with an id assigned by the server (id > 0), since API 0.6
             //
-            if (current.getUniqueId() > 0 && ds.getVersion() != null && ds.getVersion().equals("0.6")) {
+            if (!current.isNew() && ds.getVersion() != null && ds.getVersion().equals("0.6")) {
                 throwException(tr("Missing attribute ''version'' on OSM primitive with ID {0}.", Long.toString(current.getUniqueId())));
-            } else if (current.getUniqueId() > 0 && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
+            } else if (!current.isNew() && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
                 // default version in 0.5 files for existing primitives
                 Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 1, "0.5"));
                 version= 1;
-            } else if (current.getUniqueId() <= 0 && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
+            } else if (current.isNew() && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
                 // default version in 0.5 files for new primitives, no warning necessary. This is
                 // (was) legal in API 0.5
                 version= 0;
@@ -499,7 +499,7 @@ public class OsmReader extends AbstractReader {
             try {
                 current.setChangesetId(Integer.parseInt(v));
             } catch(NumberFormatException e) {
-                if (current.getUniqueId() <= 0) {
+                if (current.isNew()) {
                     // for a new primitive we just log a warning
                     Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.getUniqueId()));
                     current.setChangesetId(0);
@@ -509,7 +509,7 @@ public class OsmReader extends AbstractReader {
                 }
             }
             if (current.getChangesetId() <=0) {
-                if (current.getUniqueId() <= 0) {
+                if (current.isNew()) {
                     // for a new primitive we just log a warning
                     Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.getUniqueId()));
                     current.setChangesetId(0);
