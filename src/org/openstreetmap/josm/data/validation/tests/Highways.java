@@ -111,14 +111,15 @@ public class Highways extends Test {
 
     private void testWrongRoundabout(Way w) {
         Map<String, List<Way>> map = new HashMap<String, List<Way>>();
-        // Count all highways (per type) connected to this roundabout
+        // Count all highways (per type) connected to this roundabout, except links
         // As roundabouts are closed ways, take care of not processing the first/last node twice
         for (Node n : new HashSet<Node>(w.getNodes())) {
             for (Way h : Utils.filteredCollection(n.getReferrers(), Way.class)) {
-                if (h != w && h.hasKey("highway")) {
-                    List<Way> list = map.get(h.get("highway"));
+                String value = h.get("highway");
+                if (h != w && value != null && !value.endsWith("_link")) {
+                    List<Way> list = map.get(value);
                     if (list == null) {
-                        map.put(h.get("highway"), list = new ArrayList<Way>());
+                        map.put(value, list = new ArrayList<Way>());
                     }
                     list.add(h);
                 }
