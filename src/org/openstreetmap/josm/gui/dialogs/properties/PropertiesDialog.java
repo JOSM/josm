@@ -142,13 +142,18 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     private final JTable membershipTable = new JTable(membershipData);
 
+    /** JPanel containing both previous tables */
+    private final JPanel bothTables = new JPanel();
+
     // Popup menus
     private final JPopupMenu tagMenu = new JPopupMenu();
     private final JPopupMenu membershipMenu = new JPopupMenu();
+    private final JPopupMenu blankSpaceMenu = new JPopupMenu();
 
     // Popup menu handlers
     private final PopupMenuHandler tagMenuHandler = new PopupMenuHandler(tagMenu);
     private final PopupMenuHandler membershipMenuHandler = new PopupMenuHandler(membershipMenu);
+    private final PopupMenuHandler blankSpaceMenuHandler = new PopupMenuHandler(blankSpaceMenu);
 
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
     /**
@@ -234,7 +239,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         buildMembershipTable();
 
         // combine both tables and wrap them in a scrollPane
-        JPanel bothTables = new JPanel();
         boolean top = Main.pref.getBoolean("properties.presets.top", true);
         bothTables.setLayout(new GridBagLayout());
         if(top) {
@@ -250,15 +254,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if(!top) {
             bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
         }
-
+        
+        setupBlankSpaceMenu();
         setupKeyboardShortcuts();
 
-        // Let the action know when selection in the tables change
+        // Let the actions know when selection in the tables change
         tagTable.getSelectionModel().addListSelectionListener(editAction);
         membershipTable.getSelectionModel().addListSelectionListener(editAction);
         tagTable.getSelectionModel().addListSelectionListener(deleteAction);
         membershipTable.getSelectionModel().addListSelectionListener(deleteAction);
-
 
         JScrollPane scrollPane = (JScrollPane) createLayout(bothTables, true, Arrays.asList(new SideButton[] {
                 this.btnAdd, this.btnEdit, this.btnDel
@@ -279,7 +283,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     private void buildTagsTable() {
         // setting up the tags table
-
         tagData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
         tagTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tagTable.getTableHeader().setReorderingAllowed(false);
@@ -352,10 +355,35 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /**
-     * creates the popup menu @field membershipMenu and its launcher on membership table
+     * Creates the popup menu @field blankSpaceMenu and its launcher on main panel.
+     */
+    private void setupBlankSpaceMenu() {
+        if (Main.pref.getBoolean("properties.menu.add_edit_delete", true)) {
+            blankSpaceMenuHandler.addAction(addAction);
+            PopupMenuLauncher launcher = new PopupMenuLauncher(blankSpaceMenu) {
+                @Override
+                protected boolean checkSelection(Component component, Point p) {
+                    if (component instanceof JTable) {
+                        return ((JTable) component).rowAtPoint(p) == -1;
+                    }
+                    return true;
+                }
+            };
+            bothTables.addMouseListener(launcher);
+            tagTable.addMouseListener(launcher);
+        }
+    }
+
+    /**
+     * Creates the popup menu @field membershipMenu and its launcher on membership table.
      */
     private void setupMembershipMenu() {
         // setting up the membership table
+        if (Main.pref.getBoolean("properties.menu.add_edit_delete", true)) {
+            membershipMenuHandler.addAction(editAction);
+            membershipMenuHandler.addAction(deleteAction);
+            membershipMenu.addSeparator();
+        }
         membershipMenuHandler.addAction(setRelationSelectionAction);
         membershipMenuHandler.addAction(selectRelationAction);
         membershipMenuHandler.addAction(addRelationToSelectionAction);
@@ -401,9 +429,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /**
-     * creates the popup menu @field tagMenu and its launcher on tag table
+     * Creates the popup menu @field tagMenu and its launcher on tag table.
      */
     private void setupTagsMenu() {
+        if (Main.pref.getBoolean("properties.menu.add_edit_delete", true)) {
+            tagMenu.add(addAction);
+            tagMenu.add(editAction);
+            tagMenu.add(deleteAction);
+            tagMenu.addSeparator();
+        }
         tagMenu.add(pasteValueAction);
         tagMenu.add(copyValueAction);
         tagMenu.add(copyKeyValueAction);
@@ -417,7 +451,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /**
-     * Assignas all needed keys like Enter and Spacebar to most important actions
+     * Assigns all needed keys like Enter and Spacebar to most important actions.
      */
     private void setupKeyboardShortcuts() {
 
@@ -648,9 +682,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         boolean hasSelection = !newSel.isEmpty();
         boolean hasTags = hasSelection && tagData.getRowCount() > 0;
         boolean hasMemberships = hasSelection && membershipData.getRowCount() > 0;
-        btnAdd.setEnabled(hasSelection);
-        btnEdit.setEnabled(hasTags || hasMemberships);
-        btnDel.setEnabled(hasTags || hasMemberships);
+        addAction.setEnabled(hasSelection);
+        editAction.setEnabled(hasTags || hasMemberships);
+        deleteAction.setEnabled(hasTags || hasMemberships);
         tagTable.setVisible(hasTags);
         tagTable.getTableHeader().setVisible(hasTags);
         selectSth.setVisible(!hasSelection);
@@ -706,6 +740,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         return tagMenuHandler;
     }
 
+    /**
+     * Returns the selected tag.
+     * @return The current selected tag
+     */
     @SuppressWarnings("unchecked")
     public Tag getSelectedProperty() {
         int row = tagTable.getSelectedRow();
@@ -724,6 +762,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         return membershipMenuHandler;
     }
 
+    /**
+     * Returns the selected relation membership.
+     * @return The current selected relation membership
+     */
     public IRelation getSelectedMembershipRelation() {
         int row = membershipTable.getSelectedRow();
         return row > -1 ? (IRelation) membershipData.getValueAt(row, 0) : null;
@@ -773,7 +815,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 tagTable.clearSelection();
             }
         }
-
     }
 
     static class MemberInfo {
