@@ -469,9 +469,10 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         /** the label which displays the dialog's title **/
         private final JLabel lblTitle;
         private final JComponent lblTitle_weak;
-        private final DialogPopupMenu popupMenu = new DialogPopupMenu();
         /** the button which shows whether buttons are dynamic or not */
         private final JButton buttonsHide;
+        /** the contextual menu **/
+        private DialogPopupMenu popupMenu;
 
         public TitleBar(String toggleDialogName, String iconName) {
             setLayout(new GridBagLayout());
@@ -618,6 +619,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         }
 
         public final void registerMouseListener() {
+            popupMenu = new DialogPopupMenu();
             addMouseListener(new MouseEventHandler());
         }
 
@@ -625,7 +627,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             public MouseEventHandler() {
                 super(popupMenu);
             }
-            @Override public void mouseClicked(MouseEvent e) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     if (isCollapsed) {
                         expand();
