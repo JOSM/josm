@@ -1297,7 +1297,11 @@ public class Preferences {
     public static String updateSystemProperty(String key, String value) {
         if (value != null) {
             String old = System.setProperty(key, value);
-            Main.debug("System property '"+key+"' set to '"+value+"'. Old value was '"+old+"'");
+            if (!key.toLowerCase().contains("password")) {
+                Main.debug("System property '"+key+"' set to '"+value+"'. Old value was '"+old+"'");
+            } else {
+                Main.debug("System property '"+key+"' changed.");
+            }
             return old;
         }
         return null;

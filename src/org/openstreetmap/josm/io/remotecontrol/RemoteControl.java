@@ -31,6 +31,7 @@ public class RemoteControl
      */
     public static void start() {
         RemoteControlHttpServer.restartRemoteControlHttpServer();
+        RemoteControlHttpsServer.restartRemoteControlHttpsServer();
     }
 
     /**
@@ -39,6 +40,7 @@ public class RemoteControl
      */
     public static void stop() {
         RemoteControlHttpServer.stopRemoteControlHttpServer();
+        RemoteControlHttpsServer.stopRemoteControlHttpsServer();
     }
 
     /**
