@@ -51,7 +51,7 @@ public class OverlappingWays extends Test {
     protected static final int DUPLICATE_WAY_SEGMENT = 121;
 
     protected static final CollectionProperty IGNORED_KEYS = new CollectionProperty(
-            "overlapping-ways.ignored-keys", Arrays.asList("barrier", "building"));
+            "overlapping-ways.ignored-keys", Arrays.asList("barrier", "building", "historic:building"));
 
     /** Constructor */
     public OverlappingWays() {
@@ -155,9 +155,9 @@ public class OverlappingWays extends Test {
             }
         }
 
-        // see ticket #9598 - only report if at least 3 segments are shared
+        // see ticket #9598 - only report if at least 3 segments are shared, except for overlapping ways, i.e warnings (see #9820)
         for (TestError error : preliminaryErrors) {
-            if (error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
+            if (error.getSeverity().equals(Severity.WARNING) || error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
                 boolean ignore = false;
                 for (String ignoredKey : IGNORED_KEYS.get()) {
                     if (Utils.exists(error.getPrimitives(), Predicates.hasKey(ignoredKey))) {
