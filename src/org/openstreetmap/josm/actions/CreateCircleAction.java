@@ -7,7 +7,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,7 +19,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -32,15 +34,18 @@ import org.openstreetmap.josm.tools.Shortcut;
  * - Create a new circle from three selected nodes--or a way with 3 nodes.
  * - Useful for roundabouts
  *
- * Note: If a way is selected, it is changed. If nodes are selected a new way is created.
- *       So if you've got a way with nodes it makes a difference between running this on the way or the nodes!
- *
+ * Notes:
+ *   * If a way is selected, it is changed. If nodes are selected a new way is created.
+ *     So if you've got a way with nodes it makes a difference between running this on the way or the nodes!
+ *   * The existing nodes are retained, and additional nodes are inserted regularly
+ *     to achieve the desired number of nodes (`createcircle.nodecount`).
  * BTW: Someone might want to implement projection corrections for this...
  *
  * @since 996
  *
  * @author Henry Loenwind
  * @author Sebastian Masch
+ * @author Alain Delplanque
  */
 public final class CreateCircleAction extends JosmAction {
 
@@ -54,33 +59,70 @@ public final class CreateCircleAction extends JosmAction {
         putValue("help", ht("/Action/CreateCircle"));
     }
 
-    private double calcang(double xc, double yc, double x, double y) {
-        // calculate the angle from xc|yc to x|y
-        if (xc == x && yc == y)
-            return 0; // actually invalid, but we won't have this case in this context
-        double yd = Math.abs(y - yc);
-        if (yd == 0 && xc < x)
-            return 0;
-        if (yd == 0 && xc > x)
-            return Math.PI;
-        double xd = Math.abs(x - xc);
-        double a = Math.atan2(xd, yd);
-        if (y > yc) {
-            a = Math.PI - a;
+    /**
+     * Distributes nodes according to the algorithm of election with largest remainder.
+     * @param angles Array of PolarNode ordered by increasing angles
+     * @param nodesCount Number of nodes to be distributed
+     * @return Array of number of nodes to put in each arc
+     */
+    private int[] distributeNodes(PolarNode[] angles, int nodesCount) {
+        int[] count = new int[angles.length];
+        double[] width = new double[angles.length];
+        double[] remainder = new double[angles.length];
+        for(int i = 0; i < angles.length; i++) {
+            width[i] = angles[(i+1) % angles.length].a - angles[i].a;
+            if(width[i] < 0)
+                width[i] += 2*Math.PI;
         }
-        if (x < xc) {
-            a = -a;
+        int assign = 0;
+        for(int i = 0; i < angles.length; i++) {
+            double part = width[i] / 2.0 / Math.PI * nodesCount;
+            count[i] = (int) Math.floor(part);
+            remainder[i] = part - count[i];
+            assign += count[i];
         }
-        a = 1.5*Math.PI + a;
-        if (a < 0) {
-            a += 2*Math.PI;
+        while(assign < nodesCount) {
+            int imax = 0;
+            for(int i = 1; i < angles.length; i++)
+                if(remainder[i] > remainder[imax])
+                    imax = i;
+            count[imax]++;
+            remainder[imax] = 0;
+            assign++;
         }
-        if (a >= 2*Math.PI) {
-            a -= 2*Math.PI;
-        }
-        return a;
+        return count;
     }
 
+    /**
+     * Class designed to create a couple between a node and its angle relative to the center of the circle.
+     */
+    private class PolarNode {
+        double a;
+        Node node;
+        
+        PolarNode(EastNorth center, Node n) {
+            EastNorth pt = n.getEastNorth();
+            this.a = Math.atan2(pt.north() - center.north(), pt.east() - center.east());
+            this.node = n;
+        }
+    }
+
+    /**
+     * Comparator used to order PolarNode relative to their angle.
+     */
+    private class PolarNodeComparator implements Comparator<PolarNode> {
+
+        @Override
+        public int compare(PolarNode pc1, PolarNode pc2) {
+            if(pc1.a < pc2.a)
+                return -1;
+            else if(pc1.a == pc2.a)
+                return 0;
+            else
+                return 1;
+        }
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
@@ -117,12 +159,21 @@ public final class CreateCircleAction extends JosmAction {
                 }
         }
 
+        if (nodes.size() < 2 || nodes.size() > 3) {
+            new Notification(
+                    tr("Please select exactly two or three nodes or one way with exactly two or three nodes."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setDuration(Notification.TIME_LONG)
+                    .show();
+            return;
+        }
+
         // now we can start doing things to OSM data
         Collection<Command> cmds = new LinkedList<Command>();
-
+        EastNorth center = null;
+        
         if (nodes.size() == 2) {
             // diameter: two single nodes needed or a way with two nodes
-
             Node   n1 = nodes.get(0);
             double x1 = n1.getEastNorth().east();
             double y1 = n1.getEastNorth().north();
@@ -133,118 +184,41 @@ public final class CreateCircleAction extends JosmAction {
             // calculate the center (xc/yc)
             double xc = 0.5 * (x1 + x2);
             double yc = 0.5 * (y1 + y2);
-
-            // calculate the radius (r)
-            double r = Math.sqrt(Math.pow(xc-x1,2) + Math.pow(yc-y1,2));
-
-            // find where to put the existing nodes
-            double a1 = calcang(xc, yc, x1, y1);
-            double a2 = calcang(xc, yc, x2, y2);
-            if (a1 < a2) { double at = a1; Node nt = n1; a1 = a2; n1 = n2; a2 = at; n2 = nt; }
-
-            // build a way for the circle
-            List<Node> wayToAdd = new ArrayList<Node>(numberOfNodesInCircle + 1);
-
-            for (int i = 1; i <= numberOfNodesInCircle; i++) {
-                double a = a2 + 2*Math.PI*(1.0 - i/(double)numberOfNodesInCircle); // "1-" to get it clock-wise
-
-                // insert existing nodes if they fit before this new node (999 means "already added this node")
-                if ((a1 < 999) && (a1 > a - 1E-9) && (a1 < a + 1E-9)) {
-                    wayToAdd.add(n1);
-                    a1 = 999;
-                }
-                else if ((a2 < 999) && (a2 > a - 1E-9) && (a2 < a + 1E-9)) {
-                    wayToAdd.add(n2);
-                    a2 = 999;
-                }
-                else {
-                    // get the position of the new node and insert it
-                    double x = xc + r*Math.cos(a);
-                    double y = yc + r*Math.sin(a);
-                    Node n = new Node(Main.getProjection().eastNorth2latlon(new EastNorth(x,y)));
-                    wayToAdd.add(n);
-                    cmds.add(new AddCommand(n));
-                }
-            }
-            wayToAdd.add(wayToAdd.get(0)); // close the circle
-            if (existingWay == null) {
-                Way newWay = new Way();
-                newWay.setNodes(wayToAdd);
-                cmds.add(new AddCommand(newWay));
-            } else {
-                Way newWay = new Way(existingWay);
-                newWay.setNodes(wayToAdd);
-                cmds.add(new ChangeCommand(existingWay, newWay));
-            }
-
-            // the first node may be unused/abandoned if createcircle.nodecount is odd
-            if (a1 < 999) {
-                // if it is, delete it
-                List<OsmPrimitive> parents = n1.getReferrers();
-                if (parents.isEmpty() || ((parents.size() == 1) && (parents.contains(existingWay)))) {
-                    cmds.add(new DeleteCommand(n1));
-                }
-            }
-
+            center = new EastNorth(xc, yc);
         } else if (nodes.size() == 3) {
             // triangle: three single nodes needed or a way with three nodes
-
-            // let's get some shorter names
-            Node   n1 = nodes.get(0);
-            double x1 = n1.getEastNorth().east();
-            double y1 = n1.getEastNorth().north();
-            Node   n2 = nodes.get(1);
-            double x2 = n2.getEastNorth().east();
-            double y2 = n2.getEastNorth().north();
-            Node   n3 = nodes.get(2);
-            double x3 = n3.getEastNorth().east();
-            double y3 = n3.getEastNorth().north();
-
-            // calculate the center (xc/yc)
-            double s = 0.5*((x2 - x3)*(x1 - x3) - (y2 - y3)*(y3 - y1));
-            double sUnder = (x1 - x2)*(y3 - y1) - (y2 - y1)*(x1 - x3);
-
-            if (sUnder == 0) {
+            center = Geometry.getCenter(nodes);
+            if (center == null) {
                 notifyNodesNotOnCircle();
                 return;
             }
+        }
 
-            s /= sUnder;
+        // calculate the radius (r)
+        EastNorth n1 = nodes.get(0).getEastNorth();
+        double r = Math.sqrt(Math.pow(center.east()-n1.east(),2) +
+                Math.pow(center.north()-n1.north(),2));
 
-            double xc = 0.5*(x1 + x2) + s*(y2 - y1);
-            double yc = 0.5*(y1 + y2) + s*(x1 - x2);
+        // Order nodes by angle
+        PolarNode[] angles = new PolarNode[nodes.size()];
+        for(int i = 0; i < nodes.size(); i++) {
+            angles[i] = new PolarNode(center, nodes.get(i));
+        }
+        Arrays.sort(angles, new PolarNodeComparator());
+        int[] count = distributeNodes(angles,
+                numberOfNodesInCircle >= nodes.size() ? numberOfNodesInCircle - nodes.size() : 0);
 
-            // calculate the radius (r)
-            double r = Math.sqrt(Math.pow(xc-x1,2) + Math.pow(yc-y1,2));
-
-            // find where to put the existing nodes
-            double a1 = calcang(xc, yc, x1, y1);
-            double a2 = calcang(xc, yc, x2, y2);
-            double a3 = calcang(xc, yc, x3, y3);
-            if (a1 < a2) { double at = a1; Node nt = n1; a1 = a2; n1 = n2; a2 = at; n2 = nt; }
-            if (a2 < a3) { double at = a2; Node nt = n2; a2 = a3; n2 = n3; a3 = at; n3 = nt; }
-            if (a1 < a2) { double at = a1; Node nt = n1; a1 = a2; n1 = n2; a2 = at; n2 = nt; }
-
-            // build a way for the circle
-            List<Node> wayToAdd = new ArrayList<Node>();
-            for (int i = 1; i <= numberOfNodesInCircle; i++) {
-                double a = 2*Math.PI*(1.0 - i/(double)numberOfNodesInCircle); // "1-" to get it clock-wise
-                // insert existing nodes if they fit before this new node (999 means "already added this node")
-                if (a1 < 999 && a1 > a) {
-                    wayToAdd.add(n1);
-                    a1 = 999;
-                }
-                if (a2 < 999 && a2 > a) {
-                    wayToAdd.add(n2);
-                    a2 = 999;
-                }
-                if (a3 < 999 && a3 > a) {
-                    wayToAdd.add(n3);
-                    a3 = 999;
-                }
-                // get the position of the new node and insert it
-                double x = xc + r*Math.cos(a);
-                double y = yc + r*Math.sin(a);
+        // build a way for the circle
+        List<Node> wayToAdd = new ArrayList<Node>();
+        for(int i = 0; i < nodes.size(); i++) {
+            wayToAdd.add(angles[i].node);
+            double delta = angles[(i+1) % nodes.size()].a - angles[i].a;
+            if(delta < 0)
+                delta += 2*Math.PI;
+            for(int j = 0; j < count[i]; j++) {
+                double alpha = angles[i].a + (j+1)*delta/(count[i]+1);
+                double x = center.east() + r*Math.cos(alpha);
+                double y = center.north() + r*Math.sin(alpha);
                 LatLon ll = Main.getProjection().eastNorth2latlon(new EastNorth(x,y));
                 if (ll.isOutSideWorld()) {
                     notifyNodesNotOnCircle();
@@ -254,24 +228,16 @@ public final class CreateCircleAction extends JosmAction {
                 wayToAdd.add(n);
                 cmds.add(new AddCommand(n));
             }
-            wayToAdd.add(wayToAdd.get(0)); // close the circle
-            if (existingWay == null) {
-                Way newWay = new Way();
-                newWay.setNodes(wayToAdd);
-                cmds.add(new AddCommand(newWay));
-            } else {
-                Way newWay = new Way(existingWay);
-                newWay.setNodes(wayToAdd);
-                cmds.add(new ChangeCommand(existingWay, newWay));
-            }
-
+        }
+        wayToAdd.add(wayToAdd.get(0)); // close the circle
+        if (existingWay == null) {
+            Way newWay = new Way();
+            newWay.setNodes(wayToAdd);
+            cmds.add(new AddCommand(newWay));
         } else {
-            new Notification(
-                    tr("Please select exactly two or three nodes or one way with exactly two or three nodes."))
-                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                    .setDuration(Notification.TIME_LONG)
-                    .show();
-            return;
+            Way newWay = new Way(existingWay);
+            newWay.setNodes(wayToAdd);
+            cmds.add(new ChangeCommand(existingWay, newWay));
         }
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Create Circle"), cmds));
