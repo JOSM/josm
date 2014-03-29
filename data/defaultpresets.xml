@@ -1849,6 +1849,7 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Pier" icon="presets/pier.png" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pier"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pier"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:man_made=pier"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=pier"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=pier"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=pier"
@@ -6385,6 +6386,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=retail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=retail"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=retail"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=retail"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=retail"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=retail" />
             <space />
@@ -6395,6 +6397,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=commercial"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=commercial"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=commercial"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=commercial"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=commercial"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=commercial" />
             <space />
