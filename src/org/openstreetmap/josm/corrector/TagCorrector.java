@@ -38,12 +38,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Subclasses call applyCorrections() with maps of the requested
  * corrections and a dialog is pesented to the user to
  * confirm these changes.
+ * @param <P> The type of OSM primitive to correct
  */
-
 public abstract class TagCorrector<P extends OsmPrimitive> {
 
-    public abstract Collection<Command> execute(P primitive, P oldprimitive)
-    throws UserCancelException;
+    public abstract Collection<Command> execute(P oldprimitive, P primitive) throws UserCancelException;
 
     private String[] applicationOptions = new String[] {
             tr("Apply selected changes"),
@@ -67,12 +66,12 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
             final JMultilineLabel label1 = new JMultilineLabel(description);
             label1.setMaxWidth(600);
-            p.add(label1, GBC.eop().anchor(GBC.CENTER));
+            p.add(label1, GBC.eop().anchor(GBC.CENTER).fill(GBC.HORIZONTAL));
 
             final JMultilineLabel label2 = new JMultilineLabel(
                     tr("Please select which changes you want to apply."));
             label2.setMaxWidth(600);
-            p.add(label2, GBC.eop().anchor(GBC.CENTER));
+            p.add(label2, GBC.eop().anchor(GBC.CENTER).fill(GBC.HORIZONTAL));
 
             for (Entry<OsmPrimitive, List<TagCorrection>> entry : tagCorrectionsMap.entrySet()) {
                 final OsmPrimitive primitive = entry.getKey();
