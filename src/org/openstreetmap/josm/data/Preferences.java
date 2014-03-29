@@ -18,7 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -1278,6 +1277,9 @@ public class Preferences {
         } catch (Exception e) {
             // Ignore all exceptions
         }
+        // Workaround to fix a Java "feature"
+        // See http://stackoverflow.com/q/7615645/2257172 and #9875
+        updateSystemProperty("jsse.enableSNIExtension", "false");
         // Workaround to fix another Java bug
         // Force Java 7 to use old sorting algorithm of Arrays.sort (fix #8712).
         // See Oracle bug database: https://bugs.openjdk.java.net/browse/JDK-7075600
