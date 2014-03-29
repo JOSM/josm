@@ -47,6 +47,13 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Main.warn("Failed to register with OSX: " + ex);
         }
+        // Invite users to install Java 7 if they are still with Java 6 and using a compatible OS X version (>= 10.7.3)
+        String java = System.getProperty("java.version");
+        String os = System.getProperty("os.version");
+        if (java != null && java.startsWith("1.6") && os != null && (
+                os.startsWith("10.7.") || os.startsWith("10.8") || os.startsWith("10.9"))) {
+            askUpdateJava(java);
+        }
     }
 
     @Override

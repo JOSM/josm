@@ -38,11 +38,9 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     
     @Override
     public void startupHook() {
-        super.startupHook();
-        // Invite users to install Oracle Java 7 if they are still with Sun/Oracle Java 6
-        String vendor = System.getProperty("java.vendor");
+        // Invite users to install Java 7 if they are still with Java 6
         String version = System.getProperty("java.version");
-        if ("Sun Microsystems Inc.".equals(vendor) && version != null && version.startsWith("1.6")) {
+        if (version != null && version.startsWith("1.6")) {
             askUpdateJava(version);
         }
     }
