@@ -145,11 +145,11 @@ Build-Date: ${build.tstamp}
         </zip>
     </target>
     <!-- New Mac OS X target for Java 7 -->
-    <target name="distmac7" depends="dist">
+    <target name="mac7">
         <!-- Using https://bitbucket.org/infinitekind/appbundler to create mac application bundle -->
         <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="tools/appbundler-1.0ea.jar"/>
         <!-- create MacOS X application bundle -->
-        <bundleapp outputdirectory="dist" name="JOSM" displayname="JOSM" executablename="JOSM" identifier="org.openstreetmap.josm"
+        <bundleapp outputdirectory="${bundle.outdir}" name="JOSM" displayname="JOSM" executablename="JOSM" identifier="org.openstreetmap.josm"
                    mainclassname="org.openstreetmap.josm.gui.MainApplication"
                    copyright="JOSM, and all its integral parts, are released under the GNU General Public License v2 or later"
                    applicationCategory="public.app-category.utilities"
@@ -161,7 +161,7 @@ Build-Date: ${build.tstamp}
             <arch name="x86_64"/>
             <arch name="i386"/>
 
-            <classpath file="dist/josm-custom.jar"/>
+            <classpath file="${bundle.jar}"/>
 
             <option value="-Xmx512m"/>
 
@@ -179,17 +179,23 @@ Build-Date: ${build.tstamp}
         <!-- appbundler lacks the possibility of defining our own keys or using a template, so update the .plist manually -->
         <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="tools/xmltask.jar"/>
         
-        <xmltask source="dist/JOSM.app/Contents/Info.plist" dest="dist/JOSM.app/Contents/Info.plist" indent="false">
+        <xmltask source="${bundle.outdir}/JOSM.app/Contents/Info.plist" dest="${bundle.outdir}/JOSM.app/Contents/Info.plist" indent="false">
             <insert position="before" path="/plist/dict/key[1]"><![CDATA[<key>CFBundleAllowMixedLocalizations</key>
 <string>true</string>
 ]]></insert>
         </xmltask>
         
         <!-- create ZIP file with MacOS X application bundle -->
-        <zip destfile="dist/josm-custom-macosx-java7.zip" update="true">
-            <zipfileset dir="build" includes="CONTRIBUTION README LICENSE"/>
-            <zipfileset dir="dist" includes="JOSM.app/**/*" filemode="755" />
+        <zip destfile="${bundle.outdir}/josm-custom-macosx-java7.zip" update="true">
+            <zipfileset dir="." includes="CONTRIBUTION README LICENSE"/>
+            <zipfileset dir="${bundle.outdir}" includes="JOSM.app/**/*" filemode="755" />
         </zip>
+    </target>
+    <target name="distmac7" depends="dist">
+        <antcall target="mac7">
+            <param name="bundle.outdir" value="dist"/>
+            <param name="bundle.jar" value="dist/josm-custom.jar"/>
+        </antcall>
     </target>
     <target name="javacc" depends="init" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
