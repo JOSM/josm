@@ -39,6 +39,16 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void startupHook() {
+        if (isDebianOrUbuntu()) {
+            // Invite users to install Java 7 if they are still with Java 6 and using a compatible distrib (Debian >= 7 or Ubuntu >= 12.04)
+            String java = System.getProperty("java.version");
+            String os = getOSDescription();
+            if (java != null && java.startsWith("1.6") && os != null && (
+                    os.startsWith("Linux Debian GNU/Linux 7") || 
+                    os.startsWith("Linux Ubuntu 12") || os.startsWith("Linux Ubuntu 13") || os.startsWith("Linux Ubuntu 14"))) {
+                askUpdateJava(java, "apt://openjdk-7-jre");
+            }
+        }
     }
 
     @Override
@@ -324,6 +334,10 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     protected void askUpdateJava(String version) {
+        askUpdateJava(version, "https://www.java.com/download");
+    }
+
+    protected void askUpdateJava(String version, String url) {
         try {
             ExtendedDialog ed = new ExtendedDialog(
                     Main.parent,
@@ -332,15 +346,19 @@ public class PlatformHookUnixoid implements PlatformHook {
             // Check if the dialog has not already been permanently hidden by user
             if (!ed.toggleEnable("askUpdateJava7").toggleCheckState()) {
                 ed.setButtonIcons(new String[]{"java.png", "cancel.png"}).setCancelButton(2);
-                ed.setMinimumSize(new Dimension(460, 260));
+                ed.setMinimumSize(new Dimension(480, 300));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
-                ed.setContent(tr("You are running version {0} of Java.", "<b>"+version+"</b>")+"<br><br>"+
-                        "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.", "Oracle", tr("February 2013"))+"</b><br><br>"+
-                        "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "7")+"</b><br><br>"+
-                        tr("Would you like to update now ?"));
+                String content = tr("You are running version {0} of Java.", "<b>"+version+"</b>")+"<br><br>";
+                if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor"))) {
+                    content += "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.", 
+                            "Oracle", tr("February 2013"))+"</b><br><br>";
+                }
+                content += "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "7")+"</b><br><br>"+
+                        tr("Would you like to update now ?");
+                ed.setContent(content);
 
                 if (ed.showDialog().getValue() == 1) {
-                    openUrl("https://www.java.com/download");
+                    openUrl(url);
                 }
             }
         } catch (IOException e) {
