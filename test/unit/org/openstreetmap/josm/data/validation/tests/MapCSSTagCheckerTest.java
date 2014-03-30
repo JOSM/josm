@@ -74,7 +74,9 @@ public class MapCSSTagCheckerTest {
 
         LinkedHashSet<String> assertionErrors = new LinkedHashSet<String>();
         for (final MapCSSTagChecker.TagCheck check : c.checks) {
+            System.out.println("Check: "+check);
             for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
+                System.out.println("- Assertion: "+i);
                 final OsmPrimitive p = TestUtils.createPrimitive(i.getKey());
                 final boolean isError = Utils.exists(c.getErrorsForPrimitive(p, true), new Predicate<TestError>() {
                     @Override
@@ -92,6 +94,5 @@ public class MapCSSTagCheckerTest {
             }
         }
         assertTrue("not all assertions included in the tests are met", assertionErrors.isEmpty());
-
     }
 }

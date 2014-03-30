@@ -259,7 +259,7 @@ public interface Selector {
                 return e.child != null;
             } else if (ChildOrParentSelectorType.SIBLING.equals(type)) {
                 if (e.osm instanceof Node) {
-                    for (Way w : Utils.filteredCollection(e.osm.getReferrers(), Way.class)) {
+                    for (Way w : Utils.filteredCollection(e.osm.getReferrers(true), Way.class)) {
                         final int i = w.getNodes().indexOf(e.osm);
                         if (i - 1 >= 0) {
                             final Node n = w.getNode(i - 1);
