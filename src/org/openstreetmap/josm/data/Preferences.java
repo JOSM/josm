@@ -1279,7 +1279,9 @@ public class Preferences {
         }
         // Workaround to fix a Java "feature"
         // See http://stackoverflow.com/q/7615645/2257172 and #9875
-        updateSystemProperty("jsse.enableSNIExtension", "false");
+        if (getBoolean("jdk.tls.disableSNIExtension", true)) {
+            updateSystemProperty("jsse.enableSNIExtension", "false");
+        }
         // Workaround to fix another Java bug
         // Force Java 7 to use old sorting algorithm of Arrays.sort (fix #8712).
         // See Oracle bug database: https://bugs.openjdk.java.net/browse/JDK-7075600
