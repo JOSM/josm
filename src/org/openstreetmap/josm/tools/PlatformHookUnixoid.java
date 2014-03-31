@@ -45,7 +45,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             String java = System.getProperty("java.version");
             String os = getOSDescription();
             if (java != null && java.startsWith("1.6") && os != null && (
-                    os.startsWith("Linux Debian GNU/Linux 7") ||
+                    os.startsWith("Linux Debian GNU/Linux 7") || os.startsWith("Linux Mint") ||
                     os.startsWith("Linux Ubuntu 12") || os.startsWith("Linux Ubuntu 13") || os.startsWith("Linux Ubuntu 14"))) {
                 askUpdateJava(java, "apt://openjdk-7-jre");
             }
@@ -120,13 +120,13 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     /**
-     * Determines if the distribution is Debian or Ubuntu.
-     * @return {@code true} if the distribution is Debian or Ubuntu, {@code false} otherwise
+     * Determines if the distribution is Debian or Ubuntu, or a derivative.
+     * @return {@code true} if the distribution is Debian, Ubuntu or Mint, {@code false} otherwise
      */
     public static boolean isDebianOrUbuntu() {
         try {
             String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
-            return "Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist);
+            return "Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist) || "Mint".equalsIgnoreCase(dist);
         } catch (IOException e) {
             Main.warn(e);
             return false;
