@@ -44,7 +44,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             String java = System.getProperty("java.version");
             String os = getOSDescription();
             if (java != null && java.startsWith("1.6") && os != null && (
-                    os.startsWith("Linux Debian GNU/Linux 7") || 
+                    os.startsWith("Linux Debian GNU/Linux 7") ||
                     os.startsWith("Linux Ubuntu 12") || os.startsWith("Linux Ubuntu 13") || os.startsWith("Linux Ubuntu 14"))) {
                 askUpdateJava(java, "apt://openjdk-7-jre");
             }
@@ -133,6 +133,16 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     /**
+     * Determines if the JVM is OpenJDK-based.
+     * @return {@code true} if {@code java.home} contains "openjdk", {@code false} otherwise
+     * @since 6951
+     */
+    public static boolean isOpenJDK() {
+        String javaHome = System.getProperty("java.home");
+        return javaHome != null && javaHome.contains("openjdk");
+    }
+
+    /**
      * Get the package name including detailed version.
      * @param packageName The package name
      * @return The package name and package version if it can be identified, null otherwise
@@ -190,11 +200,8 @@ public class PlatformHookUnixoid implements PlatformHook {
      * @return The package name and package version if it can be identified, null otherwise
      */
     public String getWebStartPackageDetails() {
-        if (isDebianOrUbuntu()) {
-            String javaHome = System.getProperty("java.home");
-            if (javaHome != null && javaHome.contains("openjdk")) {
-                return getPackageDetails("icedtea-netx");
-            }
+        if (isDebianOrUbuntu() && isOpenJDK()) {
+            return getPackageDetails("icedtea-netx");
         }
         return null;
     }
@@ -349,8 +356,8 @@ public class PlatformHookUnixoid implements PlatformHook {
                 ed.setMinimumSize(new Dimension(480, 300));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
                 String content = tr("You are running version {0} of Java.", "<b>"+version+"</b>")+"<br><br>";
-                if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor"))) {
-                    content += "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.", 
+                if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor")) && !isOpenJDK()) {
+                    content += "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
                             "Oracle", tr("February 2013"))+"</b><br><br>";
                 }
                 content += "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "7")+"</b><br><br>"+
