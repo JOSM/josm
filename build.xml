@@ -238,7 +238,7 @@ Build-Date: ${build.tstamp}
                 author="false">
             <link href="http://docs.oracle.com/javase/6/docs/api"/>
             <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
-            <bottom><![CDATA[<a href="http://josm.openstreetmap.de/">JOSM</a>]]></bottom>
+            <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
         </javadoc>
     </target>
     <target name="clean">
@@ -385,7 +385,7 @@ Build-Date: ${build.tstamp}
         </loadfile>
         <!-- Download list of plugins -->
         <loadresource property="plugins">
-            <url url="http://josm.openstreetmap.de/plugin"/>
+            <url url="https://josm.openstreetmap.de/plugin"/>
             <filterchain>
                 <linecontainsregexp negate="true">
                     <regexp pattern="^\t.*"/>

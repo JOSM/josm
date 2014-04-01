@@ -16,7 +16,7 @@ item:
   - URL's are also supported to allow remote icons (are cached locally)
   type: the data types - way,node,relation,closedway (separated by comma)
   name_template: define custom formatting for OSM primitives
-                 see http://josm.openstreetmap.de/wiki/NameTemplate
+                 see https://josm.openstreetmap.de/wiki/NameTemplate
   preset_name_label: whether to insert "[preset name]" label in dialog
                      (defaults to "false" for backward-compatibility on external presets)
 
@@ -140,7 +140,7 @@ reference: include an earlier defined template
    link: a link to a helpful website (optional)
  The fields description, shortdescription and link may also be localized (e.g. de.link)
 
-See also http://josm.openstreetmap.de/wiki/TaggingPresets.
+See also https://josm.openstreetmap.de/wiki/TaggingPresets.
 
 The fields "name", "text", "display_values" may also be localized (e.g. de.name).
 When translations of equal words but different meanings may conflict, a translation
