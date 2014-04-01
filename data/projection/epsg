@@ -20,6 +20,10 @@
 <2973> +proj=tmerc +lon_0=-63 +k_0=0.9996 +x_0=500000 +ellps=intl +towgs84=126.926,547.939,130.409,-2.7867,5.16124,-0.85844,13.82265 +bounds=-61.25,14.25,-60.725,15.025  <>
 # UTM France (DOM) Reunion
 <2975> +proj=tmerc +lon_0=57 +k_0=0.9996 +x_0=500000 +y_0=10000000 +ellps=GRS80 +nadgrids=null +bounds=37.58,-25.92,58.27,-10.6  <>
+# Monte Mario / Italy zone 1
+<3003> +proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=1500000 +y_0=0 +ellps=intl +bounds=5,36,13,48 <>
+# Monte Mario / Italy zone 2
+<3004> +proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=2520000 +y_0=0 +ellps=intl +bounds=11,34,24,48 <>
 # SWEREF99 13 30 / EPSG:3008 (Sweden)
 <3008> +proj=tmerc +lon_0=13.5 +x_0=150000 +ellps=GRS80 +nadgrids=null +bounds=12.1,55.2,14.65,62.26  <>
 # LKS-92 (Latvia TM)
