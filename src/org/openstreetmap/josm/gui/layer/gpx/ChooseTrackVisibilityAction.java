@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -25,7 +26,9 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
@@ -58,6 +61,48 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     }
 
     /**
+     * Class to format a length according to SystemOfMesurement.
+     */
+    private final class TrackLength {
+        private double value;
+
+        /**
+         * Constructs a new {@code TrackLength} object with a given length.
+         * @param value length of the track
+         */
+        TrackLength(double value) {
+            this.value = value;
+        }
+
+        /**
+         * Provides string representation.
+         * @return String representation depending of SystemOfMeasurement
+         */
+        @Override
+        public String toString() {
+            return NavigatableComponent.getSystemOfMeasurement().getDistText(value);
+        }
+    }
+
+    /**
+     * Comparator for TrackLength objects
+     */
+    private final class LengthContentComparator implements Comparator<TrackLength> {
+
+        /**
+         * Compare 2 TrackLength objects relative to the real length
+         */
+        @Override
+        public int compare(TrackLength l0, TrackLength l1) {
+            if(l0.value < l1.value)
+                return -1;
+            else if(l0.value > l1.value)
+                return 1;
+            return 0;
+        }
+    }
+
+    /**
      * gathers all available data for the tracks and returns them as array of arrays
      * in the expected column order  */
     private Object[][] buildTableContents() {
@@ -68,9 +113,9 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             String name = (String) (attr.containsKey("name") ? attr.get("name") : "");
             String desc = (String) (attr.containsKey("desc") ? attr.get("desc") : "");
             String time = GpxLayer.getTimespanForTrack(trk);
-            String length = NavigatableComponent.getSystemOfMeasurement().getDistText(trk.length());
+            TrackLength length = new TrackLength(trk.length());
             String url = (String) (attr.containsKey("url") ? attr.get("url") : "");
-            tracks[i] = new String[]{name, desc, time, length, url};
+            tracks[i] = new Object[]{name, desc, time, length, url};
             i++;
         }
         return tracks;
@@ -81,13 +126,14 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
      * The table will fill its parent. */
     private JTable buildTable(Object[][] content) {
         final String[] headers = {tr("Name"), tr("Description"), tr("Timespan"), tr("Length"), tr("URL")};
-        final JTable t = new JTable(content, headers) {
+        DefaultTableModel model = new DefaultTableModel(content, headers);
+        final JTable t = new JTable(model) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
                 Component c = super.prepareRenderer(renderer, row, col);
                 if (c instanceof JComponent) {
                     JComponent jc = (JComponent) c;
-                    jc.setToolTipText((String) getValueAt(row, col));
+                    jc.setToolTipText(getValueAt(row, col).toString());
                 }
                 return c;
             }
@@ -97,6 +143,11 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
                 return false;
             }
         };
+        // define how to sort row
+        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<DefaultTableModel>();
+        t.setRowSorter(rowSorter);
+        rowSorter.setModel(model);
+        rowSorter.setComparator(3, new LengthContentComparator());
         // default column widths
         t.getColumnModel().getColumn(0).setPreferredWidth(220);
         t.getColumnModel().getColumn(1).setPreferredWidth(300);
@@ -123,7 +174,6 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
                 OpenBrowser.displayUrl(url);
             }
         };
-        t.setAutoCreateRowSorter(true);
         t.addMouseListener(urlOpener);
         t.setFillsViewportHeight(true);
         return t;
