@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
@@ -70,6 +71,7 @@ public class UnGlueAction extends JosmAction {
         int errorTime = Notification.TIME_DEFAULT;
         if (checkSelection(selection)) {
             if (!checkAndConfirmOutlyingUnglue()) {
+                // FIXME: Leaving action without clearing selectedNode, selectedWay, selectedNodes
                 return;
             }
             int count = 0;
@@ -80,20 +82,27 @@ public class UnGlueAction extends JosmAction {
                 count++;
             }
             if (count < 2) {
+                boolean selfCrossing = false;
+                if (count == 1) {
+                    // First try unglue self-crossing way
+                    selfCrossing = unglueSelfCrossingWay();
+                }
                 // If there aren't enough ways, maybe the user wanted to unglue the nodes
                 // (= copy tags to a new node)
-                if (checkForUnglueNode(selection)) {
-                    unglueNode(e);
-                } else {
-                    errorTime = Notification.TIME_SHORT;
-                    errMsg = tr("This node is not glued to anything else.");
-                }
+                if (!selfCrossing)
+                    if (checkForUnglueNode(selection)) {
+                        unglueNode(e);
+                    } else {
+                        errorTime = Notification.TIME_SHORT;
+                        errMsg = tr("This node is not glued to anything else.");
+                    }
             } else {
                 // and then do the work.
                 unglueWays();
             }
         } else if (checkSelection2(selection)) {
             if (!checkAndConfirmOutlyingUnglue()) {
+                // FIXME: Leaving action without clearing selectedNode, selectedWay, selectedNodes
                 return;
             }
             Set<Node> tmpNodes = new HashSet<Node>();
@@ -378,12 +387,63 @@ public class UnGlueAction extends JosmAction {
         }
 
         fixRelations(selectedNode, cmds, newNodes);
+        execCommands(cmds, newNodes);
+    }
 
+    /**
+     * Add commands to undo-redo system.
+     * @param cmds Commands to execute
+     * @param newNodes New created nodes by this set of command
+     */
+    private void execCommands(List<Command> cmds, List<Node> newNodes) {
         Main.main.undoRedo.add(new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
                 trn("Dupe into {0} node", "Dupe into {0} nodes", newNodes.size() + 1, newNodes.size() + 1), cmds));
         // select one of the new nodes
-        getCurrentDataSet().setSelected(newNodes.getFirst());
+        getCurrentDataSet().setSelected(newNodes.get(0));
     }
+
+    /**
+     * Duplicates a node used several times by the same way. See #9896.
+     * @return true if action is OK false if there is nothing to do
+     */
+    private boolean unglueSelfCrossingWay() {
+        // According to previous check, only one valid way through that node
+        LinkedList<Command> cmds = new LinkedList<Command>();
+        Way way = null;
+        for (Way w: OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class))
+            if (w.isUsable() && w.getNodesCount() >= 1) {
+                way = w;
+            }
+        List<Node> oldNodes = way.getNodes();
+        ArrayList<Node> newNodes = new ArrayList<Node>(oldNodes.size());
+        ArrayList<Node> addNodes = new ArrayList<Node>();
+        boolean seen = false;
+        for (Node n: oldNodes) {
+            if (n == selectedNode) {
+                if (seen) {
+                    Node newNode = new Node(n, true /* clear OSM ID */);
+                    newNodes.add(newNode);
+                    cmds.add(new AddCommand(newNode));
+                    newNodes.add(newNode);
+                    addNodes.add(newNode);
+                } else {
+                    newNodes.add(n);
+                    seen = true;
+                }
+            } else {
+                newNodes.add(n);
+            }
+        }
+        if (addNodes.isEmpty()) {
+            // selectedNode doesn't need unglue
+            return false;
+        }
+        cmds.add(new ChangeNodesCommand(way, newNodes));
+        // Update relation
+        fixRelations(selectedNode, cmds, addNodes);
+        execCommands(cmds, addNodes);
+        return true;
+     }
 
     /**
      * dupe all nodes that are selected, and put the copies on the selected way
