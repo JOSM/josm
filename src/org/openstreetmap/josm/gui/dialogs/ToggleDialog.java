@@ -158,6 +158,27 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      */
     protected JCheckBoxMenuItem windowMenuItem;
 
+    private final JRadioButtonMenuItem alwaysShown  = new JRadioButtonMenuItem(new AbstractAction(tr("Always shown")) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            setIsButtonHiding(ButtonHidingType.ALWAYS_SHOWN);
+        }
+    });
+
+    private final JRadioButtonMenuItem dynamic      = new JRadioButtonMenuItem(new AbstractAction(tr("Dynamic")) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            setIsButtonHiding(ButtonHidingType.DYNAMIC);
+        }
+    });
+
+    private final JRadioButtonMenuItem alwaysHidden = new JRadioButtonMenuItem(new AbstractAction(tr("Always hidden")) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            setIsButtonHiding(ButtonHidingType.ALWAYS_HIDDEN);
+        }
+    });
+    
     /**
      * The linked preferences class (optional). If set, accessible from the title bar with a dedicated button
      */
@@ -507,7 +528,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                     new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            JRadioButtonMenuItem item = (buttonHiding == ButtonHidingType.DYNAMIC) ? popupMenu.alwaysShown : popupMenu.dynamic;
+                            JRadioButtonMenuItem item = (buttonHiding == ButtonHidingType.DYNAMIC) ? alwaysShown : dynamic;
                             item.setSelected(true);
                             item.getAction().actionPerformed(null);
                         }
@@ -584,24 +605,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         public class DialogPopupMenu extends JPopupMenu {
             private final ButtonGroup buttonHidingGroup = new ButtonGroup();
             private final JMenu buttonHidingMenu = new JMenu(tr("Side buttons"));
-
-            public final JRadioButtonMenuItem alwaysShown  = new JRadioButtonMenuItem(new AbstractAction(tr("Always shown")) {
-                @Override public void actionPerformed(ActionEvent e) {
-                    setIsButtonHiding(ButtonHidingType.ALWAYS_SHOWN);
-                }
-            });
-
-            public final JRadioButtonMenuItem dynamic      = new JRadioButtonMenuItem(new AbstractAction(tr("Dynamic")) {
-                @Override public void actionPerformed(ActionEvent e) {
-                    setIsButtonHiding(ButtonHidingType.DYNAMIC);
-                }
-            });
-
-            public final JRadioButtonMenuItem alwaysHidden = new JRadioButtonMenuItem(new AbstractAction(tr("Always hidden")) {
-                @Override public void actionPerformed(ActionEvent e) {
-                    setIsButtonHiding(ButtonHidingType.ALWAYS_HIDDEN);
-                }
-            });
 
             public DialogPopupMenu() {
                 alwaysShown.setSelected(buttonHiding == ButtonHidingType.ALWAYS_SHOWN);
@@ -713,7 +716,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     /**
-     * Sets the dialogsPanel managing all toggle dialogs
+     * Sets the dialogsPanel managing all toggle dialogs.
+     * @param dialogsPanel The panel managing all toggle dialogs
      */
     public void setDialogsPanel(DialogsPanel dialogsPanel) {
         this.dialogsPanel = dialogsPanel;
@@ -765,6 +769,10 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         refreshHidingButtons();
     }
 
+    /**
+     * Returns the preferred height of this dialog.
+     * @return The preferred height if the toggle dialog is expanded
+     */
     public int getPreferredHeight() {
         return preferredHeight;
     }
@@ -782,21 +790,24 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     /**
-     * Replies true if this dialog is showing either as docked or as detached dialog
+     * Determines if this dialog is showing either as docked or as detached dialog.
+     * @return {@code true} if this dialog is showing either as docked or as detached dialog
      */
     public boolean isDialogShowing() {
         return isShowing;
     }
 
     /**
-     * Replies true if this dialog is docked and expanded
+     * Determines if this dialog is docked and expanded.
+     * @return {@code true} if this dialog is docked and expanded
      */
     public boolean isDialogInDefaultView() {
         return isShowing && isDocked && (! isCollapsed);
     }
 
     /**
-     * Replies true if this dialog is docked and collapsed
+     * Determines if this dialog is docked and collapsed.
+     * @return {@code true} if this dialog is docked and collapsed
      */
     public boolean isDialogInCollapsedView() {
         return isShowing && isDocked && isCollapsed;
