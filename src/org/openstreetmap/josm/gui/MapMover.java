@@ -23,7 +23,6 @@ import javax.swing.KeyStroke;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.tools.Destroyable;
-import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -76,7 +75,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     private boolean movementInPlace = false;
 
     /**
-     * Create a new MapMover
+     * COnstructs a new {@code MapMover}.
      */
     public MapMover(NavigatableComponent navComp, JPanel contentPane) {
         this.nc = navComp;
@@ -132,19 +131,21 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
             nc.zoomTo(new EastNorth(
                     mousePosMove.east() + center.east() - mouseCenter.east(),
                     mousePosMove.north() + center.north() - mouseCenter.north()));
-        } else
+        } else {
             endMovement();
+        }
     }
 
     /**
      * Start the movement, if it was the 3rd button (right button).
      */
-    @Override public void mousePressed(MouseEvent e) {
+    @Override
+    public void mousePressed(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
         int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
         if (e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0) {
             startMovement(e);
-        } else if (isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
+        } else if (Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
             startMovement(e);
         }
     }
@@ -152,10 +153,11 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     /**
      * Change the cursor back to it's pre-move cursor.
      */
-    @Override public void mouseReleased(MouseEvent e) {
+    @Override
+    public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
             endMovement();
-        } else if (isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
+        } else if (Main.isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
             endMovement();
         }
     }
@@ -194,7 +196,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     }
 
     /**
-     * Emulates dragging on Mac OSX
+     * Emulates dragging on Mac OSX.
      */
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -202,7 +204,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
             return;
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
         // Is only the selected mouse button pressed?
-        if (isPlatformOsx()) {
+        if (Main.isPlatformOsx()) {
             if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK) {
                 if (mousePosMove == null) {
                     startMovement(e);
@@ -215,15 +217,6 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
                 endMovement();
             }
         }
-    }
-
-    /**
-     * Replies true if we are currently running on OSX
-     *
-     * @return true if we are currently running on OSX
-     */
-    public static boolean isPlatformOsx() {
-        return Main.platform instanceof PlatformHookOsx;
     }
 
     @Override
