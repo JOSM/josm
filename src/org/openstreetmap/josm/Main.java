@@ -1515,4 +1515,13 @@ public abstract class Main {
             return Main.pref.get("osm.url", OSM_WEBSITE);
         return OSM_WEBSITE;
     }
+
+    /**
+     * Determines if we are currently running on OSX.
+     * @return {@code true} if we are currently running on OSX
+     * @since 6957
+     */
+    public static boolean isPlatformOsx() {
+        return Main.platform instanceof PlatformHookOsx;
+    }
 }

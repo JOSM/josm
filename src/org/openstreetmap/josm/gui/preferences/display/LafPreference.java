@@ -29,7 +29,6 @@ import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.PlatformHookOsx;
 
 /**
  * Look-and-feel preferences.
@@ -62,7 +61,7 @@ public class LafPreference implements SubPreferenceSetting {
         lafCombo = new JosmComboBox(UIManager.getInstalledLookAndFeels());
 
         // let's try to load additional LookAndFeels and put them into the list
-        if (Main.platform instanceof PlatformHookOsx) {
+        if (Main.isPlatformOsx()) {
             try {
                 Class<?> Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
                 Object Oquaqua = Cquaqua.getConstructor((Class[])null).newInstance((Object[])null);

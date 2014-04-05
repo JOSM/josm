@@ -55,7 +55,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -472,7 +471,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     @Override
     public void mouseMoved(MouseEvent e) {
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
-        if ((Main.platform instanceof PlatformHookOsx) && (mode == Mode.rotate || mode == Mode.scale)) {
+        if (Main.isPlatformOsx() && (mode == Mode.rotate || mode == Mode.scale)) {
             mouseDragged(e);
             return;
         }
