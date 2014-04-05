@@ -116,7 +116,7 @@ class NotificationManager {
             MapView mv = Main.map.mapView;
             Point mapViewPos = SwingUtilities.convertPoint(mv.getParent(), mv.getX(), mv.getY(), Main.parent);
             x = mapViewPos.x + MARGIN;
-            y = mapViewPos.y + mv.getHeight() - size.height - MARGIN;
+            y = mapViewPos.y + mv.getHeight() - Main.map.statusLine.getHeight() - size.height - MARGIN;
         } else {
             x = MARGIN;
             y = parentWindow.getHeight() - Main.toolbar.control.getSize().height - size.height - MARGIN;

@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.UIManager;
@@ -713,6 +714,62 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         mv.removeKeyListener(keyAdapter);
     }
 
+    private class MapStatusPopupMenu extends JPopupMenu {
+
+        private final JMenuItem jumpButton = createActionComponent(Main.main.menu.jumpToAct);
+        
+        private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<JCheckBoxMenuItem>();
+        
+        private final JSeparator separator = new JSeparator();
+        
+        private final JMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide status bar")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
+                Main.pref.put("statusbar.always-visible", sel);
+            }
+        });
+
+        public MapStatusPopupMenu() {
+            for (final String key : new TreeSet<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet())) {
+                JCheckBoxMenuItem item = new JCheckBoxMenuItem(new AbstractAction(key) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateSystemOfMeasurement(key);
+                    }
+                });
+                somItems.add(item);
+                add(item);
+            }
+            
+            add(jumpButton);
+            add(separator);
+            add(doNotHide);
+            
+            addPopupMenuListener(new PopupMenuListener() {
+                @Override
+                public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                    Component invoker = ((JPopupMenu)e.getSource()).getInvoker();
+                    jumpButton.setVisible(invoker == latText || invoker == lonText);
+                    String currentSOM = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();;
+                    for (JMenuItem item : somItems) {
+                        item.setSelected(item.getText().equals(currentSOM));
+                        item.setVisible(invoker == distText);
+                    }
+                    separator.setVisible(invoker == distText);
+                    doNotHide.setSelected(Main.pref.getBoolean("statusbar.always-visible", true));
+                }
+                @Override
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                    // Do nothing
+                }
+                @Override
+                public void popupMenuCanceled(PopupMenuEvent e) {
+                    // Do nothing
+                }
+            });
+        }
+    }
 
     /**
      * Construct a new MapStatus and attach it to the map view.
@@ -721,31 +778,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     public MapStatus(final MapFrame mapFrame) {
         this.mv = mapFrame.mapView;
         this.collector = new Collector(mapFrame);
-
+        
         // Context menu of status bar
-        setComponentPopupMenu(new JPopupMenu() {
-            JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide status bar")) {
-                @Override public void actionPerformed(ActionEvent e) {
-                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                    Main.pref.put("statusbar.always-visible", sel);
-                }
-            });
-            JMenuItem jumpButton;
-            {
-                jumpButton = add(Main.main.menu.jumpToAct);
-                addPopupMenuListener(new PopupMenuListener() {
-                    @Override
-                    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                        Component invoker = ((JPopupMenu)e.getSource()).getInvoker();
-                        jumpButton.setVisible(invoker == latText || invoker == lonText);
-                        doNotHide.setSelected(Main.pref.getBoolean("statusbar.always-visible", true));
-                    }
-                    @Override public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
-                    @Override public void popupMenuCanceled(PopupMenuEvent e) {}
-                });
-                add(doNotHide);
-            }
-        });
+        setComponentPopupMenu(new MapStatusPopupMenu());
 
         // also show Jump To dialog on mouse click (except context menu)
         MouseListener jumpToOnLeftClick = new MouseAdapter() {
@@ -792,16 +827,20 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         add(angleText, GBC.std().insets(3,0,0,0));
         add(distText, GBC.std().insets(3,0,0,0));
 
-        distText.addMouseListener(new MouseAdapter() {
-            private final List<String> soms = new ArrayList<String>(new TreeSet<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet()));
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                String som = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
-                String newsom = soms.get((soms.indexOf(som)+1)%soms.size());
-                NavigatableComponent.setSystemOfMeasurement(newsom);
-            }
-        });
+        if (Main.pref.getBoolean("statusbar.change-system-of-measurement-on-click", true)) {
+            distText.addMouseListener(new MouseAdapter() {
+                private final List<String> soms = new ArrayList<String>(new TreeSet<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet()));
+    
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (!e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON1) {
+                        String som = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
+                        String newsom = soms.get((soms.indexOf(som)+1)%soms.size());
+                        updateSystemOfMeasurement(newsom);
+                    }
+                }
+            });
+        }
 
         NavigatableComponent.addSoMChangeListener(somListener = new SoMChangeListener() {
             @Override
@@ -838,6 +877,20 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         thread = new Thread(collector, "Map Status Collector");
         thread.setDaemon(true);
         thread.start();
+    }
+    
+    /**
+     * Updates the system of measurement and displays a notification.
+     * @param newsom The new system of measurement to set
+     * @since 6960
+     */
+    public void updateSystemOfMeasurement(String newsom) {
+        NavigatableComponent.setSystemOfMeasurement(newsom);
+        if (Main.pref.getBoolean("statusbar.notify.change-system-of-measurement", true)) {
+            new Notification(tr("System of measurement changed to {0}", newsom))
+                .setDuration(Notification.TIME_SHORT)
+                .show();
+        }
     }
 
     public JPanel getAnglePanel() {
