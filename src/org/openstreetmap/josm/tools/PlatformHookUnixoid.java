@@ -47,7 +47,18 @@ public class PlatformHookUnixoid implements PlatformHook {
             if (java != null && java.startsWith("1.6") && os != null && (
                     os.startsWith("Linux Debian GNU/Linux 7") || os.startsWith("Linux Mint") ||
                     os.startsWith("Linux Ubuntu 12") || os.startsWith("Linux Ubuntu 13") || os.startsWith("Linux Ubuntu 14"))) {
-                askUpdateJava(java, "apt://openjdk-7-jre");
+                String url;
+                // apturl does not exist on Debian (see #8465)
+                if (os.startsWith("Linux Debian")) {
+                    url = "https://packages.debian.org/stable/openjdk-7-jre";
+                } else if (getPackageDetails("apturl") != null) {
+                    url = "apt://openjdk-7-jre";
+                } else if (os.startsWith("Linux Mint")) {
+                    url = "http://community.linuxmint.com/software/view/openjdk-7-jre";
+                } else {
+                    url = "http://packages.ubuntu.com/trusty/openjdk-7-jre";
+                }
+                askUpdateJava(java, url);
             }
         }
     }
@@ -148,14 +159,17 @@ public class PlatformHookUnixoid implements PlatformHook {
      * @param packageName The package name
      * @return The package name and package version if it can be identified, null otherwise
      */
-    public String getPackageDetails(String packageName) {
+    public static String getPackageDetails(String packageName) {
         try {
-            String version = Utils.execOutput(Arrays.asList("dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", packageName));
-            return packageName + ":" + version;
+            String version = Utils.execOutput(Arrays.asList(
+                    "dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", packageName));
+            if (version != null) {
+                return packageName + ":" + version;
+            }
         } catch (IOException e) {
             Main.warn(e);
-            return null;
         }
+        return null;
     }
 
     /**

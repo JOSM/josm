@@ -803,6 +803,9 @@ public final class Utils {
      * @throws IOException when there was an error, e.g. command does not exist
      */
     public static String execOutput(List<String> command) throws IOException {
+        if (Main.isDebugEnabled()) {
+            Main.debug(join(" ", command));
+        }
         Process p = new ProcessBuilder(command).start();
         BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
         StringBuilder all = null;
@@ -816,7 +819,7 @@ public final class Utils {
             }
         }
         Utils.close(input);
-        return all.toString();
+        return all != null ? all.toString() : null;
     }
 
     /**
