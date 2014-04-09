@@ -44,7 +44,7 @@ public class MergeLayerAction extends AbstractMergeAction {
             @Override
             public void run() {
                 boolean layerMerged = false;
-                for (Layer sourceLayer: sourceLayers) {
+                for (final Layer sourceLayer: sourceLayers) {
                     if (sourceLayer != null && sourceLayer != targetLayer) {
                         if (sourceLayer instanceof OsmDataLayer && targetLayer instanceof OsmDataLayer
                                 && ((OsmDataLayer)sourceLayer).isUploadDiscouraged() != ((OsmDataLayer)targetLayer).isUploadDiscouraged()) {
@@ -53,7 +53,12 @@ public class MergeLayerAction extends AbstractMergeAction {
                             }
                         }
                         targetLayer.mergeFrom(sourceLayer);
-                        Main.main.removeLayer(sourceLayer);
+                        GuiHelper.runInEDTAndWait(new Runnable() {
+                            @Override
+                            public void run() {
+                                Main.main.removeLayer(sourceLayer);
+                            }
+                        });
                         layerMerged = true;
                     }
                 }
