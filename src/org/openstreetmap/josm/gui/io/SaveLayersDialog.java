@@ -47,18 +47,15 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class SaveLayersDialog extends JDialog implements TableModelListener {
     public static enum UserAction {
-        /**
-         * save/upload layers was successful, proceed with operation
-         */
+        /** save/upload layers was successful, proceed with operation */
         PROCEED,
-        /**
-         * save/upload of layers was not successful or user canceled operation
-         */
+        /** save/upload of layers was not successful or user canceled operation */
         CANCEL
     }
 
@@ -285,6 +282,9 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         this.action = action;
     }
 
+    /**
+     * Closes this dialog and frees all native screen resources.
+     */
     public void closeDialog() {
         setVisible(false);
         dispose();
@@ -555,27 +555,32 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         @Override
         public void run() {
-            model.setMode(SaveLayersModel.Mode.UPLOADING_AND_SAVING);
-            List<SaveLayerInfo> toUpload = model.getLayersToUpload();
-            if (!toUpload.isEmpty()) {
-                uploadLayers(toUpload);
-            }
-            List<SaveLayerInfo> toSave = model.getLayersToSave();
-            if (!toSave.isEmpty()) {
-                saveLayers(toSave);
-            }
-            model.setMode(SaveLayersModel.Mode.EDITING_DATA);
-            if (model.hasUnsavedData()) {
-                warnBecauseOfUnsavedData();
-                model.setMode(Mode.EDITING_DATA);
-                if (canceled) {
-                    setUserAction(UserAction.CANCEL);
-                    closeDialog();
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    model.setMode(SaveLayersModel.Mode.UPLOADING_AND_SAVING);
+                    List<SaveLayerInfo> toUpload = model.getLayersToUpload();
+                    if (!toUpload.isEmpty()) {
+                        uploadLayers(toUpload);
+                    }
+                    List<SaveLayerInfo> toSave = model.getLayersToSave();
+                    if (!toSave.isEmpty()) {
+                        saveLayers(toSave);
+                    }
+                    model.setMode(SaveLayersModel.Mode.EDITING_DATA);
+                    if (model.hasUnsavedData()) {
+                        warnBecauseOfUnsavedData();
+                        model.setMode(Mode.EDITING_DATA);
+                        if (canceled) {
+                            setUserAction(UserAction.CANCEL);
+                            closeDialog();
+                        }
+                    } else {
+                        setUserAction(UserAction.PROCEED);
+                        closeDialog();
+                    }
                 }
-            } else {
-                setUserAction(UserAction.PROCEED);
-                closeDialog();
-            }
+            });
         }
 
         public void cancel() {
