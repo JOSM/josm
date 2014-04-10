@@ -93,7 +93,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     protected JCheckBox cbWireframe;
 
     public static final JosmAction PREFERENCE_ACTION = PreferencesAction.forPreferenceSubTab(
-            tr("Map paint preferences"), null, MapPaintPreference.class);
+            tr("Map paint preferences"), null, MapPaintPreference.class, "dialogs/mappaintpreference");
 
     /**
      * Constructs a new {@code MapPaintDialog}.
@@ -101,7 +101,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     public MapPaintDialog() {
         super(tr("Map Paint Styles"), "mapstyle", tr("configure the map painting style"),
                 Shortcut.registerShortcut("subwindow:mappaint", tr("Toggle: {0}", tr("MapPaint")),
-                        KeyEvent.VK_M, Shortcut.ALT_SHIFT), 150);
+                        KeyEvent.VK_M, Shortcut.ALT_SHIFT), 150, false, MapPaintPreference.class);
         build();
     }
 
