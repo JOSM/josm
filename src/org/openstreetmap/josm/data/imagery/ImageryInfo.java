@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,7 +146,10 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         }
     }
 
+    /** name of the imagery entry (gets translated by josm usually) */
     private String name;
+    /** original name of the imagery entry in case of translation call */
+    private String origName;
     private String url = null;
     private boolean defaultEntry = false;
     private String cookies = null;
@@ -561,11 +566,30 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     }
 
     /**
+     * Returns the entry name.
+     * @return The entry name
+     * @since 6968
+     */
+    public String getOriginalName() {
+        return this.origName != null ? this.origName : this.name;
+    }
+
+    /**
      * Sets the entry name.
      * @param name The entry name
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Sets the entry name and translates it.
+     * @param name The entry name
+     * @since 6968
+     */
+    public void setTranslatedName(String name) {
+        this.name = tr(name);
+        this.origName = name;
     }
 
     /**
