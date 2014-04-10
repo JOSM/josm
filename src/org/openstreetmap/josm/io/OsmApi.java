@@ -671,7 +671,7 @@ public class OsmApi extends OsmConnection {
                     // are null. Seems to be the case if the OSM server replies a 401
                     // Unauthorized, see #3887.
                     //
-                    BufferedReader in = new BufferedReader(new InputStreamReader(i));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(i, Utils.UTF_8));
                     String s;
                     try {
                         while((s = in.readLine()) != null) {
