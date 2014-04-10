@@ -4894,19 +4894,17 @@ Note that for a match, at least one positive and no negative is required.
         </item>
     </group> <!-- Man Made -->
     <group name="Power" icon="presets/power.png">
-        <item name="Power Plant" icon="presets/power.png" type="closedway,relation" preset_name_label="true">
+        <item name="Power Plant" icon="icons/power_station.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=plant"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=plant"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=plant" />
             <space />
             <key key="power" value="plant" />
             <reference ref="name_operator" />
+            <text key="branch" text="Branch operator" />
             <text key="ref" text="Reference" />
             <text key="start_date" text="Start date" />
-            <optional>
-                <label text="Output forms of energy" />
-                <label text="(please add this information to the generators if possible)" />
-                <space />
+            <optional text="Output forms of energy (optional):">
                 <combo key="plant:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="plant:output:hot_water" text="hot water" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="plant:output:hot_air" text="hot air" values="yes,2 W,3 kW,5 MW,7 GW" />
@@ -4915,6 +4913,7 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="plant:output:compressed_air" text="compressed air" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="plant:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="plant:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <space />
                 <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
             </optional>
         </item>
@@ -4930,6 +4929,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="power" value="generator" />
             <reference ref="name_operator" />
+            <text key="branch" text="Branch operator" />
             <text key="ref" text="Reference" />
             <text key="start_date" text="Start date" />
             <combo key="generator:source" text="Source" values_searchable="true">
@@ -4997,7 +4997,9 @@ Note that for a match, at least one positive and no negative is required.
                 <list_entry value="RBMK-1500" display_value="Reactor Bolshoy Moshchnosti Kanalniy 1500 (RBMK-1500)" short_description="nuclear fission" />
                 <list_entry value="VVER" display_value="Vodo-Vodyanoi Energetichesky Reactor (VVER)" short_description="nuclear fission" />
             </combo>
-            <optional text="Output forms of energy:">
+            <optional>
+                <label text="Output forms of energy:" />
+                <space />
                 <combo key="generator:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="generator:output:hot_water" text="hot water" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="generator:output:hot_air" text="hot air" values="yes,2 W,3 kW,5 MW,7 GW" />
@@ -5006,11 +5008,12 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="generator:output:compressed_air" text="compressed air" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="generator:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="generator:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
+                <space />
                 <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
             </optional>
         </item>
         <separator/>
-        <item name="Power Substation" icon="presets/power.png" type="node,closedway" preset_name_label="true">
+        <item name="Power Substation" icon="icons/power_substation.n.16.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=substation"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
@@ -5018,17 +5021,20 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="power" value="substation" />
             <text key="name" text="Name" />
-            <combo key="substation" text="Type of substation" values="transmission,distribution,converter,compensation,transition,traction,industrial" values_context="power" />
+            <combo key="substation" text="Type of substation" values="transmission,distribution,minor_distribution,converter,compensation,transition,traction,industrial" values_context="power" />
             <combo key="location" text="Location" values="outdoor,indoor,underground,platform,kiosk" values_context="power" />
             <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
             <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
+            <text key="operator" text="Operator" />
+            <text key="branch" text="Branch operator" />
+            <text key="ref" text="Reference" />
             <optional>
-                <text key="operator" text="Operator" />
-                <text key="ref" text="Reference" />
+                <text key="start_date" text="Start date" />
                 <check key="gas_insulated" text="Gas insulated" />
             </optional>
         </item>
-        <item name="Power Transformer" type="node,closedway" preset_name_label="true">
+        <item name="Power Transformer" icon="styles/standard/misc/landmark/power/transformer.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=transformer"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=transformer"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=transformer"
@@ -5039,13 +5045,17 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,yes" match="key" values_context="power" />
             <combo key="location" text="Location" values="outdoor,indoor,underground,platform,kiosk" values_context="power" />
             <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
-            <optional>
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            <text key="operator" text="Operator" />
+            <text key="branch" text="Branch operator" />
+            <optional>				
+                <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
                 <combo key="phases" text="Phases" values="1,3" length="1" />
-                <text key="rating" text="Power rating (kVA)" values_context="power" />
             </optional>
         </item>
-        <item name="Power Switchgear" type="closedway" preset_name_label="true">
+        <item name="Power Switchgear" icon="presets/power.png" type="closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switchgear" />
+            <space />
             <label text="(Please only use this tag if more detailed mapping using busbars and bays is impossible!)" />
             <space />
             <key key="power" value="switchgear" />
@@ -5055,22 +5065,58 @@ Note that for a match, at least one positive and no negative is required.
                 <check key="gas_insulated" text="Gas insulated" />
             </optional>
         </item>
-        <item name="Power Busbar" type="way" preset_name_label="true">
+        <item name="Power Busbar" icon="presets/power.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:line=busbar" />
             <space />
             <key key="power" value="line" />
             <key key="line" value="busbar" />
             <combo key="cables" text="Amount of Cables" values="3,6,9,12" />
+            <combo key="circuits" text="Amount of circuits" values="1,2,3" />
             <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
         </item>
-        <item name="Power Bay" type="way" preset_name_label="true">
+        <item name="Power Bay" icon="presets/power.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:line=bay" />
             <space />
             <key key="power" value="line" />
             <key key="line" value="bay" />
             <combo key="cables" text="Amount of Cables" values="3,6,9,12" />
+            <combo key="circuits" text="Amount of circuits" values="1,2,3" />
             <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
         </item>
-        <item name="Power Switch" type="node" preset_name_label="true">
+        <item name="Power Switch" icon="presets/power.png" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch" />
+            <space />
             <key key="power" value="switch" />
+        </item>
+        <separator/>
+        <item name="Power Converter" icon="presets/power.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=converter" />
+            <space />
+            <key key="power" value="converter" />
+            <combo key="converter" text="Type of converter" values="lcc,vsc,back-to-back" match="key" values_context="power" />
+            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60,0;50" length="5" />
+            <text key="operator" text="Operator" />
+            <text key="branch" text="Branch operator" />
+            <optional>
+                <combo key="poles" text="Amount of poles" values="monopole,bipole" />
+                <combo key="rating" text="Power rating (MVA)" values="15 MVA,50 MVA,100 MVA" />
+            </optional>		
+        </item>
+        <item name="Power Compensator" icon="presets/power.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=compensator" />
+            <space />
+            <key key="power" value="compensator" />
+            <combo key="compensator" text="Type of compensator" values="shunt_reactor,shunt_capacitor,static_var,statcom,synchronous_condenser,filter,series_reactor,series_capacitor" match="key" values_context="power" />
+            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60,0;50" length="5" />
+            <text key="operator" text="Operator" />
+            <text key="branch" text="Branch operator" />
+            <optional>
+                <combo key="rating" text="Power rating (kvar/Mvar)" values="500 kvar,1 Mvar,5 Mvar" />
+            </optional>		
         </item>
         <separator/>
         <item name="Cable Distribution Cabinet" icon="presets/power.png" type="node" preset_name_label="true">
@@ -5080,12 +5126,13 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=cable_distribution_cabinet" />
             <space />
             <key key="power" value="cable_distribution_cabinet" />
-            <text key="operator" text="Operator" />
             <text key="ref" text="Reference" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110,low" /> <!-- Recheck values -->
+            <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110,low" /> <!-- Recheck values -->			
+            <text key="operator" text="Operator" />
+            <text key="branch" text="Branch operator" />
         </item>
         <separator/>
-        <item name="Power Tower" icon="presets/power_tower.png" type="node" preset_name_label="true">
+        <item name="Power Tower" icon="icons/power_tower_high2.n.16.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=tower"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=tower"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:power=tower"
@@ -5097,12 +5144,22 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=tower" />
             <space />
             <key key="power" value="tower" />
-            <text key="operator" text="Operator" />
             <text key="ref" text="Tower reference" />
             <text key="height" text="Height in meter (m)" />
-            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood" />
+            <combo key="structure" text="Type of construction" values="lattice,tubular,solid " />
+            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+            <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
+            <text key="operator" text="Operator" />
+            <text key="branch" text="Branch operator" />
+            <optional>			
+                <combo key="tower:type" text="Tower type" values="suspension,anchor,termination,branch,transposing,crossing,transition" values_context="power" />
+                <combo key="branch:type" text="Branch tower type" values="tap,split,loop,cross" values_context="power" />
+                <combo key="design" text="Tower design" values="one-level,two-level,donau,three-level,barrel,asymmetric,triangle,flag,donau;one-level,four-level,six-level,nine-level,delta,delta_two-level,y-frame,x-frame,h-frame,guyed_h-frame,portal,portal_two-level,portal_three-level,guyed_v-frame,bipole,monopolar" values_context="power" />
+                <check key="triple_tower" text="Triple tower" />
+                <check key="design:incomplete" text="Incomplete tower" />
+            </optional>			
         </item>
-        <item name="Pole" icon="styles/standard/misc/landmark/power/pole.png" type="node" preset_name_label="true">
+        <item name="Pole" icon="icons/power_tower_low.n.16.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=pole"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=pole"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:power=pole"
@@ -5114,9 +5171,10 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="power" value="pole" />
             <text key="operator" text="Operator" />
+            <text key="branch" text="Branch operator" />
             <text key="ref" text="Pole reference" />
             <text key="height" text="Height in meter (m)" />
-            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood" />
+            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
         </item>
         <item name="Power Line" icon="presets/power.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
@@ -5129,14 +5187,39 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=line" />
             <space />
             <combo key="power" text="Line type" values="line,minor_line" default="line" match="keyvalue" />
-            <text key="operator" text="Operator" />
-            <text key="ref" text="Line reference" />
             <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,750,400,220,110,high,medium,low,750000;200000,110000;20000" />
+            <text key="ref" text="Line reference" />
+            <text key="operator" text="Operator" />
+            <text key="branch" text="Branch operator" />
             <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
-            <text key="cables" text="Amount of Cables" />
-            <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad" />
-        </item>
-    </group> <!-- Power -->
+            <optional>
+                <combo key="cables" text="Amount of Cables" values="1,3,6,9" />
+                <combo key="circuits" text="Amount of circuits" values="1,2,3" />
+                <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
+                <check key="communication" text="Used to communication data" value_on="line" value_off="" default="off" />
+            </optional>	
+        </item>		
+        <item name="Power Cable" icon="presets/power.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=cable"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=cable" />
+            <space />
+            <key key="power" value="cable" />
+            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,750,400,220,110,high,medium,low,750000;200000,110000;20000" />
+            <text key="ref" text="Line reference" />
+            <text key="operator" text="Operator" />
+            <text key="branch" text="Branch operator" />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            <optional>
+                <combo key="cables" text="Amount of Cables" values="1,3,6,9" />
+                <combo key="circuits" text="Amount of circuits" values="1,2,3" />
+                <combo key="location" text="Location" values="underground,underwater,overground" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
+                <check key="communication" text="Used to communication data" value_on="line" value_off="" default="off" />
+            </optional>	
+        </item>		
+    </group> <!-- Power -->		
     <group name="Historic Places" icon="presets/State_Tourist.png">
         <item name="Castle" icon="presets/State_Tourist.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=castle"
