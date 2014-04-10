@@ -25,21 +25,61 @@ public class PreferencesAction extends JosmAction implements Runnable {
     private final Class<? extends TabPreferenceSetting> tab;
     private final Class<? extends SubPreferenceSetting> subTab;
 
-    private PreferencesAction(String name, String tooltip,
+    private PreferencesAction(String name, String icon, String tooltip,
                               Class<? extends TabPreferenceSetting> tab, Class<? extends SubPreferenceSetting> subTab) {
-        super(name, "preference", tooltip, null, false, "preference_" + Utils.<Class>firstNonNull(tab, subTab).getName(), false);
+        super(name, icon, tooltip, null, false, "preference_" + Utils.<Class>firstNonNull(tab, subTab).getName(), false);
         this.tab = tab;
         this.subTab = subTab;
     }
 
+    /**
+     * Returns a new {@code PreferenceAction} opening preferences dialog directly to the given tab, with default icon.
+     * @param name The action name
+     * @param tooltip The action tooltip
+     * @param tab The preferences tab to select
+     * @return The created action
+     */
     public static PreferencesAction forPreferenceTab(String name, String tooltip, Class<? extends TabPreferenceSetting> tab) {
-        CheckParameterUtil.ensureParameterNotNull(tab);
-        return new PreferencesAction(name, tooltip, tab, null);
+        return forPreferenceTab(name, tooltip, tab, "preference");
     }
 
+    /**
+     * Returns a new {@code PreferenceAction} opening preferences dialog directly to the given tab, with custom icon.
+     * @param name The action name
+     * @param tooltip The action tooltip
+     * @param tab The preferences tab to select
+     * @param icon The action icon
+     * @return The created action
+     * @since 6969
+     */
+    public static PreferencesAction forPreferenceTab(String name, String tooltip, Class<? extends TabPreferenceSetting> tab, String icon) {
+        CheckParameterUtil.ensureParameterNotNull(tab);
+        return new PreferencesAction(name, icon, tooltip, tab, null);
+    }
+
+    /**
+     * Returns a new {@code PreferenceAction} opening preferences dialog directly to the given subtab, with default icon.
+     * @param name The action name
+     * @param tooltip The action tooltip
+     * @param subTab The preferences subtab to select
+     * @return The created action
+     */
     public static PreferencesAction forPreferenceSubTab(String name, String tooltip, Class<? extends SubPreferenceSetting> subTab) {
+        return forPreferenceSubTab(name, tooltip, subTab, "preference");
+    }
+
+    /**
+     * Returns a new {@code PreferenceAction} opening preferences dialog directly to the given subtab, with custom icon.
+     * @param name The action name
+     * @param tooltip The action tooltip
+     * @param subTab The preferences subtab to select
+     * @param icon The action icon
+     * @return The created action
+     * @since 6969
+     */
+    public static PreferencesAction forPreferenceSubTab(String name, String tooltip, Class<? extends SubPreferenceSetting> subTab, String icon) {
         CheckParameterUtil.ensureParameterNotNull(subTab);
-        return new PreferencesAction(name, tooltip, null, subTab);
+        return new PreferencesAction(name, icon, tooltip, null, subTab);
     }
 
     /**
