@@ -7,7 +7,7 @@ options {
 PARSER_BEGIN(MapCSSParser)
 package org.openstreetmap.josm.gui.mappaint.mapcss.parsergen;
 
-import java.awt.Color;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,87 +27,135 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.Main;
 
-/*************
- * <pre>
- * Parser definitions
+/**
+ * MapCSS parser.
  *
- *                       rule
- *  _______________________|______________________________
- * |                                                      |
- *        selector                      declaration
- *  _________|___________________   _________|____________
- * |                             | |                      |
+ * Contains two independent grammars:
+ * (a) the preprocessor and (b) the main mapcss parser.
  *
- * way|z11-12[highway=residential] { color: red; width: 3 }
+ * The preprocessor handles @media syntax. Basically this allows
+ * to write one style for different versions of JOSM (or different editors).
+ * When the @media condition is not fulfilled, it should simply skip over
+ * the whole section and not attempt to parse the possibly unknown
+ * grammar. It preserves whitespace and comments, in order to keep the
+ * line and column numbers in the error messages correct for the second pass.
  *
- *    |_____||___________________|   |_________|
- *       |            |                   |
- *     zoom       condition          instruction
- *
- * more general:
- *
- * way|z13-[a=b][c=d]::subpart, way|z-3[u=v]:closed::subpart2 { p1 : val; p2 : val; }
- *
- * 'val' can be a literal, or an expression like "prop(width, default) + 0.8".
- *
- * {@literal @media} { ... } queries are supported, following http://www.w3.org/TR/css3-mediaqueries/#syntax
- *
- *                               media_query
- *         ___________________________|_______________________________
- *        |                                                           |
- * {@literal @media} all and (min-josm-version: 7789) and (max-josm-version: 7790), all and (user-agent: xyz) { ... }
- *                |______________________|
- *                          |
- *                    media_expression
- * </pre>
  */
 
 public class MapCSSParser {
     MapCSSStyleSource sheet;
+    StringBuilder sb;
+
+    /**
+     * Nicer way to refer to a lexical state.
+     */
+    public static enum LexicalState {
+        PREPROCESSOR(0), /* the preprocessor */
+        DEFAULT(2);      /* the main parser */
+        
+        int idx; // the integer, which javacc assigns to this state
+        
+        LexicalState(int idx) {
+            if (!this.name().equals(MapCSSParserTokenManager.lexStateNames[idx])) {
+                throw new RuntimeException();
+            }
+            this.idx = idx;
+        }
+    };
+    
+    /**
+     * Constructor which initializes the parser with a certain lexical state.
+     */
+    public MapCSSParser(InputStream in, String encoding, LexicalState initState) {
+        this(createTokenManager(in, encoding, initState));
+    }
+
+    protected static MapCSSParserTokenManager createTokenManager(InputStream in, String encoding, LexicalState initState) {
+        SimpleCharStream scs;
+        try {
+            scs = new SimpleCharStream(in, encoding, 1, 1);
+        } catch(java.io.UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        return new MapCSSParserTokenManager(scs, initState.idx);
+    }
 }
 PARSER_END(MapCSSParser)
 
 /*************
  * Token definitions
+ *
+ * Lexical states for the preprocessor: <PREPROCESSOR>, <PP_COMMENT>
+ * Lexical states for the main parser: <DEFAULT>, <COMMENT>
  */
+ 
+<PREPROCESSOR>
+TOKEN:
+{
+    < PP_AND: "and" >
+|   < PP_NOT: "not" >
+|   < PP_MEDIA: "@media" >
+|   < PP_NEWLINECHAR: "\n" | "\r" | "\f" >
+|   < PP_WHITESPACE: " " | "\t" >
+|   < PP_COMMENT_START: "/*" > : PP_COMMENT
+}
+
+<PP_COMMENT>
+TOKEN:
+{
+    < PP_COMMENT_END: "*/" > : PREPROCESSOR
+}
+
+<PP_COMMENT>
+MORE:
+{
+    < ~[] >
+}
 
 <DEFAULT>
 TOKEN [IGNORE_CASE]:
 {
- /* Special keywords in some contexts, ordinary identifiers in other contexts.
-    Don't use the javacc token contexts (except DEFAULT and COMMENT) because
-    they complicate error handling. Instead simply add a parsing rule <code>ident()</code>
-    that parses the IDENT token and in addition all the keyword tokens. */
-    < AND: "and" >
-|   < SET: "set" >
-|   < NOT: "not" >
-|   < MEDIA: "@media" >
+ /* Special keyword in some contexts, ordinary identifier in other contexts.
+    Use the parsing rule <code>ident()</code> to refer to a general
+    identifier, including "set". */
+   < SET: "set" >
+}
+
+<DEFAULT,PREPROCESSOR>
+TOKEN:
+{
+    < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
+|   < UINT: ["1"-"9"] ( ["0"-"9"] )* >
+|   < STRING: "\"" ( [" ","!","#"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
+|   < #PREDEFINED: "\\" ["d","D","s","S","w","W"] >
+|   < #REGEX_CHAR_WITHOUT_STAR: [" "-")","+"-".","0"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\/" | "\\\\" | "\\[" | "\\]" | "\\+" | "\\." | "\\'" | "\\\"" | <PREDEFINED> >
+|   < REGEX: "/" <REGEX_CHAR_WITHOUT_STAR> ( <REGEX_CHAR_WITHOUT_STAR> | "*" )*  "/" >
+|   < LBRACE: "{" >
+|   < RBRACE: "}" >
+|   < LPAR: "(" >
+|   < RPAR: ")" >
+|   < COLON: ":" >
+}
+
+<PREPROCESSOR>
+TOKEN:
+{
+    < PP_SOMETHING_ELSE : ~[] >
 }
 
 <DEFAULT>
 TOKEN:
 {
-    < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
-|   < UINT: ["1"-"9"] ( ["0"-"9"] )* >
-|   < UFLOAT: ( ["0"-"9"] )+ ( "." ( ["0"-"9"] )+ )? >
-|   < STRING: "\"" ( [" ","!","#"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
-|   < #PREDEFINED: "\\" ["d","D","s","S","w","W"] >
-|   < #REGEX_CHAR_WITHOUT_STAR: [" "-")","+"-".","0"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\/" | "\\\\" | "\\[" | "\\]" | "\\+" | "\\." | "\\'" | "\\\"" | <PREDEFINED> >
-|   < REGEX: "/" <REGEX_CHAR_WITHOUT_STAR> ( <REGEX_CHAR_WITHOUT_STAR> | "*" )*  "/" >
+    < UFLOAT: ( ["0"-"9"] )+ ( "." ( ["0"-"9"] )+ )? >
 |   < #H: ["0"-"9","a"-"f","A"-"F"] >
 |   < HEXCOLOR: "#" ( <H><H><H><H><H><H><H><H> | <H><H><H><H><H><H> | <H><H><H> ) >
 |   < S: ( " " | "\t" | "\n" | "\r" | "\f" )+ >
 |   < STAR: "*" >
 |   < SLASH: "/" >
-|   < LBRACE: "{" >
-|   < RBRACE: "}" >
 |   < LSQUARE: "[" >
 |   < RSQUARE: "]" >
-|   < LPAR: "(" >
-|   < RPAR: ")" >
 |   < GREATER_EQUAL: ">=" >
 |   < LESS_EQUAL: "<=" >
 |   < GREATER: ">" >
@@ -115,7 +163,6 @@ TOKEN:
 |   < EQUAL: "=" >
 |   < EXCLAMATION: "!" >
 |   < TILDE: "~" >
-|   < COLON: ":" >
 |   < DCOLON: "::" >
 |   < SEMICOLON: ";" >
 |   < COMMA: "," >
@@ -145,6 +192,168 @@ SKIP:
 {
     < ~[] >
 }
+
+
+/*************
+ *
+ * Preprocessor parser definitions:
+ *
+ * <pre>
+ *
+ * {@literal @media} { ... } queries are supported, following http://www.w3.org/TR/css3-mediaqueries/#syntax
+ *
+ *                               media_query
+ *         ___________________________|_______________________________
+ *        |                                                           |
+ * {@literal @media} all and (min-josm-version: 7789) and (max-josm-version: 7790), all and (user-agent: xyz) { ... }
+ *                |______________________|
+ *                          |
+ *                    media_expression
+ * </pre>
+ */
+ 
+
+/**
+ * root method for the preprocessor.
+ */
+String pp_root(MapCSSStyleSource sheet):
+{
+}
+{
+    { sb = new StringBuilder(); this.sheet = sheet; }
+    pp_black_box(true) <EOF>
+    { return sb.toString(); }
+}
+
+/**
+ * Parse any unknown grammar (black box).
+ *
+ * Only stop when "@media" is encountered and keep track of correct number of
+ * opening and closing curly brackets.
+ *
+ * @param write false if this content should be skipped (@pp_media condition is not fulfilled), true otherwise
+ */
+void pp_black_box(boolean write):
+{
+    Token t;
+}
+{
+    (
+        (t=<PP_AND> | t=<PP_NOT> | t=<UINT> | t=<STRING> | t=<REGEX> | t=<LPAR> | t=<RPAR> | t=<COLON> | t=<IDENT> | t=<PP_SOMETHING_ELSE>) { if (write) sb.append(t.image); }
+        |
+            pp_w1()
+        |
+            pp_media()
+        |
+            t=<LBRACE> { if (write) sb.append(t.image); } pp_black_box(write) t=<RBRACE> { if (write) sb.append(t.image); }
+    )*
+}
+
+void pp_media():
+{
+    boolean pass = false;
+    boolean q;
+    boolean empty = true;
+}
+{
+    <PP_MEDIA> pp_w()
+    ( q=pp_media_query() { pass = pass || q; empty = false; }
+        ( <COMMA> pp_w() q=pp_media_query() { pass = pass || q; } )*
+    )?
+    <LBRACE>
+    pp_black_box(empty || pass)
+    <RBRACE>
+}
+
+boolean pp_media_query():
+{
+    Token t;
+    String mediatype = "all";
+    boolean pass = true;
+    boolean invert = false;
+    boolean e;
+}
+{
+    ( <PP_NOT> { invert = true; } pp_w() )?
+    (
+            t=<IDENT> { mediatype = t.image.toLowerCase(); } pp_w()
+            ( <PP_AND> pp_w() e=pp_media_expression() { pass = pass && e; } pp_w() )*
+        |
+            e=pp_media_expression() { pass = pass && e; } pp_w()
+            ( <PP_AND> pp_w() e=pp_media_expression() { pass = pass && e; } pp_w() )*
+    )
+    { 
+        if (!"all".equals(mediatype)) {
+            pass = false;
+        }
+        return invert ? (!pass) : pass;
+    }
+}
+
+/**
+ * Parse an @media expression.
+ *
+ * The parsing rule {@link #literal()} from the main mapcss parser is reused here.
+ *
+ * @return true if the condition is fulfilled
+ */
+boolean pp_media_expression():
+{
+    Token t;
+    String feature;
+    Object val = null;
+}
+{
+    <LPAR> pp_w() t=<IDENT> { feature = t.image; } pp_w() ( <COLON> pp_w() val=literal() )? <RPAR>
+    { return this.sheet.evalMediaExpression(feature, val); }
+}
+
+void pp_w1():
+{
+    Token t;
+}
+{
+    t=<PP_NEWLINECHAR> { sb.append(t.image); }
+        | 
+    t=<PP_WHITESPACE> { sb.append(t.image); }
+        |
+    t=<PP_COMMENT_START> { sb.append(t.image); } t=<PP_COMMENT_END> { sb.append(t.image); }
+}
+
+void pp_w():
+{
+}
+{
+ ( pp_w1() )*
+}
+
+/*************
+ *
+ * Parser definition for the main MapCSS parser:
+ *
+ * <pre>
+ *
+ *                       rule
+ *  _______________________|______________________________
+ * |                                                      |
+ *        selector                      declaration
+ *  _________|___________________   _________|____________
+ * |                             | |                      |
+ *
+ * way|z11-12[highway=residential] { color: red; width: 3 }
+ *
+ *    |_____||___________________|   |_________|
+ *       |            |                   |
+ *     zoom       condition          instruction
+ *
+ * more general:
+ *
+ * way|z13-[a=b][c=d]::subpart, way|z-3[u=v]:closed::subpart2 { p1 : val; p2 : val; }
+ *
+ * 'val' can be a literal, or an expression like "prop(width, default) + 0.8".
+ *
+ * </pre>
+ */
 
 int uint() :
 {
@@ -194,7 +403,7 @@ String ident():
     String s;
 }
 {
-    ( t=<IDENT> | t=<SET> | t=<NOT> | t=<AND> ) { return t.image; }
+    ( t=<IDENT> | t=<SET> ) { return t.image; }
 }
 
 String string_or_ident() :
@@ -255,7 +464,7 @@ List<Float> float_array() :
 }
 
 /**
- * root
+ * entry point for the main parser
  */
 void sheet(MapCSSStyleSource sheet):
 {
@@ -264,70 +473,9 @@ void sheet(MapCSSStyleSource sheet):
 {
     { this.sheet = sheet; }
     w()
-    rules(true) ( media() w() rules(true) )*
-    <EOF>
-}
-
-void media():
-{
-    boolean pass = false;
-    boolean q;
-    boolean empty = true;
-}
-{
-    <MEDIA> w()
-    ( q=media_query() { pass = pass || q; empty = false; }
-        ( <COMMA> w() q=media_query() { pass = pass || q; } )*
-    )?
-    <LBRACE> w()
-    rules(empty || pass)
-    <RBRACE>
-}
-
-boolean media_query():
-{
-    Token t;
-    String mediatype = "all";
-    boolean pass = true;
-    boolean invert = false;
-    boolean e;
-}
-{
-    ( <NOT> { invert = true; } w() )?
-    (
-            t=<IDENT> { mediatype = t.image.toLowerCase(); } w()
-            ( <AND> w() e=media_expression() { pass = pass && e; } w() )*
-        |
-            e=media_expression() { pass = pass && e; } w()
-            ( <AND> w() e=media_expression() { pass = pass && e; } w() )*
-    )
-    { 
-        if (!"all".equals(mediatype)) {
-            pass = false;
-        }
-        return invert ? (!pass) : pass;
-    }
-}
-
-boolean media_expression():
-{
-    Token t;
-    String feature;
-    Object val = null;
-}
-{
-    <LPAR> w() t=<IDENT> { feature = t.image; } w() ( <COLON> w() val=literal() )? <RPAR>
-    { return this.sheet.evalMediaExpression(feature, val); }
-}
-
-void rules(boolean add):
-{
-    MapCSSRule r;
-}
-{
     (
         try {
-            r=rule() { if (add && r != null) { sheet.rules.add(r); } } w()
+            r=rule() { if (r != null) { sheet.rules.add(r); } } w()
         } catch (MapCSSException mex) {
             error_skipto(RBRACE, mex);
             w();
@@ -336,6 +484,7 @@ void rules(boolean add):
             w();
         }
     )*
+    <EOF>
 }
 
 MapCSSRule rule():
@@ -662,7 +811,6 @@ Expression primary() :
 
 Expression function() :
 {
-    Token tmp;
     Expression arg;
     String name;
     List<Expression> args = new ArrayList<Expression>();
@@ -680,14 +828,14 @@ Expression function() :
 
 Object literal() :
 {
-    String val;
-    Token t, t2;
+    String val, pref;
+    Token t;
     float f;
 }
 {
         LOOKAHEAD(2)
-        t2=<IDENT> t=<HEXCOLOR>
-        { return Main.pref.getColor("mappaint." + (sheet == null ? "MapCSS" : sheet.title) + "." + t2.image, ColorHelper.html2color(t.image)); }
+        pref=ident() t=<HEXCOLOR>
+        { return Main.pref.getColor("mappaint." + (sheet == null ? "MapCSS" : sheet.title) + "." + pref, ColorHelper.html2color(t.image)); }
     |
         t=<IDENT> { return new Keyword(t.image); }
     |
