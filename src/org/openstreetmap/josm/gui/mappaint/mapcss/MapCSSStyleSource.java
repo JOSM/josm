@@ -77,8 +77,15 @@ public class MapCSSStyleSource extends StyleSource {
         try {
             InputStream in = getSourceInputStream();
             try {
-                MapCSSParser parser = new MapCSSParser(in, "UTF-8");
+                // evaluate @media { ... } blocks
+                MapCSSParser preprocessor = new MapCSSParser(in, "UTF-8", MapCSSParser.LexicalState.PREPROCESSOR);
+                String mapcss = preprocessor.pp_root(this);
+                
+                // do the actual mapcss parsing
+                InputStream in2 = new ByteArrayInputStream(mapcss.getBytes(Utils.UTF_8));
+                MapCSSParser parser = new MapCSSParser(in2, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
                 parser.sheet(this);
+                
                 loadMeta();
                 loadCanvas();
             } finally {

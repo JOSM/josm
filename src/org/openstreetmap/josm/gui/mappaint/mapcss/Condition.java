@@ -375,7 +375,7 @@ public abstract class Condition {
             } else if ("unconnected".equals(id) && (e.osm instanceof Node)) {
                 return OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
             }
-            return true;
+            return false;
         }
 
         @Override
