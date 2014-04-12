@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
@@ -51,7 +52,23 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
      * @throws IllegalArgumentException thrown if layer is null.
      */
     public DownloadPrimitivesTask(OsmDataLayer layer, List<PrimitiveId> ids, boolean fullRelation) throws IllegalArgumentException {
-        super(tr("Download objects"), false /* don't ignore exception */);
+        this(layer, ids, fullRelation, null);
+    }
+
+    /**
+     * Creates the  task
+     *
+     * @param layer the layer in which primitives are updated. Must not be null.
+     * @param ids a collection of primitives to update from the server. Set to
+     *     the empty collection if null.
+     * @param fullRelation true if a full download is required, i.e.,
+     *     a download including the immediate children of a relation.
+     * @param progressMonitor ProgressMonitor to use or null to create a new one.
+     * @throws IllegalArgumentException thrown if layer is null.
+     */
+    public DownloadPrimitivesTask(OsmDataLayer layer, List<PrimitiveId> ids, boolean fullRelation,
+            ProgressMonitor progessMonitor) throws IllegalArgumentException {
+        super(tr("Download objects"), progessMonitor, false /* don't ignore exception */);
         ensureParameterNotNull(layer, "layer");
         this.ids = ids;
         this.layer = layer;
@@ -83,7 +100,8 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
             @Override
             public void run() {
                 layer.mergeFrom(ds);
-                AutoScaleAction.zoomTo(ds.allPrimitives());
+                if(Main.map != null)
+                    AutoScaleAction.zoomTo(ds.allPrimitives());
                 layer.onPostDownloadFromServer();
             }
         });
