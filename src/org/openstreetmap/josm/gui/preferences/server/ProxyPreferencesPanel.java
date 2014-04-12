@@ -96,6 +96,8 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     public static final String PROXY_USER = "proxy.user";
     /** Property key for proxy password */
     public static final String PROXY_PASS = "proxy.pass";
+    /** Property key for proxy exceptions list */
+    public static final String PROXY_EXCEPTIONS = "proxy.exceptions";
 
     private Map<ProxyPolicy, JRadioButton> rbProxyPolicy;
     private JosmTextField tfProxyHttpHost;
