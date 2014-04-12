@@ -130,7 +130,22 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
      *
      */
     public DownloadReferrersTask(OsmDataLayer targetLayer, PrimitiveId primitiveId) throws IllegalArgumentException {
-        super("Download referrers", false /* don't ignore exception*/);
+        this(targetLayer,  primitiveId, null);
+    }
+
+    /**
+     * constructor
+     *
+     * @param targetLayer the target layer. Must not be null.
+     * @param primitiveId a PrimitiveId object.
+     * @param progressMonitor ProgressMonitor to use or null to create a new one.
+     * @exception IllegalArgumentException thrown if id &lt;= 0
+     * @exception IllegalArgumentException thrown if targetLayer == null
+     *
+     */
+    public DownloadReferrersTask(OsmDataLayer targetLayer, PrimitiveId primitiveId,
+            ProgressMonitor progressMonitor) throws IllegalArgumentException {
+        super("Download referrers", progressMonitor, false /* don't ignore exception*/);
         CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
         if (primitiveId.isNew())
             throw new IllegalArgumentException(MessageFormat.format("Cannot download referrers for new primitives (ID {0})", primitiveId.getUniqueId()));
@@ -167,7 +182,8 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                     @Override
                     public void run() {
                         targetLayer.onPostDownloadFromServer();
-                        Main.map.mapView.repaint();
+                        if(Main.map != null)
+                            Main.map.mapView.repaint();
                     }
                 }
         );

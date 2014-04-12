@@ -7,9 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -32,7 +32,7 @@ public class LoadObjectHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"objects"};
     }
-    
+
     @Override
     public String[] getOptionalParams() {
         return new String[] {"new_layer", "addtags", "relation_members", "referrers"};
@@ -60,15 +60,21 @@ public class LoadObjectHandler extends RequestHandler {
             final boolean newLayer = isLoadInNewLayer();
             final boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
             final boolean referrers = args.containsKey("referrers") ? Boolean.parseBoolean(args.get("referrers")) : true;
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override public void run() {
-                    DownloadPrimitiveAction.processItems(newLayer, ps, referrers, relationMembers);
-                }
-            });
-            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
+            final DownloadPrimitivesWithReferrersTask task = new DownloadPrimitivesWithReferrersTask(
+                    newLayer, ps, referrers, relationMembers, null);
+            Main.worker.submit(task);
+            Main.worker.submit(new Runnable() {
                 @Override
                 public void run() {
-                    Main.main.getCurrentDataSet().setSelected(ps);
+                    final List<PrimitiveId> downloaded = task.getDownloadedId();
+                    if(downloaded != null) {
+                        GuiHelper.runInEDT(new Runnable() {
+                            @Override
+                            public void run() {
+                                Main.main.getCurrentDataSet().setSelected(downloaded);
+                            }
+                        });
+                    }
                     AddTagsDialog.addTags(args, sender);
                     ps.clear();
                 }
