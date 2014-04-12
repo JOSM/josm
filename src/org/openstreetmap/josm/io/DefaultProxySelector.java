@@ -10,6 +10,7 @@ import java.net.Proxy.Type;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -64,6 +65,7 @@ public class DefaultProxySelector extends ProxySelector {
 
     private final Set<String> errorResources = new HashSet<String>();
     private final Set<String> errorMessages = new HashSet<String>();
+    private Set<String> proxyExceptions;
 
     /**
      * A typical example is:
@@ -137,6 +139,10 @@ public class DefaultProxySelector extends ProxySelector {
                 Main.warn(tr("The proxy will not be used."));
             }
         }
+        proxyExceptions = new HashSet<String>(
+            Main.pref.getCollection(ProxyPreferencesPanel.PROXY_EXCEPTIONS,
+                    Arrays.asList(new String[]{"localhost", "127.0.0.1"}))
+        );
     }
 
     @Override
@@ -186,7 +192,7 @@ public class DefaultProxySelector extends ProxySelector {
 
     @Override
     public List<Proxy> select(URI uri) {
-        if (uri != null && "localhost".equals(uri.getHost())) {
+        if (uri != null && proxyExceptions.contains(uri.getHost())) {
             return NO_PROXY_LIST;
         }
         switch(proxyPolicy) {
