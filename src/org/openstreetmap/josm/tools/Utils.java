@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -72,6 +74,8 @@ public final class Utils {
     private static final int MILLIS_OF_HOUR = 3600000;
     private static final int MILLIS_OF_DAY = 86400000;
 
+    public static String URL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=";
+    
     /**
      * Tests whether {@code predicate} applies to at least one elements from {@code collection}.
      */
@@ -981,4 +985,37 @@ public final class Utils {
             return s;
         }
     }
+    
+    /**
+     * Fixes URL with illegal characters in the query (and fragment) part by 
+     * percent encoding those characters.
+     * 
+     * special characters like &amp; and # are not encoded
+     * 
+     * @param url the URL that should be fixed
+     * @return the repaired URL
+     */
+    public static String fixURLQuery(String url) {
+        if (url.indexOf('?') == -1) 
+            return url;
+        
+        String query = url.substring(url.indexOf('?') + 1);
+        
+        StringBuilder sb = new StringBuilder(url.substring(0, url.indexOf('?') + 1));
+        
+        for (int i=0; i<query.length(); i++) {
+            String c = query.substring(i, i+1);
+            if (URL_CHARS.contains(c)) {
+                sb.append(c);
+            } else {
+                try {
+                    sb.append(URLEncoder.encode(c, "UTF-8"));
+                } catch (UnsupportedEncodingException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        return sb.toString();
+    }
+    
 }

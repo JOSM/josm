@@ -12,6 +12,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Handler for import request
@@ -112,7 +113,10 @@ public class ImportHandler extends RequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
-        final String urlString = args.get("url");
+        String urlString = args.get("url");
+        if (Main.pref.getBoolean("remotecontrol.importhandler.fix_url_query", true)) {
+            urlString = Utils.fixURLQuery(urlString);
+        }
         try {
             // Ensure the URL is valid
             url = new URL(urlString);
