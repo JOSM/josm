@@ -25,7 +25,7 @@ public final class Ellipsoid {
     /**
      * GRS67 ellipsoid
      */
-    public static final Ellipsoid GRS67 = Ellipsoid.create_a_rf(6378160.0, 298.247167);
+    public static final Ellipsoid GRS67 = Ellipsoid.create_a_rf(6378160.0, 298.247167472);
     /**
      * GRS80 ellipsoid
      */
