@@ -1116,12 +1116,9 @@ public abstract class Main {
     public static void checkJava6() {
         String version = System.getProperty("java.version");
         if (version != null) {
-            if (version.startsWith("1.6") || version.startsWith("6") ||
-                    version.startsWith("1.7") || version.startsWith("7") ||
-                    version.startsWith("1.8") || version.startsWith("8") ||
-                    version.startsWith("1.9") || version.startsWith("9"))
+            if (version.matches("^(1\\.)?[6789].*"))
                 return;
-            if (version.startsWith("1.5") || version.startsWith("5")) {
+            if (version.matches("^(1\\.)?[5].*")) {
                 JMultilineLabel ho = new JMultilineLabel("<html>"+
                         tr("<h2>JOSM requires Java version 6.</h2>"+
                                 "Detected Java version: {0}.<br>"+
@@ -1140,7 +1137,8 @@ public abstract class Main {
                 panel.add(link, gbc);
                 final String EXIT = tr("Exit JOSM");
                 final String CONTINUE = tr("Continue, try anyway");
-                int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, new String[] {EXIT, CONTINUE}, EXIT);
+                int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION, 
+                        JOptionPane.ERROR_MESSAGE, null, new String[] {EXIT, CONTINUE}, EXIT);
                 if (ret == 0) {
                     System.exit(0);
                 }
