@@ -96,7 +96,7 @@ public final class CreateCircleAction extends JosmAction {
     /**
      * Class designed to create a couple between a node and its angle relative to the center of the circle.
      */
-    private class PolarNode {
+    private static class PolarNode {
         double a;
         Node node;
         
@@ -110,7 +110,7 @@ public final class CreateCircleAction extends JosmAction {
     /**
      * Comparator used to order PolarNode relative to their angle.
      */
-    private class PolarNodeComparator implements Comparator<PolarNode> {
+    private static class PolarNodeComparator implements Comparator<PolarNode> {
 
         @Override
         public int compare(PolarNode pc1, PolarNode pc2) {
@@ -185,7 +185,7 @@ public final class CreateCircleAction extends JosmAction {
             double xc = 0.5 * (x1 + x2);
             double yc = 0.5 * (y1 + y2);
             center = new EastNorth(xc, yc);
-        } else if (nodes.size() == 3) {
+        } else {
             // triangle: three single nodes needed or a way with three nodes
             center = Geometry.getCenter(nodes);
             if (center == null) {

@@ -45,8 +45,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             String java = System.getProperty("java.version");
             String os = getOSDescription();
             if (java != null && java.startsWith("1.6") && os != null && (
-                    os.startsWith("Linux Debian GNU/Linux 7") || os.startsWith("Linux Mint") ||
-                    os.startsWith("Linux Ubuntu 12") || os.startsWith("Linux Ubuntu 13") || os.startsWith("Linux Ubuntu 14"))) {
+                    os.startsWith("Linux Debian GNU/Linux 7") || os.startsWith("Linux Mint") || os.matches("^Linux Ubuntu 1[234].*"))) {
                 String url;
                 // apturl does not exist on Debian (see #8465)
                 if (os.startsWith("Linux Debian")) {

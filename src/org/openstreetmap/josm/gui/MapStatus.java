@@ -716,7 +716,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
     private class MapStatusPopupMenu extends JPopupMenu {
 
-        private final JMenuItem jumpButton = createActionComponent(Main.main.menu.jumpToAct);
+        private final JMenuItem jumpButton = add(Main.main.menu.jumpToAct);
         
         private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<JCheckBoxMenuItem>();
         
@@ -742,7 +742,6 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                 add(item);
             }
             
-            add(jumpButton);
             add(separator);
             add(doNotHide);
             
@@ -750,13 +749,13 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                 @Override
                 public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                     Component invoker = ((JPopupMenu)e.getSource()).getInvoker();
-                    jumpButton.setVisible(invoker == latText || invoker == lonText);
-                    String currentSOM = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();;
+                    jumpButton.setVisible(latText.equals(invoker) || lonText.equals(invoker));
+                    String currentSOM = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
                     for (JMenuItem item : somItems) {
                         item.setSelected(item.getText().equals(currentSOM));
-                        item.setVisible(invoker == distText);
+                        item.setVisible(distText.equals(invoker));
                     }
-                    separator.setVisible(invoker == distText);
+                    separator.setVisible(distText.equals(invoker));
                     doNotHide.setSelected(Main.pref.getBoolean("statusbar.always-visible", true));
                 }
                 @Override
