@@ -1353,6 +1353,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=retaining_wall"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=retaining_wall"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:barrier=retaining_wall"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:barrier=retaining_wall"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=retaining_wall"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=retaining_wall"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:barrier=retaining_wall"
@@ -2113,7 +2114,10 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item>
         <item name="Gondola" icon="presets/aerialway.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps" />
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Piste_Maps"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Piste_Maps"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Piste_Maps" />
             <space />
             <key key="aerialway" value="gondola" />
             <reference ref="name_ref" />
@@ -2138,7 +2142,10 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item>
         <item name="T-bar Lift" icon="presets/drag_lift.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Piste_Maps"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Piste_Maps"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Piste_Maps" />
             <space />
             <key key="aerialway" value="t-bar" />
             <reference ref="name_ref" />
@@ -2312,7 +2319,8 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Charging Station" icon="styles/standard/accommodation/camping/hookup.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=charging_station"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=charging_station" />
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=charging_station"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=charging_station" />
             <space />
             <key key="amenity" value="charging_station" />
             <reference ref="name_operator" />
@@ -5054,7 +5062,10 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item>
         <item name="Power Switchgear" icon="presets/power.png" type="closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switchgear" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <label text="(Please only use this tag if more detailed mapping using busbars and bays is impossible!)" />
             <space />
@@ -5066,7 +5077,10 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item>
         <item name="Power Busbar" icon="presets/power.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:line=busbar" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:line=busbar"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <key key="power" value="line" />
             <key key="line" value="busbar" />
@@ -5076,7 +5090,10 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
         </item>
         <item name="Power Bay" icon="presets/power.png" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:line=bay" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:line=bay"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <key key="power" value="line" />
             <key key="line" value="bay" />
@@ -5092,7 +5109,10 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <separator/>
         <item name="Power Converter" icon="presets/power.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=converter" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=converter"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <key key="power" value="converter" />
             <combo key="converter" text="Type of converter" values="lcc,vsc,back-to-back" match="key" values_context="power" />
@@ -5106,7 +5126,10 @@ Note that for a match, at least one positive and no negative is required.
             </optional>		
         </item>
         <item name="Power Compensator" icon="presets/power.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=compensator" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=compensator"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <key key="power" value="compensator" />
             <combo key="compensator" text="Type of compensator" values="shunt_reactor,shunt_capacitor,static_var,statcom,synchronous_condenser,filter,series_reactor,series_capacitor" match="key" values_context="power" />
@@ -5120,10 +5143,9 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <separator/>
         <item name="Cable Distribution Cabinet" icon="presets/power.png" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable_distribution_cabinet"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=cable_distribution_cabinet"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=cable_distribution_cabinet"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=cable_distribution_cabinet" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=cable"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=cable" />
             <space />
             <key key="power" value="cable_distribution_cabinet" />
             <text key="ref" text="Reference" />
@@ -6737,6 +6759,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Site" type="relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:site"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:site"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Relation:site"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:site" />
             <space />
@@ -6840,6 +6863,7 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Hiking"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Hiking"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Hiking"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Hiking"
                   ro.href="http://wiki.openstreetmap.org/wiki/Ro:Hiking"/>
                 <space/>
                 <key key="type" value="route"/>
@@ -6980,6 +7004,7 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:associatedStreet"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:associatedStreet"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Relation:associatedStreet"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:associatedStreet"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Relation:associatedStreet" />
             <space />
             <key key="type" value="associatedStreet" />
