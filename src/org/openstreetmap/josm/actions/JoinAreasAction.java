@@ -159,6 +159,15 @@ public class JoinAreasAction extends JosmAction {
 
             return nodes;
         }
+
+        /**
+         * Inverse inside and outside
+         */
+        public void reverse() {
+            for(WayInPolygon way: ways)
+                way.insideToTheRight = !way.insideToTheRight;
+            Collections.reverse(ways);
+        }
     }
 
     public static class AssembledMultipolygon {
@@ -193,15 +202,13 @@ public class JoinAreasAction extends JosmAction {
             availableWays.removeAll(ways);
         }
 
-        public boolean hasWays() {
-            return !availableWays.isEmpty();
+        public void removeWay(WayInPolygon way) {
+            availableWays.remove(way);
         }
 
-        public WayInPolygon startNewWay(WayInPolygon way) {
+        public void setStartWay(WayInPolygon way) {
             lastWay = way;
-            lastWayReverse = !lastWay.insideToTheRight;
-
-            return lastWay;
+            lastWayReverse = !way.insideToTheRight;
         }
 
         public WayInPolygon startNewWay() {
@@ -215,55 +222,54 @@ public class JoinAreasAction extends JosmAction {
             return lastWay;
         }
 
-
-        public  WayInPolygon advanceNextLeftmostWay() {
-            return advanceNextWay(false);
-        }
-
-        public  WayInPolygon advanceNextRightmostWay() {
-            return advanceNextWay(true);
-        }
-
-        private WayInPolygon advanceNextWay(boolean rightmost) {
-
+        /**
+         * Get the next way creating a clockwise path, ensure it is the most right way. #7959
+         * @return The next way.
+         */
+        public  WayInPolygon walk() {
             Node headNode = !lastWayReverse ? lastWay.way.lastNode() : lastWay.way.firstNode();
             Node prevNode = !lastWayReverse ? lastWay.way.getNode(lastWay.way.getNodesCount() - 2) : lastWay.way.getNode(1);
 
+            double headAngle = Math.atan2(headNode.getEastNorth().east() - prevNode.getEastNorth().east(),
+                    headNode.getEastNorth().north() - prevNode.getEastNorth().north());
+            double bestAngle = 0;
+
             //find best next way
             WayInPolygon bestWay = null;
-            Node bestWayNextNode = null;
             boolean bestWayReverse = false;
 
             for (WayInPolygon way : availableWays) {
-                if (way.way.firstNode().equals(headNode)) {
-                    //start adjacent to headNode
-                    Node nextNode = way.way.getNode(1);
+                Node nextNode;
 
-                    if (nextNode.equals(prevNode))
-                    {
-                        //this is the path we came from - ignore it.
-                    }
-                    else if (bestWay == null || (Geometry.isToTheRightSideOfLine(prevNode, headNode, bestWayNextNode, nextNode) == rightmost)) {
-                        //the new way is better
-                        bestWay = way;
-                        bestWayReverse = false;
-                        bestWayNextNode = nextNode;
-                    }
+                // Check for a connected way
+                if (way.way.firstNode().equals(headNode) && way.insideToTheRight) {
+                    nextNode = way.way.getNode(1);
+                } else if (way.way.lastNode().equals(headNode) && !way.insideToTheRight) {
+                    nextNode = way.way.getNode(way.way.getNodesCount() - 2);
+                } else {
+                    continue;
                 }
 
-                if (way.way.lastNode().equals(headNode)) {
-                    //end adjacent to headNode
-                    Node nextNode = way.way.getNode(way.way.getNodesCount() - 2);
+                if(nextNode == prevNode) {
+                    // go back
+                    lastWay = way;
+                    lastWayReverse = !way.insideToTheRight;
+                    return lastWay;
+                }
 
-                    if (nextNode.equals(prevNode)) {
-                        //this is the path we came from - ignore it.
-                    }
-                    else if (bestWay == null || (Geometry.isToTheRightSideOfLine(prevNode, headNode, bestWayNextNode, nextNode) == rightmost)) {
-                        //the new way is better
-                        bestWay = way;
-                        bestWayReverse = true;
-                        bestWayNextNode = nextNode;
-                    }
+                double angle = Math.atan2(nextNode.getEastNorth().east() - headNode.getEastNorth().east(),
+                        nextNode.getEastNorth().north() - headNode.getEastNorth().north()) - headAngle;
+                if(angle > Math.PI)
+                    angle -= 2*Math.PI;
+                if(angle <= -Math.PI)
+                    angle += 2*Math.PI;
+
+                // Now we have a valid candidate way, is it better than the previous one ?
+                if (bestWay == null || angle > bestAngle) {
+                    //the new way is better
+                    bestWay = way;
+                    bestWayReverse = !way.insideToTheRight;
+                    bestAngle = angle;
                 }
             }
 
@@ -271,18 +277,6 @@ public class JoinAreasAction extends JosmAction {
             lastWayReverse = bestWayReverse;
 
             return lastWay;
-        }
-
-        public boolean isLastWayInsideToTheRight() {
-            return lastWayReverse != lastWay.insideToTheRight;
-        }
-
-        public Node getLastWayStartNode() {
-            return lastWayReverse ? lastWay.way.lastNode() : lastWay.way.firstNode();
-        }
-
-        public Node getLastWayEndNode() {
-            return lastWayReverse ? lastWay.way.firstNode() : lastWay.way.lastNode();
         }
     }
 
@@ -317,7 +311,7 @@ public class JoinAreasAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         LinkedList<Way> ways = new LinkedList<Way>(Main.main.getCurrentDataSet().getSelectedWays());
         addedRelations.clear();
-        
+
         if (ways.isEmpty()) {
             new Notification(
                     tr("Please select at least one closed way that should be joined."))
@@ -380,7 +374,7 @@ public class JoinAreasAction extends JosmAction {
                     cmds.addAll(CreateMultipolygonAction.removeTagsFromWaysIfNeeded(r));
                 }
                 commitCommands(tr("Move tags from ways to relations"));
-                
+
                 List<Way> allWays = new ArrayList<Way>();
                 for (Multipolygon pol : result.polygons) {
                     allWays.add(pol.outerWay);
@@ -968,126 +962,87 @@ public class JoinAreasAction extends JosmAction {
     public static List<AssembledPolygon> findBoundaryPolygons(Collection<WayInPolygon> multigonWays, List<Way> discardedResult) {
         //first find all discardable ways, by getting outer shells.
         //this will produce incorrect boundaries in some cases, but second pass will fix it.
-
         List<WayInPolygon> discardedWays = new ArrayList<WayInPolygon>();
-        Set<WayInPolygon> processedWays = new HashSet<WayInPolygon>();
-        WayTraverser traverser = new WayTraverser(multigonWays);
 
-        for (WayInPolygon startWay : multigonWays) {
-            if (processedWays.contains(startWay)) {
-                continue;
-            }
+        // In multigonWays collection, some way are just a point (i.e. way like nodeA-nodeA)
+        // This seems to appear when is apply over invalid way like #9911 test-case
+        // Remove all of these way to make the next work.
+        ArrayList<WayInPolygon> cleanMultigonWays = new ArrayList<WayInPolygon>();
+        for(WayInPolygon way: multigonWays)
+            if(way.way.getNodesCount() == 2 && way.way.firstNode() == way.way.lastNode())
+                discardedWays.add(way);
+            else
+                cleanMultigonWays.add(way);
 
-            traverser.startNewWay(startWay);
-
-            List<WayInPolygon> boundary = new ArrayList<WayInPolygon>();
-            WayInPolygon lastWay = startWay;
-
-            while (true) {
-                boundary.add(lastWay);
-
-                WayInPolygon bestWay = traverser.advanceNextLeftmostWay();
-                boolean wayInsideToTheRight = bestWay == null ? false : traverser.isLastWayInsideToTheRight();
-
-                if (bestWay == null || processedWays.contains(bestWay) || !wayInsideToTheRight) {
-                    //bad segment chain - proceed to discard it
-                    lastWay = null;
-                    break;
-                } else if (boundary.contains(bestWay)) {
-                    //traversed way found - close the way
-                    lastWay = bestWay;
-                    break;
-                } else {
-                    //proceed to next segment
-                    lastWay = bestWay;
-                }
-            }
-
-            if (lastWay != null) {
-                //way good
-                processedWays.addAll(boundary);
-
-                //remove junk segments at the start
-                while (boundary.get(0) != lastWay) {
-                    discardedWays.add(boundary.get(0));
-                    boundary.remove(0);
-                }
-            } else {
-                //way bad
-                discardedWays.addAll(boundary);
-                processedWays.addAll(boundary);
-            }
-        }
-
-        //now we have removed junk segments, collect the real result ways
-
-        traverser.removeWays(discardedWays);
-
+        WayTraverser traverser = new WayTraverser(cleanMultigonWays);
         List<AssembledPolygon> result = new ArrayList<AssembledPolygon>();
 
-        while (traverser.hasWays()) {
-
-            WayInPolygon startWay = traverser.startNewWay();
-            List<WayInPolygon> boundary = new ArrayList<WayInPolygon>();
-            WayInPolygon curWay = startWay;
-
-            do {
-                boundary.add(curWay);
-                curWay = traverser.advanceNextRightmostWay();
-
-                //should not happen
-                if (curWay == null || !traverser.isLastWayInsideToTheRight())
+        WayInPolygon startWay;
+        while((startWay = traverser.startNewWay()) != null) {
+            ArrayList<WayInPolygon> path = new ArrayList<WayInPolygon>();
+            path.add(startWay);
+            while(true) {
+                WayInPolygon nextWay = traverser.walk();
+                if(nextWay == null)
                     throw new RuntimeException("Join areas internal error.");
-
-            } while (curWay != startWay);
-
-            //build result
-            traverser.removeWays(boundary);
-            result.add(new AssembledPolygon(boundary));
+                if(path.get(0) == nextWay) {
+                    AssembledPolygon ring = new AssembledPolygon(path);
+                    if(ring.getNodes().size() <= 2) {
+                        // Invalid ring (2 nodes) -> remove
+                        traverser.removeWays(path);
+                        for(WayInPolygon way: path)
+                            discardedResult.add(way.way);
+                    } else {
+                        // Close ring -> add
+                        result.add(ring);
+                        traverser.removeWays(path);
+                    }
+                    break;
+                }
+                if(path.contains(nextWay)) {
+                    // Inner loop -> remove
+                    int index = path.indexOf(nextWay);
+                    while(path.size() > index) {
+                        WayInPolygon currentWay = path.get(index);
+                        discardedResult.add(currentWay.way);
+                        traverser.removeWay(currentWay);
+                        path.remove(index);
+                    }
+                    traverser.setStartWay(path.get(index-1));
+                } else {
+                    path.add(nextWay);
+                }
+            }
         }
 
-        for (WayInPolygon way : discardedWays) {
-            discardedResult.add(way.way);
-        }
-
-        //split inner polygons that have several touching parts.
-        result = fixTouchingPolygons(result);
-
-        return result;
+        return fixTouchingPolygons(result);
     }
 
     /**
      * This method checks if polygons have several touching parts and splits them in several polygons.
      * @param polygons the polygons to process.
      */
-    public static List<AssembledPolygon> fixTouchingPolygons(List<AssembledPolygon> polygons)
-    {
+    public static List<AssembledPolygon> fixTouchingPolygons(List<AssembledPolygon> polygons) {
         List<AssembledPolygon> newPolygons = new ArrayList<AssembledPolygon>();
 
-        for (AssembledPolygon innerPart : polygons) {
-            WayTraverser traverser = new WayTraverser(innerPart.ways);
+        for (AssembledPolygon ring : polygons) {
+            ring.reverse();
+            WayTraverser traverser = new WayTraverser(ring.ways);
+            WayInPolygon startWay;
 
-            while (traverser.hasWays()) {
-
-                WayInPolygon startWay = traverser.startNewWay();
-                List<WayInPolygon> boundary = new ArrayList<WayInPolygon>();
-                WayInPolygon curWay = startWay;
-
-                Node startNode = traverser.getLastWayStartNode();
-                boundary.add(curWay);
-
-                while (startNode != traverser.getLastWayEndNode()) {
-                    curWay = traverser.advanceNextLeftmostWay();
-                    boundary.add(curWay);
-
-                    //should not happen
-                    if (curWay == null || !traverser.isLastWayInsideToTheRight())
+            while((startWay = traverser.startNewWay()) != null) {
+                List<WayInPolygon> simpleRingWays = new ArrayList<WayInPolygon>();
+                simpleRingWays.add(startWay);
+                WayInPolygon nextWay;
+                while((nextWay = traverser.walk()) != startWay) {
+                    if(nextWay == null)
                         throw new RuntimeException("Join areas internal error.");
+                    simpleRingWays.add(nextWay);
                 }
-
-                //build result
-                traverser.removeWays(boundary);
-                newPolygons.add(new AssembledPolygon(boundary));
+                traverser.removeWays(simpleRingWays);
+                AssembledPolygon simpleRing = new AssembledPolygon(simpleRingWays);
+                simpleRing.reverse();
+                newPolygons.add(simpleRing);
             }
         }
 
