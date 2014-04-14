@@ -63,7 +63,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     /**
      * Class to format a length according to SystemOfMesurement.
      */
-    private final class TrackLength {
+    private static final class TrackLength {
         private double value;
 
         /**
@@ -87,7 +87,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     /**
      * Comparator for TrackLength objects
      */
-    private final class LengthContentComparator implements Comparator<TrackLength> {
+    private static final class LengthContentComparator implements Comparator<TrackLength> {
 
         /**
          * Compare 2 TrackLength objects relative to the real length

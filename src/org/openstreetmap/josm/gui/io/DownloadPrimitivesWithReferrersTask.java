@@ -74,7 +74,6 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         this.newLayer = newLayer;
         // All downloaded primitives are put in a tmpLayer
         tmpLayer = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
-        //Main.main.addLayer(tmpLayer);
     }
 
     /**
@@ -193,18 +192,18 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
     /**
      * Dialog for report a problem during download.
      * @param errs Primitives involved
-     * @param TITLE Title of dialog
-     * @param TEXT Detail message
-     * @param LIST_LABEL List of primitives description
-     * @param msgType Type of message {@see JOptionPane}
+     * @param title Title of dialog
+     * @param text Detail message
+     * @param listLabel List of primitives description
+     * @param msgType Type of message, see {@link JOptionPane}
      * @return The Dialog object
      */
     private static ExtendedDialog reportProblemDialog(Set<PrimitiveId> errs,
-            String TITLE, String TEXT, String LIST_LABEL, int msgType) {
+            String title, String text, String listLabel, int msgType) {
         JPanel p = new JPanel(new GridBagLayout());
-        p.add(new HtmlPanel(TEXT), GBC.eop());
-        if (LIST_LABEL != null) {
-            JLabel missing = new JLabel(LIST_LABEL);
+        p.add(new HtmlPanel(text), GBC.eop());
+        if (listLabel != null) {
+            JLabel missing = new JLabel(listLabel);
             missing.setFont(missing.getFont().deriveFont(Font.PLAIN));
             p.add(missing, GBC.eol());
         }
@@ -220,7 +219,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
 
         return new ExtendedDialog(
                 Main.parent,
-                TITLE,
+                title,
                 new String[] { tr("Ok") })
         .setButtonIcons(new String[] { "ok" })
         .setIcon(msgType)

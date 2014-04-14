@@ -50,8 +50,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         // Invite users to install Java 7 if they are still with Java 6 and using a compatible OS X version (>= 10.7.3)
         String java = System.getProperty("java.version");
         String os = System.getProperty("os.version");
-        if (java != null && java.startsWith("1.6") && os != null && (
-                os.startsWith("10.7.") || os.startsWith("10.8") || os.startsWith("10.9"))) {
+        if (java != null && java.startsWith("1.6") && os != null && os.matches("^10\\.[789].*")) {
             askUpdateJava(java);
         }
     }

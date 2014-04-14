@@ -256,10 +256,8 @@ public final class AlignInLineAction extends JosmAction {
             neighbors.clear();
             for(int i = 1; i < nodes.size()-1; i++)
                 if(nodes.get(i) == node) {
-                    System.out.printf("Find 2 neighbors\n");
                     neighbors.add(nodes.get(i-1));
                     neighbors.add(nodes.get(i+1));
-                    //lines.add(new Line(nodes.get(i-1), nodes.get(i+1)));
                 }
             if(neighbors.size() == 0)
                 continue;
