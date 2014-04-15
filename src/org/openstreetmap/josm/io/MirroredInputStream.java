@@ -180,16 +180,12 @@ public class MirroredInputStream extends InputStream {
 
     /**
      * Like {@link #findZipEntryPath}, but returns the corresponding InputStream.
+     * @since 6148
      */
     public InputStream findZipEntryInputStream(String extension, String namepart) {
         Pair<String, InputStream> ze = findZipEntryImpl(extension, namepart);
         if (ze == null) return null;
         return ze.b;
-    }
-
-    @Deprecated // use findZipEntryInputStream
-    public InputStream getZipEntry(String extension, String namepart) {
-        return findZipEntryInputStream(extension, namepart);
     }
 
     private Pair<String, InputStream> findZipEntryImpl(String extension, String namepart) {
