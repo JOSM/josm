@@ -33,13 +33,13 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-/*
+/**
  * A memory cache for Multipolygon objects.
- * 
+ * @since 4623
  */
 public final class MultipolygonCache implements DataSetListener, LayerChangeListener, ProjectionChangeListener, SelectionChangedListener {
 
-    private static final MultipolygonCache instance = new MultipolygonCache(); 
+    private static final MultipolygonCache INSTANCE = new MultipolygonCache(); 
     
     private final Map<NavigatableComponent, Map<DataSet, Map<Relation, Multipolygon>>> cache;
     
@@ -53,8 +53,12 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         MapView.addLayerChangeListener(this);
     }
 
+    /**
+     * Replies the unique instance.
+     * @return the unique instance
+     */
     public static final MultipolygonCache getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public final Multipolygon get(NavigatableComponent nc, Relation r) {

@@ -103,10 +103,10 @@ public final class ShowStatusReportAction extends JosmAction {
             }
         }
         try {
-            final String env_java_home = System.getenv("JAVA_HOME");
-            final String env_java_home_alt = Main.platform instanceof PlatformHookWindows ? "%JAVA_HOME%" : "${JAVA_HOME}";
-            final String prop_java_home = System.getProperty("java.home");
-            final String prop_java_home_alt = "<java.home>";
+            final String envJavaHome = System.getenv("JAVA_HOME");
+            final String envJavaHomeAlt = Main.platform instanceof PlatformHookWindows ? "%JAVA_HOME%" : "${JAVA_HOME}";
+            final String propJavaHome = System.getProperty("java.home");
+            final String propJavaHomeAlt = "<java.home>";
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
             List<String> vmArguments = new ArrayList<String>(ManagementFactory.getRuntimeMXBean().getInputArguments());
             for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext(); ) {
@@ -118,8 +118,8 @@ public final class ShowStatusReportAction extends JosmAction {
                         it.set(param[0]+"=xxx");
                     // Shorten some parameters for readability concerns
                     } else {
-                        shortenParam(it, param, env_java_home, env_java_home_alt);
-                        shortenParam(it, param, prop_java_home, prop_java_home_alt);
+                        shortenParam(it, param, envJavaHome, envJavaHomeAlt);
+                        shortenParam(it, param, propJavaHome, propJavaHomeAlt);
                     }
                 }
             }
