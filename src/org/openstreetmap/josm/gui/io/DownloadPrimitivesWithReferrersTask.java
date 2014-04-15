@@ -94,8 +94,8 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         getProgressMonitor().setTicksCount(ids.size()+1);
         // First, download primitives
         mainTask = new DownloadPrimitivesTask(tmpLayer, ids, full, getProgressMonitor().createSubTaskMonitor(1, false));
-        currentTask = mainTask;
         synchronized(this) {
+            currentTask = mainTask;
             if(canceled) {
                 currentTask = null;
                 return;
@@ -120,8 +120,10 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
 
     @Override
     protected void finish() {
-        if(canceled)
-            return;
+        synchronized(this) {
+            if(canceled)
+                return;
+        }
 
         // Append downloaded data to JOSM
         OsmDataLayer layer = Main.main.getEditLayer();
@@ -182,8 +184,10 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
      * @return List of primitives id or null if no primitives was downloaded
      */
     public List<PrimitiveId> getDownloadedId() {
-        if(canceled)
-            return null;
+        synchronized(this) {
+            if(canceled)
+                return null;
+        }
         ArrayList<PrimitiveId> downloaded = new ArrayList<PrimitiveId>(ids);
         downloaded.removeAll(mainTask.getMissingPrimitives());
         return downloaded;
