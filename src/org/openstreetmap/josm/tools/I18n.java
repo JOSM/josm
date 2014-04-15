@@ -362,7 +362,7 @@ public final class I18n {
         languages.put("en_GB", PluralMode.MODE_NOTONE);
         languages.put("es", PluralMode.MODE_NOTONE);
         languages.put("et", PluralMode.MODE_NOTONE);
-        languages.put("eu", PluralMode.MODE_NOTONE);
+        //languages.put("eu", PluralMode.MODE_NOTONE);
         languages.put("fi", PluralMode.MODE_NOTONE);
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
@@ -372,7 +372,7 @@ public final class I18n {
         //languages.put("is", PluralMode.MODE_NOTONE);
         languages.put("it", PluralMode.MODE_NOTONE);
         languages.put("ja", PluralMode.MODE_NONE);
-        languages.put("nb", PluralMode.MODE_NOTONE);
+        //languages.put("nb", PluralMode.MODE_NOTONE);
         languages.put("nl", PluralMode.MODE_NOTONE);
         languages.put("pl", PluralMode.MODE_PL);
         languages.put("pt", PluralMode.MODE_NOTONE);
@@ -382,7 +382,7 @@ public final class I18n {
         languages.put("sk", PluralMode.MODE_SK);
         //languages.put("sl", PluralMode.MODE_SL);
         languages.put("sv", PluralMode.MODE_NOTONE);
-        languages.put("tr", PluralMode.MODE_NONE);
+        //languages.put("tr", PluralMode.MODE_NONE);
         languages.put("uk", PluralMode.MODE_RU);
         languages.put("zh_CN", PluralMode.MODE_NONE);
         languages.put("zh_TW", PluralMode.MODE_NONE);
