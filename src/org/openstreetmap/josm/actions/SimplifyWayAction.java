@@ -95,17 +95,15 @@ public class SimplifyWayAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         DataSet ds = getCurrentDataSet();
         ds.beginUpdate();
-        try
-        {
+        try {
             List<Way> ways = OsmPrimitive.getFilteredList(ds.getSelected(), Way.class);
             if (ways.isEmpty()) {
                 alertSelectAtLeastOneWay();
                 return;
-            } else if (!confirmWayWithNodesOutsideBoundingBox(ways))
+            } else if (!confirmWayWithNodesOutsideBoundingBox(ways)) {
                 return;
-            else if (ways.size() > 10) {
-                if (!confirmSimplifyManyWays(ways.size()))
-                    return;
+            } else if (ways.size() > 10 && !confirmSimplifyManyWays(ways.size())) {
+                return;
             }
 
             Collection<Command> allCommands = new LinkedList<Command>();
@@ -268,10 +266,10 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     public static double xtd(double lat1, double lon1, double lat2, double lon2, double lat3, double lon3) {
-        double dist_AD = dist(lat1, lon1, lat3, lon3);
-        double crs_AD = course(lat1, lon1, lat3, lon3);
-        double crs_AB = course(lat1, lon1, lat2, lon2);
-        return Math.asin(Math.sin(dist_AD) * Math.sin(crs_AD - crs_AB));
+        double distAD = dist(lat1, lon1, lat3, lon3);
+        double crsAD = course(lat1, lon1, lat3, lon3);
+        double crsAB = course(lat1, lon1, lat2, lon2);
+        return Math.asin(Math.sin(distAD) * Math.sin(crsAD - crsAB));
     }
 
     @Override

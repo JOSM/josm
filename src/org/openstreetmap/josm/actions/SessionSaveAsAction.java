@@ -99,9 +99,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
         FileFilter ff = fc.getFileFilter();
         if (zipRequired) {
             zip = true;
-        } else if (ff == joz) {
+        } else if (joz.equals(ff)) {
             zip = true;
-        } else if (ff == jos) {
+        } else if (jos.equals(ff)) {
             zip = false;
         } else {
             if (fn.toLowerCase().endsWith(".joz")) {
@@ -230,7 +230,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             return tabs;
         }
 
-        protected Component getDisabledExportPanel(Layer layer) {
+        protected final Component getDisabledExportPanel(Layer layer) {
             JPanel p = new JPanel(new GridBagLayout());
             JCheckBox include = new JCheckBox();
             include.setEnabled(false);
