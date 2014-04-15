@@ -41,16 +41,18 @@ public class AlphanumComparator implements Comparator<String> {
 
     private static final AlphanumComparator INSTANCE = new AlphanumComparator();
 
+    /**
+     * Replies the unique instance.
+     * @return the unique instance
+     */
     public static AlphanumComparator getInstance() {
         return INSTANCE;
     }
 
     /**
      * Constructs a new Alphanum Comparator.
-     * @deprecated use {@link #getInstance()} instead.
      */
-    @Deprecated
-    public AlphanumComparator() {
+    private AlphanumComparator() {
     }
 
     /**
