@@ -80,7 +80,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * Class that helps PropertiesDialog add and edit tag values
  */
- class TagEditHelper {
+class TagEditHelper {
     private final DefaultTableModel tagData;
     private final Map<String, Map<String, Integer>> valueCount;
 
@@ -768,4 +768,4 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             }
         }
     }
- }
+}

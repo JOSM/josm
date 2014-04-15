@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,13 +16,20 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.RemoveNodesCommand;
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Disconnect nodes from a way they currently belong to.
+ * @since 6253
+ */
 public class UnJoinNodeWayAction extends JosmAction {
+    
+    /**
+     * Constructs a new {@code UnJoinNodeWayAction}.
+     */
     public UnJoinNodeWayAction() {
         super(tr("Disconnect Node from Way"), "unjoinnodeway",
                 tr("Disconnect nodes from a way they currently belong to"),

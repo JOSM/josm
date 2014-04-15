@@ -144,7 +144,7 @@ public class MultiSplitPane extends JPanel {
      * @see #getDividerPainter
      * @see #setDividerPainter
      */
-    public static abstract class DividerPainter {
+    public abstract static class DividerPainter {
         /**
          * Paint a single Divider.
          *

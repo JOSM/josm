@@ -173,7 +173,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 }
 
                 if (n == null) {
-                    n = node.isNew() ? tr("node") : ""+ node.getId();
+                    n = node.isNew() ? tr("node") : Long.toString(node.getId());
                 }
                 name.append(n);
             } else {

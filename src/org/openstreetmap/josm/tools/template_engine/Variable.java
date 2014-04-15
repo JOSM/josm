@@ -3,7 +3,6 @@ package org.openstreetmap.josm.tools.template_engine;
 
 import java.util.Collection;
 
-
 public class Variable implements TemplateEntry {
 
     private static final String SPECIAL_VARIABLE_PREFIX = "special:";
@@ -61,5 +60,4 @@ public class Variable implements TemplateEntry {
     public boolean isSpecial() {
         return special;
     }
-
 }

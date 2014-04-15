@@ -575,7 +575,7 @@ public class Preferences {
      * @return "" if there is nothing set for the preference key,
      *  the corresponding value otherwise. The result is not null.
      */
-    synchronized public String get(final String key) {
+    public synchronized String get(final String key) {
         String value = get(key, null);
         return value == null ? "" : value;
     }
@@ -588,11 +588,11 @@ public class Preferences {
      * @return the corresponding value if the property has been set before,
      *  def otherwise
      */
-    synchronized public String get(final String key, final String def) {
+    public synchronized String get(final String key, final String def) {
         return getSetting(key, new StringSetting(def), StringSetting.class).getValue();
     }
 
-    synchronized public Map<String, String> getAllPrefix(final String prefix) {
+    public synchronized Map<String, String> getAllPrefix(final String prefix) {
         final Map<String,String> all = new TreeMap<String,String>();
         for (final Entry<String,Setting> e : settingsMap.entrySet()) {
             if (e.getKey().startsWith(prefix) && (e.getValue() instanceof StringSetting)) {
@@ -602,7 +602,7 @@ public class Preferences {
         return all;
     }
 
-    synchronized public List<String> getAllPrefixCollectionKeys(final String prefix) {
+    public synchronized List<String> getAllPrefixCollectionKeys(final String prefix) {
         final List<String> all = new LinkedList<String>();
         for (Map.Entry<String, Setting> entry : settingsMap.entrySet()) {
             if (entry.getKey().startsWith(prefix) && entry.getValue() instanceof ListSetting) {
@@ -612,7 +612,7 @@ public class Preferences {
         return all;
     }
 
-    synchronized public Map<String, String> getAllColors() {
+    public synchronized Map<String, String> getAllColors() {
         final Map<String,String> all = new TreeMap<String,String>();
         for (final Entry<String,Setting> e : defaultsMap.entrySet()) {
             if (e.getKey().startsWith("color.") && e.getValue() instanceof StringSetting) {
@@ -630,16 +630,16 @@ public class Preferences {
         return all;
     }
 
-    synchronized public boolean getBoolean(final String key) {
+    public synchronized boolean getBoolean(final String key) {
         String s = get(key, null);
         return s == null ? false : Boolean.parseBoolean(s);
     }
 
-    synchronized public boolean getBoolean(final String key, final boolean def) {
+    public synchronized boolean getBoolean(final String key, final boolean def) {
         return Boolean.parseBoolean(get(key, Boolean.toString(def)));
     }
 
-    synchronized public boolean getBoolean(final String key, final String specName, final boolean def) {
+    public synchronized boolean getBoolean(final String key, final String specName, final boolean def) {
         boolean generic = getBoolean(key, def);
         String skey = key+"."+specName;
         Setting prop = settingsMap.get(skey);
@@ -822,16 +822,16 @@ public class Preferences {
      * @param def default value
      * @return a Color object for the configured colour, or the default value if none configured.
      */
-    synchronized public Color getColor(String colName, Color def) {
+    public synchronized Color getColor(String colName, Color def) {
         return getColor(colName, null, def);
     }
 
-    synchronized public Color getUIColor(String colName) {
+    public synchronized Color getUIColor(String colName) {
         return UIManager.getColor(colName);
     }
 
     /* only for preferences */
-    synchronized public String getColorName(String o) {
+    public synchronized String getColorName(String o) {
         try {
             Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
             if (m.matches()) {
@@ -868,7 +868,7 @@ public class Preferences {
      * @param def default value
      * @return a Color object for the configured colour, or the default value if none configured.
      */
-    synchronized public Color getColor(String colName, String specName, Color def) {
+    public synchronized Color getColor(String colName, String specName, Color def) {
         String colKey = ColorProperty.getColorKey(colName);
         if(!colKey.equals(colName)) {
             colornames.put(colKey, colName);
@@ -884,17 +884,17 @@ public class Preferences {
         }
     }
 
-    synchronized public Color getDefaultColor(String colKey) {
+    public synchronized Color getDefaultColor(String colKey) {
         StringSetting col = Utils.cast(defaultsMap.get("color."+colKey), StringSetting.class);
         String colStr = col == null ? null : col.getValue();
         return colStr == null || colStr.isEmpty() ? null : ColorHelper.html2color(colStr);
     }
 
-    synchronized public boolean putColor(String colKey, Color val) {
+    public synchronized boolean putColor(String colKey, Color val) {
         return put("color."+colKey, val != null ? ColorHelper.color2html(val, true) : null);
     }
 
-    synchronized public int getInteger(String key, int def) {
+    public synchronized int getInteger(String key, int def) {
         String v = get(key, Integer.toString(def));
         if(v.isEmpty())
             return def;
@@ -907,7 +907,7 @@ public class Preferences {
         return def;
     }
 
-    synchronized public int getInteger(String key, String specName, int def) {
+    public synchronized int getInteger(String key, String specName, int def) {
         String v = get(key+"."+specName);
         if(v.isEmpty())
             v = get(key,Integer.toString(def));
@@ -922,7 +922,7 @@ public class Preferences {
         return def;
     }
 
-    synchronized public long getLong(String key, long def) {
+    public synchronized long getLong(String key, long def) {
         String v = get(key, Long.toString(def));
         if(null == v)
             return def;
@@ -935,7 +935,7 @@ public class Preferences {
         return def;
     }
 
-    synchronized public double getDouble(String key, double def) {
+    public synchronized double getDouble(String key, double def) {
         String v = get(key, Double.toString(def));
         if(null == v)
             return def;
@@ -970,7 +970,7 @@ public class Preferences {
         return val == null ? Collections.<String>emptyList() : val;
     }
 
-    synchronized public void removeFromCollection(String key, String value) {
+    public synchronized void removeFromCollection(String key, String value) {
         List<String> a = new ArrayList<String>(getCollection(key, Collections.<String>emptyList()));
         a.remove(value);
         putCollection(key, a);
@@ -1016,7 +1016,7 @@ public class Preferences {
         return true;
     }
 
-    synchronized public Setting getSetting(String key, Setting def) {
+    public synchronized Setting getSetting(String key, Setting def) {
         return getSetting(key, def, Setting.class);
     }
 
@@ -1032,7 +1032,7 @@ public class Preferences {
      *  def otherwise
      */
     @SuppressWarnings("unchecked")
-    synchronized public <T extends Setting> T getSetting(String key, T def, Class<T> klass) {
+    public synchronized <T extends Setting> T getSetting(String key, T def, Class<T> klass) {
         CheckParameterUtil.ensureParameterNotNull(key);
         CheckParameterUtil.ensureParameterNotNull(def);
         Setting oldDef = defaultsMap.get(key);
@@ -1073,7 +1073,7 @@ public class Preferences {
      * If not a single entry could be found, <code>def</code> is returned.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    synchronized public Collection<Collection<String>> getArray(String key, Collection<Collection<String>> def) {
+    public synchronized Collection<Collection<String>> getArray(String key, Collection<Collection<String>> def) {
         ListListSetting val = getSetting(key, ListListSetting.create(def), ListListSetting.class);
         return (Collection) val.getValue();
     }

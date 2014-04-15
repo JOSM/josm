@@ -13,8 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Action;
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -26,6 +24,9 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class PresetListPanel extends JPanel {
 
+    /**
+     * Constructs a new {@code PresetListPanel}.
+     */
     public PresetListPanel() {
         super(new GridBagLayout());
     }

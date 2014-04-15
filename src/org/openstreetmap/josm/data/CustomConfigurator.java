@@ -740,6 +740,10 @@ public final class CustomConfigurator {
      */
     public static class PreferencesUtils {
 
+        private PreferencesUtils() {
+            // Hide implicit public constructor for utility class
+        }
+
         private static void replacePreferences(Preferences fragment, Preferences mainpref) {
             for (Entry<String, Setting> entry: fragment.settingsMap.entrySet()) {
                 mainpref.putSetting(entry.getKey(), entry.getValue());

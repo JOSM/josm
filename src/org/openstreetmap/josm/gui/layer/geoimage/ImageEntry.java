@@ -245,7 +245,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         "pos = "+pos+" | "+
         "exifCoor = "+exifCoor+" | "+
         (tmp == null ? " tmp==null" :
-            " [tmp] pos = "+tmp.pos+"");
+            " [tmp] pos = "+tmp.pos);
         return result;
     }
 
