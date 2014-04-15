@@ -93,6 +93,10 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
      */
     public static class TagSwitcher {
 
+        private TagSwitcher() {
+            // Hide implicit public constructor for utility class
+        }
+
         /**
          * Reverses a given tag.
          * @param tag The tag to reverse

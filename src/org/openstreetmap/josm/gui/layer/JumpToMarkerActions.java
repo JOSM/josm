@@ -41,7 +41,7 @@ public final class JumpToMarkerActions {
         MultikeyActionsHandler.getInstance().removeAction(jumpToPreviousMarkerAction);
     }
 
-    private static abstract class JumpToMarker extends AbstractAction implements MultikeyShortcutAction {
+    private abstract static class JumpToMarker extends AbstractAction implements MultikeyShortcutAction {
 
         private final Layer layer;
         private final Shortcut multikeyShortcut;

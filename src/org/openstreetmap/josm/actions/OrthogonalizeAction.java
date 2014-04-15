@@ -47,7 +47,7 @@ public final class OrthogonalizeAction extends JosmAction {
             "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)");
 
     /**
-     * Constructor
+     * Constructs a new {@code OrthogonalizeAction}.
      */
     public OrthogonalizeAction() {
         super(tr("Orthogonalize Shape"),
@@ -518,6 +518,9 @@ public final class OrthogonalizeAction extends JosmAction {
      * Class contains some auxiliary functions
      */
     private static class EN {
+        private EN() {
+            // Hide implicit public constructor for utility class
+        }
         // rotate counter-clock-wise
         public static EastNorth rotate_cc(EastNorth pivot, EastNorth en, double angle) {
             double cosPhi = Math.cos(angle);

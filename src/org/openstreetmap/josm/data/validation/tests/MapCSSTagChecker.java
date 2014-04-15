@@ -87,6 +87,10 @@ public class MapCSSTagChecker extends Test.TagTest {
          */
         abstract static class PrimitiveToTag implements Utils.Function<OsmPrimitive, Tag> {
 
+            private PrimitiveToTag() {
+                // Hide implicit public constructor for utility class
+            }
+
             /**
              * Creates a new mapping from an {@code MapCSS} object.
              * In case of an {@link Expression}, that is evaluated on the matched {@link OsmPrimitive}.

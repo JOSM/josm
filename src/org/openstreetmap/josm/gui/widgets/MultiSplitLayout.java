@@ -835,7 +835,7 @@ public class MultiSplitLayout implements LayoutManager {
     /**
      * Base class for the nodes that model a MultiSplitLayout.
      */
-    public static abstract class Node {
+    public abstract static class Node {
         private Split parent = null;
         private Rectangle bounds = new Rectangle();
         private double weight = 0.0;
@@ -1106,10 +1106,10 @@ public class MultiSplitLayout implements LayoutManager {
             StringBuffer sb = new StringBuffer("MultiSplitLayout.Leaf");
             sb.append(" \"");
             sb.append(getName());
-            sb.append("\"");
+            sb.append('\"');
             sb.append(" weight=");
             sb.append(getWeight());
-            sb.append(" ");
+            sb.append(' ');
             sb.append(getBounds());
             return sb.toString();
         }

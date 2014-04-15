@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.template_engine;
 
-
 public class StaticText implements TemplateEntry {
 
     private final String staticText;
@@ -24,6 +23,4 @@ public class StaticText implements TemplateEntry {
     public String toString() {
         return staticText;
     }
-
-
 }

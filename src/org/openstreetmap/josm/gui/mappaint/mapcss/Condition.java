@@ -78,7 +78,7 @@ public abstract class Condition {
         EQ, NEQ, GREATER_OR_EQUAL, GREATER, LESS_OR_EQUAL, LESS,
         REGEX, NREGEX, ONE_OF, BEGINS_WITH, ENDS_WITH, CONTAINS;
 
-        private static Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
+        private static final Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
 
         public boolean eval(String testString, String prototypeString) {
             if (testString == null && !NEGATED_OPS.contains(this))

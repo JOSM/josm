@@ -54,5 +54,4 @@ public class Condition implements TemplateEntry {
         }
         return sb.toString();
     }
-
 }

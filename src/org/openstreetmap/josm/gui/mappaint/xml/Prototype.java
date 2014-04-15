@@ -37,12 +37,10 @@ public abstract class Prototype {
         return code;
     }
 
-    public boolean check(OsmPrimitive primitive)
-    {
+    public boolean check(OsmPrimitive primitive) {
         if(conditions == null)
             return true;
-        for(XmlCondition r : conditions)
-        {
+        for(XmlCondition r : conditions) {
             String k = primitive.get(r.key);
 
             if (k == null || (r.value != null && !k.equals(r.value)))
@@ -55,5 +53,4 @@ public abstract class Prototype {
         }
         return true;
     }
-
 }
