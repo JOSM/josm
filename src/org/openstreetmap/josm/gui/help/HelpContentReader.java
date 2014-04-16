@@ -42,7 +42,7 @@ public class HelpContentReader extends WikiReader {
      */
     public String fetchHelpTopicContent(String helpTopicUrl, boolean dotest) throws HelpContentReaderException {
         if(helpTopicUrl == null)
-            throw new MissingHelpContentException();
+            throw new MissingHelpContentException(helpTopicUrl);
         HttpURLConnection con = null;
         BufferedReader in = null;
         try {
@@ -89,7 +89,7 @@ public class HelpContentReader extends WikiReader {
             throw new HelpContentReaderException(e);
         }
         if(dotest && s.isEmpty())
-            throw new MissingHelpContentException();
+            throw new MissingHelpContentException(s);
         return s;
     }
 }

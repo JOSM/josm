@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 public class MapCSSException extends RuntimeException {
 
-    protected String specialmessage;
+    protected final String specialmessage;
     protected Integer line;
     protected Integer column;
 

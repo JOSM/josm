@@ -517,7 +517,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Class contains some auxiliary functions
      */
-    private static class EN {
+    private static final class EN {
         private EN() {
             // Hide implicit public constructor for utility class
         }

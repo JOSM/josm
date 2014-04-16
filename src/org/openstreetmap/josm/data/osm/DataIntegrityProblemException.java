@@ -3,10 +3,10 @@ package org.openstreetmap.josm.data.osm;
 
 public class DataIntegrityProblemException extends RuntimeException {
 
-    private String htmlMessage;
+    private final String htmlMessage;
 
     public DataIntegrityProblemException(String message) {
-        super(message);
+        this(message, null);
     }
 
     public DataIntegrityProblemException(String message, String htmlMessage) {
