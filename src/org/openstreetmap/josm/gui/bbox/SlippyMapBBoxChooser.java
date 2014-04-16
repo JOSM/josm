@@ -128,6 +128,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
      * Constructs a new {@code SlippyMapBBoxChooser}.
      */
     public SlippyMapBBoxChooser() {
+        debug = Main.isDebugEnabled();
         SpringLayout springLayout = new SpringLayout();
         setLayout(springLayout);
         TMSLayer.setMaxWorkers();
