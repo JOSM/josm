@@ -10,10 +10,9 @@ import java.util.Stack;
 import org.openstreetmap.josm.data.osm.Relation;
 
 public class CyclicUploadDependencyException extends Exception {
-    private Stack<Relation> cycle;
+    private final Stack<Relation> cycle;
 
     public CyclicUploadDependencyException(Stack<Relation> cycle) {
-        super();
         this.cycle = cycle;
     }
 

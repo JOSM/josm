@@ -147,11 +147,11 @@ public class OsmOAuthAuthorizationClient {
             return OAuthToken.createToken(consumer);
         } catch(OAuthCommunicationException e){
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException(e);
             throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException(e);
             throw new OsmOAuthAuthorizationException(e);
         } finally {
             monitor.finishTask();
@@ -181,11 +181,11 @@ public class OsmOAuthAuthorizationClient {
             return OAuthToken.createToken(consumer);
         } catch(OAuthCommunicationException e){
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException(e);
             throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException(e);
             throw new OsmOAuthAuthorizationException(e);
         } finally {
             monitor.finishTask();
@@ -568,7 +568,7 @@ public class OsmOAuthAuthorizationClient {
             monitor.worked(1);
         } catch(OsmOAuthAuthorizationException e) {
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException(e);
             throw e;
         } finally {
             monitor.finishTask();

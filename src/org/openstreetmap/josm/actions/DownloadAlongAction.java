@@ -44,7 +44,7 @@ public abstract class DownloadAlongAction extends JosmAction {
         super(name, iconName, tooltip, shortcut, registerInToolbar);
     }
     
-    protected static void addToDownload(Area a, Rectangle2D r, Collection<Rectangle2D> results, double max_area) {
+    protected static void addToDownload(Area a, Rectangle2D r, Collection<Rectangle2D> results, double maxArea) {
         Area tmp = new Area(r);
         // intersect with sought-after area
         tmp.intersect(a);
@@ -52,7 +52,7 @@ public abstract class DownloadAlongAction extends JosmAction {
             return;
         }
         Rectangle2D bounds = tmp.getBounds2D();
-        if (bounds.getWidth() * bounds.getHeight() > max_area) {
+        if (bounds.getWidth() * bounds.getHeight() > maxArea) {
             // the rectangle gets too large; split it and make recursive call.
             Rectangle2D r1;
             Rectangle2D r2;
@@ -67,8 +67,8 @@ public abstract class DownloadAlongAction extends JosmAction {
                 r2 = new Rectangle2D.Double(bounds.getX(), bounds.getY() + bounds.getHeight() / 2, bounds.getWidth(),
                         bounds.getHeight() / 2);
             }
-            addToDownload(a, r1, results, max_area);
-            addToDownload(a, r2, results, max_area);
+            addToDownload(a, r1, results, maxArea);
+            addToDownload(a, r2, results, maxArea);
         } else {
             results.add(bounds);
         }
@@ -91,9 +91,9 @@ public abstract class DownloadAlongAction extends JosmAction {
      * This functions calculates the rectangles, asks the user to continue and downloads
      * the areas if applicable.
      */
-    protected static void confirmAndDownloadAreas(Area a, double max_area, boolean osmDownload, boolean gpxDownload, String title, ProgressMonitor progressMonitor) {
+    protected static void confirmAndDownloadAreas(Area a, double maxArea, boolean osmDownload, boolean gpxDownload, String title, ProgressMonitor progressMonitor) {
         List<Rectangle2D> toDownload = new ArrayList<Rectangle2D>();
-        addToDownload(a, a.getBounds(), toDownload, max_area);
+        addToDownload(a, a.getBounds(), toDownload, maxArea);
         if (toDownload.isEmpty()) {
             return;
         }

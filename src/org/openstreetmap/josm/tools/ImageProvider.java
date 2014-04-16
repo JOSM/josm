@@ -456,25 +456,25 @@ public class ImageProvider {
                         type = ImageType.OTHER;
                     }
 
-                    String full_name = subdir + name + ext;
-                    String cache_name = full_name;
+                    String fullName = subdir + name + ext;
+                    String cacheName = fullName;
                     /* cache separately */
                     if (dirs != null && !dirs.isEmpty()) {
-                        cache_name = "id:" + id + ":" + full_name;
+                        cacheName = "id:" + id + ":" + fullName;
                         if(archive != null) {
-                            cache_name += ":" + archive.getName();
+                            cacheName += ":" + archive.getName();
                         }
                     }
 
-                    ImageResource ir = cache.get(cache_name);
+                    ImageResource ir = cache.get(cacheName);
                     if (ir != null) return ir;
 
                     switch (place) {
                     case ARCHIVE:
                         if (archive != null) {
-                            ir = getIfAvailableZip(full_name, archive, inArchiveDir, type);
+                            ir = getIfAvailableZip(fullName, archive, inArchiveDir, type);
                             if (ir != null) {
-                                cache.put(cache_name, ir);
+                                cache.put(cacheName, ir);
                                 return ir;
                             }
                         }
@@ -485,13 +485,13 @@ public class ImageProvider {
                         // index the cache by the name of the icon we're looking for
                         // and don't bother to create a URL unless we're actually
                         // creating the image.
-                        URL path = getImageUrl(full_name, dirs, additionalClassLoaders);
+                        URL path = getImageUrl(fullName, dirs, additionalClassLoaders);
                         if (path == null) {
                             continue;
                         }
                         ir = getIfAvailableLocalURL(path, type);
                         if (ir != null) {
-                            cache.put(cache_name, ir);
+                            cache.put(cacheName, ir);
                             return ir;
                         }
                         break;
@@ -601,18 +601,17 @@ public class ImageProvider {
         return result;
     }
 
-    private static ImageResource getIfAvailableZip(String full_name, File archive, String inArchiveDir, ImageType type) {
+    private static ImageResource getIfAvailableZip(String fullName, File archive, String inArchiveDir, ImageType type) {
         ZipFile zipFile = null;
-        try
-        {
+        try {
             zipFile = new ZipFile(archive);
             if (inArchiveDir == null || inArchiveDir.equals(".")) {
                 inArchiveDir = "";
             } else if (!inArchiveDir.isEmpty()) {
                 inArchiveDir += "/";
             }
-            String entry_name = inArchiveDir + full_name;
-            ZipEntry entry = zipFile.getEntry(entry_name);
+            String entryName = inArchiveDir + fullName;
+            ZipEntry entry = zipFile.getEntry(entryName);
             if(entry != null)
             {
                 int size = (int)entry.getSize();
@@ -623,7 +622,7 @@ public class ImageProvider {
                     is = zipFile.getInputStream(entry);
                     switch (type) {
                     case SVG:
-                        URI uri = getSvgUniverse().loadSVG(is, entry_name);
+                        URI uri = getSvgUniverse().loadSVG(is, entryName);
                         SVGDiagram svg = getSvgUniverse().getDiagram(uri);
                         return svg == null ? null : new ImageResource(svg);
                     case OTHER:
@@ -754,7 +753,7 @@ public class ImageProvider {
 
         /** Quit parsing, when a certain condition is met */
         class SAXReturnException extends SAXException {
-            private String result;
+            private final String result;
 
             public SAXReturnException(String result) {
                 this.result = result;

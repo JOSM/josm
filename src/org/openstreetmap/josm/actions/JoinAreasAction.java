@@ -111,9 +111,9 @@ public class JoinAreasAction extends JosmAction {
         public final Way way;
         public boolean insideToTheRight;
 
-        public WayInPolygon(Way _way, boolean _insideRight) {
-            this.way = _way;
-            this.insideToTheRight = _insideRight;
+        public WayInPolygon(Way way, boolean insideRight) {
+            this.way = way;
+            this.insideToTheRight = insideRight;
         }
 
         @Override
@@ -288,9 +288,9 @@ public class JoinAreasAction extends JosmAction {
         public final int level;
         public final AssembledMultipolygon pol;
 
-        public PolygonLevel(AssembledMultipolygon _pol, int _level) {
-            pol = _pol;
-            level = _level;
+        public PolygonLevel(AssembledMultipolygon pol, int level) {
+            this.pol = pol;
+            this.level = level;
         }
     }
 

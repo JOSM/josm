@@ -738,7 +738,7 @@ public final class CustomConfigurator {
      * deletion by key and by value
      * Also contains functions that convert preferences object to JavaScript object and back
      */
-    public static class PreferencesUtils {
+    public static final class PreferencesUtils {
 
         private PreferencesUtils() {
             // Hide implicit public constructor for utility class

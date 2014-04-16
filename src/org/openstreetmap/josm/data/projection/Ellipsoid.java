@@ -236,21 +236,22 @@ public final class Ellipsoid {
     /**
      * convert cartesian coordinates to ellipsoidal coordinates
      *
-     * @param XYZ the coordinates in meters (X, Y, Z)
+     * @param xyz the coordinates in meters (X, Y, Z)
      * @return The corresponding latitude and longitude in degrees
      */
-    public LatLon cart2LatLon(double[] XYZ) {
-        return cart2LatLon(XYZ, 1e-11);
+    public LatLon cart2LatLon(double[] xyz) {
+        return cart2LatLon(xyz, 1e-11);
     }
-    public LatLon cart2LatLon(double[] XYZ, double epsilon) {
-        double norm = Math.sqrt(XYZ[0] * XYZ[0] + XYZ[1] * XYZ[1]);
-        double lg = 2.0 * Math.atan(XYZ[1] / (XYZ[0] + norm));
-        double lt = Math.atan(XYZ[2] / (norm * (1.0 - (a * e2 / Math.sqrt(XYZ[0] * XYZ[0] + XYZ[1] * XYZ[1] + XYZ[2] * XYZ[2])))));
+
+    public LatLon cart2LatLon(double[] xyz, double epsilon) {
+        double norm = Math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1]);
+        double lg = 2.0 * Math.atan(xyz[1] / (xyz[0] + norm));
+        double lt = Math.atan(xyz[2] / (norm * (1.0 - (a * e2 / Math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1] + xyz[2] * xyz[2])))));
         double delta = 1.0;
         while (delta > epsilon) {
             double s2 = Math.sin(lt);
             s2 *= s2;
-            double l = Math.atan((XYZ[2] / norm)
+            double l = Math.atan((xyz[2] / norm)
                     / (1.0 - (a * e2 * Math.cos(lt) / (norm * Math.sqrt(1.0 - e2 * s2)))));
             delta = Math.abs(l - lt);
             lt = l;
@@ -269,11 +270,11 @@ public final class Ellipsoid {
         double lambda = Math.toRadians(coord.lon());
 
         double Rn = a / Math.sqrt(1 - e2 * Math.pow(Math.sin(phi), 2));
-        double[] XYZ = new double[3];
-        XYZ[0] = Rn * Math.cos(phi) * Math.cos(lambda);
-        XYZ[1] = Rn * Math.cos(phi) * Math.sin(lambda);
-        XYZ[2] = Rn * (1 - e2) * Math.sin(phi);
+        double[] xyz = new double[3];
+        xyz[0] = Rn * Math.cos(phi) * Math.cos(lambda);
+        xyz[1] = Rn * Math.cos(phi) * Math.sin(lambda);
+        xyz[2] = Rn * (1 - e2) * Math.sin(phi);
 
-        return XYZ;
+        return xyz;
     }
 }

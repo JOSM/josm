@@ -438,6 +438,7 @@ public class MenuScroller {
     @Override
     protected void finalize() throws Throwable {
         dispose();
+        super.finalize();
     }
 
     private void refreshMenu() {
@@ -565,7 +566,7 @@ public class MenuScroller {
 
         UP(9, 1, 9),
         DOWN(1, 9, 1);
-        static final int[] xPoints = {1, 5, 9};
+        static final int[] XPOINTS = {1, 5, 9};
         final int[] yPoints;
 
         MenuIcon(int... yPoints) {
@@ -577,10 +578,10 @@ public class MenuScroller {
             Dimension size = c.getSize();
             Graphics g2 = g.create(size.width / 2 - 5, size.height / 2 - 5, 10, 10);
             g2.setColor(Color.GRAY);
-            g2.drawPolygon(xPoints, yPoints, 3);
+            g2.drawPolygon(XPOINTS, yPoints, 3);
             if (c.isEnabled()) {
                 g2.setColor(Color.BLACK);
-                g2.fillPolygon(xPoints, yPoints, 3);
+                g2.fillPolygon(XPOINTS, yPoints, 3);
             }
             g2.dispose();
         }
