@@ -164,7 +164,7 @@ public class RequestProcessor extends Thread {
             }
             String url = st.nextToken();
 
-            if (!method.equals("GET")) {
+            if (!"GET".equals(method)) {
                 sendNotImplemented(out);
                 return;
             }

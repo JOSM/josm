@@ -186,13 +186,13 @@ public class JosmComboBox extends JComboBox {
         private PopupMenuLauncher launcher;
 
         @Override public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals("editable")) {
+            if ("editable".equals(evt.getPropertyName())) {
                 if (evt.getNewValue().equals(true)) {
                     enableMenu();
                 } else {
                     disableMenu();
                 }
-            } else if (evt.getPropertyName().equals("editor")) {
+            } else if ("editor".equals(evt.getPropertyName())) {
                 disableMenu();
                 if (isEditable()) {
                     enableMenu();

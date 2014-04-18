@@ -428,14 +428,14 @@ public interface Selector {
         }
 
         public boolean matchesBase(OsmPrimitiveType type) {
-            if (base.equals("*")) {
+            if ("*".equals(base)) {
                 return true;
             } else if (OsmPrimitiveType.NODE.equals(type)) {
-                return base.equals("node");
+                return "node".equals(base);
             } else if (OsmPrimitiveType.WAY.equals(type)) {
-                return base.equals("way") || base.equals("area");
+                return "way".equals(base) || "area".equals(base);
             } else if (OsmPrimitiveType.RELATION.equals(type)) {
-                return base.equals("area") || base.equals("relation") || base.equals("canvas");
+                return "area".equals(base) || "relation".equals(base) || "canvas".equals(base);
             }
             return false;
         }
@@ -445,9 +445,9 @@ public interface Selector {
                 return false;
             } else {
                 if (p instanceof Relation) {
-                    if (base.equals("area")) {
+                    if ("area".equals(base)) {
                         return ((Relation) p).isMultipolygon();
-                    } else if (base.equals("canvas")) {
+                    } else if ("canvas".equals(base)) {
                         return p.get("#canvas") != null;
                     }
                 }

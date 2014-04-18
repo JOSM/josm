@@ -174,6 +174,10 @@ public final class ChangesetCache implements PreferenceChangedListener{
         fireChangesetCacheEvent(e);
     }
 
+    /**
+     * Replies the list of open changesets.
+     * @return The list of open changesets
+     */
     public List<Changeset> getOpenChangesets() {
         List<Changeset> ret = new ArrayList<Changeset>();
         for (Changeset cs: cache.values()) {
@@ -189,7 +193,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
     /* ------------------------------------------------------------------------- */
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
-        if (e.getKey() == null || ! e.getKey().equals("osm-server.url"))
+        if (e.getKey() == null || !"osm-server.url".equals(e.getKey()))
             return;
 
         // clear the cache when the API url changes

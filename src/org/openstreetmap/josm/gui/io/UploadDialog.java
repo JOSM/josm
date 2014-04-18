@@ -577,7 +577,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     /* -------------------------------------------------------------------------- */
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
-        if (e.getKey() == null || ! e.getKey().equals("osm-server.url"))
+        if (e.getKey() == null || !"osm-server.url".equals(e.getKey()))
             return;
         final Setting<?> newValue = e.getNewValue();
         final String url;

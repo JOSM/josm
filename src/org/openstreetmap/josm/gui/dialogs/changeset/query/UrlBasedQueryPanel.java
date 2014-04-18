@@ -168,14 +168,14 @@ public class UrlBasedQueryPanel extends JPanel {
             return fb == null ? "none" : fb;
         }
         protected void feedbackValid() {
-            if (getCurrentFeedback().equals("valid")) return;
+            if ("valid".equals(getCurrentFeedback())) return;
             lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
             lblValid.setToolTipText("");
             lblValid.putClientProperty("valid", "valid");
         }
 
         protected void feedbackInvalid() {
-            if (getCurrentFeedback().equals("invalid")) return;
+            if ("invalid".equals(getCurrentFeedback())) return;
             lblValid.setIcon(ImageProvider.get("warning-small"));
             lblValid.setToolTipText(tr("This changeset query URL is invalid"));
             lblValid.putClientProperty("valid", "invalid");

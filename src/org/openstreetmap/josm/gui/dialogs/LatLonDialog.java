@@ -362,7 +362,7 @@ public class LatLonDialog extends ExtendedDialog {
             } else if (m.group(7) != null) {
                 sb.append("x");     // cardinal direction
                 String c = m.group(7).toUpperCase();
-                if (c.equals("N") || c.equals("S") || c.equals("E") || c.equals("W")) {
+                if ("N".equals(c) || "S".equals(c) || "E".equals(c) || "W".equals(c)) {
                     list.add(c);
                 } else {
                     list.add(c.replace(N_TR, 'N').replace(S_TR, 'S')
@@ -460,8 +460,8 @@ public class LatLonDialog extends ExtendedDialog {
         }
 
         double coord = (coordDeg < 0 ? -1 : 1) * (Math.abs(coordDeg) + coordMin / 60 + coordSec / 3600);
-        coord = card.equals("N") || card.equals("E") ? coord : -coord;
-        if (card.equals("N") || card.equals("S")) {
+        coord = "N".equals(card) || "E".equals(card) ? coord : -coord;
+        if ("N".equals(card) || "S".equals(card)) {
             latLon.lat = coord;
         } else {
             latLon.lon = coord;

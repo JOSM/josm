@@ -15,6 +15,10 @@ import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 
+/**
+ * Provides utility methods for help system.
+ * @since 2252
+ */
 public final class HelpUtil {
 
     private HelpUtil() {
@@ -139,7 +143,7 @@ public final class HelpUtil {
      */
     public static String buildAbsoluteHelpTopic(String topic, LocaleType type) {
         String prefix = getHelpTopicPrefix(type);
-        if (prefix == null || topic == null || topic.trim().length() == 0 || topic.trim().equals("/"))
+        if (prefix == null || topic == null || topic.trim().length() == 0 || "/".equals(topic.trim()))
             return prefix;
         prefix += "/" + topic;
         return prefix.replaceAll("\\/+", "\\/"); // collapse sequences of //
@@ -219,8 +223,8 @@ public final class HelpUtil {
      *     putValue("help", ht("/Dialog/RelationEditor"));
      *  </pre>
      *
-     *
-     * @param helpTopic
+     * @param helpTopic Help topic to mark
+     * @return {@code helpTopic}
      */
     public static String ht(String helpTopic) {
         // this is just a marker method

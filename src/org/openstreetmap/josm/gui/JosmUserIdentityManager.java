@@ -20,7 +20,7 @@ import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * JosmUserStateManager is a global object which keeps track of what JOSM knows about
+ * JosmUserIdentityManager is a global object which keeps track of what JOSM knows about
  * the identity of the current user.
  *
  * JOSM can be operated anonymously provided the current user never invokes an operation
@@ -36,12 +36,12 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * <tt>GET /api/0.6/user/details</tt> request, submitted with the user name and password
  * of the current user.
  *
- * The global JosmUserStateManager listens to {@link PreferenceChangeEvent}s and keeps track
+ * The global JosmUserIdentityManager listens to {@link PreferenceChangeEvent}s and keeps track
  * of what the current JOSM instance knows about the current user. Other subsystems can
- * let the global JosmUserStateManager know in case they fully identify the current user, see
+ * let the global JosmUserIdentityManager know in case they fully identify the current user, see
  * {@link #setFullyIdentified}.
  *
- * The information kept by the JosmUserStateManager can be used to
+ * The information kept by the JosmUserIdentityManager can be used to
  * <ul>
  *   <li>safely query changesets owned by the current user based on its user id, not on its user name</li>
  *   <li>safely search for objects last touched by the current user based on its user id, not on its user name</li>
@@ -241,7 +241,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
     /* ------------------------------------------------------------------- */
     @Override
     public void preferenceChanged(PreferenceChangeEvent evt) {
-        if (evt.getKey().equals("osm-server.username")) {
+        if ("osm-server.username".equals(evt.getKey())) {
             if (!(evt.getNewValue() instanceof StringSetting)) return;
             String newValue = ((StringSetting) evt.getNewValue()).getValue();
             if (newValue == null || newValue.trim().length() == 0) {
@@ -253,7 +253,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
             }
             return;
 
-        } else if (evt.getKey().equals("osm-server.url")) {
+        } else if ("osm-server.url".equals(evt.getKey())) {
             if (!(evt.getNewValue() instanceof StringSetting)) return;
             String newValue = ((StringSetting) evt.getNewValue()).getValue();
             if (newValue == null || newValue.trim().isEmpty()) {
@@ -262,10 +262,10 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
                 setPartiallyIdentified(getUserName());
             }
 
-        } else if (evt.getKey().equals("oauth.access-token.key")) {
+        } else if ("oauth.access-token.key".equals(evt.getKey())) {
             accessTokenKeyChanged = true;
 
-        } else if (evt.getKey().equals("oauth.access-token.secret")) {
+        } else if ("oauth.access-token.secret".equals(evt.getKey())) {
             accessTokenSecretChanged = true;
         }
 

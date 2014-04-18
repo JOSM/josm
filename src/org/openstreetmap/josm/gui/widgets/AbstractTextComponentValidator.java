@@ -172,7 +172,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /* -------------------------------------------------------------------------------- */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("enabled")) {
+        if ("enabled".equals(evt.getPropertyName())) {
             boolean enabled = (Boolean)evt.getNewValue();
             if (enabled) {
                 validate();

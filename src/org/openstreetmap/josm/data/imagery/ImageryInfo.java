@@ -764,14 +764,14 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      */
     public void setAttribution(AbstractTileSource s) {
         if (attributionText != null) {
-            if (attributionText.equals("osm")) {
+            if ("osm".equals(attributionText)) {
                 s.setAttributionText(new Mapnik().getAttributionText(0, null, null));
             } else {
                 s.setAttributionText(attributionText);
             }
         }
         if (attributionLinkURL != null) {
-            if (attributionLinkURL.equals("osm")) {
+            if ("osm".equals(attributionLinkURL)) {
                 s.setAttributionLinkURL(new Mapnik().getAttributionLinkURL());
             } else {
                 s.setAttributionLinkURL(attributionLinkURL);
@@ -790,7 +790,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             s.setTermsOfUseText(termsOfUseText);
         }
         if (termsOfUseURL != null) {
-            if (termsOfUseURL.equals("osm")) {
+            if ("osm".equals(termsOfUseURL)) {
                 s.setTermsOfUseURL(new Mapnik().getTermsOfUseURL());
             } else {
                 s.setTermsOfUseURL(termsOfUseURL);

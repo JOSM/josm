@@ -1055,9 +1055,9 @@ public abstract class Main {
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase().startsWith("windows")) {
             platform = new PlatformHookWindows();
-        } else if (os.equals("Linux") || os.equals("Solaris") ||
-                os.equals("SunOS") || os.equals("AIX") ||
-                os.equals("FreeBSD") || os.equals("NetBSD") || os.equals("OpenBSD")) {
+        } else if ("Linux".equals(os) || "Solaris".equals(os) ||
+                "SunOS".equals(os) || "AIX".equals(os) ||
+                "FreeBSD".equals(os) || "NetBSD".equals(os) || "OpenBSD".equals(os)) {
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase().startsWith("mac os x")) {
             platform = new PlatformHookOsx();

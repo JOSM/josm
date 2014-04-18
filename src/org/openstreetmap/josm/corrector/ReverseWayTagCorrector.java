@@ -190,7 +190,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         if (!matcher.matches()) return value;
         String sign = matcher.group(1);
         String rest = matcher.group(2);
-        sign = sign.equals("-") ? "" : "-";
+        sign = "-".equals(sign) ? "" : "-";
         return sign + rest;
     }
 

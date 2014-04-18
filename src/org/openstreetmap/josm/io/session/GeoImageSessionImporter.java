@@ -36,7 +36,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
             Node imgNode = imgNodes.item(i);
             if (imgNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element imgElem = (Element) imgNode;
-                if (imgElem.getTagName().equals("geoimage")) {
+                if ("geoimage".equals(imgElem.getTagName())) {
                     ImageEntry entry = new ImageEntry();
                     NodeList attrNodes = imgElem.getChildNodes();
                     for (int j=0; j<attrNodes.getLength(); ++j) {
@@ -44,31 +44,32 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                         if (attrNode.getNodeType() == Node.ELEMENT_NODE) {
                             Element attrElem = (Element) attrNode;
                             try {
-                                if (attrElem.getTagName().equals("file")) {
+                                String attrElemName = attrElem.getTagName();
+                                if ("file".equals(attrElemName)) {
                                     entry.setFile(new File(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("position")) {
+                                } else if ("position".equals(attrElemName)) {
                                     double lat = Double.parseDouble(attrElem.getAttribute("lat"));
                                     double lon = Double.parseDouble(attrElem.getAttribute("lon"));
                                     entry.setPos(new LatLon(lat, lon));
-                                } else if (attrElem.getTagName().equals("speed")) {
+                                } else if ("speed".equals(attrElemName)) {
                                     entry.setSpeed(Double.parseDouble(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("elevation")) {
+                                } else if ("elevation".equals(attrElemName)) {
                                     entry.setElevation(Double.parseDouble(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("gps-time")) {
+                                } else if ("gps-time".equals(attrElemName)) {
                                     entry.setGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if (attrElem.getTagName().equals("exif-orientation")) {
+                                } else if ("exif-orientation".equals(attrElemName)) {
                                     entry.setExifOrientation(Integer.parseInt(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("exif-time")) {
+                                } else if ("exif-time".equals(attrElemName)) {
                                     entry.setExifTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if (attrElem.getTagName().equals("exif-gps-time")) {
+                                } else if ("exif-gps-time".equals(attrElemName)) {
                                     entry.setExifGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if (attrElem.getTagName().equals("exif-coordinates")) {
+                                } else if ("exif-coordinates".equals(attrElemName)) {
                                     double lat = Double.parseDouble(attrElem.getAttribute("lat"));
                                     double lon = Double.parseDouble(attrElem.getAttribute("lon"));
                                     entry.setExifCoor(new LatLon(lat, lon));
-                                } else if (attrElem.getTagName().equals("exif-image-direction")) {
+                                } else if ("exif-image-direction".equals(attrElemName)) {
                                     entry.setExifImgDir(Double.parseDouble(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("is-new-gps-data") && Boolean.parseBoolean(attrElem.getTextContent())) {
+                                } else if ("is-new-gps-data".equals(attrElemName) && Boolean.parseBoolean(attrElem.getTextContent())) {
                                     entry.flagNewGpsData();
                                 }
                                 // TODO: handle thumbnail loading
@@ -78,7 +79,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                         }
                     }
                     entries.add(entry);
-                } else if (imgElem.getTagName().equals("show-thumbnails")) {
+                } else if ("show-thumbnails".equals(imgElem.getTagName())) {
                     useThumbs = Boolean.parseBoolean(imgElem.getTextContent());
                 }
             }

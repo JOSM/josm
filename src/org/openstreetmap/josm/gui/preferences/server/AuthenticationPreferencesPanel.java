@@ -114,9 +114,9 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
      */
     public final void initFromPreferences() {
         String authMethod = Main.pref.get("osm-server.auth-method", "basic");
-        if (authMethod.equals("basic")) {
+        if ("basic".equals(authMethod)) {
             rbBasicAuthentication.setSelected(true);
-        } else if (authMethod.equals("oauth")) {
+        } else if ("oauth".equals(authMethod)) {
             rbOAuth.setSelected(true);
         } else {
             Main.warn(tr("Unsupported value in preference ''{0}'', got ''{1}''. Using authentication method ''Basic Authentication''.", "osm-server.auth-method", authMethod));
@@ -139,12 +139,12 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             authMethod = "oauth";
         }
         Main.pref.put("osm-server.auth-method", authMethod);
-        if (authMethod.equals("basic")) {
+        if ("basic".equals(authMethod)) {
             // save username and password and clear the OAuth token
             pnlBasicAuthPreferences.saveToPreferences();
             OAuthAccessTokenHolder.getInstance().clear();
             OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
-        } else if (authMethod.equals("oauth")) {
+        } else if ("oauth".equals(authMethod)) {
             // clear the password in the preferences
             pnlBasicAuthPreferences.clearPassword();
             pnlBasicAuthPreferences.saveToPreferences();

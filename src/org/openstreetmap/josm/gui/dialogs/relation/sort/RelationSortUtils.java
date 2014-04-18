@@ -49,15 +49,14 @@ final class RelationSortUtils {
     }
 
     static boolean isBackward(final RelationMember member){
-        return member.getRole().equals("backward");
+        return "backward".equals(member.getRole());
     }
 
     static boolean isForward(final RelationMember member){
-        return member.getRole().equals("forward");
+        return "forward".equals(member.getRole());
     }
 
     static boolean isOneway(final RelationMember member){
         return isForward(member) || isBackward(member);
     }
-
 }

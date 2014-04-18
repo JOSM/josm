@@ -155,11 +155,12 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-            if (e.getDescription() == null || configHandler == null)
+            String desc = e.getDescription();
+            if (desc == null || configHandler == null)
                 return;
-            if (e.getDescription().equals("urn:changeset-configuration")) {
+            if ("urn:changeset-configuration".equals(desc)) {
                 configHandler.handleChangesetConfigurationRequest();
-            } else if (e.getDescription().equals("urn:advanced-configuration")) {
+            } else if ("urn:advanced-configuration".equals(desc)) {
                 configHandler.handleUploadStrategyConfigurationRequest();
             }
         }

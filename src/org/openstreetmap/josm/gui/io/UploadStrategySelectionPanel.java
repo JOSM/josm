@@ -405,7 +405,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             tf.setBackground(UIManager.getColor("TextField.background"));
         }
 
-        protected void valiateChunkSize() {
+        protected void validateChunkSize() {
             try {
                 int chunkSize = Integer.parseInt(tfChunkSize.getText().trim());
                 int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
@@ -429,26 +429,26 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
         @Override
         public void changedUpdate(DocumentEvent arg0) {
-            valiateChunkSize();
+            validateChunkSize();
         }
 
         @Override
         public void insertUpdate(DocumentEvent arg0) {
-            valiateChunkSize();
+            validateChunkSize();
         }
 
         @Override
         public void removeUpdate(DocumentEvent arg0) {
-            valiateChunkSize();
+            validateChunkSize();
         }
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getSource() == tfChunkSize
-                    && evt.getPropertyName().equals("enabled")
+                    && "enabled".equals(evt.getPropertyName())
                     && (Boolean)evt.getNewValue()
             ) {
-                valiateChunkSize();
+                validateChunkSize();
             }
         }
     }
