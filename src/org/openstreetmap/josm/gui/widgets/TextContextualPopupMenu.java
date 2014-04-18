@@ -41,7 +41,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
 
     protected final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
         @Override public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals("editable")) {
+            if ("editable".equals(evt.getPropertyName())) {
                 removeAll();
                 addMenuEntries();
             }

@@ -205,9 +205,9 @@ public class PlaceSelection implements DownloadSelection {
         throws SAXException {
             depth++;
             try {
-                if (qName.equals("searchresults")) {
+                if ("searchresults".equals(qName)) {
                     // do nothing
-                } else if (qName.equals("named") && (depth == 2)) {
+                } else if ("named".equals(qName) && (depth == 2)) {
                     currentResult = new PlaceSelection.SearchResult();
                     currentResult.name = atts.getValue("name");
                     currentResult.info = atts.getValue("info");
@@ -218,15 +218,15 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
                     currentResult.zoom = Integer.parseInt(atts.getValue("zoom"));
                     data.add(currentResult);
-                } else if (qName.equals("description") && (depth == 3)) {
+                } else if ("description".equals(qName) && (depth == 3)) {
                     description = new StringBuffer();
-                } else if (qName.equals("named") && (depth == 4)) {
+                } else if ("named".equals(qName) && (depth == 4)) {
                     // this is a "named" place in the nearest places list.
                     String info = atts.getValue("info");
                     if ("city".equals(info) || "town".equals(info) || "village".equals(info)) {
                         currentResult.nearestPlace = atts.getValue("name");
                     }
-                } else if (qName.equals("place") && atts.getValue("lat") != null) {
+                } else if ("place".equals(qName) && atts.getValue("lat") != null) {
                     currentResult = new PlaceSelection.SearchResult();
                     currentResult.name = atts.getValue("display_name");
                     currentResult.description = currentResult.name;
@@ -257,7 +257,7 @@ public class PlaceSelection implements DownloadSelection {
          */
         @Override
         public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-            if (qName.equals("description") && description != null) {
+            if ("description".equals(qName) && description != null) {
                 currentResult.description = description.toString();
                 description = null;
             }

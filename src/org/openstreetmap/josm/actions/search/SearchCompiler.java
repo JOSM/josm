@@ -501,7 +501,7 @@ public class SearchCompiler {
             } else {
                 String mv = null;
 
-                if (key.equals("timestamp")) {
+                if ("timestamp".equals(key)) {
                     mv = DateUtils.fromDate(osm.getTimestamp());
                 } else {
                     mv = osm.get(key);
@@ -602,7 +602,7 @@ public class SearchCompiler {
                 }
             }
 
-            if (regexp && key.length() > 0 && !key.equals("*")) {
+            if (regexp && key.length() > 0 && !"*".equals(key)) {
                 try {
                     keyPattern = Pattern.compile(key, regexFlags(false));
                 } catch (PatternSyntaxException e) {
@@ -613,7 +613,7 @@ public class SearchCompiler {
             } else {
                 keyPattern = null;
             }
-            if (regexp && this.value.length() > 0 && !this.value.equals("*")) {
+            if (regexp && this.value.length() > 0 && !"*".equals(this.value)) {
                 try {
                     valuePattern = Pattern.compile(this.value, regexFlags(false));
                 } catch (PatternSyntaxException e) {
@@ -768,7 +768,7 @@ public class SearchCompiler {
     private static class UserMatch extends Match {
         private String user;
         public UserMatch(String user) {
-            if (user.equals("anonymous")) {
+            if ("anonymous".equals(user)) {
                 this.user = null;
             } else {
                 this.user = user;
@@ -1313,11 +1313,11 @@ public class SearchCompiler {
         if (value == null) {
             value = "";
         }
-        if (key.equals("type"))
+        if ("type".equals(key))
             return new ExactType(value);
-        else if (key.equals("user"))
+        else if ("user".equals(key))
             return new UserMatch(value);
-        else if (key.equals("role"))
+        else if ("role".equals(key))
             return new RoleMatch(value);
         else
             return new KeyValue(key, value, regexSearch, caseSensitive);

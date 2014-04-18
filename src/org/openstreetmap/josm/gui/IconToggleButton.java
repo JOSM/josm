@@ -61,10 +61,10 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("active")) {
+        if ("active".equals(evt.getPropertyName())) {
             setSelected((Boolean)evt.getNewValue());
             requestFocusInWindow();
-        } else if (evt.getPropertyName().equals("selected")) {
+        } else if ("selected".equals(evt.getPropertyName())) {
             setSelected((Boolean)evt.getNewValue());
         }
     }

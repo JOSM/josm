@@ -326,6 +326,6 @@ public class Test extends AbstractVisitor {
      */
     protected static final boolean isBuilding(OsmPrimitive p) {
         String v = p.get("building");
-        return v != null && !v.equals("no") && !v.equals("entrance");
+        return v != null && !"no".equals(v) && !"entrance".equals(v);
     }
 }

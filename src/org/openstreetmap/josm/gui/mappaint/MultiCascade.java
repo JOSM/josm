@@ -18,6 +18,9 @@ public class MultiCascade implements StyleKeys {
     private Map<String, Cascade> layers;
     public Range range;
 
+    /**
+     * Constructs a new {@code MultiCascade}.
+     */
     public MultiCascade() {
         layers = new HashMap<String, Cascade>();
         range = Range.ZERO_TO_INFINITY;
@@ -38,7 +41,7 @@ public class MultiCascade implements StyleKeys {
                 c = new Cascade();
                 // Everything that is not on the default layer is assumed to
                 // be a modifier. Can be overridden in style definition.
-                if (!layer.equals("default") && !layer.equals("*")) {
+                if (!"default".equals(layer) && !"*".equals(layer)) {
                     c.put(MODIFIER, true);
                 }
             }
@@ -59,7 +62,7 @@ public class MultiCascade implements StyleKeys {
         Cascade c = layers.get(layer);
         if (c == null) {
             c = new Cascade();
-            if (!layer.equals("default") && !layer.equals("*")) {
+            if (!"default".equals(layer) && !"*".equals(layer)) {
                 c.put(MODIFIER, true);
             }
         }

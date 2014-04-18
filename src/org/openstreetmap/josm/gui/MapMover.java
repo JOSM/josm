@@ -40,22 +40,23 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (action.equals(".") || action.equals(",")) {
+            if (".".equals(action) || ",".equals(action)) {
                 Point mouse = nc.getMousePosition();
                 if (mouse == null)
                     mouse = new Point((int)nc.getBounds().getCenterX(), (int)nc.getBounds().getCenterY());
-                MouseWheelEvent we = new MouseWheelEvent(nc, e.getID(), e.getWhen(), e.getModifiers(), mouse.x, mouse.y, 0, false, MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, action.equals(",") ? -1 : 1);
+                MouseWheelEvent we = new MouseWheelEvent(nc, e.getID(), e.getWhen(), e.getModifiers(), mouse.x, mouse.y, 0, false, 
+                        MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, ",".equals(action) ? -1 : 1);
                 mouseWheelMoved(we);
             } else {
                 EastNorth center = nc.getCenter();
                 EastNorth newcenter = nc.getEastNorth(nc.getWidth()/2+nc.getWidth()/5, nc.getHeight()/2+nc.getHeight()/5);
-                if (action.equals("left"))
+                if ("left".equals(action))
                     nc.zoomTo(new EastNorth(2*center.east()-newcenter.east(), center.north()));
-                else if (action.equals("right"))
+                else if ("right".equals(action))
                     nc.zoomTo(new EastNorth(newcenter.east(), center.north()));
-                else if (action.equals("up"))
+                else if ("up".equals(action))
                     nc.zoomTo(new EastNorth(center.east(), 2*center.north()-newcenter.north()));
-                else if (action.equals("down"))
+                else if ("down".equals(action))
                     nc.zoomTo(new EastNorth(center.east(), newcenter.north()));
             }
         }

@@ -27,8 +27,13 @@ public final class TigerUtils {
         return true;
     }
 
+    /**
+     * Determines if the given key denotes an integer value.
+     * @param name The key to determine
+     * @return {@code true} if the given key denotes an integer value
+     */
     public static boolean tagIsInt(String name) {
-        if (name.equals("tiger:tlid"))
+        if ("tiger:tlid".equals(name))
             return true;
         return false;
     }

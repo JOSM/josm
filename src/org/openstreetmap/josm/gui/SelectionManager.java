@@ -278,7 +278,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("active") && !(Boolean)evt.getNewValue() && mousePosStart != null) {
+        if ("active".equals(evt.getPropertyName()) && !(Boolean)evt.getNewValue() && mousePosStart != null) {
             paintRect();
             mousePosStart = null;
             mousePos = null;

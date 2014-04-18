@@ -352,7 +352,7 @@ public final class PluginHandler {
         //
         String policy = Main.pref.get(togglePreferenceKey, "ask");
         policy = policy.trim().toLowerCase();
-        if (policy.equals("never")) {
+        if ("never".equals(policy)) {
             if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Skipping plugin update after JOSM upgrade. Automatic update at startup is disabled."));
             } else if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
@@ -361,7 +361,7 @@ public final class PluginHandler {
             return false;
         }
 
-        if (policy.equals("always")) {
+        if ("always".equals(policy)) {
             if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Running plugin update after JOSM upgrade. Automatic update at startup is enabled."));
             } else if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
@@ -370,7 +370,7 @@ public final class PluginHandler {
             return true;
         }
 
-        if (!policy.equals("ask")) {
+        if (!"ask".equals(policy)) {
             Main.warn(tr("Unexpected value ''{0}'' for preference ''{1}''. Assuming value ''ask''.", policy, togglePreferenceKey));
         }
         int ret = HelpAwareOptionPane.showOptionDialog(
@@ -1354,7 +1354,7 @@ public final class PluginHandler {
         public void initDontShowAgain(String preferencesKey) {
             String policy = Main.pref.get(preferencesKey, "ask");
             policy = policy.trim().toLowerCase();
-            cbDontShowAgain.setSelected(! policy.equals("ask"));
+            cbDontShowAgain.setSelected(!"ask".equals(policy));
         }
 
         public boolean isRememberDecision() {

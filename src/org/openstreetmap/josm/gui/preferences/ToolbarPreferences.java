@@ -486,7 +486,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private final class Move implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("<") && actionsTree.getSelectionCount() > 0) {
+                if ("<".equals(e.getActionCommand()) && actionsTree.getSelectionCount() > 0) {
 
                     int leadItem = selected.getSize();
                     if (selectedList.getSelectedIndex() != -1) {
@@ -499,14 +499,13 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                             selected.add(leadItem++, ActionDefinition.getSeparator());
                         } else if (node.getUserObject() instanceof Action) {
                             selected.add(leadItem++, new ActionDefinition((Action)node.getUserObject()));
-
                         }
                     }
-                } else if (e.getActionCommand().equals(">") && selectedList.getSelectedIndex() != -1) {
+                } else if (">".equals(e.getActionCommand()) && selectedList.getSelectedIndex() != -1) {
                     while (selectedList.getSelectedIndex() != -1) {
                         selected.remove(selectedList.getSelectedIndex());
                     }
-                } else if (e.getActionCommand().equals("up")) {
+                } else if ("up".equals(e.getActionCommand())) {
                     int i = selectedList.getSelectedIndex();
                     Object o = selected.get(i);
                     if (i != 0) {
@@ -514,7 +513,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         selected.add(i-1, o);
                         selectedList.setSelectedIndex(i-1);
                     }
-                } else if (e.getActionCommand().equals("down")) {
+                } else if ("down".equals(e.getActionCommand())) {
                     int i = selectedList.getSelectedIndex();
                     Object o = selected.get(i);
                     if (i != selected.size()-1) {
@@ -579,9 +578,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         private JButton createButton(String name) {
             JButton b = new JButton();
-            if (name.equals("up")) {
+            if ("up".equals(name)) {
                 b.setIcon(ImageProvider.get("dialogs", "up"));
-            } else if (name.equals("down")) {
+            } else if ("down".equals(name)) {
                 b.setIcon(ImageProvider.get("dialogs", "down"));
             } else {
                 b.setText(name);
@@ -738,7 +737,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
                 @Override
                 protected void exportDone(JComponent source, Transferable data, int action) {
-                    if (movingComponent.equals("list")) {
+                    if ("list".equals(movingComponent)) {
                         try {
                             List<?> draggedData = (List<?>) data.getTransferData(ACTION_FLAVOR);
                             boolean localDrop = selected.contains(draggedData.get(0));
@@ -980,7 +979,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         Collection<ActionDefinition> result = new ArrayList<ActionDefinition>();
 
         for (String s : getToolString()) {
-            if (s.equals("|")) {
+            if ("|".equals(s)) {
                 result.add(ActionDefinition.getSeparator());
             } else {
                 ActionDefinition a = actionParser.loadAction(s);

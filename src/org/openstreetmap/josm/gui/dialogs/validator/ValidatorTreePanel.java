@@ -77,7 +77,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
         setErrorList(errors);
         for (KeyListener keyListener : getKeyListeners()) {
             // Fix #3596 - Remove default keyListener to avoid conflicts with JOSM commands
-            if (keyListener.getClass().getName().equals("javax.swing.plaf.basic.BasicTreeUI$Handler")) {
+            if ("javax.swing.plaf.basic.BasicTreeUI$Handler".equals(keyListener.getClass().getName())) {
                 removeKeyListener(keyListener);
             }
         }

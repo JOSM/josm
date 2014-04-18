@@ -248,7 +248,7 @@ public class OsmOAuthAuthorizationClient {
                 if (kv == null || kv.length != 2) {
                     continue;
                 }
-                if (kv[0].equals("_osm_session")) {
+                if ("_osm_session".equals(kv[0])) {
                     // osm session cookie found
                     String token = extractToken(connection);
                     if(token == null)

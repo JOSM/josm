@@ -168,7 +168,7 @@ public class NTV2GridShiftFile implements Serializable {
         int topLevelCount = 0;
         HashMap<String, List<NTV2SubGrid>> subGridMap = new HashMap<String, List<NTV2SubGrid>>();
         for (int i = 0; i < subGrid.length; i++) {
-            if (subGrid[i].getParentSubGridName().equalsIgnoreCase("NONE")) {
+            if ("NONE".equalsIgnoreCase(subGrid[i].getParentSubGridName())) {
                 topLevelCount++;
             }
             subGridMap.put(subGrid[i].getSubGridName(), new ArrayList<NTV2SubGrid>());
@@ -176,7 +176,7 @@ public class NTV2GridShiftFile implements Serializable {
         NTV2SubGrid[] topLevelSubGrid = new NTV2SubGrid[topLevelCount];
         topLevelCount = 0;
         for (int i = 0; i < subGrid.length; i++) {
-            if (subGrid[i].getParentSubGridName().equalsIgnoreCase("NONE")) {
+            if ("NONE".equalsIgnoreCase(subGrid[i].getParentSubGridName())) {
                 topLevelSubGrid[topLevelCount++] = subGrid[i];
             } else {
                 List<NTV2SubGrid> parent = subGridMap.get(subGrid[i].getParentSubGridName());

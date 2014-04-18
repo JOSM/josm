@@ -172,7 +172,7 @@ public class CustomProjection extends AbstractProjection {
             if (m.matches()) {
                 String key = m.group(1);
                 // alias
-                if (key.equals("k")) {
+                if ("k".equals(key)) {
                     key = Param.k_0.key;
                 }
                 String value = null;
@@ -180,7 +180,7 @@ public class CustomProjection extends AbstractProjection {
                     value = m.group(3);
                     // some aliases
                     if (key.equals(Param.proj.key)) {
-                        if (value.equals("longlat") || value.equals("latlon") || value.equals("latlong")) {
+                        if ("longlat".equals(value) || "latlon".equals(value) || "latlong".equals(value)) {
                             value = "lonlat";
                         }
                     }
@@ -263,7 +263,7 @@ public class CustomProjection extends AbstractProjection {
             if (nadgridsId.startsWith("@")) {
                 nadgridsId = nadgridsId.substring(1);
             }
-            if (nadgridsId.equals("null"))
+            if ("null".equals(nadgridsId))
                 return new NullDatum(null, ellps);
             NTV2GridShiftFileWrapper nadgrids = Projections.getNTV2Grid(nadgridsId);
             if (nadgrids == null)

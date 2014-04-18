@@ -135,11 +135,11 @@ public class LatLon extends Coordinate {
         String sMinutes = cDmsMinuteFormatter.format(tMinutes);
         String sSeconds = cDmsSecondFormatter.format(tSeconds);
 
-        if (sSeconds.equals(cDms60)) {
+        if (cDms60.equals(sSeconds)) {
             sSeconds = cDms00;
             sMinutes = cDmsMinuteFormatter.format(tMinutes+1);
         }
-        if (sMinutes.equals("60")) {
+        if ("60".equals(sMinutes)) {
             sMinutes = "00";
             sDegrees = Integer.toString(tDegree+1);
         }

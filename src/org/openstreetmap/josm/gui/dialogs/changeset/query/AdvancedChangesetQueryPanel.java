@@ -361,9 +361,9 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         public void restoreFromSettings() {
             String prefRoot = "changeset-query.advanced.open-restrictions";
             String v = Main.pref.get(prefRoot + ".query-type", "open");
-            rbBoth.setSelected(v.equals("both"));
-            rbOpenOnly.setSelected(v.equals("open"));
-            rbClosedOnly.setSelected(v.equals("closed"));
+            rbBoth.setSelected("both".equals(v));
+            rbOpenOnly.setSelected("open".equals(v));
+            rbClosedOnly.setSelected("closed".equals(v));
         }
     }
 
@@ -598,16 +598,16 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         public void restoreFromSettings() {
             String prefRoot = "changeset-query.advanced.user-restrictions";
             String v = Main.pref.get(prefRoot + ".query-type", "mine");
-            if (v.equals("mine")) {
+            if ("mine".equals(v)) {
                 JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
                 if (im.isAnonymous()) {
                     rbRestrictToUid.setSelected(true);
                 } else {
                     rbRestrictToMyself.setSelected(true);
                 }
-            } else if (v.equals("uid")) {
+            } else if ("uid".equals(v)) {
                 rbRestrictToUid.setSelected(true);
-            } else if (v.equals("username")) {
+            } else if ("username".equals(v)) {
                 rbRestrictToUserName.setSelected(true);
             }
             tfUid.setText(Main.pref.get(prefRoot + ".uid", ""));
@@ -895,8 +895,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         public void restoreFromSettings() {
             String prefRoot = "changeset-query.advanced.open-restrictions";
             String v = Main.pref.get(prefRoot + ".query-type", "closed-after");
-            rbClosedAfter.setSelected(v.equals("closed-after"));
-            rbClosedAfterAndCreatedBefore.setSelected(v.equals("closed-after-created-before"));
+            rbClosedAfter.setSelected("closed-after".equals(v));
+            rbClosedAfterAndCreatedBefore.setSelected("closed-after-created-before".equals(v));
             if (!rbClosedAfter.isSelected() && !rbClosedAfterAndCreatedBefore.isSelected()) {
                 rbClosedAfter.setSelected(true);
             }

@@ -1364,17 +1364,18 @@ public class Preferences {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("tag")) {
+                String localName = parser.getLocalName();
+                if ("tag".equals(localName)) {
                     settingsMap.put(parser.getAttributeValue(null, "key"), new StringSetting(parser.getAttributeValue(null, "value")));
                     jumpToEnd();
-                } else if (parser.getLocalName().equals("list") ||
-                        parser.getLocalName().equals("collection") ||
-                        parser.getLocalName().equals("lists") ||
-                        parser.getLocalName().equals("maps")
+                } else if ("list".equals(localName) ||
+                        "collection".equals(localName) ||
+                        "lists".equals(localName) ||
+                        "maps".equals(localName)
                 ) {
                     parseToplevelList();
                 } else {
-                    throwException("Unexpected element: "+parser.getLocalName());
+                    throwException("Unexpected element: "+localName);
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
@@ -1403,24 +1404,25 @@ public class Preferences {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("entry")) {
+                String localName = parser.getLocalName();
+                if ("entry".equals(localName)) {
                     if (entries == null) {
                         entries = new ArrayList<String>();
                     }
                     entries.add(parser.getAttributeValue(null, "value"));
                     jumpToEnd();
-                } else if (parser.getLocalName().equals("list")) {
+                } else if ("list".equals(localName)) {
                     if (lists == null) {
                         lists = new ArrayList<List<String>>();
                     }
                     lists.add(parseInnerList());
-                } else if (parser.getLocalName().equals("map")) {
+                } else if ("map".equals(localName)) {
                     if (maps == null) {
                         maps = new ArrayList<Map<String, String>>();
                     }
                     maps.add(parseMap());
                 } else {
-                    throwException("Unexpected element: "+parser.getLocalName());
+                    throwException("Unexpected element: "+localName);
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 break;
@@ -1433,9 +1435,9 @@ public class Preferences {
         } else if (maps != null) {
             settingsMap.put(key, new MapListSetting(Collections.unmodifiableList(maps)));
         } else {
-            if (name.equals("lists")) {
+            if ("lists".equals(name)) {
                 settingsMap.put(key, new ListListSetting(Collections.<List<String>>emptyList()));
-            } else if (name.equals("maps")) {
+            } else if ("maps".equals(name)) {
                 settingsMap.put(key, new MapListSetting(Collections.<Map<String, String>>emptyList()));
             } else {
                 settingsMap.put(key, new ListSetting(Collections.<String>emptyList()));
@@ -1448,7 +1450,7 @@ public class Preferences {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("entry")) {
+                if ("entry".equals(parser.getLocalName())) {
                     entries.add(parser.getAttributeValue(null, "value"));
                     jumpToEnd();
                 } else {
@@ -1466,7 +1468,7 @@ public class Preferences {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("tag")) {
+                if ("tag".equals(parser.getLocalName())) {
                     map.put(parser.getAttributeValue(null, "key"), parser.getAttributeValue(null, "value"));
                     jumpToEnd();
                 } else {
@@ -1499,7 +1501,7 @@ public class Preferences {
 
         @Override
         public void visit(StringSetting setting) {
-            if (noPassword && key.equals("osm-server.password"))
+            if (noPassword && "osm-server.password".equals(key))
                 return; // do not store plain password.
             /* don't save default values */
             if (setting.equals(defaultsMap.get(key)))

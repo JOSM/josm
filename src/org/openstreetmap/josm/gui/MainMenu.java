@@ -752,7 +752,7 @@ public class MainMenu extends JMenuBar {
         Main.pref.addPreferenceChangeListener(new PreferenceChangedListener() {
             @Override
             public void preferenceChanged(PreferenceChangeEvent e) {
-                if (e.getKey().equals("audio.menuinvisible")) {
+                if ("audio.menuinvisible".equals(e.getKey())) {
                     showAudioMenu(!Boolean.parseBoolean(e.getNewValue().toString()));
                 }
             }

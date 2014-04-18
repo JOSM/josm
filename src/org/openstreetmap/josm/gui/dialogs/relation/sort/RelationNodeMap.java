@@ -62,13 +62,17 @@ public class RelationNodeMap {
 
     public static Node firstOnewayNode(RelationMember m){
         if(!m.isWay()) return null;
-        if(m.getRole().equals("backward")) return m.getWay().lastNode();
+        if("backward".equals(m.getRole())) {
+            return m.getWay().lastNode();
+        }
         return m.getWay().firstNode();
     }
 
     public static Node lastOnewayNode(RelationMember m){
         if(!m.isWay()) return null;
-        if(m.getRole().equals("backward")) return m.getWay().firstNode();
+        if("backward".equals(m.getRole())) {
+            return m.getWay().firstNode();
+        }
         return m.getWay().lastNode();
     }
 

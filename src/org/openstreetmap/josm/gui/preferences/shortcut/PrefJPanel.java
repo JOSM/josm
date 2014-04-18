@@ -321,7 +321,7 @@ public class PrefJPanel extends JPanel {
                     Shortcut sc = (Shortcut)panel.model.getValueAt(row, -1);
                     if (panel.cbDisable.isSelected()) {
                         sc.setAssignedModifier(-1);
-                    } else if (panel.tfKey.getSelectedItem() == null || panel.tfKey.getSelectedItem().equals("")) {
+                    } else if (panel.tfKey.getSelectedItem() == null || "".equals(panel.tfKey.getSelectedItem())) {
                         sc.setAssignedModifier(KeyEvent.VK_CANCEL);
                     } else {
                         sc.setAssignedModifier(

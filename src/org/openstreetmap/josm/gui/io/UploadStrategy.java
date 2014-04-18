@@ -76,9 +76,9 @@ public enum UploadStrategy {
                 v = "";
             }
             v = v.trim().toLowerCase();
-            if (v.equals("true"))
+            if ("true".equals(v))
                 return SINGLE_REQUEST_STRATEGY;
-            else if (v.equals("false"))
+            else if ("false".equals(v))
                 return INDIVIDUAL_OBJECTS_STRATEGY;
             else
                 return DEFAULT_UPLOAD_STRATEGY;

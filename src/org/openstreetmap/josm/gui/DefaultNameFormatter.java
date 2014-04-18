@@ -444,12 +444,12 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     private String getNameTagValue(IRelation relation, String nameTag) {
-        if (nameTag.equals("name")) {
+        if ("name".equals(nameTag)) {
             if (Main.pref.getBoolean("osm-primitives.localize-name", true))
                 return relation.getLocalName();
             else
                 return relation.getName();
-        } else if (nameTag.equals(":LocationCode")) {
+        } else if (":LocationCode".equals(nameTag)) {
             for (String m : relation.keySet()) {
                 if (m.endsWith(nameTag))
                     return relation.get(m);
