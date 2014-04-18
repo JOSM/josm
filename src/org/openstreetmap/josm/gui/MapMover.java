@@ -123,7 +123,9 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     @Override
     public void mouseDragged(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
-        if ((e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK) {
+        int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
+        if ((e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK ||
+                Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
             if (mousePosMove == null)
                 startMovement(e);
             EastNorth center = nc.getCenter();
@@ -143,9 +145,8 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     public void mousePressed(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
         int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
-        if (e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0) {
-            startMovement(e);
-        } else if (Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
+        if (e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0 || 
+                Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
             startMovement(e);
         }
     }
@@ -155,9 +156,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            endMovement();
-        } else if (Main.isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON3 || Main.isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
             endMovement();
         }
     }
