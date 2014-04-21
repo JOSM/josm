@@ -47,7 +47,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.WireframeMapRenderer;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -247,7 +246,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      * @return {@code true} if repaint is required
      */
     private boolean giveUserFeedback(MouseEvent e, int modifiers) {
-        Collection<OsmPrimitive> c = MapView.asColl(
+        Collection<OsmPrimitive> c = asColl(
                 mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, true));
 
         updateKeyModifiers(modifiers);
@@ -430,7 +429,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         case scale:
             //  if nothing was selected, select primitive under cursor for scaling or rotating
             if (getCurrentDataSet().getSelected().isEmpty()) {
-                getCurrentDataSet().setSelected(MapView.asColl(nearestPrimitive));
+                getCurrentDataSet().setSelected(asColl(nearestPrimitive));
             }
 
             // Mode.select redraws when selectPrims is called
@@ -445,7 +444,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 virtualManager.activateVirtualNodeNearPoint(e.getPoint());
             }
             OsmPrimitive toSelect = cycleManager.cycleSetup(nearestPrimitive, e.getPoint());
-            selectPrims(NavigatableComponent.asColl(toSelect), false, false);
+            selectPrims(asColl(toSelect), false, false);
             useLastMoveCommandIfPossible();
             // Schedule a timer to update status line "initialMoveDelay+1" ms in the future
             GuiHelper.scheduleTimer(initialMoveDelay+1, new ActionListener() {
@@ -521,7 +520,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 oldHighlights.add(p);
                 needsRepaint = true;
             }
-            mv.setNewCursor(getCursor(MapView.asColl(p)), this);
+            mv.setNewCursor(getCursor(asColl(p)), this);
             // also update the stored mouse event, so we can display the correct cursor
             // when dragging a node onto another one and then press CTRL to merge
             oldEvent = e;
@@ -952,7 +951,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
 
                 if (!(alt || multipleMatchesParameter)) {
                     // no real cycling, just one element in cycle list
-                    cycleList = MapView.asColl(osm);
+                    cycleList = asColl(osm);
 
                     if (waitForMouseUpParameter) {
                         // prefer a selected nearest node or way, if possible
@@ -1059,7 +1058,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                 cycleStart = null;
             }
             // return one-element collection with one element to be selected (or added  to selection)
-            return MapView.asColl(nxt);
+            return asColl(nxt);
         }
     }
 
@@ -1160,5 +1159,14 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         private boolean hasVirtualWaysToBeConstructed() {
             return !virtualWays.isEmpty();
         }
+    }
+
+    /**
+     * @return o as collection of o's type.
+     */
+    protected static <T> Collection<T> asColl(T o) {
+        if (o == null)
+            return Collections.emptySet();
+        return Collections.singleton(o);
     }
 }

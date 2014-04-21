@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -34,6 +33,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.types.EntryType;
@@ -41,10 +41,7 @@ import org.openstreetmap.josm.data.imagery.types.ProjectionType;
 import org.openstreetmap.josm.data.imagery.types.WmsCacheType;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.tools.Utils;
-
-
 
 public class WmsCache {
     //TODO Property for maximum cache size
@@ -453,7 +450,7 @@ public class WmsCache {
         int precisionLat = Math.max(0, -(int)Math.ceil(Math.log10(deltaLat)) + 1);
         int precisionLon = Math.max(0, -(int)Math.ceil(Math.log10(deltaLon)) + 1);
 
-        String zoom = NavigatableComponent.METRIC_SOM.getDistText(ll1.greatCircleDistance(ll2));
+        String zoom = SystemOfMeasurement.METRIC.getDistText(ll1.greatCircleDistance(ll2));
         String extension;
         if ("image/jpeg".equals(mimeType) || "image/jpg".equals(mimeType)) {
             extension = "jpg";

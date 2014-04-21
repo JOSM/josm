@@ -49,6 +49,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -731,7 +732,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         });
 
         public MapStatusPopupMenu() {
-            for (final String key : new TreeSet<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet())) {
+            for (final String key : new TreeSet<String>(SystemOfMeasurement.ALL_SYSTEMS.keySet())) {
                 JCheckBoxMenuItem item = new JCheckBoxMenuItem(new AbstractAction(key) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -828,7 +829,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         if (Main.pref.getBoolean("statusbar.change-system-of-measurement-on-click", true)) {
             distText.addMouseListener(new MouseAdapter() {
-                private final List<String> soms = new ArrayList<String>(new TreeSet<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet()));
+                private final List<String> soms = new ArrayList<String>(new TreeSet<String>(SystemOfMeasurement.ALL_SYSTEMS.keySet()));
     
                 @Override
                 public void mouseClicked(MouseEvent e) {
