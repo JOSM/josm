@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -35,7 +36,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.NavigatableComponent.SystemOfMeasurement;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -428,12 +428,12 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
             // - Snap steps relative to the distance?
             double snapDistance;
             SystemOfMeasurement som = NavigatableComponent.getSystemOfMeasurement();
-            if (som.equals(NavigatableComponent.CHINESE_SOM)) {
-                snapDistance = snapDistanceChinese * NavigatableComponent.CHINESE_SOM.aValue;
-            } else if (som.equals(NavigatableComponent.IMPERIAL_SOM)) {
-                snapDistance = snapDistanceImperial * NavigatableComponent.IMPERIAL_SOM.aValue;
-            } else if (som.equals(NavigatableComponent.NAUTICAL_MILE_SOM)) {
-                snapDistance = snapDistanceNautical * NavigatableComponent.NAUTICAL_MILE_SOM.aValue;
+            if (som.equals(SystemOfMeasurement.CHINESE)) {
+                snapDistance = snapDistanceChinese * SystemOfMeasurement.CHINESE.aValue;
+            } else if (som.equals(SystemOfMeasurement.IMPERIAL)) {
+                snapDistance = snapDistanceImperial * SystemOfMeasurement.IMPERIAL.aValue;
+            } else if (som.equals(SystemOfMeasurement.NAUTICAL_MILE)) {
+                snapDistance = snapDistanceNautical * SystemOfMeasurement.NAUTICAL_MILE.aValue;
             } else {
                 snapDistance = snapDistanceMetric; // Metric system by default
             }
