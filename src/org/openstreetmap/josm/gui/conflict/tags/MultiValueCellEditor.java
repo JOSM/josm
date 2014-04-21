@@ -7,6 +7,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -34,8 +36,13 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
  */
 public class MultiValueCellEditor extends AbstractCellEditor implements TableCellEditor{
 
+    /**
+     * Defines the interface for an object implementing navigation between rows
+     */
     public static interface NavigationListener {
+        /** Call when need to go to next row */
         void gotoNextDecision();
+        /** Call when need to go to previous row */
         void gotoPreviousDecision();
     }
 
@@ -50,7 +57,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         }
     }
 
-    public void removeavigationListeners(NavigationListener listener) {
+    public void removeNavigationListeners(NavigationListener listener) {
         listeners.remove(listener);
     }
 
@@ -66,6 +73,9 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         }
     }
 
+    /**
+     * Construct a new {@link MultiValueCellEditor}
+     */
     public MultiValueCellEditor() {
         editorModel = new DefaultComboBoxModel();
         editor = new JosmComboBox(editorModel) {
@@ -98,12 +108,28 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
                     }
                 }
         );
+        editor.addItemListener(
+                new ItemListener() {
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        if(e.getStateChange() == ItemEvent.SELECTED)
+                            fireEditingStopped();
+                    }
+                }
+        );
         editor.setRenderer(new EditorCellRenderer());
         listeners = new CopyOnWriteArrayList<NavigationListener>();
     }
 
+    /**
+     * Populate model with possible values for a decision, and select current choice.
+     * @param decision The {@link MultiValueResolutionDecision} to proceed
+     */
     protected void initEditor(MultiValueResolutionDecision decision) {
         editorModel.removeAllElements();
+        if (!decision.isDecided()) {
+            editorModel.addElement(MultiValueDecisionType.UNDECIDED);
+        }
         for (String value: decision.getValues()) {
             editorModel.addElement(value);
         }
@@ -115,7 +141,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         }
         switch(decision.getDecisionType()) {
         case UNDECIDED:
-            editor.setSelectedIndex(0);
+            editor.setSelectedItem(MultiValueDecisionType.UNDECIDED);
             break;
         case KEEP_ONE:
             editor.setSelectedItem(decision.getChosenValue());
@@ -142,15 +168,22 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
     }
 
     /**
-     * The cell renderer used in the combo box
+     * The cell renderer used in the edit combo box
      *
      */
     private static class EditorCellRenderer extends JLabel implements ListCellRenderer {
 
+        /**
+         * Construct a new {@link EditorCellRenderer}.
+         */
         public EditorCellRenderer() {
             setOpaque(true);
         }
 
+        /**
+         * Set component color.
+         * @param selected true if is selected
+         */
         protected void renderColors(boolean selected) {
             if (selected) {
                 setForeground(UIManager.getColor("ComboBox.selectionForeground"));
@@ -161,12 +194,20 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
             }
         }
 
+        /**
+         * Set text for a value
+         * @param value {@link String} or {@link MultiValueDecisionType}
+         */
         protected void renderValue(Object value) {
             setFont(UIManager.getFont("ComboBox.font"));
             if (String.class.isInstance(value)) {
                 setText(String.class.cast(value));
             } else if (MultiValueDecisionType.class.isInstance(value)) {
                 switch(MultiValueDecisionType.class.cast(value)) {
+                case UNDECIDED:
+                    setText(tr("Choose a value"));
+                    setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
+                    break;
                 case KEEP_NONE:
                     setText(tr("none"));
                     setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
