@@ -64,7 +64,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  * and will be moved.
  * If no object is under the mouse, move all selected objects (if any)
  *
- * @author imi
+ * On Mac OS, Ctrl + mouse button 1 simulates right click (map move), so the
+ * feature "selection remove" is disabled on this platform.
  */
 public class SelectAction extends MapMode implements AWTEventListener, SelectionEnded {
     // "select" means the selection rectangle and "move" means either dragging
@@ -336,7 +337,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             if (lassoMode) {
                 c = "lasso";
             } else {
-                c = "rect" + (shift ? "_add" : (ctrl ? "_rm" : ""));
+                c = "rect" + (shift ? "_add" : (ctrl && !Main.isPlatformOsx() ? "_rm" : ""));
             }
             break;
         }
@@ -456,10 +457,12 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             break;
         case select:
         default:
-            // start working with rectangle or lasso
-            selectionManager.register(mv, lassoMode);
-            selectionManager.mousePressed(e);
-            break;
+            if (!(ctrl && Main.isPlatformOsx())) {
+                // start working with rectangle or lasso
+                selectionManager.register(mv, lassoMode);
+                selectionManager.mousePressed(e);
+                break;
+            }
         }
         if (giveUserFeedback(e)) {
             mv.repaint();
