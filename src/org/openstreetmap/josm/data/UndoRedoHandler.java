@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -54,7 +55,10 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
         fireCommandsChanged();
 
         // the command may have changed the selection so tell the listeners about the current situation
-        Main.main.getCurrentDataSet().fireSelectionChanged();
+        DataSet ds = Main.main.getCurrentDataSet();
+        if (ds != null) {
+            ds.fireSelectionChanged();
+        }
     }
 
     /**
