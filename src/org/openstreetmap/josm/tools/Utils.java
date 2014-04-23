@@ -811,7 +811,7 @@ public final class Utils {
             Main.debug(join(" ", command));
         }
         Process p = new ProcessBuilder(command).start();
-        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8));
         StringBuilder all = null;
         String line;
         while ((line = input.readLine()) != null) {

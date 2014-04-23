@@ -136,7 +136,8 @@ public class HelpBrowser extends JDialog {
         StyleSheet ss = new StyleSheet();
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
-                        getClass().getResourceAsStream("/data/help-browser.css")
+                        getClass().getResourceAsStream("/data/help-browser.css"),
+                        Utils.UTF_8
                 )
         );
         StringBuilder css = new StringBuilder();

@@ -134,7 +134,7 @@ public final class Projections {
         BufferedReader r = null;
         try {
             InputStream in = new MirroredInputStream("resource://data/projection/epsg");
-            r = new BufferedReader(new InputStreamReader(in));
+            r = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));
             String line, lastline = "";
             while ((line = r.readLine()) != null) {
                 line = line.trim();

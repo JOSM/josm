@@ -173,7 +173,7 @@ public abstract class OsmServerReader extends OsmConnection {
                     try {
                         InputStream i = fixEncoding(activeConnection.getErrorStream(), encoding);
                         if (i != null) {
-                            BufferedReader in = new BufferedReader(new InputStreamReader(i));
+                            BufferedReader in = new BufferedReader(new InputStreamReader(i, Utils.UTF_8));
                             String s;
                             while((s = in.readLine()) != null) {
                                 errorBody.append(s);

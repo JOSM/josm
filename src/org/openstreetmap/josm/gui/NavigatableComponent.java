@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.zip.CRC32;
 
 import javax.swing.JComponent;
 
@@ -1325,8 +1326,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public int getViewID() {
         String x = center.east() + "_" + center.north() + "_" + scale + "_" +
                 getWidth() + "_" + getHeight() + "_" + getProjection().toString();
-        java.util.zip.CRC32 id = new java.util.zip.CRC32();
-        id.update(x.getBytes());
+        CRC32 id = new CRC32();
+        id.update(x.getBytes(Utils.UTF_8));
         return (int)id.getValue();
     }
 

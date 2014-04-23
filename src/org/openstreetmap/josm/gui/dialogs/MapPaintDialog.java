@@ -658,7 +658,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             try {
                 InputStream is = s.getSourceInputStream();
                 try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, Utils.UTF_8));
                     try {
                         String line;
                         while ((line = reader.readLine()) != null) {

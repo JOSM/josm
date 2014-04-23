@@ -190,7 +190,7 @@ public class OsmApi extends OsmConnection {
 
         @Override
         protected byte[] updateData() throws OsmTransferException {
-            return sendRequest("GET", "capabilities", null, monitor, false, fastFail).getBytes();
+            return sendRequest("GET", "capabilities", null, monitor, false, fastFail).getBytes(Utils.UTF_8);
         }
     }
 

@@ -5,10 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,7 +172,7 @@ public class OsmValidator implements LayerChangeListener {
             if (file.exists()) {
                 BufferedReader in = null;
                 try {
-                    in = new BufferedReader(new FileReader(file));
+                    in = new BufferedReader(new InputStreamReader(new FileInputStream(file), Utils.UTF_8));
                     for (String line = in.readLine(); line != null; line = in.readLine()) {
                         ignoredErrors.add(line);
                     }
@@ -196,7 +198,7 @@ public class OsmValidator implements LayerChangeListener {
     public static void saveIgnoredErrors() {
         PrintWriter out = null;
         try {
-            out = new PrintWriter(new FileWriter(getValidatorDir() + "ignorederrors"), false);
+            out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(getValidatorDir() + "ignorederrors"), Utils.UTF_8), false);
             for (String e : ignoredErrors) {
                 out.println(e);
             }

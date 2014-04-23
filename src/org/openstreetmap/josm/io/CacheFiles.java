@@ -321,7 +321,7 @@ public class CacheFiles {
     private static String getUniqueFilename(String ident) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            BigInteger number = new BigInteger(1, md.digest(ident.getBytes()));
+            BigInteger number = new BigInteger(1, md.digest(ident.getBytes(Utils.UTF_8)));
             return number.toString(16);
         } catch(Exception e) {
             // Fall back. Remove unsuitable characters and some random ones to shrink down path length.

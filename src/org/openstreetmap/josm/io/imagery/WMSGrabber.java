@@ -189,7 +189,7 @@ public class WMSGrabber extends Grabber {
     protected String readException(URLConnection conn) throws IOException {
         StringBuilder exception = new StringBuilder();
         InputStream in = conn.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));
         try {
             String line = null;
             while( (line = br.readLine()) != null) {

@@ -76,7 +76,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
         try {
             InputStream in = getSourceInputStream();
             try {
-                InputStreamReader reader = new InputStreamReader(in);
+                InputStreamReader reader = new InputStreamReader(in, Utils.UTF_8);
                 XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(this));
                 parser.startWithValidation(reader,
                         Main.getXMLBase()+"/mappaint-style-1.0",

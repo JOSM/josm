@@ -4,10 +4,12 @@ package org.openstreetmap.josm.data.projection;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This test is used to monitor changes in projection code.
@@ -86,7 +89,7 @@ public class ProjectionRegressionTest {
         }
 
         Random rand = new Random();
-        BufferedWriter out = new BufferedWriter(new FileWriter(PROJECTION_DATA_FILE));
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PROJECTION_DATA_FILE), Utils.UTF_8));
         out.write("# Data for test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java\n");
         out.write("# Format: 1. Projection code; 2. lat/lon; 3. lat/lon projected -> east/north; 4. east/north (3.) inverse projected\n");
         for (Entry<String, Projection> e : supportedCodesMap.entrySet()) {
@@ -111,7 +114,7 @@ public class ProjectionRegressionTest {
     }
 
     private static List<TestData> readData() throws IOException, FileNotFoundException {
-        BufferedReader in = new BufferedReader(new FileReader(PROJECTION_DATA_FILE));
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(PROJECTION_DATA_FILE), Utils.UTF_8));
         List<TestData> result = new ArrayList<TestData>();
         String line;
         while ((line = in.readLine()) != null) {

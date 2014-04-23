@@ -103,7 +103,7 @@ public class NTV2GridShiftFile implements Serializable {
         toEllipsoid = "";
         topLevelSubGrid = null;
         in.read(b8);
-        String overviewHeaderCountId = new String(b8);
+        String overviewHeaderCountId = new String(b8, Utils.UTF_8);
         if (!"NUM_OREC".equals(overviewHeaderCountId))
             throw new IllegalArgumentException("Input file is not an NTv2 grid shift file");
         in.read(b8);
