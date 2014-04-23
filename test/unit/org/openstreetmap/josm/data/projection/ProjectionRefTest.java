@@ -2,9 +2,10 @@
 package org.openstreetmap.josm.data.projection;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class ProjectionRefTest {
  
     @Test
     public void test() throws IOException, FileNotFoundException {
-        BufferedReader in = new BufferedReader(new FileReader("data_nodist/projection-reference-data.csv"));
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("data_nodist/projection-reference-data.csv"), Utils.UTF_8));
         StringBuilder fail = new StringBuilder();
         String line;
         while ((line = in.readLine()) != null) {
@@ -91,6 +92,5 @@ public class ProjectionRefTest {
             System.err.println(fail.toString());
             throw new AssertionError(fail.toString());
         }
-
     }
 }

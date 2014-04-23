@@ -158,7 +158,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 if (result.createNewFile()) {
                     try {
                         File pidFile = new File(autosaveDir, filename+".pid");
-                        PrintStream ps = new PrintStream(pidFile);
+                        PrintStream ps = new PrintStream(pidFile, "UTF-8");
                         ps.println(ManagementFactory.getRuntimeMXBean().getName());
                         Utils.close(ps);
                     } catch (Throwable t) {
@@ -309,7 +309,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 File pidFile = getPidFile(file);
                 if (pidFile.exists()) {
                     try {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pidFile)));
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pidFile), Utils.UTF_8));
                         try {
                             String jvmId = reader.readLine();
                             if (jvmId != null) {
@@ -402,7 +402,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
-    public void dicardUnsavedLayers() {
+    public void discardUnsavedLayers() {
         for (File f: getUnsavedLayersFiles()) {
             moveToDeletedLayersFolder(f);
         }

@@ -175,7 +175,7 @@ public class NmeaReader {
 
         BufferedReader rd = null;
         try {
-            rd = new BufferedReader(new InputStreamReader(source));
+            rd = new BufferedReader(new InputStreamReader(source, Utils.UTF_8));
 
             StringBuilder sb = new StringBuilder(1024);
             int loopstart_char = rd.read();
@@ -242,7 +242,7 @@ public class NmeaReader {
             String[] chkstrings = s.split("\\*");
             if(chkstrings.length > 1)
             {
-                byte[] chb = chkstrings[0].getBytes();
+                byte[] chb = chkstrings[0].getBytes(Utils.UTF_8);
                 int chk=0;
                 for (int i = 1; i < chb.length; i++) {
                     chk ^= chb[i];

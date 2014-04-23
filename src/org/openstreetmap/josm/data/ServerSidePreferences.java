@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class ServerSidePreferences extends Preferences {
     public static class MissingPassword extends Exception{
-        public String realm;
+        public final String realm;
         public MissingPassword(String r) {
             realm = r;
         }
@@ -61,7 +61,7 @@ public class ServerSidePreferences extends Preferences {
                     t = t.replace("Basic realm=\"","").replace("\"","");
                     throw new MissingPassword(t);
                 }
-                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream(), Utils.UTF_8));
                 StringBuilder b = new StringBuilder();
                 try {
                     for (String line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -93,7 +93,7 @@ public class ServerSidePreferences extends Preferences {
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
                 con.connect();
-                PrintWriter out = new PrintWriter(new OutputStreamWriter(con.getOutputStream()));
+                PrintWriter out = new PrintWriter(new OutputStreamWriter(con.getOutputStream(), Utils.UTF_8));
                 out.println(s);
                 Utils.close(out);
                 Utils.close(con.getInputStream());
@@ -116,6 +116,10 @@ public class ServerSidePreferences extends Preferences {
         }
     }
 
+    /**
+     * Constructs a new {@code ServerSidePreferences}.
+     * @param serverUrl The server URL hosting the user preferences.
+     */
     public ServerSidePreferences(URL serverUrl) {
         Connection connection = null;
         try {

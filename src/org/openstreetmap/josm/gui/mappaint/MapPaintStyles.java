@@ -234,7 +234,7 @@ public final class MapPaintStyles {
             if (entry.url.toLowerCase().endsWith(".xml"))
                 return new XmlStyleSource(entry);
             else {
-                InputStreamReader reader = new InputStreamReader(in);
+                InputStreamReader reader = new InputStreamReader(in, Utils.UTF_8);
                 try {
                     WHILE: while (true) {
                         int c = reader.read();

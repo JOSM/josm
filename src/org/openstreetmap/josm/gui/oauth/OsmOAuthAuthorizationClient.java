@@ -213,7 +213,7 @@ public class OsmOAuthAuthorizationClient {
     protected String extractToken(HttpURLConnection connection) {
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            r = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8));
             String c;
             Pattern p = Pattern.compile(".*authenticity_token.*value=\"([^\"]+)\".*");
             while ((c = r.readLine()) != null) {

@@ -9,7 +9,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -226,7 +226,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             try {
                 // Try lsb_release (only available on LSB-compliant Linux systems, see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
                 Process p = Runtime.getRuntime().exec("lsb_release -ds");
-                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), Utils.UTF_8));
                 String line = Utils.strip(input.readLine());
                 Utils.close(input);
                 if (line != null && !line.isEmpty()) {
@@ -311,7 +311,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 if (file.exists()) {
                     BufferedReader reader = null;
                     try {
-                        reader = new BufferedReader(new FileReader(file));
+                        reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Utils.UTF_8));
                         String id = null;
                         String release = null;
                         String line;

@@ -142,7 +142,7 @@ public class RequestProcessor extends Thread {
         Writer out = null;
         try {
             OutputStream raw = new BufferedOutputStream(request.getOutputStream());
-            out = new OutputStreamWriter(raw);
+            out = new OutputStreamWriter(raw, Utils.UTF_8);
             BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII"));
 
             String get = in.readLine();

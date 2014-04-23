@@ -7,9 +7,10 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.io.UploadStrategy;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.tools.Utils;
 
 public class OsmServerBackreferenceReaderTest {
     static private final Logger logger = Logger.getLogger(OsmServerBackreferenceReader.class.getName());
@@ -217,7 +219,7 @@ public class OsmServerBackreferenceReaderTest {
 
         try {
             PrintWriter pw = new PrintWriter(
-                    new FileWriter(dataSetCacheOutputFile)
+                    new OutputStreamWriter(new FileOutputStream(dataSetCacheOutputFile), Utils.UTF_8)
             );
             logger.info(MessageFormat.format("caching test data set in ''{0}'' ...", dataSetCacheOutputFile.toString()));
             OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion());

@@ -491,7 +491,7 @@ public class MainApplication extends Main {
                     if (selection == 1) {
                         autosaveTask.recoverUnsavedLayers();
                     } else if (selection == 3) {
-                        autosaveTask.dicardUnsavedLayers();
+                        autosaveTask.discardUnsavedLayers();
                     }
                 }
                 autosaveTask.schedule();

@@ -194,7 +194,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
                 return;
             }
             StringBuilder changesets = new StringBuilder();
-            bin = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            bin = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8));
             String line;
             while ((line = bin.readLine()) != null) {
                 changesets.append(line).append("\n");
