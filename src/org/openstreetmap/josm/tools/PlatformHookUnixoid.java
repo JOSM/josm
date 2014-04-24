@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Calendar;
 
 import javax.swing.JOptionPane;
 
@@ -359,6 +360,13 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     protected void askUpdateJava(final String version, final String url) {
+        // Expiration date of this feature around the expected release of our first Java 7 tested version
+        Calendar today = Calendar.getInstance();
+        Calendar expiration = Calendar.getInstance();
+        expiration.set(2014, Calendar.MAY, 25);
+        if (!today.before(expiration)) {
+            return;
+        }
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
             public void run() {
