@@ -1172,7 +1172,8 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_sign"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_sign"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_sign"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_sign" />
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_sign"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:traffic_sign" />
             <space />
             <key key="traffic_sign" value="city_limit" />
             <text key="name" text="Name" />
@@ -1727,6 +1728,7 @@ Note that for a match, at least one positive and no negative is required.
         <separator/>
         <item name="Water" icon="presets/water.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=water"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=water"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=water"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=water"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=water"
@@ -4904,6 +4906,7 @@ Note that for a match, at least one positive and no negative is required.
     <group name="Power" icon="presets/power.png">
         <item name="Power Plant" icon="icons/power_station.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=plant"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=plant"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=plant"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=plant" />
             <space />
@@ -5047,7 +5050,8 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=transformer"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=transformer"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=transformer"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=transformer" />
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=transformer"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=transformer" />
             <space />
             <key key="power" value="transformer" />
             <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,yes" match="key" values_context="power" />
@@ -6568,6 +6572,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Brownfield" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=brownfield"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=brownfield"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=brownfield"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=brownfield"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=brownfield"
@@ -6578,6 +6583,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Greenfield" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=greenfield"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=greenfield"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=greenfield"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=greenfield"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=greenfield" />
@@ -6697,6 +6703,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Contact (schema with 'contact:*' prefix)" icon="presets/contact.png" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:contact"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:contact"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:contact"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:contact"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:contact"
@@ -6882,7 +6889,6 @@ Note that for a match, at least one positive and no negative is required.
 
             <item name="Piste route" icon="presets/path.png" type="relation" preset_name_label="true">
                 <link href="http://wiki.openstreetmap.org/wiki/Tag:route=piste"
-                  en.href="http://wiki.openstreetmap.org/wiki/Tag:route=piste"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:route=piste"/>
                 <space/>
                 <key key="type" value="route"/>
@@ -7076,6 +7082,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Bridge" icon="presets/bridge.png" type="relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Bridges_and_Tunnels"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relations/Proposed/Bridges_and_Tunnels"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Relations/Proposed/Bridges_and_Tunnels"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Relations/Proposed/Bridges_and_Tunnels" />
             <space />
