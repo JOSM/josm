@@ -74,8 +74,9 @@ public final class Utils {
     private static final int MILLIS_OF_HOUR = 3600000;
     private static final int MILLIS_OF_DAY = 86400000;
 
-    public static final String URL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=";
-    
+    // Should us keep "%" character when fixing URL or encode it? Let us keep them for now, see #9937
+    public static final String URL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
+
     /**
      * Tests whether {@code predicate} applies to at least one elements from {@code collection}.
      */
