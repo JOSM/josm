@@ -64,7 +64,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * and will be moved.
  * If no object is under the mouse, move all selected objects (if any)
  *
- * On Mac OS, Ctrl + mouse button 1 simulates right click (map move), so the
+ * On Mac OS X, Ctrl + mouse button 1 simulates right click (map move), so the
  * feature "selection remove" is disabled on this platform.
  */
 public class SelectAction extends MapMode implements AWTEventListener, SelectionEnded {
@@ -110,7 +110,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     private MouseEvent oldEvent = null;
 
     private Mode mode = null;
-    private SelectionManager selectionManager;
+    private final SelectionManager selectionManager;
     private boolean cancelDrawMode = false;
     private boolean drawTargetHighlight;
     private boolean didMouseDrag = false;
@@ -499,8 +499,16 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
             return;
 
         cancelDrawMode = true;
-        if (mode == Mode.select)
+        if (mode == Mode.select) {
+            // Unregisters selectionManager if ctrl has been pressed after mouse click on Mac OS X in order to move the map
+            if (ctrl && Main.isPlatformOsx()) {
+                selectionManager.unregister(mv);
+                mv.requestClearRect();
+                // Make sure correct cursor is displayed
+                mv.setNewCursor(Cursor.MOVE_CURSOR, this);
+            }
             return;
+        }
 
         // do not count anything as a move if it lasts less than 100 milliseconds.
         if ((mode == Mode.move) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay))
@@ -566,15 +574,12 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         didMouseDrag = true;
     }
 
-
-
     @Override
     public void mouseExited(MouseEvent e) {
         if(removeHighlighting()) {
             mv.repaint();
         }
     }
-
 
     @Override
     public void mouseReleased(MouseEvent e) {
