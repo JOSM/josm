@@ -15,7 +15,7 @@ public abstract class AbstractDownloadTask implements DownloadTask {
     private boolean failed = false;
 
     public AbstractDownloadTask() {
-        errorMessages = new ArrayList<Object>();
+        errorMessages = new ArrayList<>();
     }
 
     public boolean isCanceled() {

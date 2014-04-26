@@ -53,7 +53,7 @@ public class TurnrestrictionTest extends Test {
 
         Way fromWay = null;
         Way toWay = null;
-        List<OsmPrimitive> via = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> via = new ArrayList<>();
 
         boolean morefrom = false;
         boolean moreto = false;
@@ -65,7 +65,7 @@ public class TurnrestrictionTest extends Test {
             if (m.getMember().isIncomplete())
                 return;
 
-            List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> l = new ArrayList<>();
             l.add(r);
             l.add(m.getMember());
             if (m.isWay()) {

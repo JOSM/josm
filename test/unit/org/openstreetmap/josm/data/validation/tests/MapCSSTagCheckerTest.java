@@ -72,7 +72,7 @@ public class MapCSSTagCheckerTest {
         final MapCSSTagChecker c = new MapCSSTagChecker();
         c.initialize();
 
-        LinkedHashSet<String> assertionErrors = new LinkedHashSet<String>();
+        LinkedHashSet<String> assertionErrors = new LinkedHashSet<>();
         for (final MapCSSTagChecker.TagCheck check : c.checks) {
             System.out.println("Check: "+check);
             for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {

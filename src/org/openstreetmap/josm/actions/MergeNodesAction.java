@@ -194,11 +194,11 @@ public class MergeNodesAction extends JosmAction {
      * @return a list of commands; null, if the ways could not be fixed
      */
     protected static List<Command> fixParentWays(Collection<Node> nodesToDelete, Node targetNode) {
-        List<Command> cmds = new ArrayList<Command>();
-        Set<Way> waysToDelete = new HashSet<Way>();
+        List<Command> cmds = new ArrayList<>();
+        Set<Way> waysToDelete = new HashSet<>();
 
         for (Way w: OsmPrimitive.getFilteredList(OsmPrimitive.getReferrer(nodesToDelete), Way.class)) {
-            List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
+            List<Node> newNodes = new ArrayList<>(w.getNodesCount());
             for (Node n: w.getNodes()) {
                 if (! nodesToDelete.contains(n) && n != targetNode) {
                     newNodes.add(n);
@@ -263,7 +263,7 @@ public class MergeNodesAction extends JosmAction {
         if (nodes == null) {
             return;
         }
-        Set<Node> allNodes = new HashSet<Node>(nodes);
+        Set<Node> allNodes = new HashSet<>(nodes);
         allNodes.add(targetLocationNode);
         Node target;
         if (nodes.contains(targetLocationNode) && !targetLocationNode.isNew()) {
@@ -293,7 +293,7 @@ public class MergeNodesAction extends JosmAction {
         if (nodes == null) {
             return null;
         }
-        Set<Node> allNodes = new HashSet<Node>(nodes);
+        Set<Node> allNodes = new HashSet<>(nodes);
         allNodes.add(targetLocationNode);
         return mergeNodes(layer, nodes, selectTargetNode(allNodes), targetLocationNode);
     }
@@ -319,16 +319,16 @@ public class MergeNodesAction extends JosmAction {
         try {
             TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
             List<Command> resultion = CombinePrimitiveResolverDialog.launchIfNecessary(nodeTags, nodes, Collections.singleton(targetNode));
-            LinkedList<Command> cmds = new LinkedList<Command>();
+            LinkedList<Command> cmds = new LinkedList<>();
 
             // the nodes we will have to delete
             //
-            Collection<Node> nodesToDelete = new HashSet<Node>(nodes);
+            Collection<Node> nodesToDelete = new HashSet<>(nodes);
             nodesToDelete.remove(targetNode);
 
             // fix the ways referring to at least one of the merged nodes
             //
-            Collection<Way> waysToDelete = new HashSet<Way>();
+            Collection<Way> waysToDelete = new HashSet<>();
             List<Command> wayFixCommands = fixParentWays(
                     nodesToDelete,
                     targetNode);

@@ -95,14 +95,14 @@ public class OpenFileAction extends DiskAccessAction {
 
     public static class OpenFileTask extends PleaseWaitRunnable {
         private List<File> files;
-        private List<File> successfullyOpenedFiles = new ArrayList<File>();
+        private List<File> successfullyOpenedFiles = new ArrayList<>();
         private FileFilter fileFilter;
         private boolean canceled;
         private boolean recordHistory = false;
 
         public OpenFileTask(List<File> files, FileFilter fileFilter, String title) {
             super(title, false /* don't ignore exception */);
-            this.files = new ArrayList<File>(files);
+            this.files = new ArrayList<>(files);
             this.fileFilter = fileFilter;
         }
 
@@ -213,8 +213,8 @@ public class OpenFileAction extends DiskAccessAction {
 
             if (chosenImporter != null) {
                 // The importer was explicitly chosen, so use it.
-                List<File> filesNotMatchingWithImporter = new LinkedList<File>();
-                List<File> filesMatchingWithImporter = new LinkedList<File>();
+                List<File> filesNotMatchingWithImporter = new LinkedList<>();
+                List<File> filesMatchingWithImporter = new LinkedList<>();
                 for (final File f : files) {
                     if (!chosenImporter.acceptFile(f)) {
                         if (f.isDirectory()) {
@@ -246,9 +246,9 @@ public class OpenFileAction extends DiskAccessAction {
                 }
             } else {
                 // find appropriate importer
-                MultiMap<FileImporter, File> importerMap = new MultiMap<FileImporter, File>();
-                List<File> filesWithUnknownImporter = new LinkedList<File>();
-                List<File> urlFiles = new LinkedList<File>();
+                MultiMap<FileImporter, File> importerMap = new MultiMap<>();
+                List<File> filesWithUnknownImporter = new LinkedList<>();
+                List<File> urlFiles = new LinkedList<>();
                 FILES: for (File f : files) {
                     for (FileImporter importer : ExtensionFileFilter.importers) {
                         if (importer.acceptFile(f)) {
@@ -265,18 +265,18 @@ public class OpenFileAction extends DiskAccessAction {
                 if (!filesWithUnknownImporter.isEmpty()) {
                     alertFilesWithUnknownImporter(filesWithUnknownImporter);
                 }
-                List<FileImporter> importers = new ArrayList<FileImporter>(importerMap.keySet());
+                List<FileImporter> importers = new ArrayList<>(importerMap.keySet());
                 Collections.sort(importers);
                 Collections.reverse(importers);
 
-                Set<String> fileHistory = new LinkedHashSet<String>();
-                Set<String> failedAll = new HashSet<String>();
+                Set<String> fileHistory = new LinkedHashSet<>();
+                Set<String> failedAll = new HashSet<>();
 
                 for (FileImporter importer : importers) {
-                    List<File> files = new ArrayList<File>(importerMap.get(importer));
+                    List<File> files = new ArrayList<>(importerMap.get(importer));
                     importData(importer, files);
                     // suppose all files will fail to load
-                    List<File> failedFiles = new ArrayList<File>(files);
+                    List<File> failedFiles = new ArrayList<>(files);
 
                     if (recordHistory && !importer.isBatchImporter()) {
                         // remove the files which didn't fail to load from the failed list

@@ -65,7 +65,7 @@ public class UploadSelectionAction extends JosmAction{
     }
 
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         for (OsmPrimitive p: ds.allPrimitives()) {
             if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
                 ret.add(p);
@@ -75,7 +75,7 @@ public class UploadSelectionAction extends JosmAction{
     }
 
     protected Set<OsmPrimitive> getModifiedPrimitives(Collection<OsmPrimitive> primitives) {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         for (OsmPrimitive p: primitives) {
             if (p.isNewOrUndeleted()) {
                 ret.add(p);
@@ -187,7 +187,7 @@ public class UploadSelectionAction extends JosmAction{
         private Set<OsmPrimitive> hull;
 
         public UploadHullBuilder(){
-            hull = new HashSet<OsmPrimitive>();
+            hull = new HashSet<>();
         }
 
         @Override
@@ -242,7 +242,7 @@ public class UploadSelectionAction extends JosmAction{
          */
         public Set<OsmPrimitive> build(Collection<OsmPrimitive> base) throws IllegalArgumentException{
             CheckParameterUtil.ensureParameterNotNull(base, "base");
-            hull = new HashSet<OsmPrimitive>();
+            hull = new HashSet<>();
             for (OsmPrimitive p: base) {
                 p.accept(this);
             }
@@ -302,7 +302,7 @@ public class UploadSelectionAction extends JosmAction{
          * @return primitives to check
          */
         protected Set<OsmPrimitive> getPrimitivesToCheckForParents() {
-            HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+            HashSet<OsmPrimitive> ret = new HashSet<>();
             for (OsmPrimitive p: toUpload) {
                 if (p.isDeleted() && !p.isNewOrUndeleted()) {
                     ret.add(p);
@@ -314,9 +314,9 @@ public class UploadSelectionAction extends JosmAction{
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                Stack<OsmPrimitive> toCheck = new Stack<OsmPrimitive>();
+                Stack<OsmPrimitive> toCheck = new Stack<>();
                 toCheck.addAll(getPrimitivesToCheckForParents());
-                Set<OsmPrimitive> checked = new HashSet<OsmPrimitive>();
+                Set<OsmPrimitive> checked = new HashSet<>();
                 while(!toCheck.isEmpty()) {
                     if (canceled) return;
                     OsmPrimitive current = toCheck.pop();

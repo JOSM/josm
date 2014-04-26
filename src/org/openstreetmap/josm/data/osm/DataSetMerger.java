@@ -58,9 +58,9 @@ public class DataSetMerger {
         this.targetDataSet = targetDataSet;
         this.sourceDataSet = sourceDataSet;
         conflicts = new ConflictCollection();
-        mergedMap = new HashMap<PrimitiveId, PrimitiveId>();
-        objectsWithChildrenToMerge = new HashSet<PrimitiveId>();
-        objectsToDelete = new HashSet<OsmPrimitive>();
+        mergedMap = new HashMap<>();
+        objectsWithChildrenToMerge = new HashSet<>();
+        objectsToDelete = new HashSet<>();
     }
 
     /**
@@ -136,7 +136,7 @@ public class DataSetMerger {
     }
 
     protected void addConflict(OsmPrimitive my, OsmPrimitive their) {
-        addConflict(new Conflict<OsmPrimitive>(my, their));
+        addConflict(new Conflict<>(my, their));
     }
 
     protected void fixIncomplete(Way other) {
@@ -237,7 +237,7 @@ public class DataSetMerger {
         if (target == null)
             throw new IllegalStateException(tr("Missing merge target for way with id {0}", source.getUniqueId()));
 
-        List<Node> newNodes = new ArrayList<Node>(source.getNodesCount());
+        List<Node> newNodes = new ArrayList<>(source.getNodesCount());
         for (Node sourceNode : source.getNodes()) {
             Node targetNode = (Node)getMergeTarget(sourceNode);
             if (targetNode != null) {
@@ -263,7 +263,7 @@ public class DataSetMerger {
         Relation target = (Relation) getMergeTarget(source);
         if (target == null)
             throw new IllegalStateException(tr("Missing merge target for relation with id {0}", source.getUniqueId()));
-        LinkedList<RelationMember> newMembers = new LinkedList<RelationMember>();
+        LinkedList<RelationMember> newMembers = new LinkedList<>();
         for (RelationMember sourceMember : source.getMembers()) {
             OsmPrimitive targetMember = getMergeTarget(sourceMember.getMember());
             if (targetMember == null)
@@ -271,7 +271,7 @@ public class DataSetMerger {
             RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
             newMembers.add(newMember);
             if (targetMember.isDeleted() && !conflicts.hasConflictForMy(targetMember)) {
-                addConflict(new Conflict<OsmPrimitive>(targetMember, sourceMember.getMember(), true));
+                addConflict(new Conflict<>(targetMember, sourceMember.getMember(), true));
                 targetMember.setDeleted(false);
             }
         }
@@ -325,7 +325,7 @@ public class DataSetMerger {
             // If target dataset refers to the deleted primitive, conflict will be added in fixReferences method
             for (OsmPrimitive referrer: source.getReferrers()) {
                 if (targetDataSet.getPrimitiveById(referrer.getPrimitiveId()) == null) {
-                    addConflict(new Conflict<OsmPrimitive>(target, source, true));
+                    addConflict(new Conflict<>(target, source, true));
                     target.setDeleted(false);
                     break;
                 }
@@ -402,7 +402,7 @@ public class DataSetMerger {
         }
         targetDataSet.beginUpdate();
         try {
-            List<? extends OsmPrimitive> candidates = new ArrayList<Node>(targetDataSet.getNodes());
+            List<? extends OsmPrimitive> candidates = new ArrayList<>(targetDataSet.getNodes());
             for (Node node: sourceDataSet.getNodes()) {
                 mergePrimitive(node, candidates);
                 if (progressMonitor != null) {
@@ -410,7 +410,7 @@ public class DataSetMerger {
                 }
             }
             candidates.clear();
-            candidates = new ArrayList<Way>(targetDataSet.getWays());
+            candidates = new ArrayList<>(targetDataSet.getWays());
             for (Way way: sourceDataSet.getWays()) {
                 mergePrimitive(way, candidates);
                 if (progressMonitor != null) {
@@ -418,7 +418,7 @@ public class DataSetMerger {
                 }
             }
             candidates.clear();
-            candidates = new ArrayList<Relation>(targetDataSet.getRelations());
+            candidates = new ArrayList<>(targetDataSet.getRelations());
             for (Relation relation: sourceDataSet.getRelations()) {
                 mergePrimitive(relation, candidates);
                 if (progressMonitor != null) {

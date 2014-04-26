@@ -35,7 +35,7 @@ public class TagEditorModel extends AbstractTableModel {
     public static final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
     /** the list holding the tags */
-    protected final List<TagModel> tags =new ArrayList<TagModel>();
+    protected final List<TagModel> tags =new ArrayList<>();
 
     /** indicates whether the model is dirty */
     private boolean dirty =  false;
@@ -311,7 +311,7 @@ public class TagEditorModel extends AbstractTableModel {
     public void deleteTags(int [] tagIndices) {
         if (tags == null)
             return;
-        ArrayList<TagModel> toDelete = new ArrayList<TagModel>();
+        ArrayList<TagModel> toDelete = new ArrayList<>();
         for (int tagIdx : tagIndices) {
             TagModel tag = tags.get(tagIdx);
             if (tag != null) {
@@ -442,7 +442,7 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     public Map<String,String> getTags(boolean keepEmpty) {
-        Map<String,String> tags = new HashMap<String, String>();
+        Map<String,String> tags = new HashMap<>();
         applyToTags(tags, keepEmpty);
         return tags;
     }
@@ -489,7 +489,7 @@ public class TagEditorModel extends AbstractTableModel {
     protected Command createDeleteTagsCommand(Collection<OsmPrimitive> primitives) {
 
         List<String> currentkeys = getKeys();
-        ArrayList<Command> commands = new ArrayList<Command>();
+        ArrayList<Command> commands = new ArrayList<>();
 
         for (OsmPrimitive primitive : primitives) {
             for (String oldkey : primitive.keySet()) {
@@ -515,7 +515,7 @@ public class TagEditorModel extends AbstractTableModel {
      * @return the list of keys managed by this model
      */
     public List<String> getKeys() {
-        ArrayList<String> keys = new ArrayList<String>();
+        ArrayList<String> keys = new ArrayList<>();
         for (TagModel tag: tags) {
             if (!tag.getName().trim().isEmpty()) {
                 keys.add(tag.getName());
@@ -583,7 +583,7 @@ public class TagEditorModel extends AbstractTableModel {
          if (tags.isEmpty())
             return;
 
-        Map<String, TagModel> modelTags = new HashMap<String, TagModel>();
+        Map<String, TagModel> modelTags = new HashMap<>();
         for (int i=0; i<getRowCount(); i++) {
             TagModel tagModel = get(i);
             modelTags.put(tagModel.getName(), tagModel);

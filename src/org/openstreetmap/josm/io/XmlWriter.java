@@ -65,7 +65,7 @@ public class XmlWriter implements Closeable {
     /**
      * The output writer to save the values to.
      */
-    private static final Map<Character, String> encoding = new HashMap<Character, String>();
+    private static final Map<Character, String> encoding = new HashMap<>();
     static {
         encoding.put('<', "&lt;");
         encoding.put('>', "&gt;");

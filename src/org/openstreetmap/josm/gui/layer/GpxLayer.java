@@ -71,7 +71,7 @@ public class GpxLayer extends Layer {
     // used by ChooseTrackVisibilityAction to determine which tracks to show/hide
     public boolean[] trackVisibility = new boolean[0];
 
-    private final List<GpxTrack> lastTracks = new ArrayList<GpxTrack>(); // List of tracks at last paint
+    private final List<GpxTrack> lastTracks = new ArrayList<>(); // List of tracks at last paint
     private int lastUpdateCount;
 
     public GpxLayer(GpxData d) {
@@ -634,7 +634,7 @@ public class GpxLayer extends Layer {
             computeCacheInSync = true;
         }
 
-        LinkedList<WayPoint> visibleSegments = new LinkedList<WayPoint>();
+        LinkedList<WayPoint> visibleSegments = new LinkedList<>();
         WayPoint last = null;
         ensureTrackVisibilityLength();
         for (Collection<WayPoint> segment : data.getLinesIterable(trackVisibility)) {

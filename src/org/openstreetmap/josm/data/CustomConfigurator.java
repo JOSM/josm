@@ -200,7 +200,7 @@ public final class CustomConfigurator {
      * @param keys - which preferences keys you need to export ("imagery.entries", for example)
      */
     public static void exportPreferencesKeysToFile(String filename, boolean append, String... keys) {
-        HashSet<String> keySet = new HashSet<String>();
+        HashSet<String> keySet = new HashSet<>();
         Collections.addAll(keySet, keys);
         exportPreferencesKeysToFile(filename, append, keySet);
     }
@@ -214,7 +214,7 @@ public final class CustomConfigurator {
      * @param pattern - Regexp pattern forh preferences keys you need to export (".*imagery.*", for example)
      */
     public static void exportPreferencesKeysByPatternToFile(String fileName, boolean append, String pattern) {
-        List<String> keySet = new ArrayList<String>();
+        List<String> keySet = new ArrayList<>();
         Map<String, Setting> allSettings = Main.pref.getAllSettings();
         for (String key: allSettings.keySet()) {
             if (key.matches(pattern)) keySet.add(key);
@@ -316,9 +316,9 @@ public final class CustomConfigurator {
 
 
     public static void pluginOperation(String install, String uninstall, String delete)  {
-        final List<String> installList = new ArrayList<String>();
-        final List<String> removeList = new ArrayList<String>();
-        final List<String> deleteList = new ArrayList<String>();
+        final List<String> installList = new ArrayList<>();
+        final List<String> removeList = new ArrayList<>();
+        final List<String> deleteList = new ArrayList<>();
         Collections.addAll(installList, install.toLowerCase().split(";"));
         Collections.addAll(removeList, uninstall.toLowerCase().split(";"));
         Collections.addAll(deleteList, delete.toLowerCase().split(";"));
@@ -350,9 +350,9 @@ public final class CustomConfigurator {
                     @Override
                     public void run() {
                         List<PluginInformation> availablePlugins = task.getAvailablePlugins();
-                        List<PluginInformation> toInstallPlugins = new ArrayList<PluginInformation>();
-                        List<PluginInformation> toRemovePlugins = new ArrayList<PluginInformation>();
-                        List<PluginInformation> toDeletePlugins = new ArrayList<PluginInformation>();
+                        List<PluginInformation> toInstallPlugins = new ArrayList<>();
+                        List<PluginInformation> toRemovePlugins = new ArrayList<>();
+                        List<PluginInformation> toDeletePlugins = new ArrayList<>();
                         for (PluginInformation pi: availablePlugins) {
                             String name = pi.name.toLowerCase();
                             if (installList.contains(name)) toInstallPlugins.add(pi);
@@ -363,7 +363,7 @@ public final class CustomConfigurator {
                             PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(Main.parent, toInstallPlugins, tr ("Installing plugins"));
                             Main.worker.submit(pluginDownloadTask);
                         }
-                        Collection<String> pls = new ArrayList<String>(Main.pref.getCollection("plugins"));
+                        Collection<String> pls = new ArrayList<>(Main.pref.getCollection("plugins"));
                         for (PluginInformation pi: toInstallPlugins) {
                             if (!pls.contains(pi.name)) {
                                 pls.add(pi.name);
@@ -414,7 +414,7 @@ public final class CustomConfigurator {
     public static class XMLCommandProcessor {
 
         Preferences mainPrefs;
-        Map<String,Element> tasksMap = new HashMap<String,Element>();
+        Map<String,Element> tasksMap = new HashMap<>();
 
         private boolean lastV; // last If condition result
 
@@ -887,9 +887,9 @@ public final class CustomConfigurator {
             return null;
         }
         if (existing != null)
-            return new ArrayList<String>(existing.getValue());
+            return new ArrayList<>(existing.getValue());
         else
-            return defaults.getValue() == null ? null : new ArrayList<String>(defaults.getValue());
+            return defaults.getValue() == null ? null : new ArrayList<>(defaults.getValue());
     }
 
     private static Collection<Collection<String>> getArray(Preferences mainpref, String key, boolean warnUnknownDefault)  {
@@ -916,9 +916,9 @@ public final class CustomConfigurator {
         }
 
         if (existing != null)
-            return new ArrayList<Map<String, String>>(existing.getValue());
+            return new ArrayList<>(existing.getValue());
         else
-            return defaults.getValue() == null ? null : new ArrayList<Map<String, String>>(defaults.getValue());
+            return defaults.getValue() == null ? null : new ArrayList<>(defaults.getValue());
     }
 
     private static void defaultUnknownWarning(String key) {
@@ -1002,7 +1002,7 @@ public final class CustomConfigurator {
 
         tmpPref.settingsMap.clear();
 
-        Map<String, Setting> tmp = new HashMap<String, Setting>();
+        Map<String, Setting> tmp = new HashMap<>();
         for (Entry<String, String> e : stringMap.entrySet()) {
             tmp.put(e.getKey(), new StringSetting(e.getValue()));
         }
@@ -1032,10 +1032,10 @@ public final class CustomConfigurator {
      * @throws ScriptException
      */
     public static void loadPrefsToJS(ScriptEngine engine, Preferences tmpPref, String whereToPutInJS, boolean includeDefaults) throws ScriptException {
-        Map<String, String> stringMap =  new TreeMap<String, String>();
-        Map<String, List<String>> listMap = new TreeMap<String, List<String>>();
-        Map<String, List<List<String>>> listlistMap = new TreeMap<String, List<List<String>>>();
-        Map<String, List<Map<String, String>>> listmapMap = new TreeMap<String, List<Map<String, String>>>();
+        Map<String, String> stringMap =  new TreeMap<>();
+        Map<String, List<String>> listMap = new TreeMap<>();
+        Map<String, List<List<String>>> listlistMap = new TreeMap<>();
+        Map<String, List<Map<String, String>>> listmapMap = new TreeMap<>();
 
         if (includeDefaults) {
             for (Map.Entry<String, Setting> e: tmpPref.defaultsMap.entrySet()) {

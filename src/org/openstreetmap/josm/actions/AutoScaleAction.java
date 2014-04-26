@@ -206,7 +206,7 @@ public class AutoScaleAction extends JosmAction {
             if (l == null) return null;
             l.visitBoundingBox(v);
         } else if (mode.equals("selection") || mode.equals("conflict")) {
-            Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
+            Collection<OsmPrimitive> sel = new HashSet<>();
             if (mode.equals("selection")) {
                 sel = getCurrentDataSet().getSelected();
             } else if (mode.equals("conflict")) {

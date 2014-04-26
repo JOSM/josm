@@ -70,7 +70,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             Collection<String> samples = Arrays.asList(
                     "+proj=lonlat +ellps=WGS84 +datum=WGS84 +bounds=-180,-90,180,90",
                     "+proj=tmerc +lat_0=0 +lon_0=9 +k_0=1 +x_0=3500000 +y_0=0 +ellps=bessel +nadgrids=BETA2007.gsb");
-            List<String> inputHistory = new LinkedList<String>(Main.pref.getCollection("projection.custom.value.history", samples));
+            List<String> inputHistory = new LinkedList<>(Main.pref.getCollection("projection.custom.value.history", samples));
             Collections.reverse(inputHistory);
             cbInput.setPossibleItems(inputHistory);
             cbInput.setText(initialText == null ? "" : initialText);
@@ -193,7 +193,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
         }
 
         private String listKeys(Map<String, ?> map) {
-            List<String> keys = new ArrayList<String>(map.keySet());
+            List<String> keys = new ArrayList<>(map.keySet());
             Collections.sort(keys);
             return Utils.join(", ", keys);
         }

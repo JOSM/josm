@@ -57,12 +57,12 @@ public class MapListEditor extends ExtendedDialog {
         this.entry = entry;
         List<Map<String, String>> orig = setting.getValue();
 
-        dataKeys = new ArrayList<List<String>>();
-        dataValues = new ArrayList<List<String>>();
+        dataKeys = new ArrayList<>();
+        dataValues = new ArrayList<>();
         if (orig != null) {
             for (Map<String, String> m : orig) {
-                List<String> keys = new ArrayList<String>();
-                List<String> values = new ArrayList<String>();
+                List<String> keys = new ArrayList<>();
+                List<String> values = new ArrayList<>();
                 for (Entry<String, String> e : m.entrySet()) {
                     keys.add(e.getKey());
                     values.add(e.getValue());
@@ -81,9 +81,9 @@ public class MapListEditor extends ExtendedDialog {
      * @return the preference data
      */
     public List<Map<String,String>> getData() {
-        List<Map<String,String>> data = new ArrayList<Map<String,String>>();
+        List<Map<String,String>> data = new ArrayList<>();
         for (int i=0; i < dataKeys.size(); ++i) {
-            Map<String,String> m = new LinkedHashMap<String, String>();
+            Map<String,String> m = new LinkedHashMap<>();
             for (int j=0; j < dataKeys.get(i).size(); ++j) {
                 m.put(dataKeys.get(i).get(j), dataValues.get(i).get(j));
             }
@@ -99,7 +99,7 @@ public class MapListEditor extends ExtendedDialog {
         JPanel left = new JPanel(new GridBagLayout());
 
         entryModel = new EntryListModel();
-        entryList = new JList<String>(entryModel);
+        entryList = new JList<>(entryModel);
         entryList.getSelectionModel().addListSelectionListener(new EntryListener());
         JScrollPane scroll = new JScrollPane(entryList);
         left.add(scroll, GBC.eol().fill());

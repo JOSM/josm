@@ -103,10 +103,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     private final JToolBar toolBarActions = new JToolBar(JToolBar.VERTICAL);
     private final JToolBar toolBarToggle = new JToolBar(JToolBar.VERTICAL);
 
-    private final List<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
-    private final List<MapMode> mapModes = new ArrayList<MapMode>();
-    private final List<IconToggleButton> allDialogButtons = new ArrayList<IconToggleButton>();
-    public final List<IconToggleButton> allMapModeButtons = new ArrayList<IconToggleButton>();
+    private final List<ToggleDialog> allDialogs = new ArrayList<>();
+    private final List<MapMode> mapModes = new ArrayList<>();
+    private final List<IconToggleButton> allDialogButtons = new ArrayList<>();
+    public final List<IconToggleButton> allMapModeButtons = new ArrayList<>();
 
     private final ListAllButtonsAction listAllDialogsAction = new ListAllButtonsAction(allDialogButtons);
     private final ListAllButtonsAction listAllMapModesAction = new ListAllButtonsAction(allMapModeButtons);
@@ -127,7 +127,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     // Map modes
     public final SelectAction mapModeSelect;
-    private final Map<Layer, MapMode> lastMapMode = new HashMap<Layer, MapMode>();
+    private final Map<Layer, MapMode> lastMapMode = new HashMap<>();
     private final MapMode mapModeDraw;
     private final MapMode mapModeZoom;
 
@@ -644,7 +644,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     /**
      * the mapMode listeners
      */
-    private static final CopyOnWriteArrayList<MapModeChangeListener> mapModeChangeListeners = new CopyOnWriteArrayList<MapModeChangeListener>();
+    private static final CopyOnWriteArrayList<MapModeChangeListener> mapModeChangeListeners = new CopyOnWriteArrayList<>();
 
     private PreferenceChangedListener sidetoolbarPreferencesChangedListener;
     /**

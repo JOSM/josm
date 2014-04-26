@@ -42,9 +42,9 @@ public class AutoCompletionList extends AbstractTableModel {
      * constructor
      */
     public AutoCompletionList() {
-        list = new ArrayList<AutoCompletionListItem>();
-        filtered = new ArrayList<AutoCompletionListItem>();
-        valutToItemMap = new HashMap<String, AutoCompletionListItem>();
+        list = new ArrayList<>();
+        filtered = new ArrayList<>();
+        valutToItemMap = new HashMap<>();
     }
 
     /**

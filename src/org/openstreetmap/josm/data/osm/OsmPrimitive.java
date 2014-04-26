@@ -120,7 +120,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public static <T extends OsmPrimitive>  List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
         if (list == null) return Collections.emptyList();
-        List<T> ret = new LinkedList<T>();
+        List<T> ret = new LinkedList<>();
         for(OsmPrimitive p: list) {
             if (type.isInstance(p)) {
                 ret.add(type.cast(p));
@@ -141,7 +141,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @return the sub-set of OSM primitives of type <code>type</code>
      */
     public static <T extends OsmPrimitive> Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
-        Set<T> ret = new LinkedHashSet<T>();
+        Set<T> ret = new LinkedHashSet<>();
         if (set != null) {
             for(OsmPrimitive p: set) {
                 if (type.isInstance(p)) {
@@ -160,7 +160,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * empty set if primitives is null or if there are no referring primitives
      */
     public static Set<OsmPrimitive> getReferrer(Collection<? extends OsmPrimitive> primitives) {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         if (primitives == null || primitives.isEmpty()) return ret;
         for (OsmPrimitive p: primitives) {
             ret.addAll(p.getReferrers());
@@ -631,7 +631,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public static Collection<String> getUninterestingKeys() {
         if (uninteresting == null) {
-            LinkedList<String> l = new LinkedList<String>(Arrays.asList(
+            LinkedList<String> l = new LinkedList<>(Arrays.asList(
                 "source", "source_ref", "source:", "comment",
                 "converted_by", "watch", "watch:",
                 "description", "attribution"));
@@ -730,7 +730,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Returns {@link #getKeys()} for which {@code key} does not fulfill {@link #isUninterestingKey}.
      */
     public Map<String, String> getInterestingTags() {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         String[] keys = this.keys;
         if (keys != null) {
             for (int i = 0; i < keys.length; i += 2) {
@@ -996,7 +996,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
         checkDataset();
         Object referrers = this.referrers;
-        List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> result = new ArrayList<>();
         if (referrers != null) {
             if (referrers instanceof OsmPrimitive) {
                 OsmPrimitive ref = (OsmPrimitive)referrers;
@@ -1297,7 +1297,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     @Override
     public Collection<String> getTemplateKeys() {
         Collection<String> keySet = keySet();
-        List<String> result = new ArrayList<String>(keySet.size() + 2);
+        List<String> result = new ArrayList<>(keySet.size() + 2);
         result.add(SPECIAL_VALUE_ID);
         result.add(SPECIAL_VALUE_LOCAL_NAME);
         result.addAll(keySet);
@@ -1330,7 +1330,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @return the set of referring relations
      */
     public static Set<Relation> getParentRelations(Collection<? extends OsmPrimitive> primitives) {
-        HashSet<Relation> ret = new HashSet<Relation>();
+        HashSet<Relation> ret = new HashSet<>();
         for (OsmPrimitive w : primitives) {
             ret.addAll(OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class));
         }

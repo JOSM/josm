@@ -54,7 +54,7 @@ public final class JumpToMarkerActions {
         }
         
         protected final void setLastLayer(Layer l) {
-            lastLayer = new WeakReference<Layer>(l);
+            lastLayer = new WeakReference<>(l);
         }
 
         @Override

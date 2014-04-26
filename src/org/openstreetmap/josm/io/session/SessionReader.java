@@ -56,7 +56,7 @@ import org.xml.sax.SAXException;
  */
 public class SessionReader {
 
-    private static Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<String, Class<? extends SessionLayerImporter>>();
+    private static Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<>();
     static {
         registerSessionLayerImporter("osm-data", OsmDataSessionImporter.class);
         registerSessionLayerImporter("imagery", ImagerySessionImporter.class);
@@ -85,9 +85,9 @@ public class SessionReader {
     private URI sessionFileURI;
     private boolean zip; // true, if session file is a .joz file; false if it is a .jos file
     private ZipFile zipFile;
-    private List<Layer> layers = new ArrayList<Layer>();
+    private List<Layer> layers = new ArrayList<>();
     private int active = -1;
-    private List<Runnable> postLoadTasks = new ArrayList<Runnable>();
+    private List<Runnable> postLoadTasks = new ArrayList<>();
     private ViewportData viewport;
 
     /**
@@ -345,8 +345,8 @@ public class SessionReader {
             active = -1;
         }
 
-        MultiMap<Integer, Integer> deps = new MultiMap<Integer, Integer>();
-        Map<Integer, Element> elems = new HashMap<Integer, Element>();
+        MultiMap<Integer, Integer> deps = new MultiMap<>();
+        Map<Integer, Element> elems = new HashMap<>();
 
         NodeList nodes = layersEl.getChildNodes();
 
@@ -393,9 +393,9 @@ public class SessionReader {
         }
 
         List<Integer> sorted = Utils.topologicalSort(deps);
-        final Map<Integer, Layer> layersMap = new TreeMap<Integer, Layer>(Collections.reverseOrder());
-        final Map<Integer, SessionLayerImporter> importers = new HashMap<Integer, SessionLayerImporter>();
-        final Map<Integer, String> names = new HashMap<Integer, String>();
+        final Map<Integer, Layer> layersMap = new TreeMap<>(Collections.reverseOrder());
+        final Map<Integer, SessionLayerImporter> importers = new HashMap<>();
+        final Map<Integer, String> names = new HashMap<>();
 
         progressMonitor.setTicksCount(sorted.size());
         LAYER: for (int idx: sorted) {
@@ -429,7 +429,7 @@ public class SessionReader {
                 }
             } else {
                 importers.put(idx, imp);
-                List<LayerDependency> depsImp = new ArrayList<LayerDependency>();
+                List<LayerDependency> depsImp = new ArrayList<>();
                 for (int d : deps.get(idx)) {
                     SessionLayerImporter dImp = importers.get(d);
                     if (dImp == null) {
@@ -480,7 +480,7 @@ public class SessionReader {
             progressMonitor.worked(1);
         }
 
-        layers = new ArrayList<Layer>();
+        layers = new ArrayList<>();
         for (int idx : layersMap.keySet()) {
             Layer layer = layersMap.get(idx);
             if (layer == null) {

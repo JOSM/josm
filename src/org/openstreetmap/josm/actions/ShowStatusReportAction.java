@@ -108,7 +108,7 @@ public final class ShowStatusReportAction extends JosmAction {
             final String propJavaHome = System.getProperty("java.home");
             final String propJavaHomeAlt = "<java.home>";
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
-            List<String> vmArguments = new ArrayList<String>(ManagementFactory.getRuntimeMXBean().getInputArguments());
+            List<String> vmArguments = new ArrayList<>(ManagementFactory.getRuntimeMXBean().getInputArguments());
             for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext(); ) {
                 String value = it.next();
                 if (value.contains("=")) {
@@ -163,7 +163,7 @@ public final class ShowStatusReportAction extends JosmAction {
             settings.remove("osm-server.password");
             settings.remove("oauth.access-token.key");
             settings.remove("oauth.access-token.secret");
-            Set<String> keys = new HashSet<String>(settings.keySet());
+            Set<String> keys = new HashSet<>(settings.keySet());
             for (String key : keys) {
                 if (key.startsWith("marker.show")) {
                     settings.remove(key);

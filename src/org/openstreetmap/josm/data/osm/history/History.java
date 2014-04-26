@@ -24,7 +24,7 @@ public class History{
     }
 
     private static History filter(History history, FilterPredicate predicate) {
-        List<HistoryOsmPrimitive> out = new ArrayList<HistoryOsmPrimitive>();
+        List<HistoryOsmPrimitive> out = new ArrayList<>();
         for (HistoryOsmPrimitive primitive: history.versions) {
             if (predicate.matches(primitive)) {
                 out.add(primitive);
@@ -55,14 +55,14 @@ public class History{
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         this.id = id;
         this.type = type;
-        this.versions = new ArrayList<HistoryOsmPrimitive>();
+        this.versions = new ArrayList<>();
         if (versions != null) {
             this.versions.addAll(versions);
         }
     }
 
     public History sortAscending() {
-        List<HistoryOsmPrimitive> copy = new ArrayList<HistoryOsmPrimitive>(versions);
+        List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
         Collections.sort(
                 copy,
                 new Comparator<HistoryOsmPrimitive>() {
@@ -76,7 +76,7 @@ public class History{
     }
 
     public History sortDescending() {
-        List<HistoryOsmPrimitive> copy = new ArrayList<HistoryOsmPrimitive>(versions);
+        List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
         Collections.sort(
                 copy,
                 new Comparator<HistoryOsmPrimitive>() {

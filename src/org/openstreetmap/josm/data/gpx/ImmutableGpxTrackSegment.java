@@ -14,7 +14,7 @@ public class ImmutableGpxTrackSegment implements GpxTrackSegment {
     private final double length;
 
     public ImmutableGpxTrackSegment(Collection<WayPoint> wayPoints) {
-        this.wayPoints = Collections.unmodifiableCollection(new ArrayList<WayPoint>(wayPoints));
+        this.wayPoints = Collections.unmodifiableCollection(new ArrayList<>(wayPoints));
         this.bounds = calculateBounds();
         this.length = calculateLength();
     }

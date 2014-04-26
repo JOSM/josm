@@ -74,11 +74,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * Constructs a {@code MultiFetchServerObjectReader}.
      */
     public MultiFetchServerObjectReader() {
-        nodes = new LinkedHashSet<Long>();
-        ways = new LinkedHashSet<Long>();
-        relations = new LinkedHashSet<Long>();
+        nodes = new LinkedHashSet<>();
+        ways = new LinkedHashSet<>();
+        relations = new LinkedHashSet<>();
         this.outputDataSet = new DataSet();
-        this.missingPrimitives = new LinkedHashSet<PrimitiveId>();
+        this.missingPrimitives = new LinkedHashSet<>();
     }
 
     /**
@@ -237,7 +237,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @return the subset of ids
      */
     protected Set<Long> extractIdPackage(Set<Long> ids) {
-        HashSet<Long> pkg = new HashSet<Long>();
+        HashSet<Long> pkg = new HashSet<>();
         if (ids.isEmpty())
             return pkg;
         if (ids.size() > MAX_IDS_PER_REQUEST) {
@@ -332,14 +332,14 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         progressMonitor.setTicksCount(ids.size());
         progressMonitor.setTicks(0);
         // The complete set containg all primitives to fetch
-        Set<Long> toFetch = new HashSet<Long>(ids);
+        Set<Long> toFetch = new HashSet<>(ids);
         // Build a list of fetchers that will  download smaller sets containing only MAX_IDS_PER_REQUEST (200) primitives each.
         // we will run up to MAX_DOWNLOAD_THREADS concurrent fetchers.
         int threadsNumber = Main.pref.getInteger("osm.download.threads", OsmApi.MAX_DOWNLOAD_THREADS);
         threadsNumber = Math.min(Math.max(threadsNumber, 1), OsmApi.MAX_DOWNLOAD_THREADS);
         Executor exec = Executors.newFixedThreadPool(threadsNumber);
-        CompletionService<FetchResult> ecs = new ExecutorCompletionService<FetchResult>(exec);
-        List<Future<FetchResult>> jobs = new ArrayList<Future<FetchResult>>();
+        CompletionService<FetchResult> ecs = new ExecutorCompletionService<>(exec);
+        List<Future<FetchResult>> jobs = new ArrayList<>();
         while (!toFetch.isEmpty()) {
             jobs.add(ecs.submit(new Fetcher(type, extractIdPackage(toFetch), progressMonitor)));
         }
@@ -387,7 +387,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         int n = nodes.size() + ways.size() + relations.size();
         progressMonitor.beginTask(trn("Downloading {0} object from ''{1}''", "Downloading {0} objects from ''{1}''", n, n, OsmApi.getOsmApi().getBaseUrl()));
         try {
-            missingPrimitives = new HashSet<PrimitiveId>();
+            missingPrimitives = new HashSet<>();
             if (isCanceled()) return null;
             fetchPrimitives(ways,OsmPrimitiveType.WAY, progressMonitor);
             if (isCanceled()) return null;

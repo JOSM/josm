@@ -74,7 +74,7 @@ public class Version {
     private boolean isLocalBuild;
 
     protected Map<String, String> parseManifestStyleFormattedString(String content) {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<>();
         if (content == null) return properties;
         Pattern p = Pattern.compile("^([^:]+):(.*)$");
         for (String line: content.split("\n")) {

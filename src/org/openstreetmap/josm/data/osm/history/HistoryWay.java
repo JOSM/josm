@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class HistoryWay extends HistoryOsmPrimitive {
 
-    private List<Long> nodeIds = new ArrayList<Long>();
+    private List<Long> nodeIds = new ArrayList<>();
 
     /**
      * Constructs a new {@code HistoryWay}.

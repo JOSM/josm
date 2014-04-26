@@ -40,17 +40,17 @@ public abstract class AbstractReader {
      * longs too, but in contrast to internal ids negative values are used
      * to identify primitives unknown to the OSM server
      */
-    protected final Map<PrimitiveId, OsmPrimitive> externalIdMap = new HashMap<PrimitiveId, OsmPrimitive>();
+    protected final Map<PrimitiveId, OsmPrimitive> externalIdMap = new HashMap<>();
 
     /**
      * Data structure for the remaining way objects
      */
-    protected final Map<Long, Collection<Long>> ways = new HashMap<Long, Collection<Long>>();
+    protected final Map<Long, Collection<Long>> ways = new HashMap<>();
 
     /**
      * Data structure for relation objects
      */
-    protected final Map<Long, Collection<RelationMemberData>> relations = new HashMap<Long, Collection<RelationMemberData>>();
+    protected final Map<Long, Collection<RelationMemberData>> relations = new HashMap<>();
     
     /**
      * Replies the parsed data set
@@ -83,7 +83,7 @@ public abstract class AbstractReader {
     protected void processWaysAfterParsing() throws IllegalDataException{
         for (Long externalWayId: ways.keySet()) {
             Way w = (Way)externalIdMap.get(new SimplePrimitiveId(externalWayId, OsmPrimitiveType.WAY));
-            List<Node> wayNodes = new ArrayList<Node>();
+            List<Node> wayNodes = new ArrayList<>();
             for (long id : ways.get(externalWayId)) {
                 Node n = (Node)externalIdMap.get(new SimplePrimitiveId(id, OsmPrimitiveType.NODE));
                 if (n == null) {
@@ -136,7 +136,7 @@ public abstract class AbstractReader {
             Relation relation = (Relation) externalIdMap.get(
                     new SimplePrimitiveId(externalRelationId, OsmPrimitiveType.RELATION)
             );
-            List<RelationMember> relationMembers = new ArrayList<RelationMember>();
+            List<RelationMember> relationMembers = new ArrayList<>();
             for (RelationMemberData rm : relations.get(externalRelationId)) {
                 OsmPrimitive primitive = null;
 

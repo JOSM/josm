@@ -63,8 +63,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * constructor
      */
     public MemberTableModel(OsmDataLayer layer, PresetListPanel.PresetHandler presetHandler) {
-        members = new ArrayList<RelationMember>();
-        listeners = new CopyOnWriteArrayList<IMemberModelListener>();
+        members = new ArrayList<>();
+        listeners = new CopyOnWriteArrayList<>();
         this.layer = layer;
         this.presetHandler = presetHandler;
         addTableModelListener(this);
@@ -336,7 +336,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @return the set of incomplete primitives
      */
     public Set<OsmPrimitive> getIncompleteMemberPrimitives() {
-        Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         for (RelationMember member : members) {
             if (member.getMember().isIncomplete()) {
                 ret.add(member.getMember());
@@ -351,7 +351,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @return the set of selected incomplete primitives
      */
     public Set<OsmPrimitive> getSelectedIncompleteMemberPrimitives() {
-        Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         for (RelationMember member : getSelectedMembers()) {
             if (member.getMember().isIncomplete()) {
                 ret.add(member.getMember());
@@ -387,7 +387,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     protected List<Integer> getSelectedIndices() {
-        List<Integer> selectedIndices = new ArrayList<Integer>();
+        List<Integer> selectedIndices = new ArrayList<>();
         for (int i = 0; i < members.size(); i++) {
             if (getSelectionModel().isSelectedIndex(i)) {
                 selectedIndices.add(i);
@@ -402,7 +402,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             return;
         int idx = index;
         for (OsmPrimitive primitive : primitives) {
-            Set<String> potentialRoles = new TreeSet<String>();
+            Set<String> potentialRoles = new TreeSet<>();
             for (TaggingPreset tp : presets) {
                 String suggestedRole = tp.suggestRoleForOsmPrimitive(primitive);
                 if (suggestedRole != null) {
@@ -479,7 +479,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @return a collection with the currently selected relation members
      */
     public Collection<RelationMember> getSelectedMembers() {
-        List<RelationMember> selectedMembers = new ArrayList<RelationMember>();
+        List<RelationMember> selectedMembers = new ArrayList<>();
         for (int i : getSelectedIndices()) {
             selectedMembers.add(members.get(i));
         }
@@ -492,7 +492,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @return the set of selected referers
      */
     public Collection<OsmPrimitive> getSelectedChildPrimitives() {
-        Collection<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
+        Collection<OsmPrimitive> ret = new ArrayList<>();
         for (RelationMember m: getSelectedMembers()) {
             ret.add(m.getMember());
         }
@@ -505,7 +505,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @return the set of selected referers
      */
     public Set<OsmPrimitive> getChildPrimitives(Collection<? extends OsmPrimitive> referenceSet) {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         if (referenceSet == null) return null;
         for (RelationMember m: members) {
             if (referenceSet.contains(m.getMember())) {
@@ -528,7 +528,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
         // lookup the indices for the respective members
         //
-        Set<Integer> selectedIndices = new HashSet<Integer>();
+        Set<Integer> selectedIndices = new HashSet<>();
         for (RelationMember member : selectedMembers) {
             for (int idx = 0; idx < members.size(); ++idx) {
                 if (member.equals(members.get(idx))) {
@@ -597,7 +597,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     public static boolean hasMembersReferringTo(Collection<RelationMember> members, Collection<OsmPrimitive> primitives) {
         if (primitives == null || primitives.isEmpty())
             return false;
-        HashSet<OsmPrimitive> referrers = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> referrers = new HashSet<>();
         for (RelationMember member : members) {
             referrers.add(member.getMember());
         }
@@ -671,7 +671,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * Sort the selected relation members by the way they are linked.
      */
     void sort() {
-        List<RelationMember> selectedMembers = new ArrayList<RelationMember>(getSelectedMembers());
+        List<RelationMember> selectedMembers = new ArrayList<>(getSelectedMembers());
         List<RelationMember> sortedMembers = null;
         List<RelationMember> newMembers;
         if (selectedMembers.size() <= 1) {
@@ -680,7 +680,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         } else {
             sortedMembers = relationSorter.sortMembers(selectedMembers);
             List<Integer> selectedIndices = getSelectedIndices();
-            newMembers = new ArrayList<RelationMember>();
+            newMembers = new ArrayList<>();
             boolean inserted = false;
             for (int i=0; i < members.size(); i++) {
                 if (selectedIndices.contains(i)) {
@@ -729,7 +729,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         } else {
             Collections.reverse(selectedIndicesReversed);
 
-            List<RelationMember> newMembers = new ArrayList<RelationMember>(members);
+            List<RelationMember> newMembers = new ArrayList<>(members);
 
             for (int i=0; i < selectedIndices.size(); i++) {
                 newMembers.set(selectedIndices.get(i), members.get(selectedIndicesReversed.get(i)));

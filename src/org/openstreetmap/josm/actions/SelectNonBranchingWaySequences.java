@@ -37,8 +37,8 @@ public class SelectNonBranchingWaySequences {
             outerNodes = null;
             nodes = null;
         } else {
-            nodes = new TreeSet<Node>();
-            outerNodes = new TreeSet<Node>();
+            nodes = new TreeSet<>();
+            outerNodes = new TreeSet<>();
 
             for (Way way : ways)
                 addNodes(way);
@@ -148,7 +148,7 @@ public class SelectNonBranchingWaySequences {
         if (way == null)
             return;
 
-        selection = new LinkedList<OsmPrimitive>();
+        selection = new LinkedList<>();
         for (OsmPrimitive primitive : currentSelection)
             selection.add(primitive);
 

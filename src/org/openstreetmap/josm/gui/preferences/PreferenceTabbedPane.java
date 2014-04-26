@@ -141,14 +141,14 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     // all created tabs
-    private final List<PreferenceTab> tabs = new ArrayList<PreferenceTab>();
-    private static final Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
-    private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
+    private final List<PreferenceTab> tabs = new ArrayList<>();
+    private static final Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<>();
+    private final List<PreferenceSetting> settings = new ArrayList<>();
 
     // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)
-    private final List<PreferenceSetting> settingsInitialized = new ArrayList<PreferenceSetting>();
+    private final List<PreferenceSetting> settingsInitialized = new ArrayList<>();
 
-    List<ValidationListener> validationListeners = new ArrayList<ValidationListener>();
+    List<ValidationListener> validationListeners = new ArrayList<>();
 
     /**
      * Add validation listener to currently open preferences dialog. Calling to removeValidationListener is not necessary, all listeners will

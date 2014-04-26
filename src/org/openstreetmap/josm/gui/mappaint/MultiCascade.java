@@ -22,7 +22,7 @@ public class MultiCascade implements StyleKeys {
      * Constructs a new {@code MultiCascade}.
      */
     public MultiCascade() {
-        layers = new HashMap<String, Cascade>();
+        layers = new HashMap<>();
         range = Range.ZERO_TO_INFINITY;
     }
 

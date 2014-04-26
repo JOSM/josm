@@ -48,7 +48,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         CheckParameterUtil.ensureParameterNotNull(selectionBase, "selectionBase");
         this.selectionBase = selectionBase;
         this.hull = new DataSet();
-        this.mappedPrimitives = new HashMap<OsmPrimitive, PrimitiveData>();
+        this.mappedPrimitives = new HashMap<>();
     }
 
     protected boolean isInSelectionBase(OsmPrimitive primitive) {
@@ -79,7 +79,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         if (isAlreadyRemembered(w))
             return;
         WayData clone = w.save();
-        List<Long> newNodes = new ArrayList<Long>(w.getNodesCount());
+        List<Long> newNodes = new ArrayList<>(w.getNodesCount());
         for (Node n: w.getNodes()) {
             newNodes.add(mappedPrimitives.get(n).getUniqueId());
         }
@@ -101,7 +101,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
             mappedPrimitives.put(r, clone);
         }
 
-        List<RelationMemberData> newMembers = new ArrayList<RelationMemberData>();
+        List<RelationMemberData> newMembers = new ArrayList<>();
         for (RelationMember member: r.getMembers()) {
             newMembers.add(
                     new RelationMemberData(member.getRole(), mappedPrimitives.get(member.getMember())));

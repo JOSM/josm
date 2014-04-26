@@ -85,7 +85,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
     @Override
     public String getToolTipText() {
-        MultiMap<Severity, TestError> errorTree = new MultiMap<Severity, TestError>();
+        MultiMap<Severity, TestError> errorTree = new MultiMap<>();
         List<TestError> errors = Main.map.validatorDialog.tree.getErrors();
         for (TestError e : errors) {
             errorTree.put(e.getSeverity(), e);

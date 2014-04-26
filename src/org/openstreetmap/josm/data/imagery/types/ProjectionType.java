@@ -70,7 +70,7 @@ public class ProjectionType {
      */
     public List<EntryType> getEntry() {
         if (entry == null) {
-            entry = new ArrayList<EntryType>();
+            entry = new ArrayList<>();
         }
         return this.entry;
     }

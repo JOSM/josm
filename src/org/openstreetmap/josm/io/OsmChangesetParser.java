@@ -43,7 +43,7 @@ public final class OsmChangesetParser {
     private List<Changeset> changesets;
 
     private OsmChangesetParser() {
-        changesets = new LinkedList<Changeset>();
+        changesets = new LinkedList<>();
     }
 
     /**

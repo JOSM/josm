@@ -105,7 +105,7 @@ public class UnGlueAction extends JosmAction {
                 // FIXME: Leaving action without clearing selectedNode, selectedWay, selectedNodes
                 return;
             }
-            Set<Node> tmpNodes = new HashSet<Node>();
+            Set<Node> tmpNodes = new HashSet<>();
             for (Node n : selectedNodes) {
                 int count = 0;
                 for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
@@ -164,7 +164,7 @@ public class UnGlueAction extends JosmAction {
      * (i.e. copy node and remove all tags from the old one. Relations will not be removed)
      */
     private void unglueNode(ActionEvent e) {
-        LinkedList<Command> cmds = new LinkedList<Command>();
+        LinkedList<Command> cmds = new LinkedList<>();
 
         Node c = new Node(selectedNode);
         c.removeAll();
@@ -273,7 +273,7 @@ public class UnGlueAction extends JosmAction {
         if (selectedWay == null)
             return false;
 
-        selectedNodes = new HashSet<Node>();
+        selectedNodes = new HashSet<>();
         for (OsmPrimitive p : selection) {
             if (p instanceof Node) {
                 Node n = (Node) p;
@@ -306,7 +306,7 @@ public class UnGlueAction extends JosmAction {
         newNodes.add(newNode);
         cmds.add(new AddCommand(newNode));
 
-        List<Node> nn = new ArrayList<Node>();
+        List<Node> nn = new ArrayList<>();
         for (Node pushNode : w.getNodes()) {
             if (originalNode == pushNode) {
                 pushNode = newNode;
@@ -336,7 +336,7 @@ public class UnGlueAction extends JosmAction {
                 if (rm.isNode() && rm.getMember() == originalNode) {
                     if (newRel == null) {
                         newRel = new Relation(r);
-                        rolesToReAdd = new HashSet<String>();
+                        rolesToReAdd = new HashSet<>();
                     }
                     rolesToReAdd.add(rm.getRole());
                 }
@@ -358,12 +358,12 @@ public class UnGlueAction extends JosmAction {
      * dupe a single node once, and put the copy on the selected way
      */
     private void unglueWays() {
-        LinkedList<Command> cmds = new LinkedList<Command>();
-        LinkedList<Node> newNodes = new LinkedList<Node>();
+        LinkedList<Command> cmds = new LinkedList<>();
+        LinkedList<Node> newNodes = new LinkedList<>();
 
         if (selectedWay == null) {
             Way wayWithSelectedNode = null;
-            LinkedList<Way> parentWays = new LinkedList<Way>();
+            LinkedList<Way> parentWays = new LinkedList<>();
             for (OsmPrimitive osm : selectedNode.getReferrers()) {
                 if (osm.isUsable() && osm instanceof Way) {
                     Way w = (Way) osm;
@@ -406,15 +406,15 @@ public class UnGlueAction extends JosmAction {
      */
     private boolean unglueSelfCrossingWay() {
         // According to previous check, only one valid way through that node
-        LinkedList<Command> cmds = new LinkedList<Command>();
+        LinkedList<Command> cmds = new LinkedList<>();
         Way way = null;
         for (Way w: OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class))
             if (w.isUsable() && w.getNodesCount() >= 1) {
                 way = w;
             }
         List<Node> oldNodes = way.getNodes();
-        ArrayList<Node> newNodes = new ArrayList<Node>(oldNodes.size());
-        ArrayList<Node> addNodes = new ArrayList<Node>();
+        ArrayList<Node> newNodes = new ArrayList<>(oldNodes.size());
+        ArrayList<Node> addNodes = new ArrayList<>();
         boolean seen = false;
         for (Node n: oldNodes) {
             if (n == selectedNode) {
@@ -448,12 +448,12 @@ public class UnGlueAction extends JosmAction {
      *
      */
     private void unglueWays2() {
-        LinkedList<Command> cmds = new LinkedList<Command>();
-        List<Node> allNewNodes = new LinkedList<Node>();
+        LinkedList<Command> cmds = new LinkedList<>();
+        List<Node> allNewNodes = new LinkedList<>();
         Way tmpWay = selectedWay;
 
         for (Node n : selectedNodes) {
-            List<Node> newNodes = new LinkedList<Node>();
+            List<Node> newNodes = new LinkedList<>();
             tmpWay = modifyWay(n, tmpWay, cmds, newNodes);
             fixRelations(n, cmds, newNodes);
             allNewNodes.addAll(newNodes);
@@ -480,7 +480,7 @@ public class UnGlueAction extends JosmAction {
     }
 
     protected boolean checkAndConfirmOutlyingUnglue() {
-        List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>(2 + (selectedNodes == null ? 0 : selectedNodes.size()));
+        List<OsmPrimitive> primitives = new ArrayList<>(2 + (selectedNodes == null ? 0 : selectedNodes.size()));
         if (selectedNodes != null)
             primitives.addAll(selectedNodes);
         if (selectedNode != null)

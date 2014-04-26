@@ -110,12 +110,12 @@ public class ImageProvider {
     /**
      * The icon cache
      */
-    private static final Map<String, ImageResource> cache = new HashMap<String, ImageResource>();
+    private static final Map<String, ImageResource> cache = new HashMap<>();
 
     /**
      * Caches the image data for rotated versions of the same image.
      */
-    private static final Map<Image, Map<Long, ImageResource>> ROTATE_CACHE = new HashMap<Image, Map<Long, ImageResource>>();
+    private static final Map<Image, Map<Long, ImageResource>> ROTATE_CACHE = new HashMap<>();
 
     private static final ExecutorService IMAGE_FETCHER = Executors.newSingleThreadExecutor();
 
@@ -676,7 +676,7 @@ public class ImageProvider {
     private static URL getImageUrl(String path, String name, Collection<ClassLoader> additionalClassLoaders) {
         if (path != null && path.startsWith("resource://")) {
             String p = path.substring("resource://".length());
-            Collection<ClassLoader> classLoaders = new ArrayList<ClassLoader>(PluginHandler.getResourceClassLoaders());
+            Collection<ClassLoader> classLoaders = new ArrayList<>(PluginHandler.getResourceClassLoaders());
             if (additionalClassLoaders != null) {
                 classLoaders.addAll(additionalClassLoaders);
             }
@@ -895,7 +895,7 @@ public class ImageProvider {
         synchronized (ROTATE_CACHE) {
             Map<Long, ImageResource> cacheByAngle = ROTATE_CACHE.get(img);
             if (cacheByAngle == null) {
-                ROTATE_CACHE.put(img, cacheByAngle = new HashMap<Long, ImageResource>());
+                ROTATE_CACHE.put(img, cacheByAngle = new HashMap<>());
             }
 
             imageResource = cacheByAngle.get(originalAngle);

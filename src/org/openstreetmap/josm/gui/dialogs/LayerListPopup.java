@@ -73,7 +73,7 @@ public class LayerListPopup extends JPopupMenu {
             actions = Arrays.asList(selectedLayers.get(0).getMenuEntries());
         } else {
             // Very simple algorithm - first selected layer has actions order as in getMenuEntries, actions from other layers go to the end
-            actions = new ArrayList<Action>();
+            actions = new ArrayList<>();
             boolean separatorAdded = true;
             for (Action a: selectedLayers.get(0).getMenuEntries()) {
                 if (!separatorAdded && a instanceof SeparatorLayerAction) {

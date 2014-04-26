@@ -71,19 +71,19 @@ public class DuplicateRelation extends Test {
             role = src.getRole();
             type = src.getType();
             relId = 0;
-            coor = new ArrayList<LatLon>();
+            coor = new ArrayList<>();
 
             if (src.isNode()) {
                 Node r = src.getNode();
                 tags = r.getKeys();
-                coor = new ArrayList<LatLon>(1);
+                coor = new ArrayList<>(1);
                 coor.add(r.getCoor());
             }
             if (src.isWay()) {
                 Way r = src.getWay();
                 tags = r.getKeys();
                 List<Node> wNodes = r.getNodes();
-                coor = new ArrayList<LatLon>(wNodes.size());
+                coor = new ArrayList<>(wNodes.size());
                 for (Node wNode : wNodes) {
                     coor.add(wNode.getCoor());
                 }
@@ -92,7 +92,7 @@ public class DuplicateRelation extends Test {
                 Relation r = src.getRelation();
                 tags = r.getKeys();
                 relId = r.getId();
-                coor = new ArrayList<LatLon>();
+                coor = new ArrayList<>();
             }
         }
     }
@@ -108,7 +108,7 @@ public class DuplicateRelation extends Test {
          * @param members The list of relation members
          */
         public RelationMembers(List<RelationMember> members) {
-            this.members = new ArrayList<RelMember>(members.size());
+            this.members = new ArrayList<>(members.size());
             for (RelationMember member : members) {
                 this.members.add(new RelMember(member));
             }
@@ -171,7 +171,7 @@ public class DuplicateRelation extends Test {
     private MultiMap<List<RelationMember>, OsmPrimitive> relations_nokeys;
 
     /** List of keys without useful information */
-    private final Set<String> ignoreKeys = new HashSet<String>(OsmPrimitive.getUninterestingKeys());
+    private final Set<String> ignoreKeys = new HashSet<>(OsmPrimitive.getUninterestingKeys());
 
     /**
      * Default constructor
@@ -184,8 +184,8 @@ public class DuplicateRelation extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        relations = new MultiMap<RelationPair, OsmPrimitive>(1000);
-        relations_nokeys = new MultiMap<List<RelationMember>, OsmPrimitive>(1000);
+        relations = new MultiMap<>(1000);
+        relations_nokeys = new MultiMap<>(1000);
     }
 
     @Override
@@ -228,7 +228,7 @@ public class DuplicateRelation extends Test {
     public Command fixError(TestError testError) {
         if (testError.getCode() == SAME_RELATION) return null;
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        HashSet<Relation> relFix = new HashSet<Relation>();
+        HashSet<Relation> relFix = new HashSet<>();
 
         for (OsmPrimitive osm : sel)
             if (osm instanceof Relation && !osm.isDeleted()) {
@@ -262,7 +262,7 @@ public class DuplicateRelation extends Test {
             }
         }
 
-        Collection<Command> commands = new LinkedList<Command>();
+        Collection<Command> commands = new LinkedList<>();
 
         // Fix relations.
         if (relationWithRelations != null && relationToKeep != relationWithRelations) {
@@ -291,7 +291,7 @@ public class DuplicateRelation extends Test {
 
         // We fix it only if there is no more than one relation that is relation member.
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        HashSet<Relation> relations = new HashSet<Relation>();
+        HashSet<Relation> relations = new HashSet<>();
 
         for (OsmPrimitive osm : sel)
             if (osm instanceof Relation) {

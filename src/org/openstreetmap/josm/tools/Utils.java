@@ -121,7 +121,7 @@ public final class Utils {
     }
 
     public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
-        return new FilteredCollection<T>(collection, predicate);
+        return new FilteredCollection<>(collection, predicate);
     }
 
     /**
@@ -141,7 +141,7 @@ public final class Utils {
      * This is an efficient read-only implementation.
      */
     public static <S, T extends S> SubclassFilteredCollection<S, T> filteredCollection(Collection<S> collection, final Class<T> klass) {
-        return new SubclassFilteredCollection<S, T>(collection, new Predicate<S>() {
+        return new SubclassFilteredCollection<>(collection, new Predicate<S>() {
             @Override
             public boolean evaluate(S o) {
                 return klass.isInstance(o);
@@ -522,7 +522,7 @@ public final class Utils {
      * @return the list of sorted objects
      */
     public static <T> List<T> topologicalSort(final MultiMap<T,T> dependencies) {
-        MultiMap<T,T> deps = new MultiMap<T,T>();
+        MultiMap<T,T> deps = new MultiMap<>();
         for (T key : dependencies.keySet()) {
             deps.putVoid(key);
             for (T val : dependencies.get(key)) {
@@ -532,7 +532,7 @@ public final class Utils {
         }
 
         int size = deps.size();
-        List<T> sorted = new ArrayList<T>();
+        List<T> sorted = new ArrayList<>();
         for (int i=0; i<size; ++i) {
             T parentless = null;
             for (T key : deps.keySet()) {
@@ -905,7 +905,7 @@ public final class Utils {
      */
     public static List<String> getMatches(final Matcher m) {
         if (m.matches()) {
-            List<String> result = new ArrayList<String>(m.groupCount() + 1);
+            List<String> result = new ArrayList<>(m.groupCount() + 1);
             for (int i = 0; i <= m.groupCount(); i++) {
                 result.add(m.group(i));
             }

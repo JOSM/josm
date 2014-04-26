@@ -84,7 +84,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     }
 
     public RelationMemberConflictResolverModel() {
-        decisions = new ArrayList<RelationMemberConflictDecision>();
+        decisions = new ArrayList<>();
         support = new PropertyChangeSupport(this);
     }
 
@@ -167,7 +167,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     public void populate(Collection<RelationToChildReference> references) {
         references = references == null ? new LinkedList<RelationToChildReference>() : references;
         decisions.clear();
-        this.relations = new HashSet<Relation>(references.size());
+        this.relations = new HashSet<>(references.size());
         for (RelationToChildReference reference: references) {
             decisions.add(new RelationMemberConflictDecision(reference.getParent(), reference.getPosition()));
             relations.add(reference.getParent());
@@ -267,7 +267,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * @return a list of commands
      */
     public List<Command> buildResolutionCommands(OsmPrimitive newPrimitive) {
-        List<Command> command = new LinkedList<Command>();
+        List<Command> command = new LinkedList<>();
         for (Relation relation : relations) {
             Command cmd = buildResolveCommand(relation, newPrimitive);
             if (cmd != null) {
@@ -307,7 +307,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * to the decisions managed by this model
      */
     public Set<Relation> getModifiedRelations(OsmPrimitive newPrimitive) {
-        HashSet<Relation> ret = new HashSet<Relation>();
+        HashSet<Relation> ret = new HashSet<>();
         for (Relation relation: relations) {
             if (isChanged(relation, newPrimitive)) {
                 ret.add(relation);

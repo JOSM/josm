@@ -37,7 +37,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
      * @return The set of incomplete members of the given relations.
      */
     public Set<OsmPrimitive> buildSetOfIncompleteMembers(Collection<Relation> rels) {
-        Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         for (Relation r : rels) {
             ret.addAll(r.getIncompleteMembers());
         }

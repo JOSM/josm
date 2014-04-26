@@ -66,7 +66,7 @@ public class GpxReader implements GpxConstants {
         private GpxLink currentLink;
         private Extensions currentExtensions;
         private Stack<State> states;
-        private final Stack<String> elements = new Stack<String>();
+        private final Stack<String> elements = new Stack<>();
 
         private StringBuffer accumulator = new StringBuffer();
 
@@ -74,7 +74,7 @@ public class GpxReader implements GpxConstants {
 
         @Override public void startDocument() {
             accumulator = new StringBuffer();
-            states = new Stack<State>();
+            states = new Stack<>();
             data = new GpxData();
         }
 
@@ -122,8 +122,8 @@ public class GpxReader implements GpxConstants {
                 } else if (localName.equals("trk")) {
                     states.push(currentState);
                     currentState = State.trk;
-                    currentTrack = new ArrayList<Collection<WayPoint>>();
-                    currentTrackAttr = new HashMap<String, Object>();
+                    currentTrack = new ArrayList<>();
+                    currentTrackAttr = new HashMap<>();
                 } else if (localName.equals("extensions")) {
                     states.push(currentState);
                     currentState = State.ext;
@@ -163,7 +163,7 @@ public class GpxReader implements GpxConstants {
                 if (localName.equals("trkseg")) {
                     states.push(currentState);
                     currentState = State.trkseg;
-                    currentTrackSeg = new ArrayList<WayPoint>();
+                    currentTrackSeg = new ArrayList<>();
                 } else if (localName.equals("link")) {
                     states.push(currentState);
                     currentState = State.link;
@@ -414,7 +414,7 @@ public class GpxReader implements GpxConstants {
         }
 
         public void tryToFinish() throws SAXException {
-            List<String> remainingElements = new ArrayList<String>(elements);
+            List<String> remainingElements = new ArrayList<>(elements);
             for (int i=remainingElements.size() - 1; i >= 0; i--) {
                 endElement(null, remainingElements.get(i), remainingElements.get(i));
             }

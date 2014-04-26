@@ -83,7 +83,7 @@ class NotificationManager {
     }
 
     public NotificationManager() {
-        queue = new LinkedList<Notification>();
+        queue = new LinkedList<>();
         hideTimer = new Timer(defaultNotificationTime, new HideEvent());
         hideTimer.setRepeats(false);
         pauseTimer = new Timer(pauseTime, new PauseFinishedEvent());

@@ -190,7 +190,7 @@ public class OpeningHourTest extends Test.TagTest {
         if (ENGINE == null || value == null || value.trim().isEmpty()) {
             return Collections.emptyList();
         }
-        final List<OpeningHoursTestError> errors = new ArrayList<OpeningHoursTestError>();
+        final List<OpeningHoursTestError> errors = new ArrayList<>();
         try {
             final Object r = parse(value, mode);
             String prettifiedValue = null;

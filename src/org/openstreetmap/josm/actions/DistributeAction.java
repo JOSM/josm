@@ -51,8 +51,8 @@ public final class DistributeAction extends JosmAction {
         if (!isEnabled())
             return;
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        Collection<Node> nodes = new LinkedList<Node>();
-        Collection<Node> itnodes = new LinkedList<Node>();
+        Collection<Node> nodes = new LinkedList<>();
+        Collection<Node> itnodes = new LinkedList<>();
         for (OsmPrimitive osm : sel)
             if (osm instanceof Node) {
                 nodes.add((Node)osm);
@@ -114,7 +114,7 @@ public final class DistributeAction extends JosmAction {
         double by = nodeb.getEastNorth().north();
 
         // A list of commands to do
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
 
         // Amount of nodes between A and B plus 1
         int num = nodes.size()+1;
@@ -151,7 +151,7 @@ public final class DistributeAction extends JosmAction {
     }
 
     private Set<Node> removeNodesWithoutCoordinates(Collection<Node> col) {
-        Set<Node> result = new HashSet<Node>();
+        Set<Node> result = new HashSet<>();
         for (Iterator<Node> it = col.iterator(); it.hasNext();) {
             Node n = it.next();
             if (n.getCoor() == null) {

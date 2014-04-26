@@ -178,7 +178,7 @@ public class SplitWayAction extends JosmAction {
 
         List<List<Node>> wayChunks = buildSplitChunks(selectedWay, selectedNodes);
         if (wayChunks != null) {
-            List<OsmPrimitive> sel = new ArrayList<OsmPrimitive>(selectedWays.size() + selectedRelations.size());
+            List<OsmPrimitive> sel = new ArrayList<>(selectedWays.size() + selectedRelations.size());
             sel.addAll(selectedWays);
             sel.addAll(selectedRelations);
             SplitWayResult result = splitWay(getEditLayer(),selectedWay, wayChunks, sel);
@@ -215,7 +215,7 @@ public class SplitWayAction extends JosmAction {
         }
 
         // List of ways shared by all nodes
-        List<Way> result = new ArrayList<Way>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
+        List<Way> result = new ArrayList<>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
         for (int i=1; i<selectedNodes.size(); i++) {
             List<OsmPrimitive> ref = selectedNodes.get(i).getReferrers();
             for (Iterator<Way> it = result.iterator(); it.hasNext(); ) {
@@ -262,9 +262,9 @@ public class SplitWayAction extends JosmAction {
         CheckParameterUtil.ensureParameterNotNull(wayToSplit, "wayToSplit");
         CheckParameterUtil.ensureParameterNotNull(splitPoints, "splitPoints");
 
-        Set<Node> nodeSet = new HashSet<Node>(splitPoints);
-        List<List<Node>> wayChunks = new LinkedList<List<Node>>();
-        List<Node> currentWayChunk = new ArrayList<Node>();
+        Set<Node> nodeSet = new HashSet<>(splitPoints);
+        List<List<Node>> wayChunks = new LinkedList<>();
+        List<Node> currentWayChunk = new ArrayList<>();
         wayChunks.add(currentWayChunk);
 
         Iterator<Node> it = wayToSplit.getNodes().iterator();
@@ -273,7 +273,7 @@ public class SplitWayAction extends JosmAction {
             boolean atEndOfWay = currentWayChunk.isEmpty() || !it.hasNext();
             currentWayChunk.add(currentNode);
             if (nodeSet.contains(currentNode) && !atEndOfWay) {
-                currentWayChunk = new ArrayList<Node>();
+                currentWayChunk = new ArrayList<>();
                 currentWayChunk.add(currentNode);
                 wayChunks.add(currentWayChunk);
             }
@@ -334,8 +334,8 @@ public class SplitWayAction extends JosmAction {
      */
     public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks, Collection<? extends OsmPrimitive> selection) {
         // build a list of commands, and also a new selection list
-        Collection<Command> commandList = new ArrayList<Command>(wayChunks.size());
-        List<OsmPrimitive> newSelection = new ArrayList<OsmPrimitive>(selection.size() + wayChunks.size());
+        Collection<Command> commandList = new ArrayList<>(wayChunks.size());
+        List<OsmPrimitive> newSelection = new ArrayList<>(selection.size() + wayChunks.size());
         newSelection.addAll(selection);
 
         Iterator<List<Node>> chunkIt = wayChunks.iterator();
@@ -350,7 +350,7 @@ public class SplitWayAction extends JosmAction {
             newSelection.add(way);
         }
 
-        List<Way> newWays = new ArrayList<Way>();
+        List<Way> newWays = new ArrayList<>();
         // Second, create new ways
         while (chunkIt.hasNext()) {
             Way wayToAdd = new Way();
@@ -392,7 +392,7 @@ public class SplitWayAction extends JosmAction {
                                     via = rmv.getMember();
                                 }
                             }
-                            List<Node> nodes = new ArrayList<Node>();
+                            List<Node> nodes = new ArrayList<>();
                             if(via != null) {
                                 if(via instanceof Node) {
                                     nodes.add((Node)via);

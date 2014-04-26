@@ -147,7 +147,7 @@ public final class Shortcut {
 
     // create a shortcut object from an string as saved in the preferences
     private Shortcut(String prefString) {
-        List<String> s = (new ArrayList<String>(Main.pref.getCollection(prefString)));
+        List<String> s = (new ArrayList<>(Main.pref.getCollection(prefString)));
         this.shortText = prefString.substring(15);
         this.longText = s.get(0);
         this.requestedKey = Integer.parseInt(s.get(1));
@@ -231,10 +231,10 @@ public final class Shortcut {
     ///////////////////////////////
 
     // here we store our shortcuts
-    private static Map<String, Shortcut> shortcuts = new LinkedHashMap<String, Shortcut>();
+    private static Map<String, Shortcut> shortcuts = new LinkedHashMap<>();
 
     // and here our modifier groups
-    private static Map<Integer, Integer> groups= new HashMap<Integer, Integer>();
+    private static Map<Integer, Integer> groups= new HashMap<>();
 
     // check if something collides with an existing shortcut
     public static Shortcut findShortcut(int requestedKey, int modifier) {
@@ -251,7 +251,7 @@ public final class Shortcut {
      * FOR PREF PANE ONLY
      */
     public static List<Shortcut> listAll() {
-        List<Shortcut> l = new ArrayList<Shortcut>();
+        List<Shortcut> l = new ArrayList<>();
         for(Shortcut c : shortcuts.values())
         {
             if(!c.shortText.equals("core:none")) {
@@ -298,7 +298,7 @@ public final class Shortcut {
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();
         // (2) User defined shortcuts
-        LinkedList<Shortcut> newshortcuts = new LinkedList<Shortcut>();
+        LinkedList<Shortcut> newshortcuts = new LinkedList<>();
         for(String s : Main.pref.getAllPrefixCollectionKeys("shortcut.entry.")) {
             newshortcuts.add(new Shortcut(s));
         }

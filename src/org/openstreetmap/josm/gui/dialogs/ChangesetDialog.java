@@ -91,14 +91,14 @@ public class ChangesetDialog extends ToggleDialog{
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         inSelectionModel = new ChangesetInSelectionListModel(selectionModel);
 
-        lstInSelection = new JList<Changeset>(inSelectionModel);
+        lstInSelection = new JList<>(inSelectionModel);
         lstInSelection.setSelectionModel(selectionModel);
         lstInSelection.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstInSelection.setCellRenderer(new ChangesetListCellRenderer());
 
         selectionModel = new DefaultListSelectionModel();
         inActiveDataLayerModel = new ChangesetsInActiveDataLayerListModel(selectionModel);
-        lstInActiveDataLayer = new JList<Changeset>(inActiveDataLayerModel);
+        lstInActiveDataLayer = new JList<>(inActiveDataLayerModel);
         lstInActiveDataLayer.setSelectionModel(selectionModel);
         lstInActiveDataLayer.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstInActiveDataLayer.setCellRenderer(new ChangesetListCellRenderer());
@@ -301,7 +301,7 @@ public class ChangesetDialog extends ToggleDialog{
         public void selectObjectsByChangesetIds(DataSet ds, Set<Integer> ids) {
             if (ds == null || ids == null)
                 return;
-            Set<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> sel = new HashSet<>();
             for (OsmPrimitive p: ds.allPrimitives()) {
                 if (ids.contains(p.getChangesetId())) {
                     sel.add(p);
@@ -484,7 +484,7 @@ public class ChangesetDialog extends ToggleDialog{
         public void actionPerformed(ActionEvent arg0) {
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();
-            final Set<Integer> toDownload = new HashSet<Integer>();
+            final Set<Integer> toDownload = new HashSet<>();
             ChangesetCache cc = ChangesetCache.getInstance();
             for (int id: sel) {
                 if (!cc.contains(id)) {

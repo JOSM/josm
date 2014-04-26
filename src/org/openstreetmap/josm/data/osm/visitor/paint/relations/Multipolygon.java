@@ -55,10 +55,10 @@ public class Multipolygon {
      *
      */
     private static class MultipolygonRoleMatcher implements PreferenceChangedListener{
-        private final List<String> outerExactRoles = new ArrayList<String>();
-        private final List<String> outerRolePrefixes = new ArrayList<String>();
-        private final List<String> innerExactRoles = new ArrayList<String>();
-        private final List<String> innerRolePrefixes = new ArrayList<String>();
+        private final List<String> outerExactRoles = new ArrayList<>();
+        private final List<String> outerRolePrefixes = new ArrayList<>();
+        private final List<String> innerExactRoles = new ArrayList<>();
+        private final List<String> innerRolePrefixes = new ArrayList<>();
 
         private void initDefaults() {
             outerExactRoles.clear();
@@ -201,9 +201,9 @@ public class Multipolygon {
 
         private PolyData(List<Node> nodes, boolean selected, Collection<Long> wayIds) {
             this.wayIds = Collections.unmodifiableCollection(wayIds);
-            this.nodes = new ArrayList<Node>(nodes);
+            this.nodes = new ArrayList<>(nodes);
             this.selected = selected;
-            this.inners = new ArrayList<Multipolygon.PolyData>();
+            this.inners = new ArrayList<>();
             this.poly = new Path2D.Double();
             this.poly.setWindingRule(Path2D.WIND_EVEN_ODD);
             buildPoly();
@@ -234,8 +234,8 @@ public class Multipolygon {
             this.selected = copy.selected;
             this.poly = (Double) copy.poly.clone();
             this.wayIds = Collections.unmodifiableCollection(copy.wayIds);
-            this.nodes = new ArrayList<Node>(copy.nodes);
-            this.inners = new ArrayList<Multipolygon.PolyData>(copy.inners);
+            this.nodes = new ArrayList<>(copy.nodes);
+            this.inners = new ArrayList<>(copy.inners);
         }
 
         public Intersection contains(Path2D.Double p) {
@@ -296,7 +296,7 @@ public class Multipolygon {
                     Way w = (Way) ds.getPrimitiveById(wayIds.iterator().next(), OsmPrimitiveType.WAY);
                     nodes.addAll(w.getNodes());
                 } else if (!wayIds.isEmpty()) {
-                    List<Way> waysToJoin = new ArrayList<Way>();
+                    List<Way> waysToJoin = new ArrayList<>();
                     for (Long wayId : wayIds) {
                         Way w = (Way) ds.getPrimitiveById(wayId, OsmPrimitiveType.WAY);
                         if (w != null && w.getNodesCount() > 0) { // fix #7173 (empty ways on purge)
@@ -346,11 +346,11 @@ public class Multipolygon {
         }
     }
 
-    private final List<Way> innerWays = new ArrayList<Way>();
-    private final List<Way> outerWays = new ArrayList<Way>();
-    private final List<PolyData> innerPolygons = new ArrayList<PolyData>();
-    private final List<PolyData> outerPolygons = new ArrayList<PolyData>();
-    private final List<PolyData> combinedPolygons = new ArrayList<PolyData>();
+    private final List<Way> innerWays = new ArrayList<>();
+    private final List<Way> outerWays = new ArrayList<>();
+    private final List<PolyData> innerPolygons = new ArrayList<>();
+    private final List<PolyData> outerPolygons = new ArrayList<>();
+    private final List<PolyData> combinedPolygons = new ArrayList<>();
 
     private boolean incomplete;
 
@@ -396,7 +396,7 @@ public class Multipolygon {
     }
 
     private void createPolygons(List<Way> ways, List<PolyData> result) {
-        List<Way> waysToJoin = new ArrayList<Way>();
+        List<Way> waysToJoin = new ArrayList<>();
         for (Way way: ways) {
             if (way.isClosed()) {
                 result.add(new PolyData(way));
@@ -412,14 +412,14 @@ public class Multipolygon {
 
     public static Collection<JoinedWay> joinWays(Collection<Way> waysToJoin)
     {
-        final Collection<JoinedWay> result = new ArrayList<JoinedWay>();
+        final Collection<JoinedWay> result = new ArrayList<>();
         final Way[] joinArray = waysToJoin.toArray(new Way[waysToJoin.size()]);
         int left = waysToJoin.size();
         while (left > 0) {
             Way w = null;
             boolean selected = false;
             List<Node> nodes = null;
-            Set<Long> wayIds = new HashSet<Long>();
+            Set<Long> wayIds = new HashSet<>();
             boolean joined = true;
             while (joined && left > 0) {
                 joined = false;

@@ -196,7 +196,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     public void fromOtherApplication() {
         // Reload local styles when they have been changed in an external editor.
         // Checks file modification time.
-        List<StyleSource> toReload = new ArrayList<StyleSource>();
+        List<StyleSource> toReload = new ArrayList<>();
         for (StyleSource s : MapPaintStyles.getStyles().getStyleSources()) {
             if (s.isLocal()) {
                 File f = new File(s.url);
@@ -233,10 +233,10 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
 
     protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
 
-        List<StyleSource> data = new ArrayList<StyleSource>();
+        List<StyleSource> data = new ArrayList<>();
 
         public StylesModel() {
-            data = new ArrayList<StyleSource>(MapPaintStyles.getStyles().getStyleSources());
+            data = new ArrayList<>(MapPaintStyles.getStyles().getStyleSources());
         }
 
         private StyleSource getRow(int i) {
@@ -300,14 +300,14 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
 
         @Override
         public void mapPaintStylesUpdated() {
-            data = new ArrayList<StyleSource>(MapPaintStyles.getStyles().getStyleSources());
+            data = new ArrayList<>(MapPaintStyles.getStyles().getStyleSources());
             fireTableDataChanged();
             tblStyles.repaint();
         }
 
         @Override
         public void mapPaintStyleEntryUpdated(int idx) {
-            data = new ArrayList<StyleSource>(MapPaintStyles.getStyles().getStyleSources());
+            data = new ArrayList<>(MapPaintStyles.getStyles().getStyleSources());
             fireTableRowsUpdated(idx, idx);
             tblStyles.repaint();
         }

@@ -174,7 +174,7 @@ public class WMSImagery {
             child = getChild(child, "Request");
             child = getChild(child, "GetMap");
 
-            formats = new ArrayList<String>(Utils.filter(Utils.transform(getChildren(child, "Format"),
+            formats = new ArrayList<>(Utils.filter(Utils.transform(getChildren(child, "Format"),
                     new Utils.Function<Element, String>() {
                         @Override
                         public String apply(Element x) {
@@ -225,7 +225,7 @@ public class WMSImagery {
     public ImageryInfo toImageryInfo(String name, Collection<LayerDetails> selectedLayers) {
         ImageryInfo i = new ImageryInfo(name, buildGetMapUrl(selectedLayers));
         if (selectedLayers != null) {
-            HashSet<String> proj = new HashSet<String>();
+            HashSet<String> proj = new HashSet<>();
             for (WMSImagery.LayerDetails l : selectedLayers) {
                 proj.addAll(l.getProjections());
             }
@@ -235,7 +235,7 @@ public class WMSImagery {
     }
 
     private List<LayerDetails> parseLayers(List<Element> children, Set<String> parentCrs) {
-        List<LayerDetails> details = new ArrayList<LayerDetails>(children.size());
+        List<LayerDetails> details = new ArrayList<>(children.size());
         for (Element element : children) {
             details.add(parseLayer(element, parentCrs));
         }
@@ -247,7 +247,7 @@ public class WMSImagery {
         String ident = getChildContent(element, "Name", null, null);
 
         // The set of supported CRS/SRS for this layer
-        Set<String> crsList = new HashSet<String>();
+        Set<String> crsList = new HashSet<>();
         // ...including this layer's already-parsed parent projections
         crsList.addAll(parentCrs);
 
@@ -331,7 +331,7 @@ public class WMSImagery {
     }
 
     private static List<Element> getChildren(Element parent, String name) {
-        List<Element> retVal = new ArrayList<Element>();
+        List<Element> retVal = new ArrayList<>();
         for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
             if (child instanceof Element && name.equals(child.getNodeName())) {
                 retVal.add((Element) child);

@@ -100,7 +100,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * Builds the content panel for this dialog
      */
     protected void buildContentPanel() {
-        lstPrimitives = new JList<OsmPrimitive>(model);
+        lstPrimitives = new JList<>(model);
         lstPrimitives.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstPrimitives.setSelectionModel(selectionModel);
         lstPrimitives.setCellRenderer(new OsmPrimitivRenderer());
@@ -412,7 +412,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         // Variable to store history from currentDataSet()
         private LinkedList<Collection<? extends OsmPrimitive>> history;
-        private final List<OsmPrimitive> selection = new ArrayList<OsmPrimitive>();
+        private final List<OsmPrimitive> selection = new ArrayList<>();
         private DefaultListSelectionModel selectionModel;
 
         /**
@@ -496,7 +496,7 @@ public class SelectionListDialog extends ToggleDialog  {
          * @return choosen elements in the view
          */
         public Collection<OsmPrimitive> getSelected() {
-            Set<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> sel = new HashSet<>();
             for(int i=0; i< getSize();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     sel.add(selection.get(i));
@@ -728,7 +728,7 @@ public class SelectionListDialog extends ToggleDialog  {
             }
             if(ways + nodes + relations == 0) {
                 text.append(tr("Unselectable now"));
-                this.sel=new ArrayList<OsmPrimitive>(); // empty selection
+                this.sel=new ArrayList<>(); // empty selection
             }
             if(ways + nodes + relations == 1)
             {

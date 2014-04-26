@@ -160,7 +160,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
                 XmlCondition c = rule.cond;
                 if (c.key != null) {
                     if(rule.conditions == null) {
-                        rule.conditions = new LinkedList<XmlCondition>();
+                        rule.conditions = new LinkedList<>();
                     }
                     rule.conditions.add(new XmlCondition(rule.cond));
                     c = new XmlCondition();

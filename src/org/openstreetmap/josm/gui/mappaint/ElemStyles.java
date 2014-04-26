@@ -33,7 +33,7 @@ public class ElemStyles {
      * Constructs a new {@code ElemStyles}.
      */
     public ElemStyles() {
-        styleSources = new ArrayList<StyleSource>();
+        styleSources = new ArrayList<>();
     }
 
     public void clearCached() {
@@ -175,7 +175,7 @@ public class ElemStyles {
                 if (multipolygon.getOuterWays().contains(osm)) {
                     boolean hasIndependentLineStyle = false;
                     if (!isOuterWayOfSomeMP) { // do this only one time
-                        List<ElemStyle> tmp = new ArrayList<ElemStyle>(p.a.size());
+                        List<ElemStyle> tmp = new ArrayList<>(p.a.size());
                         for (ElemStyle s : p.a) {
                             if (s instanceof AreaElemStyle) {
                                 wayColor = ((AreaElemStyle) s).color;
@@ -304,7 +304,7 @@ public class ElemStyles {
      */
     public Pair<StyleList, Range> generateStyles(OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
 
-        List<ElemStyle> sl = new ArrayList<ElemStyle>();
+        List<ElemStyle> sl = new ArrayList<>();
         MultiCascade mc = new MultiCascade();
         Environment env = new Environment(osm, mc, null, null);
 
@@ -350,7 +350,7 @@ public class ElemStyles {
                 }
             }
         }
-        return new Pair<StyleList, Range>(new StyleList(sl), mc.range);
+        return new Pair<>(new StyleList(sl), mc.range);
     }
 
     private static <T> void addIfNotNull(List<T> list, T obj) {

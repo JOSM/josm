@@ -79,7 +79,7 @@ public class MainApplication extends Main {
         mainFrame.setContentPane(contentPanePrivate);
         mainFrame.setJMenuBar(menu);
         geometry.applySafe(mainFrame);
-        LinkedList<Image> l = new LinkedList<Image>();
+        LinkedList<Image> l = new LinkedList<>();
         l.add(ImageProvider.get("logo_16x16x32").getImage());
         l.add(ImageProvider.get("logo_16x16x8").getImage());
         l.add(ImageProvider.get("logo_32x32x32").getImage());
@@ -201,7 +201,7 @@ public class MainApplication extends Main {
         }
 
         public static Map<Option, Collection<String>> fromStringMap(Map<String, Collection<String>> opts) {
-            Map<Option, Collection<String>> res = new HashMap<Option, Collection<String>>();
+            Map<Option, Collection<String>> res = new HashMap<>();
             for (Map.Entry<String, Collection<String>> e : opts.entrySet()) {
                 Option o = Option.valueOf(e.getKey().toUpperCase().replace("-", "_"));
                 if (o != null) {
@@ -214,14 +214,14 @@ public class MainApplication extends Main {
 
     private static Map<Option, Collection<String>> buildCommandLineArgumentMap(String[] args) {
 
-        List<LongOpt> los = new ArrayList<LongOpt>();
+        List<LongOpt> los = new ArrayList<>();
         for (Option o : Option.values()) {
             los.add(new LongOpt(o.getName(), o.requiresArgument() ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, 0));
         }
 
         Getopt g = new Getopt("JOSM", args, "hv", los.toArray(new LongOpt[los.size()]));
 
-        Map<Option, Collection<String>> argMap = new HashMap<Option, Collection<String>>();
+        Map<Option, Collection<String>> argMap = new HashMap<>();
 
         int c;
         while ((c = g.getopt()) != -1 ) {
@@ -240,7 +240,7 @@ public class MainApplication extends Main {
             if (opt != null) {
                 Collection<String> values = argMap.get(opt);
                 if (values == null) {
-                    values = new ArrayList<String>();
+                    values = new ArrayList<>();
                     argMap.put(opt, values);
                 }
                 values.add(g.getOptarg());
@@ -251,7 +251,7 @@ public class MainApplication extends Main {
         for (int i = g.getOptind(); i < args.length; ++i) {
             Collection<String> values = argMap.get(Option.DOWNLOAD);
             if (values == null) {
-                values = new ArrayList<String>();
+                values = new ArrayList<>();
                 argMap.put(Option.DOWNLOAD, values);
             }
             values.add(args[i]);
@@ -527,7 +527,7 @@ public class MainApplication extends Main {
         private boolean handleNetworkErrors() {
             boolean condition = !NETWORK_ERRORS.isEmpty();
             if (condition) {
-                Set<String> errors = new TreeSet<String>();
+                Set<String> errors = new TreeSet<>();
                 for (Throwable t : NETWORK_ERRORS.values()) {
                     errors.add(t.toString());
                 }

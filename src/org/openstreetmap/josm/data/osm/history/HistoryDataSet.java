@@ -51,9 +51,9 @@ public class HistoryDataSet implements LayerChangeListener{
      * Constructs a new {@code HistoryDataSet}.
      */
     public HistoryDataSet() {
-        data = new HashMap<PrimitiveId, ArrayList<HistoryOsmPrimitive>>();
-        listeners = new CopyOnWriteArrayList<HistoryDataSetListener>();
-        changesets = new HashMap<Long, Changeset>();
+        data = new HashMap<>();
+        listeners = new CopyOnWriteArrayList<>();
+        changesets = new HashMap<>();
     }
 
     public void addHistoryDataSetListener(HistoryDataSetListener listener) {
@@ -186,7 +186,7 @@ public class HistoryDataSet implements LayerChangeListener{
     }
 
     public Collection<Long> getChangesetIds() {
-        final HashSet<Long> ids = new HashSet<Long>();
+        final HashSet<Long> ids = new HashSet<>();
         for (Collection<HistoryOsmPrimitive> i : data.values()) {
             for (HistoryOsmPrimitive j : i) {
                 ids.add(j.getChangesetId());

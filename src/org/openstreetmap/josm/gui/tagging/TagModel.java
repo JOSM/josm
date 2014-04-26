@@ -16,7 +16,7 @@ public class TagModel {
      * constructor
      */
     public TagModel() {
-        values = new ArrayList<String>();
+        values = new ArrayList<>();
         setName("");
         setValue("");
     }

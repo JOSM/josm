@@ -94,7 +94,7 @@ public class Capabilities {
             }
         } else {
             if (! capabilities.containsKey(element))  {
-                HashMap<String,String> h = new HashMap<String, String>();
+                HashMap<String,String> h = new HashMap<>();
                 capabilities.put(element, h);
             }
             HashMap<String, String> e = capabilities.get(element);
@@ -103,8 +103,8 @@ public class Capabilities {
     }
 
     public final void clear() {
-        capabilities = new HashMap<String, HashMap<String,String>>();
-        imageryBlacklist = new ArrayList<String>();
+        capabilities = new HashMap<>();
+        imageryBlacklist = new ArrayList<>();
     }
 
     public boolean supportsVersion(String version) {

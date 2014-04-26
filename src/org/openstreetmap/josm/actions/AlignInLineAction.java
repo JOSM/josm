@@ -88,13 +88,13 @@ public final class AlignInLineAction extends JosmAction {
         for(Node n: nodes) {
             Collection<Way> ref = OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
             if(waysRef == null)
-                waysRef = new HashSet<Way>(ref);
+                waysRef = new HashSet<>(ref);
             else
                 waysRef.retainAll(ref);
         }
         if(waysRef.size() == 1) {
             // All nodes are part of the same way. See #9605
-            HashSet<Node> remainNodes = new HashSet<Node>(nodes);
+            HashSet<Node> remainNodes = new HashSet<>(nodes);
             Way way = waysRef.iterator().next();
             for(Node n: way.getNodes()) {
                 if(!remainNodes.contains(n)) continue;
@@ -134,8 +134,8 @@ public final class AlignInLineAction extends JosmAction {
         if (!isEnabled())
             return;
 
-        List<Node> selectedNodes = new ArrayList<Node>(getCurrentDataSet().getSelectedNodes());
-        List<Way> selectedWays = new ArrayList<Way>(getCurrentDataSet().getSelectedWays());
+        List<Node> selectedNodes = new ArrayList<>(getCurrentDataSet().getSelectedNodes());
+        List<Way> selectedWays = new ArrayList<>(getCurrentDataSet().getSelectedWays());
 
         try {
             Command cmd = null;
@@ -195,7 +195,7 @@ public final class AlignInLineAction extends JosmAction {
         Node[] anchors = new Node[2]; // oh, java I love you so much..
         // use the nodes furthest apart as anchors
         nodePairFurthestApart(nodes, anchors);
-        Collection<Command> cmds = new ArrayList<Command>(nodes.size());
+        Collection<Command> cmds = new ArrayList<>(nodes.size());
         Line line = new Line(anchors[0], anchors[1]);
         for(Node node: nodes)
             if(node != anchors[0] && node != anchors[1])
@@ -211,16 +211,16 @@ public final class AlignInLineAction extends JosmAction {
      */
     private Command alignMultiWay(Collection<Way> ways) throws InvalidSelection {
         // Collect all nodes and compute line equation
-        HashSet<Node> nodes = new HashSet<Node>();
-        HashMap<Way, Line> lines = new HashMap<Way, Line>();
+        HashSet<Node> nodes = new HashSet<>();
+        HashMap<Way, Line> lines = new HashMap<>();
         for(Way w: ways) {
             if(w.firstNode() == w.lastNode())
                 throw new InvalidSelection(tr("Can not align a polygon. Abort."));
             nodes.addAll(w.getNodes());
             lines.put(w, new Line(w));
         }
-        Collection<Command> cmds = new ArrayList<Command>(nodes.size());
-        List<Way> referers = new ArrayList<Way>(ways.size());
+        Collection<Command> cmds = new ArrayList<>(nodes.size());
+        List<Way> referers = new ArrayList<>(ways.size());
         for(Node n: nodes) {
             referers.clear();
             for(OsmPrimitive o: n.getReferrers())
@@ -249,8 +249,8 @@ public final class AlignInLineAction extends JosmAction {
      * @throws InvalidSelection
      */
     private List<Line> getInvolvedLines(Node node, List<Way> refWays) throws InvalidSelection {
-        ArrayList<Line> lines = new ArrayList<Line>();
-        ArrayList<Node> neighbors = new ArrayList<Node>();
+        ArrayList<Line> lines = new ArrayList<>();
+        ArrayList<Node> neighbors = new ArrayList<>();
         for(Way way: refWays) {
             List<Node> nodes = way.getNodes();
             neighbors.clear();

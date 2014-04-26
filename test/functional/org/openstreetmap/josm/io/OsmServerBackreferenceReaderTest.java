@@ -126,7 +126,7 @@ public class OsmServerBackreferenceReaderTest {
      */
     static public void createDataSetOnServer(DataSet ds) throws OsmTransferException {
         logger.info("creating data set on the server ...");
-        ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
+        ArrayList<OsmPrimitive> primitives = new ArrayList<>();
         primitives.addAll(ds.getNodes());
         primitives.addAll(ds.getWays());
         primitives.addAll(ds.getRelations());
@@ -327,7 +327,7 @@ public class OsmServerBackreferenceReaderTest {
             assertEquals(false, w1.isIncomplete());
         }
         assertEquals(2, referers.getRelations().size());  // two relations referring to
-        Set<Long> expectedNodeIds = new HashSet<Long>();
+        Set<Long> expectedNodeIds = new HashSet<>();
         for (Way way : referers.getWays()) {
             Way orig = (Way) ds.getPrimitiveById(way);
             for (Node n : orig.getNodes()) {
@@ -358,7 +358,7 @@ public class OsmServerBackreferenceReaderTest {
         reader.setReadFull(false);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
 
-        Set<Long> referringRelationsIds = new HashSet<Long>();
+        Set<Long> referringRelationsIds = new HashSet<>();
         r = lookupRelation(referers, 6);
         assertNotNull(r);
         assertEquals(false, r.isIncomplete());
@@ -385,7 +385,7 @@ public class OsmServerBackreferenceReaderTest {
         // make sure we read all ways referred to by parent relations. These
         // ways are incomplete after reading.
         //
-        Set<Long> expectedWayIds = new HashSet<Long>();
+        Set<Long> expectedWayIds = new HashSet<>();
         for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
             if (m.isWay()) {
                 expectedWayIds.add(m.getMember().getId());
@@ -419,7 +419,7 @@ public class OsmServerBackreferenceReaderTest {
     }
 
     protected Set<Long> getNodeIdsInWay(Way way) {
-        HashSet<Long> ret = new HashSet<Long>();
+        HashSet<Long> ret = new HashSet<>();
         if (way == null)return ret;
         for (Node n: way.getNodes()) {
             ret.add(n.getId());
@@ -428,7 +428,7 @@ public class OsmServerBackreferenceReaderTest {
     }
 
     protected Set<Long> getNodeIdsInRelation(Relation r) {
-        HashSet<Long> ret = new HashSet<Long>();
+        HashSet<Long> ret = new HashSet<>();
         if (r == null) return ret;
         for (RelationMember m: r.getMembers()) {
             if (m.isNode()) {
@@ -454,7 +454,7 @@ public class OsmServerBackreferenceReaderTest {
         reader.setReadFull(true);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
 
-        Set<Long> referringRelationsIds = new HashSet<Long>();
+        Set<Long> referringRelationsIds = new HashSet<>();
         r = lookupRelation(referers, 6);
         assertNotNull(r);
         assertEquals(false, r.isIncomplete());
@@ -481,7 +481,7 @@ public class OsmServerBackreferenceReaderTest {
         // make sure we read all ways referred to by parent relations. These
         // ways are completely read after reading the relations
         //
-        Set<Long> expectedWayIds = new HashSet<Long>();
+        Set<Long> expectedWayIds = new HashSet<>();
         for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
             if (m.isWay()) {
                 expectedWayIds.add(m.getMember().getId());
@@ -508,7 +508,7 @@ public class OsmServerBackreferenceReaderTest {
             assertEquals(false, w.isIncomplete());
         }
 
-        Set<Long> expectedNodeIds = new HashSet<Long>();
+        Set<Long> expectedNodeIds = new HashSet<>();
         for (int i = 6; i < 10; i++) {
             Relation r1 = lookupRelation(ds, i);
             expectedNodeIds.addAll(getNodeIdsInRelation(r1));

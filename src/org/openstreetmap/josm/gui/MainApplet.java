@@ -70,7 +70,7 @@ public class MainApplet extends JApplet {
         {"reset-preferences", tr("any"),tr("If specified, reset the configuration instead of reading it.")}
     };
 
-    private Map<String, Collection<String>> args = new HashMap<String, Collection<String>>();
+    private Map<String, Collection<String>> args = new HashMap<>();
 
     @Override public String[][] getParameterInfo() {
         return paramInfo;
@@ -156,7 +156,7 @@ public class MainApplet extends JApplet {
         String param = getParameter(s);
         if (param != null) {
             if (v == null) {
-                v = new LinkedList<String>();
+                v = new LinkedList<>();
             }
             v.addAll(Arrays.asList(param.split(";")));
         }

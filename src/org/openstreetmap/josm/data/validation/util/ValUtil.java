@@ -39,8 +39,8 @@ public final class ValUtil {
         Node n1 = w.getNode(0);
         Node n2 = w.getNode(w.getNodesCount() - 1);
 
-        List<List<Way>> cells = new ArrayList<List<Way>>(2);
-        Set<Point2D> cellNodes = new HashSet<Point2D>();
+        List<List<Way>> cells = new ArrayList<>(2);
+        Set<Point2D> cellNodes = new HashSet<>();
         Point2D cell;
 
         // First, round coordinates
@@ -54,7 +54,7 @@ public final class ValUtil {
         cellNodes.add(cell);
         List<Way> ways = cellWays.get(cell);
         if (ways == null) {
-            ways = new ArrayList<Way>();
+            ways = new ArrayList<>();
             cellWays.put(cell, ways);
         }
         cells.add(ways);
@@ -65,7 +65,7 @@ public final class ValUtil {
             cellNodes.add(cell);
             ways = cellWays.get( cell );
             if (ways == null) {
-                ways = new ArrayList<Way>();
+                ways = new ArrayList<>();
                 cellWays.put(cell, ways);
             }
             cells.add(ways);
@@ -83,7 +83,7 @@ public final class ValUtil {
             cellNodes.add(cell);
             ways = cellWays.get(cell);
             if (ways == null) {
-                ways = new ArrayList<Way>();
+                ways = new ArrayList<>();
                 cellWays.put(cell, ways);
             }
             cells.add(ways);
@@ -95,7 +95,7 @@ public final class ValUtil {
             cellNodes.add(cell);
             ways = cellWays.get(cell);
             if (ways == null) {
-                ways = new ArrayList<Way>();
+                ways = new ArrayList<>();
                 cellWays.put(cell, ways);
             }
             cells.add(ways);
@@ -133,7 +133,7 @@ public final class ValUtil {
     public static List<Point2D> getSegmentCells(EastNorth en1, EastNorth en2, double gridDetail) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(en1, "en1");
         CheckParameterUtil.ensureParameterNotNull(en2, "en2");
-        List<Point2D> cells = new ArrayList<Point2D>();
+        List<Point2D> cells = new ArrayList<>();
         double x0 = en1.east() * gridDetail;
         double x1 = en2.east() * gridDetail;
         double y0 = en1.north() * gridDetail + 1;

@@ -37,7 +37,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
      */
     public RelationMemberListTableCellRenderer() {
         setOpaque(true);
-        icons = new HashMap<OsmPrimitiveType, ImageIcon>();
+        icons = new HashMap<>();
         icons.put(OsmPrimitiveType.NODE, ImageProvider.get("data", "node"));
         icons.put(OsmPrimitiveType.WAY, ImageProvider.get("data", "way"));
         icons.put(OsmPrimitiveType.RELATION, ImageProvider.get("data", "relation"));

@@ -136,6 +136,6 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
 
     @Override
     public List<String> getTemplateKeys() {
-        return new ArrayList<String>(attr.keySet());
+        return new ArrayList<>(attr.keySet());
     }
 }

@@ -24,7 +24,7 @@ public class WayConnectionTypeCalculator {
      */
     public List<WayConnectionType> updateLinks(List<RelationMember> members) {
         this.members = members;
-        final List<WayConnectionType> con = new ArrayList<WayConnectionType>();
+        final List<WayConnectionType> con = new ArrayList<>();
 
         for (int i=0; i<members.size(); ++i) {
             con.add(null);
@@ -245,7 +245,7 @@ public class WayConnectionTypeCalculator {
             return NONE;
 
         /** the list of nodes the way k can dock to */
-        List<Node> refNodes= new ArrayList<Node>();
+        List<Node> refNodes= new ArrayList<>();
 
         switch (ref_direction) {
         case FORWARD:

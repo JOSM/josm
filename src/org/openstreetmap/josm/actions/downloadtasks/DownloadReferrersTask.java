@@ -61,7 +61,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         super("Download referrers", false /* don't ignore exception*/);
         CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
         canceled = false;
-        this.children = new HashMap<Long, OsmPrimitiveType>();
+        this.children = new HashMap<>();
         if (children != null) {
             for (OsmPrimitive p: children) {
                 if (! p.isNew()) {
@@ -84,7 +84,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         super("Download referrers", false /* don't ignore exception*/);
         CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
         canceled = false;
-        this.children = new HashMap<Long, OsmPrimitiveType>();
+        this.children = new HashMap<>();
         if (children != null) {
             for (Entry<Long, OsmPrimitiveType> entry : children.entrySet()) {
                 if (entry.getKey() > 0 && entry.getValue() != null) {
@@ -114,7 +114,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             throw new IllegalArgumentException(MessageFormat.format("Id > 0 required, got {0}", id));
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         canceled = false;
-        this.children = new HashMap<Long, OsmPrimitiveType>();
+        this.children = new HashMap<>();
         this.children.put(id, type);
         this.targetLayer = targetLayer;
         parents = new DataSet();
@@ -150,7 +150,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         if (primitiveId.isNew())
             throw new IllegalArgumentException(MessageFormat.format("Cannot download referrers for new primitives (ID {0})", primitiveId.getUniqueId()));
         canceled = false;
-        this.children = new HashMap<Long, OsmPrimitiveType>();
+        this.children = new HashMap<>();
         this.children.put(primitiveId.getUniqueId(), primitiveId.getType());
         this.targetLayer = targetLayer;
         parents = new DataSet();
@@ -214,7 +214,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
 
         DataSetMerger merger;
         if (!ways.isEmpty()) {
-            Set<Node> nodes = new HashSet<Node>();
+            Set<Node> nodes = new HashSet<>();
             for (Way w: ways) {
                 // Ensure each node is only listed once
                 nodes.addAll(w.getNodes());

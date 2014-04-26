@@ -45,7 +45,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class PasteTagsConflictResolverDialog extends JDialog  implements PropertyChangeListener {
     private static final Map<OsmPrimitiveType, String> PANE_TITLES;
     static {
-        PANE_TITLES = new HashMap<OsmPrimitiveType, String>();
+        PANE_TITLES = new HashMap<>();
         PANE_TITLES.put(OsmPrimitiveType.NODE, tr("Tags from nodes"));
         PANE_TITLES.put(OsmPrimitiveType.WAY, tr("Tags from ways"));
         PANE_TITLES.put(OsmPrimitiveType.RELATION, tr("Tags from relations"));
@@ -77,7 +77,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     protected final void build() {
         setTitle(tr("Conflicts in pasted tags"));
         allPrimitivesResolver = new TagConflictResolver();
-        resolvers = new HashMap<OsmPrimitiveType, TagConflictResolver>();
+        resolvers = new HashMap<>();
         for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
             resolvers.put(type, new TagConflictResolver());
             resolvers.get(type).getModel().addPropertyChangeListener(this);
@@ -359,8 +359,8 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         public Map<OsmPrimitiveType, Integer> targetInfo;
 
         public StatisticsInfo() {
-            sourceInfo = new HashMap<OsmPrimitiveType, Integer>();
-            targetInfo = new HashMap<OsmPrimitiveType, Integer>();
+            sourceInfo = new HashMap<>();
+            targetInfo = new HashMap<>();
         }
     }
 
@@ -397,7 +397,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         private List<StatisticsInfo> data;
 
         public StatisticsTableModel() {
-            data = new ArrayList<StatisticsInfo>();
+            data = new ArrayList<>();
         }
 
         @Override

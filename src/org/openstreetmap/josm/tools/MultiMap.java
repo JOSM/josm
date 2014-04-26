@@ -21,12 +21,19 @@ public class MultiMap<A, B> {
 
     private final Map<A, Set<B>> map;
 
+    /**
+     * Constructs a new {@code MultiMap}.
+     */
     public MultiMap() {
-        map = new HashMap<A, Set<B>>();
+        map = new HashMap<>();
     }
 
+    /**
+     * Constructs a new {@code MultiMap} with the specified initial capacity. 
+     * @param capacity the initial capacity
+     */
     public MultiMap(int capacity) {
-        map = new HashMap<A, Set<B>>(capacity);
+        map = new HashMap<>(capacity);
     }
 
     /**
@@ -37,7 +44,7 @@ public class MultiMap<A, B> {
     public void put(A key, B value) {
         Set<B> vals = map.get(key);
         if (vals == null) {
-            vals = new LinkedHashSet<B>();
+            vals = new LinkedHashSet<>();
             map.put(key, vals);
         }
         vals.add(value);
@@ -63,7 +70,7 @@ public class MultiMap<A, B> {
     public void putAll(A key, Collection<B> values) {
         Set<B> vals = map.get(key);
         if (vals == null) {
-            vals = new LinkedHashSet<B>(values);
+            vals = new LinkedHashSet<>(values);
             map.put(key, vals);
         }
         vals.addAll(values);
@@ -92,7 +99,7 @@ public class MultiMap<A, B> {
      */
     public Set<B> getValues(A key) {
         if (!map.containsKey(key))
-            return new LinkedHashSet<B>();
+            return new LinkedHashSet<>();
         return map.get(key);
     }
 
@@ -160,7 +167,7 @@ public class MultiMap<A, B> {
 
     @Override
     public String toString() {
-        List<String> entries = new ArrayList<String>(map.size());
+        List<String> entries = new ArrayList<>(map.size());
         for (A key : map.keySet()) {
             entries.add(key + "->{" + Utils.join(",", map.get(key)) + "}");
         }

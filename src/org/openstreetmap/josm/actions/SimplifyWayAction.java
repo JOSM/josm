@@ -106,7 +106,7 @@ public class SimplifyWayAction extends JosmAction {
                 return;
             }
 
-            Collection<Command> allCommands = new LinkedList<Command>();
+            Collection<Command> allCommands = new LinkedList<>();
             for (Way way: ways) {
                 SequenceCommand simplifyCommand = simplifyWay(way);
                 if (simplifyCommand == null) {
@@ -138,7 +138,7 @@ public class SimplifyWayAction extends JosmAction {
     protected boolean isRequiredNode(Way way, Node node) {
         boolean isRequired =  Collections.frequency(way.getNodes(), node) > 1;
         if (! isRequired) {
-            List<OsmPrimitive> parents = new LinkedList<OsmPrimitive>();
+            List<OsmPrimitive> parents = new LinkedList<>();
             parents.addAll(node.getReferrers());
             parents.remove(way);
             isRequired = !parents.isEmpty();
@@ -170,7 +170,7 @@ public class SimplifyWayAction extends JosmAction {
     public SequenceCommand simplifyWay(Way w, double threshold) {
         int lower = 0;
         int i = 0;
-        List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
+        List<Node> newNodes = new ArrayList<>(w.getNodesCount());
         while(i < w.getNodesCount()){
             if (isRequiredNode(w,w.getNode(i))) {
                 // copy a required node to the list of new nodes. Simplify not possible
@@ -190,13 +190,13 @@ public class SimplifyWayAction extends JosmAction {
             i++;
         }
 
-        HashSet<Node> delNodes = new HashSet<Node>();
+        HashSet<Node> delNodes = new HashSet<>();
         delNodes.addAll(w.getNodes());
         delNodes.removeAll(newNodes);
 
         if (delNodes.isEmpty()) return null;
 
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
         Way newWay = new Way(w);
         newWay.setNodes(newNodes);
         cmds.add(new ChangeCommand(w, newWay));

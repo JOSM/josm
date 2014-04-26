@@ -159,7 +159,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
      * to remove the highlight from them again as otherwise the whole data
      * set would have to be checked.
      */
-    private Set<OsmPrimitive> oldHighlights = new HashSet<OsmPrimitive>();
+    private Set<OsmPrimitive> oldHighlights = new HashSet<>();
 
     /**
      * Create a new SelectAction
@@ -253,7 +253,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         updateKeyModifiers(modifiers);
         determineMapMode(!c.isEmpty());
 
-        HashSet<OsmPrimitive> newHighlights = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> newHighlights = new HashSet<>();
 
         virtualManager.clear();
         if(mode == Mode.move) {
@@ -361,7 +361,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         for(OsmPrimitive prim : oldHighlights) {
             prim.setHighlighted(false);
         }
-        oldHighlights = new HashSet<OsmPrimitive>();
+        oldHighlights = new HashSet<>();
         return true;
     }
 
@@ -845,7 +845,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         if (target == null)
             return;
 
-        Collection<Node> nodesToMerge = new LinkedList<Node>(selNodes);
+        Collection<Node> nodesToMerge = new LinkedList<>(selNodes);
         nodesToMerge.add(target);
         MergeNodesAction.doMergeNodes(Main.main.getEditLayer(), nodesToMerge, target);
     }
@@ -1073,7 +1073,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
     private class VirtualManager {
 
         private Node virtualNode = null;
-        private Collection<WaySegment> virtualWays = new LinkedList<WaySegment>();
+        private Collection<WaySegment> virtualWays = new LinkedList<>();
         private int nodeVirtualSize;
         private int virtualSnapDistSq2;
         private int virtualSpace;
@@ -1099,8 +1099,8 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         private boolean activateVirtualNodeNearPoint(Point p) {
             if (nodeVirtualSize > 0) {
 
-                Collection<WaySegment> selVirtualWays = new LinkedList<WaySegment>();
-                Pair<Node, Node> vnp = null, wnp = new Pair<Node, Node>(null, null);
+                Collection<WaySegment> selVirtualWays = new LinkedList<>();
+                Pair<Node, Node> vnp = null, wnp = new Pair<>(null, null);
 
                 Way w = null;
                 for (WaySegment ws : mv.getNearestWaySegments(p, OsmPrimitive.isSelectablePredicate)) {
@@ -1116,7 +1116,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
                             // virtual node at the same spot will be joined which is likely unwanted
                             Pair.sort(wnp);
                             if (vnp == null) {
-                                vnp = new Pair<Node, Node>(wnp.a, wnp.b);
+                                vnp = new Pair<>(wnp.a, wnp.b);
                                 virtualNode = new Node(mv.getLatLon(pc.getX(), pc.getY()));
                             }
                             if (vnp.equals(wnp)) {
@@ -1138,7 +1138,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         }
 
         private void createMiddleNodeFromVirtual(EastNorth currentEN) {
-            Collection<Command> virtualCmds = new LinkedList<Command>();
+            Collection<Command> virtualCmds = new LinkedList<>();
             virtualCmds.add(new AddCommand(virtualNode));
             for (WaySegment virtualWay : virtualWays) {
                 Way w = virtualWay.way;

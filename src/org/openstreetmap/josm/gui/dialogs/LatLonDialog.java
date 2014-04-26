@@ -342,7 +342,7 @@ public class LatLonDialog extends ExtendedDialog {
         final Matcher m = p.matcher(coord);
 
         final StringBuilder sb = new StringBuilder();
-        final List<Object> list = new ArrayList<Object>();
+        final List<Object> list = new ArrayList<>();
 
         while (m.find()) {
             if (m.group(1) != null) {

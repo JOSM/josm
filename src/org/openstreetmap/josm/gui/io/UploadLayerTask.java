@@ -68,7 +68,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         this.monitor = monitor;
         this.changeset = changeset;
         this.strategy = strategy;
-        processedPrimitives = new HashSet<IPrimitive>();
+        processedPrimitives = new HashSet<>();
     }
 
     protected OsmPrimitive getPrimitive(OsmPrimitiveType type, long id) {

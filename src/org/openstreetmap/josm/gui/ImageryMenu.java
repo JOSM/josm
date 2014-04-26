@@ -132,7 +132,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         if (Main.isDisplayingMapView()) {
             MapView mv = Main.map.mapView;
             LatLon pos = mv.getProjection().eastNorth2latlon(mv.getCenter());
-            final Set<ImageryInfo> inViewLayers = new HashSet<ImageryInfo>();
+            final Set<ImageryInfo> inViewLayers = new HashSet<>();
 
             for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
                 if (i.getBounds() != null && i.getBounds().contains(pos)) {
@@ -237,7 +237,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
      * (and possibly recreated) when refreshImageryMenu() is called.
      * @since 5803
      */
-    private List <Object> dynamicItems = new ArrayList<Object>(20);
+    private List <Object> dynamicItems = new ArrayList<>(20);
     
     /**
      * Remove all the items in @field dynamicItems collection

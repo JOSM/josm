@@ -173,7 +173,7 @@ public class CreateMultipolygonAction extends JosmAction {
         if (selectedRelations.size() == 1 && "multipolygon".equals(selectedRelations.iterator().next().get("type"))) {
             return selectedRelations.iterator().next();
         } else {
-            final HashSet<Relation> relatedRelations = new HashSet<Relation>();
+            final HashSet<Relation> relatedRelations = new HashSet<>();
             for (final Way w : selectedWays) {
                 relatedRelations.addAll(Utils.filteredCollection(w.getReferrers(), Relation.class));
             }
@@ -187,7 +187,7 @@ public class CreateMultipolygonAction extends JosmAction {
     public static Pair<Relation, Relation> updateMultipolygonRelation(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
         // add ways of existing relation to include them in polygon analysis
-        Set<Way> ways = new HashSet<Way>(selectedWays);
+        Set<Way> ways = new HashSet<>(selectedWays);
         ways.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
 
         final MultipolygonCreate polygon = analyzeWays(ways, true);
@@ -302,7 +302,7 @@ public class CreateMultipolygonAction extends JosmAction {
 
     private static void addMembers(JoinedPolygon polygon, Relation rel, String role) {
         final int count = rel.getMembersCount();
-        final HashSet<Way> ways = new HashSet<Way>(polygon.ways);
+        final HashSet<Way> ways = new HashSet<>(polygon.ways);
         for (int i = 0; i < count; i++) {
             final RelationMember m = rel.getMember(i);
             if (ways.contains(m.getMember()) && !role.equals(m.getRole())) {
@@ -324,12 +324,12 @@ public class CreateMultipolygonAction extends JosmAction {
      * @return a list of commands to execute
      */
     public static List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
-        Map<String, String> values = new HashMap<String, String>(relation.getKeys());
+        Map<String, String> values = new HashMap<>(relation.getKeys());
 
-        List<Way> innerWays = new ArrayList<Way>();
-        List<Way> outerWays = new ArrayList<Way>();
+        List<Way> innerWays = new ArrayList<>();
+        List<Way> outerWays = new ArrayList<>();
 
-        Set<String> conflictingKeys = new TreeSet<String>();
+        Set<String> conflictingKeys = new TreeSet<>();
 
         for( RelationMember m : relation.getMembers() ) {
 
@@ -370,11 +370,11 @@ public class CreateMultipolygonAction extends JosmAction {
 
         values.put("area", "yes");
 
-        List<Command> commands = new ArrayList<Command>();
+        List<Command> commands = new ArrayList<>();
         boolean moveTags = Main.pref.getBoolean("multipoly.movetags", true);
 
         for (Entry<String, String> entry : values.entrySet()) {
-            List<OsmPrimitive> affectedWays = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> affectedWays = new ArrayList<>();
             String key = entry.getKey();
             String value = entry.getValue();
 

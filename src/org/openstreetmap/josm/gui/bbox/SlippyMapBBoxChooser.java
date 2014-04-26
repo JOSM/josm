@@ -48,7 +48,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
      * TMS TileSource provider for the slippymap chooser
      */
     public static class TMSTileSourceProvider implements TileSourceProvider {
-        static final Set<String> existingSlippyMapUrls = new HashSet<String>();
+        static final Set<String> existingSlippyMapUrls = new HashSet<>();
         static {
             // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
             existingSlippyMapUrls.add("https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik
@@ -60,7 +60,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         @Override
         public List<TileSource> getTileSources() {
             if (!TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get()) return Collections.<TileSource>emptyList();
-            List<TileSource> sources = new ArrayList<TileSource>();
+            List<TileSource> sources = new ArrayList<>();
             for (ImageryInfo info : ImageryLayerInfo.instance.getLayers()) {
                 if (existingSlippyMapUrls.contains(info.getUrl())) {
                     continue;
@@ -94,7 +94,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         providers.addIfAbsent(tileSourceProvider);
     }
 
-    private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<TileSourceProvider>();
+    private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<>();
 
     static {
         addTileSourceProvider(new TileSourceProvider() {
@@ -178,7 +178,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     }
 
     private List<TileSource> getAllTileSources() {
-        List<TileSource> tileSources = new ArrayList<TileSource>();
+        List<TileSource> tileSources = new ArrayList<>();
         for (TileSourceProvider provider: providers) {
             tileSources.addAll(provider.getTileSources());
         }
@@ -337,7 +337,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
         MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
 
-        List<MapMarker> marker = new ArrayList<MapMarker>(2);
+        List<MapMarker> marker = new ArrayList<>(2);
         marker.add(xmin_ymin);
         marker.add(xmax_ymax);
         setMapMarkerList(marker);

@@ -75,15 +75,15 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         OsmDataLayer layer;
         String layerName;
         String layerFileName;
-        final Deque<File> backupFiles = new LinkedList<File>();
+        final Deque<File> backupFiles = new LinkedList<>();
     }
 
     private final DataSetListenerAdapter datasetAdapter = new DataSetListenerAdapter(this);
-    private final Set<DataSet> changedDatasets = new HashSet<DataSet>();
-    private final List<AutosaveLayerInfo> layersInfo = new ArrayList<AutosaveLayerInfo>();
+    private final Set<DataSet> changedDatasets = new HashSet<>();
+    private final List<AutosaveLayerInfo> layersInfo = new ArrayList<>();
     private Timer timer;
     private final Object layersLock = new Object();
-    private final Deque<File> deletedLayers = new LinkedList<File>();
+    private final Deque<File> deletedLayers = new LinkedList<>();
 
     private final File autosaveDir = new File(Main.pref.getPreferencesDir() + AUTOSAVE_DIR);
     private final File deletedLayersDir = new File(Main.pref.getPreferencesDir() + DELETED_LAYERS_DIR);
@@ -299,7 +299,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
      * @return The list of .osm files still present in autosave dir, that are not currently managed by another instance of JOSM
      */
     public List<File> getUnsavedLayersFiles() {
-        List<File> result = new ArrayList<File>();
+        List<File> result = new ArrayList<>();
         File[] files = autosaveDir.listFiles(OsmImporter.FILE_FILTER);
         if (files == null)
             return result;

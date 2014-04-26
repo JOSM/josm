@@ -63,8 +63,8 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * Constructs a new {@code ConflictCollection}.
      */
     public ConflictCollection() {
-        conflicts = new ArrayList<Conflict<? extends OsmPrimitive>>();
-        listeners = new CopyOnWriteArrayList<IConflictListener>();
+        conflicts = new ArrayList<>();
+        listeners = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -147,7 +147,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * @param their their primitive
      */
     public void add(OsmPrimitive my, OsmPrimitive their) {
-        addConflict(new Conflict<OsmPrimitive>(my, their));
+        addConflict(new Conflict<>(my, their));
         fireConflictAdded();
     }
 
@@ -321,7 +321,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * of "my" in the conflicts managed by this collection.
      */
     public Set<OsmPrimitive> getMyConflictParties() {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         for (Conflict<?> c: conflicts) {
             ret.add(c.getMy());
         }
@@ -335,7 +335,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * of "their" in the conflicts managed by this collection.
      */
     public Set<OsmPrimitive> getTheirConflictParties() {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         for (Conflict<?> c: conflicts) {
             ret.add(c.getTheir());
         }

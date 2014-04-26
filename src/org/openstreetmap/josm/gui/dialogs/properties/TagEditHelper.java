@@ -205,7 +205,7 @@ class TagEditHelper {
      */
     public void saveTagsIfNeeded() {
         if (PROPERTY_REMEMBER_TAGS.get() && !recentTags.isEmpty()) {
-            List<String> c = new ArrayList<String>( recentTags.size()*2 );
+            List<String> c = new ArrayList<>( recentTags.size()*2 );
             for (Tag t: recentTags.keySet()) {
                 c.add(t.getKey());
                 c.add(t.getValue());
@@ -365,17 +365,17 @@ class TagEditHelper {
                         break;
                     }
                 }
-                Collection<Command> commands = new ArrayList<Command>();
+                Collection<Command> commands = new ArrayList<>();
                 commands.add(new ChangePropertyCommand(sel, key, null));
                 if (value.equals(tr("<different>"))) {
-                    Map<String, List<OsmPrimitive>> map = new HashMap<String, List<OsmPrimitive>>();
+                    Map<String, List<OsmPrimitive>> map = new HashMap<>();
                     for (OsmPrimitive osm: sel) {
                         String val = osm.get(key);
                         if (val != null) {
                             if (map.containsKey(val)) {
                                 map.get(val).add(osm);
                             } else {
-                                List<OsmPrimitive> v = new ArrayList<OsmPrimitive>();
+                                List<OsmPrimitive> v = new ArrayList<>();
                                 v.add(osm);
                                 map.put(val, v);
                             }
@@ -514,7 +514,7 @@ class TagEditHelper {
     }
 
     class AddTagsDialog extends AbstractTagsDialog {
-        List<JosmAction> recentTagsActions = new ArrayList<JosmAction>();
+        List<JosmAction> recentTagsActions = new ArrayList<>();
         
         // Counter of added commands for possible undo
         private int commandCount;
@@ -640,7 +640,7 @@ class TagEditHelper {
             // We store the maximum number (9) of recent tags to allow dynamic change of number of tags shown in the preferences.
             // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum numbern and not the number of tags to show.
             // However, as Set does not allow to iterate in descending order, we need to copy its elements into a List we can access in reverse order.
-            List<Tag> tags = new LinkedList<Tag>(recentTags.keySet());
+            List<Tag> tags = new LinkedList<>(recentTags.keySet());
             for (int i = tags.size()-1; i >= 0 && count <= tagsToShow; i--, count++) {
                 final Tag t = tags.get(i);
                 // Create action for reusing the tag, with keyboard shortcut Ctrl+(1-5)
@@ -674,7 +674,7 @@ class TagEditHelper {
                 ImageIcon icon = MapPaintStyles.getNodeIcon(t, false); // Filters deprecated icon
                 if (icon == null) {
                     // If no icon found in map style look at presets
-                    Map<String, String> map = new HashMap<String, String>();
+                    Map<String, String> map = new HashMap<>();
                     map.put(t.getKey(), t.getValue());
                     for (TaggingPreset tp : TaggingPreset.getMatchingPresets(null, map, false)) {
                         icon = tp.getIcon();

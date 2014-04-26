@@ -130,10 +130,10 @@ public final class AlignInCircleAction extends JosmAction {
             return;
 
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        List<Node> nodes = new LinkedList<Node>();
+        List<Node> nodes = new LinkedList<>();
         // fixNodes: All nodes for which the angle relative to center should not be modified
-        HashSet<Node> fixNodes = new HashSet<Node>();
-        List<Way> ways = new LinkedList<Way>();
+        HashSet<Node> fixNodes = new HashSet<>();
+        List<Way> ways = new LinkedList<>();
         EastNorth center = null;
         double radius = 0;
         
@@ -155,13 +155,13 @@ public final class AlignInCircleAction extends JosmAction {
             // Temporary closed way used to reorder nodes
             Way closedWay = new Way(w);
             closedWay.addNode(w.firstNode());
-            ArrayList<Way> usedWays = new ArrayList<Way>(1);
+            ArrayList<Way> usedWays = new ArrayList<>(1);
             usedWays.add(closedWay);
             nodes = collectNodesAnticlockwise(usedWays);
         } else if (!ways.isEmpty() && checkWaysArePolygon(ways)) {
             // Case 2
-            ArrayList<Node> inside = new ArrayList<Node>();
-            ArrayList<Node> outside = new ArrayList<Node>();
+            ArrayList<Node> inside = new ArrayList<>();
+            ArrayList<Node> outside = new ArrayList<>();
             
             for(Node n: nodes) {
                 boolean isInside = false;
@@ -239,7 +239,7 @@ public final class AlignInCircleAction extends JosmAction {
 
         if(!actionAllowed(nodes)) return;
 
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
 
         // Move each node to that distance from the center.
         // Nodes that are not "fix" will be adjust making regular arcs. 
@@ -286,7 +286,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @return List of nodes with more than one referrer
      */
     private List<Node> collectNodesWithExternReferers(List<Way> ways) {
-        ArrayList<Node> withReferrers = new ArrayList<Node>();
+        ArrayList<Node> withReferrers = new ArrayList<>();
         for(Way w: ways)
             for(Node n: w.getNodes())
                 if(n.getReferrers().size() > 1)
@@ -300,7 +300,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @return Nodes anticlockwise ordered
      */
     private List<Node> collectNodesAnticlockwise(List<Way> ways) {
-        ArrayList<Node> nodes = new ArrayList<Node>();
+        ArrayList<Node> nodes = new ArrayList<>();
         Node firstNode = ways.get(0).firstNode();
         Node lastNode = null;
         Way lastWay = null;

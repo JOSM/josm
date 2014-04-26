@@ -25,7 +25,7 @@ public class ThumbsLoader implements Runnable {
 
     public ThumbsLoader(GeoImageLayer layer) {
         this.layer = layer;
-        this.data = new ArrayList<ImageEntry>(layer.data);
+        this.data = new ArrayList<>(layer.data);
         if (!cacheOff) {
             cache = new CacheFiles("geoimage-thumbnails", false);
             cache.setExpire(CacheFiles.EXPIRE_NEVER, false);

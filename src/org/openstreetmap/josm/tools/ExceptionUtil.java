@@ -77,7 +77,7 @@ public final class ExceptionUtil {
 
     public static Pair<OsmPrimitive, Collection<OsmPrimitive>> parsePreconditionFailed(String msg) {
         final String ids = "(\\d+(?:,\\d+)*)";
-        final Collection<OsmPrimitive> refs = new TreeSet<OsmPrimitive>(); // error message can contain several times the same way
+        final Collection<OsmPrimitive> refs = new TreeSet<>(); // error message can contain several times the same way
         Matcher m;
         m = Pattern.compile(".*Node (\\d+) is still used by relations " + ids + ".*").matcher(msg);
         if (m.matches()) {

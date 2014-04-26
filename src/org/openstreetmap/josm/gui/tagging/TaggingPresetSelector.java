@@ -73,7 +73,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     private JCheckBox ckSearchInTags;
     private final EnumSet<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
     private boolean typesInSelectionDirty = true;
-    private final List<PresetClassification> classifications = new ArrayList<PresetClassification>();
+    private final List<PresetClassification> classifications = new ArrayList<>();
     private ResultListModel lsResultModel = new ResultListModel();
 
     private ActionListener dblClickListener;
@@ -93,7 +93,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
     private static class ResultListModel extends AbstractListModel<TaggingPreset> {
 
-        private List<PresetClassification> presets = new ArrayList<PresetClassification>();
+        private List<PresetClassification> presets = new ArrayList<>();
 
         public void setPresets(List<PresetClassification> presets) {
             this.presets = presets;
@@ -119,9 +119,9 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         public final TaggingPreset preset;
         public int classification;
         public int favoriteIndex;
-        private final Collection<String> groups = new HashSet<String>();
-        private final Collection<String> names = new HashSet<String>();
-        private final Collection<String> tags = new HashSet<String>();
+        private final Collection<String> groups = new HashSet<>();
+        private final Collection<String> names = new HashSet<>();
+        private final Collection<String> tags = new HashSet<>();
 
         PresetClassification(TaggingPreset preset) {
             this.preset = preset;
@@ -244,7 +244,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         });
         add(edSearchText, BorderLayout.NORTH);
 
-        lsResult = new JList<TaggingPreset>();
+        lsResult = new JList<>();
         lsResult.setModel(lsResultModel);
         lsResult.setCellRenderer(new ResultListCellRenderer());
         lsResult.addMouseListener(new MouseAdapter() {
@@ -336,7 +336,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
-        List<PresetClassification> result = new ArrayList<PresetClassification>();
+        List<PresetClassification> result = new ArrayList<>();
         PRESET_LOOP:
             for (PresetClassification presetClasification: classifications) {
                 TaggingPreset preset = presetClasification.preset;

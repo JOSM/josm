@@ -46,7 +46,7 @@ public class ReferringRelationsBrowser extends JPanel {
      */
     protected void build() {
         setLayout(new BorderLayout());
-        referrers = new JList<Relation>(model);
+        referrers = new JList<>(model);
         referrers.setCellRenderer(new OsmPrimitivRenderer());
         add(new JScrollPane(referrers), BorderLayout.CENTER);
         referrers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

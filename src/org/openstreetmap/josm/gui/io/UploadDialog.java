@@ -67,7 +67,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     /**
      * List of custom components that can be added by plugins at JOSM startup.
      */
-    private static final Collection<Component> customComponents = new ArrayList<Component>();
+    private static final Collection<Component> customComponents = new ArrayList<>();
 
     /**
      * Replies the unique instance of the upload dialog
@@ -483,7 +483,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
             /* test for empty tags in the changeset metadata and proceed only after user's confirmation.
              * though, accept if key and value are empty (cf. xor). */
-            List<String> emptyChangesetTags = new ArrayList<String>();
+            List<String> emptyChangesetTags = new ArrayList<>();
             for (final Entry<String, String> i : pnlTagSettings.getTags(true).entrySet()) {
                 final boolean isKeyEmpty = i.getKey() == null || i.getKey().trim().isEmpty();
                 final boolean isValueEmpty = i.getValue() == null || i.getValue().trim().isEmpty();

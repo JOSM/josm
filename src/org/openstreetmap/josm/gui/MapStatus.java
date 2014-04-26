@@ -195,7 +195,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      */
     private Thread thread;
 
-    private final List<StatusTextHistory> statusText = new ArrayList<StatusTextHistory>();
+    private final List<StatusTextHistory> statusText = new ArrayList<>();
 
     private static class StatusTextHistory {
         final Object id;
@@ -351,7 +351,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
                                         // These labels may need to be updated from the outside
                                         // so collect them
-                                        List<JLabel> lbls = new ArrayList<JLabel>(osms.size());
+                                        List<JLabel> lbls = new ArrayList<>(osms.size());
                                         for (final OsmPrimitive osm : osms) {
                                             JLabel l = popupBuildPrimitiveLabels(osm);
                                             lbls.add(l);
@@ -719,7 +719,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         private final JMenuItem jumpButton = add(Main.main.menu.jumpToAct);
         
-        private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<JCheckBoxMenuItem>();
+        private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
         
         private final JSeparator separator = new JSeparator();
         
@@ -732,7 +732,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         });
 
         public MapStatusPopupMenu() {
-            for (final String key : new TreeSet<String>(SystemOfMeasurement.ALL_SYSTEMS.keySet())) {
+            for (final String key : new TreeSet<>(SystemOfMeasurement.ALL_SYSTEMS.keySet())) {
                 JCheckBoxMenuItem item = new JCheckBoxMenuItem(new AbstractAction(key) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -829,7 +829,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         if (Main.pref.getBoolean("statusbar.change-system-of-measurement-on-click", true)) {
             distText.addMouseListener(new MouseAdapter() {
-                private final List<String> soms = new ArrayList<String>(new TreeSet<String>(SystemOfMeasurement.ALL_SYSTEMS.keySet()));
+                private final List<String> soms = new ArrayList<>(new TreeSet<>(SystemOfMeasurement.ALL_SYSTEMS.keySet()));
     
                 @Override
                 public void mouseClicked(MouseEvent e) {

@@ -43,10 +43,10 @@ public class FilterTest {
         ds.addPrimitive(n1);
         ds.addPrimitive(n2);
 
-        Collection<OsmPrimitive> all = new HashSet<OsmPrimitive>();
+        Collection<OsmPrimitive> all = new HashSet<>();
         all.addAll(Arrays.asList(new OsmPrimitive[] {n1, n2}));
 
-        List<Filter> filters = new LinkedList<Filter>();
+        List<Filter> filters = new LinkedList<>();
         Filter f1 = new Filter();
         f1.text = "fixme";
         f1.hiding = true;
@@ -66,7 +66,7 @@ public class FilterTest {
         for (int i : new int [] {1,2,3, 11,12,13,14, 15}) {
             DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/filterTests.osm"), NullProgressMonitor.INSTANCE);
 
-            List<Filter> filters = new LinkedList<Filter>();
+            List<Filter> filters = new LinkedList<>();
             switch (i) {
             case 1: {
                 Filter f1 = new Filter();

@@ -41,9 +41,9 @@ public class ListEditor extends ExtendedDialog {
         this.entry = entry;
         List<String> orig = setting.getValue();
         if (orig != null) {
-            data = new ArrayList<String>(orig);
+            data = new ArrayList<>(orig);
         } else {
-            data = new ArrayList<String>();
+            data = new ArrayList<>();
         }
         setButtonIcons(new String[] {"ok.png", "cancel.png"});
         setRememberWindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(gui, new Dimension(300, 350)));
@@ -55,7 +55,7 @@ public class ListEditor extends ExtendedDialog {
      * @return The list of values.
      */
     public List<String> getData() {
-        return new ArrayList<String>(Utils.filter(data, new Predicate<String>() {
+        return new ArrayList<>(Utils.filter(data, new Predicate<String>() {
             @Override
             public boolean evaluate(String object) {
                 return object != null && !object.isEmpty();

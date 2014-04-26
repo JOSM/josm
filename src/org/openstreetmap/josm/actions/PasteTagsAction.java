@@ -55,7 +55,7 @@ public final class PasteTagsAction extends JosmAction {
 
         private final Collection<PrimitiveData> source;
         private final Collection<OsmPrimitive> target;
-        private final List<Tag> commands = new ArrayList<Tag>();
+        private final List<Tag> commands = new ArrayList<>();
 
         public TagPaster(Collection<PrimitiveData> source, Collection<OsmPrimitive> target) {
             this.source = source;
@@ -118,7 +118,7 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         protected Map<OsmPrimitiveType, Integer> getSourceStatistics() {
-            HashMap<OsmPrimitiveType, Integer> ret = new HashMap<OsmPrimitiveType, Integer>();
+            HashMap<OsmPrimitiveType, Integer> ret = new HashMap<>();
             for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
                 if (!getSourceTagsByType(type).isEmpty()) {
                     ret.put(type, getSourcePrimitivesByType(type).size());
@@ -128,7 +128,7 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         protected Map<OsmPrimitiveType, Integer> getTargetStatistics() {
-            HashMap<OsmPrimitiveType, Integer> ret = new HashMap<OsmPrimitiveType, Integer>();
+            HashMap<OsmPrimitiveType, Integer> ret = new HashMap<>();
             for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
                 int count = OsmPrimitive.getFilteredList(target, type.getOsmClass()).size();
                 if (count > 0) {
@@ -272,7 +272,7 @@ public final class PasteTagsAction extends JosmAction {
         }
         if (!TextTagParser.validateTags(tags)) return false;
 
-        List<Command> commands = new ArrayList<Command>(tags.size());
+        List<Command> commands = new ArrayList<>(tags.size());
         for (Entry<String, String> entry: tags.entrySet()) {
             String v = entry.getValue();
             commands.add(new ChangePropertyCommand(selection, entry.getKey(), "".equals(v)?null:v));
@@ -290,7 +290,7 @@ public final class PasteTagsAction extends JosmAction {
         if (directlyAdded==null || directlyAdded.isEmpty()) return false;
 
         PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded, selection);
-        List<Command> commands = new ArrayList<Command>();
+        List<Command> commands = new ArrayList<>();
         for (Tag tag : tagPaster.execute()) {
             commands.add(new ChangePropertyCommand(selection, tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue()));
         }

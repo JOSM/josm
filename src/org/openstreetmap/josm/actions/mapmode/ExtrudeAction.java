@@ -256,7 +256,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
         if (selectedNode != null) {
             if (ctrl || nodeDragWithoutCtrl) {
-                movingNodeList = new ArrayList<OsmPrimitive>();
+                movingNodeList = new ArrayList<>();
                 movingNodeList.add(selectedNode);
                 calculatePossibleDirectionsByNode();
                 if (possibleMoveDirections.isEmpty()) {
@@ -269,7 +269,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             // Otherwise switch to another mode
             if (ctrl) {
                 mode = Mode.translate;
-                movingNodeList = new ArrayList<OsmPrimitive>();
+                movingNodeList = new ArrayList<>();
                 movingNodeList.add(selectedSegment.getFirstNode());
                 movingNodeList.add(selectedSegment.getSecondNode());
             } else if (alt) {
@@ -416,7 +416,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     private void createNewRectangle() {
         if (selectedSegment == null) return;
         // crete a new rectangle
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
         Node third = new Node(newN2en);
         Node fourth = new Node(newN1en);
         Way wnew = new Way();
@@ -440,7 +440,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     private void performExtrusion() {
         // create extrusion
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
         Way wnew = new Way(selectedSegment.way);
         boolean wayWasModified = false;
         boolean wayWasSingleSegment = wnew.getNodesCount() == 2;
@@ -592,7 +592,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         initialN2en = selectedSegment.getSecondNode().getEastNorth();
 
         //add direction perpendicular to the selected segment
-        possibleMoveDirections = new ArrayList<ReferenceSegment>();
+        possibleMoveDirections = new ArrayList<>();
         possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
                 initialN1en.getY() - initialN2en.getY(),
                 initialN2en.getX() - initialN1en.getX()
@@ -626,7 +626,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         // remember initial positions for segment nodes.
         initialN1en = selectedNode.getEastNorth();
         initialN2en = initialN1en;
-        possibleMoveDirections = new ArrayList<ReferenceSegment>();
+        possibleMoveDirections = new ArrayList<>();
         for (OsmPrimitive p: selectedNode.getReferrers()) {
             if (p instanceof Way  && p.isUsable()) {
                 for (Node neighbor: ((Way) p).getNeighbours(selectedNode)) {

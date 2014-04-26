@@ -63,7 +63,7 @@ public class OverlappingWays extends Test {
     @Override
     public void startTest(ProgressMonitor monitor)  {
         super.startTest(monitor);
-        nodePairs = new MultiMap<Pair<Node,Node>, WaySegment>(1000);
+        nodePairs = new MultiMap<>(1000);
     }
 
     private boolean parentMultipolygonConcernsArea(OsmPrimitive p) {
@@ -77,15 +77,15 @@ public class OverlappingWays extends Test {
 
     @Override
     public void endTest() {
-        Map<List<Way>, Set<WaySegment>> seenWays = new HashMap<List<Way>, Set<WaySegment>>(500);
+        Map<List<Way>, Set<WaySegment>> seenWays = new HashMap<>(500);
 
-        Collection<TestError> preliminaryErrors = new ArrayList<TestError>();
+        Collection<TestError> preliminaryErrors = new ArrayList<>();
         for (Set<WaySegment> duplicated : nodePairs.values()) {
             int ways = duplicated.size();
 
             if (ways > 1) {
-                List<OsmPrimitive> prims = new ArrayList<OsmPrimitive>();
-                List<Way> currentWays = new ArrayList<Way>();
+                List<OsmPrimitive> prims = new ArrayList<>();
+                List<Way> currentWays = new ArrayList<>();
                 Collection<WaySegment> highlight;
                 int highway = 0;
                 int railway = 0;
@@ -177,7 +177,7 @@ public class OverlappingWays extends Test {
 
     protected static Set<WaySegment> checkDuplicateWaySegment(Way w) {
         // test for ticket #4959
-        Set<WaySegment> segments = new TreeSet<WaySegment>(new Comparator<WaySegment>() {
+        Set<WaySegment> segments = new TreeSet<>(new Comparator<WaySegment>() {
             @Override
             public int compare(WaySegment o1, WaySegment o2) {
                 final List<Node> n1 = Arrays.asList(o1.getFirstNode(), o1.getSecondNode());
@@ -189,7 +189,7 @@ public class OverlappingWays extends Test {
                 return first != 0 ? first : second;
             }
         });
-        final Set<WaySegment> duplicateWaySegments = new HashSet<WaySegment>();
+        final Set<WaySegment> duplicateWaySegments = new HashSet<>();
 
         for (int i = 0; i < w.getNodesCount() - 1; i++) {
             final WaySegment segment = new WaySegment(w, i);
@@ -223,7 +223,7 @@ public class OverlappingWays extends Test {
                 lastN = n;
                 continue;
             }
-            nodePairs.put(Pair.sort(new Pair<Node,Node>(lastN, n)),
+            nodePairs.put(Pair.sort(new Pair<>(lastN, n)),
                     new WaySegment(w, i));
             lastN = n;
         }

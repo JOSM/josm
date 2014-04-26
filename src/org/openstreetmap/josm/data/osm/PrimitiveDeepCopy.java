@@ -21,9 +21,9 @@ public class PrimitiveDeepCopy {
         void pasteBufferChanged(PrimitiveDeepCopy pasteBuffer);
     }
 
-    private final List<PrimitiveData> directlyAdded = new ArrayList<PrimitiveData>();
-    private final List<PrimitiveData> referenced = new ArrayList<PrimitiveData>();
-    private final CopyOnWriteArrayList<PasteBufferChangedListener> listeners = new CopyOnWriteArrayList<PasteBufferChangedListener>();
+    private final List<PrimitiveData> directlyAdded = new ArrayList<>();
+    private final List<PrimitiveData> referenced = new ArrayList<>();
+    private final CopyOnWriteArrayList<PasteBufferChangedListener> listeners = new CopyOnWriteArrayList<>();
 
     public PrimitiveDeepCopy() {
 
@@ -41,9 +41,9 @@ public class PrimitiveDeepCopy {
         directlyAdded.clear();
         referenced.clear();
 
-        final Set<Long> visitedNodeIds = new HashSet<Long>();
-        final Set<Long> visitedWayIds = new HashSet<Long>();
-        final Set<Long> visitedRelationIds = new HashSet<Long>();
+        final Set<Long> visitedNodeIds = new HashSet<>();
+        final Set<Long> visitedWayIds = new HashSet<>();
+        final Set<Long> visitedRelationIds = new HashSet<>();
 
         new AbstractVisitor() {
             boolean firstIteration;
@@ -95,7 +95,7 @@ public class PrimitiveDeepCopy {
     }
 
     public List<PrimitiveData> getAll() {
-        List<PrimitiveData> result = new ArrayList<PrimitiveData>(directlyAdded.size() + referenced.size());
+        List<PrimitiveData> result = new ArrayList<>(directlyAdded.size() + referenced.size());
         result.addAll(directlyAdded);
         result.addAll(referenced);
         return result;

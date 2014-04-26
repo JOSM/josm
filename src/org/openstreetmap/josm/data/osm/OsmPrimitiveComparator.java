@@ -9,7 +9,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 
 /** Comparator, comparing by type and objects display names */
 public class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
-    private final Map<OsmPrimitive, String> cache= new HashMap<OsmPrimitive, String>();
+    private final Map<OsmPrimitive, String> cache= new HashMap<>();
     private final DefaultNameFormatter df = DefaultNameFormatter.getInstance();
     public boolean relationsFirst = false;
 

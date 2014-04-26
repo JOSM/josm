@@ -43,7 +43,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         sb.append("<strong>id</strong>=")
         .append(primitive.getId())
         .append("<br>");
-        List<String> keyList = new ArrayList<String>(primitive.keySet());
+        List<String> keyList = new ArrayList<>(primitive.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
             if (i > 0) {

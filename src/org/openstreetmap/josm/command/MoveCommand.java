@@ -29,7 +29,7 @@ public class MoveCommand extends Command {
     /**
      * The objects that should be moved.
      */
-    private Collection<Node> nodes = new LinkedList<Node>();
+    private Collection<Node> nodes = new LinkedList<>();
     /**
      * Starting position, base command point, current (mouse-drag) position = startEN + (x,y) =
      */
@@ -50,7 +50,7 @@ public class MoveCommand extends Command {
     /**
      * List of all old states of the objects.
      */
-    private List<OldNodeState> oldState = new LinkedList<OldNodeState>();
+    private List<OldNodeState> oldState = new LinkedList<>();
 
     /**
      * Constructs a new {@code MoveCommand} to move a primitive.

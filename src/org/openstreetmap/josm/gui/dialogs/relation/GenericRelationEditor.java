@@ -645,7 +645,7 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      */
     protected void cleanSelfReferences() {
-        List<OsmPrimitive> toCheck = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> toCheck = new ArrayList<>();
         toCheck.add(getRelation());
         if (memberTableModel.hasMembersReferringTo(toCheck)) {
             int ret = ConditionalOptionPaneUtil.showOptionDialog(
@@ -766,7 +766,7 @@ public class GenericRelationEditor extends RelationEditor  {
         protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {
             if (primitives == null || primitives.isEmpty())
                 return primitives;
-            List<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> ret = new ArrayList<>();
             ConditionalOptionPaneUtil.startBulkOperation("add_primitive_to_relation");
             for (OsmPrimitive primitive : primitives) {
                 if (primitive instanceof Relation && getRelation() != null && getRelation().equals(primitive)) {
@@ -1168,7 +1168,7 @@ public class GenericRelationEditor extends RelationEditor  {
             final Relation newRelation = new Relation();
             tagEditorPanel.getModel().applyToPrimitive(newRelation);
             memberTableModel.applyToRelation(newRelation);
-            List<RelationMember> newMembers = new ArrayList<RelationMember>();
+            List<RelationMember> newMembers = new ArrayList<>();
             for (RelationMember rm: newRelation.getMembers()) {
                 if (!rm.getMember().isDeleted()) {
                     newMembers.add(rm);
@@ -1213,7 +1213,7 @@ public class GenericRelationEditor extends RelationEditor  {
             Relation editedRelation = new Relation(getRelation());
             tagEditorPanel.getModel().applyToPrimitive(editedRelation);
             memberTableModel.applyToRelation(editedRelation);
-            Conflict<Relation> conflict = new Conflict<Relation>(getRelation(), editedRelation);
+            Conflict<Relation> conflict = new Conflict<>(getRelation(), editedRelation);
             Main.main.undoRedo.add(new ConflictAddCommand(getLayer(),conflict));
         }
 
@@ -1636,7 +1636,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
-            Collection<RelationMember> members = new HashSet<RelationMember>();
+            Collection<RelationMember> members = new HashSet<>();
             Collection<OsmPrimitive> selection = getLayer().data.getSelected();
             for (RelationMember member: r.getMembers()) {
                 if (selection.contains(member.getMember())) {
@@ -1681,7 +1681,7 @@ public class GenericRelationEditor extends RelationEditor  {
             try {
                 List<PrimitiveData> primitives = Main.pasteBuffer.getDirectlyAdded();
                 DataSet ds = getLayer().data;
-                List<OsmPrimitive> toAdd = new ArrayList<OsmPrimitive>();
+                List<OsmPrimitive> toAdd = new ArrayList<>();
                 boolean hasNewInOtherLayer = false;
 
                 for (PrimitiveData primitive: primitives) {
@@ -1721,7 +1721,7 @@ public class GenericRelationEditor extends RelationEditor  {
     class CopyMembersAction extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent e) {
-            Set<OsmPrimitive> primitives = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> primitives = new HashSet<>();
             for (RelationMember rm: memberTableModel.getSelectedMembers()) {
                 primitives.add(rm.getMember());
             }

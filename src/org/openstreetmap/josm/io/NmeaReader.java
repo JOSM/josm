@@ -171,7 +171,7 @@ public class NmeaReader {
 
         // create the data tree
         data = new GpxData();
-        Collection<Collection<WayPoint>> currentTrack = new ArrayList<Collection<WayPoint>>();
+        Collection<Collection<WayPoint>> currentTrack = new ArrayList<>();
 
         BufferedReader rd = null;
         try {
@@ -213,7 +213,7 @@ public class NmeaReader {
         }
     }
     private static class NMEAParserState {
-        protected Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
+        protected Collection<WayPoint> waypoints = new ArrayList<>();
         protected String p_Time;
         protected String p_Date;
         protected WayPoint p_Wp;

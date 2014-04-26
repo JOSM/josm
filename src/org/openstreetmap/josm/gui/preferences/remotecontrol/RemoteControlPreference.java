@@ -56,8 +56,7 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
             prefs.put(p, cb);
         }
     }
-    private final Map<PermissionPrefWithDefault, JCheckBox> prefs =
-            new LinkedHashMap<PermissionPrefWithDefault, JCheckBox>();
+    private final Map<PermissionPrefWithDefault, JCheckBox> prefs = new LinkedHashMap<>();
     private JCheckBox enableRemoteControl;
     private JCheckBox loadInNewLayer = new JCheckBox(tr("Download objects to new layer"));
     private JCheckBox alwaysAskUserConfirm = new JCheckBox(tr("Confirm all Remote Control actions manually"));

@@ -65,7 +65,7 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     private class Parser extends DefaultHandler {
-        Stack<Object> current = new Stack<Object>();
+        Stack<Object> current = new Stack<>();
         StringBuilder characters = new StringBuilder(64);
 
         private Locator locator;
@@ -185,8 +185,8 @@ public class XmlObjectParser implements Iterable<Object> {
         Class<?> klass;
         boolean onStart;
         boolean both;
-        private final Map<String, Field> fields = new HashMap<String, Field>();
-        private final Map<String, Method> methods = new HashMap<String, Method>();
+        private final Map<String, Field> fields = new HashMap<>();
+        private final Map<String, Method> methods = new HashMap<>();
 
         public Entry(Class<?> klass, boolean onStart, boolean both) {
             this.klass = klass;
@@ -225,13 +225,13 @@ public class XmlObjectParser implements Iterable<Object> {
         }
     }
 
-    private Map<String, Entry> mapping = new HashMap<String, Entry>();
+    private Map<String, Entry> mapping = new HashMap<>();
     private DefaultHandler parser;
 
     /**
      * The queue of already parsed items from the parsing thread.
      */
-    private List<Object> queue = new LinkedList<Object>();
+    private List<Object> queue = new LinkedList<>();
     private Iterator<Object> queueIterator = null;
 
     /**

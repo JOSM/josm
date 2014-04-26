@@ -178,7 +178,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
             synchronized(this) {
                 changesetReader= new OsmServerChangesetReader();
             }
-            downloadedChangesets = new HashSet<Changeset>();
+            downloadedChangesets = new HashSet<>();
             downloadedChangesets.addAll(changesetReader.queryChangesets(query, getProgressMonitor().createSubTaskMonitor(0, false)));
             synchronized (this) {
                 changesetReader = null;

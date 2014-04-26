@@ -236,7 +236,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         GridBagConstraints gc = new GridBagConstraints();
 
         ButtonGroup bgProxyPolicy = new ButtonGroup();
-        rbProxyPolicy = new HashMap<ProxyPolicy, JRadioButton>();
+        rbProxyPolicy = new HashMap<>();
         ProxyPolicyChangeListener policyChangeListener = new ProxyPolicyChangeListener();
         for (ProxyPolicy pp: ProxyPolicy.values()) {
             rbProxyPolicy.put(pp, new JRadioButton());

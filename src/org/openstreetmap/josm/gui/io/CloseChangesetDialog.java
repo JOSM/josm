@@ -196,7 +196,7 @@ public class CloseChangesetDialog extends JDialog {
      */
     public void setChangesets(Collection<Changeset> changesets) {
         if (changesets == null) {
-            changesets = new ArrayList<Changeset>();
+            changesets = new ArrayList<>();
         }
         model.removeAllElements();
         for (Changeset cs: changesets) {

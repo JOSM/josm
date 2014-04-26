@@ -71,7 +71,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Remember movements, so the user can later undo it for certain nodes
      */
-    private static final Map<Node, EastNorth> rememberMovements = new HashMap<Node, EastNorth>();
+    private static final Map<Node, EastNorth> rememberMovements = new HashMap<>();
 
     /**
      * Undo the previous orthogonalization for certain nodes.
@@ -97,7 +97,7 @@ public final class OrthogonalizeAction extends JosmAction {
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
-            final Collection<Command> commands = new LinkedList<Command>();
+            final Collection<Command> commands = new LinkedList<>();
             final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
             try {
                 for (OsmPrimitive p : sel) {
@@ -144,8 +144,8 @@ public final class OrthogonalizeAction extends JosmAction {
                 return;
         }
 
-        final List<Node> nodeList = new ArrayList<Node>();
-        final List<WayData> wayDataList = new ArrayList<WayData>();
+        final List<Node> nodeList = new ArrayList<>();
+        final List<WayData> wayDataList = new ArrayList<>();
         final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         try {
@@ -164,7 +164,7 @@ public final class OrthogonalizeAction extends JosmAction {
             else  {
                 if (nodeList.size() == 2 || nodeList.isEmpty()) {
                     OrthogonalizeAction.rememberMovements.clear();
-                    final Collection<Command> commands = new LinkedList<Command>();
+                    final Collection<Command> commands = new LinkedList<>();
 
                     if (nodeList.size() == 2) {  // fixed direction
                         commands.addAll(orthogonalize(wayDataList, nodeList));
@@ -201,15 +201,15 @@ public final class OrthogonalizeAction extends JosmAction {
      * Collect groups of ways with common nodes in order to orthogonalize each group separately.
      */
     private static List<List<WayData>> buildGroups(List<WayData> wayDataList) {
-        List<List<WayData>> groups = new ArrayList<List<WayData>>();
-        Set<WayData> remaining = new HashSet<WayData>(wayDataList);
+        List<List<WayData>> groups = new ArrayList<>();
+        Set<WayData> remaining = new HashSet<>(wayDataList);
         while (!remaining.isEmpty()) {
-            List<WayData> group = new ArrayList<WayData>();
+            List<WayData> group = new ArrayList<>();
             groups.add(group);
             Iterator<WayData> it = remaining.iterator();
             WayData next = it.next();
             it.remove();
-            extendGroupRec(group, next, new ArrayList<WayData>(remaining));
+            extendGroupRec(group, next, new ArrayList<>(remaining));
             remaining.removeAll(group);
         }
         return groups;
@@ -282,7 +282,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         // put the nodes of all ways in a set
-        final HashSet<Node> allNodes = new HashSet<Node>();
+        final HashSet<Node> allNodes = new HashSet<>();
         for (WayData w : wayDataList) {
             for (Node n : w.way.getNodes()) {
                 allNodes.add(n);
@@ -290,8 +290,8 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         // the new x and y value for each node
-        final HashMap<Node, Double> nX = new HashMap<Node, Double>();
-        final HashMap<Node, Double> nY = new HashMap<Node, Double>();
+        final HashMap<Node, Double> nX = new HashMap<>();
+        final HashMap<Node, Double> nY = new HashMap<>();
 
         // calculate the centroid of all nodes
         // it is used as rotation center
@@ -313,7 +313,7 @@ public final class OrthogonalizeAction extends JosmAction {
         final Direction[] VERTICAL = {Direction.UP, Direction.DOWN};
         final Direction[][] ORIENTATIONS = {HORIZONTAL, VERTICAL};
         for (Direction[] orientation : ORIENTATIONS){
-            final HashSet<Node> s = new HashSet<Node>(allNodes);
+            final HashSet<Node> s = new HashSet<>(allNodes);
             int s_size = s.size();
             for (int dummy = 0; dummy < s_size; ++dummy) {
                 if (s.isEmpty()) {
@@ -321,7 +321,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 }
                 final Node dummy_n = s.iterator().next();     // pick arbitrary element of s
 
-                final HashSet<Node> cs = new HashSet<Node>(); // will contain each node that can be reached from dummy_n
+                final HashSet<Node> cs = new HashSet<>(); // will contain each node that can be reached from dummy_n
                 cs.add(dummy_n);                              // walking only on horizontal / vertical segments
 
                 boolean somethingHappened = true;
@@ -380,7 +380,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         // rotate back and log the change
-        final Collection<Command> commands = new LinkedList<Command>();
+        final Collection<Command> commands = new LinkedList<>();
         for (Node n: allNodes) {
             EastNorth tmp = new EastNorth(nX.get(n), nY.get(n));
             tmp = EN.rotate_cc(pivot, tmp, headingAll);

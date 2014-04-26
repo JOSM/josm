@@ -40,7 +40,7 @@ public class EditRelationAction extends AbstractRelationAction  {
      * @return The set of currently selected relation members for the given relation.
      */
     public static Set<RelationMember> getMembersForCurrentSelection(Relation r) {
-        Set<RelationMember> members = new HashSet<RelationMember>();
+        Set<RelationMember> members = new HashSet<>();
         if (Main.isDisplayingMapView()) {
             OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer != null && editLayer.data != null) {

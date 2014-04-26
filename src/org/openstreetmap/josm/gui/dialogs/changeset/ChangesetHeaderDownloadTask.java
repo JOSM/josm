@@ -64,7 +64,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
             changesets = Collections.emptyList();
         }
 
-        HashSet<Integer> ids = new HashSet<Integer>();
+        HashSet<Integer> ids = new HashSet<>();
         for (Changeset cs: changesets) {
             if (cs == null || cs.isNew()) {
                 continue;
@@ -88,7 +88,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
         if (ids == null) {
             ids = Collections.emptyList();
         }
-        idsToDownload = new HashSet<Integer>();
+        idsToDownload = new HashSet<>();
         if (ids == null ||  ids.isEmpty())
             return;
         for (int id: ids) {
@@ -178,7 +178,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
             synchronized (this) {
                 reader = new OsmServerChangesetReader();
             }
-            downloadedChangesets = new HashSet<Changeset>();
+            downloadedChangesets = new HashSet<>();
             downloadedChangesets.addAll(reader.readChangesets(idsToDownload, getProgressMonitor().createSubTaskMonitor(0, false)));
         } catch(OsmTransferException e) {
             if (canceled)

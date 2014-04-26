@@ -150,7 +150,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
             }
             // If the plugin has been unselected, was it required by other plugins still selected ?
             else if (!cb.isSelected()) {
-                Set<String> otherPlugins = new HashSet<String>();
+                Set<String> otherPlugins = new HashSet<>();
                 for (PluginInformation pi : model.getAvailablePlugins()) {
                     if (!pi.equals(cb.pi) && pi.requires != null && model.isSelectedPlugin(pi.getName())) {
                         for (String s : pi.getRequiredPlugins()) {

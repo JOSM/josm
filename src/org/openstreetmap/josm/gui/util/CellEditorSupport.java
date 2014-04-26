@@ -24,12 +24,12 @@ public class CellEditorSupport {
      */
     public CellEditorSupport(CellEditor editor) {
         this.editor = editor;
-        this.listeners = new LinkedList<CellEditorListener>();
+        this.listeners = new LinkedList<>();
     }
 
     protected List<CellEditorListener> getListeners() {
         synchronized (this) {
-            return new ArrayList<CellEditorListener>(listeners);
+            return new ArrayList<>(listeners);
         }
     }
 

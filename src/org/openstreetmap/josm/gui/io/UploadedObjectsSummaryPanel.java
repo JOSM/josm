@@ -157,7 +157,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         private List<OsmPrimitive> primitives;
 
         public PrimitiveListModel() {
-            primitives = new ArrayList<OsmPrimitive>();
+            primitives = new ArrayList<>();
         }
 
         public PrimitiveListModel(List<OsmPrimitive> primitives) {
@@ -166,7 +166,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
 
         public void setPrimitives(List<OsmPrimitive> primitives) {
             if (primitives == null) {
-                this.primitives = new ArrayList<OsmPrimitive>();
+                this.primitives = new ArrayList<>();
             } else {
                 this.primitives = primitives;
             }

@@ -70,8 +70,8 @@ public class JpgImporter extends FileImporter {
     public void importData(List<File> sel, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         progressMonitor.beginTask(tr("Looking for image files"), 1);
         try {
-            List<File> files = new ArrayList<File>();
-            Set<String> visitedDirs = new HashSet<String>();
+            List<File> files = new ArrayList<>();
+            Set<String> visitedDirs = new HashSet<>();
             addRecursiveFiles(files, visitedDirs, sel, progressMonitor.createSubTaskMonitor(1, true));
 
             if (progressMonitor.isCanceled())

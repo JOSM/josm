@@ -63,8 +63,8 @@ public class DefaultProxySelector extends ProxySelector {
     private InetSocketAddress socksProxySocketAddress;
     private ProxySelector delegate;
 
-    private final Set<String> errorResources = new HashSet<String>();
-    private final Set<String> errorMessages = new HashSet<String>();
+    private final Set<String> errorResources = new HashSet<>();
+    private final Set<String> errorMessages = new HashSet<>();
     private Set<String> proxyExceptions;
 
     /**
@@ -139,7 +139,7 @@ public class DefaultProxySelector extends ProxySelector {
                 Main.warn(tr("The proxy will not be used."));
             }
         }
-        proxyExceptions = new HashSet<String>(
+        proxyExceptions = new HashSet<>(
             Main.pref.getCollection(ProxyPreferencesPanel.PROXY_EXCEPTIONS,
                     Arrays.asList(new String[]{"localhost", "127.0.0.1"}))
         );
@@ -160,7 +160,7 @@ public class DefaultProxySelector extends ProxySelector {
      * @since 6523
      */
     public final Set<String> getErrorResources() {
-        return new TreeSet<String>(errorResources);
+        return new TreeSet<>(errorResources);
     }
 
     /**
@@ -169,7 +169,7 @@ public class DefaultProxySelector extends ProxySelector {
      * @since 6523
      */
     public final Set<String> getErrorMessages() {
-        return new TreeSet<String>(errorMessages);
+        return new TreeSet<>(errorMessages);
     }
 
     /**

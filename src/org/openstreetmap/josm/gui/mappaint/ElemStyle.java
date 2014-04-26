@@ -140,7 +140,7 @@ public abstract class ElemStyle implements StyleKeys {
         }
     }
 
-    private static final Map<FontDescriptor, Font> FONT_MAP = new HashMap<FontDescriptor, Font>();
+    private static final Map<FontDescriptor, Font> FONT_MAP = new HashMap<>();
     private static Font getCachedFont(FontDescriptor fd) {
         Font f = FONT_MAP.get(fd);
         if (f != null) return f;

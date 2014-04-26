@@ -257,7 +257,7 @@ public class ChildRelationBrowser extends JPanel {
             TreePath [] selection = childTree.getSelectionPaths();
             if (selection == null || selection.length == 0)
                 return;
-            HashSet<Relation> relations = new HashSet<Relation>();
+            HashSet<Relation> relations = new HashSet<>();
             for (TreePath aSelection : selection) {
                 relations.add((Relation) aSelection.getLastPathComponent());
             }
@@ -297,8 +297,8 @@ public class ChildRelationBrowser extends JPanel {
              * exception
              */);
             this.relation = r;
-            relationsToDownload = new Stack<Relation>();
-            downloadedRelationIds = new HashSet<Long>();
+            relationsToDownload = new Stack<>();
+            downloadedRelationIds = new HashSet<>();
             relationsToDownload.push(this.relation);
         }
 

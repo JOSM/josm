@@ -78,7 +78,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         referrers = null;
         this.layer = layer;
-        parents = new ArrayList<Relation>();
+        parents = new ArrayList<>();
         this.child = child;
         this.full = full;
     }

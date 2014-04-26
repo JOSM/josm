@@ -89,7 +89,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * the zoom listeners
      */
-    private static final CopyOnWriteArrayList<ZoomChangeListener> zoomChangeListeners = new CopyOnWriteArrayList<ZoomChangeListener>();
+    private static final CopyOnWriteArrayList<ZoomChangeListener> zoomChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Removes a zoom change listener
@@ -117,7 +117,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<SoMChangeListener>();
+    private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Removes a SoM change listener
@@ -532,8 +532,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private Stack<ZoomData> zoomUndoBuffer = new Stack<ZoomData>();
-    private Stack<ZoomData> zoomRedoBuffer = new Stack<ZoomData>();
+    private Stack<ZoomData> zoomUndoBuffer = new Stack<>();
+    private Stack<ZoomData> zoomRedoBuffer = new Stack<>();
     private Date zoomTimestamp = new Date();
 
     private void pushZoomUndo(EastNorth center, double scale) {
@@ -587,7 +587,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     private Map<Double, List<Node>> getNearestNodesImpl(Point p,
             Predicate<OsmPrimitive> predicate) {
-        TreeMap<Double, List<Node>> nearestMap = new TreeMap<Double, List<Node>>();
+        TreeMap<Double, List<Node>> nearestMap = new TreeMap<>();
         DataSet ds = getCurrentDataSet();
 
         if (ds != null) {
@@ -602,7 +602,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     if (nearestMap.containsKey(dist)) {
                         nlist = nearestMap.get(dist);
                     } else {
-                        nlist = new LinkedList<Node>();
+                        nlist = new LinkedList<>();
                         nearestMap.put(dist, nlist);
                     }
                     nlist.add(n);
@@ -646,7 +646,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 if (minDistSq == null) {
                     if (!nlist.isEmpty()) {
                         minDistSq = distSq;
-                        nearestList = new ArrayList<Node>();
+                        nearestList = new ArrayList<>();
                         nearestList.addAll(nlist);
                     }
                 } else {
@@ -797,7 +797,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     private Map<Double, List<WaySegment>> getNearestWaySegmentsImpl(Point p,
             Predicate<OsmPrimitive> predicate) {
-        Map<Double, List<WaySegment>> nearestMap = new TreeMap<Double, List<WaySegment>>();
+        Map<Double, List<WaySegment>> nearestMap = new TreeMap<>();
         DataSet ds = getCurrentDataSet();
 
         if (ds != null) {
@@ -840,7 +840,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                         if (nearestMap.containsKey(perDistSq)) {
                             wslist = nearestMap.get(perDistSq);
                         } else {
-                            wslist = new LinkedList<WaySegment>();
+                            wslist = new LinkedList<>();
                             nearestMap.put(perDistSq, wslist);
                         }
                         wslist.add(new WaySegment(w, i));
@@ -868,8 +868,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<WaySegment> getNearestWaySegments(Point p,
             Collection<WaySegment> ignore, Predicate<OsmPrimitive> predicate) {
-        List<WaySegment> nearestList = new ArrayList<WaySegment>();
-        List<WaySegment> unselected = new LinkedList<WaySegment>();
+        List<WaySegment> nearestList = new ArrayList<>();
+        List<WaySegment> unselected = new LinkedList<>();
 
         for (List<WaySegment> wss : getNearestWaySegmentsImpl(p, predicate).values()) {
             // put selected waysegs within each distance group first
@@ -1009,8 +1009,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<Way> getNearestWays(Point p,
             Collection<Way> ignore, Predicate<OsmPrimitive> predicate) {
-        List<Way> nearestList = new ArrayList<Way>();
-        Set<Way> wset = new HashSet<Way>();
+        List<Way> nearestList = new ArrayList<>();
+        Set<Way> wset = new HashSet<>();
 
         for (List<WaySegment> wss : getNearestWaySegmentsImpl(p, predicate).values()) {
             for (WaySegment ws : wss) {
@@ -1255,8 +1255,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<OsmPrimitive> getAllNearest(Point p,
             Collection<OsmPrimitive> ignore, Predicate<OsmPrimitive> predicate) {
-        List<OsmPrimitive> nearestList = new ArrayList<OsmPrimitive>();
-        Set<Way> wset = new HashSet<Way>();
+        List<OsmPrimitive> nearestList = new ArrayList<>();
+        Set<Way> wset = new HashSet<>();
 
         // add nearby ways
         for (List<WaySegment> wss : getNearestWaySegmentsImpl(p, predicate).values()) {
@@ -1273,7 +1273,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
 
         // add parent relations of nearby nodes and ways
-        Set<OsmPrimitive> parentRelations = new HashSet<OsmPrimitive>();
+        Set<OsmPrimitive> parentRelations = new HashSet<>();
         for (OsmPrimitive o : nearestList) {
             for (OsmPrimitive r : o.getReferrers()) {
                 if (r instanceof Relation && predicate.evaluate(r)) {
@@ -1368,7 +1368,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private LinkedList<CursorInfo> cursors = new LinkedList<CursorInfo>();
+    private LinkedList<CursorInfo> cursors = new LinkedList<>();
     
     /**
      * Set new cursor.
@@ -1408,7 +1408,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private void stripCursors(Object reference) {
-        LinkedList<CursorInfo> c = new LinkedList<CursorInfo>();
+        LinkedList<CursorInfo> c = new LinkedList<>();
         for(CursorInfo i : cursors) {
             if(i.object != reference) {
                 c.add(i);

@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
  */
 public class ChangesetContentTableModel extends AbstractTableModel {
 
-    private final List<ChangesetContentEntry> data = new ArrayList<ChangesetContentEntry>();
+    private final List<ChangesetContentEntry> data = new ArrayList<>();
     private DefaultListSelectionModel selectionModel;
 
     public ChangesetContentTableModel(DefaultListSelectionModel selectionModel) {
@@ -52,7 +52,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
     }
 
     public Set<HistoryOsmPrimitive> getSelectedPrimitives() {
-        Set<HistoryOsmPrimitive> ret = new HashSet<HistoryOsmPrimitive>();
+        Set<HistoryOsmPrimitive> ret = new HashSet<>();
         for (int i=0;i < data.size();i++) {
             if (selectionModel.isSelectedIndex(i)) {
                 ret.add(data.get(i).getPrimitive());

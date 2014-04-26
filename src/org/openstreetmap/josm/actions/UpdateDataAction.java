@@ -50,7 +50,7 @@ public class UpdateDataAction extends JosmAction{
         if (getEditLayer() == null)
             return;
 
-        List<Area> areas = new ArrayList<Area>();
+        List<Area> areas = new ArrayList<>();
         for(DataSource ds : getEditLayer().data.dataSources) {
             areas.add(new Area(ds.bounds.asRect()));
         }
@@ -71,7 +71,7 @@ public class UpdateDataAction extends JosmAction{
             }
         }
 
-        List<Area> areasToDownload = new ArrayList<Area>();
+        List<Area> areasToDownload = new ArrayList<>();
         for(Area a : areas) {
             if(a.isEmpty()) {
                 continue;

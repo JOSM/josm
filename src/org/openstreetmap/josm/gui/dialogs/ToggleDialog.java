@@ -151,7 +151,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     protected JToggleButton button;
     private JPanel buttonsPanel;
-    private List<javax.swing.Action> buttonActions = new ArrayList<javax.swing.Action>();
+    private List<javax.swing.Action> buttonActions = new ArrayList<>();
 
     /** holds the menu entry in the windows menu. Required to properly
      * toggle the checkbox on show/hide
@@ -865,7 +865,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         if (scroll) {
             data = new JScrollPane(data);
         }
-        LinkedList<Collection<SideButton>> buttons = new LinkedList<Collection<SideButton>>();
+        LinkedList<Collection<SideButton>> buttons = new LinkedList<>();
         buttons.addFirst(firstButtons);
         if (nextButtons != null) {
             buttons.addAll(Arrays.asList(nextButtons));

@@ -79,7 +79,7 @@ public class RestartAction extends JosmAction {
             if (!new File(java).isFile()) {
                 throw new IOException("Unable to find suitable java runtime at "+java);
             }
-            final List<String> cmd = new ArrayList<String>(Collections.singleton(java));
+            final List<String> cmd = new ArrayList<>(Collections.singleton(java));
             // vm arguments
             for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
                 // if it's the agent argument : we ignore it otherwise the

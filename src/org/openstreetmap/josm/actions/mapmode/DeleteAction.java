@@ -193,7 +193,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         if(!drawTargetHighlight)
             return;
 
-        Set<OsmPrimitive> newHighlights = new HashSet<OsmPrimitive>();
+        Set<OsmPrimitive> newHighlights = new HashSet<>();
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
 
         if(parameters.mode == DeleteMode.segment) {

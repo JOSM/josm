@@ -66,7 +66,7 @@ public class ColorPreference implements SubPreferenceSetting {
 
     private DefaultTableModel tableModel;
     private JTable colors;
-    private List<String> del = new ArrayList<String>();
+    private List<String> del = new ArrayList<>();
 
     private JButton colorEdit;
     private JButton defaultSet;
@@ -91,9 +91,9 @@ public class ColorPreference implements SubPreferenceSetting {
             tableModel.removeRow(0);
         }
         // fill model with colors:
-        Map<String, String> colorKeyList = new TreeMap<String, String>();
-        Map<String, String> colorKeyList_mappaint = new TreeMap<String, String>();
-        Map<String, String> colorKeyList_layer = new TreeMap<String, String>();
+        Map<String, String> colorKeyList = new TreeMap<>();
+        Map<String, String> colorKeyList_mappaint = new TreeMap<>();
+        Map<String, String> colorKeyList_layer = new TreeMap<>();
         for (String key : colorMap.keySet()) {
             if (key.startsWith("layer ")) {
                 colorKeyList_layer.put(getName(key), key);
@@ -114,7 +114,7 @@ public class ColorPreference implements SubPreferenceSetting {
 
     private void addColorRows(Map<String, String> colorMap, Map<String, String> keyMap) {
         for (String value : keyMap.values()) {
-            Vector<Object> row = new Vector<Object>(2);
+            Vector<Object> row = new Vector<>(2);
             String html = colorMap.get(value);
             Color color = ColorHelper.html2color(html);
             if (color == null) {
@@ -133,7 +133,7 @@ public class ColorPreference implements SubPreferenceSetting {
     public Map<String, String> getColorModel() {
         String key;
         String value;
-        Map<String, String> colorMap = new HashMap<String, String>();
+        Map<String, String> colorMap = new HashMap<>();
         for(int row = 0; row < tableModel.getRowCount(); ++row) {
             key = (String)tableModel.getValueAt(row, 0);
             value = ColorHelper.color2html((Color)tableModel.getValueAt(row, 1));

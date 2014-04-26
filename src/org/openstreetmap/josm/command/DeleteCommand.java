@@ -50,7 +50,7 @@ public class DeleteCommand extends Command {
      * The primitives that get deleted.
      */
     private final Collection<? extends OsmPrimitive> toDelete;
-    private final Map<OsmPrimitive, PrimitiveData> clonedPrimitives = new HashMap<OsmPrimitive, PrimitiveData>();
+    private final Map<OsmPrimitive, PrimitiveData> clonedPrimitives = new HashMap<>();
 
     /**
      * Constructor. Deletes a collection of primitives in the current edit layer.
@@ -149,7 +149,7 @@ public class DeleteCommand extends Command {
     }
 
     private Set<OsmPrimitiveType> getTypesToDelete() {
-        Set<OsmPrimitiveType> typesToDelete = new HashSet<OsmPrimitiveType>();
+        Set<OsmPrimitiveType> typesToDelete = new HashSet<>();
         for (OsmPrimitive osm : toDelete) {
             typesToDelete.add(OsmPrimitiveType.from(osm));
         }
@@ -200,7 +200,7 @@ public class DeleteCommand extends Command {
         if (toDelete.size() == 1)
             return null;
         else {
-            List<PseudoCommand> children = new ArrayList<PseudoCommand>(toDelete.size());
+            List<PseudoCommand> children = new ArrayList<>(toDelete.size());
             for (final OsmPrimitive osm : toDelete) {
                 children.add(new PseudoCommand() {
 
@@ -277,7 +277,7 @@ public class DeleteCommand extends Command {
      * can be deleted too
      */
     protected static Collection<Node> computeNodesToDelete(OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
-        Collection<Node> nodesToDelete = new HashSet<Node>();
+        Collection<Node> nodesToDelete = new HashSet<>();
         for (Way way : OsmPrimitive.getFilteredList(primitivesToDelete, Way.class)) {
             for (Node n : way.getNodes()) {
                 if (n.isTagged()) {
@@ -338,13 +338,13 @@ public class DeleteCommand extends Command {
         if (selection == null || selection.isEmpty())
             return null;
 
-        Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
+        Set<OsmPrimitive> primitivesToDelete = new HashSet<>(selection);
 
         Collection<Relation> relationsToDelete = Utils.filteredCollection(primitivesToDelete, Relation.class);
         if (!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete))
             return null;
 
-        Collection<Way> waysToBeChanged = new HashSet<Way>();
+        Collection<Way> waysToBeChanged = new HashSet<>();
 
         if (alsoDeleteNodesInWay) {
             // delete untagged nodes only referenced by primitives in primitivesToDelete, too
@@ -358,7 +358,7 @@ public class DeleteCommand extends Command {
 
         waysToBeChanged.addAll(OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Way.class));
 
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
         for (Way w : waysToBeChanged) {
             Way wnew = new Way(w);
             wnew.removeNodes(OsmPrimitive.getFilteredSet(primitivesToDelete, Node.class));
@@ -414,7 +414,7 @@ public class DeleteCommand extends Command {
             // If the way is circular (first and last nodes are the same),
             // the way shouldn't be splitted
 
-            List<Node> n = new ArrayList<Node>();
+            List<Node> n = new ArrayList<>();
 
             n.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount() - 1));
             n.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
@@ -425,7 +425,7 @@ public class DeleteCommand extends Command {
             return new ChangeCommand(ws.way, wnew);
         }
 
-        List<Node> n1 = new ArrayList<Node>(), n2 = new ArrayList<Node>();
+        List<Node> n1 = new ArrayList<>(), n2 = new ArrayList<>();
 
         n1.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
         n2.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount()));
@@ -439,7 +439,7 @@ public class DeleteCommand extends Command {
             wnew.setNodes(n1);
             return new ChangeCommand(ws.way, wnew);
         } else {
-            List<List<Node>> chunks = new ArrayList<List<Node>>(2);
+            List<List<Node>> chunks = new ArrayList<>(2);
             chunks.add(n1);
             chunks.add(n2);
             return SplitWayAction.splitWay(layer,ws.way, chunks, Collections.<OsmPrimitive>emptyList()).getCommand();

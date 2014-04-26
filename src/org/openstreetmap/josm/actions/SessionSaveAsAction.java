@@ -116,7 +116,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
                 return;
         }
 
-        List<Layer> layersOut = new ArrayList<Layer>();
+        List<Layer> layersOut = new ArrayList<>();
         for (Layer layer : layers) {
             if (exporters.get(layer) == null || !exporters.get(layer).shallExport()) continue;
             // TODO: resolve dependencies for layers excluded by the user
@@ -166,11 +166,11 @@ public class SessionSaveAsAction extends DiskAccessAction {
          * Initializes action.
          */
         public final void initialize() {
-            layers = new ArrayList<Layer>(Main.map.mapView.getAllLayersAsList());
-            exporters = new HashMap<Layer, SessionLayerExporter>();
-            dependencies = new MultiMap<Layer, Layer>();
+            layers = new ArrayList<>(Main.map.mapView.getAllLayersAsList());
+            exporters = new HashMap<>();
+            dependencies = new MultiMap<>();
 
-            Set<Layer> noExporter = new HashSet<Layer>();
+            Set<Layer> noExporter = new HashSet<>();
 
             for (Layer layer : layers) {
                 SessionLayerExporter exporter = SessionWriter.getSessionLayerExporter(layer);

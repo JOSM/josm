@@ -128,7 +128,7 @@ public final class I18n {
     };
     private static Map<String, String> strings = null;
     private static Map<String, String[]> pstrings = null;
-    private static Map<String, PluralMode> languages = new HashMap<String, PluralMode>();
+    private static Map<String, PluralMode> languages = new HashMap<>();
 
     /**
      * Translates some text for the current locale.
@@ -323,7 +323,7 @@ public final class I18n {
      * @return an array of locale objects.
      */
     public static final Locale[] getAvailableTranslations() {
-        Collection<Locale> v = new ArrayList<Locale>(languages.size());
+        Collection<Locale> v = new ArrayList<>(languages.size());
         if(getTranslationFile("en") != null)
         {
             for (String loc : languages.keySet()) {
@@ -489,8 +489,8 @@ public final class I18n {
             s = strings;
             p = pstrings;
         } else {
-            s = new HashMap<String, String>();
-            p = new HashMap<String, String[]>();
+            s = new HashMap<>();
+            p = new HashMap<>();
         }
         /* file format:
            Files are always a group. English file and translated file must provide identical datasets.

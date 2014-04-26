@@ -124,7 +124,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             public void valueChanged(ListSelectionEvent lse) {
                 if (Main.isDisplayingMapView()) {
                     Collection<RelationMember> sel = getMemberTableModel().getSelectedMembers();
-                    final List<OsmPrimitive> toHighlight = new ArrayList<OsmPrimitive>();
+                    final List<OsmPrimitive> toHighlight = new ArrayList<>();
                     for (RelationMember r: sel) {
                         if (r.getMember().isUsable()) {
                             toHighlight.add(r.getMember());

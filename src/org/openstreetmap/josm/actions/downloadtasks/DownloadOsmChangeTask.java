@@ -102,7 +102,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
             try {
                 // A changeset does not contain all referred primitives, this is the map of incomplete ones
                 // For each incomplete primitive, we'll have to get its state at date it was referred
-                Map<OsmPrimitive, Date> toLoad = new HashMap<OsmPrimitive, Date>();
+                Map<OsmPrimitive, Date> toLoad = new HashMap<>();
                 for (OsmPrimitive p : downloadedData.allNonDeletedPrimitives()) {
                     if (p.isIncomplete()) {
                         Date timestamp = null;
@@ -141,7 +141,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
 
         @Override
         public void historyUpdated(HistoryDataSet source, PrimitiveId id) {
-            Map<OsmPrimitive, Date> toLoadNext = new HashMap<OsmPrimitive, Date>();
+            Map<OsmPrimitive, Date> toLoadNext = new HashMap<>();
             for (Iterator<OsmPrimitive> it = toLoad.keySet().iterator(); it.hasNext();) {
                 OsmPrimitive p = it.next();
                 History history = source.getHistory(p.getPrimitiveId());

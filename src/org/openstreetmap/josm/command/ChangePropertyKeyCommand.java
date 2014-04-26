@@ -53,7 +53,7 @@ public class ChangePropertyKeyCommand extends Command {
      * @param newKey the new value of the key
      */
     public ChangePropertyKeyCommand(Collection<? extends OsmPrimitive> objects, String key, String newKey) {
-        this.objects = new LinkedList<OsmPrimitive>(objects);
+        this.objects = new LinkedList<>(objects);
         this.key = key;
         this.newKey = newKey;
     }
@@ -100,7 +100,7 @@ public class ChangePropertyKeyCommand extends Command {
     public Collection<PseudoCommand> getChildren() {
         if (objects.size() == 1)
             return null;
-        List<PseudoCommand> children = new ArrayList<PseudoCommand>();
+        List<PseudoCommand> children = new ArrayList<>();
 
         final NameVisitor v = new NameVisitor();
         for (final OsmPrimitive osm : objects) {

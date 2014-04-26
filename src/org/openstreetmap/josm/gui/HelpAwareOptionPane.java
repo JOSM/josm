@@ -46,7 +46,7 @@ public final class HelpAwareOptionPane {
         public final String helpTopic;
         private boolean enabled;
 
-        private final Collection<ChangeListener> listeners = new HashSet<ChangeListener>();
+        private final Collection<ChangeListener> listeners = new HashSet<>();
 
         /**
          * Constructs a new {@code ButtonSpec}.
@@ -132,7 +132,7 @@ public final class HelpAwareOptionPane {
      * @return the list of buttons
      */
     private static List<JButton> createOptionButtons(ButtonSpec[] options, String helpTopic) {
-        List<JButton> buttons = new ArrayList<JButton>();
+        List<JButton> buttons = new ArrayList<>();
         if (options == null) {
             JButton b = new JButton(tr("OK"));
             b.setIcon(ImageProvider.get("ok"));

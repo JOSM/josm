@@ -400,7 +400,7 @@ public class ChangesetQuery {
         protected Collection<Long> parseLongs(String value) {
             return value == null || value.isEmpty()
                     ? Collections.<Long>emptySet() :
-                    new HashSet<Long>(Utils.transform(Arrays.asList(value.split(",")), new Utils.Function<String, Long>() {
+                    new HashSet<>(Utils.transform(Arrays.asList(value.split(",")), new Utils.Function<String, Long>() {
                         @Override
                         public Long apply(String x) {
                             return Long.valueOf(x);
@@ -456,7 +456,7 @@ public class ChangesetQuery {
         }
 
         protected Map<String,String> createMapFromQueryString(String query) {
-            Map<String,String> queryParams  = new HashMap<String, String>();
+            Map<String,String> queryParams  = new HashMap<>();
             String[] keyValuePairs = query.split("&");
             for (String keyValuePair: keyValuePairs) {
                 String[] kv = keyValuePair.split("=");

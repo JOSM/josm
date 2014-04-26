@@ -67,11 +67,14 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         return instance;
     }
 
-    private final Queue<AbstractDatasetChangedEvent> eventsInEDT = new LinkedBlockingQueue<AbstractDatasetChangedEvent>();
-    private final CopyOnWriteArrayList<ListenerInfo> inEDTListeners = new CopyOnWriteArrayList<ListenerInfo>();
-    private final CopyOnWriteArrayList<ListenerInfo> normalListeners = new CopyOnWriteArrayList<ListenerInfo>();
+    private final Queue<AbstractDatasetChangedEvent> eventsInEDT = new LinkedBlockingQueue<>();
+    private final CopyOnWriteArrayList<ListenerInfo> inEDTListeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<ListenerInfo> normalListeners = new CopyOnWriteArrayList<>();
     private final DataSetListener myListener = new DataSetListenerAdapter(this);
 
+    /**
+     * Constructs a new {@code DatasetEventManager}.
+     */
     public DatasetEventManager() {
         MapView.addEditLayerChangeListener(this);
     }
@@ -138,7 +141,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         @Override
         public void run() {
             while (!eventsInEDT.isEmpty()) {
-                List<AbstractDatasetChangedEvent> events = new ArrayList<AbstractDatasetChangedEvent>();
+                List<AbstractDatasetChangedEvent> events = new ArrayList<>();
                 events.addAll(eventsInEDT);
 
                 DataSet dataSet = null;
@@ -186,8 +189,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
                                 evs.add(event);
                             }
                         } else {
-                            consolidatedEvent = new DataChangedEvent(dataSet,
-                                    new ArrayList<AbstractDatasetChangedEvent>(Arrays.asList(consolidatedEvent)));
+                            consolidatedEvent = new DataChangedEvent(dataSet, new ArrayList<>(Arrays.asList(consolidatedEvent)));
                         }
 
                     }

@@ -64,7 +64,7 @@ public class TagTable extends JTable  {
     /** a list of components to which focus can be transferred without stopping
      * cell editing this table.
      */
-    private final CopyOnWriteArrayList<Component> doNotStopCellEditingWhenFocused = new CopyOnWriteArrayList<Component>();
+    private final CopyOnWriteArrayList<Component> doNotStopCellEditingWhenFocused = new CopyOnWriteArrayList<>();
     private CellEditorRemover editorRemover;
 
     /**
@@ -345,7 +345,7 @@ public class TagTable extends JTable  {
                  if (tags==null || tags.isEmpty()) {
                     TextTagParser.showBadBufferMessage(ht("/Action/PasteTags"));
                  } else if (TextTagParser.validateTags(tags)) {
-                     List<Tag> newTags = new ArrayList<Tag>();
+                     List<Tag> newTags = new ArrayList<>();
                      for (Map.Entry<String, String> entry: tags.entrySet()) {
                         String k = entry.getKey();
                         String v = entry.getValue();

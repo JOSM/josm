@@ -36,8 +36,8 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      * Constructs a new {@code AdjustmentSynchronizer}
      */
     public AdjustmentSynchronizer() {
-        synchronizedAdjustables = new ArrayList<Adjustable>();
-        enabledMap = new HashMap<Adjustable, Boolean>();
+        synchronizedAdjustables = new ArrayList<>();
+        enabledMap = new HashMap<>();
         observable = new Observable();
     }
 

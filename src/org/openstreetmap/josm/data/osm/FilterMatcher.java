@@ -89,8 +89,8 @@ public class FilterMatcher {
         }
     }
 
-    private final List<FilterInfo> hiddenFilters = new ArrayList<FilterInfo>();
-    private final List<FilterInfo> disabledFilters = new ArrayList<FilterInfo>();
+    private final List<FilterInfo> hiddenFilters = new ArrayList<>();
+    private final List<FilterInfo> disabledFilters = new ArrayList<>();
 
     public void update(Collection<Filter> filters) throws ParseError {
         hiddenFilters.clear();

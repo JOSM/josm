@@ -41,7 +41,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 1862
      */
     public List<Node> getNodes() {
-        return new CopyList<Node>(nodes);
+        return new CopyList<>(nodes);
     }
 
     /**
@@ -166,7 +166,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 4671
      */
     public Set<Node> getNeighbours(Node node) {
-        HashSet<Node> neigh = new HashSet<Node>();
+        HashSet<Node> neigh = new HashSet<>();
 
         if (node == null) return neigh;
 
@@ -190,7 +190,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 3348
      */
     public List<Pair<Node,Node>> getNodePairs(boolean sort) {
-        List<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
+        List<Pair<Node,Node>> chunkSet = new ArrayList<>();
         if (isIncomplete()) return chunkSet;
         Node lastN = null;
         Node[] nodes = this.nodes;
@@ -199,7 +199,7 @@ public final class Way extends OsmPrimitive implements IWay {
                 lastN = n;
                 continue;
             }
-            Pair<Node,Node> np = new Pair<Node,Node>(lastN, n);
+            Pair<Node,Node> np = new Pair<>(lastN, n);
             if (sort) {
                 Pair.sort(np);
             }
@@ -283,7 +283,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
             WayData wayData = (WayData) data;
 
-            List<Node> newNodes = new ArrayList<Node>(wayData.getNodes().size());
+            List<Node> newNodes = new ArrayList<>(wayData.getNodes().size());
             for (Long nodeId : wayData.getNodes()) {
                 Node node = (Node)getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
                 if (node != null) {
@@ -385,7 +385,7 @@ public final class Way extends OsmPrimitive implements IWay {
         boolean locked = writeLock();
         try {
             boolean closed = (lastNode() == firstNode() && selection.contains(lastNode()));
-            List<Node> copy = new ArrayList<Node>();
+            List<Node> copy = new ArrayList<>();
 
             for (Node n: nodes) {
                 if (!selection.contains(n)) {

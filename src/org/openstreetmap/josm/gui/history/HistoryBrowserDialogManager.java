@@ -37,7 +37,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
     private Map<Long, HistoryBrowserDialog> dialogs;
 
     protected HistoryBrowserDialogManager() {
-        dialogs = new HashMap<Long, HistoryBrowserDialog>();
+        dialogs = new HashMap<>();
         MapView.addLayerChangeListener(this);
     }
 
@@ -107,7 +107,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
      *
      */
     public void hideAll() {
-        List<HistoryBrowserDialog> dialogs = new ArrayList<HistoryBrowserDialog>();
+        List<HistoryBrowserDialog> dialogs = new ArrayList<>();
         dialogs.addAll(this.dialogs.values());
         for (HistoryBrowserDialog dialog: dialogs) {
             dialog.unlinkAsListener();

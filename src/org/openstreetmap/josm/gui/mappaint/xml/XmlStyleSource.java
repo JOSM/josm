@@ -40,14 +40,14 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
      */
     public static final String XML_STYLE_MIME_TYPES = "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
-    protected final Map<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
-    protected final Map<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
-    protected final Map<String, LinemodPrototype> modifiers = new HashMap<String, LinemodPrototype>();
-    protected final Map<String, AreaPrototype> areas = new HashMap<String, AreaPrototype>();
-    protected final List<IconPrototype> iconsList = new LinkedList<IconPrototype>();
-    protected final List<LinePrototype> linesList = new LinkedList<LinePrototype>();
-    protected final List<LinemodPrototype> modifiersList = new LinkedList<LinemodPrototype>();
-    protected final List<AreaPrototype> areasList = new LinkedList<AreaPrototype>();
+    protected final Map<String, IconPrototype> icons = new HashMap<>();
+    protected final Map<String, LinePrototype> lines = new HashMap<>();
+    protected final Map<String, LinemodPrototype> modifiers = new HashMap<>();
+    protected final Map<String, AreaPrototype> areas = new HashMap<>();
+    protected final List<IconPrototype> iconsList = new LinkedList<>();
+    protected final List<LinePrototype> linesList = new LinkedList<>();
+    protected final List<LinemodPrototype> modifiersList = new LinkedList<>();
+    protected final List<AreaPrototype> areasList = new LinkedList<>();
 
     public XmlStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
@@ -181,7 +181,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
      */
     private void get(OsmPrimitive primitive, boolean closed, WayPrototypesRecord p, Double scale, MultiCascade mc) {
         String lineIdx = null;
-        HashMap<String, LinemodPrototype> overlayMap = new HashMap<String, LinemodPrototype>();
+        HashMap<String, LinemodPrototype> overlayMap = new HashMap<>();
         boolean isNotArea = primitive.isKeyFalse("area");
         for (String key : primitive.keySet()) {
             String val = primitive.get(key);
@@ -253,7 +253,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
         }
         overlayMap.remove(lineIdx); // do not use overlay if linestyle is from the same rule (example: railway=tram)
         if (!overlayMap.isEmpty()) {
-            List<LinemodPrototype> tmp = new LinkedList<LinemodPrototype>();
+            List<LinemodPrototype> tmp = new LinkedList<>();
             if (p.linemods != null) {
                 tmp.addAll(p.linemods);
             }

@@ -22,7 +22,7 @@ public final class Cascade implements Cloneable {
 
     public static final Cascade EMPTY_CASCADE = new Cascade();
 
-    protected Map<String, Object> prop = new HashMap<String, Object>();
+    protected Map<String, Object> prop = new HashMap<>();
 
     private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})");
 

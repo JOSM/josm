@@ -56,11 +56,9 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             String description) throws UserCancelException {
 
         if (!tagCorrectionsMap.isEmpty() || !roleCorrectionMap.isEmpty()) {
-            Collection<Command> commands = new ArrayList<Command>();
-            Map<OsmPrimitive, TagCorrectionTable> tagTableMap =
-                new HashMap<OsmPrimitive, TagCorrectionTable>();
-            Map<OsmPrimitive, RoleCorrectionTable> roleTableMap =
-                new HashMap<OsmPrimitive, RoleCorrectionTable>();
+            Collection<Command> commands = new ArrayList<>();
+            Map<OsmPrimitive, TagCorrectionTable> tagTableMap = new HashMap<>();
+            Map<OsmPrimitive, RoleCorrectionTable> roleTableMap = new HashMap<>();
 
             final JPanel p = new JPanel(new GridBagLayout());
 
@@ -107,8 +105,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     continue;
                 }
 
-                final JLabel rolesLabel = new JLabel(
-                        tr("Roles in relations referring to"));
+                final JLabel rolesLabel = new JLabel(tr("Roles in relations referring to"));
                 p.add(rolesLabel, GBC.std());
 
                 final JLabel primitiveLabel = new JLabel(
@@ -118,8 +115,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 );
                 p.add(primitiveLabel, GBC.eol());
 
-                final RoleCorrectionTable table = new RoleCorrectionTable(
-                        roleCorrections);
+                final RoleCorrectionTable table = new RoleCorrectionTable(roleCorrections);
                 final JScrollPane scrollPane = new JScrollPane(table);
                 p.add(scrollPane, GBC.eop().fill(GBC.HORIZONTAL));
 
@@ -155,7 +151,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
                     // use this structure to remember keys that have been set already so that
                     // they're not dropped by a later step
-                    Set<String> keysChanged = new HashSet<String>();
+                    Set<String> keysChanged = new HashSet<>();
 
                     // apply all changes to this clone
                     for (int i = 0; i < tagCorrections.size(); i++) {

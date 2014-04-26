@@ -32,7 +32,7 @@ public class HTMLGrabber extends WMSGrabber {
 
         Main.info("Grabbing HTML " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
-        List<String> cmdParams = new ArrayList<String>();
+        List<String> cmdParams = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(MessageFormat.format(PROP_BROWSER.get(), urlstring));
         while (st.hasMoreTokens()) {
             cmdParams.add(st.nextToken());

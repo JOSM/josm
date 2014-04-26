@@ -30,7 +30,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
     public SelectionTableModel(OsmDataLayer layer) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
-        cache = new ArrayList<OsmPrimitive>();
+        cache = new ArrayList<>();
         populateSelectedPrimitives(layer);
     }
 

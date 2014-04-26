@@ -308,7 +308,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             String urlString = url.toExternalForm();
             if (urlString.matches(PATTERN_OSM_API_URL)) {
                 // TODO: proper i18n after stabilization
-                Collection<String> items = new ArrayList<String>();
+                Collection<String> items = new ArrayList<>();
                 items.add(tr("OSM Server URL:") + " " + url.getHost());
                 items.add(tr("Command")+": "+url.getPath());
                 if (url.getQuery() != null) {

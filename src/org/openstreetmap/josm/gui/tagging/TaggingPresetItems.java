@@ -76,13 +76,12 @@ public final class TaggingPresetItems {
     private static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
 
     // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
-    private static final Map<String,EnumSet<TaggingPresetType>> typeCache =
-            new LinkedHashMap<String, EnumSet<TaggingPresetType>>(16, 1.1f, true);
+    private static final Map<String,EnumSet<TaggingPresetType>> typeCache = new LinkedHashMap<>(16, 1.1f, true);
 
     /**
      * Last value of each key used in presets, used for prefilling corresponding fields
      */
-    private static final Map<String,String> lastValue = new HashMap<String,String>();
+    private static final Map<String,String> lastValue = new HashMap<>();
 
     public static class PresetListEntry {
         public String value;
@@ -427,7 +426,7 @@ public final class TaggingPresetItems {
 
     public static class Roles extends TaggingPresetItem {
 
-        public final List<Role> roles = new LinkedList<Role>();
+        public final List<Role> roles = new LinkedList<>();
 
         @Override
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
@@ -760,7 +759,7 @@ public final class TaggingPresetItems {
         /**
          * List of checkboxes
          */
-        public final List<Check> checks = new LinkedList<Check>();
+        public final List<Check> checks = new LinkedList<>();
 
         @Override
         boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
@@ -909,7 +908,7 @@ public final class TaggingPresetItems {
         public String values_searchable = "false";
 
         protected JComponent component;
-        protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<String, PresetListEntry>();
+        protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<>();
         private boolean initialized = false;
         protected Usage usage;
         protected Object originalValue;
@@ -1327,7 +1326,7 @@ public final class TaggingPresetItems {
                 clearSelection();
             } else {
                 String s = o.toString();
-                TreeSet<String> parts = new TreeSet<String>(Arrays.asList(s.split(delimiter)));
+                TreeSet<String> parts = new TreeSet<>(Arrays.asList(s.split(delimiter)));
                 ListModel lm = getModel();
                 int[] intParts = new int[lm.getSize()];
                 int j = 0;
@@ -1388,7 +1387,7 @@ public final class TaggingPresetItems {
     private static String[] splitEscaped(char delimiter, String s) {
         if (s == null)
             return new String[0];
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         boolean backslash = false;
         StringBuilder item = new StringBuilder();
         for (int i=0; i<s.length(); i++) {
@@ -1414,7 +1413,7 @@ public final class TaggingPresetItems {
 
     static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
         Usage returnValue = new Usage();
-        returnValue.values = new TreeSet<String>();
+        returnValue.values = new TreeSet<>();
         for (OsmPrimitive s : sel) {
             String v = s.get(key);
             if (v != null) {
@@ -1431,7 +1430,7 @@ public final class TaggingPresetItems {
     static Usage determineBooleanUsage(Collection<OsmPrimitive> sel, String key) {
 
         Usage returnValue = new Usage();
-        returnValue.values = new TreeSet<String>();
+        returnValue.values = new TreeSet<>();
         for (OsmPrimitive s : sel) {
             String booleanValue = OsmUtils.getNamedOsmBoolean(s.get(key));
             if (booleanValue != null) {

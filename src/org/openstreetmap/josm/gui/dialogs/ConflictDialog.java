@@ -94,7 +94,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     protected void build() {
         model = new ConflictListModel();
 
-        lstConflicts = new JList<OsmPrimitive>(model);
+        lstConflicts = new JList<>(model);
         lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
         lstConflicts.addMouseListener(new MouseEventHandler());
@@ -234,7 +234,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         g.setColor(preferencesColor);
         Visitor conflictPainter = new AbstractVisitor() {
             // Manage a stack of visited relations to avoid infinite recursion with cyclic relations (fix #7938)
-            private final Set<Relation> visited = new HashSet<Relation>();
+            private final Set<Relation> visited = new HashSet<>();
             @Override
             public void visit(Node n) {
                 Point p = nc.getPoint(n);
@@ -363,7 +363,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         private CopyOnWriteArrayList<ListDataListener> listeners;
 
         public ConflictListModel() {
-            listeners = new CopyOnWriteArrayList<ListDataListener>();
+            listeners = new CopyOnWriteArrayList<>();
         }
 
         @Override
@@ -450,7 +450,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
+            Collection<OsmPrimitive> sel = new LinkedList<>();
             for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
                 sel.add(o);
             }

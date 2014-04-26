@@ -470,7 +470,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public Map<String, String> getKeys() {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         String[] keys = this.keys;
         if (keys != null) {
             for (int i=0; i<keys.length ; i+=2) {
@@ -637,7 +637,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         String[] keys = this.keys;
         if (keys == null)
             return Collections.emptySet();
-        Set<String> result = new HashSet<String>(keys.length / 2);
+        Set<String> result = new HashSet<>(keys.length / 2);
         for (int i=0; i<keys.length; i+=2) {
             result.add(keys[i]);
         }

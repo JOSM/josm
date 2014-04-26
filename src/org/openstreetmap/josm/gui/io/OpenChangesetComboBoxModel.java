@@ -28,7 +28,7 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel implements 
     }
 
     public OpenChangesetComboBoxModel() {
-        this.changesets = new ArrayList<Changeset>();
+        this.changesets = new ArrayList<>();
     }
 
     /**

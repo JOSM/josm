@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class CSSColors {
-    private static final Map<String, Color> CSS_COLORS = new HashMap<String, Color>();
+    private static final Map<String, Color> CSS_COLORS = new HashMap<>();
     static {
         Object[][] CSSCOLORS_INIT = new Object[][] {
             {"aliceblue", 0xf0f8ff},

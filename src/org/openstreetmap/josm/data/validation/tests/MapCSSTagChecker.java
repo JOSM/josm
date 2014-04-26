@@ -68,15 +68,15 @@ public class MapCSSTagChecker extends Test.TagTest {
         super(tr("Tag checker (MapCSS based)"), tr("This test checks for errors in tag keys and values."));
     }
 
-    final List<TagCheck> checks = new ArrayList<TagCheck>();
+    final List<TagCheck> checks = new ArrayList<>();
 
     static class TagCheck implements Predicate<OsmPrimitive> {
         protected final MapCSSRule rule;
-        protected final List<PrimitiveToTag> change = new ArrayList<PrimitiveToTag>();
-        protected final Map<String, String> keyChange = new LinkedHashMap<String, String>();
-        protected final List<String> alternatives = new ArrayList<String>();
-        protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<Instruction.AssignmentInstruction, Severity>();
-        protected final Map<String, Boolean> assertions = new HashMap<String, Boolean>();
+        protected final List<PrimitiveToTag> change = new ArrayList<>();
+        protected final Map<String, String> keyChange = new LinkedHashMap<>();
+        protected final List<String> alternatives = new ArrayList<>();
+        protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<>();
+        protected final Map<String, Boolean> assertions = new HashMap<>();
 
         TagCheck(MapCSSRule rule) {
             this.rule = rule;
@@ -179,7 +179,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             assert source.getErrors().isEmpty();
             // Ignore "meta" rule(s) from external rules of JOSM wiki
             removeMetaRules(source);
-            return new ArrayList<TagCheck>(Utils.transform(source.rules, new Utils.Function<MapCSSRule, TagCheck>() {
+            return new ArrayList<>(Utils.transform(source.rules, new Utils.Function<MapCSSRule, TagCheck>() {
                 @Override
                 public TagCheck apply(MapCSSRule x) {
                     return TagCheck.ofMapCSSRule(x);
@@ -296,7 +296,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 return null;
             }
             final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
-            Collection<Command> cmds = new LinkedList<Command>();
+            Collection<Command> cmds = new LinkedList<>();
             for (PrimitiveToTag toTag : change) {
                 final Tag tag = toTag.apply(p);
                 final String key = insertArguments(matchingSelector, tag.getKey());
@@ -415,7 +415,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      * Obtains all {@link TestError}s for the {@link OsmPrimitive} {@code p}.
      */
     public Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
-        final ArrayList<TestError> r = new ArrayList<TestError>();
+        final ArrayList<TestError> r = new ArrayList<>();
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         for (TagCheck check : checks) {
             if (Severity.OTHER.equals(check.getSeverity()) && !includeOtherSeverity) {

@@ -375,8 +375,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             private final Map<Integer, List<MapPolygon>> mapPolygons;
 
             private DefListSelectionListener() {
-                this.mapRectangles = new HashMap<Integer, MapRectangle>();
-                this.mapPolygons = new HashMap<Integer, List<MapPolygon>>();
+                this.mapRectangles = new HashMap<>();
+                this.mapPolygons = new HashMap<>();
             }
 
             @Override
@@ -407,7 +407,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     if (shapes != null && !shapes.isEmpty()) {
                         if (defaultTable.getSelectionModel().isSelectedIndex(i)) {
                             if (!mapPolygons.containsKey(i)) {
-                                List<MapPolygon> list = new ArrayList<MapPolygon>();
+                                List<MapPolygon> list = new ArrayList<>();
                                 mapPolygons.put(i, list);
                                 // Add new map polygons
                                 for (Shape shape : shapes) {
@@ -541,7 +541,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     return;
                 }
 
-                Set<String> acceptedEulas = new HashSet<String>();
+                Set<String> acceptedEulas = new HashSet<>();
 
                 outer:
                 for (int line : lines) {

@@ -108,7 +108,7 @@ public class CombineWayAction extends JosmAction {
         ways.remove(null); // just in case -  remove all null ways from the collection
 
         // remove duplicates, preserving order
-        ways = new LinkedHashSet<Way>(ways);
+        ways = new LinkedHashSet<>(ways);
 
         // try to build a new way which includes all the combined
         // ways
@@ -124,8 +124,8 @@ public class CombineWayAction extends JosmAction {
         //
         TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
 
-        List<Way> reversedWays = new LinkedList<Way>();
-        List<Way> unreversedWays = new LinkedList<Way>();
+        List<Way> reversedWays = new LinkedList<>();
+        List<Way> unreversedWays = new LinkedList<>();
         for (Way w: ways) {
             // Treat zero or one-node ways as unreversed as Combine action action is a good way to fix them (see #8971)
             if (w.getNodesCount() < 2 || (path.indexOf(w.getNode(0)) + 1) == path.lastIndexOf(w.getNode(1))) {
@@ -154,10 +154,10 @@ public class CombineWayAction extends JosmAction {
             }
             // if there are still reversed ways with direction-dependent tags, reverse their tags
             if (!reversedWays.isEmpty() && PROP_REVERSE_WAY.get()) {
-                List<Way> unreversedTagWays = new ArrayList<Way>(ways);
+                List<Way> unreversedTagWays = new ArrayList<>(ways);
                 unreversedTagWays.removeAll(reversedWays);
                 ReverseWayTagCorrector reverseWayTagCorrector = new ReverseWayTagCorrector();
-                List<Way> reversedTagWays = new ArrayList<Way>(reversedWays.size());
+                List<Way> reversedTagWays = new ArrayList<>(reversedWays.size());
                 Collection<Command> changePropertyCommands =  null;
                 for (Way w : reversedWays) {
                     Way wnew = new Way(w);
@@ -182,8 +182,8 @@ public class CombineWayAction extends JosmAction {
 
         List<Command> resolution = CombinePrimitiveResolverDialog.launchIfNecessary(wayTags, ways, Collections.singleton(targetWay));
 
-        LinkedList<Command> cmds = new LinkedList<Command>();
-        LinkedList<Way> deletedWays = new LinkedList<Way>(ways);
+        LinkedList<Command> cmds = new LinkedList<>();
+        LinkedList<Way> deletedWays = new LinkedList<>(ways);
         deletedWays.remove(targetWay);
 
         cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
@@ -376,7 +376,7 @@ public class CombineWayAction extends JosmAction {
 
     public static class NodeGraph {
         public static List<NodePair> buildNodePairs(Way way, boolean directed) {
-            List<NodePair> pairs = new ArrayList<NodePair>();
+            List<NodePair> pairs = new ArrayList<>();
             for (Pair<Node,Node> pair: way.getNodePairs(false /* don't sort */)) {
                 pairs.add(new NodePair(pair));
                 if (!directed) {
@@ -387,7 +387,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         public static List<NodePair> buildNodePairs(List<Way> ways, boolean directed) {
-            List<NodePair> pairs = new ArrayList<NodePair>();
+            List<NodePair> pairs = new ArrayList<>();
             for (Way w: ways) {
                 pairs.addAll(buildNodePairs(w, directed));
             }
@@ -395,7 +395,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         public static List<NodePair> eliminateDuplicateNodePairs(List<NodePair> pairs) {
-            List<NodePair> cleaned = new ArrayList<NodePair>();
+            List<NodePair> cleaned = new ArrayList<>();
             for(NodePair p: pairs) {
                 if (!cleaned.contains(p) && !cleaned.contains(p.swap())) {
                     cleaned.add(p);
@@ -448,7 +448,7 @@ public class CombineWayAction extends JosmAction {
                     successors.get(pair.getA()).add(pair);
                 }
             } else {
-                List<NodePair> l = new ArrayList<NodePair>();
+                List<NodePair> l = new ArrayList<>();
                 l.add(pair);
                 successors.put(pair.getA(), l);
             }
@@ -460,7 +460,7 @@ public class CombineWayAction extends JosmAction {
                     predecessors.get(pair.getB()).add(pair);
                 }
             } else {
-                List<NodePair> l = new ArrayList<NodePair>();
+                List<NodePair> l = new ArrayList<>();
                 l.add(pair);
                 predecessors.put(pair.getB(), l);
             }
@@ -479,9 +479,9 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected void prepare() {
-            Set<NodePair> undirectedEdges = new LinkedHashSet<NodePair>();
-            successors = new LinkedHashMap<Node, List<NodePair>>();
-            predecessors = new LinkedHashMap<Node, List<NodePair>>();
+            Set<NodePair> undirectedEdges = new LinkedHashSet<>();
+            successors = new LinkedHashMap<>();
+            predecessors = new LinkedHashMap<>();
 
             for (NodePair pair: edges) {
                 if (!undirectedEdges.contains(pair) && ! undirectedEdges.contains(pair.swap())) {
@@ -497,7 +497,7 @@ public class CombineWayAction extends JosmAction {
          * Constructs a new {@code NodeGraph}.
          */
         public NodeGraph() {
-            edges = new LinkedHashSet<NodePair>();
+            edges = new LinkedHashSet<>();
         }
 
         public void add(NodePair pair) {
@@ -522,7 +522,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Set<Node> getTerminalNodes() {
-            Set<Node> ret = new LinkedHashSet<Node>();
+            Set<Node> ret = new LinkedHashSet<>();
             for (Node n: getNodes()) {
                 if (isTerminalNode(n)) {
                     ret.add(n);
@@ -532,7 +532,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Set<Node> getNodes(Stack<NodePair> pairs) {
-            HashSet<Node> nodes = new LinkedHashSet<Node>(2*pairs.size());
+            HashSet<Node> nodes = new LinkedHashSet<>(2*pairs.size());
             for (NodePair pair: pairs) {
                 nodes.add(pair.getA());
                 nodes.add(pair.getB());
@@ -552,7 +552,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Set<Node> getNodes() {
-            Set<Node> nodes = new LinkedHashSet<Node>(2 * edges.size());
+            Set<Node> nodes = new LinkedHashSet<>(2 * edges.size());
             for (NodePair pair: edges) {
                 nodes.add(pair.getA());
                 nodes.add(pair.getB());
@@ -565,7 +565,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected List<Node> buildPathFromNodePairs(Stack<NodePair> path) {
-            LinkedList<Node> ret = new LinkedList<Node>();
+            LinkedList<Node> ret = new LinkedList<>();
             for (NodePair pair: path) {
                 ret.add(pair.getA());
             }
@@ -584,8 +584,8 @@ public class CombineWayAction extends JosmAction {
         protected List<Node> buildSpanningPath(Node startNode) {
             if (startNode == null)
                 return null;
-            Stack<NodePair> path = new Stack<NodePair>();
-            Stack<NodePair> nextPairs  = new Stack<NodePair>();
+            Stack<NodePair> path = new Stack<>();
+            Stack<NodePair> nextPairs  = new Stack<>();
             nextPairs.addAll(getOutboundPairs(startNode));
             while(!nextPairs.isEmpty()) {
                 NodePair cur= nextPairs.pop();

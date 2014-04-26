@@ -80,7 +80,7 @@ public class JosmComboBox extends JComboBox {
      */
     public JosmComboBox(ComboBoxModel aModel) {
         super(aModel);
-        List<Object> list = new ArrayList<Object>(aModel.getSize());
+        List<Object> list = new ArrayList<>(aModel.getSize());
         for (int i = 0; i<aModel.getSize(); i++) {
             list.add(aModel.getElementAt(i));
         }

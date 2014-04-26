@@ -40,7 +40,7 @@ public class Lanes extends Test.TagTest {
             // nothing to check
             return;
         }
-        final Set<Integer> lanesCount = new HashSet<Integer>(Utils.transform(keysForPattern, new Utils.Function<String, Integer>() {
+        final Set<Integer> lanesCount = new HashSet<>(Utils.transform(keysForPattern, new Utils.Function<String, Integer>() {
             @Override
             public Integer apply(String key) {
                 return getLanesCount(p.get(key));

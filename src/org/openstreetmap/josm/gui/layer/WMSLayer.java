@@ -138,16 +138,16 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     private volatile int bottomEdge;
 
     // Request queue
-    private final List<WMSRequest> requestQueue = new ArrayList<WMSRequest>();
-    private final List<WMSRequest> finishedRequests = new ArrayList<WMSRequest>();
+    private final List<WMSRequest> requestQueue = new ArrayList<>();
+    private final List<WMSRequest> finishedRequests = new ArrayList<>();
     /**
      * List of request currently being processed by download threads
      */
-    private final List<WMSRequest> processingRequests = new ArrayList<WMSRequest>();
+    private final List<WMSRequest> processingRequests = new ArrayList<>();
     private final Lock requestQueueLock = new ReentrantLock();
     private final Condition queueEmpty = requestQueueLock.newCondition();
-    private final List<Grabber> grabbers = new ArrayList<Grabber>();
-    private final List<Thread> grabberThreads = new ArrayList<Thread>();
+    private final List<Grabber> grabbers = new ArrayList<>();
+    private final List<Thread> grabberThreads = new ArrayList<>();
     private boolean canceled;
 
     /** set to true if this layer uses an invalid base url */
@@ -234,7 +234,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public void downloadAreaToCache(PrecacheTask precacheTask, List<LatLon> points, double bufferX, double bufferY) {
-        Set<Point> requestedTiles = new HashSet<Point>();
+        Set<Point> requestedTiles = new HashSet<>();
         for (LatLon point: points) {
             EastNorth minEn = Main.getProjection().latlon2eastNorth(new LatLon(point.lat() - bufferY, point.lon() - bufferX));
             EastNorth maxEn = Main.getProjection().latlon2eastNorth(new LatLon(point.lat() + bufferY, point.lon() + bufferX));
@@ -446,7 +446,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
 
         gatherFinishedRequests();
-        Set<ProjectionBounds> areaToCache = new HashSet<ProjectionBounds>();
+        Set<ProjectionBounds> areaToCache = new HashSet<>();
 
         for(int x = bminx; x<=bmaxx; ++x) {
             for(int y = bminy; y<=bmaxy; ++y){

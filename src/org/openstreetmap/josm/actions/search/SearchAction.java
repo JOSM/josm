@@ -83,7 +83,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
-    private static final LinkedList<SearchSetting> searchHistory = new LinkedList<SearchSetting>();
+    private static final LinkedList<SearchSetting> searchHistory = new LinkedList<>();
     static {
         for (String s: Main.pref.getCollection("search.history", Collections.<String>emptyList())) {
             SearchSetting ss = SearchSetting.readFromString(s);
@@ -109,7 +109,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         while (searchHistory.size() > maxsize) {
             searchHistory.removeLast();
         }
-        LinkedHashSet<String> savedHistory = new LinkedHashSet<String>(searchHistory.size());
+        LinkedHashSet<String> savedHistory = new LinkedHashSet<>(searchHistory.size());
         for (SearchSetting item: searchHistory) {
             savedHistory.add(item.writeToString());
         }
@@ -117,7 +117,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     }
 
     public static List<String> getSearchExpressionHistory() {
-        List<String> ret = new ArrayList<String>(getSearchHistory().size());
+        List<String> ret = new ArrayList<>(getSearchHistory().size());
         for (SearchSetting ss: getSearchHistory()) {
             ret.add(ss.text);
         }
@@ -581,7 +581,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     public static void search(SearchSetting s) {
 
         final DataSet ds = Main.main.getCurrentDataSet();
-        Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>(ds.getAllSelected());
+        Collection<OsmPrimitive> sel = new HashSet<>(ds.getAllSelected());
         int foundMatches = getSelection(s, sel, new Predicate<OsmPrimitive>(){
             @Override
             public boolean evaluate(OsmPrimitive o){

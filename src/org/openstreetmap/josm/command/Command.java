@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public abstract class Command extends PseudoCommand {
 
     private static final class CloneVisitor extends AbstractVisitor {
-        public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<OsmPrimitive, PrimitiveData>();
+        public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<>();
 
         @Override
         public void visit(Node n) {
@@ -75,7 +75,7 @@ public abstract class Command extends PseudoCommand {
     }
 
     /** the map of OsmPrimitives in the original state to OsmPrimitives in cloned state */
-    private Map<OsmPrimitive, PrimitiveData> cloneMap = new HashMap<OsmPrimitive, PrimitiveData>();
+    private Map<OsmPrimitive, PrimitiveData> cloneMap = new HashMap<>();
 
     /** the layer which this command is applied to */
     private final OsmDataLayer layer;
@@ -105,7 +105,7 @@ public abstract class Command extends PseudoCommand {
      */
     public boolean executeCommand() {
         CloneVisitor visitor = new CloneVisitor();
-        Collection<OsmPrimitive> all = new ArrayList<OsmPrimitive>();
+        Collection<OsmPrimitive> all = new ArrayList<>();
         fillModifiedData(all, all, all);
         for (OsmPrimitive osm : all) {
             osm.accept(visitor);

@@ -106,9 +106,9 @@ public class DuplicateWay extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        ways = new MultiMap<WayPair, OsmPrimitive>(1000);
-        waysNoTags = new MultiMap<WayPairNoTags, OsmPrimitive>(1000);
-        knownHashCodes = new HashSet<Integer>(1000);
+        ways = new MultiMap<>(1000);
+        waysNoTags = new MultiMap<>(1000);
+        knownHashCodes = new HashSet<>(1000);
     }
 
     @Override
@@ -167,7 +167,7 @@ public class DuplicateWay extends Test {
         if (!w.isUsable())
             return;
         List<Node> wNodes = w.getNodes();                            // The original list of nodes for this way
-        List<Node> wNodesToUse = new ArrayList<Node>(wNodes.size()); // The list that will be considered for this test
+        List<Node> wNodesToUse = new ArrayList<>(wNodes.size()); // The list that will be considered for this test
         if (w.isClosed()) {
             // In case of a closed way, build the list of lat/lon starting from the node with the lowest id
             // to ensure this list will produce the same hashcode as the list obtained from another closed
@@ -191,7 +191,7 @@ public class DuplicateWay extends Test {
             wNodesToUse.addAll(wNodes);
         }
         // Build the list of lat/lon
-        List<LatLon> wLat = new ArrayList<LatLon>(wNodesToUse.size());
+        List<LatLon> wLat = new ArrayList<>(wNodesToUse.size());
         for (Node node : wNodesToUse) {
             wLat.add(node.getCoor());
         }
@@ -199,7 +199,7 @@ public class DuplicateWay extends Test {
         if (!w.hasDirectionKeys()) {
             int hash = wLat.hashCode();
             if (!knownHashCodes.contains(hash)) {
-                List<LatLon> reversedwLat = new ArrayList<LatLon>(wLat);
+                List<LatLon> reversedwLat = new ArrayList<>(wLat);
                    Collections.reverse(reversedwLat);
                 int reverseHash = reversedwLat.hashCode();
                 if (!knownHashCodes.contains(reverseHash)) {
@@ -225,7 +225,7 @@ public class DuplicateWay extends Test {
     @Override
     public Command fixError(TestError testError) {
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        HashSet<Way> ways = new HashSet<Way>();
+        HashSet<Way> ways = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Way && !osm.isDeleted()) {
@@ -260,7 +260,7 @@ public class DuplicateWay extends Test {
             }
         }
 
-        Collection<Command> commands = new LinkedList<Command>();
+        Collection<Command> commands = new LinkedList<>();
 
         // Fix relations.
         if (wayWithRelations != null && wayToKeep != wayWithRelations) {
@@ -293,7 +293,7 @@ public class DuplicateWay extends Test {
 
         // We fix it only if there is no more than one way that is relation member.
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        HashSet<Way> ways = new HashSet<Way>();
+        HashSet<Way> ways = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Way) {

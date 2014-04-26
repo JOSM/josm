@@ -41,7 +41,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
         }
     }
 
-    private static final List<SourceProvider> ruleSourceProviders = new ArrayList<SourceProvider>();
+    private static final List<SourceProvider> ruleSourceProviders = new ArrayList<>();
 
     /**
      * Registers a new additional rule source provider.
@@ -134,7 +134,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
 
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
-            List<ExtendedSourceEntry> def = new ArrayList<ExtendedSourceEntry>();
+            List<ExtendedSourceEntry> def = new ArrayList<>();
             
             addDefault(def, "addresses",    tr("Addresses"),           tr("Checks for errors on addresses"));
             addDefault(def, "combinations", tr("Tag combinations"),    tr("Checks for missing tag or suspicious combinations"));
@@ -161,7 +161,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
 
         @Override
         public Map<String, String> serialize(SourceEntry entry) {
-            Map<String, String> res = new HashMap<String, String>();
+            Map<String, String> res = new HashMap<>();
             res.put("url", entry.url);
             res.put("title", entry.title == null ? "" : entry.title);
             res.put("active", Boolean.toString(entry.active));

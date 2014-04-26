@@ -82,7 +82,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private String name = "";
         private String icon = "";
         private ImageIcon ico = null;
-        private final Map<String, Object> parameters = new HashMap<String, Object>();
+        private final Map<String, Object> parameters = new HashMap<>();
 
         public ActionDefinition(Action action) {
             this.action = action;
@@ -203,7 +203,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 skip('(');
 
                 ParameterizedAction parametrizedAction = (ParameterizedAction)action;
-                Map<String, ActionParameter<?>> actionParams = new HashMap<String, ActionParameter<?>>();
+                Map<String, ActionParameter<?>> actionParams = new HashMap<>();
                 for (ActionParameter<?> param: parametrizedAction.getActionParameters()) {
                     actionParams.put(param.getName(), param);
                 }
@@ -399,7 +399,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         JMenuItem remove = new JMenuItem(new AbstractAction(tr("Remove from toolbar")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                                Collection<String> t = new LinkedList<String>(getToolString());
+                                Collection<String> t = new LinkedList<>(getToolString());
                                 ActionParser parser = new ActionParser(null);
                                 // get text definition of current action
                 String res = parser.saveAction(act);
@@ -466,13 +466,13 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
      * Key: Registered name (property "toolbar" of action).
      * Value: The action to execute.
      */
-    private final Map<String, Action> actions = new HashMap<String, Action>();
-    private final Map<String, Action> regactions = new HashMap<String, Action>();
+    private final Map<String, Action> actions = new HashMap<>();
+    private final Map<String, Action> regactions = new HashMap<>();
 
     private final DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode(tr("Actions"));
 
     public JToolBar control = new JToolBar();
-    private final Map<Object, ActionDefinition> buttonActions = new HashMap<Object, ActionDefinition>(30);
+    private final Map<Object, ActionDefinition> buttonActions = new HashMap<>(30);
 
     @Override
     public PreferenceSetting createPreferenceSetting() {
@@ -551,8 +551,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         private final Move moveAction = new Move();
 
-        private final DefaultListModel<ActionDefinition> selected = new DefaultListModel<ActionDefinition>();
-        private final JList<ActionDefinition> selectedList = new JList<ActionDefinition>(selected);
+        private final DefaultListModel<ActionDefinition> selected = new DefaultListModel<>();
+        private final JList<ActionDefinition> selectedList = new JList<>(selected);
 
         private final DefaultTreeModel actionsTreeModel;
         private final JTree actionsTree;
@@ -654,7 +654,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             selectedList.setTransferHandler(new TransferHandler() {
                 @Override
                 protected Transferable createTransferable(JComponent c) {
-                    List<ActionDefinition> actions = new ArrayList<ActionDefinition>();
+                    List<ActionDefinition> actions = new ArrayList<>();
                     for (ActionDefinition o: ((JList<ActionDefinition>)c).getSelectedValuesList()) {
                         actions.add(o);
                     }
@@ -767,7 +767,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 @Override
                 protected Transferable createTransferable(JComponent c) {
                     TreePath[] paths = actionsTree.getSelectionPaths();
-                    List<ActionDefinition> dragActions = new ArrayList<ActionDefinition>();
+                    List<ActionDefinition> dragActions = new ArrayList<>();
                     for (TreePath path : paths) {
                         DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                         Object obj = node.getUserObject();
@@ -855,7 +855,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         @Override
         public boolean ok() {
-            Collection<String> t = new LinkedList<String>();
+            Collection<String> t = new LinkedList<>();
             ActionParser parser = new ActionParser(null);
             for (int i = 0; i < selected.size(); ++i) {
                 ActionDefinition action = (ActionDefinition)selected.get(i);
@@ -970,11 +970,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     private Collection<ActionDefinition> getDefinedActions() {
         loadActions();
 
-        Map<String, Action> allActions = new HashMap<String, Action>(regactions);
+        Map<String, Action> allActions = new HashMap<>(regactions);
         allActions.putAll(actions);
         ActionParser actionParser = new ActionParser(allActions);
 
-        Collection<ActionDefinition> result = new ArrayList<ActionDefinition>();
+        Collection<ActionDefinition> result = new ArrayList<>();
 
         for (String s : getToolString()) {
             if ("|".equals(s)) {
@@ -1061,7 +1061,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
      * @param removeIfExists if true and the button already exists, remove it
      */
     public void addCustomButton(String definitionText, int preferredIndex, boolean removeIfExists) {
-        LinkedList<String> t = new LinkedList<String>(getToolString());
+        LinkedList<String> t = new LinkedList<>(getToolString());
         if (t.contains(definitionText)) {
             if (!removeIfExists) return; // do nothing
             t.remove(definitionText);

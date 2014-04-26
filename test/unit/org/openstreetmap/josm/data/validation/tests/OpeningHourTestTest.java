@@ -143,7 +143,7 @@ public class OpeningHourTestTest {
     @Test
     public void testPresetValues() throws Exception {
         final Collection<TaggingPreset> presets = TaggingPresetReader.readFromPreferences(false, false);
-        final Set<Tag> values = new LinkedHashSet<Tag>();
+        final Set<Tag> values = new LinkedHashSet<>();
         for (final TaggingPreset p : presets) {
             for (final TaggingPresetItem i : p.data) {
                 if (i instanceof TaggingPresetItems.KeyedItem &&

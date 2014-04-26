@@ -44,7 +44,7 @@ public final class MirrorAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        HashSet<Node> nodes = new HashSet<Node>();
+        HashSet<Node> nodes = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Node) {
@@ -72,7 +72,7 @@ public final class MirrorAction extends JosmAction {
         }
         double middle = (minEast + maxEast) / 2;
 
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
 
         for (Node n : nodes) {
             cmds.add(new MoveCommand(n, 2 * (middle - n.getEastNorth().east()), 0.0));

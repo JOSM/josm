@@ -57,7 +57,7 @@ public class ProjectionRegressionTest {
     public static void main(String[] args) throws IOException, FileNotFoundException {
         setUp();
 
-        Map<String, Projection> supportedCodesMap = new HashMap<String, Projection>();
+        Map<String, Projection> supportedCodesMap = new HashMap<>();
         for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
             for (String code : pc.allCodes()) {
                 Collection<String> pref = pc.getPreferencesFromCode(code);
@@ -67,16 +67,16 @@ public class ProjectionRegressionTest {
             }
         }
 
-        List<TestData> prevData = new ArrayList<TestData>();
+        List<TestData> prevData = new ArrayList<>();
         if (new File(PROJECTION_DATA_FILE).exists()) {
             prevData = readData();
         }
-        Map<String,TestData> prevCodesMap = new HashMap<String,TestData>();
+        Map<String,TestData> prevCodesMap = new HashMap<>();
         for (TestData data : prevData) {
             prevCodesMap.put(data.code, data);
         }
 
-        Set<String> codesToWrite = new LinkedHashSet<String>();
+        Set<String> codesToWrite = new LinkedHashSet<>();
         for (TestData data : prevData) {
             if (supportedCodesMap.containsKey(data.code)) {
                 codesToWrite.add(data.code);
@@ -115,7 +115,7 @@ public class ProjectionRegressionTest {
 
     private static List<TestData> readData() throws IOException, FileNotFoundException {
         BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(PROJECTION_DATA_FILE), Utils.UTF_8));
-        List<TestData> result = new ArrayList<TestData>();
+        List<TestData> result = new ArrayList<>();
         String line;
         while ((line = in.readLine()) != null) {
             if (line.startsWith("#")) {
@@ -158,7 +158,7 @@ public class ProjectionRegressionTest {
     @Test
     public void regressionTest() throws IOException, FileNotFoundException {
         List<TestData> allData = readData();
-        Set<String> dataCodes = new HashSet<String>();
+        Set<String> dataCodes = new HashSet<>();
         for (TestData data : allData) {
             dataCodes.add(data.code);
         }

@@ -73,7 +73,7 @@ public class DownloadAlongPanel extends JPanel {
         for (int i = 0; i < dist.length; ++i) {
             s[i] = tr("{0} meters", dist[i]);
         }
-        buffer = new JList<String>(s);
+        buffer = new JList<>(s);
         
         double distanceValue = Main.pref.getDouble(prefDist, dist[0]);
         int distanceLegacyIndex = 0;
@@ -92,7 +92,7 @@ public class DownloadAlongPanel extends JPanel {
         for (int i = 0; i < area.length; ++i) {
             s[i] = tr("{0} sq km", area[i]);
         }
-        maxRect = new JList<String>(s);
+        maxRect = new JList<>(s);
 
         double areaValue = Main.pref.getDouble(prefArea, area[0]);
         int areaLegacyIndex = 0;
@@ -108,7 +108,7 @@ public class DownloadAlongPanel extends JPanel {
         
         if (prefNear != null) {
             add(new JLabel(tr("Download near:")), GBC.eol());
-            downloadNear = new JList<String>(new String[]{tr("track only"), tr("waypoints only"), tr("track and waypoints")});
+            downloadNear = new JList<>(new String[]{tr("track only"), tr("waypoints only"), tr("track and waypoints")});
             downloadNear.setSelectedIndex(Main.pref.getInteger(prefNear, 0));
             add(downloadNear, GBC.eol());
         } else {

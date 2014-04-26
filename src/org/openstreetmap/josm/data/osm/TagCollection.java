@@ -140,7 +140,7 @@ public class TagCollection implements Iterable<Tag> {
         return tags;
     }
 
-    private final Set<Tag> tags = new HashSet<Tag>();
+    private final Set<Tag> tags = new HashSet<>();
 
     /**
      * Creates an empty tag collection
@@ -468,7 +468,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the tags of this tag collection as set
      */
     public Set<Tag> asSet() {
-        return new HashSet<Tag>(tags);
+        return new HashSet<>(tags);
     }
 
     /**
@@ -478,7 +478,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the tags of this tag collection as list.
      */
     public List<Tag> asList() {
-        return new ArrayList<Tag>(tags);
+        return new ArrayList<>(tags);
     }
 
     /**
@@ -497,7 +497,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of keys of this tag collection
      */
     public Set<String> getKeys() {
-        HashSet<String> ret = new HashSet<String>();
+        HashSet<String> ret = new HashSet<>();
         for (Tag tag: tags) {
             ret.add(tag.getKey());
         }
@@ -510,12 +510,12 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of keys which have at least 2 matching tags.
      */
     public Set<String> getKeysWithMultipleValues() {
-        HashMap<String, Integer> counters = new HashMap<String, Integer>();
+        HashMap<String, Integer> counters = new HashMap<>();
         for (Tag tag: tags) {
             Integer v = counters.get(tag.getKey());
             counters.put(tag.getKey(),(v==null) ? 1 : v+1);
         }
-        Set<String> ret = new HashSet<String>();
+        Set<String> ret = new HashSet<>();
         for (Entry<String, Integer> e : counters.entrySet()) {
             if (e.getValue() > 1) {
                 ret.add(e.getKey());
@@ -555,7 +555,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of values
      */
     public Set<String> getValues() {
-        HashSet<String> ret = new HashSet<String>();
+        HashSet<String> ret = new HashSet<>();
         for (Tag tag: tags) {
             ret.add(tag.getValue());
         }
@@ -571,7 +571,7 @@ public class TagCollection implements Iterable<Tag> {
      * are no values for the given key
      */
     public Set<String> getValues(String key) {
-        HashSet<String> ret = new HashSet<String>();
+        HashSet<String> ret = new HashSet<>();
         if (key == null) return ret;
         for (Tag tag: tags) {
             if (tag.matchesKey(key)) {
@@ -732,8 +732,8 @@ public class TagCollection implements Iterable<Tag> {
             return originalValues.iterator().next();
         }
 
-        Set<String> values = new LinkedHashSet<String>();
-        Map<String, Collection<String>> originalSplitValues = new LinkedHashMap<String, Collection<String>>();
+        Set<String> values = new LinkedHashSet<>();
+        Map<String, Collection<String>> originalSplitValues = new LinkedHashMap<>();
         for (String v : originalValues) {
             List<String> vs = Arrays.asList(SPLIT_VALUES_PATTERN.split(v));
             originalSplitValues.put(v, vs);

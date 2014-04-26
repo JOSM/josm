@@ -386,7 +386,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                 return;
             if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.main.getEditLayer();
-            Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> target = new HashSet<>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
                 if (p.isUsable() && p.getChangesetId() == current.getId()) {
                     target.add(p);
@@ -447,7 +447,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                 return;
             if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.main.getEditLayer();
-            Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> target = new HashSet<>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
                 if (p.isUsable() && p.getChangesetId() == current.getId()) {
                     target.add(p);

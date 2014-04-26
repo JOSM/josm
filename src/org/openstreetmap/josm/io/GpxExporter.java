@@ -289,7 +289,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                         "public domain",
                         "GNU Lesser Public License (LGPL)",
                         "BSD License (MIT/X11)"};
-                JList<String> l = new JList<String>(licenses);
+                JList<String> l = new JList<>(licenses);
                 l.setVisibleRowCount(licenses.length);
                 l.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 int answer = JOptionPane.showConfirmDialog(

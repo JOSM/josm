@@ -93,15 +93,15 @@ public final class TaggingPresetReader {
         parser.mapBoth("chunk", Chunk.class);
         parser.map("reference", Reference.class);
 
-        LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
+        LinkedList<TaggingPreset> all = new LinkedList<>();
         TaggingPresetMenu lastmenu = null;
         TaggingPresetItems.Roles lastrole = null;
-        final List<TaggingPresetItems.Check> checks = new LinkedList<TaggingPresetItems.Check>();
-        List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<TaggingPresetItems.PresetListEntry>();
-        final Map<String, List<Object>> byId = new HashMap<String, List<Object>>();
-        final Stack<String> lastIds = new Stack<String>();
+        final List<TaggingPresetItems.Check> checks = new LinkedList<>();
+        List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<>();
+        final Map<String, List<Object>> byId = new HashMap<>();
+        final Stack<String> lastIds = new Stack<>();
         /** lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
-        final Stack<Iterator<Object>> lastIdIterators = new Stack<Iterator<Object>>();
+        final Stack<Iterator<Object>> lastIdIterators = new Stack<>();
 
         if (validate) {
             parser.startWithValidation(in, Main.getXMLBase()+"/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
@@ -130,7 +130,7 @@ public final class TaggingPresetReader {
                     // if preset item contains an id, store a mapping for later usage
                     String lastId = ((Chunk) o).id;
                     lastIds.push(lastId);
-                    byId.put(lastId, new ArrayList<Object>());
+                    byId.put(lastId, new ArrayList<>());
                     continue;
                 }
             } else if (!lastIds.isEmpty()) {
@@ -208,7 +208,7 @@ public final class TaggingPresetReader {
                                 ((TaggingPresetItems.Key) o).value = ""; // Fix #8530
                             }
                         }
-                        listEntries = new LinkedList<TaggingPresetItems.PresetListEntry>();
+                        listEntries = new LinkedList<>();
                         lastrole = null;
                     }
                 } else
@@ -260,7 +260,7 @@ public final class TaggingPresetReader {
      * @return Collection of all presets successfully read
      */
     public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate, boolean displayErrMsg) {
-        LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
+        LinkedList<TaggingPreset> allPresets = new LinkedList<>();
         for(String source : sources)  {
             try {
                 allPresets.addAll(readAll(source, validate));

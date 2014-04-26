@@ -59,11 +59,11 @@ public final class Projections {
      *
      * should be compatible to PROJ.4
      */
-    public static final Map<String, ProjFactory> projs = new HashMap<String, ProjFactory>();
-    public static final Map<String, Ellipsoid> ellipsoids = new HashMap<String, Ellipsoid>();
-    public static final Map<String, Datum> datums = new HashMap<String, Datum>();
-    public static final Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<String, NTV2GridShiftFileWrapper>();
-    public static final Map<String, Pair<String, String>> inits = new HashMap<String, Pair<String, String>>();
+    public static final Map<String, ProjFactory> projs = new HashMap<>();
+    public static final Map<String, Ellipsoid> ellipsoids = new HashMap<>();
+    public static final Map<String, Datum> datums = new HashMap<>();
+    public static final Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<>();
+    public static final Map<String, Pair<String, String>> inits = new HashMap<>();
 
     static {
         registerBaseProjection("lonlat", LonLat.class, "core");
@@ -157,9 +157,9 @@ public final class Projections {
         }
     }
 
-    private static final Set<String> allCodes = new HashSet<String>();
-    private static final Map<String, ProjectionChoice> allProjectionChoicesByCode = new HashMap<String, ProjectionChoice>();
-    private static final Map<String, Projection> projectionsByCode_cache = new HashMap<String, Projection>();
+    private static final Set<String> allCodes = new HashSet<>();
+    private static final Map<String, ProjectionChoice> allProjectionChoicesByCode = new HashMap<>();
+    private static final Map<String, Projection> projectionsByCode_cache = new HashMap<>();
 
     static {
         for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {

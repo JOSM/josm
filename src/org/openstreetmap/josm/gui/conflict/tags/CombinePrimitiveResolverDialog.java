@@ -244,7 +244,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     protected List<Command> buildTagChangeCommand(OsmPrimitive primitive, TagCollection tc) {
-        LinkedList<Command> cmds = new LinkedList<Command>();
+        LinkedList<Command> cmds = new LinkedList<>();
         for (String key : tc.getKeys()) {
             if (tc.hasUniqueEmptyValue(key)) {
                 if (primitive.get(key) != null) {
@@ -265,7 +265,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * @return The list of {@link Command commands} needed to apply resolution choices.
      */
     public List<Command> buildResolutionCommands() {
-        List<Command> cmds = new LinkedList<Command>();
+        List<Command> cmds = new LinkedList<>();
 
         TagCollection allResolutions = getTagConflictResolverModel().getAllResolutions();
         if (!allResolutions.isEmpty()) {
@@ -297,7 +297,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
     protected void prepareDefaultRelationDecisions() {
         RelationMemberConflictResolverModel model = getRelationMemberConflictResolverModel();
-        Set<Relation> relations = new HashSet<Relation>();
+        Set<Relation> relations = new HashSet<>();
         for (int i = 0; i < model.getNumDecisions(); i++) {
             RelationMemberConflictDecision decision = model.getDecision(i);
             if (!relations.contains(decision.getRelation())) {
@@ -532,7 +532,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 throw new UserCancelException();
             }
         }
-        List<Command> cmds = new LinkedList<Command>();
+        List<Command> cmds = new LinkedList<>();
         for (OsmPrimitive i : targetPrimitives) {
             dialog.setTargetPrimitive(i);
             cmds.addAll(dialog.buildResolutionCommands());

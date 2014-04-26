@@ -21,8 +21,8 @@ import org.xml.sax.SAXException;
 public class ImageryLayerInfo {
 
     public static final ImageryLayerInfo instance = new ImageryLayerInfo();
-    List<ImageryInfo> layers = new ArrayList<ImageryInfo>();
-    static List<ImageryInfo> defaultLayers = new ArrayList<ImageryInfo>();
+    List<ImageryInfo> layers = new ArrayList<>();
+    static List<ImageryInfo> defaultLayers = new ArrayList<>();
 
     private static final String[] DEFAULT_LAYER_SITES = {
         Main.getJOSMWebsite()+"/maps"
@@ -91,7 +91,7 @@ public class ImageryLayerInfo {
         while (defaultLayers.remove(null));
 
         Collection<String> defaults = Main.pref.getCollection("imagery.layers.default");
-        List<String> defaultsSave = new ArrayList<String>();
+        List<String> defaultsSave = new ArrayList<>();
         for (ImageryInfo def : defaultLayers) {
             if (def.isDefaultEntry()) {
                 defaultsSave.add(def.getUrl());
@@ -136,7 +136,7 @@ public class ImageryLayerInfo {
     }
 
     public void save() {
-        List<ImageryPreferenceEntry> entries = new ArrayList<ImageryPreferenceEntry>();
+        List<ImageryPreferenceEntry> entries = new ArrayList<>();
         for (ImageryInfo info : layers) {
             entries.add(new ImageryPreferenceEntry(info));
         }

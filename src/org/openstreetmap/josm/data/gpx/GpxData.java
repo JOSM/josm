@@ -25,9 +25,9 @@ public class GpxData extends WithAttributes {
 
     public String creator;
 
-    public final Collection<GpxTrack> tracks = new LinkedList<GpxTrack>();
-    public final Collection<GpxRoute> routes = new LinkedList<GpxRoute>();
-    public final Collection<WayPoint> waypoints = new LinkedList<WayPoint>();
+    public final Collection<GpxTrack> tracks = new LinkedList<>();
+    public final Collection<GpxRoute> routes = new LinkedList<>();
+    public final Collection<WayPoint> waypoints = new LinkedList<>();
 
     @SuppressWarnings("unchecked")
     public void mergeFrom(GpxData other) {

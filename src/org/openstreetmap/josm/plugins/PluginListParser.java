@@ -57,7 +57,7 @@ public class PluginListParser {
      * @throws PluginListParseException thrown if something goes wrong while parsing
      */
     public List<PluginInformation> parse(InputStream in) throws PluginListParseException{
-        List<PluginInformation> ret = new LinkedList<PluginInformation>();
+        List<PluginInformation> ret = new LinkedList<>();
         BufferedReader r = null;
         try {
             r = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));

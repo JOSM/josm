@@ -159,7 +159,7 @@ public class ValidateAction extends JosmAction {
         OsmTransferException {
             if (tests == null || tests.isEmpty())
                 return;
-            errors = new ArrayList<TestError>(200);
+            errors = new ArrayList<>(200);
             getProgressMonitor().setTicksCount(tests.size() * validatedPrimitives.size());
             int testCounter = 0;
             for (Test test : tests) {
@@ -178,7 +178,7 @@ public class ValidateAction extends JosmAction {
                 getProgressMonitor().subTask(tr("Updating ignored errors ..."));
                 for (TestError error : errors) {
                     if (canceled) return;
-                    List<String> s = new ArrayList<String>();
+                    List<String> s = new ArrayList<>();
                     s.add(error.getIgnoreState());
                     s.add(error.getIgnoreGroup());
                     s.add(error.getIgnoreSubGroup());

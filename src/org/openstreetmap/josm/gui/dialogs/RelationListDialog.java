@@ -128,7 +128,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         //
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         model = new RelationListModel(selectionModel);
-        displaylist = new JList<Relation>(model);
+        displaylist = new JList<>(model);
         displaylist.setSelectionModel(selectionModel);
         displaylist.setCellRenderer(new OsmPrimitivRenderer() {
             /**
@@ -380,7 +380,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      *
      */
     private class RelationListModel extends AbstractListModel<Relation> {
-        private final List<Relation> relations = new ArrayList<Relation>();
+        private final List<Relation> relations = new ArrayList<>();
         private List<Relation> filteredRelations;
         private DefaultListSelectionModel selectionModel;
         private SearchCompiler.Match filter;
@@ -462,7 +462,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             if (removedPrimitives == null) return;
             // extract the removed relations
             //
-            Set<Relation> removedRelations = new HashSet<Relation>();
+            Set<Relation> removedRelations = new HashSet<>();
             for (OsmPrimitive p: removedPrimitives) {
                 if (! (p instanceof Relation)) {
                     continue;
@@ -486,7 +486,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         private void updateFilteredRelations() {
             if (filter != null) {
-                filteredRelations = new ArrayList<Relation>(Utils.filter(relations, new Predicate<Relation>() {
+                filteredRelations = new ArrayList<>(Utils.filter(relations, new Predicate<Relation>() {
                     @Override
                     public boolean evaluate(Relation r) {
                         return filter.match(r);
@@ -532,7 +532,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
          * @return the list of selected, non-new relations.
          */
         public List<Relation> getSelectedRelations() {
-            List<Relation> ret = new ArrayList<Relation>();
+            List<Relation> ret = new ArrayList<>();
             for (int i=0; i<getSize();i++) {
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;

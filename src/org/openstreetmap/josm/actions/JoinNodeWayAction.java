@@ -46,7 +46,7 @@ public class JoinNodeWayAction extends JosmAction {
 
         Node node = selectedNodes.iterator().next();
 
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
 
         // If the user has selected some ways, only join the node to these.
         boolean restrictToSelectedWays =
@@ -54,7 +54,7 @@ public class JoinNodeWayAction extends JosmAction {
 
             List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
                     Main.map.mapView.getPoint(node), OsmPrimitive.isSelectablePredicate);
-            HashMap<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
+            HashMap<Way, List<Integer>> insertPoints = new HashMap<>();
             for (WaySegment ws : wss) {
                 // Maybe cleaner to pass a "isSelected" predicate to getNearestWaySegments, but this is less invasive.
                 if(restrictToSelectedWays && !ws.way.isSelected()) {
@@ -65,7 +65,7 @@ public class JoinNodeWayAction extends JosmAction {
                 if (insertPoints.containsKey(ws.way)) {
                     is = insertPoints.get(ws.way);
                 } else {
-                    is = new ArrayList<Integer>();
+                    is = new ArrayList<>();
                     insertPoints.put(ws.way, is);
                 }
 
@@ -97,7 +97,7 @@ public class JoinNodeWayAction extends JosmAction {
     }
 
     private static void pruneSuccsAndReverse(List<Integer> is) {
-        HashSet<Integer> is2 = new HashSet<Integer>();
+        HashSet<Integer> is2 = new HashSet<>();
         for (int i : is) {
             if (!is2.contains(i - 1) && !is2.contains(i + 1)) {
                 is2.add(i);

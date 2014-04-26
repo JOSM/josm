@@ -194,12 +194,12 @@ public final class PluginHandler {
     /**
      * All installed and loaded plugins (resp. their main classes)
      */
-    public static final Collection<PluginProxy> pluginList = new LinkedList<PluginProxy>();
+    public static final Collection<PluginProxy> pluginList = new LinkedList<>();
 
     /**
      * Add here all ClassLoader whose resource should be searched.
      */
-    private static final List<ClassLoader> sources = new LinkedList<ClassLoader>();
+    private static final List<ClassLoader> sources = new LinkedList<>();
 
     static {
         try {
@@ -226,7 +226,7 @@ public final class PluginHandler {
      * @param plugins the collection of plugins
      */
     private static void filterDeprecatedPlugins(Component parent, Collection<String> plugins) {
-        Set<DeprecatedPlugin> removedPlugins = new TreeSet<DeprecatedPlugin>();
+        Set<DeprecatedPlugin> removedPlugins = new TreeSet<>();
         for (DeprecatedPlugin depr : DEPRECATED_PLUGINS) {
             if (plugins.contains(depr.name)) {
                 plugins.remove(depr.name);
@@ -460,7 +460,7 @@ public final class PluginHandler {
         }
 
         // Add all plugins already loaded (to include early plugins when checking late ones)
-        Collection<PluginInformation> allPlugins = new HashSet<PluginInformation>(plugins);
+        Collection<PluginInformation> allPlugins = new HashSet<>(plugins);
         for (PluginProxy proxy : pluginList) {
             allPlugins.add(proxy.getPluginInformation());
         }
@@ -486,11 +486,11 @@ public final class PluginHandler {
         // make sure the dependencies to other plugins are not broken
         //
         if (requires != null) {
-            Set<String> pluginNames = new HashSet<String>();
+            Set<String> pluginNames = new HashSet<>();
             for (PluginInformation pi: plugins) {
                 pluginNames.add(pi.name);
             }
-            Set<String> missingPlugins = new HashSet<String>();
+            Set<String> missingPlugins = new HashSet<>();
             List<String> requiredPlugins = local ? plugin.getLocalRequiredPlugins() : plugin.getRequiredPlugins();
             for (String requiredPlugin : requiredPlugins) {
                 if (!pluginNames.contains(requiredPlugin)) {
@@ -514,11 +514,11 @@ public final class PluginHandler {
      */
     public static ClassLoader createClassLoader(Collection<PluginInformation> plugins) {
         // iterate all plugins and collect all libraries of all plugins:
-        List<URL> allPluginLibraries = new LinkedList<URL>();
+        List<URL> allPluginLibraries = new LinkedList<>();
         File pluginDir = Main.pref.getPluginsDirectory();
 
         // Add all plugins already loaded (to include early plugins in the classloader, allowing late plugins to rely on early ones)
-        Collection<PluginInformation> allPlugins = new HashSet<PluginInformation>(plugins);
+        Collection<PluginInformation> allPlugins = new HashSet<>(plugins);
         for (PluginProxy proxy : pluginList) {
             allPlugins.add(proxy.getPluginInformation());
         }
@@ -591,7 +591,7 @@ public final class PluginHandler {
         try {
             monitor.beginTask(tr("Loading plugins ..."));
             monitor.subTask(tr("Checking plugin preconditions..."));
-            List<PluginInformation> toLoad = new LinkedList<PluginInformation>();
+            List<PluginInformation> toLoad = new LinkedList<>();
             for (PluginInformation pi: plugins) {
                 if (checkLoadPreconditions(parent, plugins, pi)) {
                     toLoad.add(pi);
@@ -635,7 +635,7 @@ public final class PluginHandler {
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
     public static void loadEarlyPlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
-        List<PluginInformation> earlyPlugins = new ArrayList<PluginInformation>(plugins.size());
+        List<PluginInformation> earlyPlugins = new ArrayList<>(plugins.size());
         for (PluginInformation pi: plugins) {
             if (pi.early) {
                 earlyPlugins.add(pi);
@@ -653,7 +653,7 @@ public final class PluginHandler {
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
     public static void loadLatePlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
-        List<PluginInformation> latePlugins = new ArrayList<PluginInformation>(plugins.size());
+        List<PluginInformation> latePlugins = new ArrayList<>(plugins.size());
         for (PluginInformation pi: plugins) {
             if (!pi.early) {
                 latePlugins.add(pi);
@@ -687,7 +687,7 @@ public final class PluginHandler {
                 Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while loading locally available plugin information");
                 return null;
             }
-            HashMap<String, PluginInformation> ret = new HashMap<String, PluginInformation>();
+            HashMap<String, PluginInformation> ret = new HashMap<>();
             for (PluginInformation pi: task.getAvailablePlugins()) {
                 ret.put(pi.name, pi);
             }
@@ -732,7 +732,7 @@ public final class PluginHandler {
         }
         try {
             monitor.beginTask(tr("Determine plugins to load..."));
-            Set<String> plugins = new HashSet<String>();
+            Set<String> plugins = new HashSet<>();
             plugins.addAll(Main.pref.getCollection("plugins",  new LinkedList<String>()));
             if (System.getProperty("josm.plugins") != null) {
                 plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
@@ -742,7 +742,7 @@ public final class PluginHandler {
             monitor.subTask(tr("Removing unmaintained plugins..."));
             filterUnmaintainedPlugins(parent, plugins);
             Map<String, PluginInformation> infos = loadLocallyAvailablePluginInformation(monitor.createSubTaskMonitor(1,false));
-            List<PluginInformation> ret = new LinkedList<PluginInformation>();
+            List<PluginInformation> ret = new LinkedList<>();
             for (Iterator<String> it = plugins.iterator(); it.hasNext();) {
                 String plugin = it.next();
                 if (infos.containsKey(plugin)) {
@@ -790,7 +790,7 @@ public final class PluginHandler {
 
     private static Set<PluginInformation> findRequiredPluginsToDownload(
             Collection<PluginInformation> pluginsToUpdate, List<PluginInformation> allPlugins, Set<PluginInformation> pluginsToDownload) {
-        Set<PluginInformation> result = new HashSet<PluginInformation>();
+        Set<PluginInformation> result = new HashSet<>();
         for (PluginInformation pi : pluginsToUpdate) {
             for (String name : pi.getRequiredPlugins()) {
                 try {
@@ -879,7 +879,7 @@ public final class PluginHandler {
 
             // filter plugins which actually have to be updated
             //
-            Collection<PluginInformation> pluginsToUpdate = new ArrayList<PluginInformation>();
+            Collection<PluginInformation> pluginsToUpdate = new ArrayList<>();
             for (PluginInformation pi: plugins) {
                 if (pi.isUpdateRequired()) {
                     pluginsToUpdate.add(pi);
@@ -888,7 +888,7 @@ public final class PluginHandler {
 
             if (!pluginsToUpdate.isEmpty()) {
 
-                Set<PluginInformation> pluginsToDownload = new HashSet<PluginInformation>(pluginsToUpdate);
+                Set<PluginInformation> pluginsToDownload = new HashSet<>(pluginsToUpdate);
 
                 if (allPlugins != null) {
                     // Updated plugins may need additional plugin dependencies currently not installed
@@ -1149,7 +1149,7 @@ public final class PluginHandler {
         msg.append("</html>");
 
         try {
-            FutureTask<Integer> task = new FutureTask<Integer>(new Callable<Integer>() {
+            FutureTask<Integer> task = new FutureTask<>(new Callable<Integer>() {
                 @Override
                 public Integer call() {
                     return HelpAwareOptionPane.showOptionDialog(
@@ -1217,7 +1217,7 @@ public final class PluginHandler {
             // don't know what plugin threw the exception
             return null;
 
-        Set<String> plugins = new HashSet<String>(
+        Set<String> plugins = new HashSet<>(
                 Main.pref.getCollection("plugins",Collections.<String> emptySet())
         );
         final PluginInformation pluginInfo = plugin.getPluginInformation();
@@ -1259,7 +1259,7 @@ public final class PluginHandler {
      */
     public static String getBugReportText() {
         StringBuilder text = new StringBuilder();
-        LinkedList <String> pl = new LinkedList<String>(Main.pref.getCollection("plugins", new LinkedList<String>()));
+        LinkedList <String> pl = new LinkedList<>(Main.pref.getCollection("plugins", new LinkedList<String>()));
         for (final PluginProxy pp : pluginList) {
             PluginInformation pi = pp.getPluginInformation();
             pl.remove(pi.name);

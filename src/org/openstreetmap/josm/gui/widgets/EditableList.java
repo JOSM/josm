@@ -26,7 +26,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 public class EditableList extends JPanel {
 
     public final String title;
-    public final JList<String> sourcesList = new JList<String>(new DefaultListModel<String>());
+    public final JList<String> sourcesList = new JList<>(new DefaultListModel<String>());
     public final JButton addSrcButton = new JButton(tr("Add"));
     public final JButton editSrcButton = new JButton(tr("Edit"));
     public final JButton deleteSrcButton = new JButton(tr("Delete"));
@@ -130,7 +130,7 @@ public class EditableList extends JPanel {
     }
 
     public List<String> getItems() {
-        final List<String> items = new ArrayList<String>(sourcesList.getModel().getSize());
+        final List<String> items = new ArrayList<>(sourcesList.getModel().getSize());
         for (int i = 0; i < sourcesList.getModel().getSize(); ++i) {
             items.add(sourcesList.getModel().getElementAt(i));
         }

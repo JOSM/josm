@@ -13,7 +13,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<Au
 
     private int maxSize = 10;
 
-    private List<HistoryChangedListener> listeners = new ArrayList<HistoryChangedListener>();
+    private List<HistoryChangedListener> listeners = new ArrayList<>();
 
     public ComboBoxHistory(int size) {
         maxSize = size;
@@ -88,7 +88,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<Au
     }
 
     public List<String> asStringList() {
-        List<String> list = new ArrayList<String>(maxSize);
+        List<String> list = new ArrayList<>(maxSize);
         for (AutoCompletionListItem item : this) {
             list.add(item.getValue());
         }

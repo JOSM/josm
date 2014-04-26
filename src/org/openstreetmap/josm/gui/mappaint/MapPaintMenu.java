@@ -75,7 +75,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
             return false;
         }
     }
-    private final Map<String, MapPaintAction> actions = new HashMap<String, MapPaintAction>();
+    private final Map<String, MapPaintAction> actions = new HashMap<>();
 
     /**
      * Constructs a new {@code MapPaintMenu}

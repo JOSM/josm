@@ -24,7 +24,7 @@ class ImageResource {
     /**
      * Caches the image data for resized versions of the same image.
      */
-    private Map<Dimension, Image> imgCache = new HashMap<Dimension, Image>();
+    private Map<Dimension, Image> imgCache = new HashMap<>();
     private SVGDiagram svg;
     public static final Dimension DEFAULT_DIMENSION = new Dimension(-1, -1);
 

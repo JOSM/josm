@@ -182,7 +182,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             this.drawArea = drawArea;
             this.drawMultipolygon = drawMultipolygon;
             this.drawRestriction = drawRestriction;
-            styleElems = new ArrayList<StyleRecord>();
+            styleElems = new ArrayList<>();
         }
 
         public void add(Node osm, int flags) {

@@ -89,15 +89,15 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private double toleranceMultiplier;
 
     private Node mouseOnExistingNode;
-    private Set<Way> mouseOnExistingWays = new HashSet<Way>();
+    private Set<Way> mouseOnExistingWays = new HashSet<>();
     // old highlights store which primitives are currently highlighted. This
     // is true, even if target highlighting is disabled since the status bar
     // derives its information from this list as well.
-    private Set<OsmPrimitive> oldHighlights = new HashSet<OsmPrimitive>();
+    private Set<OsmPrimitive> oldHighlights = new HashSet<>();
     // new highlights contains a list of primitives that should be highlighted
     // but haven’t been so far. The idea is to compare old and new and only
     // repaint if there are changes.
-    private Set<OsmPrimitive> newHighlights = new HashSet<OsmPrimitive>();
+    private Set<OsmPrimitive> newHighlights = new HashSet<>();
     private boolean drawHelperLine;
     private boolean wayIsFinished = false;
     private boolean drawTargetHighlight;
@@ -305,7 +305,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     // events for crossplatform key holding processing
-    private final Set<Integer> set = new TreeSet<Integer>();
+    private final Set<Integer> set = new TreeSet<>();
     private KeyEvent releaseEvent;
     private Timer timer;
     void processKeyEvent(KeyEvent e) {
@@ -424,12 +424,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         mousePos = e.getPoint();
 
         DataSet ds = getCurrentDataSet();
-        Collection<OsmPrimitive> selection = new ArrayList<OsmPrimitive>(ds.getSelected());
-        Collection<Command> cmds = new LinkedList<Command>();
-        Collection<OsmPrimitive> newSelection = new LinkedList<OsmPrimitive>(ds.getSelected());
+        Collection<OsmPrimitive> selection = new ArrayList<>(ds.getSelected());
+        Collection<Command> cmds = new LinkedList<>();
+        Collection<OsmPrimitive> newSelection = new LinkedList<>(ds.getSelected());
 
-        List<Way> reuseWays = new ArrayList<Way>(),
-                replacedWays = new ArrayList<Way>();
+        List<Way> reuseWays = new ArrayList<>(),
+                replacedWays = new ArrayList<>();
         boolean newNode = false;
         Node n = null;
 
@@ -657,20 +657,20 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     private void insertNodeIntoAllNearbySegments(List<WaySegment> wss, Node n, Collection<OsmPrimitive> newSelection, Collection<Command> cmds, List<Way> replacedWays, List<Way> reuseWays) {
-        Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
+        Map<Way, List<Integer>> insertPoints = new HashMap<>();
         for (WaySegment ws : wss) {
             List<Integer> is;
             if (insertPoints.containsKey(ws.way)) {
                 is = insertPoints.get(ws.way);
             } else {
-                is = new ArrayList<Integer>();
+                is = new ArrayList<>();
                 insertPoints.put(ws.way, is);
             }
 
             is.add(ws.lowerIndex);
         }
 
-        Set<Pair<Node,Node>> segSet = new HashSet<Pair<Node,Node>>();
+        Set<Pair<Node,Node>> segSet = new HashSet<>();
 
         for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
             Way w = insertPoint.getKey();
@@ -680,7 +680,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
             pruneSuccsAndReverse(is);
             for (int i : is) {
-                segSet.add(Pair.sort(new Pair<Node,Node>(w.getNode(i), w.getNode(i+1))));
+                segSet.add(Pair.sort(new Pair<>(w.getNode(i), w.getNode(i+1))));
             }
             for (int i : is) {
                 wnew.addNode(i + 1, n);
@@ -813,7 +813,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         Node currentMouseNode = null;
         mouseOnExistingNode = null;
-        mouseOnExistingWays = new HashSet<Way>();
+        mouseOnExistingWays = new HashSet<>();
 
         showStatusInfo(-1, -1, -1, snapHelper.isSnapOn());
 
@@ -979,7 +979,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     private static void pruneSuccsAndReverse(List<Integer> is) {
-        HashSet<Integer> is2 = new HashSet<Integer>();
+        HashSet<Integer> is2 = new HashSet<>();
         for (int i : is) {
             if (!is2.contains(i - 1) && !is2.contains(i + 1)) {
                 is2.add(i);
@@ -1092,7 +1092,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * and latter processes them into oldHighlights.
      */
     private void addHighlighting() {
-        newHighlights = new HashSet<OsmPrimitive>();
+        newHighlights = new HashSet<>();
 
         // if ctrl key is held ("no join"), don't highlight anything
         if (ctrl) {
@@ -1131,7 +1131,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * Returns true if a repaint has been issued.
      */
     private boolean removeHighlighting() {
-        newHighlights = new HashSet<OsmPrimitive>();
+        newHighlights = new HashSet<>();
         return redrawIfRequired();
     }
 
@@ -1569,7 +1569,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 Collection<Way> selectedWays = ds.getSelectedWays();
                 if (selectedWays.size()==1) {
                     Way w = selectedWays.iterator().next();
-                    Collection <EastNorth> pointsToProject = new ArrayList<EastNorth>();
+                    Collection <EastNorth> pointsToProject = new ArrayList<>();
                     if (w.getNodesCount()<1000) {
                         for (Node n: w.getNodes()) {
                             pointsToProject.add(n.getEastNorth());

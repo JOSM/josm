@@ -75,7 +75,7 @@ public class WmsCache {
     private static class ProjectionEntries {
         final String projection;
         final String cacheDirectory;
-        final List<CacheEntry> entries = new ArrayList<WmsCache.CacheEntry>();
+        final List<CacheEntry> entries = new ArrayList<>();
 
         ProjectionEntries(String projection, String cacheDirectory) {
             this.projection = projection;
@@ -83,13 +83,13 @@ public class WmsCache {
         }
     }
 
-    private final Map<String, ProjectionEntries> entries = new HashMap<String, ProjectionEntries>();
+    private final Map<String, ProjectionEntries> entries = new HashMap<>();
     private final File cacheDir;
     private final int tileSize; // Should be always 500
     private int totalFileSize;
     private boolean totalFileSizeDirty; // Some file was missing - size needs to be recalculated
     // No need for hashCode/equals on CacheEntry, object identity is enough. Comparing by values can lead to error - CacheEntry for wrong projection could be found
-    private Map<CacheEntry, SoftReference<BufferedImage>> memoryCache = new HashMap<WmsCache.CacheEntry, SoftReference<BufferedImage>>();
+    private Map<CacheEntry, SoftReference<BufferedImage>> memoryCache = new HashMap<>();
     private Set<ProjectionBounds> areaToCache;
 
     protected String cacheDirPath() {
@@ -209,7 +209,7 @@ public class WmsCache {
 
     private void removeNonReferencedFiles() {
 
-        Set<String> usedProjections = new HashSet<String>();
+        Set<String> usedProjections = new HashSet<>();
 
         for (ProjectionEntries projectionEntries: entries.values()) {
 
@@ -217,7 +217,7 @@ public class WmsCache {
 
             File projectionDir = new File(cacheDir, projectionEntries.cacheDirectory);
             if (projectionDir.exists()) {
-                Set<String> referencedFiles = new HashSet<String>();
+                Set<String> referencedFiles = new HashSet<>();
 
                 for (CacheEntry ce: projectionEntries.entries) {
                     referencedFiles.add(ce.filename);
@@ -372,7 +372,7 @@ public class WmsCache {
         ProjectionEntries projectionEntries;
         List<CacheEntry> matches;
         synchronized (this) {
-            matches = new ArrayList<WmsCache.CacheEntry>();
+            matches = new ArrayList<>();
 
             double minPPD = pixelPerDegree / 5;
             double maxPPD = pixelPerDegree * 5;
@@ -409,12 +409,12 @@ public class WmsCache {
 
 
         boolean drawAtLeastOnce = false;
-        Map<CacheEntry, SoftReference<BufferedImage>> localCache = new HashMap<WmsCache.CacheEntry, SoftReference<BufferedImage>>();
+        Map<CacheEntry, SoftReference<BufferedImage>> localCache = new HashMap<>();
         for (CacheEntry ce: matches) {
             BufferedImage img;
             try {
                 img = loadImage(projectionEntries, ce);
-                localCache.put(ce, new SoftReference<BufferedImage>(img));
+                localCache.put(ce, new SoftReference<>(img));
             } catch (IOException e) {
                 continue;
             }

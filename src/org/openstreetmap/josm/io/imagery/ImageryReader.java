@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.imagery;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.io.IOException;
@@ -84,9 +83,9 @@ public class ImageryReader {
         @Override public void startDocument() {
             accumulator = new StringBuffer();
             skipEntry = false;
-            states = new Stack<State>();
+            states = new Stack<>();
             states.push(State.INIT);
-            entries = new ArrayList<ImageryInfo>();
+            entries = new ArrayList<>();
             entry = null;
             bounds = null;
             projections = null;
@@ -140,7 +139,7 @@ public class ImageryReader {
                     }
                     newState = State.BOUNDS;
                 } else if (qName.equals("projections")) {
-                    projections = new ArrayList<String>();
+                    projections = new ArrayList<>();
                     newState = State.PROJECTIONS;
                 }
                 break;

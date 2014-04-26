@@ -37,7 +37,7 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
 
     public CustomizeDrawingAction(Layer l) {
         this();
-        layers = new LinkedList<Layer>();
+        layers = new LinkedList<>();
         layers.add(l);
     }
 

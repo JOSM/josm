@@ -32,7 +32,7 @@ public final class DefaultAuthenticator extends Authenticator {
         instance = new DefaultAuthenticator();
     }
 
-    private final Map<RequestorType, Boolean> credentialsTried = new HashMap<RequestorType, Boolean>();
+    private final Map<RequestorType, Boolean> credentialsTried = new HashMap<>();
     private boolean enabled = true;
 
     private DefaultAuthenticator() {
