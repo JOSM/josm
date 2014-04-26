@@ -26,13 +26,13 @@ public abstract class TransformNodesCommand extends Command {
     /**
      * The nodes to transform.
      */
-    protected Collection<Node> nodes = new LinkedList<Node>();
+    protected Collection<Node> nodes = new LinkedList<>();
 
 
     /**
      * List of all old states of the nodes.
      */
-    protected Map<Node, OldNodeState> oldStates = new HashMap<Node, OldNodeState>();
+    protected Map<Node, OldNodeState> oldStates = new HashMap<>();
 
     /**
      * Stores the state of the nodes before the command.

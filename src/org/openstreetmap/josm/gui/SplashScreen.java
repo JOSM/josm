@@ -180,7 +180,7 @@ public class SplashScreen extends JFrame {
         }
 
         private static final int MAX_NUMBER_OF_MESSAGES = 3;
-        private LinkedList<String> messages = new LinkedList<String>(Arrays.asList("", "", "")); //update when changing MAX_NUMBER_OF_MESSAGES
+        private LinkedList<String> messages = new LinkedList<>(Arrays.asList("", "", "")); //update when changing MAX_NUMBER_OF_MESSAGES
         private long time = System.currentTimeMillis();
 
         /**

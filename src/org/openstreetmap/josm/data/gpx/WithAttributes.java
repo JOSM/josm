@@ -18,7 +18,7 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
     /**
      * The "attr" hash is used to store the XML payload (not only XML attributes!)
      */
-    public Map<String, Object> attr = new HashMap<String, Object>(0);
+    public Map<String, Object> attr = new HashMap<>(0);
 
     /**
      * Returns the Object value to which the specified key is mapped,

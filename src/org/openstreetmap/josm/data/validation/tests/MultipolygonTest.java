@@ -56,8 +56,8 @@ public class MultipolygonTest extends Test {
 
     private static ElemStyles styles;
 
-    private final List<List<Node>> nonClosedWays = new ArrayList<List<Node>>();
-    private final Set<String> keysCheckedByAnotherTest = new HashSet<String>();
+    private final List<List<Node>> nonClosedWays = new ArrayList<>();
+    private final Set<String> keysCheckedByAnotherTest = new HashSet<>();
 
     /**
      * Constructs a new {@code MultipolygonTest}.
@@ -91,8 +91,8 @@ public class MultipolygonTest extends Test {
     }
 
     private List<List<Node>> joinWays(Collection<Way> ways) {
-        List<List<Node>> result = new ArrayList<List<Node>>();
-        List<Way> waysToJoin = new ArrayList<Way>();
+        List<List<Node>> result = new ArrayList<>();
+        List<Way> waysToJoin = new ArrayList<>();
         for (Way way : ways) {
             if (way.isClosed()) {
                 result.add(way.getNodes());
@@ -122,7 +122,7 @@ public class MultipolygonTest extends Test {
     }
 
     private List<GeneralPath> createPolygons(List<List<Node>> joinedWays) {
-        List<GeneralPath> result = new ArrayList<GeneralPath>();
+        List<GeneralPath> result = new ArrayList<>();
         for (List<Node> way : joinedWays) {
             result.add(createPath(way));
         }
@@ -228,7 +228,7 @@ public class MultipolygonTest extends Test {
                         AreaElemStyle areaInner = ElemStyles.getAreaElemStyle(wInner, false);
 
                         if (areaInner != null && area.equals(areaInner)) {
-                            List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
+                            List<OsmPrimitive> l = new ArrayList<>();
                             l.add(r);
                             l.add(wInner);
                             addError(r, new TestError(this, Severity.WARNING, tr("Style for inner way equals multipolygon"),
@@ -239,7 +239,7 @@ public class MultipolygonTest extends Test {
                         for (Way wOuter : polygon.getOuterWays()) {
                             AreaElemStyle areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
                             if (areaOuter != null && !area.equals(areaOuter)) {
-                                List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
+                                List<OsmPrimitive> l = new ArrayList<>();
                                 l.add(r);
                                 l.add(wOuter);
                                 addError(r, new TestError(this, Severity.WARNING, tr("Style for outer way mismatches"),
@@ -250,14 +250,14 @@ public class MultipolygonTest extends Test {
                 }
             }
 
-            List<Node> openNodes = new LinkedList<Node>();
+            List<Node> openNodes = new LinkedList<>();
             for (List<Node> w : nonClosedWays) {
                 if (w.size()<1) continue;
                 openNodes.add(w.get(0));
                 openNodes.add(w.get(w.size() - 1));
             }
             if (!openNodes.isEmpty()) {
-                List<OsmPrimitive> primitives = new LinkedList<OsmPrimitive>();
+                List<OsmPrimitive> primitives = new LinkedList<>();
                 primitives.add(r);
                 primitives.addAll(openNodes);
                 Arrays.asList(openNodes, r);
@@ -281,7 +281,7 @@ public class MultipolygonTest extends Test {
                     }
                 }
                 if (outside || crossing) {
-                    List<List<Node>> highlights = new ArrayList<List<Node>>();
+                    List<List<Node>> highlights = new ArrayList<>();
                     highlights.add(pdInner);
                     if (outside) {
                         addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"), INNER_WAY_OUTSIDE, Collections.singletonList(r), highlights));
@@ -318,7 +318,7 @@ public class MultipolygonTest extends Test {
                     return;
                 }
             }
-            List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(primitives);
+            List<OsmPrimitive> newPrimitives = new ArrayList<>(primitives);
             newPrimitives.add(0, r);
             error.setPrimitives(newPrimitives);
         }

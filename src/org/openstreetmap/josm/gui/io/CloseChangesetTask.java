@@ -38,10 +38,10 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
     public CloseChangesetTask(Collection<Changeset> changesets) {
         super(tr("Closing changeset"), false /* don't ignore exceptions */);
         if (changesets == null) {
-            changesets = new ArrayList<Changeset>();
+            changesets = new ArrayList<>();
         }
         this.changesets = changesets;
-        this.closedChangesets = new ArrayList<Changeset>();
+        this.closedChangesets = new ArrayList<>();
     }
 
     @Override

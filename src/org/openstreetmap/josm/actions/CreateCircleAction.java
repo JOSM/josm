@@ -136,7 +136,7 @@ public final class CreateCircleAction extends JosmAction {
         }
 
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        List<Node> nodes = new LinkedList<Node>();
+        List<Node> nodes = new LinkedList<>();
         Way existingWay = null;
 
         for (OsmPrimitive osm : sel)
@@ -169,7 +169,7 @@ public final class CreateCircleAction extends JosmAction {
         }
 
         // now we can start doing things to OSM data
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
         EastNorth center = null;
         
         if (nodes.size() == 2) {
@@ -209,7 +209,7 @@ public final class CreateCircleAction extends JosmAction {
                 numberOfNodesInCircle >= nodes.size() ? numberOfNodesInCircle - nodes.size() : 0);
 
         // build a way for the circle
-        List<Node> wayToAdd = new ArrayList<Node>();
+        List<Node> wayToAdd = new ArrayList<>();
         for(int i = 0; i < nodes.size(); i++) {
             wayToAdd.add(angles[i].node);
             double delta = angles[(i+1) % nodes.size()].a - angles[i].a;

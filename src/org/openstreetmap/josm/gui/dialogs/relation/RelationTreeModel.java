@@ -33,7 +33,7 @@ public class RelationTreeModel implements TreeModel {
      */
     public RelationTreeModel() {
         this.root = null;
-        listeners = new CopyOnWriteArrayList<TreeModelListener>();
+        listeners = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -42,7 +42,7 @@ public class RelationTreeModel implements TreeModel {
      */
     public RelationTreeModel(Relation root) {
         this.root = root;
-        listeners = new CopyOnWriteArrayList<TreeModelListener>();
+        listeners = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -55,7 +55,7 @@ public class RelationTreeModel implements TreeModel {
         Relation root = new Relation();
         root.setMembers(members);
         this.root = root;
-        listeners = new CopyOnWriteArrayList<TreeModelListener>();
+        listeners = new CopyOnWriteArrayList<>();
     }
 
     /**

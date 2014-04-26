@@ -27,8 +27,8 @@ public class ChangesetDataSet {
         public HistoryOsmPrimitive getPrimitive();
     }
 
-    private final Map<PrimitiveId, HistoryOsmPrimitive> primitives = new HashMap<PrimitiveId, HistoryOsmPrimitive>();
-    private final Map<PrimitiveId, ChangesetModificationType> modificationTypes = new HashMap<PrimitiveId, ChangesetModificationType>();
+    private final Map<PrimitiveId, HistoryOsmPrimitive> primitives = new HashMap<>();
+    private final Map<PrimitiveId, ChangesetModificationType> modificationTypes = new HashMap<>();
 
     /**
      * Remembers a history primitive with the given modification type
@@ -115,7 +115,7 @@ public class ChangesetDataSet {
      */
     public Set<HistoryOsmPrimitive> getPrimitivesByModificationType(ChangesetModificationType cmt) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(cmt,"cmt");
-        HashSet<HistoryOsmPrimitive> ret = new HashSet<HistoryOsmPrimitive>();
+        HashSet<HistoryOsmPrimitive> ret = new HashSet<>();
         for (Entry<PrimitiveId, ChangesetModificationType> entry: modificationTypes.entrySet()) {
             if (entry.getValue().equals(cmt)) {
                 ret.add(primitives.get(entry.getKey()));

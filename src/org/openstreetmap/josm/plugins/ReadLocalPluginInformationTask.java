@@ -44,12 +44,12 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
      */
     public ReadLocalPluginInformationTask() {
         super(tr("Reading local plugin information.."), false);
-        availablePlugins = new HashMap<String, PluginInformation>();
+        availablePlugins = new HashMap<>();
     }
 
     public ReadLocalPluginInformationTask(ProgressMonitor monitor) {
         super(tr("Reading local plugin information.."),monitor, false);
-        availablePlugins = new HashMap<String, PluginInformation>();
+        availablePlugins = new HashMap<>();
     }
 
     @Override
@@ -236,7 +236,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
      * @return information about available plugins detected by this task.
      */
     public List<PluginInformation> getAvailablePlugins() {
-        return new ArrayList<PluginInformation>(availablePlugins.values());
+        return new ArrayList<>(availablePlugins.values());
     }
 
     /**

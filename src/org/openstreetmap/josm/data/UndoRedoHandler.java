@@ -19,13 +19,13 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     /**
      * All commands that were made on the dataset. Don't write from outside!
      */
-    public final LinkedList<Command> commands = new LinkedList<Command>();
+    public final LinkedList<Command> commands = new LinkedList<>();
     /**
      * The stack for redoing commands
      */
-    public final LinkedList<Command> redoCommands = new LinkedList<Command>();
+    public final LinkedList<Command> redoCommands = new LinkedList<>();
 
-    private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<CommandQueueListener>();
+    private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<>();
 
     /**
      * Constructs a new {@code UndoRedoHandler}.

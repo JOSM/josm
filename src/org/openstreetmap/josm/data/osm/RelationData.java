@@ -8,7 +8,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 
 public class RelationData extends PrimitiveData implements IRelation {
 
-    private List<RelationMemberData> members = new ArrayList<RelationMemberData>();
+    private List<RelationMemberData> members = new ArrayList<>();
 
     public RelationData() {
 
@@ -24,7 +24,7 @@ public class RelationData extends PrimitiveData implements IRelation {
     }
 
     public void setMembers(List<RelationMemberData> memberData) {
-        members = new ArrayList<RelationMemberData>(memberData);
+        members = new ArrayList<>(memberData);
     }
 
     @Override

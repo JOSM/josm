@@ -55,10 +55,10 @@ public class ListListEditor extends ExtendedDialog {
         super(gui, tr("Change list of lists setting"), new String[] {tr("OK"), tr("Cancel")});
         this.entry = entry;
         List<List<String>> orig = setting.getValue();
-        data = new ArrayList<List<String>>();
+        data = new ArrayList<>();
         if (orig != null) {
             for (List<String> l : orig) {
-                data.add(new ArrayList<String>(l));
+                data.add(new ArrayList<>(l));
             }
         }
         setButtonIcons(new String[] {"ok.png", "cancel.png"});
@@ -81,7 +81,7 @@ public class ListListEditor extends ExtendedDialog {
         JPanel left = new JPanel(new GridBagLayout());
 
         entryModel = new EntryListModel();
-        entryList = new JList<String>(entryModel);
+        entryList = new JList<>(entryModel);
         entryList.getSelectionModel().addListSelectionListener(new EntryListener());
         JScrollPane scroll = new JScrollPane(entryList);
         left.add(scroll, GBC.eol().fill());

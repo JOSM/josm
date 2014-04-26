@@ -33,8 +33,8 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
     /** Is the error selected ? */
     private boolean selected;
     
-    private final Set<PaintedPoint> paintedPoints = new HashSet<PaintedPoint>();
-    private final Set<PaintedSegment> paintedSegments = new HashSet<PaintedSegment>();
+    private final Set<PaintedPoint> paintedPoints = new HashSet<>();
+    private final Set<PaintedSegment> paintedSegments = new HashSet<>();
 
     /**
      * Constructor

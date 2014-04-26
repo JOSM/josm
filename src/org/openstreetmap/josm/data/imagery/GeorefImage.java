@@ -168,7 +168,7 @@ public class GeorefImage implements Serializable {
                 }
                 img.getGraphics().dispose();
                 g.drawImage(img, x, y, null);
-                reImg = new SoftReference<BufferedImage>(img);
+                reImg = new SoftReference<>(img);
             }
         } catch(Exception e) {
             fallbackDraw(g, getImage(), x, y, width, height, alphaChannel);

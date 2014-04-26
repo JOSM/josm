@@ -57,7 +57,7 @@ public class GeoJSONWriter {
      */
     public String write(boolean pretty) {
         StringWriter stringWriter = new StringWriter();
-        Map<String, Object> config = new HashMap<String, Object>(1);
+        Map<String, Object> config = new HashMap<>(1);
         config.put(JsonGenerator.PRETTY_PRINTING, pretty);
         JsonWriter writer = Json.createWriterFactory(config).createWriter(stringWriter);
         JsonObjectBuilder object = Json.createObjectBuilder()

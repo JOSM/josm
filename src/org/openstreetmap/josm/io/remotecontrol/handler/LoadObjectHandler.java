@@ -26,7 +26,7 @@ public class LoadObjectHandler extends RequestHandler {
      */
     public static final String command = "load_object";
 
-    private final List<PrimitiveId> ps = new LinkedList<PrimitiveId>();
+    private final List<PrimitiveId> ps = new LinkedList<>();
 
     @Override
     public String[] getMandatoryParams() {

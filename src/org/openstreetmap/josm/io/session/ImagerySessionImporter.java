@@ -30,7 +30,7 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         if (!"0.1".equals(version)) {
             throw new IllegalDataException(tr("Version ''{0}'' of meta data for imagery layer is not supported. Expected: 0.1", version));
         }
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
 
         NodeList nodes = elem.getChildNodes();
 

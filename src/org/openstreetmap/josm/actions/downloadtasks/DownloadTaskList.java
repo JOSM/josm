@@ -43,8 +43,8 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 6053
  */
 public class DownloadTaskList {
-    private List<DownloadTask> tasks = new LinkedList<DownloadTask>();
-    private List<Future<?>> taskFutures = new LinkedList<Future<?>>();
+    private List<DownloadTask> tasks = new LinkedList<>();
+    private List<Future<?>> taskFutures = new LinkedList<>();
     private ProgressMonitor progressMonitor;
 
     private void addDownloadTask(DownloadTask dt, Rectangle2D td, int i, int n) {
@@ -107,7 +107,7 @@ public class DownloadTaskList {
     public Future<?> download(boolean newLayer, Collection<Area> areas, boolean osmData, boolean gpxData, ProgressMonitor progressMonitor) {
         progressMonitor.beginTask(tr("Updating data"));
         try {
-            List<Rectangle2D> rects = new ArrayList<Rectangle2D>(areas.size());
+            List<Rectangle2D> rects = new ArrayList<>(areas.size());
             for (Area a : areas) {
                 rects.add(a.getBounds2D());
             }
@@ -125,7 +125,7 @@ public class DownloadTaskList {
      * @return the set of ids of all complete, non-new primitives
      */
     protected Set<OsmPrimitive> getCompletePrimitives(DataSet ds) {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         for (OsmPrimitive primitive : ds.allPrimitives()) {
             if (!primitive.isIncomplete() && !primitive.isNew()) {
                 ret.add(primitive);
@@ -141,7 +141,7 @@ public class DownloadTaskList {
      * @param potentiallyDeleted a set of ids to check update from the server
      */
     protected void updatePotentiallyDeletedPrimitives(Set<OsmPrimitive> potentiallyDeleted) {
-        final List<OsmPrimitive> toSelect = new ArrayList<OsmPrimitive>();
+        final List<OsmPrimitive> toSelect = new ArrayList<>();
         for (OsmPrimitive primitive : potentiallyDeleted) {
             if (primitive != null) {
                 toSelect.add(primitive);
@@ -215,7 +215,7 @@ public class DownloadTaskList {
      * @return the set of primitive ids which have been downloaded by this task list
      */
     public Set<OsmPrimitive> getDownloadedPrimitives() {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         for (DownloadTask task : tasks) {
             if (task instanceof DownloadOsmTask) {
                 DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
@@ -252,12 +252,12 @@ public class DownloadTaskList {
                     return;
                 }
             }
-            LinkedHashSet<Object> errors = new LinkedHashSet<Object>();
+            LinkedHashSet<Object> errors = new LinkedHashSet<>();
             for (DownloadTask dt : tasks) {
                 errors.addAll(dt.getErrorObjects());
             }
             if (!errors.isEmpty()) {
-                final Collection<String> items = new ArrayList<String>();
+                final Collection<String> items = new ArrayList<>();
                 for (Object error : errors) {
                     if (error instanceof String) {
                         items.add((String) error);

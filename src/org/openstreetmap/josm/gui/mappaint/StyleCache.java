@@ -24,44 +24,46 @@ public final class StyleCache {
     /* styles for each scale range */
     private final List<StyleList> data;
 
-    private static final Storage<StyleCache> internPool = new Storage<StyleCache>(); // TODO: clean up the intern pool from time to time (after purge or layer removal)
+    private static final Storage<StyleCache> internPool = new Storage<>(); // TODO: clean up the intern pool from time to time (after purge or layer removal)
 
     public static final StyleCache EMPTY_STYLECACHE = (new StyleCache()).intern();
 
     private StyleCache() {
-        bd = new ArrayList<Double>();
+        bd = new ArrayList<>();
         bd.add(0.0);
         bd.add(Double.POSITIVE_INFINITY);
-        data = new ArrayList<StyleList>();
+        data = new ArrayList<>();
         data.add(null);
     }
 
     private StyleCache(StyleCache s) {
-        bd = new ArrayList<Double>(s.bd);
-        data = new ArrayList<StyleList>(s.data);
+        bd = new ArrayList<>(s.bd);
+        data = new ArrayList<>(s.data);
     }
 
     /**
      * List of Styles, immutable
      */
-    public static class StyleList implements Iterable<ElemStyle>
-    {
+    public static class StyleList implements Iterable<ElemStyle> {
         private List<ElemStyle> lst;
 
+        /**
+         * Constructs a new {@code StyleList}.
+         */
         public StyleList() {
-            lst = new ArrayList<ElemStyle>();
+            lst = new ArrayList<>();
         }
 
         public StyleList(ElemStyle... init) {
-            lst = new ArrayList<ElemStyle>(Arrays.asList(init));
+            lst = new ArrayList<>(Arrays.asList(init));
         }
 
         public StyleList(Collection<ElemStyle> sl) {
-            lst = new ArrayList<ElemStyle>(sl);
+            lst = new ArrayList<>(sl);
         }
 
         public StyleList(StyleList sl, ElemStyle s) {
-            lst = new ArrayList<ElemStyle>(sl.lst);
+            lst = new ArrayList<>(sl.lst);
             lst.add(s);
         }
 
@@ -120,7 +122,7 @@ public final class StyleCache {
             throw new IllegalArgumentException();
         for (int i=0; i<data.size(); ++i) {
             if (bd.get(i) < scale && scale <= bd.get(i+1)) {
-                return new Pair<StyleList, Range>(data.get(i), new Range(bd.get(i), bd.get(i+1)));
+                return new Pair<>(data.get(i), new Range(bd.get(i), bd.get(i+1)));
             }
         }
         throw new AssertionError();

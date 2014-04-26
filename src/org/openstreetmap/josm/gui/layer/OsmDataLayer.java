@@ -102,7 +102,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
      * List of validation errors in this layer.
      * @since 3669
      */
-    public final List<TestError> validationErrors = new ArrayList<TestError>();
+    public final List<TestError> validationErrors = new ArrayList<>();
 
     protected void setRequiresSaveToFile(boolean newValue) {
         boolean oldValue = requiresSaveToFile;
@@ -182,7 +182,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         void uploadDiscouragedChanged(OsmDataLayer layer, boolean newValue);
     }
 
-    private final CopyOnWriteArrayList<LayerStateChangeListener> layerStateChangeListeners = new CopyOnWriteArrayList<LayerStateChangeListener>();
+    private final CopyOnWriteArrayList<LayerStateChangeListener> layerStateChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Adds a layer state change listener
@@ -326,8 +326,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     @Override public String getToolTipText() {
-        int nodes = new FilteredCollection<Node>(data.getNodes(), OsmPrimitive.nonDeletedPredicate).size();
-        int ways = new FilteredCollection<Way>(data.getWays(), OsmPrimitive.nonDeletedPredicate).size();
+        int nodes = new FilteredCollection<>(data.getNodes(), OsmPrimitive.nonDeletedPredicate).size();
+        int ways = new FilteredCollection<>(data.getWays(), OsmPrimitive.nonDeletedPredicate).size();
 
         String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
         tool += trn("{0} way", "{0} ways", ways, ways);
@@ -504,7 +504,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 new ConsistencyTestAction(),
                 SeparatorLayerAction.INSTANCE,
                 new LayerListPopup.InfoAction(this)};
-        List<Action> actions = new ArrayList<Action>();
+        List<Action> actions = new ArrayList<>();
         actions.addAll(Arrays.asList(new Action[]{
                 LayerListDialog.getInstance().createActivateLayerAction(this),
                 LayerListDialog.getInstance().createShowHideLayerAction(),
@@ -535,13 +535,13 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     public static GpxData toGpxData(DataSet data, File file) {
         GpxData gpxData = new GpxData();
         gpxData.storageFile = file;
-        HashSet<Node> doneNodes = new HashSet<Node>();
+        HashSet<Node> doneNodes = new HashSet<>();
         for (Way w : data.getWays()) {
             if (!w.isUsable()) {
                 continue;
             }
-            Collection<Collection<WayPoint>> trk = new ArrayList<Collection<WayPoint>>();
-            Map<String, Object> trkAttr = new HashMap<String, Object>();
+            Collection<Collection<WayPoint>> trk = new ArrayList<>();
+            Map<String, Object> trkAttr = new HashMap<>();
 
             if (w.get("name") != null) {
                 trkAttr.put("name", w.get("name"));
@@ -554,7 +554,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                     continue;
                 }
                 if (trkseg == null) {
-                    trkseg = new ArrayList<WayPoint>();
+                    trkseg = new ArrayList<>();
                     trk.add(trkseg);
                 }
                 if (!n.isTagged()) {

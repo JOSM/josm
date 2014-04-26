@@ -45,10 +45,10 @@ public final class ChangesetCache implements PreferenceChangedListener{
     }
 
     /** the cached changesets */
-    private final Map<Integer, Changeset> cache  = new HashMap<Integer, Changeset>();
+    private final Map<Integer, Changeset> cache  = new HashMap<>();
 
     private final CopyOnWriteArrayList<ChangesetCacheListener> listeners =
-        new CopyOnWriteArrayList<ChangesetCacheListener>();
+        new CopyOnWriteArrayList<>();
 
     private ChangesetCache() {
         Main.pref.addPreferenceChangeListener(this);
@@ -116,7 +116,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
     }
 
     public Set<Changeset> getChangesets() {
-        return new HashSet<Changeset>(cache.values());
+        return new HashSet<>(cache.values());
     }
 
     protected void remove(int id, DefaultChangesetCacheEvent e) {
@@ -179,7 +179,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
      * @return The list of open changesets
      */
     public List<Changeset> getOpenChangesets() {
-        List<Changeset> ret = new ArrayList<Changeset>();
+        List<Changeset> ret = new ArrayList<>();
         for (Changeset cs: cache.values()) {
             if (cs.isOpen()) {
                 ret.add(cs);

@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.Geometry;
  */
 public class Shape {
 
-    private List<Coordinate> coords = new ArrayList<Coordinate>();
+    private List<Coordinate> coords = new ArrayList<>();
 
     public Shape(String asString, String separator) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
@@ -52,7 +52,7 @@ public class Shape {
     public boolean contains(LatLon latlon) {
         if (latlon == null)
             return false;
-        List<Node> nodes = new ArrayList<Node>(coords.size());
+        List<Node> nodes = new ArrayList<>(coords.size());
         for (Coordinate c : coords) {
             nodes.add(new Node(new LatLon(c.getLat(), c.getLon())));
         }

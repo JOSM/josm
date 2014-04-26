@@ -109,7 +109,7 @@ public class PlaceSelection implements DownloadSelection {
 
         cbSearchExpression = new HistoryComboBox();
         cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
-        List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(cmtHistory);
         cbSearchExpression.setPossibleItems(cmtHistory);
         lpanel.add(cbSearchExpression);
@@ -194,7 +194,7 @@ public class PlaceSelection implements DownloadSelection {
         private SearchResult currentResult = null;
         private StringBuffer description = null;
         private int depth = 0;
-        private List<SearchResult> data = new LinkedList<SearchResult>();
+        private List<SearchResult> data = new LinkedList<>();
 
         /**
          * Detect starting elements.
@@ -388,7 +388,7 @@ public class PlaceSelection implements DownloadSelection {
         private ListSelectionModel selectionModel;
 
         public NamedResultTableModel(ListSelectionModel selectionModel) {
-            data = new ArrayList<SearchResult>();
+            data = new ArrayList<>();
             this.selectionModel = selectionModel;
         }
         @Override
@@ -407,7 +407,7 @@ public class PlaceSelection implements DownloadSelection {
             if (data == null) {
                 this.data.clear();
             } else {
-                this.data  =new ArrayList<SearchResult>(data);
+                this.data = new ArrayList<>(data);
             }
             fireTableDataChanged();
         }

@@ -29,7 +29,7 @@ public class SelfIntersectingWay extends Test {
     }
 
     @Override public void visit(Way w) {
-        HashSet<Node> nodes = new HashSet<Node>();
+        HashSet<Node> nodes = new HashSet<>();
 
         for (int i = 1; i < w.getNodesCount() - 1; i++) {
             Node n = w.getNode(i);

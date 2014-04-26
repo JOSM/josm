@@ -53,7 +53,7 @@ public class FilterTableModel extends AbstractTableModel {
         loadPrefs();
     }
 
-    private final List<Filter> filters = new LinkedList<Filter>();
+    private final List<Filter> filters = new LinkedList<>();
     private final FilterMatcher filterMatcher = new FilterMatcher();
 
     private void updateFilters() {
@@ -77,7 +77,7 @@ public class FilterTableModel extends AbstractTableModel {
             disabledCount = 0;
             changed = true;
         } else {
-            final Collection<OsmPrimitive> deselect = new HashSet<OsmPrimitive>();
+            final Collection<OsmPrimitive> deselect = new HashSet<>();
 
             ds.beginUpdate();
             try {
@@ -122,7 +122,7 @@ public class FilterTableModel extends AbstractTableModel {
             return;
 
         boolean changed = false;
-        List<OsmPrimitive> deselect = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> deselect = new ArrayList<>();
 
         ds.beginUpdate();
         try {
@@ -189,7 +189,7 @@ public class FilterTableModel extends AbstractTableModel {
     }
 
     private void savePrefs() {
-        Collection<FilterPreferenceEntry> entries = new ArrayList<FilterPreferenceEntry>();
+        Collection<FilterPreferenceEntry> entries = new ArrayList<>();
         for (Filter flt : filters) {
             entries.add(flt.getPreferenceEntry());
         }

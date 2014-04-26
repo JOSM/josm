@@ -24,7 +24,7 @@ public final class TaggingPresetNameTemplateList {
         }
         return instance;
     }
-    private final List<TaggingPreset> presetsWithPattern = new LinkedList<TaggingPreset>();
+    private final List<TaggingPreset> presetsWithPattern = new LinkedList<>();
 
     private TaggingPresetNameTemplateList() {
         if (TaggingPresetPreference.taggingPresets != null) {

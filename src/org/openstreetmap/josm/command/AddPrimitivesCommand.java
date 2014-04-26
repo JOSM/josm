@@ -23,8 +23,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class AddPrimitivesCommand extends Command {
 
-    private List<PrimitiveData> data = new ArrayList<PrimitiveData>();
-    private Collection<PrimitiveData> toSelect = new ArrayList<PrimitiveData>();
+    private List<PrimitiveData> data = new ArrayList<>();
+    private Collection<PrimitiveData> toSelect = new ArrayList<>();
 
     // only filled on undo
     private List<OsmPrimitive> createdPrimitives = null;
@@ -70,8 +70,8 @@ public class AddPrimitivesCommand extends Command {
     @Override public boolean executeCommand() {
         Collection<OsmPrimitive> primitivesToSelect;
         if (createdPrimitives == null) { // first time execution
-            List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(data.size());
-            primitivesToSelect = new ArrayList<OsmPrimitive>(toSelect.size());
+            List<OsmPrimitive> newPrimitives = new ArrayList<>(data.size());
+            primitivesToSelect = new ArrayList<>(toSelect.size());
 
             for (PrimitiveData pd : data) {
                 OsmPrimitive primitive = getLayer().data.getPrimitiveById(pd);
@@ -114,8 +114,8 @@ public class AddPrimitivesCommand extends Command {
         DataSet ds = getLayer().data;
 
         if (createdPrimitives == null) {
-            createdPrimitives = new ArrayList<OsmPrimitive>(data.size());
-            createdPrimitivesToSelect = new ArrayList<OsmPrimitive>(toSelect.size());
+            createdPrimitives = new ArrayList<>(data.size());
+            createdPrimitivesToSelect = new ArrayList<>(toSelect.size());
 
             for (PrimitiveData pd : data) {
                 OsmPrimitive p = ds.getPrimitiveById(pd);
@@ -161,7 +161,7 @@ public class AddPrimitivesCommand extends Command {
         if (createdPrimitives != null)
             return createdPrimitives;
 
-        Collection<OsmPrimitive> prims = new HashSet<OsmPrimitive>();
+        Collection<OsmPrimitive> prims = new HashSet<>();
         for (PrimitiveData d : data) {
             OsmPrimitive osm = getLayer().data.getPrimitiveById(d);
             if (osm == null)

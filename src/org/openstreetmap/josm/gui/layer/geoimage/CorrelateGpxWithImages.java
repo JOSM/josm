@@ -83,7 +83,7 @@ import org.xml.sax.SAXException;
  */
 public class CorrelateGpxWithImages extends AbstractAction {
 
-    private static List<GpxData> loadedGpxData = new ArrayList<GpxData>();
+    private static List<GpxData> loadedGpxData = new ArrayList<>();
 
     GeoImageLayer yLayer = null;
     double timezone;
@@ -116,7 +116,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     ExtendedDialog syncDialog;
-    List<GpxDataWrapper> gpxLst = new ArrayList<GpxDataWrapper>();
+    List<GpxDataWrapper> gpxLst = new ArrayList<>();
     JPanel outerPanel;
     JosmComboBox cbGpx;
     JosmTextField tfTimezone;
@@ -292,7 +292,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             panelTf.add(new JLabel(tr("I am in the timezone of: ")), gc);
 
             String[] tmp = TimeZone.getAvailableIDs();
-            List<String> vtTimezones = new ArrayList<String>(tmp.length);
+            List<String> vtTimezones = new ArrayList<>(tmp.length);
 
             for (String tzStr : tmp) {
                 TimeZone tz = TimeZone.getTimeZone(tzStr);
@@ -330,7 +330,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             JPanel panelLst = new JPanel();
             panelLst.setLayout(new BorderLayout());
 
-            imgList = new JList<String>(new AbstractListModel<String>() {
+            imgList = new JList<>(new AbstractListModel<String>() {
                 @Override
                 public String getElementAt(int i) {
                     return yLayer.data.get(i).getFile().getName();
@@ -875,7 +875,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             final JLabel lblTimezone = new JLabel();
             final JSlider sldTimezone = new JSlider(-24, 24, 0);
             sldTimezone.setPaintLabels(true);
-            Dictionary<Integer,JLabel> labelTable = new Hashtable<Integer, JLabel>();
+            Dictionary<Integer,JLabel> labelTable = new Hashtable<>();
             labelTable.put(-24, new JLabel("-12:00"));
             labelTable.put(-12, new JLabel( "-6:00"));
             labelTable.put(  0, new JLabel(  "0:00"));
@@ -1075,7 +1075,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @return matching images
      */
     private List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
-        List<ImageEntry> dateImgLst = new ArrayList<ImageEntry>(yLayer.data.size());
+        List<ImageEntry> dateImgLst = new ArrayList<>(yLayer.data.size());
         for (ImageEntry e : yLayer.data) {
             if (!e.hasExifTime()) {
                 continue;

@@ -67,7 +67,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         gc.weightx  =1.0;
 
         ButtonGroup bgVersionBasedUpdatePolicy = new ButtonGroup();
-        rbVersionBasedUpatePolicy = new HashMap<Policy, JRadioButton>();
+        rbVersionBasedUpatePolicy = new HashMap<>();
         JRadioButton btn = new JRadioButton(tr("Ask before updating"));
         rbVersionBasedUpatePolicy.put(Policy.ASK, btn);
         bgVersionBasedUpdatePolicy.add(btn);
@@ -108,7 +108,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         TimeBasedPolicyChangeListener changeListener = new TimeBasedPolicyChangeListener();
 
         ButtonGroup bgTimeBasedUpdatePolicy = new ButtonGroup();
-        rbTimeBasedUpatePolicy = new HashMap<Policy, JRadioButton>();
+        rbTimeBasedUpatePolicy = new HashMap<>();
         JRadioButton btn = new JRadioButton(tr("Ask before updating"));
         btn.addChangeListener(changeListener);
         rbTimeBasedUpatePolicy.put(Policy.ASK, btn);

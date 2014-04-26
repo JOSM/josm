@@ -126,7 +126,7 @@ public abstract class SourceEditor extends JPanel {
         
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         this.availableSourcesModel = new AvailableSourcesListModel(selectionModel);
-        this.lstAvailableSources = new JList<ExtendedSourceEntry>(availableSourcesModel);
+        this.lstAvailableSources = new JList<>(availableSourcesModel);
         this.lstAvailableSources.setSelectionModel(selectionModel);
         this.lstAvailableSources.setCellRenderer(new SourceEntryListCellRenderer());
         this.availableSourcesUrl = availableSourcesUrl;
@@ -445,7 +445,7 @@ public abstract class SourceEditor extends JPanel {
         private DefaultListSelectionModel selectionModel;
 
         public AvailableSourcesListModel(DefaultListSelectionModel selectionModel) {
-            data = new ArrayList<ExtendedSourceEntry>();
+            data = new ArrayList<>();
             this.selectionModel = selectionModel;
         }
 
@@ -482,7 +482,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public List<ExtendedSourceEntry> getSelected() {
-            List<ExtendedSourceEntry> ret = new ArrayList<ExtendedSourceEntry>();
+            List<ExtendedSourceEntry> ret = new ArrayList<>();
             for(int i=0; i<data.size();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     ret.add(data.get(i));
@@ -498,7 +498,7 @@ public abstract class SourceEditor extends JPanel {
 
         public ActiveSourcesModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-            this.data = new ArrayList<SourceEntry>();
+            this.data = new ArrayList<>();
         }
 
         @Override
@@ -574,7 +574,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public void removeIdxs(Collection<Integer> idxs) {
-            List<SourceEntry> newData = new ArrayList<SourceEntry>();
+            List<SourceEntry> newData = new ArrayList<>();
             for (int i=0; i<data.size(); ++i) {
                 if (!idxs.contains(i)) {
                     newData.add(data.get(i));
@@ -600,7 +600,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public List<SourceEntry> getSources() {
-            return new ArrayList<SourceEntry>(data);
+            return new ArrayList<>(data);
         }
 
         public boolean canMove(int i) {
@@ -982,7 +982,7 @@ public abstract class SourceEditor extends JPanel {
             List<ExtendedSourceEntry> sources = availableSourcesModel.getSelected();
             int josmVersion = Version.getInstance().getVersion();
             if (josmVersion != Version.JOSM_UNKNOWN_VERSION) {
-                Collection<String> messages = new ArrayList<String>();
+                Collection<String> messages = new ArrayList<>();
                 for (ExtendedSourceEntry entry : sources) {
                     if (entry.minJosmVersion != null && entry.minJosmVersion > josmVersion) {
                         messages.add(tr("Entry ''{0}'' requires JOSM Version {1}. (Currently running: {2})",
@@ -1053,7 +1053,7 @@ public abstract class SourceEditor extends JPanel {
 
         public IconPathTableModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-            this.data = new ArrayList<String>();
+            this.data = new ArrayList<>();
         }
 
         @Override
@@ -1144,7 +1144,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public List<String> getIconPaths() {
-            return new ArrayList<String>(data);
+            return new ArrayList<>(data);
         }
     }
 
@@ -1236,7 +1236,7 @@ public abstract class SourceEditor extends JPanel {
         private final List<SourceProvider> sourceProviders;
         private BufferedReader reader;
         private boolean canceled;
-        private final List<ExtendedSourceEntry> sources = new ArrayList<ExtendedSourceEntry>();
+        private final List<ExtendedSourceEntry> sources = new ArrayList<>();
 
         public SourceLoader(String url, List<SourceProvider> sourceProviders) {
             super(tr(getStr(I18nString.LOADING_SOURCES_FROM), url));
@@ -1422,7 +1422,7 @@ public abstract class SourceEditor extends JPanel {
 
         public FileOrUrlCellEditor(boolean isFile) {
             this.isFile = isFile;
-            listeners = new CopyOnWriteArrayList<CellEditorListener>();
+            listeners = new CopyOnWriteArrayList<>();
             build();
         }
 
@@ -1574,9 +1574,9 @@ public abstract class SourceEditor extends JPanel {
             if (src == null)
                 return new ArrayList<SourceEntry>(getDefault());
 
-            List<SourceEntry> entries = new ArrayList<SourceEntry>();
+            List<SourceEntry> entries = new ArrayList<>();
             for (Map<String, String> sourcePref : src) {
-                SourceEntry e = deserialize(new HashMap<String, String>(sourcePref));
+                SourceEntry e = deserialize(new HashMap<>(sourcePref));
                 if (e != null) {
                     entries.add(e);
                 }
@@ -1585,7 +1585,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public boolean put(Collection<? extends SourceEntry> entries) {
-            Collection<Map<String, String>> setting = new ArrayList<Map<String, String>>(entries.size());
+            Collection<Map<String, String>> setting = new ArrayList<>(entries.size());
             for (SourceEntry e : entries) {
                 setting.add(serialize(e));
             }
@@ -1597,7 +1597,7 @@ public abstract class SourceEditor extends JPanel {
          * @return The set of active source URLs.
          */
         public final Set<String> getActiveUrls() {
-            Set<String> urls = new HashSet<String>();
+            Set<String> urls = new HashSet<>();
             for (SourceEntry e : get()) {
                 if (e.active) {
                     urls.add(e.url);

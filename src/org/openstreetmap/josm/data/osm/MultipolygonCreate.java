@@ -48,7 +48,7 @@ public class MultipolygonCreate {
          * @return list of nodes
          */
         private List<Node> getNodes() {
-            List<Node> nodes = new ArrayList<Node>();
+            List<Node> nodes = new ArrayList<>();
 
             for(int waypos = 0; waypos < this.ways.size(); waypos ++) {
                 Way way = this.ways.get(waypos);
@@ -84,7 +84,7 @@ public class MultipolygonCreate {
         public PolygonLevel(JoinedPolygon _pol, int _level) {
             this.outerWay = _pol;
             this.level = _level;
-            this.innerWays = new ArrayList<JoinedPolygon>();
+            this.innerWays = new ArrayList<>();
         }
     }
 
@@ -97,8 +97,8 @@ public class MultipolygonCreate {
     }
 
     public MultipolygonCreate(){
-        this.outerWays = new ArrayList<JoinedPolygon>(0);
-        this.innerWays = new ArrayList<JoinedPolygon>(0);
+        this.outerWays = new ArrayList<>(0);
+        this.innerWays = new ArrayList<>(0);
     }
 
     /**
@@ -108,11 +108,11 @@ public class MultipolygonCreate {
      * @return error description if the ways cannot be split, {@code null} if all fine.
      */
     public String makeFromWays(Collection<Way> ways){
-        List<JoinedPolygon> joinedWays = new ArrayList<JoinedPolygon>();
+        List<JoinedPolygon> joinedWays = new ArrayList<>();
 
         //collect ways connecting to each node.
-        MultiMap<Node, Way> nodesWithConnectedWays = new MultiMap<Node, Way>();
-        Set<Way> usedWays = new HashSet<Way>();
+        MultiMap<Node, Way> nodesWithConnectedWays = new MultiMap<>();
+        Set<Way> usedWays = new HashSet<>();
 
         for(Way w: ways) {
             if (w.getNodesCount() < 2) {
@@ -138,8 +138,8 @@ public class MultipolygonCreate {
             }
 
             Node startNode = startWay.firstNode();
-            List<Way> collectedWays = new ArrayList<Way>();
-            List<Boolean> collectedWaysReverse = new ArrayList<Boolean>();
+            List<Way> collectedWays = new ArrayList<>();
+            List<Boolean> collectedWaysReverse = new ArrayList<>();
             Way curWay = startWay;
             Node prevNode = startNode;
 
@@ -196,8 +196,8 @@ public class MultipolygonCreate {
             return tr("There is an intersection between ways.");
         }
 
-        this.outerWays = new ArrayList<JoinedPolygon>(0);
-        this.innerWays = new ArrayList<JoinedPolygon>(0);
+        this.outerWays = new ArrayList<>(0);
+        this.innerWays = new ArrayList<>(0);
 
         //take every other level
         for (PolygonLevel pol : list) {
@@ -220,12 +220,12 @@ public class MultipolygonCreate {
     private List<PolygonLevel> findOuterWaysRecursive(int level, Collection<JoinedPolygon> boundaryWays) {
 
         //TODO: bad performance for deep nesting...
-        List<PolygonLevel> result = new ArrayList<PolygonLevel>();
+        List<PolygonLevel> result = new ArrayList<>();
 
         for (JoinedPolygon outerWay : boundaryWays) {
 
             boolean outerGood = true;
-            List<JoinedPolygon> innerCandidates = new ArrayList<JoinedPolygon>();
+            List<JoinedPolygon> innerCandidates = new ArrayList<>();
 
             for (JoinedPolygon innerWay : boundaryWays) {
                 if (innerWay == outerWay) {

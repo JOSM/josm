@@ -22,8 +22,8 @@ public class ExpertToggleAction extends ToggleAction {
         void expertChanged(boolean isExpert);
     }
 
-    private static final List<WeakReference<ExpertModeChangeListener>> listeners = new ArrayList<WeakReference<ExpertModeChangeListener>>();
-    private static final List<WeakReference<Component>> visibilityToggleListeners = new ArrayList<WeakReference<Component>>();
+    private static final List<WeakReference<ExpertModeChangeListener>> listeners = new ArrayList<>();
+    private static final List<WeakReference<Component>> visibilityToggleListeners = new ArrayList<>();
 
     private static final ExpertToggleAction INSTANCE = new ExpertToggleAction();
 
@@ -69,7 +69,7 @@ public class ExpertToggleAction extends ToggleAction {
             // already registered ? => abort
             if (wr.get() == listener) return;
         }
-        listeners.add(new WeakReference<ExpertModeChangeListener>(listener));
+        listeners.add(new WeakReference<>(listener));
         if (fireWhenAdding) {
             listener.expertChanged(isExpert());
         }
@@ -99,7 +99,7 @@ public class ExpertToggleAction extends ToggleAction {
             // already registered ? => abort
             if (wr.get() == c) return;
         }
-        visibilityToggleListeners.add(new WeakReference<Component>(c));
+        visibilityToggleListeners.add(new WeakReference<>(c));
         c.setVisible(isExpert());
     }
 

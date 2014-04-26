@@ -60,7 +60,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      */
     public HistoryLoadTask() {
         super(tr("Load history"), true);
-        toLoad = new HashSet<PrimitiveId>();
+        toLoad = new HashSet<>();
     }
 
     /**
@@ -74,7 +74,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     public HistoryLoadTask(Component parent) {
         super(parent, tr("Load history"), true);
         CheckParameterUtil.ensureParameterNotNull(parent, "parent");
-        toLoad = new HashSet<PrimitiveId>();
+        toLoad = new HashSet<>();
     }
 
     /**

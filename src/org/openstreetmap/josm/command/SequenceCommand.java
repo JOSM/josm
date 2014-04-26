@@ -107,7 +107,7 @@ public class SequenceCommand extends Command {
 
     @Override
     public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
-        Collection<OsmPrimitive> prims = new HashSet<OsmPrimitive>();
+        Collection<OsmPrimitive> prims = new HashSet<>();
         for (Command c : sequence) {
             prims.addAll(c.getParticipatingPrimitives());
         }

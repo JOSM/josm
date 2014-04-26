@@ -29,7 +29,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
             throw new IllegalDataException(tr("Version ''{0}'' of meta data for geoimage layer is not supported. Expected: 0.1", version));
         }
 
-        List<ImageEntry> entries = new ArrayList<ImageEntry>();
+        List<ImageEntry> entries = new ArrayList<>();
         NodeList imgNodes = elem.getChildNodes();
         boolean useThumbs = false;
         for (int i=0; i<imgNodes.getLength(); ++i) {

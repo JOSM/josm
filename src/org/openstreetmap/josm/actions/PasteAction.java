@@ -105,11 +105,11 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         double offsetNorth = mPosition.north() - (maxNorth + minNorth)/2.0;
 
         // Make a copy of pasteBuffer and map from old id to copied data id
-        List<PrimitiveData> bufferCopy = new ArrayList<PrimitiveData>();
-        List<PrimitiveData> toSelect = new ArrayList<PrimitiveData>();
-        Map<Long, Long> newNodeIds = new HashMap<Long, Long>();
-        Map<Long, Long> newWayIds = new HashMap<Long, Long>();
-        Map<Long, Long> newRelationIds = new HashMap<Long, Long>();
+        List<PrimitiveData> bufferCopy = new ArrayList<>();
+        List<PrimitiveData> toSelect = new ArrayList<>();
+        Map<Long, Long> newNodeIds = new HashMap<>();
+        Map<Long, Long> newWayIds = new HashMap<>();
+        Map<Long, Long> newRelationIds = new HashMap<>();
         for (PrimitiveData data: pasteBuffer.getAll()) {
             if (data.isIncomplete()) {
                 continue;
@@ -137,7 +137,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
                     nodeData.setEastNorth(nodeData.getEastNorth().add(offsetEast, offsetNorth));
                 }
             } else if (data instanceof WayData) {
-                List<Long> newNodes = new ArrayList<Long>();
+                List<Long> newNodes = new ArrayList<>();
                 for (Long oldNodeId: ((WayData)data).getNodes()) {
                     Long newNodeId = newNodeIds.get(oldNodeId);
                     if (newNodeId != null) {
@@ -146,7 +146,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
                 }
                 ((WayData)data).setNodes(newNodes);
             } else if (data instanceof RelationData) {
-                List<RelationMemberData> newMembers = new ArrayList<RelationMemberData>();
+                List<RelationMemberData> newMembers = new ArrayList<>();
                 for (RelationMemberData member: ((RelationData)data).getMembers()) {
                     OsmPrimitiveType memberType = member.getMemberType();
                     Long newId = null;

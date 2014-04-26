@@ -70,7 +70,7 @@ public class PrefJPanel extends JPanel {
     private static Map<Integer, String> keyList = setKeyList();
 
     private static Map<Integer, String> setKeyList() {
-        Map<Integer, String> list = new LinkedHashMap<Integer, String>();
+        Map<Integer, String> list = new LinkedHashMap<>();
         String unknown = Toolkit.getProperty("AWT.unknown", "Unknown");
         // Assume all known keys are declared in KeyEvent as "public static int VK_*"
         for (Field field : KeyEvent.class.getFields()) {
@@ -366,7 +366,7 @@ public class PrefJPanel extends JPanel {
                 } else {
                     expr = expr.replace("+", "\\+");
                     // split search string on whitespace, do case-insensitive AND search
-                    List<RowFilter<Object, Object>> andFilters = new ArrayList<RowFilter<Object, Object>>();
+                    List<RowFilter<Object, Object>> andFilters = new ArrayList<>();
                     for (String word : expr.split("\\s+")) {
                         andFilters.add(RowFilter.regexFilter("(?i)" + word));
                     }

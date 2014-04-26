@@ -165,7 +165,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         } catch (SecurityException ex) {
             Main.warn(ex);
         }
-        sourceWays = new LinkedHashSet<Way>(getCurrentDataSet().getSelectedWays());
+        sourceWays = new LinkedHashSet<>(getCurrentDataSet().getSelectedWays());
         for (Way w : sourceWays) {
             w.setHighlighted(true);
         }

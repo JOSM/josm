@@ -73,7 +73,7 @@ public class PreferencesTable extends JTable {
      * @return newly created list of PrefEntry
      */
     public List<PrefEntry> getSelectedItems() {
-        List<PrefEntry> entries = new ArrayList<PrefEntry>();
+        List<PrefEntry> entries = new ArrayList<>();
         for (int row : getSelectedRows()) {
             PrefEntry p = (PrefEntry) model.getValueAt(row, -1);
             entries.add(p);

@@ -63,7 +63,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
     /**
      * List of available rectifier services. May be extended from the outside
      */
-    public List<RectifierService> services = new ArrayList<RectifierService>();
+    public List<RectifierService> services = new ArrayList<>();
 
     public MapRectifierWMSmenuAction() {
         super(tr("Rectified Image..."),

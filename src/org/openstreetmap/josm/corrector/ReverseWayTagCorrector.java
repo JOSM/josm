@@ -45,7 +45,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         }
     }
 
-    private static final Collection<Pattern> ignoredKeys = new ArrayList<Pattern>();
+    private static final Collection<Pattern> ignoredKeys = new ArrayList<>();
     static {
         for (String s : OsmPrimitive.getUninterestingKeys()) {
             ignoredKeys.add(getPatternFor(s));
@@ -175,7 +175,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     }
 
     public static List<Way> irreversibleWays(List<Way> ways) {
-        List<Way> newWays = new ArrayList<Way>(ways);
+        List<Way> newWays = new ArrayList<>(ways);
         for (Way way : ways) {
             if (isReversible(way)) {
                 newWays.remove(way);
@@ -196,10 +196,9 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
     @Override
     public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
-        Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap =
-            new HashMap<OsmPrimitive, List<TagCorrection>>();
+        Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap = new HashMap<>();
 
-        List<TagCorrection> tagCorrections = new ArrayList<TagCorrection>();
+        List<TagCorrection> tagCorrections = new ArrayList<>();
         for (String key : way.keySet()) {
             String value = way.get(key);
             Tag newTag = TagSwitcher.apply(key, value);
@@ -222,9 +221,8 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             tagCorrectionsMap.put(way, tagCorrections);
         }
 
-        Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap =
-            new HashMap<OsmPrimitive, List<RoleCorrection>>();
-        List<RoleCorrection> roleCorrections = new ArrayList<RoleCorrection>();
+        Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap = new HashMap<>();
+        List<RoleCorrection> roleCorrections = new ArrayList<>();
 
         Collection<OsmPrimitive> referrers = oldway.getReferrers();
         for (OsmPrimitive referrer: referrers) {

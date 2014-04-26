@@ -285,8 +285,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
      */
     private Collection<OsmPrimitive> getAffectedPrimitives(Collection<? extends OsmPrimitive> primitives) {
         // Filters can use nested parent/child expression so complete tree is necessary
-        Set<OsmPrimitive> result = new HashSet<OsmPrimitive>();
-        Stack<OsmPrimitive> stack = new Stack<OsmPrimitive>();
+        Set<OsmPrimitive> result = new HashSet<>();
+        Stack<OsmPrimitive> stack = new Stack<>();
         stack.addAll(primitives);
 
         while (!stack.isEmpty()) {
@@ -367,7 +367,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
         @Override
         public List<MultikeyInfo> getMultikeyCombinations() {
-            List<MultikeyInfo> result = new ArrayList<MultikeyShortcutAction.MultikeyInfo>();
+            List<MultikeyInfo> result = new ArrayList<>();
 
             for (int i=0; i<filterModel.getRowCount(); i++) {
                 Filter filter = filterModel.getFilter(i);

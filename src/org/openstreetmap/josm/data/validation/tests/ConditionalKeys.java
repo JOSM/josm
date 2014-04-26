@@ -22,15 +22,18 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 public class ConditionalKeys extends Test.TagTest {
 
     final OpeningHourTest openingHourTest = new OpeningHourTest();
-    static final Set<String> RESTRICTION_TYPES = new HashSet<String>(Arrays.asList("oneway", "toll", "noexit", "maxspeed", "minspeed",
+    static final Set<String> RESTRICTION_TYPES = new HashSet<>(Arrays.asList("oneway", "toll", "noexit", "maxspeed", "minspeed",
             "maxweight", "maxaxleload", "maxheight", "maxwidth", "maxlength", "overtaking", "maxgcweight", "maxgcweightrating", "fee"));
-    static final Set<String> RESTRICTION_VALUES = new HashSet<String>(Arrays.asList("yes", "official", "designated", "destination",
+    static final Set<String> RESTRICTION_VALUES = new HashSet<>(Arrays.asList("yes", "official", "designated", "destination",
             "delivery", "permissive", "private", "agricultural", "forestry", "no"));
-    static final Set<String> TRANSPORT_MODES = new HashSet<String>(Arrays.asList("access", "foot", "ski", "inline_skates", "ice_skates",
+    static final Set<String> TRANSPORT_MODES = new HashSet<>(Arrays.asList("access", "foot", "ski", "inline_skates", "ice_skates",
             "horse", "vehicle", "bicycle", "carriage", "trailer", "caravan", "motor_vehicle", "motorcycle", "moped", "mofa",
             "motorcar", "motorhome", "psv", "bus", "taxi", "tourist_bus", "goods", "hgv", "agricultural", "atv", "snowmobile"
             /*,"hov","emergency","hazmat","disabled"*/));
 
+    /**
+     * Constructs a new {@code ConditionalKeys}.
+     */
     public ConditionalKeys() {
         super(tr("Conditional Keys"), tr("Tests for the correct usage of ''*:conditional'' tags."));
     }
@@ -93,7 +96,7 @@ public class ConditionalKeys extends Test.TagTest {
 
         public static List<ConditionalValue> parse(String value) throws ConditionalParsingException {
             // <restriction-value> @ <condition>[;<restriction-value> @ <condition>]
-            final List<ConditionalValue> r = new ArrayList<ConditionalValue>();
+            final List<ConditionalValue> r = new ArrayList<>();
             final Pattern part = Pattern.compile("([^@\\p{Space}][^@]*?)" + "\\s*@\\s*" + "(\\([^)\\p{Space}][^)]+?\\)|[^();\\p{Space}][^();]*?)\\s*");
             final Matcher m = Pattern.compile("(" + part + ")(;\\s*" + part + ")*").matcher(value);
             if (!m.matches()) {
@@ -136,7 +139,7 @@ public class ConditionalKeys extends Test.TagTest {
     }
 
     public List<TestError> validatePrimitive(OsmPrimitive p) {
-        final List<TestError> errors = new ArrayList<TestError>();
+        final List<TestError> errors = new ArrayList<>();
         for (final String key : Utils.filter(p.keySet(), Predicates.stringMatchesPattern(Pattern.compile(".*:conditional$")))) {
             if (!isKeyValid(key)) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Wrong syntax in {0} key", key), 3201, p));

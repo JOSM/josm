@@ -110,16 +110,16 @@ public class Highways extends Test {
     }
 
     private void testWrongRoundabout(Way w) {
-        Map<String, List<Way>> map = new HashMap<String, List<Way>>();
+        Map<String, List<Way>> map = new HashMap<>();
         // Count all highways (per type) connected to this roundabout, except links
         // As roundabouts are closed ways, take care of not processing the first/last node twice
-        for (Node n : new HashSet<Node>(w.getNodes())) {
+        for (Node n : new HashSet<>(w.getNodes())) {
             for (Way h : Utils.filteredCollection(n.getReferrers(), Way.class)) {
                 String value = h.get("highway");
                 if (h != w && value != null && !value.endsWith("_link")) {
                     List<Way> list = map.get(value);
                     if (list == null) {
-                        map.put(value, list = new ArrayList<Way>());
+                        map.put(value, list = new ArrayList<>());
                     }
                     list.add(h);
                 }
@@ -149,7 +149,7 @@ public class Highways extends Test {
             return true;
         }
 
-        final HashSet<OsmPrimitive> referrers = new HashSet<OsmPrimitive>();
+        final HashSet<OsmPrimitive> referrers = new HashSet<>();
         referrers.addAll(way.firstNode().getReferrers());
         referrers.addAll(way.lastNode().getReferrers());
 

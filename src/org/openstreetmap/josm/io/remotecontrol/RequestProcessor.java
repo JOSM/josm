@@ -60,7 +60,7 @@ public class RequestProcessor extends Thread {
      * Will be initialized with default handlers here. Other plug-ins
      * can extend this list by using @see addRequestHandler
      */
-    private static Map<String, Class<? extends RequestHandler>> handlers = new TreeMap<String, Class<? extends RequestHandler>>();
+    private static Map<String, Class<? extends RequestHandler>> handlers = new TreeMap<>();
 
     /**
      * Constructor
@@ -173,7 +173,7 @@ public class RequestProcessor extends Thread {
 
             String command = questionPos < 0 ? url : url.substring(0, questionPos);
 
-            Map <String,String> headers = new HashMap<String, String>();
+            Map <String,String> headers = new HashMap<>();
             int k=0, MAX_HEADERS=20;
             while (k<MAX_HEADERS) {
                 get=in.readLine();

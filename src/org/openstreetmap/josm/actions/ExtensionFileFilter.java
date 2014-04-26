@@ -42,7 +42,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
     static {
 
-        importers = new ArrayList<FileImporter>();
+        importers = new ArrayList<>();
 
         String[] importerNames = {
                 "org.openstreetmap.josm.io.OsmImporter",
@@ -68,7 +68,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
             }
         }
 
-        exporters = new ArrayList<FileExporter>();
+        exporters = new ArrayList<>();
 
         String[] exporterNames = {
                 "org.openstreetmap.josm.io.GpxExporter",
@@ -137,7 +137,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
         updateAllFormatsImporter();
-        LinkedList<ExtensionFileFilter> filters = new LinkedList<ExtensionFileFilter>();
+        LinkedList<ExtensionFileFilter> filters = new LinkedList<>();
         for (FileImporter importer : importers) {
             filters.add(importer.filter);
         }
@@ -154,7 +154,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 2029
      */
     public static List<ExtensionFileFilter> getExportExtensionFileFilters() {
-        LinkedList<ExtensionFileFilter> filters = new LinkedList<ExtensionFileFilter>();
+        LinkedList<ExtensionFileFilter> filters = new LinkedList<>();
         for (FileExporter exporter : exporters) {
             if (filters.contains(exporter.filter) || !exporter.isEnabled()) {
                 continue;

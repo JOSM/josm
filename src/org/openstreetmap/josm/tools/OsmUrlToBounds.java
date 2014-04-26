@@ -43,7 +43,7 @@ public final class OsmUrlToBounds {
             return null;
         }
         String[] args = url.substring(i+1).split("&");
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         for (String arg : args) {
             int eq = arg.indexOf('=');
             if (eq != -1) {
@@ -145,7 +145,7 @@ public final class OsmUrlToBounds {
             return null;
         final String shortLink = url.substring(SHORTLINK_PREFIX.length());
 
-        final Map<Character, Integer> array = new HashMap<Character, Integer>();
+        final Map<Character, Integer> array = new HashMap<>();
 
         for (int i=0; i<SHORTLINK_CHARS.length; ++i) {
             array.put(SHORTLINK_CHARS[i], i);
@@ -228,7 +228,7 @@ public final class OsmUrlToBounds {
         double x = Math.floor((lon + 180) / 360 * Math.pow(2.0, zoom));
         double y = Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI)
                 / 2 * Math.pow(2.0, zoom));
-        return new Pair<Double, Double>(x, y);
+        return new Pair<>(x, y);
     }
 
     public static LatLon getLatLonOfTile(double x, double y, double zoom) {

@@ -244,7 +244,7 @@ public class CacheFiles {
     public void cleanUp() {
         if(!this.enabled || maxsize == -1) return;
 
-        TreeMap<Long, File> modtime = new TreeMap<Long, File>();
+        TreeMap<Long, File> modtime = new TreeMap<>();
         long dirsize = 0;
 
         for(File f : dir.listFiles()) {

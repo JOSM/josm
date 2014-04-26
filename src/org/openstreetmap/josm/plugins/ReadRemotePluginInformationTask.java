@@ -63,7 +63,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         if (sites == null) {
             this.sites = Collections.emptySet();
         }
-        this.availablePlugins = new LinkedList<PluginInformation>();
+        this.availablePlugins = new LinkedList<>();
         this.displayErrMsg = displayErrMsg;
     }
     /**
@@ -349,8 +349,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      * @return the plugin informations, without deprecated plugins
      */
     protected List<PluginInformation> filterDeprecatedPlugins(List<PluginInformation> plugins) {
-        List<PluginInformation> ret = new ArrayList<PluginInformation>(plugins.size());
-        HashSet<String> deprecatedPluginNames = new HashSet<String>();
+        List<PluginInformation> ret = new ArrayList<>(plugins.size());
+        HashSet<String> deprecatedPluginNames = new HashSet<>();
         for (PluginHandler.DeprecatedPlugin p : PluginHandler.DEPRECATED_PLUGINS) {
             deprecatedPluginNames.add(p.name);
         }
@@ -388,7 +388,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         File pluginDir = Main.pref.getPluginsDirectory();
 
         // collect old cache files and remove if no longer in use
-        List<File> siteCacheFiles = new LinkedList<File>();
+        List<File> siteCacheFiles = new LinkedList<>();
         for (String location : PluginInformation.getPluginLocations()) {
             File [] f = new File(location).listFiles(
                     new FilenameFilter() {

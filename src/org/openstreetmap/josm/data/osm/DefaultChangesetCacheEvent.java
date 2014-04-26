@@ -15,9 +15,9 @@ public class DefaultChangesetCacheEvent implements ChangesetCacheEvent{
 
     public DefaultChangesetCacheEvent(ChangesetCache source) {
         this.source = source;
-        added = new HashSet<Changeset>();
-        modified = new HashSet<Changeset>();
-        removed = new HashSet<Changeset>();
+        added = new HashSet<>();
+        modified = new HashSet<>();
+        removed = new HashSet<>();
     }
 
     @Override

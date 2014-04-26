@@ -36,7 +36,7 @@ public class RemoveNodesCommand extends Command {
      */
     public RemoveNodesCommand(Way way, List<Node> rmNodes) {
         this.way = way;
-        this.rmNodes = new HashSet<Node>(rmNodes);
+        this.rmNodes = new HashSet<>(rmNodes);
     }
 
     @Override

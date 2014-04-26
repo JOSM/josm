@@ -167,8 +167,8 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         }
 
         // draw tagged ways first, then untagged ways, then highlighted ways
-        List<Way> highlightedWays = new ArrayList<Way>();
-        List<Way> untaggedWays = new ArrayList<Way>();
+        List<Way> highlightedWays = new ArrayList<>();
+        List<Way> untaggedWays = new ArrayList<>();
 
         for (final Way way : data.searchWays(bbox)){
             if (way.isDrawable() && !ds.isSelected(way) && !way.isDisabledAndHidden()) {

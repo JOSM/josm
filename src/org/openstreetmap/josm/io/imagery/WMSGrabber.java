@@ -40,7 +40,7 @@ public class WMSGrabber extends Grabber {
 
     protected String baseURL;
     private ImageryInfo info;
-    private Map<String, String> props = new HashMap<String, String>();
+    private Map<String, String> props = new HashMap<>();
 
     public WMSGrabber(MapView mv, WMSLayer layer, boolean localOnly) {
         super(mv, layer, localOnly);

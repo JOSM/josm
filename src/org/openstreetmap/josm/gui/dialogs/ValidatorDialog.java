@@ -97,7 +97,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         addTreeSelectionListener(new SelectionWatch());
         InputMapUtils.unassignCtrlShiftUpDown(tree, JComponent.WHEN_FOCUSED);
 
-        List<SideButton> buttons = new LinkedList<SideButton>();
+        List<SideButton> buttons = new LinkedList<>();
 
         selectButton = new SideButton(new AbstractAction() {
             {
@@ -189,9 +189,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (selectionPaths == null)
             return;
 
-        Set<DefaultMutableTreeNode> processedNodes = new HashSet<DefaultMutableTreeNode>();
+        Set<DefaultMutableTreeNode> processedNodes = new HashSet<>();
 
-        LinkedList<TestError> errorsToFix = new LinkedList<TestError>();
+        LinkedList<TestError> errorsToFix = new LinkedList<>();
         for (TreePath path : selectionPaths) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
             if (node == null) {
@@ -230,7 +230,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (selectionPaths == null)
             return;
 
-        Set<DefaultMutableTreeNode> processedNodes = new HashSet<DefaultMutableTreeNode>();
+        Set<DefaultMutableTreeNode> processedNodes = new HashSet<>();
         for (TreePath path : selectionPaths) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
             if (node == null) {
@@ -239,7 +239,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
             Object mainNodeInfo = node.getUserObject();
             if (!(mainNodeInfo instanceof TestError)) {
-                Set<String> state = new HashSet<String>();
+                Set<String> state = new HashSet<>();
                 // ask if the whole set should be ignored
                 if (asked == JOptionPane.DEFAULT_OPTION) {
                     String[] a = new String[] { tr("Whole group"), tr("Single elements"), tr("Nothing") };
@@ -308,7 +308,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (tree == null)
             return;
 
-        Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>(40);
+        Collection<OsmPrimitive> sel = new HashSet<>(40);
 
         TreePath[] selectedPaths = tree.getSelectionPaths();
         if (selectedPaths == null)
@@ -547,7 +547,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (newSelection.isEmpty()) {
             tree.setFilter(null);
         }
-        HashSet<OsmPrimitive> filter = new HashSet<OsmPrimitive>(newSelection);
+        HashSet<OsmPrimitive> filter = new HashSet<>(newSelection);
         tree.setFilter(filter);
     }
 

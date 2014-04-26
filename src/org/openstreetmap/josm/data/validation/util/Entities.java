@@ -385,7 +385,7 @@ public class Entities {
                     } else { // escaped value content is an entity name
                         if(mapNameToValue == null)
                         {
-                            mapNameToValue = new HashMap<String, String>();
+                            mapNameToValue = new HashMap<>();
                             for (String[] pair : ARRAY)
                                 mapNameToValue.put(pair[0], pair[1]);
                         }

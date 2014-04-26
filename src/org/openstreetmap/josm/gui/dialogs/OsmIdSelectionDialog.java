@@ -156,7 +156,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
      * @param cbHistory the {@link HistoryComboBox} to which the history is restored to
      */
     protected void restorePrimitivesHistory(HistoryComboBox cbHistory) {
-        java.util.List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(getClass().getName() + ".primitivesHistory", new LinkedList<String>()));
+        java.util.List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(getClass().getName() + ".primitivesHistory", new LinkedList<String>()));
         // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         Collections.reverse(cmtHistory);
         cbHistory.setPossibleItems(cmtHistory);
@@ -207,7 +207,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
                 }
             }));
             tfId.tryToPasteFrom(parsedText);
-            final Set<OsmPrimitiveType> types = new HashSet<OsmPrimitiveType>(Utils.transform(ids, new Utils.Function<SimplePrimitiveId, OsmPrimitiveType>() {
+            final Set<OsmPrimitiveType> types = new HashSet<>(Utils.transform(ids, new Utils.Function<SimplePrimitiveId, OsmPrimitiveType>() {
                 @Override
                 public OsmPrimitiveType apply(SimplePrimitiveId x) {
                     return x.getType();

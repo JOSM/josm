@@ -300,7 +300,7 @@ public class FileDrop
     private static File[] createFileArray(BufferedReader bReader)
     {
         try {
-            List<File> list = new ArrayList<File>();
+            List<File> list = new ArrayList<>();
             String line = null;
             while ((line = bReader.readLine()) != null) {
                 try {

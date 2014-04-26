@@ -156,18 +156,18 @@ public abstract class UnconnectedWays extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        ways = new HashSet<MyWaySegment>();
-        endnodes = new QuadBuckets<Node>();
-        endnodes_highway = new QuadBuckets<Node>();
-        middlenodes = new QuadBuckets<Node>();
-        othernodes = new HashSet<Node>();
+        ways = new HashSet<>();
+        endnodes = new QuadBuckets<>();
+        endnodes_highway = new QuadBuckets<>();
+        middlenodes = new QuadBuckets<>();
+        othernodes = new HashSet<>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
         dsArea = Main.main == null || !Main.main.hasEditLayer() ? null : Main.main.getCurrentDataSet().getDataSourceArea();
     }
 
     protected Map<Node, Way> getWayEndNodesNearOtherHighway() {
-        Map<Node, Way> map = new HashMap<Node, Way>();
+        Map<Node, Way> map = new HashMap<>();
         for (int iter = 0; iter < 1; iter++) {
             for (MyWaySegment s : ways) {
                 if (isCanceled()) {
@@ -198,7 +198,7 @@ public abstract class UnconnectedWays extends Test {
     }
 
     protected Map<Node, Way> getWayEndNodesNearOtherWay() {
-        Map<Node, Way> map = new HashMap<Node, Way>();
+        Map<Node, Way> map = new HashMap<>();
         for (MyWaySegment s : ways) {
             if (isCanceled()) {
                 map.clear();
@@ -219,7 +219,7 @@ public abstract class UnconnectedWays extends Test {
     }
 
     protected Map<Node, Way> getWayNodesNearOtherWay() {
-        Map<Node, Way> map = new HashMap<Node, Way>();
+        Map<Node, Way> map = new HashMap<>();
         for (MyWaySegment s : ways) {
             if (isCanceled()) {
                 map.clear();
@@ -239,7 +239,7 @@ public abstract class UnconnectedWays extends Test {
     }
 
     protected Map<Node, Way> getConnectedWayEndNodesNearOtherWay() {
-        Map<Node, Way> map = new HashMap<Node, Way>();
+        Map<Node, Way> map = new HashMap<>();
         for (MyWaySegment s : ways) {
             if (isCanceled()) {
                 map.clear();
@@ -347,7 +347,7 @@ public abstract class UnconnectedWays extends Test {
             }
             LatLon topLeft  = new LatLon(y2+fudge, x1-fudge);
             LatLon botRight = new LatLon(y1-fudge, x2+fudge);
-            List<LatLon> ret = new ArrayList<LatLon>(2);
+            List<LatLon> ret = new ArrayList<>(2);
             ret.add(topLeft);
             ret.add(botRight);
             return ret;
@@ -367,8 +367,8 @@ public abstract class UnconnectedWays extends Test {
                     // Used the cached result and trim out
                     // the nodes that are not in the smaller
                     // area, but keep the old larger cache.
-                    Set<Node> trimmed = new HashSet<Node>(nearbyNodeCache);
-                    Set<Node> initial = new HashSet<Node>(nearbyNodeCache);
+                    Set<Node> trimmed = new HashSet<>(nearbyNodeCache);
+                    Set<Node> initial = new HashSet<>(nearbyNodeCache);
                     for (Node n : initial) {
                         if (!nearby(n, dist)) {
                             trimmed.remove(n);
@@ -399,7 +399,7 @@ public abstract class UnconnectedWays extends Test {
                 // so defer as much of the work as possible, like
                 // allocating the hash set
                 if (nearbyNodeCache == null) {
-                    nearbyNodeCache = new HashSet<Node>();
+                    nearbyNodeCache = new HashSet<>();
                 }
                 nearbyNodeCache.add(n);
             }
@@ -412,7 +412,7 @@ public abstract class UnconnectedWays extends Test {
     }
 
     List<MyWaySegment> getWaySegments(Way w) {
-        List<MyWaySegment> ret = new ArrayList<MyWaySegment>();
+        List<MyWaySegment> ret = new ArrayList<>();
         if (!w.isUsable()
                 || w.hasKey("barrier")
                 || w.hasTag("natural", "cliff"))

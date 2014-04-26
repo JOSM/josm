@@ -66,7 +66,7 @@ public class DownloadDialog extends JDialog  {
     }
 
     protected SlippyMapChooser slippyMapChooser;
-    protected final List<DownloadSelection> downloadSelections = new ArrayList<DownloadSelection>();
+    protected final List<DownloadSelection> downloadSelections = new ArrayList<>();
     protected final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
     protected JCheckBox cbNewLayer;
     protected JCheckBox cbStartup;

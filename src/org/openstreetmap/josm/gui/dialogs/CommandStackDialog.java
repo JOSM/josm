@@ -225,7 +225,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     /**
      * Simple listener setup to update the button enabled state when the side dialog shows.
      */
-    Set<IEnabledStateUpdating> showNotifyListener = new LinkedHashSet<IEnabledStateUpdating>();
+    Set<IEnabledStateUpdating> showNotifyListener = new LinkedHashSet<>();
 
     private void addShowNotifyListener(IEnabledStateUpdating listener) {
         showNotifyListener.add(listener);
@@ -303,7 +303,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     protected CommandListMutableTreeNode getNodeForCommand(PseudoCommand c, int idx) {
         CommandListMutableTreeNode node = new CommandListMutableTreeNode(c, idx);
         if (c.getChildren() != null) {
-            List<PseudoCommand> children = new ArrayList<PseudoCommand>(c.getChildren());
+            List<PseudoCommand> children = new ArrayList<>(c.getChildren());
             for (int i=0; i<children.size(); ++i) {
                 node.add(getNodeForCommand(children.get(i), i));
             }
@@ -319,7 +319,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     protected static FilteredCollection<OsmPrimitive> getAffectedPrimitives(TreePath path) {
         PseudoCommand c = ((CommandListMutableTreeNode) path.getLastPathComponent()).getCommand();
         final OsmDataLayer currentLayer = Main.main.getEditLayer();
-        FilteredCollection<OsmPrimitive> prims = new FilteredCollection<OsmPrimitive>(
+        FilteredCollection<OsmPrimitive> prims = new FilteredCollection<>(
                 c.getParticipatingPrimitives(),
                 new Predicate<OsmPrimitive>(){
                     @Override

@@ -469,7 +469,7 @@ public class LayerListDialog extends ToggleDialog {
             Layer l = LayerListDialog.getLayerForIndex(index);
             if (l != null) {
                 l.toggleVisible();
-                lastLayer = new WeakReference<Layer>(l);
+                lastLayer = new WeakReference<>(l);
             } else if (repeat && lastLayer != null) {
                 l = lastLayer.get();
                 if (LayerListDialog.isLayerValid(l)) {
@@ -829,7 +829,7 @@ public class LayerListDialog extends ToggleDialog {
             if (!Main.isDisplayingMapView())
                 return;
 
-            List<String> layerNames = new ArrayList<String>();
+            List<String> layerNames = new ArrayList<>();
             for (Layer l: Main.map.mapView.getAllLayers()) {
                 layerNames.add(l.getName());
             }
@@ -1112,7 +1112,7 @@ public class LayerListDialog extends ToggleDialog {
          */
         private LayerListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-            listeners = new CopyOnWriteArrayList<LayerListModelListener>();
+            listeners = new CopyOnWriteArrayList<>();
         }
 
         /**
@@ -1198,7 +1198,7 @@ public class LayerListDialog extends ToggleDialog {
          * be empty.
          */
         public List<Layer> getSelectedLayers() {
-            List<Layer> selected = new ArrayList<Layer>();
+            List<Layer> selected = new ArrayList<>();
             for (int i=0; i<getLayers().size(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     selected.add(getLayers().get(i));
@@ -1215,7 +1215,7 @@ public class LayerListDialog extends ToggleDialog {
          * but may be empty.
          */
         public List<Integer> getSelectedRows() {
-            List<Integer> selected = new ArrayList<Integer>();
+            List<Integer> selected = new ArrayList<>();
             for (int i=0; i<getLayers().size();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     selected.add(i);
@@ -1375,7 +1375,7 @@ public class LayerListDialog extends ToggleDialog {
          * for <code>source</code>. Never null, but can be empty.
          */
         public List<Layer> getPossibleMergeTargets(Layer source) {
-            List<Layer> targets = new ArrayList<Layer>();
+            List<Layer> targets = new ArrayList<>();
             if (source == null)
                 return targets;
             for (Layer target : getLayers()) {
@@ -1616,7 +1616,7 @@ public class LayerListDialog extends ToggleDialog {
     // This is not Class<? extends Layer> on purpose, to allow asking for layers implementing some interface
     public static List<MultikeyInfo> getLayerInfoByClass(Class<?> layerClass) {
 
-        List<MultikeyInfo> result = new ArrayList<MultikeyShortcutAction.MultikeyInfo>();
+        List<MultikeyInfo> result = new ArrayList<>();
 
         if (!Main.isDisplayingMapView())
             return result;

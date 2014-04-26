@@ -72,7 +72,7 @@ public class WmsCacheType {
      */
     public List<ProjectionType> getProjection() {
         if (projection == null) {
-            projection = new ArrayList<ProjectionType>();
+            projection = new ArrayList<>();
         }
         return this.projection;
     }

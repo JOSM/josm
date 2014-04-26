@@ -71,7 +71,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     private NodeListMerger nodeListMerger;
     private RelationMemberMerger relationMemberMerger;
     private PropertiesMerger propertiesMerger;
-    private final List<IConflictResolver> conflictResolvers = new ArrayList<IConflictResolver>();
+    private final List<IConflictResolver> conflictResolvers = new ArrayList<>();
     private OsmPrimitive my;
     private OsmPrimitive their;
     private Conflict<? extends OsmPrimitive> conflict;
@@ -275,7 +275,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      * @return the resolution command
      */
     public Command buildResolveCommand() {
-        List<Command> commands = new ArrayList<Command>();
+        List<Command> commands = new ArrayList<>();
 
         if (tagMerger.getModel().getNumResolvedConflicts() > 0) {
             commands.add(tagMerger.getModel().buildResolveCommand(conflict));

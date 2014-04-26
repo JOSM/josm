@@ -21,7 +21,7 @@ public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> 
      */
     public ReferringRelationsBrowserModel() {
         relation = null;
-        referrers = new ArrayList<Relation>();
+        referrers = new ArrayList<>();
     }
 
     public ReferringRelationsBrowserModel(Relation relation) {

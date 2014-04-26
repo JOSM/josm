@@ -21,8 +21,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Storage;
 
 public class ChangesetListModel extends DefaultListModel<Changeset> implements ChangesetCacheListener {
-    private final List<Changeset> data = new ArrayList<Changeset>();
-    private final Storage<Changeset> shownChangesets = new Storage<Changeset>(true);
+    private final List<Changeset> data = new ArrayList<>();
+    private final Storage<Changeset> shownChangesets = new Storage<>(true);
     private DefaultListSelectionModel selectionModel;
 
     public ChangesetListModel(DefaultListSelectionModel selectionModel) {
@@ -30,7 +30,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
     }
 
     public Set<Changeset> getSelectedChangesets() {
-        Set<Changeset> ret = new HashSet<Changeset>();
+        Set<Changeset> ret = new HashSet<>();
         for (int i=0; i < getSize(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
                 ret.add(data.get(i));
@@ -40,7 +40,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
     }
 
     public Set<Integer> getSelectedChangesetIds() {
-        Set<Integer> ret = new HashSet<Integer>();
+        Set<Integer> ret = new HashSet<>();
         for (int i=0; i < getSize(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
                 ret.add(data.get(i).getId());
@@ -89,7 +89,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
             setChangesets(null);
             return;
         }
-        Set<Changeset> changesets = new HashSet<Changeset>(ids.size());
+        Set<Changeset> changesets = new HashSet<>(ids.size());
         for (int id: ids) {
             if (id <= 0) {
                 continue;
@@ -104,7 +104,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
             setChangesets(null);
             return;
         }
-        Set<Changeset> changesets = new HashSet<Changeset>();
+        Set<Changeset> changesets = new HashSet<>();
         for (OsmPrimitive p: primitives) {
             if (p.getChangesetId() <= 0) {
                 continue;
@@ -119,7 +119,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
             setChangesets(null);
             return;
         }
-        Set<Changeset> changesets = new HashSet<Changeset>();
+        Set<Changeset> changesets = new HashSet<>();
         for (OsmPrimitive p: ds.allPrimitives()) {
             if (p.getChangesetId() <=0 ) {
                 continue;
@@ -168,7 +168,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      * @return the selected open changesets
      */
     public List<Changeset> getSelectedOpenChangesets() {
-        List<Changeset> ret = new ArrayList<Changeset>();
+        List<Changeset> ret = new ArrayList<>();
         for (int i=0; i< getSize(); i++) {
             if (selectionModel.isSelectedIndex(i)) {
                 Changeset cs = data.get(i);

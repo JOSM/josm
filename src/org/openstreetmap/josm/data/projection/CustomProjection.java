@@ -74,7 +74,7 @@ public class CustomProjection extends AbstractProjection {
         public String key;
         public boolean hasValue;
 
-        public static final Map<String, Param> paramsByKey = new HashMap<String, Param>();
+        public static final Map<String, Param> paramsByKey = new HashMap<>();
         static {
             for (Param p : Param.values()) {
                 paramsByKey.put(p.key, p);
@@ -160,7 +160,7 @@ public class CustomProjection extends AbstractProjection {
     }
 
     private Map<String, String> parseParameterList(String pref) throws ProjectionConfigurationException {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         String[] parts = Utils.WHITE_SPACES_PATTERN.split(pref.trim());
         if (pref.trim().isEmpty()) {
             parts = new String[0];
@@ -291,7 +291,7 @@ public class CustomProjection extends AbstractProjection {
 
         if (numStr.length != 3 && numStr.length != 7)
             throw new ProjectionConfigurationException(tr("Unexpected number of arguments for parameter ''towgs84'' (must be 3 or 7)"));
-        List<Double> towgs84Param = new ArrayList<Double>();
+        List<Double> towgs84Param = new ArrayList<>();
         for (String str : numStr) {
             try {
                 towgs84Param.add(Double.parseDouble(str));

@@ -72,7 +72,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
 
     protected List<PrefEntry> allData;
-    protected List<PrefEntry> displayData = new ArrayList<PrefEntry>();
+    protected List<PrefEntry> displayData = new ArrayList<>();
     protected JosmTextField txtFilter;
     protected PreferencesTable table;
 
@@ -205,7 +205,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
 
     private void exportSelectedToXML() {
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         boolean hasLists = false;
 
         for (PrefEntry p: table.getSelectedItems()) {
@@ -276,7 +276,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     };
 
     private List<PrefEntry> prepareData(Map<String, Setting> loaded, Map<String, Setting> orig, Map<String, Setting> defaults) {
-        List<PrefEntry> data = new ArrayList<PrefEntry>();
+        List<PrefEntry> data = new ArrayList<>();
         for (Entry<String, Setting> e : loaded.entrySet()) {
             Setting value = e.getValue();
             Setting old = orig.get(e.getKey());
@@ -308,7 +308,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         return data;
     }
 
-    Map<String,String> profileTypes = new LinkedHashMap<String, String>();
+    Map<String,String> profileTypes = new LinkedHashMap<>();
 
     private JPopupMenu buildPopupMenu() {
         JPopupMenu menu = new JPopupMenu();

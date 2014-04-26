@@ -52,8 +52,8 @@ public class UploadAction extends JosmAction{
      * dialog is the last thing shown before upload really starts; on occasion
      * however, a plugin might also want to insert something after that.
      */
-    private static final List<UploadHook> uploadHooks = new LinkedList<UploadHook>();
-    private static final List<UploadHook> lateUploadHooks = new LinkedList<UploadHook>();
+    private static final List<UploadHook> uploadHooks = new LinkedList<>();
+    private static final List<UploadHook> lateUploadHooks = new LinkedList<>();
     static {
         /**
          * Calls validator before upload.
@@ -231,7 +231,7 @@ public class UploadAction extends JosmAction{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                final HashMap<String, String> tags = new HashMap<String, String>(layer.data.getChangeSetTags());
+                final HashMap<String, String> tags = new HashMap<>(layer.data.getChangeSetTags());
                 if (!tags.containsKey("source")) {
                     tags.put("source", dialog.getLastChangesetSourceFromHistory());
                 }

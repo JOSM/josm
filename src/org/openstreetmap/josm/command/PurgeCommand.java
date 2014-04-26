@@ -67,7 +67,7 @@ public class PurgeCommand extends Command {
     }
 
     protected final void saveIncomplete(Collection<OsmPrimitive> makeIncomplete) {
-        makeIncompleteData = new Storage<PrimitiveData>(new Storage.PrimitiveIdHash());
+        makeIncompleteData = new Storage<>(new Storage.PrimitiveIdHash());
         makeIncompleteData_byPrimId = makeIncompleteData.foreignKey(new Storage.PrimitiveIdHash());
 
         for (OsmPrimitive osm : makeIncomplete) {
@@ -142,12 +142,12 @@ public class PurgeCommand extends Command {
      * its referrers come later in the sorted collection.
      */
     public static List<OsmPrimitive> topoSort(Collection<OsmPrimitive> sel) {
-        Set<OsmPrimitive> in = new HashSet<OsmPrimitive>(sel);
+        Set<OsmPrimitive> in = new HashSet<>(sel);
 
-        List<OsmPrimitive> out = new ArrayList<OsmPrimitive>(in.size());
+        List<OsmPrimitive> out = new ArrayList<>(in.size());
 
         // Nodes not deleted in the first pass
-        Set<OsmPrimitive> remainingNodes = new HashSet<OsmPrimitive>(in.size());
+        Set<OsmPrimitive> remainingNodes = new HashSet<>(in.size());
 
         /**
          *  First add nodes that have no way referrer.
@@ -197,10 +197,10 @@ public class PurgeCommand extends Command {
           */
         @SuppressWarnings({ "unchecked", "rawtypes" })
         Set<Relation> inR = (Set) in;
-        Set<Relation> childlessR = new HashSet<Relation>();
-        List<Relation> outR = new ArrayList<Relation>(inR.size());
+        Set<Relation> childlessR = new HashSet<>();
+        List<Relation> outR = new ArrayList<>(inR.size());
 
-        HashMap<Relation, Integer> numChilds = new HashMap<Relation, Integer>();
+        HashMap<Relation, Integer> numChilds = new HashMap<>();
 
         // calculate initial number of childs
         for (Relation r : inR) {

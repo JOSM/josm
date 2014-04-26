@@ -98,7 +98,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      * constructor
      */
     public RelationDialogManager(){
-        openDialogs = new HashMap<DialogContext, RelationEditor>();
+        openDialogs = new HashMap<>();
     }
     /**
      * Register the relation editor for a relation managed by a

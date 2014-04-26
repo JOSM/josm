@@ -53,7 +53,7 @@ public class ValidateUploadHook implements UploadHook {
         v.visit(apiDataSet.getPrimitivesToAdd());
         Collection<OsmPrimitive> selection = v.visit(apiDataSet.getPrimitivesToUpdate());
 
-        List<TestError> errors = new ArrayList<TestError>(30);
+        List<TestError> errors = new ArrayList<>(30);
         for (Test test : tests) {
             test.setBeforeUpload(true);
             test.setPartialSelection(true);
@@ -82,7 +82,7 @@ public class ValidateUploadHook implements UploadHook {
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
             int nume = 0;
             for (TestError error : errors) {
-                List<String> s = new ArrayList<String>();
+                List<String> s = new ArrayList<>();
                 s.add(error.getIgnoreState());
                 s.add(error.getIgnoreGroup());
                 s.add(error.getIgnoreSubGroup());

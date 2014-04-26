@@ -160,7 +160,7 @@ public final class MapPaintStyles {
     }
 
     public static List<String> getIconSourceDirs(StyleSource source) {
-        List<String> dirs = new LinkedList<String>();
+        List<String> dirs = new LinkedList<>();
 
         String sourceDir = source.getLocalSourceDir();
         if (sourceDir != null) {
@@ -216,7 +216,7 @@ public final class MapPaintStyles {
     private static StyleSource fromSourceEntry(SourceEntry entry) {
         MirroredInputStream in = null;
         try {
-            Set<String> mimes = new HashSet<String>();
+            Set<String> mimes = new HashSet<>();
             mimes.addAll(Arrays.asList(XmlStyleSource.XML_STYLE_MIME_TYPES.split(", ")));
             mimes.addAll(Arrays.asList(MapCSSStyleSource.MAPCSS_STYLE_MIME_TYPES.split(", ")));
             in = new MirroredInputStream(entry.url, null, Utils.join(", ", mimes));
@@ -273,7 +273,7 @@ public final class MapPaintStyles {
      * @param sel the indices of styles to reload
      */
     public static void reloadStyles(final int... sel) {
-        List<StyleSource> toReload = new ArrayList<StyleSource>();
+        List<StyleSource> toReload = new ArrayList<>();
         List<StyleSource> data = styles.getStyleSources();
         for (int i : sel) {
             toReload.add(data.get(i));
@@ -333,7 +333,7 @@ public final class MapPaintStyles {
             return;
         int[] selSorted = Arrays.copyOf(sel, sel.length);
         Arrays.sort(selSorted);
-        List<StyleSource> data = new ArrayList<StyleSource>(styles.getStyleSources());
+        List<StyleSource> data = new ArrayList<>(styles.getStyleSources());
         for (int row: selSorted) {
             StyleSource t1 = data.get(row);
             StyleSource t2 = data.get(row + delta);
@@ -400,7 +400,7 @@ public final class MapPaintStyles {
     }
 
     protected static final CopyOnWriteArrayList<MapPaintSylesUpdateListener> listeners
-            = new CopyOnWriteArrayList<MapPaintSylesUpdateListener>();
+            = new CopyOnWriteArrayList<>();
 
     public static void addMapPaintSylesUpdateListener(MapPaintSylesUpdateListener listener) {
         if (listener != null) {

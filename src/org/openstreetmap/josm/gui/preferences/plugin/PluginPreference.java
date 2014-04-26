@@ -279,7 +279,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             return false;
         pnlPluginUpdatePolicy.rememberInPreferences();
         if (model.isActivePluginsChanged()) {
-            LinkedList<String> l = new LinkedList<String>(model.getSelectedPluginNames());
+            LinkedList<String> l = new LinkedList<>(model.getSelectedPluginNames());
             Collections.sort(l);
             Main.pref.putCollection("plugins", l);
             return true;
@@ -493,11 +493,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         protected final void build() {
             setLayout(new GridBagLayout());
             add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
-            model = new DefaultListModel<String>();
+            model = new DefaultListModel<>();
             for (String s : Main.pref.getPluginSites()) {
                 model.addElement(s);
             }
-            final JList<String> list = new JList<String>(model);
+            final JList<String> list = new JList<>(model);
             add(new JScrollPane(list), GBC.std().fill());
             JPanel buttons = new JPanel(new GridBagLayout());
             buttons.add(new JButton(new AbstractAction(tr("Add")){
@@ -564,7 +564,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         public List<String> getUpdateSites() {
             if (model.getSize() == 0) return Collections.emptyList();
-            List<String> ret = new ArrayList<String>(model.getSize());
+            List<String> ret = new ArrayList<>(model.getSize());
             for (int i=0; i< model.getSize();i++){
                 ret.add((String)model.get(i));
             }

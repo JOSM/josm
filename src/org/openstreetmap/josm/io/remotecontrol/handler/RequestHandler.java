@@ -193,7 +193,7 @@ public abstract class RequestHandler {
     protected void parseArgs() {
         try {
             String req = URLDecoder.decode(this.request, "UTF-8");
-            HashMap<String, String> args = new HashMap<String, String>();
+            HashMap<String, String> args = new HashMap<>();
             if (req.indexOf('?') != -1) {
                 String query = req.substring(req.indexOf('?') + 1);
                 if (query.indexOf('#') != -1) {
@@ -216,7 +216,7 @@ public abstract class RequestHandler {
     void checkMandatoryParams() throws RequestHandlerBadRequestException {
         String[] mandatory = getMandatoryParams();
         String[] optional = getOptionalParams();
-        List<String> missingKeys = new LinkedList<String>();
+        List<String> missingKeys = new LinkedList<>();
         boolean error = false;
         if(mandatory != null) for (String key : mandatory) {
             String value = args.get(key);
@@ -226,7 +226,7 @@ public abstract class RequestHandler {
                 missingKeys.add(key);
             }
         }
-        HashSet<String> knownParams = new HashSet<String>();
+        HashSet<String> knownParams = new HashSet<>();
         if (mandatory != null) Collections.addAll(knownParams, mandatory);
         if (optional != null) Collections.addAll(knownParams, optional);
         for (String par: args.keySet()) {

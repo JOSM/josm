@@ -94,7 +94,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             super(asString, separator);
         }
 
-        private List<Shape> shapes = new ArrayList<Shape>();
+        private List<Shape> shapes = new ArrayList<>();
 
         /**
          * Adds a new shape to this bounds.
@@ -545,7 +545,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
         if (serverProjections == null || serverProjections.isEmpty()) {
             try {
-                serverProjections = new ArrayList<String>();
+                serverProjections = new ArrayList<>();
                 Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase());
                 if(m.matches()) {
                     for(String p : m.group(1).split(","))
@@ -709,7 +709,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     }
 
     public void setServerProjections(Collection<String> serverProjections) {
-        this.serverProjections = new ArrayList<String>(serverProjections);
+        this.serverProjections = new ArrayList<>(serverProjections);
     }
 
     /**

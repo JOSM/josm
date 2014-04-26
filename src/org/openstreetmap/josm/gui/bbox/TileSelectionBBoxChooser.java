@@ -156,7 +156,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
         MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
 
-        List<MapMarker> marker = new ArrayList<MapMarker>(2);
+        List<MapMarker> marker = new ArrayList<>(2);
         marker.add(xmin_ymin);
         marker.add(xmax_ymax);
         mapViewer.setBoundingBox(bbox);
@@ -327,7 +327,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             add(buildTextPanel(), BorderLayout.NORTH);
             add(buildTileGridInputPanel(), BorderLayout.CENTER);
 
-            Set<AWTKeyStroke> forwardKeys = new HashSet<AWTKeyStroke>(getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
+            Set<AWTKeyStroke> forwardKeys = new HashSet<>(getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
             forwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
             setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,forwardKeys);
         }

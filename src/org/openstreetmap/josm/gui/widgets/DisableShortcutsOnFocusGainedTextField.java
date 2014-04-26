@@ -101,8 +101,8 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
         init();
     }
 
-    private final List<Pair<Action,Shortcut>> unregisteredActionShortcuts = new ArrayList<Pair<Action,Shortcut>>();
-    private final Set<JosmAction> disabledMenuActions = new HashSet<JosmAction>();
+    private final List<Pair<Action,Shortcut>> unregisteredActionShortcuts = new ArrayList<>();
+    private final Set<JosmAction> disabledMenuActions = new HashSet<>();
 
     protected final void init() {
         addFocusListener(this);
@@ -162,7 +162,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
                 Action action = Main.getRegisteredActionShortcut(shortcut);
                 if (action != null) {
                     Main.unregisterActionShortcut(action, shortcut);
-                    unregisteredActionShortcuts.add(new Pair<Action,Shortcut>(action,shortcut));
+                    unregisteredActionShortcuts.add(new Pair<>(action,shortcut));
                 }
             }
         }

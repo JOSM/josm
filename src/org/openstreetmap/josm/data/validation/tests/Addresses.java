@@ -116,13 +116,13 @@ public class Addresses extends Test {
         checkHouseNumbersWithoutStreet(r);
         if (r.hasTag("type", ASSOCIATED_STREET)) {
             // Used to count occurences of each house number in order to find duplicates
-            Map<String, List<OsmPrimitive>> map = new HashMap<String, List<OsmPrimitive>>();
+            Map<String, List<OsmPrimitive>> map = new HashMap<>();
             // Used to detect different street names
             String relationName = r.get("name");
-            Set<OsmPrimitive> wrongStreetNames = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> wrongStreetNames = new HashSet<>();
             // Used to check distance
-            Set<OsmPrimitive> houses = new HashSet<OsmPrimitive>();
-            Set<Way> street = new HashSet<Way>();
+            Set<OsmPrimitive> houses = new HashSet<>();
+            Set<Way> street = new HashSet<>();
             for (RelationMember m : r.getMembers()) {
                 String role = m.getRole();
                 OsmPrimitive p = m.getMember();
@@ -133,7 +133,7 @@ public class Addresses extends Test {
                         number = number.trim().toUpperCase();
                         List<OsmPrimitive> list = map.get(number);
                         if (list == null) {
-                            map.put(number, list = new ArrayList<OsmPrimitive>());
+                            map.put(number, list = new ArrayList<>());
                         }
                         list.add(p);
                     }

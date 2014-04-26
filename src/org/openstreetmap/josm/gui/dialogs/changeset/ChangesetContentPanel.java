@@ -276,7 +276,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         protected List<HistoryOsmPrimitive> filterPrimitivesWithUnloadedHistory(Collection<HistoryOsmPrimitive> primitives) {
-            List<HistoryOsmPrimitive> ret = new ArrayList<HistoryOsmPrimitive>(primitives.size());
+            List<HistoryOsmPrimitive> ret = new ArrayList<>(primitives.size());
             for (HistoryOsmPrimitive p: primitives) {
                 if (HistoryDataSet.getInstance().getHistory(p.getPrimitiveId()) == null) {
                     ret.add(p);
@@ -332,7 +332,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<HistoryOsmPrimitive> selected = model.getSelectedPrimitives();
-            Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> target = new HashSet<>();
             for (HistoryOsmPrimitive p : model.getSelectedPrimitives()) {
                 OsmPrimitive op = layer.data.getPrimitiveById(p.getPrimitiveId());
                 if (op != null) {
@@ -382,7 +382,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<HistoryOsmPrimitive> selected = model.getSelectedPrimitives();
-            Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> target = new HashSet<>();
             for (HistoryOsmPrimitive p : model.getSelectedPrimitives()) {
                 OsmPrimitive op = layer.data.getPrimitiveById(p.getPrimitiveId());
                 if (op != null) {

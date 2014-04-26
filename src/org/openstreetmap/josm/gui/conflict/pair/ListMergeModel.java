@@ -182,7 +182,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     }
 
     public ListMergeModel() {
-        entries = new HashMap<ListRole, ArrayList<T>>();
+        entries = new HashMap<>();
         for (ListRole role : ListRole.values()) {
             entries.put(role, new ArrayList<T>());
         }
@@ -195,7 +195,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         theirEntriesSelectionModel = new EntriesSelectionModel(entries.get(THEIR_ENTRIES));
         mergedEntriesSelectionModel =  new EntriesSelectionModel(entries.get(MERGED_ENTRIES));
 
-        listeners = new ArrayList<PropertyChangeListener>();
+        listeners = new ArrayList<>();
         comparePairListModel = new ComparePairListModel();
 
         setFrozen(true);
@@ -348,7 +348,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     }
 
     protected void alertCopyFailedForDeletedPrimitives(List<PrimitiveId> deletedIds) {
-        List<String> items = new ArrayList<String>();
+        List<String> items = new ArrayList<>();
         for (int i=0; i<Math.min(MAX_DELETED_PRIMITIVE_IN_DIALOG, deletedIds.size()); i++) {
             items.add(deletedIds.get(i).toString());
         }
@@ -372,9 +372,9 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     private void copy(ListRole sourceRole, int[] rows, int position) {
         if (position < 0 || position > getMergedEntriesSize())
             throw new IllegalArgumentException();
-        List<T> newItems = new ArrayList<T>(rows.length);
+        List<T> newItems = new ArrayList<>(rows.length);
         List<T> source = entries.get(sourceRole);
-        List<PrimitiveId> deletedIds = new ArrayList<PrimitiveId>();
+        List<PrimitiveId> deletedIds = new ArrayList<>();
         for (int row: rows) {
             T entry = source.get(row);
             OsmPrimitive primitive = getMyPrimitive(entry);
@@ -834,7 +834,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
          * Constructs a new {@code ComparePairListModel}.
          */
         public ComparePairListModel() {
-            this.compareModes = new ArrayList<ComparePairType>();
+            this.compareModes = new ArrayList<>();
             compareModes.add(MY_WITH_THEIR);
             compareModes.add(MY_WITH_MERGED);
             compareModes.add(THEIR_WITH_MERGED);

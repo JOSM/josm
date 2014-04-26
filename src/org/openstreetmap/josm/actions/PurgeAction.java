@@ -94,13 +94,13 @@ public class PurgeAction extends JosmAction {
         Collection<OsmPrimitive> sel = getCurrentDataSet().getAllSelected();
         layer = Main.main.getEditLayer();
 
-        toPurge = new HashSet<OsmPrimitive>(sel);
-        toPurgeAdditionally = new ArrayList<OsmPrimitive>();
-        toPurgeChecked = new HashSet<OsmPrimitive>();
+        toPurge = new HashSet<>(sel);
+        toPurgeAdditionally = new ArrayList<>();
+        toPurgeChecked = new HashSet<>();
 
         // Add referrer, unless the object to purge is not new
         // and the parent is a relation
-        HashSet<OsmPrimitive> toPurgeRecursive = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> toPurgeRecursive = new HashSet<>();
         while (!toPurge.isEmpty()) {
 
             for (OsmPrimitive osm: toPurge) {
@@ -116,10 +116,10 @@ public class PurgeAction extends JosmAction {
                 toPurgeChecked.add(osm);
             }
             toPurge = toPurgeRecursive;
-            toPurgeRecursive = new HashSet<OsmPrimitive>();
+            toPurgeRecursive = new HashSet<>();
         }
 
-        makeIncomplete = new HashSet<OsmPrimitive>();
+        makeIncomplete = new HashSet<>();
 
         // Find the objects that will be incomplete after purging.
         // At this point, all parents of new to-be-purged primitives are
@@ -142,7 +142,7 @@ public class PurgeAction extends JosmAction {
         // Add untagged way nodes. Do not add nodes that have other
         // referrers not yet to-be-purged.
         if (Main.pref.getBoolean("purge.add_untagged_waynodes", true)) {
-            Set<OsmPrimitive> wayNodes = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> wayNodes = new HashSet<>();
             for (OsmPrimitive osm : toPurgeChecked) {
                 if (osm instanceof Way) {
                     Way w = (Way) osm;
@@ -165,7 +165,7 @@ public class PurgeAction extends JosmAction {
         }
 
         if (Main.pref.getBoolean("purge.add_relations_with_only_incomplete_members", true)) {
-            Set<Relation> relSet = new HashSet<Relation>();
+            Set<Relation> relSet = new HashSet<>();
             for (OsmPrimitive osm : toPurgeChecked) {
                 for (OsmPrimitive parent : osm.getReferrers()) {
                     if (parent instanceof Relation
@@ -179,7 +179,7 @@ public class PurgeAction extends JosmAction {
             /**
              * Add higher level relations (list gets extended while looping over it)
              */
-            List<Relation> relLst = new ArrayList<Relation>(relSet);
+            List<Relation> relLst = new ArrayList<>(relSet);
             for (int i=0; i<relLst.size(); ++i) {
                 for (OsmPrimitive parent : relLst.get(i).getReferrers()) {
                     if (!(toPurgeChecked.contains(parent))
@@ -188,7 +188,7 @@ public class PurgeAction extends JosmAction {
                     }
                 }
             }
-            relSet = new HashSet<Relation>(relLst);
+            relSet = new HashSet<>(relLst);
             toPurgeChecked.addAll(relSet);
             toPurgeAdditionally.addAll(relSet);
         }
@@ -247,7 +247,7 @@ public class PurgeAction extends JosmAction {
                     return (Long.valueOf(o1.getUniqueId())).compareTo(o2.getUniqueId());
                 }
             });
-            JList<OsmPrimitive> list = new JList<OsmPrimitive>(toPurgeAdditionally.toArray(new OsmPrimitive[toPurgeAdditionally.size()]));
+            JList<OsmPrimitive> list = new JList<>(toPurgeAdditionally.toArray(new OsmPrimitive[toPurgeAdditionally.size()]));
             /* force selection to be active for all entries */
             list.setCellRenderer(new OsmPrimitivRenderer() {
                 @Override

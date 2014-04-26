@@ -118,7 +118,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
                 }
         );
         editor.setRenderer(new EditorCellRenderer());
-        listeners = new CopyOnWriteArrayList<NavigationListener>();
+        listeners = new CopyOnWriteArrayList<>();
     }
 
     /**

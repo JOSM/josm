@@ -47,7 +47,7 @@ public class SystemOfMeasurement {
      */
     public static final Map<String, SystemOfMeasurement> ALL_SYSTEMS;
     static {
-        ALL_SYSTEMS = new LinkedHashMap<String, SystemOfMeasurement>();
+        ALL_SYSTEMS = new LinkedHashMap<>();
         ALL_SYSTEMS.put(marktr("Metric"), METRIC);
         ALL_SYSTEMS.put(marktr("Chinese"), CHINESE);
         ALL_SYSTEMS.put(marktr("Imperial"), IMPERIAL);

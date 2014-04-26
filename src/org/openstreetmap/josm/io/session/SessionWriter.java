@@ -47,8 +47,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class SessionWriter {
 
-    private static Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters =
-            new HashMap<Class<? extends Layer>, Class<? extends SessionLayerExporter>>();
+    private static Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters = new HashMap<>();
     static {
         registerSessionLayerExporter(OsmDataLayer.class , OsmDataSessionExporter.class);
         registerSessionLayerExporter(TMSLayer.class , ImagerySessionExporter.class);
@@ -209,7 +208,7 @@ public class SessionWriter {
             }
             Set<Layer> deps = dependencies.get(layer);
             if (!deps.isEmpty()) {
-                List<Integer> depsInt = new ArrayList<Integer>();
+                List<Integer> depsInt = new ArrayList<>();
                 for (Layer depLayer : deps) {
                     int depIndex = layers.indexOf(depLayer);
                     if (depIndex == -1) throw new AssertionError();

@@ -99,8 +99,8 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        Collection<String> tests = new LinkedList<String>();
-        Collection<String> testsBeforeUpload = new LinkedList<String>();
+        Collection<String> tests = new LinkedList<>();
+        Collection<String> testsBeforeUpload = new LinkedList<>();
 
         for (Test test : allTests) {
             test.ok();
@@ -114,7 +114,7 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
         // Initializes all tests but MapCSSTagChecker because it is initialized
         // later in ValidatorTagCheckerRulesPreference.ok(),
         // after its list of rules has been saved to preferences
-        List<Test> testsToInitialize = new ArrayList<Test>(allTests);
+        List<Test> testsToInitialize = new ArrayList<>(allTests);
         testsToInitialize.remove(OsmValidator.getTest(MapCSSTagChecker.class));
         OsmValidator.initializeTests(testsToInitialize);
 

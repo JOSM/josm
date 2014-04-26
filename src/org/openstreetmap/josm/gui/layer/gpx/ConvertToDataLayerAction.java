@@ -49,7 +49,7 @@ public class ConvertToDataLayerAction extends AbstractAction {
         DataSet ds = new DataSet();
         for (GpxTrack trk : layer.data.tracks) {
             for (GpxTrackSegment segment : trk.getSegments()) {
-                List<Node> nodes = new ArrayList<Node>();
+                List<Node> nodes = new ArrayList<>();
                 for (WayPoint p : segment.getWayPoints()) {
                     Node n = new Node(p.getCoor());
                     String timestr = p.getString("time");

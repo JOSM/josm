@@ -82,7 +82,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * The types as preparsed collection.
      */
     public EnumSet<TaggingPresetType> types;
-    public List<TaggingPresetItem> data = new LinkedList<TaggingPresetItem>();
+    public List<TaggingPresetItem> data = new LinkedList<>();
     public Roles roles;
     public TemplateEntry nameTemplate;
     public Match nameTemplateFilter;
@@ -208,8 +208,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         if (data == null)
             return null;
         PresetPanel p = new PresetPanel();
-        LinkedList<TaggingPresetItem> l = new LinkedList<TaggingPresetItem>();
-        LinkedList<TaggingPresetItem> presetLink = new LinkedList<TaggingPresetItem>();
+        LinkedList<TaggingPresetItem> l = new LinkedList<>();
+        LinkedList<TaggingPresetItem> presetLink = new LinkedList<>();
         if(types != null){
             JPanel pp = new JPanel();
             for(TaggingPresetType t : types){
@@ -298,7 +298,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
         } else if (answer == DIALOG_ANSWER_NEW_RELATION) {
             final Relation r = new Relation();
-            final Collection<RelationMember> members = new HashSet<RelationMember>();
+            final Collection<RelationMember> members = new HashSet<>();
             for(Tag t : getChangedTags()) {
                 r.put(t.getKey(), t.getValue());
             }
@@ -386,7 +386,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      */
     public Collection<OsmPrimitive> createSelection(Collection<OsmPrimitive> participants) {
         originalSelectionEmpty = participants.isEmpty();
-        Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
+        Collection<OsmPrimitive> sel = new LinkedList<>();
         for (OsmPrimitive osm : participants)
         {
             if (types != null)
@@ -418,7 +418,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public List<Tag> getChangedTags() {
-        List<Tag> result = new ArrayList<Tag>();
+        List<Tag> result = new ArrayList<>();
         for (TaggingPresetItem i: data) {
             i.addCommands(result);
         }
@@ -426,7 +426,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public static Command createCommand(Collection<OsmPrimitive> sel, List<Tag> changedTags) {
-        List<Command> cmds = new ArrayList<Command>();
+        List<Command> cmds = new ArrayList<>();
         for (Tag tag: changedTags) {
             cmds.add(new ChangePropertyCommand(sel, tag.getKey(), tag.getValue()));
         }
@@ -510,7 +510,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public ToolbarButtonAction() {
             super("", ImageProvider.get("styles/standard/waypoint","pin"));
             putValue(SHORT_DESCRIPTION, tr("Add or remove toolbar button"));
-            LinkedList<String> t = new LinkedList<String>(ToolbarPreferences.getToolString());
+            LinkedList<String> t = new LinkedList<>(ToolbarPreferences.getToolString());
             toolbarIndex = t.indexOf(getToolbarString());
             putValue(SELECTED_KEY, toolbarIndex >= 0);
         }

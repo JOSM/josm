@@ -50,7 +50,7 @@ public class LoadAndZoomHandler extends RequestHandler {
     private double maxlon;
 
     // Optional argument 'select'
-    private final Set<SimplePrimitiveId> toSelect = new HashSet<SimplePrimitiveId>();
+    private final Set<SimplePrimitiveId> toSelect = new HashSet<>();
 
     @Override
     public String getPermissionMessage() {
@@ -160,7 +160,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
                 @Override
                 public void run() {
-                    Set<OsmPrimitive> newSel = new HashSet<OsmPrimitive>();
+                    Set<OsmPrimitive> newSel = new HashSet<>();
                     DataSet ds = Main.main.getCurrentDataSet();
                     if(ds == null) // e.g. download failed
                         return;

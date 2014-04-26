@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
 public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements ChangesetDownloadTask{
 
     /** the list of changeset ids to download */
-    private final List<Integer> toDownload = new ArrayList<Integer>();
+    private final List<Integer> toDownload = new ArrayList<>();
     /** true if the task was canceled */
     private boolean canceled;
     /** keeps the last exception thrown in the task, if any */
@@ -56,7 +56,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
             }
             toDownload.add(id);
         }
-        downloadedChangesets = new HashSet<Changeset>();
+        downloadedChangesets = new HashSet<>();
     }
 
     /**

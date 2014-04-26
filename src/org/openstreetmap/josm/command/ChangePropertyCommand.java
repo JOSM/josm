@@ -48,7 +48,7 @@ public class ChangePropertyCommand extends Command {
      * @param tags the tags to set
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, AbstractMap<String, String> tags) {
-        this.objects = new LinkedList<OsmPrimitive>();
+        this.objects = new LinkedList<>();
         this.tags = tags;
         init(objects);
     }
@@ -61,8 +61,8 @@ public class ChangePropertyCommand extends Command {
      * @param value the value of the key to set
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, String key, String value) {
-        this.objects = new LinkedList<OsmPrimitive>();
-        this.tags = new HashMap<String, String>(1);
+        this.objects = new LinkedList<>();
+        this.tags = new HashMap<>(1);
         this.tags.put(key, value);
         init(objects);
     }
@@ -200,7 +200,7 @@ public class ChangePropertyCommand extends Command {
     @Override public Collection<PseudoCommand> getChildren() {
         if (objects.size() == 1)
             return null;
-        List<PseudoCommand> children = new ArrayList<PseudoCommand>();
+        List<PseudoCommand> children = new ArrayList<>();
         for (final OsmPrimitive osm : objects) {
             children.add(new PseudoCommand() {
                 @Override public String getDescriptionText() {

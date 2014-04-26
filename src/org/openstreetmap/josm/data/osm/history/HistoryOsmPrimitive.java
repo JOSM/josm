@@ -88,7 +88,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         this.user = user;
         this.changesetId  = changesetId;
         this.timestamp = timestamp;
-        tags = new HashMap<String, String>();
+        tags = new HashMap<>();
     }
 
     /**
@@ -190,9 +190,9 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
      */
     public void setTags(Map<String,String> tags) {
         if (tags == null) {
-            this.tags = new HashMap<String, String>();
+            this.tags = new HashMap<>();
         } else {
-            this.tags = new HashMap<String, String>(tags);
+            this.tags = new HashMap<>(tags);
         }
     }
 

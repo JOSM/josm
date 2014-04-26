@@ -154,7 +154,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         TMSLayer.loaderFactory = loaderFactory;
     }
 
-    private Set<Tile> tileRequestsOutstanding = new HashSet<Tile>();
+    private Set<Tile> tileRequestsOutstanding = new HashSet<>();
 
     @Override
     public synchronized void tileLoadingFinished(Tile tile, boolean success) {
@@ -969,7 +969,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (border != null) {
             borderRect = tileToRect(border);
         }
-        List<Tile> missedTiles = new LinkedList<Tile>();
+        List<Tile> missedTiles = new LinkedList<>();
         // The callers of this code *require* that we return any tiles
         // that we do not draw in missedTiles.  ts.allExistingTiles() by
         // default will only return already-existing tiles.  However, we
@@ -1177,7 +1177,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             // Tileset is either empty or too large
             if (zoom == 0 || this.insane())
                 return Collections.emptyList();
-            List<Tile> ret = new ArrayList<Tile>();
+            List<Tile> ret = new ArrayList<>();
             for (int x = x0; x <= x1; x++) {
                 for (int y = y0; y <= y1; y++) {
                     Tile t;
@@ -1195,7 +1195,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         }
 
         private List<Tile> allLoadedTiles() {
-            List<Tile> ret = new ArrayList<Tile>();
+            List<Tile> ret = new ArrayList<>();
             for (Tile t : this.allExistingTiles()) {
                 if (t.isLoaded())
                     ret.add(t);
@@ -1374,7 +1374,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             if (missedTiles.size() <= 0) {
                 break;
             }
-            List<Tile> newlyMissedTiles = new LinkedList<Tile>();
+            List<Tile> newlyMissedTiles = new LinkedList<>();
             for (Tile missed : missedTiles) {
                 if ("no-tile".equals(missed.getValue("tile-info")) && zoomOffset > 0) {
                     // Don't try to paint from higher zoom levels when tile is overzoomed

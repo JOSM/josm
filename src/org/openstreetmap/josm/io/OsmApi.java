@@ -75,7 +75,7 @@ public class OsmApi extends OsmConnection {
     public static final String DEFAULT_API_URL = "https://api.openstreetmap.org/api";
 
     // The collection of instantiated OSM APIs
-    private static Map<String, OsmApi> instances = new HashMap<String, OsmApi>();
+    private static Map<String, OsmApi> instances = new HashMap<>();
 
     private URL url = null;
 

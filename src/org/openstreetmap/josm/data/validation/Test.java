@@ -57,7 +57,7 @@ public class Test extends AbstractVisitor {
     protected boolean isBeforeUpload;
 
     /** The list of errors */
-    protected List<TestError> errors = new ArrayList<TestError>(30);
+    protected List<TestError> errors = new ArrayList<>(30);
 
     /** Whether the test is run on a partial selection data */
     protected boolean partialSelection;
@@ -151,7 +151,7 @@ public class Test extends AbstractVisitor {
         String startMessage = tr("Running test {0}", name);
         this.progressMonitor.beginTask(startMessage);
         Main.debug(startMessage);
-        this.errors = new ArrayList<TestError>(30);
+        this.errors = new ArrayList<>(30);
         this.startTime = System.currentTimeMillis();
     }
 
@@ -306,7 +306,7 @@ public class Test extends AbstractVisitor {
      * @return a Delete command on all primitives that have not yet been deleted, or null otherwise
      */
     protected final Command deletePrimitivesIfNeeded(Collection<? extends OsmPrimitive> primitives) {
-        Collection<OsmPrimitive> primitivesToDelete = new ArrayList<OsmPrimitive>();
+        Collection<OsmPrimitive> primitivesToDelete = new ArrayList<>();
         for (OsmPrimitive p : primitives) {
             if (!p.isDeleted()) {
                 primitivesToDelete.add(p);

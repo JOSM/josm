@@ -210,7 +210,7 @@ public class MainMenu extends JMenuBar {
     /** View / History (web) */
     public final HistoryInfoWebAction historyinfoweb = new HistoryInfoWebAction();
     /** View / "Zoom to"... actions */
-    public final Map<String, AutoScaleAction> autoScaleActions = new HashMap<String, AutoScaleAction>();
+    public final Map<String, AutoScaleAction> autoScaleActions = new HashMap<>();
     /** View / Jump to position */
     public final JumpToAction jumpToAct = new JumpToAction();
 

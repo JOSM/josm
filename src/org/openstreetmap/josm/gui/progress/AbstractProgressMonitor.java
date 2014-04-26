@@ -38,7 +38,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
     private String shownCustomText;
     private boolean intermediateTask;
 
-    private Queue<Request> requests = new LinkedList<Request>();
+    private Queue<Request> requests = new LinkedList<>();
     private AbstractProgressMonitor currentChild;
     private Request requestedState = new Request();
 

@@ -256,7 +256,7 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     public <K> Map<K,T> foreignKey(Hash<K,? super T> h) {
-        return new FMap<K>(h);
+        return new FMap<>(h);
     }
 
     // ---------------- Implementation

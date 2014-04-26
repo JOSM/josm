@@ -48,12 +48,12 @@ public class MapCSSStyleSource extends StyleSource {
 
     public MapCSSStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
-        rules = new ArrayList<MapCSSRule>();
+        rules = new ArrayList<>();
     }
 
     public MapCSSStyleSource(SourceEntry entry) {
         super(entry);
-        rules = new ArrayList<MapCSSRule>();
+        rules = new ArrayList<>();
     }
 
     /**
@@ -67,7 +67,7 @@ public class MapCSSStyleSource extends StyleSource {
         super(null, null, null);
         CheckParameterUtil.ensureParameterNotNull(css);
         this.css = css;
-        rules = new ArrayList<MapCSSRule>();
+        rules = new ArrayList<>();
     }
 
     @Override

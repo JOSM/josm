@@ -235,7 +235,7 @@ public class MirroredInputStream extends InputStream {
             url = new URL(name);
             if (!url.getProtocol().equals("file")) {
                 String prefKey = getPrefKey(url, destDir);
-                List<String> localPath = new ArrayList<String>(Main.pref.getCollection(prefKey));
+                List<String> localPath = new ArrayList<>(Main.pref.getCollection(prefKey));
                 if (localPath.size() == 2) {
                     File lfile = new File(localPath.get(1));
                     if(lfile.exists()) {
@@ -268,7 +268,7 @@ public class MirroredInputStream extends InputStream {
         String prefKey = getPrefKey(url, destDir);
         long age = 0L;
         File localFile = null;
-        List<String> localPathEntry = new ArrayList<String>(Main.pref.getCollection(prefKey));
+        List<String> localPathEntry = new ArrayList<>(Main.pref.getCollection(prefKey));
         if (localPathEntry.size() == 2) {
             localFile = new File(localPathEntry.get(1));
             if(!localFile.exists())

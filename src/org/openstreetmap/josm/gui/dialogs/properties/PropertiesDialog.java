@@ -155,7 +155,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final PopupMenuHandler membershipMenuHandler = new PopupMenuHandler(membershipMenu);
     private final PopupMenuHandler blankSpaceMenuHandler = new PopupMenuHandler(blankSpaceMenu);
 
-    private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
+    private final Map<String, Map<String, Integer>> valueCount = new TreeMap<>();
     /**
      * This sub-object is responsible for all adding and editing of tags
      */
@@ -399,7 +399,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             @Override
             protected int checkTableSelection(JTable table, Point p) {
                 int row = super.checkTableSelection(table, p);
-                List<Relation> rels = new ArrayList<Relation>();
+                List<Relation> rels = new ArrayList<>();
                 for (int i: table.getSelectedRows()) {
                     rels.add((Relation) table.getValueAt(i, 0));
                 }
@@ -602,8 +602,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         tagData.setRowCount(0);
 
         final boolean displayDiscardableKeys = Main.pref.getBoolean("display.discardable-keys", false);
-        final Map<String, Integer> keyCount = new HashMap<String, Integer>();
-        final Map<String, String> tags = new HashMap<String, String>();
+        final Map<String, Integer> keyCount = new HashMap<>();
+        final Map<String, String> tags = new HashMap<>();
         valueCount.clear();
         EnumSet<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
         for (OsmPrimitive osm : newSel) {
@@ -616,7 +616,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         Map<String, Integer> v = valueCount.get(key);
                         v.put(value, v.containsKey(value) ? v.get(value) + 1 : 1);
                     } else {
-                        TreeMap<String, Integer> v = new TreeMap<String, Integer>();
+                        TreeMap<String, Integer> v = new TreeMap<>();
                         v.put(value, 1);
                         valueCount.put(key, v);
                     }
@@ -638,7 +638,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         membershipData.setRowCount(0);
 
-        Map<Relation, MemberInfo> roles = new HashMap<Relation, MemberInfo>();
+        Map<Relation, MemberInfo> roles = new HashMap<>();
         for (OsmPrimitive primitive: newSel) {
             for (OsmPrimitive ref: primitive.getReferrers(true)) {
                 if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
@@ -659,7 +659,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         }
 
-        List<Relation> sortedRelations = new ArrayList<Relation>(roles.keySet());
+        List<Relation> sortedRelations = new ArrayList<>(roles.keySet());
         Collections.sort(sortedRelations, new Comparator<Relation>() {
             @Override public int compare(Relation o1, Relation o2) {
                 int comp = Boolean.valueOf(o1.isDisabledAndHidden()).compareTo(o2.isDisabledAndHidden());
@@ -818,9 +818,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     static class MemberInfo {
-        private List<RelationMember> role = new ArrayList<RelationMember>();
-        private Set<OsmPrimitive> members = new HashSet<OsmPrimitive>();
-        private List<Integer> position = new ArrayList<Integer>();
+        private List<RelationMember> role = new ArrayList<>();
+        private Set<OsmPrimitive> members = new HashSet<>();
+        private List<Integer> position = new ArrayList<>();
         private Iterable<OsmPrimitive> selection;
         private String positionString = null;
         private String roleString = null;
@@ -900,7 +900,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         protected void deleteTags(int[] rows){
             // convert list of rows to HashMap (and find gap for nextKey)
-            HashMap<String, String> tags = new HashMap<String, String>(rows.length);
+            HashMap<String, String> tags = new HashMap<>(rows.length);
             int nextKeyIndex = rows[0];
             for (int row : rows) {
                 String key = tagData.getValueAt(row, 0).toString();
@@ -1062,7 +1062,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             try {
                 String base = Main.pref.get("url.openstreetmap-wiki", "http://wiki.openstreetmap.org/wiki/");
                 String lang = LanguageInfo.getWikiLanguagePrefix();
-                final List<URI> uris = new ArrayList<URI>();
+                final List<URI> uris = new ArrayList<>();
                 int row;
                 if (tagTable.getSelectedRowCount() == 1) {
                     row = tagTable.getSelectedRow();
@@ -1173,7 +1173,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         @Override
         public void actionPerformed(ActionEvent ae) {
             int[] rows = tagTable.getSelectedRows();
-            Set<String> values = new TreeSet<String>();
+            Set<String> values = new TreeSet<>();
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
             if (rows.length == 0 || sel.isEmpty()) return;
 
@@ -1231,7 +1231,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         @Override
         protected Collection<String> getString(OsmPrimitive p, String key) {
-            List<String> r = new LinkedList<String>();
+            List<String> r = new LinkedList<>();
             for (Entry<String, String> kv : p.getKeys().entrySet()) {
                 r.add(new Tag(kv.getKey(), kv.getValue()).toString());
             }

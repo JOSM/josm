@@ -50,8 +50,8 @@ public final class ExpressionFactory {
     private static final Functions FUNCTIONS_INSTANCE = new Functions();
 
     static {
-        arrayFunctions = new ArrayList<Method>();
-        parameterFunctions = new ArrayList<Method>();
+        arrayFunctions = new ArrayList<>();
+        parameterFunctions = new ArrayList<>();
         for (Method m : Functions.class.getDeclaredMethods()) {
             Class<?>[] paramTypes = m.getParameterTypes();
             if (paramTypes.length == 1 && paramTypes[0].isArray()) {

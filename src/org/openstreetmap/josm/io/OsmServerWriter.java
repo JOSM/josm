@@ -39,7 +39,7 @@ public class OsmServerWriter {
     private static List<OsmServerWritePostprocessor> postprocessors;
     public static void registerPostprocessor(OsmServerWritePostprocessor pp) {
         if (postprocessors == null) {
-            postprocessors = new ArrayList<OsmServerWritePostprocessor>();
+            postprocessors = new ArrayList<>();
         }
         postprocessors.add(pp);
     }
@@ -151,7 +151,7 @@ public class OsmServerWriter {
             throw new IllegalArgumentException(tr("Value >0 expected for parameter ''{0}'', got {1}", "chunkSize", chunkSize));
         try {
             progressMonitor.beginTask(tr("Starting to upload in chunks..."));
-            List<IPrimitive> chunk = new ArrayList<IPrimitive>(chunkSize);
+            List<IPrimitive> chunk = new ArrayList<>(chunkSize);
             Iterator<? extends IPrimitive> it = primitives.iterator();
             int numChunks = (int)Math.ceil((double)primitives.size() / (double)chunkSize);
             int i= 0;
@@ -191,7 +191,7 @@ public class OsmServerWriter {
      */
     public void uploadOsm(UploadStrategySpecification strategy, Collection<? extends IPrimitive> primitives, Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
-        processed = new LinkedList<IPrimitive>();
+        processed = new LinkedList<>();
         monitor = monitor == null ? NullProgressMonitor.INSTANCE : monitor;
         monitor.beginTask(tr("Uploading data ..."));
         try {

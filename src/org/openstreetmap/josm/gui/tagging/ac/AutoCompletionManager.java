@@ -65,7 +65,7 @@ public class AutoCompletionManager implements DataSetListener {
      * the same as tagCache but for the preset keys and values
      * can be accessed directly
      */
-    protected static final MultiMap<String, String> presetTagCache = new MultiMap<String, String>();
+    protected static final MultiMap<String, String> presetTagCache = new MultiMap<>();
     /**
      * the cached list of member roles
      * only accessed by getRoleCache(), rebuild() and cacheRelationMemberRoles()
@@ -76,7 +76,7 @@ public class AutoCompletionManager implements DataSetListener {
      * the same as roleCache but for the preset roles
      * can be accessed directly
      */
-    protected static final Set<String> presetRoleCache = new HashSet<String>();
+    protected static final Set<String> presetRoleCache = new HashSet<>();
 
     public AutoCompletionManager(DataSet ds) {
         this.ds = ds;
@@ -104,8 +104,8 @@ public class AutoCompletionManager implements DataSetListener {
      *
      */
     protected void rebuild() {
-        tagCache = new MultiMap<String, String>();
-        roleCache = new HashSet<String>();
+        tagCache = new MultiMap<>();
+        roleCache = new HashSet<>();
         cachePrimitives(ds.allNonDeletedCompletePrimitives());
     }
 
@@ -177,11 +177,11 @@ public class AutoCompletionManager implements DataSetListener {
      * @return the list of keys held by the cache
      */
     protected List<String> getDataKeys() {
-        return new ArrayList<String>(getTagCache().keySet());
+        return new ArrayList<>(getTagCache().keySet());
     }
 
     protected List<String> getPresetKeys() {
-        return new ArrayList<String>(presetTagCache.keySet());
+        return new ArrayList<>(presetTagCache.keySet());
     }
 
     /**
@@ -192,11 +192,11 @@ public class AutoCompletionManager implements DataSetListener {
      * @return the list of auto completion values
      */
     protected List<String> getDataValues(String key) {
-        return new ArrayList<String>(getTagCache().getValues(key));
+        return new ArrayList<>(getTagCache().getValues(key));
     }
 
     protected static List<String> getPresetValues(String key) {
-        return new ArrayList<String>(presetTagCache.getValues(key));
+        return new ArrayList<>(presetTagCache.getValues(key));
     }
 
     /**
@@ -205,7 +205,7 @@ public class AutoCompletionManager implements DataSetListener {
      * @return the list of member roles
      */
     public List<String> getMemberRoles() {
-        return new ArrayList<String>(getRoleCache());
+        return new ArrayList<>(getRoleCache());
     }
 
     /**

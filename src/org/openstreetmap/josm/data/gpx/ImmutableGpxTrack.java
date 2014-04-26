@@ -17,13 +17,13 @@ public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
     private final Bounds bounds;
 
     public ImmutableGpxTrack(Collection<Collection<WayPoint>> trackSegs, Map<String, Object> attributes) {
-        List<GpxTrackSegment> newSegments = new ArrayList<GpxTrackSegment>();
+        List<GpxTrackSegment> newSegments = new ArrayList<>();
         for (Collection<WayPoint> trackSeg: trackSegs) {
             if (trackSeg != null && !trackSeg.isEmpty()) {
                 newSegments.add(new ImmutableGpxTrackSegment(trackSeg));
             }
         }
-        this.attr = Collections.unmodifiableMap(new HashMap<String, Object>(attributes));
+        this.attr = Collections.unmodifiableMap(new HashMap<>(attributes));
         this.segments = Collections.unmodifiableCollection(newSegments);
         this.length = calculateLength();
         this.bounds = calculateBounds();

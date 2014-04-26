@@ -29,7 +29,7 @@ public class FixDataHook implements UploadHook {
     /**
      * List of checks to run on data
      */
-    private List<FixData> deprecated = new LinkedList<FixData>();
+    private List<FixData> deprecated = new LinkedList<>();
 
     /**
      * Constructor for data initialization
@@ -75,7 +75,7 @@ public class FixDataHook implements UploadHook {
     public static class FixDataSpace implements FixData {
         @Override
         public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
-            Map<String, String> newKeys = new HashMap<String, String>(keys);
+            Map<String, String> newKeys = new HashMap<>(keys);
             for (Entry<String, String> e : keys.entrySet()) {
                 String v = Tag.removeWhiteSpaces(e.getValue());
                 String k = Tag.removeWhiteSpaces(e.getKey());
@@ -183,7 +183,7 @@ public class FixDataHook implements UploadHook {
             return true;
 
         List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
 
         for (OsmPrimitive osm : objectsToUpload) {
             Map<String, String> keys = osm.getKeys();
@@ -194,7 +194,7 @@ public class FixDataHook implements UploadHook {
                         modified = true;
                 }
                 if(modified)
-                    cmds.add(new ChangePropertyCommand(Collections.singleton(osm), new HashMap<String, String>(keys)));
+                    cmds.add(new ChangePropertyCommand(Collections.singleton(osm), new HashMap<>(keys)));
             }
         }
 

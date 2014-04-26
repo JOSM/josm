@@ -51,7 +51,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
          * @throws IllegalArgumentException If list contain less than 5 elements
          */
         public Bookmark(Collection<String> list) throws NumberFormatException, IllegalArgumentException {
-            List<String> array = new ArrayList<String>(list);
+            List<String> array = new ArrayList<>(list);
             if(array.size() < 5)
                 throw new IllegalArgumentException(tr("Wrong number of arguments for bookmark"));
             name = array.get(0);
@@ -166,7 +166,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         model.removeAllElements();
         Collection<Collection<String>> args = Main.pref.getArray("bookmarks", null);
         if(args != null) {
-            LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
+            LinkedList<Bookmark> bookmarks = new LinkedList<>();
             for(Collection<String> entry : args) {
                 try {
                     bookmarks.add(new Bookmark(entry));
@@ -183,7 +183,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         else if(!Main.applet) { /* FIXME: remove else clause after spring 2011, but fix windows installer before */
             File bookmarkFile = new File(Main.pref.getPreferencesDir(),"bookmarks");
             try {
-                LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
+                LinkedList<Bookmark> bookmarks = new LinkedList<>();
                 if (bookmarkFile.exists()) {
                     Main.info("Try loading obsolete bookmarks file");
                     BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -239,7 +239,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
      * Saves all bookmarks to the preferences file
      */
     public final void save() {
-        LinkedList<Collection<String>> coll = new LinkedList<Collection<String>>();
+        LinkedList<Collection<String>> coll = new LinkedList<>();
         for (Object o : ((DefaultListModel<Bookmark>)getModel()).toArray()) {
             String[] array = new String[5];
             Bookmark b = (Bookmark) o;

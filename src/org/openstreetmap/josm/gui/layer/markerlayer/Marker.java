@@ -87,7 +87,7 @@ public class Marker implements TemplateEngineDataProvider {
         // so per layer settings is useless. Anyway it's possible to specify marker layer pattern in Einstein preferences and maybe somebody
         // will make gui for it so I'm keeping it here
 
-        private static final Map<String, TemplateEntryProperty> CACHE = new HashMap<String, TemplateEntryProperty>();
+        private static final Map<String, TemplateEntryProperty> CACHE = new HashMap<>();
 
         // Legacy code - convert label from int to template engine expression
         private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0 );
@@ -184,7 +184,7 @@ public class Marker implements TemplateEngineDataProvider {
      * (depending on whether they want to override default behaviour or just add new
      * stuff).
      */
-    public static final List<MarkerProducers> markerProducers = new LinkedList<MarkerProducers>();
+    public static final List<MarkerProducers> markerProducers = new LinkedList<>();
 
     // Add one Marker specifying the default behaviour.
     static {
@@ -467,7 +467,7 @@ public class Marker implements TemplateEngineDataProvider {
         if (dataProvider != null) {
             result = dataProvider.getTemplateKeys();
         } else {
-            result = new ArrayList<String>();
+            result = new ArrayList<>();
         }
         result.add(MARKER_FORMATTED_OFFSET);
         result.add(MARKER_OFFSET);

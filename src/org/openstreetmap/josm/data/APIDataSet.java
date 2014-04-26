@@ -43,9 +43,9 @@ public class APIDataSet {
      * creates a new empty data set
      */
     public APIDataSet() {
-        toAdd = new LinkedList<OsmPrimitive>();
-        toUpdate = new LinkedList<OsmPrimitive>();
-        toDelete = new LinkedList<OsmPrimitive>();
+        toAdd = new LinkedList<>();
+        toUpdate = new LinkedList<>();
+        toDelete = new LinkedList<>();
     }
 
     /**
@@ -121,7 +121,7 @@ public class APIDataSet {
      */
     public boolean participatesInConflict(ConflictCollection conflicts) {
         if (conflicts == null || conflicts.isEmpty()) return false;
-        Set<PrimitiveId> idsParticipatingInConflicts = new HashSet<PrimitiveId>();
+        Set<PrimitiveId> idsParticipatingInConflicts = new HashSet<>();
         for (OsmPrimitive p: conflicts.getMyConflictParties()) {
             idsParticipatingInConflicts.add(p.getPrimitiveId());
         }
@@ -189,7 +189,7 @@ public class APIDataSet {
      * @return all primitives
      */
     public List<OsmPrimitive> getPrimitives() {
-        LinkedList<OsmPrimitive> ret = new LinkedList<OsmPrimitive>();
+        LinkedList<OsmPrimitive> ret = new LinkedList<>();
         ret.addAll(toAdd);
         ret.addAll(toUpdate);
         ret.addAll(toDelete);
@@ -222,11 +222,11 @@ public class APIDataSet {
      * @throws CyclicUploadDependencyException thrown, if a cyclic dependency is detected
      */
     public void adjustRelationUploadOrder() throws CyclicUploadDependencyException{
-        LinkedList<OsmPrimitive> newToAdd = new LinkedList<OsmPrimitive>();
+        LinkedList<OsmPrimitive> newToAdd = new LinkedList<>();
         newToAdd.addAll(Utils.filteredCollection(toAdd, Node.class));
         newToAdd.addAll(Utils.filteredCollection(toAdd, Way.class));
 
-        List<Relation> relationsToAdd = new ArrayList<Relation>(Utils.filteredCollection(toAdd, Relation.class));
+        List<Relation> relationsToAdd = new ArrayList<>(Utils.filteredCollection(toAdd, Relation.class));
         List<Relation> noProblemRelations = filterRelationsNotReferringToNewRelations(relationsToAdd);
         newToAdd.addAll(noProblemRelations);
         relationsToAdd.removeAll(noProblemRelations);
@@ -235,7 +235,7 @@ public class APIDataSet {
         newToAdd.addAll(graph.computeUploadOrder());
         toAdd = newToAdd;
 
-        LinkedList<OsmPrimitive> newToDelete = new LinkedList<OsmPrimitive>();
+        LinkedList<OsmPrimitive> newToDelete = new LinkedList<>();
         graph = new RelationUploadDependencyGraph(Utils.filteredCollection(toDelete, Relation.class), false);
         newToDelete.addAll(graph.computeUploadOrder());
         newToDelete.addAll(Utils.filteredCollection(toDelete, Way.class));
@@ -252,7 +252,7 @@ public class APIDataSet {
      * new relation
      */
     protected List<Relation> filterRelationsNotReferringToNewRelations(Collection<Relation> relations) {
-        List<Relation> ret = new LinkedList<Relation>();
+        List<Relation> ret = new LinkedList<>();
         for (Relation relation: relations) {
             boolean refersToNewRelation = false;
             for (RelationMember m : relation.getMembers()) {
@@ -274,9 +274,9 @@ public class APIDataSet {
      *
      */
     private static class RelationUploadDependencyGraph {
-        private Map<Relation, Set<Relation>> children = new HashMap<Relation, Set<Relation>>();
+        private Map<Relation, Set<Relation>> children = new HashMap<>();
         private Collection<Relation> relations;
-        private Set<Relation> visited = new HashSet<Relation>();
+        private Set<Relation> visited = new HashSet<>();
         private List<Relation> uploadOrder;
         private final boolean newOrUndeleted;
 
@@ -286,7 +286,7 @@ public class APIDataSet {
         }
 
         public final void build(Collection<Relation> relations) {
-            this.relations = new HashSet<Relation>();
+            this.relations = new HashSet<>();
             for(Relation relation: relations) {
                 if (newOrUndeleted ? !relation.isNewOrUndeleted() : !relation.isDeleted()) {
                     continue;
@@ -303,7 +303,7 @@ public class APIDataSet {
         public Set<Relation> getChildren(Relation relation) {
             Set<Relation> p = children.get(relation);
             if (p == null) {
-                p = new HashSet<Relation>();
+                p = new HashSet<>();
                 children.put(relation, p);
             }
             return p;
@@ -330,13 +330,13 @@ public class APIDataSet {
         }
 
         public List<Relation> computeUploadOrder() throws CyclicUploadDependencyException {
-            visited = new HashSet<Relation>();
-            uploadOrder = new LinkedList<Relation>();
-            Stack<Relation> path = new Stack<Relation>();
+            visited = new HashSet<>();
+            uploadOrder = new LinkedList<>();
+            Stack<Relation> path = new Stack<>();
             for (Relation relation: relations) {
                 visit(path, relation);
             }
-            List<Relation> ret = new ArrayList<Relation>(relations);
+            List<Relation> ret = new ArrayList<>(relations);
             Collections.sort(
                     ret,
                     new Comparator<Relation>() {

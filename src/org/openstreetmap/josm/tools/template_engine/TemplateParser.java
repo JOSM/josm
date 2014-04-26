@@ -38,7 +38,7 @@ public class TemplateParser {
     }
 
     private TemplateEntry parseExpression(Collection<TokenType> endTokens) throws ParseError {
-        List<TemplateEntry> entries = new ArrayList<TemplateEntry>();
+        List<TemplateEntry> entries = new ArrayList<>();
         while (true) {
             TemplateEntry templateEntry;
             Token token = tokenizer.lookAhead();

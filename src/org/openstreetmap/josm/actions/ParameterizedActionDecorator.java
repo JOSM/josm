@@ -15,7 +15,7 @@ public class ParameterizedActionDecorator implements Action {
 
     public ParameterizedActionDecorator(ParameterizedAction action, Map<String, Object> parameters) {
         this.action = action;
-        this.parameters = new HashMap<String, Object>(parameters);
+        this.parameters = new HashMap<>(parameters);
     }
 
     @Override

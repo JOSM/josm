@@ -16,7 +16,7 @@ public class PrimitivesAddedEvent extends AbstractDatasetChangedEvent {
 
     public PrimitivesAddedEvent(DataSet dataSet, Collection<? extends OsmPrimitive> primitives, boolean wasIncomplete) {
         super(dataSet);
-        this.primitives = Collections.unmodifiableList(new ArrayList<OsmPrimitive>(primitives));
+        this.primitives = Collections.unmodifiableList(new ArrayList<>(primitives));
         this.wasIncomplete = wasIncomplete;
     }
 

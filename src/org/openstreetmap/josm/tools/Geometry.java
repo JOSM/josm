@@ -65,11 +65,11 @@ public final class Geometry {
         BBox[] wayBounds = new BBox[n];
         boolean[] changedWays = new boolean[n];
 
-        Set<Node> intersectionNodes = new LinkedHashSet<Node>();
+        Set<Node> intersectionNodes = new LinkedHashSet<>();
 
         //copy node arrays for local usage.
         for (int pos = 0; pos < n; pos ++) {
-            newNodes[pos] = new ArrayList<Node>(ways.get(pos).getNodes());
+            newNodes[pos] = new ArrayList<>(ways.get(pos).getNodes());
             wayBounds[pos] = getNodesBounds(newNodes[pos]);
             changedWays[pos] = false;
         }
@@ -827,8 +827,8 @@ public final class Geometry {
     }
 
     public static class MultiPolygonMembers {
-        public final Set<Way> outers = new HashSet<Way>();
-        public final Set<Way> inners = new HashSet<Way>();
+        public final Set<Way> outers = new HashSet<>();
+        public final Set<Way> inners = new HashSet<>();
 
         public MultiPolygonMembers(Relation multiPolygon) {
             for (RelationMember m : multiPolygon.getMembers()) {

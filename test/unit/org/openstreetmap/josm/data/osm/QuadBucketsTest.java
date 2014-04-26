@@ -26,9 +26,9 @@ public class QuadBucketsTest {
     }
 
     private void removeAllTest(DataSet ds) {
-        List<Node> allNodes = new ArrayList<Node>(ds.getNodes());
-        List<Way> allWays = new ArrayList<Way>(ds.getWays());
-        List<Relation> allRelations = new ArrayList<Relation>(ds.getRelations());
+        List<Node> allNodes = new ArrayList<>(ds.getNodes());
+        List<Way> allWays = new ArrayList<>(ds.getWays());
+        List<Relation> allRelations = new ArrayList<>(ds.getRelations());
 
         QuadBuckets<Node> nodes = Reflection.field("nodes").ofType(new TypeRef<QuadBuckets<Node>>() {}).in(ds).get();
         QuadBuckets<Way> ways = Reflection.field("ways").ofType(new TypeRef<QuadBuckets<Way>>() {}).in(ds).get();

@@ -92,7 +92,7 @@ public abstract class DownloadAlongAction extends JosmAction {
      * the areas if applicable.
      */
     protected static void confirmAndDownloadAreas(Area a, double maxArea, boolean osmDownload, boolean gpxDownload, String title, ProgressMonitor progressMonitor) {
-        List<Rectangle2D> toDownload = new ArrayList<Rectangle2D>();
+        List<Rectangle2D> toDownload = new ArrayList<>();
         addToDownload(a, a.getBounds(), toDownload, maxArea);
         if (toDownload.isEmpty()) {
             return;

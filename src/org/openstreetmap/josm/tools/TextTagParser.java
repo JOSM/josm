@@ -57,7 +57,7 @@ public final class TextTagParser {
          */
         Map<String, String>  getFreeParsedTags() {
             String k, v;
-            Map<String, String> tags = new HashMap<String,String>();
+            Map<String, String> tags = new HashMap<>();
 
             while (true) {
                 skipEmpty();
@@ -163,7 +163,7 @@ public final class TextTagParser {
     public static Map<String, String> readTagsByRegexp(String text, String splitRegex, String tagRegex, boolean unescapeTextInQuotes) {
          String[] lines = text.split(splitRegex);
          Pattern p = Pattern.compile(tagRegex);
-         Map<String, String> tags = new HashMap<String,String>();
+         Map<String, String> tags = new HashMap<>();
          String k=null, v=null;
          for (String  line: lines) {
             if (line.trim().isEmpty()) continue; // skip empty lines

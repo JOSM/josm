@@ -122,7 +122,7 @@ public class UploadSelectionDialog extends JDialog {
 
     public void populate(Collection<OsmPrimitive> selected, Collection<OsmPrimitive> deleted) {
         if (selected != null) {
-            lstSelectedPrimitives.getOsmPrimitiveListModel().setPrimitives(new ArrayList<OsmPrimitive>(selected));
+            lstSelectedPrimitives.getOsmPrimitiveListModel().setPrimitives(new ArrayList<>(selected));
             if (!selected.isEmpty()) {
                 lstSelectedPrimitives.getSelectionModel().setSelectionInterval(0, selected.size()-1);
             } else {
@@ -134,7 +134,7 @@ public class UploadSelectionDialog extends JDialog {
         }
 
         if (deleted != null) {
-            lstDeletedPrimitives.getOsmPrimitiveListModel().setPrimitives(new ArrayList<OsmPrimitive>(deleted));
+            lstDeletedPrimitives.getOsmPrimitiveListModel().setPrimitives(new ArrayList<>(deleted));
         } else {
             lstDeletedPrimitives.getOsmPrimitiveListModel().setPrimitives(null);
         }
@@ -149,7 +149,7 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     public List<OsmPrimitive> getSelectedPrimitives() {
-        List<OsmPrimitive> ret  = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> ret  = new ArrayList<>();
         ret.addAll(lstSelectedPrimitives.getOsmPrimitiveListModel().getPrimitives(lstSelectedPrimitives.getSelectedIndices()));
         ret.addAll(lstDeletedPrimitives.getOsmPrimitiveListModel().getPrimitives(lstDeletedPrimitives.getSelectedIndices()));
         return ret;
@@ -246,7 +246,7 @@ public class UploadSelectionDialog extends JDialog {
         public List<OsmPrimitive> getPrimitives(int [] indices) {
             if (indices == null || indices.length == 0)
                 return Collections.emptyList();
-            List<OsmPrimitive> ret = new ArrayList<OsmPrimitive>(indices.length);
+            List<OsmPrimitive> ret = new ArrayList<>(indices.length);
             for (int i: indices) {
                 if (i < 0) {
                     continue;

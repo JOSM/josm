@@ -13,7 +13,7 @@ public class HelpBrowserHistory extends Observable {
 
     public HelpBrowserHistory(HelpBrowser browser) {
         this.browser = browser;
-        history = new ArrayList<String>();
+        history = new ArrayList<>();
     }
 
     public void clear() {
@@ -57,11 +57,11 @@ public class HelpBrowserHistory extends Observable {
         } else if (historyPos == history.size() -1) {
             // do nothing just append
         } else if (historyPos ==0 && history.size() > 0) {
-            history = new ArrayList<String>(Collections.singletonList(history.get(0)));
+            history = new ArrayList<>(Collections.singletonList(history.get(0)));
         } else if (historyPos < history.size() -1 && historyPos > 0) {
-            history = new ArrayList<String>(history.subList(0, historyPos));
+            history = new ArrayList<>(history.subList(0, historyPos));
         } else {
-            history = new ArrayList<String>();
+            history = new ArrayList<>();
         }
         if(add)
         {

@@ -85,7 +85,7 @@ public class ImageryHandler extends RequestHandler {
 
     @Override
     protected void parseArgs() {
-        HashMap<String, String> args = new HashMap<String, String>();
+        HashMap<String, String> args = new HashMap<>();
         if (request.indexOf('?') != -1) {
             String query = request.substring(request.indexOf('?') + 1);
             if (query.indexOf("url=") == 0) {

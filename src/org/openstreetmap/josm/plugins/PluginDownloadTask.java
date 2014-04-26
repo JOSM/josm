@@ -26,7 +26,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
-
 /**
  * Asynchronous task for downloading a collection of plugins.
  *
@@ -42,9 +41,9 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
      */
     public static final String PLUGIN_MIME_TYPES = "application/java-archive, application/zip; q=0.9, application/octet-stream; q=0.5";
     
-    private final Collection<PluginInformation> toUpdate = new LinkedList<PluginInformation>();
-    private final Collection<PluginInformation> failed = new LinkedList<PluginInformation>();
-    private final Collection<PluginInformation> downloaded = new LinkedList<PluginInformation>();
+    private final Collection<PluginInformation> toUpdate = new LinkedList<>();
+    private final Collection<PluginInformation> failed = new LinkedList<>();
+    private final Collection<PluginInformation> downloaded = new LinkedList<>();
     private Exception lastException;
     private boolean canceled;
     private HttpURLConnection downloadConnection;

@@ -30,7 +30,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
         for (Relation orig : relations) {
             Command c = GenericRelationEditor.addPrimitivesToRelation(orig, Main.main.getCurrentDataSet().getSelected());
             if (c != null) {

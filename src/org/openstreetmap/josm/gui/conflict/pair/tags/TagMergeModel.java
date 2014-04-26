@@ -40,8 +40,8 @@ public class TagMergeModel extends DefaultTableModel {
     private int numUndecidedTags = 0;
 
     public TagMergeModel() {
-        tagMergeItems = new ArrayList<TagMergeItem>();
-        listeners = new ArrayList<PropertyChangeListener>();
+        tagMergeItems = new ArrayList<>();
+        listeners = new ArrayList<>();
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -103,7 +103,7 @@ public class TagMergeModel extends DefaultTableModel {
      */
     public void populate(OsmPrimitive my, OsmPrimitive their) {
         tagMergeItems.clear();
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.addAll(my.keySet());
         keys.addAll(their.keySet());
         for(String key : keys) {

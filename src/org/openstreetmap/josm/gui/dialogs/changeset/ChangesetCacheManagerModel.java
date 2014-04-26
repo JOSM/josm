@@ -29,7 +29,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     /** the name of the property for the currently selected changeset in the detail view */
     public static final String CHANGESET_IN_DETAIL_VIEW_PROP = ChangesetCacheManagerModel.class.getName() + ".changesetInDetailView";
 
-    private final List<Changeset> data = new ArrayList<Changeset>();
+    private final List<Changeset> data = new ArrayList<>();
     private DefaultListSelectionModel selectionModel;
     private Changeset changesetInDetailView;
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
@@ -75,7 +75,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @return the list of selected changesets
      */
     public List<Changeset> getSelectedChangesets() {
-        List<Changeset> ret = new ArrayList<Changeset>();
+        List<Changeset> ret = new ArrayList<>();
         for (int i =0; i< data.size();i++) {
             Changeset cs = data.get(i);
             if (selectionModel.isSelectedIndex(i)) {
@@ -91,7 +91,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @return a set of ids of the selected changesets
      */
     public Set<Integer> getSelectedChangesetIds() {
-        Set<Integer> ret = new HashSet<Integer>();
+        Set<Integer> ret = new HashSet<>();
         for (Changeset cs: getSelectedChangesets()) {
             ret.add(cs.getId());
         }

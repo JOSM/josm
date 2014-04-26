@@ -49,22 +49,22 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             switch (index) {
             case NE_INDEX:
                 if (ne == null) {
-                    ne = new QBLevel<T>(this, index, buckets);
+                    ne = new QBLevel<>(this, index, buckets);
                 }
                 return ne;
             case NW_INDEX:
                 if (nw == null) {
-                    nw = new QBLevel<T>(this, index, buckets);
+                    nw = new QBLevel<>(this, index, buckets);
                 }
                 return nw;
             case SE_INDEX:
                 if (se == null) {
-                    se = new QBLevel<T>(this, index, buckets);
+                    se = new QBLevel<>(this, index, buckets);
                 }
                 return se;
             case SW_INDEX:
                 if (sw == null) {
-                    sw = new QBLevel<T>(this, index, buckets);
+                    sw = new QBLevel<>(this, index, buckets);
                 }
                 return sw;
             default:
@@ -173,7 +173,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             boolean ret = false;
             // The split_lock will keep two concurrent calls from overwriting content
             if (content == null) {
-                content = new ArrayList<T>();
+                content = new ArrayList<>();
             }
             ret = content.add(o);
             return ret;
@@ -404,7 +404,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
     @Override
     public final void clear() {
-        root = new QBLevel<T>(this);
+        root = new QBLevel<>(this);
         search_cache = null;
         size = 0;
     }
@@ -477,7 +477,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     }
 
     public ArrayList<T> toArrayList() {
-        ArrayList<T> a = new ArrayList<T>();
+        ArrayList<T> a = new ArrayList<>();
         for (T n : this) {
             a.add(n);
         }
@@ -580,7 +580,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     }
 
     public List<T> search(BBox search_bbox) {
-        List<T> ret = new ArrayList<T>();
+        List<T> ret = new ArrayList<>();
         // Doing this cuts down search cost on a real-life data set by about 25%
         boolean cache_searches = true;
         if (cache_searches) {

@@ -92,15 +92,15 @@ public class Preferences {
      * The map must not contain null as key or value. The mapped setting objects
      * must not have a null value.
      */
-    protected final SortedMap<String, Setting> settingsMap = new TreeMap<String, Setting>();
+    protected final SortedMap<String, Setting> settingsMap = new TreeMap<>();
     /**
      * Map the setting name to the default value of the setting.
      * The map must not contain null as key or value. The value of the mapped
      * setting objects can be null.
      */
-    protected final SortedMap<String, Setting> defaultsMap = new TreeMap<String, Setting>();
+    protected final SortedMap<String, Setting> defaultsMap = new TreeMap<>();
     // maps color keys to human readable color name
-    protected final SortedMap<String, String> colornames = new TreeMap<String, String>();
+    protected final SortedMap<String, String> colornames = new TreeMap<>();
 
     /**
      * Interface for a preference value.
@@ -218,7 +218,7 @@ public class Preferences {
          * @return a corresponding ListSetting object
          */
         public static ListSetting create(Collection<String> value) {
-            return new ListSetting(value == null ? null : Collections.unmodifiableList(new ArrayList<String>(value)));
+            return new ListSetting(value == null ? null : Collections.unmodifiableList(new ArrayList<>(value)));
         }
         @Override public boolean equalVal(List<String> otherVal) {
             return equalCollection(value, otherVal);
@@ -275,9 +275,9 @@ public class Preferences {
          */
         public static ListListSetting create(Collection<Collection<String>> value) {
             if (value != null) {
-                List<List<String>> valueList = new ArrayList<List<String>>(value.size());
+                List<List<String>> valueList = new ArrayList<>(value.size());
                 for (Collection<String> lst : value) {
-                    valueList.add(new ArrayList<String>(lst));
+                    valueList.add(new ArrayList<>(lst));
                 }
                 return new ListListSetting(valueList);
             }
@@ -297,9 +297,9 @@ public class Preferences {
         @Override public ListListSetting copy() {
             if (value == null) return new ListListSetting(null);
 
-            List<List<String>> copy = new ArrayList<List<String>>(value.size());
+            List<List<String>> copy = new ArrayList<>(value.size());
             for (Collection<String> lst : value) {
-                List<String> lstCopy = new ArrayList<String>(lst);
+                List<String> lstCopy = new ArrayList<>(lst);
                 copy.add(Collections.unmodifiableList(lstCopy));
             }
             return new ListListSetting(Collections.unmodifiableList(copy));
@@ -358,9 +358,9 @@ public class Preferences {
         }
         @Override public MapListSetting copy() {
             if (value == null) return new MapListSetting(null);
-            List<Map<String, String>> copy = new ArrayList<Map<String, String>>(value.size());
+            List<Map<String, String>> copy = new ArrayList<>(value.size());
             for (Map<String, String> map : value) {
-                Map<String, String> mapCopy = new LinkedHashMap<String,String>(map);
+                Map<String, String> mapCopy = new LinkedHashMap<>(map);
                 copy.add(Collections.unmodifiableMap(mapCopy));
             }
             return new MapListSetting(Collections.unmodifiableList(copy));
@@ -434,7 +434,7 @@ public class Preferences {
         Color getDefaultValue();
     }
 
-    private final CopyOnWriteArrayList<PreferenceChangedListener> listeners = new CopyOnWriteArrayList<PreferenceChangedListener>();
+    private final CopyOnWriteArrayList<PreferenceChangedListener> listeners = new CopyOnWriteArrayList<>();
 
     public void addPreferenceChangeListener(PreferenceChangedListener listener) {
         if (listener != null) {
@@ -540,7 +540,7 @@ public class Preferences {
      * @return A list of all existing directories where resources could be stored.
      */
     public Collection<String> getAllPossiblePreferenceDirs() {
-        LinkedList<String> locations = new LinkedList<String>();
+        LinkedList<String> locations = new LinkedList<>();
         locations.add(getPreferencesDir());
         String s;
         if ((s = System.getenv("JOSM_RESOURCES")) != null) {
@@ -593,7 +593,7 @@ public class Preferences {
     }
 
     public synchronized Map<String, String> getAllPrefix(final String prefix) {
-        final Map<String,String> all = new TreeMap<String,String>();
+        final Map<String,String> all = new TreeMap<>();
         for (final Entry<String,Setting> e : settingsMap.entrySet()) {
             if (e.getKey().startsWith(prefix) && (e.getValue() instanceof StringSetting)) {
                 all.put(e.getKey(), ((StringSetting) e.getValue()).getValue());
@@ -603,7 +603,7 @@ public class Preferences {
     }
 
     public synchronized List<String> getAllPrefixCollectionKeys(final String prefix) {
-        final List<String> all = new LinkedList<String>();
+        final List<String> all = new LinkedList<>();
         for (Map.Entry<String, Setting> entry : settingsMap.entrySet()) {
             if (entry.getKey().startsWith(prefix) && entry.getValue() instanceof ListSetting) {
                 all.add(entry.getKey());
@@ -613,7 +613,7 @@ public class Preferences {
     }
 
     public synchronized Map<String, String> getAllColors() {
-        final Map<String,String> all = new TreeMap<String,String>();
+        final Map<String,String> all = new TreeMap<>();
         for (final Entry<String,Setting> e : defaultsMap.entrySet()) {
             if (e.getKey().startsWith("color.") && e.getValue() instanceof StringSetting) {
                 StringSetting d = (StringSetting) e.getValue();
@@ -971,7 +971,7 @@ public class Preferences {
     }
 
     public synchronized void removeFromCollection(String key, String value) {
-        List<String> a = new ArrayList<String>(getCollection(key, Collections.<String>emptyList()));
+        List<String> a = new ArrayList<>(getCollection(key, Collections.<String>emptyList()));
         a.remove(value);
         putCollection(key, a);
     }
@@ -1058,7 +1058,7 @@ public class Preferences {
      * Saves at most {@code maxsize} items of collection {@code val}.
      */
     public boolean putCollectionBounded(String key, int maxsize, Collection<String> val) {
-        Collection<String> newCollection = new ArrayList<String>(Math.min(maxsize, val.size()));
+        Collection<String> newCollection = new ArrayList<>(Math.min(maxsize, val.size()));
         for (String i : val) {
             if (newCollection.size() >= maxsize) {
                 break;
@@ -1088,11 +1088,11 @@ public class Preferences {
     }
 
     public Collection<Map<String, String>> getListOfStructs(String key, Collection<Map<String, String>> def) {
-        return getSetting(key, new MapListSetting(def == null ? null : new ArrayList<Map<String, String>>(def)), MapListSetting.class).getValue();
+        return getSetting(key, new MapListSetting(def == null ? null : new ArrayList<>(def)), MapListSetting.class).getValue();
     }
 
     public boolean putListOfStructs(String key, Collection<Map<String, String>> value) {
-        return putSetting(key, value == null ? null : new MapListSetting(new ArrayList<Map<String, String>>(value)));
+        return putSetting(key, value == null ? null : new MapListSetting(new ArrayList<>(value)));
     }
 
     @Retention(RetentionPolicy.RUNTIME) public @interface pref { }
@@ -1123,8 +1123,8 @@ public class Preferences {
         Collection<Map<String,String>> prop =
             getListOfStructs(key, def == null ? null : serializeListOfStructs(def, klass));
         if (prop == null)
-            return def == null ? null : new ArrayList<T>(def);
-        List<T> lst = new ArrayList<T>();
+            return def == null ? null : new ArrayList<>(def);
+        List<T> lst = new ArrayList<>();
         for (Map<String,String> entries : prop) {
             T struct = deserializeStruct(entries, klass);
             lst.add(struct);
@@ -1152,7 +1152,7 @@ public class Preferences {
     private <T> Collection<Map<String,String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
         if (l == null)
             return null;
-        Collection<Map<String,String>> vals = new ArrayList<Map<String,String>>();
+        Collection<Map<String,String>> vals = new ArrayList<>();
         for (T struct : l) {
             if (struct == null) {
                 continue;
@@ -1170,7 +1170,7 @@ public class Preferences {
             throw new RuntimeException(ex);
         }
 
-        Map<String,String> hash = new LinkedHashMap<String,String>();
+        Map<String,String> hash = new LinkedHashMap<>();
         for (Field f : klass.getDeclaredFields()) {
             if (f.getAnnotation(pref.class) == null) {
                 continue;
@@ -1243,11 +1243,11 @@ public class Preferences {
     }
 
     public Map<String, Setting> getAllSettings() {
-        return new TreeMap<String, Setting>(settingsMap);
+        return new TreeMap<>(settingsMap);
     }
 
     public Map<String, Setting> getAllDefaults() {
-        return new TreeMap<String, Setting>(defaultsMap);
+        return new TreeMap<>(defaultsMap);
     }
 
     /**
@@ -1401,18 +1401,18 @@ public class Preferences {
                 String localName = parser.getLocalName();
                 if ("entry".equals(localName)) {
                     if (entries == null) {
-                        entries = new ArrayList<String>();
+                        entries = new ArrayList<>();
                     }
                     entries.add(parser.getAttributeValue(null, "value"));
                     jumpToEnd();
                 } else if ("list".equals(localName)) {
                     if (lists == null) {
-                        lists = new ArrayList<List<String>>();
+                        lists = new ArrayList<>();
                     }
                     lists.add(parseInnerList());
                 } else if ("map".equals(localName)) {
                     if (maps == null) {
-                        maps = new ArrayList<Map<String, String>>();
+                        maps = new ArrayList<>();
                     }
                     maps.add(parseMap());
                 } else {
@@ -1440,7 +1440,7 @@ public class Preferences {
     }
 
     protected List<String> parseInnerList() throws XMLStreamException {
-        List<String> entries = new ArrayList<String>();
+        List<String> entries = new ArrayList<>();
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
@@ -1458,7 +1458,7 @@ public class Preferences {
     }
 
     protected Map<String, String> parseMap() throws XMLStreamException {
-        Map<String, String> map = new LinkedHashMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<>();
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {

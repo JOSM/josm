@@ -28,7 +28,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class StyleSource extends SourceEntry {
 
-    private List<Throwable> errors = new ArrayList<Throwable>();
+    private List<Throwable> errors = new ArrayList<>();
     public File zipIcons;
 
     private ImageIcon imageIcon;

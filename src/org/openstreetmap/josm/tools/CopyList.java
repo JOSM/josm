@@ -115,7 +115,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
      */
     @Override
     public Object clone() {
-        return new CopyList<E>(array, size);
+        return new CopyList<>(array, size);
     }
 
     private void rangeCheck(int index) {

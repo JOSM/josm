@@ -295,7 +295,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     public Collection<OsmPrimitive> getSelectedObjects(boolean alt) {
 
-        Collection<OsmPrimitive> selection = new LinkedList<OsmPrimitive>();
+        Collection<OsmPrimitive> selection = new LinkedList<>();
 
         // whether user only clicked, not dragged.
         boolean clicked = false;

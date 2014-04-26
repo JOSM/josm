@@ -39,7 +39,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
             getTheirEntries().add(n);
         }
         if (myAndTheirEntriesEqual()) {
-            entries.put(ListRole.MERGED_ENTRIES, new ArrayList<Node>(getMyEntries()));
+            entries.put(ListRole.MERGED_ENTRIES, new ArrayList<>(getMyEntries()));
             setFrozen(true);
         } else {
             setFrozen(false);

@@ -153,7 +153,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
             });
 
         // Warm about deleted primitives
-        final Set<PrimitiveId> del = new HashSet<PrimitiveId>();
+        final Set<PrimitiveId> del = new HashSet<>();
         DataSet ds = Main.main.getCurrentDataSet();
         for (PrimitiveId id : ids) {
             OsmPrimitive osm = ds.getPrimitiveById(id);
@@ -188,7 +188,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
             if(canceled)
                 return null;
         }
-        ArrayList<PrimitiveId> downloaded = new ArrayList<PrimitiveId>(ids);
+        ArrayList<PrimitiveId> downloaded = new ArrayList<>(ids);
         downloaded.removeAll(mainTask.getMissingPrimitives());
         return downloaded;
     }

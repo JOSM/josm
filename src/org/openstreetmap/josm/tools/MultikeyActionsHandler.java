@@ -31,7 +31,7 @@ public final class MultikeyActionsHandler {
     private static final long DIALOG_DELAY = 1000;
     private static final String STATUS_BAR_ID = "multikeyShortcut";
 
-    private Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<MultikeyShortcutAction,MyAction>();
+    private Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<>();
 
     private class MyKeyEventDispatcher implements KeyEventDispatcher {
         @Override

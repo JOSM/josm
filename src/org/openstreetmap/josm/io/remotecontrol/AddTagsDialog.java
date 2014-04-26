@@ -58,7 +58,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
     int[] count;
 
     String sender;
-    static Set<String> trustedSenders = new HashSet<String>();
+    static Set<String> trustedSenders = new HashSet<>();
 
     /**
      * Class for displaying "delete from ... objects" in the table
@@ -80,7 +80,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         String tag;
         Map<String, Integer> valueCount;
         public ExistingValues(String tag) {
-            this.tag=tag; valueCount=new HashMap<String, Integer>();
+            this.tag=tag; valueCount=new HashMap<>();
         }
 
         int addValue(String val) {
@@ -302,7 +302,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                     } catch (UnsupportedEncodingException e) {
                         throw new RuntimeException(e);
                     }
-                    Set<String> tagSet = new HashSet<String>();
+                    Set<String> tagSet = new HashSet<>();
                     for (String tag : tags) {
                         if (!tag.trim().isEmpty() && tag.contains("=")) {
                             tagSet.add(tag.trim());

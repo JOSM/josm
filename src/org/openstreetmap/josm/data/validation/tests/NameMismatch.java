@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
@@ -60,7 +59,7 @@ public class NameMismatch extends Test.TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
-        HashSet<String> names = new HashSet<String>();
+        HashSet<String> names = new HashSet<>();
 
         for (Entry<String, String> entry : p.getKeys().entrySet()) {
             if (entry.getKey().startsWith("name:")) {

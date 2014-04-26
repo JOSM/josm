@@ -544,14 +544,14 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         private PointInTimeType pointInTimeType;
 
         protected void initKeyList() {
-            HashSet<String> keySet = new HashSet<String>();
+            HashSet<String> keySet = new HashSet<>();
             if (current != null) {
                 keySet.addAll(current.getTags().keySet());
             }
             if (reference != null) {
                 keySet.addAll(reference.getTags().keySet());
             }
-            keys = new ArrayList<String>(keySet);
+            keys = new ArrayList<>(keySet);
             Collections.sort(keys);
             fireTableDataChanged();
         }

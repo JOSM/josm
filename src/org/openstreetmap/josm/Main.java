@@ -208,9 +208,9 @@ public abstract class Main {
      */
     private GettingStarted gettingStarted = new GettingStarted();
 
-    private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<MapFrameListener>();
+    private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<>();
 
-    protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<String, Throwable>();
+    protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
     /**
      * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
@@ -518,7 +518,7 @@ public abstract class Main {
                 KeyEvent.VK_F1, Shortcut.DIRECT));
 
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
-        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
+        List<Callable<Void>> tasks = new ArrayList<>();
 
         tasks.add(new InitializationTask(tr("Initializing OSM API")) {
 
@@ -834,7 +834,7 @@ public abstract class Main {
 
     protected static void postConstructorProcessCmdLine(Map<Option, Collection<String>> args) {
         if (args.containsKey(Option.DOWNLOAD)) {
-            List<File> fileList = new ArrayList<File>();
+            List<File> fileList = new ArrayList<>();
             for (String s : args.get(Option.DOWNLOAD)) {
                 File f = null;
                 switch(paramType(s)) {
@@ -917,7 +917,7 @@ public abstract class Main {
      */
     public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, boolean exit) {
         SaveLayersDialog dialog = new SaveLayersDialog(parent);
-        List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<OsmDataLayer>();
+        List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<>();
         for (Layer l: selectedLayers) {
             if (!(l instanceof OsmDataLayer)) {
                 continue;
@@ -961,7 +961,7 @@ public abstract class Main {
             pref.put("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
             // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
             if (Main.isDisplayingMapView()) {
-                Collection<Layer> layers = new ArrayList<Layer>(Main.map.mapView.getAllLayers());
+                Collection<Layer> layers = new ArrayList<>(Main.map.mapView.getAllLayers());
                 for (Layer l: layers) {
                     Main.main.removeLayer(l);
                 }
@@ -1188,7 +1188,7 @@ public abstract class Main {
      * explicitly removing the listeners and allows us to transparently register every
      * created dataset as projection change listener.
      */
-    private static final List<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<WeakReference<ProjectionChangeListener>>();
+    private static final List<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<>();
 
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if (newValue == null ^ oldValue == null
@@ -1225,7 +1225,7 @@ public abstract class Main {
                 // already registered ? => abort
                 if (wr.get() == listener) return;
             }
-            listeners.add(new WeakReference<ProjectionChangeListener>(listener));
+            listeners.add(new WeakReference<>(listener));
         }
     }
 
@@ -1268,7 +1268,7 @@ public abstract class Main {
         void fromOtherApplication();
     }
 
-    private static final List<WeakReference<WindowSwitchListener>> windowSwitchListeners = new ArrayList<WeakReference<WindowSwitchListener>>();
+    private static final List<WeakReference<WindowSwitchListener>> windowSwitchListeners = new ArrayList<>();
 
     /**
      * Register a window switch listener.
@@ -1283,7 +1283,7 @@ public abstract class Main {
                 if (wr.get() == listener) return;
             }
             boolean wasEmpty = windowSwitchListeners.isEmpty();
-            windowSwitchListeners.add(new WeakReference<WindowSwitchListener>(listener));
+            windowSwitchListeners.add(new WeakReference<>(listener));
             if (wasEmpty) {
                 // The following call will have no effect, when there is no window
                 // at the time. Therefore, MasterWindowListener.setup() will also be
@@ -1479,7 +1479,7 @@ public abstract class Main {
      * @since 6639
      */
     public static Map<String, Throwable> getNetworkErrors() {
-        return new HashMap<String, Throwable>(NETWORK_ERRORS);
+        return new HashMap<>(NETWORK_ERRORS);
     }
 
     /**

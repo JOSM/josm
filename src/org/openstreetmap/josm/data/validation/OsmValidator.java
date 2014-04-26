@@ -76,7 +76,7 @@ public class OsmValidator implements LayerChangeListener {
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
     public static double griddetail;
 
-    public static final Collection<String> ignoredErrors = new TreeSet<String>();
+    public static final Collection<String> ignoredErrors = new TreeSet<>();
 
     /**
      * All available tests
@@ -123,7 +123,7 @@ public class OsmValidator implements LayerChangeListener {
 
     private static Map<String, Test> allTestsMap;
     static {
-        allTestsMap = new HashMap<String, Test>();
+        allTestsMap = new HashMap<>();
         for (Class<Test> testClass : allAvailableTests) {
             try {
                 allTestsMap.put(testClass.getName(), testClass.newInstance());
@@ -225,7 +225,7 @@ public class OsmValidator implements LayerChangeListener {
     public static SortedMap<String, Test> getAllTestsMap() {
         applyPrefs(allTestsMap, false);
         applyPrefs(allTestsMap, true);
-        return new TreeMap<String, Test>(allTestsMap);
+        return new TreeMap<>(allTestsMap);
     }
 
     /**
@@ -262,7 +262,7 @@ public class OsmValidator implements LayerChangeListener {
 
     public static Collection<Test> getEnabledTests(boolean beforeUpload) {
         Collection<Test> enabledTests = getTests();
-        for (Test t : new ArrayList<Test>(enabledTests)) {
+        for (Test t : new ArrayList<>(enabledTests)) {
             if (beforeUpload ? t.testBeforeUpload : t.enabled) {
                 continue;
             }

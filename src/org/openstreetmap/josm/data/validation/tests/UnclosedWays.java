@@ -155,7 +155,7 @@ public class UnclosedWays extends Test {
      * @since 6390
      */
     public Set<String> getCheckedKeys() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         for (UnclosedWaysCheck c : checks) {
             keys.add(c.key);
         }

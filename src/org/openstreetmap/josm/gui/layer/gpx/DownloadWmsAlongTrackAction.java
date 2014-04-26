@@ -45,7 +45,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final List<LatLon> points = new ArrayList<LatLon>();
+        final List<LatLon> points = new ArrayList<>();
         for (GpxTrack trk : data.tracks) {
             for (GpxTrackSegment segment : trk.getSegments()) {
                 for (WayPoint p : segment.getWayPoints()) {

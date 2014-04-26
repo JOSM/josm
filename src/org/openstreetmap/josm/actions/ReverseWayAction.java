@@ -46,7 +46,7 @@ public final class ReverseWayAction extends JosmAction {
         }
 
         public Collection<Command> getCommands() {
-            List<Command> c = new ArrayList<Command>();
+            List<Command> c = new ArrayList<>();
             c.addAll(tagCorrectionCommands);
             c.add(reverseCommand);
             return c;
@@ -89,7 +89,7 @@ public final class ReverseWayAction extends JosmAction {
         }
 
         boolean propertiesUpdated = false;
-        Collection<Command> c = new LinkedList<Command>();
+        Collection<Command> c = new LinkedList<>();
         for (Way w : sel) {
             ReverseWayResult revResult;
             try {

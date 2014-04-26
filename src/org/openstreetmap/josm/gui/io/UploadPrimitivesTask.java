@@ -73,7 +73,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         this.layer = layer;
         this.changeset = changeset;
         this.strategy = strategy;
-        this.processedPrimitives = new HashSet<IPrimitive>();
+        this.processedPrimitives = new HashSet<>();
     }
 
     protected MaxChangesetSizeExceededPolicy askMaxChangesetSizeExceedsPolicy() {

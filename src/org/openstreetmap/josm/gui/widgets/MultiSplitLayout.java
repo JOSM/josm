@@ -71,7 +71,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @see MultiSplitPane
  */
 public class MultiSplitLayout implements LayoutManager {
-    private final Map<String, Component> childMap = new HashMap<String, Component>();
+    private final Map<String, Component> childMap = new HashMap<>();
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Node model;
     private int dividerSize;
@@ -802,7 +802,7 @@ public class MultiSplitLayout implements LayoutManager {
 
     private List<Divider> dividersThatOverlap(Node root, Rectangle r) {
         if (nodeOverlapsRectangle(root, r) && (root instanceof Split)) {
-            List<Divider> dividers = new ArrayList<Divider>();
+            List<Divider> dividers = new ArrayList<>();
             for(Node child : ((Split)root).getChildren()) {
                 if (child instanceof Divider) {
                     if (nodeOverlapsRectangle(child, r)) {
@@ -1000,7 +1000,7 @@ public class MultiSplitLayout implements LayoutManager {
          * @see #setChildren
          */
         public List<Node> getChildren() {
-            return new ArrayList<Node>(children);
+            return new ArrayList<>(children);
         }
 
         /**
@@ -1020,7 +1020,7 @@ public class MultiSplitLayout implements LayoutManager {
             for(Node child : this.children) {
                 child.parent_set(null);
             }
-            this.children = new ArrayList<Node>(children);
+            this.children = new ArrayList<>(children);
             for(Node child : this.children) {
                 child.parent_set(this);
             }
@@ -1182,7 +1182,7 @@ public class MultiSplitLayout implements LayoutManager {
     }
 
     private static void addSplitChild(Split parent, Node child) {
-        List<Node> children = new ArrayList<Node>(parent.getChildren());
+        List<Node> children = new ArrayList<>(parent.getChildren());
         if (children.isEmpty()) {
             children.add(child);
         }

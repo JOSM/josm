@@ -59,7 +59,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         pnl.add(commentLabel, GBC.eol().insets(0, 5, 10, 3).fill(GBC.HORIZONTAL));
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
         hcbUploadComment.setMaxTextLength(Changeset.MAX_COMMENT_LENGTH);
-        List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(cmtHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadComment.setPossibleItems(cmtHistory);
         final CommentModelListener commentModelListener = new CommentModelListener(hcbUploadComment, changesetCommentModel);
@@ -80,7 +80,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 3).fill(GBC.HORIZONTAL));
 
         hcbUploadSource.setToolTipText(tr("Enter a source"));
-        List<String> sourceHistory = new LinkedList<String>(Main.pref.getCollection(SOURCE_HISTORY_KEY, Arrays.asList("knowledge", "survey", "Bing")));
+        List<String> sourceHistory = new LinkedList<>(Main.pref.getCollection(SOURCE_HISTORY_KEY, Arrays.asList("knowledge", "survey", "Bing")));
         Collections.reverse(sourceHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadSource.setPossibleItems(sourceHistory);
         final CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);

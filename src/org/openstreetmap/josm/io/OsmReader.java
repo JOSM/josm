@@ -59,7 +59,7 @@ public class OsmReader extends AbstractReader {
     /** register a new postprocessor */
     public static void registerPostprocessor(OsmServerReadPostprocessor pp) {
         if (postprocessors == null) {
-            postprocessors = new ArrayList<OsmServerReadPostprocessor>();
+            postprocessors = new ArrayList<>();
         }
         postprocessors.add(pp);
     }
@@ -222,7 +222,7 @@ public class OsmReader extends AbstractReader {
         w.load(wd);
         externalIdMap.put(wd.getPrimitiveId(), w);
 
-        Collection<Long> nodeIds = new ArrayList<Long>();
+        Collection<Long> nodeIds = new ArrayList<>();
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
@@ -239,7 +239,7 @@ public class OsmReader extends AbstractReader {
         }
         if (w.isDeleted() && !nodeIds.isEmpty()) {
             Main.info(tr("Deleted way {0} contains nodes", w.getUniqueId()));
-            nodeIds = new ArrayList<Long>();
+            nodeIds = new ArrayList<>();
         }
         ways.put(wd.getUniqueId(), nodeIds);
         return w;
@@ -269,7 +269,7 @@ public class OsmReader extends AbstractReader {
         r.load(rd);
         externalIdMap.put(rd.getPrimitiveId(), r);
 
-        Collection<RelationMemberData> members = new ArrayList<RelationMemberData>();
+        Collection<RelationMemberData> members = new ArrayList<>();
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
@@ -286,7 +286,7 @@ public class OsmReader extends AbstractReader {
         }
         if (r.isDeleted() && !members.isEmpty()) {
             Main.info(tr("Deleted relation {0} contains members", r.getUniqueId()));
-            members = new ArrayList<RelationMemberData>();
+            members = new ArrayList<>();
         }
         relations.put(rd.getUniqueId(), members);
         return r;

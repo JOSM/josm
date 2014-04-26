@@ -63,7 +63,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         super();
     }
 
-    private static final List<SourceProvider> presetSourceProviders = new ArrayList<SourceProvider>();
+    private static final List<SourceProvider> presetSourceProviders = new ArrayList<>();
     
     /**
      * The collection of tagging presets.
@@ -87,7 +87,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         @Override
         public boolean validatePreferences() {
             if (sources.hasActiveSourcesChanged()) {
-                List<Integer> sourcesToRemove = new ArrayList<Integer>();
+                List<Integer> sourcesToRemove = new ArrayList<>();
                 int i = -1;
                 SOURCES:
                     for (SourceEntry source: sources.getActiveSources()) {
@@ -293,7 +293,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
             Main.main.menu.presetsMenu.setVisible(false);
         } else {
             AutoCompletionManager.cachePresets(taggingPresets);
-            HashMap<TaggingPresetMenu,JMenu> submenus = new HashMap<TaggingPresetMenu,JMenu>();
+            HashMap<TaggingPresetMenu,JMenu> submenus = new HashMap<>();
             for (final TaggingPreset p : taggingPresets) {
                 JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
                 if (p instanceof TaggingPresetSeparator) {
@@ -343,7 +343,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
         @Override
         public Map<String, String> serialize(SourceEntry entry) {
-            Map<String, String> res = new HashMap<String, String>();
+            Map<String, String> res = new HashMap<>();
             res.put("url", entry.url);
             res.put("title", entry.title == null ? "" : entry.title);
             return res;

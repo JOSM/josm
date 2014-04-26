@@ -34,7 +34,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @since 1925
      */
     public List<RelationMember> getMembers() {
-        return new CopyList<RelationMember>(members);
+        return new CopyList<>(members);
     }
 
     /**
@@ -240,7 +240,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
             RelationData relationData = (RelationData) data;
 
-            List<RelationMember> newMembers = new ArrayList<RelationMember>();
+            List<RelationMember> newMembers = new ArrayList<>();
             for (RelationMemberData member : relationData.getMembers()) {
                 OsmPrimitive primitive = getDataSet().getPrimitiveById(member);
                 if (primitive == null)
@@ -383,7 +383,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * member of this relation
      */
     public Set<OsmPrimitive> getMemberPrimitives() {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         RelationMember[] members = this.members;
         for (RelationMember m: members) {
             if (m.getMember() != null) {
@@ -520,7 +520,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @return the incomplete children. Empty collection if no children are incomplete.
      */
     public Collection<OsmPrimitive> getIncompleteMembers() {
-        Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         RelationMember[] members = this.members;
         for (RelationMember rm: members) {
             if (!rm.getMember().isIncomplete()) {

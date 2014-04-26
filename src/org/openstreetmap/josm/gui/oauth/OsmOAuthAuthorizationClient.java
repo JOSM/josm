@@ -374,7 +374,7 @@ public class OsmOAuthAuthorizationClient {
             connection.setDoOutput(true);
             connection.setUseCaches(false);
 
-            Map<String,String> parameters = new HashMap<String, String>();
+            Map<String,String> parameters = new HashMap<>();
             parameters.put("username", userName);
             parameters.put("password", password);
             parameters.put("referer", "/");
@@ -435,7 +435,7 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected void sendAuthorisationRequest(SessionId sessionId, OAuthToken requestToken, OsmPrivileges privileges) throws OsmOAuthAuthorizationException {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         fetchOAuthToken(sessionId, requestToken);
         parameters.put("oauth_token", requestToken.getKey());
         parameters.put("oauth_callback", "");

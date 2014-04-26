@@ -54,8 +54,8 @@ public class MultiFetchServerObjectReaderTest {
         int numWays = 1000;
         int numRelations = 1000;
 
-        ArrayList<Node> nodes = new ArrayList<Node>();
-        ArrayList<Way> ways = new ArrayList<Way>();
+        ArrayList<Node> nodes = new ArrayList<>();
+        ArrayList<Way> ways = new ArrayList<>();
 
         // create a set of nodes
         //
@@ -121,7 +121,7 @@ public class MultiFetchServerObjectReaderTest {
      */
     static public void createDataSetOnServer(DataSet ds) throws OsmTransferException {
         logger.info("creating data set on the server ...");
-        ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
+        ArrayList<OsmPrimitive> primitives = new ArrayList<>();
         primitives.addAll(testDataSet.getNodes());
         primitives.addAll(testDataSet.getWays());
         primitives.addAll(testDataSet.getRelations());
@@ -245,7 +245,7 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void testMultiGet10Nodes() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Node> nodes = new ArrayList<Node>(ds.getNodes());
+        ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i =0; i< 10; i++) {
             reader.append(nodes.get(i));
         }
@@ -262,7 +262,7 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void testMultiGet10Ways() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Way> ways= new ArrayList<Way>(ds.getWays());
+        ArrayList<Way> ways= new ArrayList<>(ds.getWays());
         for (int i =0; i< 10; i++) {
             reader.append(ways.get(i));
         }
@@ -280,7 +280,7 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void testMultiGet10Relations() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Relation> relations= new ArrayList<Relation>(ds.getRelations());
+        ArrayList<Relation> relations= new ArrayList<>(ds.getRelations());
         for (int i =0; i< 10; i++) {
             reader.append(relations.get(i));
         }
@@ -298,7 +298,7 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void testMultiGet800Nodes() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Node> nodes = new ArrayList<Node>(ds.getNodes());
+        ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i =0; i< 812; i++) {
             reader.append(nodes.get(i));
         }
@@ -315,7 +315,7 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void multiGetWithNonExistingNode() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Node> nodes = new ArrayList<Node>(ds.getNodes());
+        ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i =0; i< 10; i++) {
             reader.append(nodes.get(i));
         }

@@ -388,7 +388,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                 // Adding a new node to the highlighted segment
                 // Important: If there are other ways containing the same
                 // segment, a node must added to all of that ways.
-                Collection<Command> virtualCmds = new LinkedList<Command>();
+                Collection<Command> virtualCmds = new LinkedList<>();
 
                 // Creating a new node
                 Node virtualNode = new Node(mv.getEastNorth(mousePos.x,
@@ -405,7 +405,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                         candidateSegment.getFirstNode().getReferrers(),
                         Way.class);
 
-                Collection<WaySegment> virtualSegments = new LinkedList<WaySegment>();
+                Collection<WaySegment> virtualSegments = new LinkedList<>();
                 for (Way w : firstNodeWays) {
                     List<Pair<Node, Node>> wpps = w.getNodePairs(true);
                     for (Way w2 : secondNodeWays) {
@@ -455,7 +455,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                             tr("Cannot delete node that has tags"),
                             tr("Error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    List<Node> nodeList = new ArrayList<Node>();
+                    List<Node> nodeList = new ArrayList<>();
                     nodeList.add(candidateNode);
                     Command deleteCmd = DeleteCommand.delete(getEditLayer(), nodeList, true);
                     if (deleteCmd != null) {
@@ -599,8 +599,8 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
      *
      */
     private void updateStateByCurrentSelection() {
-        final List<Node> nodeList = new ArrayList<Node>();
-        final List<Way> wayList = new ArrayList<Way>();
+        final List<Node> nodeList = new ArrayList<>();
+        final List<Way> wayList = new ArrayList<>();
         final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         // Collecting nodes and ways from the selection

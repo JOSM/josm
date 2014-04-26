@@ -168,8 +168,8 @@ public abstract class LabelCompositionStrategy {
             "capacity"
         };
 
-        private List<String> nameTags = new ArrayList<String>();
-        private List<String> nameComplementTags = new ArrayList<String>();
+        private List<String> nameTags = new ArrayList<>();
+        private List<String> nameComplementTags = new ArrayList<>();
 
         /**
          * <p>Creates the strategy and initializes its name tags from the preferences.</p>
@@ -187,7 +187,7 @@ public abstract class LabelCompositionStrategy {
             if (nameTags == null) {
                 nameTags = Collections.emptyList();
             }
-            ArrayList<String> result = new ArrayList<String>();
+            ArrayList<String> result = new ArrayList<>();
             for(String tag: nameTags) {
                 if (tag == null) {
                     continue;
@@ -247,13 +247,13 @@ public abstract class LabelCompositionStrategy {
          */
         public final void initNameTagsFromPreferences() {
             if (Main.pref == null){
-                this.nameTags = new ArrayList<String>(Arrays.asList(DEFAULT_NAME_TAGS));
-                this.nameComplementTags = new ArrayList<String>(Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS));
+                this.nameTags = new ArrayList<>(Arrays.asList(DEFAULT_NAME_TAGS));
+                this.nameComplementTags = new ArrayList<>(Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS));
             } else {
-                this.nameTags = new ArrayList<String>(
+                this.nameTags = new ArrayList<>(
                         Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(DEFAULT_NAME_TAGS))
                 );
-                this.nameComplementTags = new ArrayList<String>(
+                this.nameComplementTags = new ArrayList<>(
                         Main.pref.getCollection("mappaint.nameComplementOrder", Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS))
                 );
             }

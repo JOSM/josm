@@ -192,7 +192,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
          * Constructs a new {@code RelationMemberTableModel}.
          */
         public RelationMemberTableModel() {
-            data = new ArrayList<RelationToChildReference>();
+            data = new ArrayList<>();
         }
 
         @Override
@@ -228,7 +228,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
 
         public Set<OsmPrimitive> getObjectsToDelete() {
-            HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+            HashSet<OsmPrimitive> ret = new HashSet<>();
             for (RelationToChildReference ref: data) {
                 ret.add(ref.getChild());
             }
@@ -240,7 +240,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
 
         public Set<OsmPrimitive> getParentRelations() {
-            HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+            HashSet<OsmPrimitive> ret = new HashSet<>();
             for (RelationToChildReference ref: data) {
                 ret.add(ref.getParent());
             }

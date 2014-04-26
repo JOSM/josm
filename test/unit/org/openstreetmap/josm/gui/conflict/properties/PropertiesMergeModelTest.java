@@ -58,7 +58,7 @@ public class PropertiesMergeModelTest {
     }
 
     private void populate(OsmPrimitive my, OsmPrimitive their) {
-        model.populate(new Conflict<OsmPrimitive>(my, their));
+        model.populate(new Conflict<>(my, their));
     }
 
     @Test

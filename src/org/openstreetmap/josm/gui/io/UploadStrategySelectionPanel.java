@@ -72,9 +72,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
         ButtonGroup bgStrategies = new ButtonGroup();
-        rbStrategy = new HashMap<UploadStrategy, JRadioButton>();
-        lblStrategies = new HashMap<UploadStrategy, JMultilineLabel>();
-        lblNumRequests = new HashMap<UploadStrategy, JLabel>();
+        rbStrategy = new HashMap<>();
+        lblStrategies = new HashMap<>();
+        lblNumRequests = new HashMap<>();
         for (UploadStrategy strategy: UploadStrategy.values()) {
             rbStrategy.put(strategy, new JRadioButton());
             lblNumRequests.put(strategy, new JLabel());

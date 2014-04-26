@@ -144,7 +144,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             }
         };
         // define how to sort row
-        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<DefaultTableModel>();
+        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>();
         t.setRowSorter(rowSorter);
         rowSorter.setModel(model);
         rowSorter.setComparator(3, new LengthContentComparator());

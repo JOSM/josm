@@ -109,7 +109,7 @@ public final class MapRendererFactory {
         return null;
     }
 
-    private final List<Descriptor> descriptors = new ArrayList<Descriptor>();
+    private final List<Descriptor> descriptors = new ArrayList<>();
     private Class<? extends AbstractMapRenderer> activeRenderer = null;
 
     private MapRendererFactory() {

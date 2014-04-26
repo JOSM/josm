@@ -31,7 +31,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     public static final String RELATION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".relationSnapshot";
 
     /** the list of registered relation editor classes */
-    private static List<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
+    private static List<Class<RelationEditor>> editors = new ArrayList<>();
 
     /**
      * Registers a relation editor class. Depending on the type of relation to be edited

@@ -19,8 +19,8 @@ public class OsmPrimitiveTest {
     }
 
     private void compareReferrers(OsmPrimitive actual, OsmPrimitive... expected) {
-        Assert.assertEquals(new HashSet<OsmPrimitive>(Arrays.asList(expected)),
-                new HashSet<OsmPrimitive>(actual.getReferrers()));
+        Assert.assertEquals(new HashSet<>(Arrays.asList(expected)),
+                new HashSet<>(actual.getReferrers()));
     }
 
     private DataSet dataSet = new DataSet();

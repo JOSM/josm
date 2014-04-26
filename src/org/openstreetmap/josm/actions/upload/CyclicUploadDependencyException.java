@@ -44,6 +44,6 @@ public class CyclicUploadDependencyException extends Exception {
     }
 
     public List<Relation> getCyclicUploadDependency() {
-        return new ArrayList<Relation>(cycle);
+        return new ArrayList<>(cycle);
     }
 }

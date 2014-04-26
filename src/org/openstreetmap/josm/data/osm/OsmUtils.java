@@ -12,11 +12,11 @@ public final class OsmUtils {
         // Hide default constructor for utils classes
     }
 
-    static final List<String> TRUE_VALUES = new ArrayList<String>(Arrays
+    static final List<String> TRUE_VALUES = new ArrayList<>(Arrays
             .asList(new String[] { "true", "yes", "1", "on" }));
-    static final List<String> FALSE_VALUES = new ArrayList<String>(Arrays
+    static final List<String> FALSE_VALUES = new ArrayList<>(Arrays
             .asList(new String[] { "false", "no", "0", "off" }));
-    static final List<String> REVERSE_VALUES = new ArrayList<String>(Arrays
+    static final List<String> REVERSE_VALUES = new ArrayList<>(Arrays
             .asList(new String[] { "reverse", "-1" }));
 
     public static final String trueval = "yes";

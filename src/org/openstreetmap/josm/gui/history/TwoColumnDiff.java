@@ -58,8 +58,8 @@ class TwoColumnDiff {
     public TwoColumnDiff(Object[] reference, Object[] current) {
         this.reference = Utils.copyArray(reference);
         this.current = Utils.copyArray(current);
-        referenceDiff = new ArrayList<Item>();
-        currentDiff = new ArrayList<Item>();
+        referenceDiff = new ArrayList<>();
+        currentDiff = new ArrayList<>();
         diff();
     }
     

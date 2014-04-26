@@ -325,7 +325,7 @@ public class PropertiesMergeModel extends Observable {
      * @return The list of commands
      */
     public List<Command> buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
-        List<Command> cmds = new ArrayList<Command>();
+        List<Command> cmds = new ArrayList<>();
         if (hasCoordConflict() && isDecidedCoord()) {
             cmds.add(new CoordinateConflictResolveCommand(conflict, coordMergeDecision));
         }

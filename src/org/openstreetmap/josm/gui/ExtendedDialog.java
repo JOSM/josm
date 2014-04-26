@@ -101,7 +101,7 @@ public class ExtendedDialog extends JDialog {
 
     // For easy access when inherited
     protected Insets contentInsets = new Insets(10,5,0,5);
-    protected List<JButton> buttons = new ArrayList<JButton>();
+    protected List<JButton> buttons = new ArrayList<>();
 
     /**
      * This method sets up the most basic options for the dialog. Add more

@@ -101,18 +101,18 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      */
     private static final int MAX_EVENTS = 1000;
 
-    private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new Storage.PrimitiveIdHash(), true);
+    private Storage<OsmPrimitive> allPrimitives = new Storage<>(new Storage.PrimitiveIdHash(), true);
     private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new Storage.PrimitiveIdHash());
-    private CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<DataSetListener>();
+    private CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<>();
 
     // provide means to highlight map elements that are not osm primitives
-    private Collection<WaySegment> highlightedVirtualNodes = new LinkedList<WaySegment>();
-    private Collection<WaySegment> highlightedWaySegments = new LinkedList<WaySegment>();
+    private Collection<WaySegment> highlightedVirtualNodes = new LinkedList<>();
+    private Collection<WaySegment> highlightedWaySegments = new LinkedList<>();
 
     // Number of open calls to beginUpdate
     private int updateCount;
     // Events that occurred while dataset was locked but should be fired after write lock is released
-    private final List<AbstractDatasetChangedEvent> cachedEvents = new ArrayList<AbstractDatasetChangedEvent>();
+    private final List<AbstractDatasetChangedEvent> cachedEvents = new ArrayList<>();
 
     private int highlightUpdateCount;
 
@@ -145,7 +145,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     /**
      * History of selections - shared by plugins and SelectionListDialog
      */
-    private final LinkedList<Collection<? extends OsmPrimitive>> selectionHistory = new LinkedList<Collection<? extends OsmPrimitive>>();
+    private final LinkedList<Collection<? extends OsmPrimitive>> selectionHistory = new LinkedList<>();
 
     /**
      * Replies the history of JOSM selections
@@ -210,7 +210,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     /*
      * Holding bin for changeset tag information, to be applied when or if this is ever uploaded.
      */
-    private Map<String, String> changeSetTags = new HashMap<String, String>();
+    private Map<String, String> changeSetTags = new HashMap<>();
 
     public Map<String, String> getChangeSetTags() {
         return changeSetTags;
@@ -224,10 +224,10 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * All nodes goes here, even when included in other data (ways etc). This enables the instant
      * conversion of the whole DataSet by iterating over this data structure.
      */
-    private QuadBuckets<Node> nodes = new QuadBuckets<Node>();
+    private QuadBuckets<Node> nodes = new QuadBuckets<>();
 
     private <T extends OsmPrimitive> Collection<T> getPrimitives(Predicate<OsmPrimitive> predicate) {
-        return new SubclassFilteredCollection<OsmPrimitive, T>(allPrimitives, predicate);
+        return new SubclassFilteredCollection<>(allPrimitives, predicate);
     }
 
     /**
@@ -253,7 +253,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      *
      * The way nodes are stored only in the way list.
      */
-    private QuadBuckets<Way> ways = new QuadBuckets<Way>();
+    private QuadBuckets<Way> ways = new QuadBuckets<>();
 
     /**
      * Replies an unmodifiable collection of ways in this dataset
@@ -276,7 +276,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     /**
      * All relations/relationships
      */
-    private Collection<Relation> relations = new ArrayList<Relation>();
+    private Collection<Relation> relations = new ArrayList<>();
 
     /**
      * Replies an unmodifiable collection of relations in this dataset
@@ -291,7 +291,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         lock.readLock().lock();
         try {
             // QuadBuckets might be useful here (don't forget to do reindexing after some of rm is changed)
-            List<Relation> result = new ArrayList<Relation>();
+            List<Relation> result = new ArrayList<>();
             for (Relation r: relations) {
                 if (r.getBBox().intersects(bbox)) {
                     result.add(r);
@@ -306,7 +306,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     /**
      * All data sources of this DataSet.
      */
-    public final Collection<DataSource> dataSources = new LinkedList<DataSource>();
+    public final Collection<DataSource> dataSources = new LinkedList<>();
 
     /**
      * @return A collection containing all primitives of the dataset. Data are not ordered
@@ -411,7 +411,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * themselves for any dataset selection changes that occur, regardless of the current active
      * dataset. (However, the selection does only change in the active layer)
      */
-    private static final Collection<SelectionChangedListener> selListeners = new CopyOnWriteArrayList<SelectionChangedListener>();
+    private static final Collection<SelectionChangedListener> selListeners = new CopyOnWriteArrayList<>();
 
     public static void addSelectionListener(SelectionChangedListener listener) {
         ((CopyOnWriteArrayList<SelectionChangedListener>)selListeners).addIfAbsent(listener);
@@ -433,11 +433,11 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         }
     }
 
-    private Set<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
+    private Set<OsmPrimitive> selectedPrimitives = new LinkedHashSet<>();
     private Collection<OsmPrimitive> selectionSnapshot;
 
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
-        return new FilteredCollection<OsmPrimitive>(getSelected(), new Predicate<OsmPrimitive>() {
+        return new FilteredCollection<>(getSelected(), new Predicate<OsmPrimitive>() {
             @Override
             public boolean evaluate(OsmPrimitive primitive) {
                 return primitive instanceof Node || primitive instanceof Way;
@@ -473,7 +473,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * @return unmodifiable collection of primitives
      */
     public Collection<OsmPrimitive> getSelected() {
-        return new SubclassFilteredCollection<OsmPrimitive, OsmPrimitive>(getAllSelected(), OsmPrimitive.nonDeletedPredicate);
+        return new SubclassFilteredCollection<>(getAllSelected(), OsmPrimitive.nonDeletedPredicate);
     }
 
     /**
@@ -486,7 +486,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         Collection<OsmPrimitive> currentList;
         synchronized (selectionLock) {
             if (selectionSnapshot == null) {
-                selectionSnapshot = Collections.unmodifiableList(new ArrayList<OsmPrimitive>(selectedPrimitives));
+                selectionSnapshot = Collections.unmodifiableList(new ArrayList<>(selectedPrimitives));
             }
             currentList = selectionSnapshot;
         }
@@ -497,21 +497,21 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * Return selected nodes.
      */
     public Collection<Node> getSelectedNodes() {
-        return new SubclassFilteredCollection<OsmPrimitive, Node>(getSelected(), OsmPrimitive.nodePredicate);
+        return new SubclassFilteredCollection<>(getSelected(), OsmPrimitive.nodePredicate);
     }
 
     /**
      * Return selected ways.
      */
     public Collection<Way> getSelectedWays() {
-        return new SubclassFilteredCollection<OsmPrimitive, Way>(getSelected(), OsmPrimitive.wayPredicate);
+        return new SubclassFilteredCollection<>(getSelected(), OsmPrimitive.wayPredicate);
     }
 
     /**
      * Return selected relations.
      */
     public Collection<Relation> getSelectedRelations() {
-        return new SubclassFilteredCollection<OsmPrimitive, Relation>(getSelected(), OsmPrimitive.relationPredicate);
+        return new SubclassFilteredCollection<>(getSelected(), OsmPrimitive.relationPredicate);
     }
 
     /**
@@ -591,8 +591,8 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     public void setSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
         boolean changed;
         synchronized (selectionLock) {
-            LinkedHashSet<OsmPrimitive> oldSelection = new LinkedHashSet<OsmPrimitive>(selectedPrimitives);
-            selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
+            LinkedHashSet<OsmPrimitive> oldSelection = new LinkedHashSet<>(selectedPrimitives);
+            selectedPrimitives = new LinkedHashSet<>();
             addSelected(selection, false);
             changed = !oldSelection.equals(selectedPrimitives);
             if (changed) {
@@ -718,7 +718,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         getReadLock().lock();
         try {
             DataSet ds = new DataSet();
-            HashMap<OsmPrimitive, OsmPrimitive> primMap = new HashMap<OsmPrimitive, OsmPrimitive>();
+            HashMap<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
             for (Node n : nodes) {
                 Node newNode = new Node(n);
                 primMap.put(n, newNode);
@@ -727,7 +727,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
             for (Way w : ways) {
                 Way newWay = new Way(w);
                 primMap.put(w, newWay);
-                List<Node> newNodes = new ArrayList<Node>();
+                List<Node> newNodes = new ArrayList<>();
                 for (Node n: w.getNodes()) {
                     newNodes.add((Node)primMap.get(n));
                 }
@@ -744,7 +744,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
             }
             for (Relation r : relations) {
                 Relation newRelation = (Relation)primMap.get(r);
-                List<RelationMember> newMembers = new ArrayList<RelationMember>();
+                List<RelationMember> newMembers = new ArrayList<>();
                 for (RelationMember rm: r.getMembers()) {
                     newMembers.add(new RelationMember(rm.getRole(), primMap.get(rm.getMember())));
                 }
@@ -820,7 +820,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * @return The set of ways that have been modified
      */
     public Set<Way> unlinkNodeFromWays(Node node) {
-        Set<Way> result = new HashSet<Way>();
+        Set<Way> result = new HashSet<>();
         beginUpdate();
         try {
             for (Way way: ways) {
@@ -847,7 +847,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * @return The set of relations that have been modified
      */
     public Set<Relation> unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
-        Set<Relation> result = new HashSet<Relation>();
+        Set<Relation> result = new HashSet<>();
         beginUpdate();
         try {
             for (Relation relation : relations) {
@@ -881,7 +881,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * @return The set of primitives that have been modified
      */
     public Set<OsmPrimitive> unlinkReferencesToPrimitive(OsmPrimitive referencedPrimitive) {
-        Set<OsmPrimitive> result = new HashSet<OsmPrimitive>();
+        Set<OsmPrimitive> result = new HashSet<>();
         beginUpdate();
         try {
             if (referencedPrimitive instanceof Node) {
@@ -982,7 +982,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         if (updateCount > 0) {
             updateCount--;
             if (updateCount == 0) {
-                List<AbstractDatasetChangedEvent> eventsCopy = new ArrayList<AbstractDatasetChangedEvent>(cachedEvents);
+                List<AbstractDatasetChangedEvent> eventsCopy = new ArrayList<>(cachedEvents);
                 cachedEvents.clear();
                 lock.writeLock().unlock();
 
@@ -1158,7 +1158,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * bounds are defined.
      */
     public List<Bounds> getDataSourceBounds() {
-        List<Bounds> ret = new ArrayList<Bounds>(dataSources.size());
+        List<Bounds> ret = new ArrayList<>(dataSources.size());
         for (DataSource ds : dataSources) {
             if (ds.bounds != null) {
                 ret.add(ds.bounds);

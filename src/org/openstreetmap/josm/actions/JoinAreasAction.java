@@ -51,9 +51,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class JoinAreasAction extends JosmAction {
     // This will be used to commit commands and unite them into one large command sequence at the end
-    private final LinkedList<Command> cmds = new LinkedList<Command>();
+    private final LinkedList<Command> cmds = new LinkedList<>();
     private int cmdsCount = 0;
-    private final List<Relation> addedRelations = new LinkedList<Relation>();
+    private final List<Relation> addedRelations = new LinkedList<>();
 
     /**
      * This helper class describes join ares action result.
@@ -73,7 +73,7 @@ public class JoinAreasAction extends JosmAction {
 
         public Multipolygon(Way way) {
             outerWay = way;
-            innerWays = new ArrayList<Way>();
+            innerWays = new ArrayList<>();
         }
     }
 
@@ -142,7 +142,7 @@ public class JoinAreasAction extends JosmAction {
         }
 
         public List<Node> getNodes() {
-            List<Node> nodes = new ArrayList<Node>();
+            List<Node> nodes = new ArrayList<>();
             for (WayInPolygon way : this.ways) {
                 //do not add the last node as it will be repeated in the next way
                 if (way.insideToTheRight) {
@@ -176,7 +176,7 @@ public class JoinAreasAction extends JosmAction {
 
         public AssembledMultipolygon(AssembledPolygon way) {
             outerWay = way;
-            innerWays = new ArrayList<AssembledPolygon>();
+            innerWays = new ArrayList<>();
         }
     }
 
@@ -194,7 +194,7 @@ public class JoinAreasAction extends JosmAction {
 
         public WayTraverser(Collection<WayInPolygon> ways) {
 
-            availableWays = new HashSet<WayInPolygon>(ways);
+            availableWays = new HashSet<>(ways);
             lastWay = null;
         }
 
@@ -309,7 +309,7 @@ public class JoinAreasAction extends JosmAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        LinkedList<Way> ways = new LinkedList<Way>(Main.main.getCurrentDataSet().getSelectedWays());
+        LinkedList<Way> ways = new LinkedList<>(Main.main.getCurrentDataSet().getSelectedWays());
         addedRelations.clear();
 
         if (ways.isEmpty()) {
@@ -320,7 +320,7 @@ public class JoinAreasAction extends JosmAction {
             return;
         }
 
-        List<Node> allNodes = new ArrayList<Node>();
+        List<Node> allNodes = new ArrayList<>();
         for (Way way : ways) {
             if (!way.isClosed()) {
                 new Notification(
@@ -375,7 +375,7 @@ public class JoinAreasAction extends JosmAction {
                 }
                 commitCommands(tr("Move tags from ways to relations"));
 
-                List<Way> allWays = new ArrayList<Way>();
+                List<Way> allWays = new ArrayList<>();
                 for (Multipolygon pol : result.polygons) {
                     allWays.add(pol.outerWay);
                     allWays.addAll(pol.innerWays);
@@ -405,7 +405,7 @@ public class JoinAreasAction extends JosmAction {
      * @return {@code true} if areas are joinable
      */
     private boolean testJoin(List<Multipolygon> areas) {
-        List<Way> allStartingWays = new ArrayList<Way>();
+        List<Way> allStartingWays = new ArrayList<>();
 
         for (Multipolygon area : areas) {
             allStartingWays.add(area.outerWay);
@@ -427,9 +427,9 @@ public class JoinAreasAction extends JosmAction {
         JoinAreasResult result = new JoinAreasResult();
         result.hasChanges = false;
 
-        List<Way> allStartingWays = new ArrayList<Way>();
-        List<Way> innerStartingWays = new ArrayList<Way>();
-        List<Way> outerStartingWays = new ArrayList<Way>();
+        List<Way> allStartingWays = new ArrayList<>();
+        List<Way> innerStartingWays = new ArrayList<>();
+        List<Way> outerStartingWays = new ArrayList<>();
 
         for (Multipolygon area : areas) {
             outerStartingWays.add(area.outerWay);
@@ -456,7 +456,7 @@ public class JoinAreasAction extends JosmAction {
             return result;
         commitCommands(marktr("Added node on all intersections"));
 
-        List<RelationRole> relations = new ArrayList<RelationRole>();
+        List<RelationRole> relations = new ArrayList<>();
 
         // Remove ways from all relations so ways can be combined/split quietly
         for (Way way : allStartingWays) {
@@ -466,7 +466,7 @@ public class JoinAreasAction extends JosmAction {
         // Don't warn now, because it will really look corrupted
         boolean warnAboutRelations = !relations.isEmpty() && allStartingWays.size() > 1;
 
-        List<WayInPolygon> preparedWays = new ArrayList<WayInPolygon>();
+        List<WayInPolygon> preparedWays = new ArrayList<>();
 
         for (Way way : outerStartingWays) {
             List<Way> splitWays = splitWayOnNodes(way, nodes);
@@ -479,7 +479,7 @@ public class JoinAreasAction extends JosmAction {
         }
 
         // Find boundary ways
-        List<Way> discardedWays = new ArrayList<Way>();
+        List<Way> discardedWays = new ArrayList<>();
         List<AssembledPolygon> bounadries = findBoundaryPolygons(preparedWays, discardedWays);
 
         //find polygons
@@ -487,8 +487,8 @@ public class JoinAreasAction extends JosmAction {
 
 
         //assemble final polygons
-        List<Multipolygon> polygons = new ArrayList<Multipolygon>();
-        Set<Relation> relationsToDelete = new LinkedHashSet<Relation>();
+        List<Multipolygon> polygons = new ArrayList<>();
+        Set<Relation> relationsToDelete = new LinkedHashSet<>();
 
         for (AssembledMultipolygon pol : preparedPolygons) {
 
@@ -547,7 +547,7 @@ public class JoinAreasAction extends JosmAction {
      */
     private boolean resolveTagConflicts(List<Multipolygon> polygons) {
 
-        List<Way> ways = new ArrayList<Way>();
+        List<Way> ways = new ArrayList<>();
 
         for (Multipolygon pol : polygons) {
             ways.add(pol.outerWay);
@@ -576,7 +576,7 @@ public class JoinAreasAction extends JosmAction {
     private boolean removeDuplicateNodes(List<Way> ways) {
         //TODO: maybe join nodes with JoinNodesAction, rather than reconnect the ways.
 
-        Map<Node, Node> nodeMap = new TreeMap<Node, Node>(new NodePositionComparator());
+        Map<Node, Node> nodeMap = new TreeMap<>(new NodePositionComparator());
         int totalNodesRemoved = 0;
 
         for (Way way : ways) {
@@ -585,7 +585,7 @@ public class JoinAreasAction extends JosmAction {
             }
 
             int nodesRemoved = 0;
-            List<Node> newNodes = new ArrayList<Node>();
+            List<Node> newNodes = new ArrayList<>();
             Node prevNode = null;
 
             for (Node node : way.getNodes()) {
@@ -660,11 +660,11 @@ public class JoinAreasAction extends JosmAction {
      */
     private List<WayInPolygon> markWayInsideSide(List<Way> parts, boolean isInner) {
 
-        List<WayInPolygon> result = new ArrayList<WayInPolygon>();
+        List<WayInPolygon> result = new ArrayList<>();
 
         //prepare prev and next maps
-        Map<Way, Way> nextWayMap = new HashMap<Way, Way>();
-        Map<Way, Way> prevWayMap = new HashMap<Way, Way>();
+        Map<Way, Way> nextWayMap = new HashMap<>();
+        Map<Way, Way> prevWayMap = new HashMap<>();
 
         for (int pos = 0; pos < parts.size(); pos ++) {
 
@@ -830,7 +830,7 @@ public class JoinAreasAction extends JosmAction {
      */
     private List<Way> splitWayOnNodes(Way way, Set<Node> nodes) {
 
-        List<Way> result = new ArrayList<Way>();
+        List<Way> result = new ArrayList<>();
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
 
         if (chunks.size() > 1) {
@@ -858,14 +858,14 @@ public class JoinAreasAction extends JosmAction {
      * @return list of node paths to produce.
      */
     private List<List<Node>> buildNodeChunks(Way way, Collection<Node> splitNodes) {
-        List<List<Node>> result = new ArrayList<List<Node>>();
-        List<Node> curList = new ArrayList<Node>();
+        List<List<Node>> result = new ArrayList<>();
+        List<Node> curList = new ArrayList<>();
 
         for (Node node : way.getNodes()) {
             curList.add(node);
             if (curList.size() > 1 && splitNodes.contains(node)) {
                 result.add(curList);
-                curList = new ArrayList<Node>();
+                curList = new ArrayList<>();
                 curList.add(node);
             }
         }
@@ -877,7 +877,6 @@ public class JoinAreasAction extends JosmAction {
         return result;
     }
 
-
     /**
      * This method finds which ways are outer and which are inner.
      * @param boundaries list of joined boundaries to search in
@@ -886,7 +885,7 @@ public class JoinAreasAction extends JosmAction {
     private List<AssembledMultipolygon> findPolygons(Collection<AssembledPolygon> boundaries) {
 
         List<PolygonLevel> list = findOuterWaysImpl(0, boundaries);
-        List<AssembledMultipolygon> result = new ArrayList<AssembledMultipolygon>();
+        List<AssembledMultipolygon> result = new ArrayList<>();
 
         //take every other level
         for (PolygonLevel pol : list) {
@@ -907,12 +906,12 @@ public class JoinAreasAction extends JosmAction {
     private List<PolygonLevel> findOuterWaysImpl(int level, Collection<AssembledPolygon> boundaryWays) {
 
         //TODO: bad performance for deep nestings...
-        List<PolygonLevel> result = new ArrayList<PolygonLevel>();
+        List<PolygonLevel> result = new ArrayList<>();
 
         for (AssembledPolygon outerWay : boundaryWays) {
 
             boolean outerGood = true;
-            List<AssembledPolygon> innerCandidates = new ArrayList<AssembledPolygon>();
+            List<AssembledPolygon> innerCandidates = new ArrayList<>();
 
             for (AssembledPolygon innerWay : boundaryWays) {
                 if (innerWay == outerWay) {
@@ -962,12 +961,12 @@ public class JoinAreasAction extends JosmAction {
     public static List<AssembledPolygon> findBoundaryPolygons(Collection<WayInPolygon> multigonWays, List<Way> discardedResult) {
         //first find all discardable ways, by getting outer shells.
         //this will produce incorrect boundaries in some cases, but second pass will fix it.
-        List<WayInPolygon> discardedWays = new ArrayList<WayInPolygon>();
+        List<WayInPolygon> discardedWays = new ArrayList<>();
 
         // In multigonWays collection, some way are just a point (i.e. way like nodeA-nodeA)
         // This seems to appear when is apply over invalid way like #9911 test-case
         // Remove all of these way to make the next work.
-        ArrayList<WayInPolygon> cleanMultigonWays = new ArrayList<WayInPolygon>();
+        ArrayList<WayInPolygon> cleanMultigonWays = new ArrayList<>();
         for(WayInPolygon way: multigonWays)
             if(way.way.getNodesCount() == 2 && way.way.firstNode() == way.way.lastNode())
                 discardedWays.add(way);
@@ -975,11 +974,11 @@ public class JoinAreasAction extends JosmAction {
                 cleanMultigonWays.add(way);
 
         WayTraverser traverser = new WayTraverser(cleanMultigonWays);
-        List<AssembledPolygon> result = new ArrayList<AssembledPolygon>();
+        List<AssembledPolygon> result = new ArrayList<>();
 
         WayInPolygon startWay;
         while((startWay = traverser.startNewWay()) != null) {
-            ArrayList<WayInPolygon> path = new ArrayList<WayInPolygon>();
+            ArrayList<WayInPolygon> path = new ArrayList<>();
             path.add(startWay);
             while(true) {
                 WayInPolygon nextWay = traverser.walk();
@@ -1023,7 +1022,7 @@ public class JoinAreasAction extends JosmAction {
      * @param polygons the polygons to process.
      */
     public static List<AssembledPolygon> fixTouchingPolygons(List<AssembledPolygon> polygons) {
-        List<AssembledPolygon> newPolygons = new ArrayList<AssembledPolygon>();
+        List<AssembledPolygon> newPolygons = new ArrayList<>();
 
         for (AssembledPolygon ring : polygons) {
             ring.reverse();
@@ -1031,7 +1030,7 @@ public class JoinAreasAction extends JosmAction {
             WayInPolygon startWay;
 
             while((startWay = traverser.startNewWay()) != null) {
-                List<WayInPolygon> simpleRingWays = new ArrayList<WayInPolygon>();
+                List<WayInPolygon> simpleRingWays = new ArrayList<>();
                 simpleRingWays.add(startWay);
                 WayInPolygon nextWay;
                 while((nextWay = traverser.walk()) != startWay) {
@@ -1056,7 +1055,7 @@ public class JoinAreasAction extends JosmAction {
      * @return {@code true} if inner is inside outer
      */
     public static boolean wayInsideWay(AssembledPolygon inside, AssembledPolygon outside) {
-        Set<Node> outsideNodes = new HashSet<Node>(outside.getNodes());
+        Set<Node> outsideNodes = new HashSet<>(outside.getNodes());
         List<Node> insideNodes = inside.getNodes();
 
         for (Node insideNode : insideNodes) {
@@ -1126,7 +1125,7 @@ public class JoinAreasAction extends JosmAction {
         // the user about this.
 
         //TODO: ReverseWay and Combine way are really slow and we use them a lot here. This slows down large joins.
-        List<Way> actionWays = new ArrayList<Way>(ways.size());
+        List<Way> actionWays = new ArrayList<>(ways.size());
 
         for (WayInPolygon way : ways) {
             actionWays.add(way.way);
@@ -1153,14 +1152,14 @@ public class JoinAreasAction extends JosmAction {
      */
     private List<Multipolygon> collectMultipolygons(List<Way> selectedWays) {
 
-        List<Multipolygon> result = new ArrayList<Multipolygon>();
+        List<Multipolygon> result = new ArrayList<>();
 
         //prepare the lists, to minimize memory allocation.
-        List<Way> outerWays = new ArrayList<Way>();
-        List<Way> innerWays = new ArrayList<Way>();
+        List<Way> outerWays = new ArrayList<>();
+        List<Way> innerWays = new ArrayList<>();
 
-        Set<Way> processedOuterWays = new LinkedHashSet<Way>();
-        Set<Way> processedInnerWays = new LinkedHashSet<Way>();
+        Set<Way> processedOuterWays = new LinkedHashSet<>();
+        Set<Way> processedInnerWays = new LinkedHashSet<>();
 
         for (Relation r : OsmPrimitive.getParentRelations(selectedWays)) {
             if (r.isDeleted() || !r.isMultipolygon()) {
@@ -1282,7 +1281,7 @@ public class JoinAreasAction extends JosmAction {
      * @return List of relations with roles the primitives was part of
      */
     private List<RelationRole> removeFromAllRelations(OsmPrimitive osm) {
-        List<RelationRole> result = new ArrayList<RelationRole>();
+        List<RelationRole> result = new ArrayList<>();
 
         for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
             if (r.isDeleted()) {
@@ -1321,7 +1320,7 @@ public class JoinAreasAction extends JosmAction {
      * @param relationsToDelete set of relations to delete.
      */
     private void fixRelations(List<RelationRole> rels, Way outer, RelationRole ownMultipol, Set<Relation> relationsToDelete) {
-        List<RelationRole> multiouters = new ArrayList<RelationRole>();
+        List<RelationRole> multiouters = new ArrayList<>();
 
         if (ownMultipol != null) {
             multiouters.add(ownMultipol);

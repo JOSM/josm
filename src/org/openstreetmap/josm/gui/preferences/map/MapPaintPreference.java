@@ -40,7 +40,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
     private SourceEditor sources;
     private JCheckBox enableIconDefault;
 
-    private static final List<SourceProvider> styleSourceProviders = new ArrayList<SourceProvider>();
+    private static final List<SourceProvider> styleSourceProviders = new ArrayList<>();
 
     /**
      * Registers a new additional style source provider.
@@ -214,7 +214,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         private boolean insertNewDefaults(List<SourceEntry> list) {
             boolean changed = false;
 
-            Collection<String> knownDefaults = new TreeSet<String>(Main.pref.getCollection("mappaint.style.known-defaults"));
+            Collection<String> knownDefaults = new TreeSet<>(Main.pref.getCollection("mappaint.style.known-defaults"));
 
             Collection<ExtendedSourceEntry> defaults = getDefault();
             int insertionIdx = 0;
@@ -263,7 +263,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
         @Override
         public Map<String, String> serialize(SourceEntry entry) {
-            Map<String, String> res = new HashMap<String, String>();
+            Map<String, String> res = new HashMap<>();
             res.put("url", entry.url);
             res.put("title", entry.title == null ? "" : entry.title);
             res.put("active", Boolean.toString(entry.active));

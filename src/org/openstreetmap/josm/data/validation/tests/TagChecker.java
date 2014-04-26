@@ -74,11 +74,11 @@ public class TagChecker extends Test.TagTest {
     /** The spell check preset values */
     protected static MultiMap<String, String> presetsValueData;
     /** The TagChecker data */
-    protected static final List<CheckerData> checkerData = new ArrayList<CheckerData>();
-    protected static final List<String> ignoreDataStartsWith = new ArrayList<String>();
-    protected static final List<String> ignoreDataEquals = new ArrayList<String>();
-    protected static final List<String> ignoreDataEndsWith = new ArrayList<String>();
-    protected static final List<IgnoreKeyPair> ignoreDataKeyPair = new ArrayList<IgnoreKeyPair>();
+    protected static final List<CheckerData> checkerData = new ArrayList<>();
+    protected static final List<String> ignoreDataStartsWith = new ArrayList<>();
+    protected static final List<String> ignoreDataEquals = new ArrayList<>();
+    protected static final List<String> ignoreDataEndsWith = new ArrayList<>();
+    protected static final List<IgnoreKeyPair> ignoreDataKeyPair = new ArrayList<>();
 
     /** The preferences prefix */
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + TagChecker.class.getSimpleName();
@@ -160,7 +160,7 @@ public class TagChecker extends Test.TagTest {
         ignoreDataEndsWith.clear();
         ignoreDataKeyPair.clear();
 
-        spellCheckKeyData = new HashMap<String, String>();
+        spellCheckKeyData = new HashMap<>();
         
         String errorSources = "";
         for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
@@ -257,7 +257,7 @@ public class TagChecker extends Test.TagTest {
 
         Collection<TaggingPreset> presets = TaggingPresetPreference.taggingPresets;
         if (presets != null) {
-            presetsValueData = new MultiMap<String, String>();
+            presetsValueData = new MultiMap<>();
             for (String a : OsmPrimitive.getUninterestingKeys()) {
                 presetsValueData.putVoid(a);
             }
@@ -315,7 +315,7 @@ public class TagChecker extends Test.TagTest {
     @Override
     public void check(OsmPrimitive p) {
         // Just a collection to know if a primitive has been already marked with error
-        MultiMap<OsmPrimitive, String> withErrors = new MultiMap<OsmPrimitive, String>();
+        MultiMap<OsmPrimitive, String> withErrors = new MultiMap<>();
 
         if (checkComplex) {
             Map<String, String> keys = p.getKeys();
@@ -549,7 +549,7 @@ public class TagChecker extends Test.TagTest {
 
     @Override
     public Command fixError(TestError testError) {
-        List<Command> commands = new ArrayList<Command>(50);
+        List<Command> commands = new ArrayList<>(50);
 
         Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();
         for (OsmPrimitive p : primitives) {
@@ -606,7 +606,7 @@ public class TagChecker extends Test.TagTest {
 
     protected static class CheckerData {
         private String description;
-        protected List<CheckerElement> data = new ArrayList<CheckerElement>();
+        protected List<CheckerElement> data = new ArrayList<>();
         private OsmPrimitiveType type;
         private int code;
         protected Severity severity;

@@ -64,7 +64,7 @@ public class RelationChecker extends Test {
         initializePresets();
     }
 
-    private static Collection<TaggingPreset> relationpresets = new LinkedList<TaggingPreset>();
+    private static Collection<TaggingPreset> relationpresets = new LinkedList<>();
 
     /**
      * Reads the presets data.
@@ -86,16 +86,16 @@ public class RelationChecker extends Test {
 
     private static class RoleInfo {
         private int total = 0;
-        private Collection<Node> nodes = new LinkedList<Node>();
-        private Collection<Way> ways = new LinkedList<Way>();
-        private Collection<Way> openways = new LinkedList<Way>();
-        private Collection<Relation> relations = new LinkedList<Relation>();
+        private Collection<Node> nodes = new LinkedList<>();
+        private Collection<Way> ways = new LinkedList<>();
+        private Collection<Way> openways = new LinkedList<>();
+        private Collection<Relation> relations = new LinkedList<>();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void visit(Relation n) {
-        LinkedList<Role> allroles = new LinkedList<Role>();
+        LinkedList<Role> allroles = new LinkedList<>();
         for (TaggingPreset p : relationpresets) {
             boolean matches = true;
             Roles r = null;
@@ -123,7 +123,7 @@ public class RelationChecker extends Test {
             errors.add( new TestError(this, Severity.WARNING, tr("Relation type is unknown"),
                     RELATION_UNKNOWN, n) );
         } else {
-            HashMap<String,RoleInfo> map = new HashMap<String, RoleInfo>();
+            HashMap<String,RoleInfo> map = new HashMap<>();
             for (RelationMember m : n.getMembers()) {
                 String s = "";
                 if (m.hasRole()) {
@@ -151,7 +151,7 @@ public class RelationChecker extends Test {
                 errors.add( new TestError(this, Severity.ERROR, tr("Relation is empty"),
                         RELATION_EMPTY, n) );
             } else {
-                LinkedList<String> done = new LinkedList<String>();
+                LinkedList<String> done = new LinkedList<>();
                 for (Role r : allroles) {
                     done.add(r.key);
                     String keyname = r.key;
@@ -179,7 +179,7 @@ public class RelationChecker extends Test {
                     }
                     if (ri != null) {
                         if (r.types != null) {
-                            Set<OsmPrimitive> wrongTypes = new HashSet<OsmPrimitive>();
+                            Set<OsmPrimitive> wrongTypes = new HashSet<>();
                             if (!r.types.contains(TaggingPresetType.WAY)) {
                                 wrongTypes.addAll(r.types.contains(TaggingPresetType.CLOSEDWAY) ? ri.openways : ri.ways);
                             }
@@ -191,7 +191,7 @@ public class RelationChecker extends Test {
                             }
                             if (!wrongTypes.isEmpty()) {
                                 String s = marktr("Member for role {0} of wrong type");
-                                LinkedList<OsmPrimitive> highlight = new LinkedList<OsmPrimitive>(wrongTypes);
+                                LinkedList<OsmPrimitive> highlight = new LinkedList<>(wrongTypes);
                                 highlight.addFirst(n);
                                 errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                                         tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE,
@@ -199,7 +199,7 @@ public class RelationChecker extends Test {
                             }
                         }
                         if (r.memberExpression != null) {
-                            Set<OsmPrimitive> notMatching = new HashSet<OsmPrimitive>();
+                            Set<OsmPrimitive> notMatching = new HashSet<>();
                             for (Collection<OsmPrimitive> c : Arrays.asList(new Collection[]{ri.nodes, ri.ways, ri.relations})) {
                                 for (OsmPrimitive p : c) {
                                     if (p.isUsable() && !r.memberExpression.match(p)) {
@@ -209,7 +209,7 @@ public class RelationChecker extends Test {
                             }
                             if (!notMatching.isEmpty()) {
                                 String s = marktr("Member for role ''{0}'' does not match ''{1}''");
-                                LinkedList<OsmPrimitive> highlight = new LinkedList<OsmPrimitive>(notMatching);
+                                LinkedList<OsmPrimitive> highlight = new LinkedList<>(notMatching);
                                 highlight.addFirst(n);
                                 errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                                         tr(s, keyname, r.memberExpression), MessageFormat.format(s, keyname, r.memberExpression), WRONG_TYPE,

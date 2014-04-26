@@ -48,7 +48,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     private static DefaultNameFormatter instance;
 
-    private static final List<NameFormatterHook> formatHooks = new LinkedList<NameFormatterHook>();
+    private static final List<NameFormatterHook> formatHooks = new LinkedList<>();
 
     /**
      * Replies the unique instance of this formatter
@@ -107,7 +107,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      */
     public static List<String> getNamingtagsForRelations() {
         if (namingTagsForRelations == null) {
-            namingTagsForRelations = new ArrayList<String>(
+            namingTagsForRelations = new ArrayList<>(
                     Main.pref.getCollection("relation.nameOrder", Arrays.asList(DEFAULT_NAMING_TAGS_FOR_RELATIONS))
                     );
         }
@@ -497,7 +497,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         sb.append("<strong>id</strong>=")
         .append(primitive.getId())
         .append("<br>");
-        List<String> keyList = new ArrayList<String>(primitive.keySet());
+        List<String> keyList = new ArrayList<>(primitive.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
             if (i > 0) {
@@ -628,7 +628,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         sb.append(" (");
         String nameTag = null;
-        Set<String> namingTags = new HashSet<String>(getNamingtagsForRelations());
+        Set<String> namingTags = new HashSet<>(getNamingtagsForRelations());
         for (String n : relation.getTags().keySet()) {
             // #3328: "note " and " note" are name tags too
             if (namingTags.contains(n.trim())) {
@@ -670,7 +670,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         sb.append("<strong>id</strong>=")
         .append(primitive.getId())
         .append("<br>");
-        List<String> keyList = new ArrayList<String>(primitive.getTags().keySet());
+        List<String> keyList = new ArrayList<>(primitive.getTags().keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
             if (i > 0) {

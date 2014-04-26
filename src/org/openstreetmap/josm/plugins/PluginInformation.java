@@ -74,8 +74,8 @@ public class PluginInformation {
     public String iconPath;
     /** The plugin icon. */
     public ImageIcon icon;
-    public List<URL> libraries = new LinkedList<URL>();
-    public final Map<String, String> attr = new TreeMap<String, String>();
+    public List<URL> libraries = new LinkedList<>();
+    public final Map<String, String> attr = new TreeMap<>();
 
     private static final ImageIcon emptyIcon = new ImageIcon(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB));
 
@@ -400,7 +400,7 @@ public class PluginInformation {
      */
     public static Collection<String> getPluginLocations() {
         Collection<String> locations = Main.pref.getAllPossiblePreferenceDirs();
-        Collection<String> all = new ArrayList<String>(locations.size());
+        Collection<String> all = new ArrayList<>(locations.size());
         for (String s : locations) {
             all.add(s+"plugins");
         }
@@ -496,7 +496,7 @@ public class PluginInformation {
     }
 
     private static List<String> getRequiredPlugins(String pluginList) {
-        List<String> requiredPlugins = new ArrayList<String>();
+        List<String> requiredPlugins = new ArrayList<>();
         if (pluginList != null) {
             for (String s : pluginList.split(";")) {
                 String plugin = s.trim();

@@ -44,11 +44,11 @@ public class PowerLines extends Test {
     /** Values for {@code power} key interpreted as allowed power items */
     public static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator");
 
-    private final Map<Way, String> towerPoleTagMap = new HashMap<Way, String>();
+    private final Map<Way, String> towerPoleTagMap = new HashMap<>();
 
-    private final List<PowerLineError> potentialErrors = new ArrayList<PowerLineError>();
+    private final List<PowerLineError> potentialErrors = new ArrayList<>();
 
-    private final List<OsmPrimitive> powerStations = new ArrayList<OsmPrimitive>();
+    private final List<OsmPrimitive> powerStations = new ArrayList<>();
 
     /**
      * Constructs a new {@code PowerLines} test.
@@ -117,7 +117,7 @@ public class PowerLines extends Test {
 
     protected final boolean isInPowerStation(Node n) {
         for (OsmPrimitive station : powerStations) {
-            List<List<Node>> nodesLists = new ArrayList<List<Node>>();
+            List<List<Node>> nodesLists = new ArrayList<>();
             if (station instanceof Way) {
                 nodesLists.add(((Way)station).getNodes());
             } else if (station instanceof Relation) {

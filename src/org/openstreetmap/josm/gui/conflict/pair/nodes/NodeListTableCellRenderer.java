@@ -58,7 +58,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
 
         // show the key/value-pairs, sorted by key
         //
-        List<String> keyList = new ArrayList<String>(primitive.keySet());
+        List<String> keyList = new ArrayList<>(primitive.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
             if (i > 0) {

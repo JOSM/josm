@@ -184,9 +184,9 @@ public abstract class CrossingWays extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        cellSegments = new HashMap<Point2D,List<WaySegment>>(1000);
-        errorSegments = new HashSet<WaySegment>();
-        seenWays = new HashMap<List<Way>, List<WaySegment>>(50);
+        cellSegments = new HashMap<>(1000);
+        errorSegments = new HashSet<>();
+        seenWays = new HashMap<>(50);
     }
 
     @Override
@@ -246,7 +246,7 @@ public abstract class CrossingWays extends Test {
 
                     prims = Arrays.asList(es1.way, es2.way);
                     if ((highlight = seenWays.get(prims)) == null) {
-                        highlight = new ArrayList<WaySegment>();
+                        highlight = new ArrayList<>();
                         highlight.add(es1);
                         highlight.add(es2);
 
@@ -277,11 +277,11 @@ public abstract class CrossingWays extends Test {
      */
     public List<List<WaySegment>> getSegments(EastNorth n1, EastNorth n2) {
 
-        List<List<WaySegment>> cells = new ArrayList<List<WaySegment>>();
+        List<List<WaySegment>> cells = new ArrayList<>();
         for (Point2D cell : ValUtil.getSegmentCells(n1, n2, OsmValidator.griddetail)) {
             List<WaySegment> segments = cellSegments.get(cell);
             if (segments == null) {
-                segments = new ArrayList<WaySegment>();
+                segments = new ArrayList<>();
                 cellSegments.put(cell, segments);
             }
             cells.add(segments);

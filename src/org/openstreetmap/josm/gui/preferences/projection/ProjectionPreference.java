@@ -66,8 +66,8 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
     }
 
-    private static List<ProjectionChoice> projectionChoices = new ArrayList<ProjectionChoice>();
-    private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<String, ProjectionChoice>();
+    private static List<ProjectionChoice> projectionChoices = new ArrayList<>();
+    private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<>();
 
     // some ProjectionChoices that are referenced from other parts of the code
     public static final ProjectionChoice wgs84, mercator, lambert, utm_france_dom, lambert_cc9;
@@ -246,7 +246,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
     private static final CollectionProperty PROP_SUB_PROJECTION = new CollectionProperty("projection.sub", null);
     public static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", "Metric");
-    private static final String[] unitsValues = (new ArrayList<String>(SystemOfMeasurement.ALL_SYSTEMS.keySet())).toArray(new String[0]);
+    private static final String[] unitsValues = (new ArrayList<>(SystemOfMeasurement.ALL_SYSTEMS.keySet())).toArray(new String[0]);
     private static final String[] unitsValuesTr = new String[unitsValues.length];
     static {
         for (int i=0; i<unitsValues.length; ++i) {

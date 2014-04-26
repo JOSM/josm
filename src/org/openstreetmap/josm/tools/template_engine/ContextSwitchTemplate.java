@@ -65,7 +65,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
                 children = Collections.emptyList();
             }
 
-            List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> result = new ArrayList<>();
             for (OsmPrimitive child: children) {
                 for (OsmPrimitive parent: child.getReferrers(true)) {
                     if (condition == null || condition.match(parent)) {
@@ -99,7 +99,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
             } else {
                 parents = Collections.emptyList();
             }
-            List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> result = new ArrayList<>();
             for (OsmPrimitive p: parents) {
                 if (p instanceof Way) {
                     for (Node n: ((Way) p).getNodes()) {
@@ -136,7 +136,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         List<OsmPrimitive> getPrimitives(OsmPrimitive root) {
-            List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> result = new ArrayList<>();
             for (OsmPrimitive o: lhs.getPrimitives(root)) {
                 if (condition == null || condition.match(o)) {
                     result.add(o);
@@ -167,7 +167,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         List<OsmPrimitive> getPrimitives(OsmPrimitive root) {
-            List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> result = new ArrayList<>();
             List<OsmPrimitive> lhsList = lhs.getPrimitives(root);
             for (OsmPrimitive o: rhs.getPrimitives(root)) {
                 if (lhsList.contains(o) && (condition == null || condition.match(o))) {

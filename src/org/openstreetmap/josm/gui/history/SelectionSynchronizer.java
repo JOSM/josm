@@ -17,7 +17,7 @@ public class SelectionSynchronizer implements ListSelectionListener {
      * Constructs a new {@code SelectionSynchronizer}.
      */
     public SelectionSynchronizer() {
-        participants = new ArrayList<ListSelectionModel>();
+        participants = new ArrayList<>();
     }
 
     public void participateInSynchronizedSelection(ListSelectionModel model) {

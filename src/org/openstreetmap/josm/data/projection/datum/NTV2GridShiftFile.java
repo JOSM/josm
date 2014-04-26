@@ -166,7 +166,7 @@ public class NTV2GridShiftFile implements Serializable {
      */
     private NTV2SubGrid[] createSubGridTree(NTV2SubGrid[] subGrid) {
         int topLevelCount = 0;
-        HashMap<String, List<NTV2SubGrid>> subGridMap = new HashMap<String, List<NTV2SubGrid>>();
+        HashMap<String, List<NTV2SubGrid>> subGridMap = new HashMap<>();
         for (int i = 0; i < subGrid.length; i++) {
             if ("NONE".equalsIgnoreCase(subGrid[i].getParentSubGridName())) {
                 topLevelCount++;

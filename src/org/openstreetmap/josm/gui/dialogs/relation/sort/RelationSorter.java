@@ -22,7 +22,7 @@ public class RelationSorter {
         public List<RelationMember> sortMembers(List<RelationMember> list);
     }
 
-    private static final Collection<AdditionalSorter> additionalSorters = new ArrayList<AdditionalSorter>();
+    private static final Collection<AdditionalSorter> additionalSorters = new ArrayList<>();
 
     static {
         // first adequate sorter is used, so order matters
@@ -85,12 +85,12 @@ public class RelationSorter {
      * @return sorted collection of relation members
      */
     public List<RelationMember> sortMembers(List<RelationMember> relationMembers) {
-        List<RelationMember> newMembers = new ArrayList<RelationMember>();
+        List<RelationMember> newMembers = new ArrayList<>();
 
         // Sort members with custom mechanisms (relation-dependent)
-        List<RelationMember> defaultMembers = new ArrayList<RelationMember>(relationMembers.size());
+        List<RelationMember> defaultMembers = new ArrayList<>(relationMembers.size());
         // Maps sorter to assigned members for sorting. Use LinkedHashMap to retain order.
-        Map<AdditionalSorter, List<RelationMember>> customMap = new LinkedHashMap<AdditionalSorter, List<RelationMember>>();
+        Map<AdditionalSorter, List<RelationMember>> customMap = new LinkedHashMap<>();
 
         // Dispatch members to the first adequate sorter
         for (RelationMember m : relationMembers) {
@@ -100,7 +100,7 @@ public class RelationSorter {
                     List<RelationMember> list;
                     list = customMap.get(sorter);
                     if (list == null) {
-                        customMap.put(sorter, list = new LinkedList<RelationMember>());
+                        customMap.put(sorter, list = new LinkedList<>());
                     }
                     list.add(m);
                     wasAdded = true;
@@ -122,12 +122,12 @@ public class RelationSorter {
 
     public static List<RelationMember> sortMembersByConnectivity(List<RelationMember> defaultMembers) {
 
-        List<RelationMember> newMembers = new ArrayList<RelationMember>();
+        List<RelationMember> newMembers = new ArrayList<>();
 
         RelationNodeMap map = new RelationNodeMap(defaultMembers);
         // List of groups of linked members
         //
-        List<LinkedList<Integer>> allGroups = new ArrayList<LinkedList<Integer>>();
+        List<LinkedList<Integer>> allGroups = new ArrayList<>();
 
         // current group of members that are linked among each other
         // Two successive members are always linked i.e. have a common node.
@@ -136,7 +136,7 @@ public class RelationSorter {
 
         Integer first;
         while ((first = map.pop()) != null) {
-            group = new LinkedList<Integer>();
+            group = new LinkedList<>();
             group.add(first);
 
             allGroups.add(group);

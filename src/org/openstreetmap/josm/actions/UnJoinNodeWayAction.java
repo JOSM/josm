@@ -98,7 +98,7 @@ public class UnJoinNodeWayAction extends JosmAction {
             return null;
 
         // List of ways shared by all nodes
-        List<Way> result = new ArrayList<Way>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
+        List<Way> result = new ArrayList<>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
         for (int i=1; i<selectedNodes.size(); i++) {
             List<OsmPrimitive> ref = selectedNodes.get(i).getReferrers();
             for (Iterator<Way> it = result.iterator(); it.hasNext(); ) {

@@ -32,7 +32,7 @@ public class ProjectionRefTest {
      * @param args
      */
     public static void main(String[] args) {
-        Map<String, Projection> allCodes = new HashMap<String, Projection>();
+        Map<String, Projection> allCodes = new HashMap<>();
         for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
             for (String code : pc.allCodes()) {
                 Collection<String> pref = pc.getPreferencesFromCode(code);
