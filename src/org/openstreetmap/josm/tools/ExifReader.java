@@ -86,11 +86,7 @@ public final class ExifReader {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);
             final Directory dir = metadata.getDirectory(ExifIFD0Directory.class);
             return dir.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-        } catch (JpegProcessingException e) {
-            Main.error(e);
-        } catch (MetadataException e) {
-            Main.error(e);
-        } catch (IOException e) {
+        } catch (JpegProcessingException | MetadataException | IOException e) {
             Main.error(e);
         }
         return null;

@@ -141,11 +141,7 @@ public class OsmChangesetContentParser {
             SAXParserFactory.newInstance().newSAXParser().parse(source, new Parser());
         } catch(XmlParsingException e) {
             throw e;
-        } catch (ParserConfigurationException e) {
-            throw new XmlParsingException(e);
-        } catch(SAXException e) {
-            throw new XmlParsingException(e);
-        } catch(IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new XmlParsingException(e);
         } finally {
             progressMonitor.finishTask();

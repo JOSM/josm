@@ -460,10 +460,7 @@ public final class Utils {
             if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 return (String) t.getTransferData(DataFlavor.stringFlavor);
             }
-        } catch (UnsupportedFlavorException ex) {
-            Main.error(ex);
-            return null;
-        } catch (IOException ex) {
+        } catch (UnsupportedFlavorException | IOException ex) {
             Main.error(ex);
             return null;
         }

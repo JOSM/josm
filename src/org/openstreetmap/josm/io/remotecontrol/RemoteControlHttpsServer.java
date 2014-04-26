@@ -87,17 +87,8 @@ public class RemoteControlHttpsServer extends Thread {
                     
                     initOK = true;
                 }
-            } catch (KeyStoreException e) {
-                Main.error(e);
-            } catch (NoSuchAlgorithmException e) {
-                Main.error(e);
-            } catch (CertificateException e) {
-                Main.error(e);
-            } catch (IOException e) {
-                Main.error(e);
-            } catch (UnrecoverableKeyException e) {
-                Main.error(e);
-            } catch (KeyManagementException e) {
+            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | 
+                    IOException | UnrecoverableKeyException | KeyManagementException e) {
                 Main.error(e);
             }
         }

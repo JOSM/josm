@@ -267,13 +267,7 @@ public final class MapRendererFactory {
         try {
             Constructor<?> c = activeRenderer.getConstructor(new Class<?>[]{Graphics2D.class, NavigatableComponent.class, boolean.class});
             return AbstractMapRenderer.class.cast(c.newInstance(g, viewport, isInactiveMode));
-        } catch(NoSuchMethodException e){
-            throw new MapRendererFactoryException(e);
-        } catch (IllegalArgumentException e) {
-            throw new MapRendererFactoryException(e);
-        } catch (InstantiationException e) {
-            throw new MapRendererFactoryException(e);
-        } catch (IllegalAccessException e) {
+        } catch(NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException e){
             throw new MapRendererFactoryException(e);
         } catch (InvocationTargetException e) {
             throw new MapRendererFactoryException(e.getCause());

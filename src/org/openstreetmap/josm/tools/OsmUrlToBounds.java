@@ -27,9 +27,7 @@ public final class OsmUrlToBounds {
             if (url.contains("%")) {
                 url = URLDecoder.decode(url, "UTF-8");
             }
-        } catch (UnsupportedEncodingException x) {
-            Main.error(x);
-        } catch (IllegalArgumentException x) {
+        } catch (UnsupportedEncodingException | IllegalArgumentException x) {
             Main.error(x);
         }
         Bounds b = parseShortLink(url);
@@ -71,11 +69,7 @@ public final class OsmUrlToBounds {
                         parseDouble(map, "lon"),
                         z == null ? 18 : Integer.parseInt(z));
             }
-        } catch (NumberFormatException x) {
-            Main.error(x);
-        } catch (NullPointerException x) {
-            Main.error(x);
-        } catch (ArrayIndexOutOfBoundsException x) {
+        } catch (NumberFormatException | NullPointerException | ArrayIndexOutOfBoundsException x) {
             Main.error(x);
         }
         return b;

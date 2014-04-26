@@ -76,9 +76,7 @@ public class SessionReader {
         SessionLayerImporter importer = null;
         try {
             importer = importerClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         return importer;
@@ -456,9 +454,7 @@ public class SessionReader {
                 Exception exception = null;
                 try {
                     layer = imp.load(e, support, progressMonitor.createSubTaskMonitor(1, false));
-                } catch (IllegalDataException ex) {
-                    exception = ex;
-                } catch (IOException ex) {
+                } catch (IllegalDataException | IOException ex) {
                     exception = ex;
                 }
                 if (exception != null) {
@@ -541,9 +537,7 @@ public class SessionReader {
                         cancel = dlg.getValue() != 2;
                     }
                 });
-            } catch (InvocationTargetException ex) {
-                throw new RuntimeException(ex);
-            } catch (InterruptedException ex) {
+            } catch (InvocationTargetException | InterruptedException ex) {
                 throw new RuntimeException(ex);
             }
         }

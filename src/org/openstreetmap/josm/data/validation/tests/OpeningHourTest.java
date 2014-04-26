@@ -208,9 +208,7 @@ public class OpeningHourTest extends Test.TagTest {
             if (!ignoreOtherSeverity && errors.isEmpty() && prettifiedValue != null && !value.equals(prettifiedValue)) {
                 errors.add(new OpeningHoursTestError(tr("opening_hours value can be prettified"), Severity.OTHER, prettifiedValue));
             }
-        } catch (ScriptException ex) {
-            Main.error(ex);
-        } catch (NoSuchMethodException ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             Main.error(ex);
         }
         return errors;

@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
@@ -122,13 +121,9 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 throw new OsmApiException(connection.getResponseCode(),connection.getHeaderField("Error"), null);
             Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connection.getInputStream());
             return OsmServerUserInfoReader.buildFromXML(d);
-        } catch(SAXException e) {
+        } catch(SAXException | ParserConfigurationException e) {
             throw new XmlParsingException(e);
-        } catch(ParserConfigurationException e){
-            throw new XmlParsingException(e);
-        } catch(MalformedURLException e) {
-            throw new OsmTransferException(e);
-        } catch(IOException e){
+        } catch(IOException e) {
             throw new OsmTransferException(e);
         } catch(OAuthException e) {
             throw new OsmOAuthAuthorizationException(e);

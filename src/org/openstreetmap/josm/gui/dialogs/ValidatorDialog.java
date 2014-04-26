@@ -637,11 +637,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                         Main.main.getCurrentDataSet().fireSelectionChanged();
                     }
                 });
-            } catch(InterruptedException e) {
+            } catch(InterruptedException | InvocationTargetException e) {
                 // FIXME: signature of realRun should have a generic checked exception we
                 // could throw here
-                throw new RuntimeException(e);
-            } catch(InvocationTargetException e) {
                 throw new RuntimeException(e);
             } finally {
                 monitor.finishTask();

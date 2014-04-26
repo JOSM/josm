@@ -19,7 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -715,22 +714,13 @@ public class OsmApi extends OsmConnection {
                 default:
                     throw new OsmApiException(retCode, errorHeader, errorBody);
                 }
-            } catch (UnknownHostException e) {
-                throw new OsmTransferException(e);
-            } catch (SocketTimeoutException e) {
-                if (retries-- > 0) {
-                    continue;
-                }
-                throw new OsmTransferException(e);
-            } catch (ConnectException e) {
+            } catch (SocketTimeoutException | ConnectException e) {
                 if (retries-- > 0) {
                     continue;
                 }
                 throw new OsmTransferException(e);
             } catch(IOException e) {
                 throw new OsmTransferException(e);
-            } catch(OsmTransferCanceledException e) {
-                throw e;
             } catch(OsmTransferException e) {
                 throw e;
             }

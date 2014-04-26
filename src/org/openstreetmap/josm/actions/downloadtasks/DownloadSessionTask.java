@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.Future;
@@ -53,11 +52,7 @@ public class DownloadSessionTask extends AbstractDownloadTask {
                 URL u = new URL(url);
                 loader = new Loader(Utils.openURL(u), u.toURI(), url.endsWith(".joz"));
                 return Main.worker.submit(loader);
-            } catch (URISyntaxException e) {
-                Main.error(e);
-            } catch (MalformedURLException e) {
-                Main.error(e);
-            } catch (IOException e) {
+            } catch (URISyntaxException | IOException e) {
                 Main.error(e);
             }
         }

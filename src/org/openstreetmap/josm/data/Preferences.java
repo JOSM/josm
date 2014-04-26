@@ -1166,9 +1166,7 @@ public class Preferences {
         T structPrototype;
         try {
             structPrototype = klass.newInstance();
-        } catch (InstantiationException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             throw new RuntimeException(ex);
         }
 
@@ -1186,9 +1184,7 @@ public class Preferences {
                         hash.put(f.getName().replace("_", "-"), fieldValue.toString());
                     }
                 }
-            } catch (IllegalArgumentException ex) {
-                throw new RuntimeException(ex);
-            } catch (IllegalAccessException ex) {
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
                 throw new RuntimeException(ex);
             }
         }
@@ -1199,9 +1195,7 @@ public class Preferences {
         T struct = null;
         try {
             struct = klass.newInstance();
-        } catch (InstantiationException ex) {
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             throw new RuntimeException(ex);
         }
         for (Entry<String,String> key_value : hash.entrySet()) {

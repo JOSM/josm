@@ -319,13 +319,7 @@ public class PluginInformation {
             Constructor<?> c = klass.getConstructor(PluginInformation.class);
             Object plugin = c.newInstance(this);
             return new PluginProxy(plugin, this);
-        } catch(NoSuchMethodException e) {
-            throw new PluginException(name, e);
-        } catch(IllegalAccessException e) {
-            throw new PluginException(name, e);
-        } catch (InstantiationException e) {
-            throw new PluginException(name, e);
-        } catch(InvocationTargetException e) {
+        } catch(NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new PluginException(name, e);
         }
     }
@@ -342,9 +336,7 @@ public class PluginInformation {
             return null;
         try {
             return Class.forName(className, true, classLoader);
-        } catch (ClassNotFoundException e) {
-            throw new PluginException(name, e);
-        } catch (ClassCastException e) {
+        } catch (ClassNotFoundException | ClassCastException e) {
             throw new PluginException(name, e);
         }
     }

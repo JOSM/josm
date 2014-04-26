@@ -222,9 +222,7 @@ public final class OsmChangesetParser {
             InputSource inputSource = new InputSource(new InvalidXmlCharacterFilter(new InputStreamReader(source, Utils.UTF_8)));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser.new Parser());
             return parser.getChangesets();
-        } catch(ParserConfigurationException e) {
-            throw new IllegalDataException(e.getMessage(), e);
-        } catch(SAXException e) {
+        } catch(ParserConfigurationException | SAXException e) {
             throw new IllegalDataException(e.getMessage(), e);
         } catch(Exception e) {
             throw new IllegalDataException(e);

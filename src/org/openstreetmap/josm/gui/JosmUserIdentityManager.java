@@ -216,9 +216,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
         try {
             UserInfo info = new OsmServerUserInfoReader().fetchUserInfo(NullProgressMonitor.INSTANCE);
             setFullyIdentified(info.getDisplayName(), info);
-        } catch (IllegalArgumentException e) {
-            Main.error(e);
-        } catch (OsmTransferException e) {
+        } catch (IllegalArgumentException | OsmTransferException e) {
             Main.error(e);
         }
     }

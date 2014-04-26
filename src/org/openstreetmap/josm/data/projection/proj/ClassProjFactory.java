@@ -17,9 +17,7 @@ public class ClassProjFactory implements ProjFactory {
         Proj proj = null;
         try {
             proj = projClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         return proj;
