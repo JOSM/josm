@@ -20,7 +20,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Storage;
 
-public class ChangesetListModel extends DefaultListModel  implements ChangesetCacheListener{
+public class ChangesetListModel extends DefaultListModel<Changeset> implements ChangesetCacheListener {
     private final List<Changeset> data = new ArrayList<Changeset>();
     private final Storage<Changeset> shownChangesets = new Storage<Changeset>(true);
     private DefaultListSelectionModel selectionModel;
@@ -130,7 +130,7 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
     }
 
     @Override
-    public Object getElementAt(int idx) {
+    public Changeset getElementAt(int idx) {
         return data.get(idx);
     }
 

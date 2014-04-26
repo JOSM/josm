@@ -23,7 +23,7 @@ public class AuthorizationProcedureComboBox extends JosmComboBox {
         setSelectedItem(AuthorizationProcedure.FULLY_AUTOMATIC);
     }
 
-    private static class AuthorisationProcedureCellRenderer extends JLabel implements ListCellRenderer {
+    private static class AuthorisationProcedureCellRenderer extends JLabel implements ListCellRenderer<AuthorizationProcedure> {
         public AuthorisationProcedureCellRenderer() {
             setOpaque(true);
         }
@@ -79,8 +79,8 @@ public class AuthorizationProcedureComboBox extends JosmComboBox {
         }
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int idx, boolean isSelected, boolean hasFocus) {
-            AuthorizationProcedure procedure = (AuthorizationProcedure)value;
+        public Component getListCellRendererComponent(JList<? extends AuthorizationProcedure> list, AuthorizationProcedure procedure, 
+                int idx, boolean isSelected, boolean hasFocus) {
             renderColors(isSelected);
             renderText(procedure);
             renderToolTipText(procedure);

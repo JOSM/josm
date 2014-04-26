@@ -30,11 +30,9 @@ public abstract class AbstractMergeAction extends JosmAction {
     public static class LayerListCellRenderer extends DefaultListCellRenderer {
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Layer layer = (Layer) value;
-            JLabel label = (JLabel) super.getListCellRendererComponent(list, layer.getName(), index, isSelected,
-                    cellHasFocus);
+            JLabel label = (JLabel) super.getListCellRendererComponent(list, layer.getName(), index, isSelected, cellHasFocus);
             Icon icon = layer.getIcon();
             label.setIcon(icon);
             label.setToolTipText(layer.getToolTipText());

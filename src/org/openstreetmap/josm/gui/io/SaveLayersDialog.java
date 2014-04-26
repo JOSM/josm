@@ -172,7 +172,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             gc.weighty = 0.0;
             add(lblMessage = new JLabel(), gc);
             lblMessage.setHorizontalAlignment(JLabel.LEFT);
-            lstLayers = new JList();
+            lstLayers = new JList<SaveLayerInfo>();
             lstLayers.setCellRenderer(
                     new DefaultListCellRenderer() {
                         @Override

@@ -44,7 +44,7 @@ public class MapListEditor extends ExtendedDialog {
     EntryListModel entryModel;
     PrefEntry entry;
 
-    JList entryList;
+    JList<String> entryList;
     JTable table;
     MapTableModel tableModel;
 
@@ -99,7 +99,7 @@ public class MapListEditor extends ExtendedDialog {
         JPanel left = new JPanel(new GridBagLayout());
 
         entryModel = new EntryListModel();
-        entryList = new JList(entryModel);
+        entryList = new JList<String>(entryModel);
         entryList.getSelectionModel().addListSelectionListener(new EntryListener());
         JScrollPane scroll = new JScrollPane(entryList);
         left.add(scroll, GBC.eol().fill());
@@ -132,9 +132,9 @@ public class MapListEditor extends ExtendedDialog {
         return p;
     }
 
-    class EntryListModel extends AbstractListModel {
+    class EntryListModel extends AbstractListModel<String> {
         @Override
-        public Object getElementAt(int index) {
+        public String getElementAt(int index) {
             return tr("Entry {0}", index+1);
         }
 
@@ -212,7 +212,6 @@ public class MapListEditor extends ExtendedDialog {
     }
 
     class MapTableModel extends AbstractTableModel {
-        @SuppressWarnings("unchecked")
         private List<List<String>> data() {
             if (entryIdx == null) return Collections.emptyList();
             return Arrays.asList(dataKeys.get(entryIdx), dataValues.get(entryIdx));

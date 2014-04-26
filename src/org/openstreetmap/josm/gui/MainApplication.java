@@ -266,7 +266,7 @@ public class MainApplication extends Main {
      */
     public static void main(final String[] argArray) {
         I18n.init();
-        Main.checkJava6();
+        Main.checkJavaVersion();
 
         // construct argument table
         Map<Option, Collection<String>> args = null;

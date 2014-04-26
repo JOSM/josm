@@ -29,14 +29,13 @@ import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * This is browser for a list of relations which refer to another relations
- *
- *
+ * This is browser for a list of relations which refer to another relations.
+ * @since 1806
  */
 public class ReferringRelationsBrowser extends JPanel {
 
     /** the list of relations */
-    private JList referrers;
+    private JList<Relation> referrers;
     private ReferringRelationsBrowserModel model;
     private OsmDataLayer layer;
     private JCheckBox cbReadFull;
@@ -47,7 +46,7 @@ public class ReferringRelationsBrowser extends JPanel {
      */
     protected void build() {
         setLayout(new BorderLayout());
-        referrers = new JList(model);
+        referrers = new JList<Relation>(model);
         referrers.setCellRenderer(new OsmPrimitivRenderer());
         add(new JScrollPane(referrers), BorderLayout.CENTER);
         referrers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -159,7 +158,7 @@ public class ReferringRelationsBrowser extends JPanel {
         public void run() {
             int idx = referrers.getSelectedIndex();
             if (idx < 0) return;
-            Relation r = model.get(idx);
+            Relation r = model.getElementAt(idx);
             if (r == null) return;
             RelationEditor editor = RelationEditor.getEditor(getLayer(), r, null);
             editor.setVisible(true);

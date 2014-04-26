@@ -300,16 +300,19 @@ public class AutoCompletingComboBox extends JosmComboBox {
      * ListCellRenderer for AutoCompletingComboBox
      * renders an AutoCompletionListItem by showing only the string value part
      */
-    public static class AutoCompleteListCellRenderer extends JLabel implements ListCellRenderer {
+    public static class AutoCompleteListCellRenderer extends JLabel implements ListCellRenderer<AutoCompletionListItem> {
 
+        /**
+         * Constructs a new {@code AutoCompleteListCellRenderer}.
+         */
         public AutoCompleteListCellRenderer() {
             setOpaque(true);
         }
 
         @Override
         public Component getListCellRendererComponent(
-                JList list,
-                Object value,
+                JList<? extends AutoCompletionListItem> list,
+                AutoCompletionListItem item,
                 int index,
                 boolean isSelected,
                 boolean cellHasFocus)
@@ -322,7 +325,6 @@ public class AutoCompletingComboBox extends JosmComboBox {
                 setForeground(list.getForeground());
             }
 
-            AutoCompletionListItem item = (AutoCompletionListItem) value;
             setText(item.getValue());
             return this;
         }

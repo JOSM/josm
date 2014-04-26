@@ -80,7 +80,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     /** the model for the list of conflicts */
     private ConflictListModel model;
     /** the list widget for the list of conflicts */
-    private JList lstConflicts;
+    private JList<OsmPrimitive> lstConflicts;
 
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
@@ -94,7 +94,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     protected void build() {
         model = new ConflictListModel();
 
-        lstConflicts = new JList(model);
+        lstConflicts = new JList<OsmPrimitive>(model);
         lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
         lstConflicts.addMouseListener(new MouseEventHandler());
@@ -271,11 +271,11 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                 }
             }
         };
-        for (Object o : lstConflicts.getSelectedValues()) {
-            if (conflicts == null || !conflicts.hasConflictForMy((OsmPrimitive)o)) {
+        for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
+            if (conflicts == null || !conflicts.hasConflictForMy(o)) {
                 continue;
             }
-            conflicts.getConflictForMy((OsmPrimitive)o).getTheir().accept(conflictPainter);
+            conflicts.getConflictForMy(o).getTheir().accept(conflictPainter);
         }
     }
 
@@ -358,7 +358,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      * The {@link ListModel} for conflicts
      *
      */
-    class ConflictListModel implements ListModel {
+    class ConflictListModel implements ListModel<OsmPrimitive> {
 
         private CopyOnWriteArrayList<ListDataListener> listeners;
 
@@ -391,7 +391,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public OsmPrimitive getElementAt(int index) {
             if (index < 0) return null;
             if (index >= getSize()) return null;
             return conflicts.get(index).getMy();
@@ -451,8 +451,8 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         @Override
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
-            for (Object o : lstConflicts.getSelectedValues()) {
-                sel.add((OsmPrimitive)o);
+            for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
+                sel.add(o);
             }
             DataSet ds = Main.main.getCurrentDataSet();
             if (ds != null) { // Can't see how it is possible but it happened in #7942

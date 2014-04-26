@@ -139,7 +139,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
      * A simple list of OSM primitives.
      *
      */
-    static class PrimitiveList extends JList {
+    static class PrimitiveList extends JList<OsmPrimitive> {
         public PrimitiveList() {
             super(new PrimitiveListModel());
         }
@@ -153,7 +153,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
      * A list model for a list of OSM primitives.
      *
      */
-    static class PrimitiveListModel extends AbstractListModel{
+    static class PrimitiveListModel extends AbstractListModel<OsmPrimitive> {
         private List<OsmPrimitive> primitives;
 
         public PrimitiveListModel() {
@@ -174,7 +174,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public OsmPrimitive getElementAt(int index) {
             if (primitives == null) return null;
             return primitives.get(index);
         }

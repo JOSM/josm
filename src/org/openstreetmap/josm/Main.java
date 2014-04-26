@@ -1110,21 +1110,21 @@ public abstract class Main {
     }
 
     /**
-     * Checks that JOSM is at least running with Java 6.
-     * @since 3815
+     * Checks that JOSM is at least running with Java 7.
+     * @since 7001
      */
-    public static void checkJava6() {
+    public static void checkJavaVersion() {
         String version = System.getProperty("java.version");
         if (version != null) {
-            if (version.matches("^(1\\.)?[6789].*"))
+            if (version.matches("^(1\\.)?[789].*"))
                 return;
-            if (version.matches("^(1\\.)?[5].*")) {
+            if (version.matches("^(1\\.)?[56].*")) {
                 JMultilineLabel ho = new JMultilineLabel("<html>"+
-                        tr("<h2>JOSM requires Java version 6.</h2>"+
-                                "Detected Java version: {0}.<br>"+
+                        tr("<h2>JOSM requires Java version {0}.</h2>"+
+                                "Detected Java version: {1}.<br>"+
                                 "You can <ul><li>update your Java (JRE) or</li>"+
-                                "<li>use an earlier (Java 5 compatible) version of JOSM.</li></ul>"+
-                                "More Info:", version)+"</html>");
+                                "<li>use an earlier (Java {2} compatible) version of JOSM.</li></ul>"+
+                                "More Info:", "7", version, "6")+"</html>");
                 JTextArea link = new JTextArea(HelpUtil.getWikiBaseHelpUrl()+"/Help/SystemRequirements");
                 link.setEditable(false);
                 link.setBackground(panel.getBackground());

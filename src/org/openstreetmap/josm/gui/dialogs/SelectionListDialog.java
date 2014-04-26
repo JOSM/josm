@@ -80,7 +80,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8
  */
 public class SelectionListDialog extends ToggleDialog  {
-    private JList lstPrimitives;
+    private JList<OsmPrimitive> lstPrimitives;
     private DefaultListSelectionModel selectionModel  = new DefaultListSelectionModel();
     private SelectionListModel model = new SelectionListModel(selectionModel);
 
@@ -100,7 +100,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * Builds the content panel for this dialog
      */
     protected void buildContentPanel() {
-        lstPrimitives = new JList(model);
+        lstPrimitives = new JList<OsmPrimitive>(model);
         lstPrimitives.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstPrimitives.setSelectionModel(selectionModel);
         lstPrimitives.setCellRenderer(new OsmPrimitivRenderer());
@@ -406,7 +406,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * JOSM selection.
      *
      */
-    private static class SelectionListModel extends AbstractListModel implements EditLayerChangeListener, SelectionChangedListener, DataSetListener{
+    private static class SelectionListModel extends AbstractListModel<OsmPrimitive> implements EditLayerChangeListener, SelectionChangedListener, DataSetListener{
 
         private static final int SELECTION_HISTORY_SIZE = 10;
 
@@ -480,7 +480,7 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public OsmPrimitive getElementAt(int index) {
             return selection.get(index);
         }
 

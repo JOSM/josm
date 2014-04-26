@@ -35,15 +35,6 @@ import java.io.IOException;
   * @since 1023
   */
 public class PlatformHookWindows extends PlatformHookUnixoid implements PlatformHook {
-    
-    @Override
-    public void startupHook() {
-        // Invite users to install Java 7 if they are still with Java 6
-        String version = System.getProperty("java.version");
-        if (version != null && version.startsWith("1.6")) {
-            askUpdateJava(version);
-        }
-    }
 
     @Override
     public void openUrl(String url) throws IOException {

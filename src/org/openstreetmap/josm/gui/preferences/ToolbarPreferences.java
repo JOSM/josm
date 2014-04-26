@@ -380,12 +380,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             currentAction.getParameters().put(param.getName(), param.readFromString((String)aValue));
         }
 
-
         public void setCurrentAction(ActionDefinition currentAction) {
             this.currentAction = currentAction;
             fireTableDataChanged();
         }
-
     }
 
     private class ToolbarPopupMenu extends JPopupMenu  {
@@ -507,7 +505,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     }
                 } else if ("up".equals(e.getActionCommand())) {
                     int i = selectedList.getSelectedIndex();
-                    Object o = selected.get(i);
+                    ActionDefinition o = selected.get(i);
                     if (i != 0) {
                         selected.remove(i);
                         selected.add(i-1, o);
@@ -515,7 +513,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     }
                 } else if ("down".equals(e.getActionCommand())) {
                     int i = selectedList.getSelectedIndex();
-                    Object o = selected.get(i);
+                    ActionDefinition o = selected.get(i);
                     if (i != selected.size()-1) {
                         selected.remove(i);
                         selected.add(i+1, o);
@@ -553,8 +551,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         private final Move moveAction = new Move();
 
-        private final DefaultListModel selected = new DefaultListModel();
-        private final JList selectedList = new JList(selected);
+        private final DefaultListModel<ActionDefinition> selected = new DefaultListModel<ActionDefinition>();
+        private final JList<ActionDefinition> selectedList = new JList<ActionDefinition>(selected);
 
         private final DefaultTreeModel actionsTreeModel;
         private final JTree actionsTree;
@@ -657,8 +655,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 @Override
                 protected Transferable createTransferable(JComponent c) {
                     List<ActionDefinition> actions = new ArrayList<ActionDefinition>();
-                    for (Object o: ((JList)c).getSelectedValues()) {
-                        actions.add((ActionDefinition)o);
+                    for (ActionDefinition o: ((JList<ActionDefinition>)c).getSelectedValuesList()) {
+                        actions.add(o);
                     }
                     return new ActionTransferable(actions);
                 }
@@ -687,17 +685,15 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 public boolean importData(JComponent comp, Transferable t) {
                     try {
                         int dropIndex = selectedList.locationToIndex(selectedList.getMousePosition(true));
-                        List<?> draggedData = (List<?>) t.getTransferData(ACTION_FLAVOR);
+                        List<ActionDefinition> draggedData = (List<ActionDefinition>) t.getTransferData(ACTION_FLAVOR);
 
                         Object leadItem = dropIndex >= 0 ? selected.elementAt(dropIndex) : null;
                         int dataLength = draggedData.size();
-
 
                         if (leadItem != null) {
                             for (Object o: draggedData) {
                                 if (leadItem.equals(o))
                                     return false;
-
                             }
                         }
 
@@ -882,6 +878,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     }
 
+    /**
+     * Constructs a new {@code ToolbarPreferences}.
+     */
     public ToolbarPreferences() {
         control.setFloatable(false);
         control.setComponentPopupMenu(popupMenu);
@@ -930,8 +929,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
     }
 
-    public Action getAction(String s)
-    {
+    public Action getAction(String s) {
         Action e = actions.get(s);
         if(e == null) {
             e = regactions.get(s);

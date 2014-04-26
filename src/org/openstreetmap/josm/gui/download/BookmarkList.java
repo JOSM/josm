@@ -35,7 +35,7 @@ import org.openstreetmap.josm.tools.Utils;
  * List class that read and save its content from the bookmark file.
  * @since 6340
  */
-public class BookmarkList extends JList {
+public class BookmarkList extends JList<BookmarkList.Bookmark> {
 
     /**
      * Class holding one bookmarkentry.
@@ -152,7 +152,7 @@ public class BookmarkList extends JList {
      * Creates a bookmark list as well as the Buttons add and remove.
      */
     public BookmarkList() {
-        setModel(new DefaultListModel());
+        setModel(new DefaultListModel<Bookmark>());
         load();
         setVisibleRowCount(7);
         setCellRenderer(new BookmarkCellRenderer());
@@ -162,7 +162,7 @@ public class BookmarkList extends JList {
      * Loads the bookmarks from file.
      */
     public final void load() {
-        DefaultListModel model = (DefaultListModel)getModel();
+        DefaultListModel<Bookmark> model = (DefaultListModel<Bookmark>)getModel();
         model.removeAllElements();
         Collection<Collection<String>> args = Main.pref.getArray("bookmarks", null);
         if(args != null) {
@@ -240,9 +240,9 @@ public class BookmarkList extends JList {
      */
     public final void save() {
         LinkedList<Collection<String>> coll = new LinkedList<Collection<String>>();
-        for (Object o : ((DefaultListModel)getModel()).toArray()) {
+        for (Object o : ((DefaultListModel<Bookmark>)getModel()).toArray()) {
             String[] array = new String[5];
-            Bookmark b = (Bookmark)o;
+            Bookmark b = (Bookmark) o;
             array[0] = b.getName();
             Bounds area = b.getArea();
             array[1] = String.valueOf(area.getMinLat());
@@ -254,7 +254,7 @@ public class BookmarkList extends JList {
         Main.pref.putArray("bookmarks", coll);
     }
 
-    static class BookmarkCellRenderer extends JLabel implements ListCellRenderer {
+    static class BookmarkCellRenderer extends JLabel implements ListCellRenderer<BookmarkList.Bookmark> {
 
         private ImageIcon icon;
 
@@ -286,14 +286,12 @@ public class BookmarkList extends JList {
             return sb.toString();
 
         }
-        @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
 
-            Bookmark b = (Bookmark) value;
+        @Override
+        public Component getListCellRendererComponent(JList<? extends Bookmark> list, Bookmark value, int index, boolean isSelected, boolean cellHasFocus) {
             renderColor(isSelected);
-            setText(b.getName());
-            setToolTipText(buildToolTipText(b));
+            setText(value.getName());
+            setToolTipText(buildToolTipText(value));
             return this;
         }
     }

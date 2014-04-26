@@ -9,20 +9,23 @@ import javax.swing.ListCellRenderer;
 
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 
-public class ComparePairListCellRenderer extends JLabel implements ListCellRenderer {
+public class ComparePairListCellRenderer extends JLabel implements ListCellRenderer<ComparePairType> {
+
+    /**
+     * Constructs a new {@code ComparePairListCellRenderer}.
+     */
     public ComparePairListCellRenderer() {
         setOpaque(true);
     }
+
     @Override
     public Component getListCellRendererComponent(
-            JList list,
-            Object value,
+            JList<? extends ComparePairType> list,
+            ComparePairType value,
             int index,
             boolean isSelected,
-            boolean cellHasFocus)
-    {
-        ComparePairType type = (ComparePairType)value;
-        setText(type.getDisplayName());
+            boolean cellHasFocus) {
+        setText(value.getDisplayName());
         setBackground(isSelected ? ConflictColors.BGCOLOR_SELECTED.get() : ConflictColors.BGCOLOR.get());
         setForeground(ConflictColors.FGCOLOR.get());
         return this;

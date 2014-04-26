@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -215,8 +216,8 @@ public class BookmarkSelection implements DownloadSelection {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object[] sels = bookmarks.getSelectedValues();
-            if (sels == null || sels.length == 0)
+            List<Bookmark> sels = bookmarks.getSelectedValuesList();
+            if (sels == null || sels.isEmpty())
                 return;
             for (Object sel: sels) {
                 ((DefaultListModel)bookmarks.getModel()).removeElement(sel);
@@ -242,10 +243,10 @@ public class BookmarkSelection implements DownloadSelection {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object[] sels = bookmarks.getSelectedValues();
-            if (sels == null || sels.length != 1)
+            List<Bookmark> sels = bookmarks.getSelectedValuesList();
+            if (sels == null || sels.size() != 1)
                 return;
-            Bookmark b = (Bookmark)sels[0];
+            Bookmark b = sels.get(0);
             Object value =
                 JOptionPane.showInputDialog(
                         Main.parent,tr("Please enter a name for the bookmarked download area."),

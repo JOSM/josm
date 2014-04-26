@@ -10,16 +10,20 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 
-public class ReferringRelationsBrowserModel extends AbstractListModel {
+public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> {
 
     /** the relation */
     private Relation relation;
     private List<Relation> referrers;
 
+    /**
+     * Constructs a new {@code ReferringRelationsBrowserModel}.
+     */
     public ReferringRelationsBrowserModel() {
         relation = null;
         referrers = new ArrayList<Relation>();
     }
+
     public ReferringRelationsBrowserModel(Relation relation) {
         this();
         this.relation = relation;
@@ -37,7 +41,7 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
     }
 
     @Override
-    public Object getElementAt(int index) {
+    public Relation getElementAt(int index) {
         return referrers.get(index);
     }
 
@@ -94,9 +98,5 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
 
     public Relation getRelation() {
         return relation;
-    }
-
-    public Relation get(int index) {
-        return referrers.get(index);
     }
 }

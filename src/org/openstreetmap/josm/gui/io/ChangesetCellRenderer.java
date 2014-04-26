@@ -20,8 +20,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  *
  */
-public class ChangesetCellRenderer extends JLabel implements ListCellRenderer {
-    private ImageIcon icon ;
+public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Changeset> {
+    private ImageIcon icon;
+
+    /**
+     * Constructs a new {@code ChangesetCellRenderer}.
+     */
     public ChangesetCellRenderer() {
         icon = ImageProvider.get("data", "changeset");
         setOpaque(true);
@@ -41,9 +45,7 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer {
     }
 
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus) {
-        Changeset cs = (Changeset)value;
+    public Component getListCellRendererComponent(JList<? extends Changeset> list, Changeset cs, int index, boolean isSelected, boolean cellHasFocus) {
         if (isSelected) {
             setForeground(UIManager.getColor("List.selectionForeground"));
             setBackground(UIManager.getColor("List.selectionBackground"));

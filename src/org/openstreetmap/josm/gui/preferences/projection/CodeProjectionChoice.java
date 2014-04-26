@@ -46,7 +46,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
 
         public JosmTextField filter;
         private ProjectionCodeListModel model;
-        public JList selectionList;
+        public JList<String> selectionList;
         List<String> data;
         List<String> filteredData;
         static final String DEFAULT_CODE = "EPSG:3857";
@@ -90,14 +90,14 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         /**
          * List model for the filtered view on the list of all codes.
          */
-        private class ProjectionCodeListModel extends AbstractListModel {
+        private class ProjectionCodeListModel extends AbstractListModel<String> {
             @Override
             public int getSize() {
                 return filteredData.size();
             }
 
             @Override
-            public Object getElementAt(int index) {
+            public String getElementAt(int index) {
                 if (index >= 0 && index < filteredData.size())
                     return filteredData.get(index);
                 else

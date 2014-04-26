@@ -130,22 +130,8 @@ Build-Date: ${build.tstamp}
             <!-- <zipfileset src="lib/signpost-core-1.2.1.1.jar"/> -->
         </jar>
     </target>
-    <!-- Compatibility Mac OS X target for Java 6 (incompatible with new on for Java 7, see #8654, #9035) -->
-    <target name="distmac" depends="dist">
-        <!-- modify MacOS X Info.plist file to hold the SVN version number -->
-        <copy file="macosx/JOSM.app/Contents/Info.plist" todir="build"/>
-        <replace file="build/Info.plist" token="@SVNVersion@" value="${version.entry.commit.revision}"/>
-        <!-- create ZIP file with MacOS X application bundle -->
-        <zip destfile="dist/josm-custom-macosx.zip" update="true">
-            <zipfileset dir="build" includes="CONTRIBUTION README LICENSE"/>
-            <zipfileset dir="macosx" includes="JOSM.app/Contents JOSM.app/Contents/MacOS JOSM.app/Contents/Resources JOSM.app/Contents/Resources/Java JOSM.app/Contents/PkgInfo JOSM.app/Contents/Resources/JOSM.icns"/>
-            <zipfileset dir="build" includes="Info.plist" prefix="JOSM.app/Contents"/>
-            <zipfileset dir="dist" includes="josm-custom.jar" prefix="JOSM.app/Contents/Resources/Java"/>
-            <zipfileset dir="macosx" includes="JOSM.app/Contents/MacOS/JOSM" filemode="755"/>
-        </zip>
-    </target>
-    <!-- New Mac OS X target for Java 7 -->
-    <target name="mac7">
+    <!-- Mac OS X target -->
+    <target name="mac">
         <!-- Using https://bitbucket.org/infinitekind/appbundler to create mac application bundle -->
         <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="tools/appbundler-1.0ea.jar"/>
         <!-- create MacOS X application bundle -->
@@ -186,13 +172,13 @@ Build-Date: ${build.tstamp}
         </xmltask>
         
         <!-- create ZIP file with MacOS X application bundle -->
-        <zip destfile="${bundle.outdir}/josm-custom-macosx-java7.zip" update="true">
+        <zip destfile="${bundle.outdir}/josm-custom-macosx.zip" update="true">
             <zipfileset dir="." includes="CONTRIBUTION README LICENSE"/>
             <zipfileset dir="${bundle.outdir}" includes="JOSM.app/**/*" filemode="755" />
         </zip>
     </target>
-    <target name="distmac7" depends="dist">
-        <antcall target="mac7">
+    <target name="distmac" depends="dist">
+        <antcall target="mac">
             <param name="bundle.outdir" value="dist"/>
             <param name="bundle.jar" value="dist/josm-custom.jar"/>
         </antcall>
@@ -203,15 +189,15 @@ Build-Date: ${build.tstamp}
             <arg value="-cp"/>
             <arg value="${javacc.home}/javacc.jar"/>
             <arg value="javacc"/>
-            <arg value="-JDK_VERSION=1.6"/>
+            <arg value="-JDK_VERSION=1.7"/>
             <arg value="-GRAMMAR_ENCODING=UTF-8"/>
             <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </exec>
     </target>
     <target name="compile" depends="init,javacc">
-        <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="iso-8859-1"/>
-        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
+        <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="iso-8859-1"/>
+        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
@@ -236,7 +222,7 @@ Build-Date: ${build.tstamp}
                 private="true"
                 linksource="true"
                 author="false">
-            <link href="http://docs.oracle.com/javase/6/docs/api"/>
+            <link href="http://docs.oracle.com/javase/7/docs/api"/>
             <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
         </javadoc>
@@ -265,11 +251,11 @@ Build-Date: ${build.tstamp}
         <delete file="${test.dir}/jacoco.exec" />
     </target>
     <target name="test-compile" depends="test-init,dist">
-        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
+        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
-        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
+        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>

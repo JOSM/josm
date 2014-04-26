@@ -490,16 +490,16 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
     private static class PluginConfigurationSitesPanel extends JPanel {
 
-        private DefaultListModel model;
+        private DefaultListModel<String> model;
 
         protected final void build() {
             setLayout(new GridBagLayout());
             add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
-            model = new DefaultListModel();
+            model = new DefaultListModel<String>();
             for (String s : Main.pref.getPluginSites()) {
                 model.addElement(s);
             }
-            final JList list = new JList(model);
+            final JList<String> list = new JList<String>(model);
             add(new JScrollPane(list), GBC.std().fill());
             JPanel buttons = new JPanel(new GridBagLayout());
             buttons.add(new JButton(new AbstractAction(tr("Add")){
