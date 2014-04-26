@@ -16,8 +16,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,8 +26,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -322,28 +322,17 @@ public final class Utils {
 
     /**
      * Simple file copy function that will overwrite the target file.<br>
-     * Taken from <a href="http://www.rgagnon.com/javadetails/java-0064.html">this article</a> (CC-NC-BY-SA)
      * @param in The source file
      * @param out The destination file
+     * @return the path to the target file
      * @throws java.io.IOException If any I/O error occurs
+     * @throws IllegalArgumentException If {@code in} or {@code out} is {@code null}
+     * @since 7003
      */
-    public static void copyFile(File in, File out) throws IOException  {
-        // TODO: remove this function when we move to Java 7 (use Files.copy instead)
-        FileInputStream inStream = null;
-        FileOutputStream outStream = null;
-        try {
-            inStream = new FileInputStream(in);
-            outStream = new FileOutputStream(out);
-            FileChannel inChannel = inStream.getChannel();
-            inChannel.transferTo(0, inChannel.size(), outStream.getChannel());
-        }
-        catch (IOException e) {
-            throw e;
-        }
-        finally {
-            close(outStream);
-            close(inStream);
-        }
+    public static Path copyFile(File in, File out) throws IOException, IllegalArgumentException  {
+        CheckParameterUtil.ensureParameterNotNull(in, "in");
+        CheckParameterUtil.ensureParameterNotNull(out, "out");
+        return Files.copy(in.toPath(), out.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static int copyStream(InputStream source, OutputStream destination) throws IOException {
