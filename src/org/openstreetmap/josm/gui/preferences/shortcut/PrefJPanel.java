@@ -373,10 +373,8 @@ public class PrefJPanel extends JPanel {
                     sorter.setRowFilter(RowFilter.andFilter(andFilters));
                 }
                 model.fireTableDataChanged();
-            } catch (PatternSyntaxException ex) {
+            } catch (PatternSyntaxException | ClassCastException ex) {
                 Main.warn(ex);
-            } catch (ClassCastException ex2) {
-                Main.warn(ex2);
             }
         }
 

@@ -355,9 +355,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                     rememberNodesOfIncompleteWaysToLoad(result.dataSet);
                     merge(result.dataSet);
                 }
-            } catch (InterruptedException e) {
-                Main.error(e);
-            } catch (ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 Main.error(e);
             }
         }

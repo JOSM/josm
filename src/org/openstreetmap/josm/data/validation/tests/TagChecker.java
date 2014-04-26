@@ -713,8 +713,7 @@ public class TagChecker extends Test.TagTest {
                     data.add(new CheckerElement(exp));
                 } catch (IllegalStateException e) {
                     return tr("Illegal expression ''{0}''", exp);
-                }
-                catch (PatternSyntaxException e) {
+                } catch (PatternSyntaxException e) {
                     return tr("Illegal regular expression ''{0}''", exp);
                 }
             }

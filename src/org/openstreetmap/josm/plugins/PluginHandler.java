@@ -1166,9 +1166,7 @@ public final class PluginHandler {
             });
             GuiHelper.runInEDT(task);
             return task.get();
-        } catch (InterruptedException e) {
-            Main.warn(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             Main.warn(e);
         }
         return -1;

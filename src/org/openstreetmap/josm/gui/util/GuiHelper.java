@@ -81,17 +81,14 @@ public final class GuiHelper {
         } else {
             try {
                 SwingUtilities.invokeAndWait(task);
-            } catch (InterruptedException e) {
-                Main.error(e);
-            } catch (InvocationTargetException e) {
+            } catch (InterruptedException | InvocationTargetException e) {
                 Main.error(e);
             }
         }
     }
 
     /**
-     * returns true if the user wants to cancel, false if they
-     * want to continue
+     * @return true if the user wants to cancel, false if they want to continue
      */
     public static final boolean warnUser(String title, String content, ImageIcon baseActionIcon, String continueToolTip) {
         ExtendedDialog dlg = new ExtendedDialog(Main.parent,

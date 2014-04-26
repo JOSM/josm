@@ -174,9 +174,7 @@ public class ServerSidePreferences extends Preferences {
         boolean res = false;
         try {
             fromXML(in);
-        } catch (RuntimeException e) {
-            Main.error(e);
-        } catch (XMLStreamException e) {
+        } catch (RuntimeException | XMLStreamException e) {
             Main.error(e);
         }
         return res;

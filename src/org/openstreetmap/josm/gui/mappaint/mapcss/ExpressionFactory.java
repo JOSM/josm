@@ -82,9 +82,7 @@ public final class ExpressionFactory {
             parameterFunctions.add(Math.class.getMethod("sqrt", double.class));
             parameterFunctions.add(Math.class.getMethod("tan", double.class));
             parameterFunctions.add(Math.class.getMethod("tanh", double.class));
-        } catch (NoSuchMethodException ex) {
-            throw new RuntimeException(ex);
-        } catch (SecurityException ex) {
+        } catch (NoSuchMethodException | SecurityException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -751,9 +749,7 @@ public final class ExpressionFactory {
             Object result = null;
             try {
                 result = m.invoke(FUNCTIONS_INSTANCE, convertedArgs);
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex);
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalAccessException | IllegalArgumentException ex) {
                 throw new RuntimeException(ex);
             } catch (InvocationTargetException ex) {
                 Main.error(ex);
@@ -814,9 +810,7 @@ public final class ExpressionFactory {
             Object result = null;
             try {
                 result = m.invoke(null, convertedArgs);
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex);
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalAccessException | IllegalArgumentException ex) {
                 throw new RuntimeException(ex);
             } catch (InvocationTargetException ex) {
                 Main.error(ex);

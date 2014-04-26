@@ -25,7 +25,6 @@ import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthProvider;
-import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthException;
 
 import org.openstreetmap.josm.Main;
@@ -109,13 +108,7 @@ public class OsmOAuthAuthorizationClient {
                 if (con != null) {
                     con.disconnect();
                 }
-            } catch (NoSuchFieldException e) {
-                Main.error(e);
-                Main.warn(tr("Failed to cancel running OAuth operation"));
-            } catch (SecurityException e) {
-                Main.error(e);
-                Main.warn(tr("Failed to cancel running OAuth operation"));
-            } catch (IllegalAccessException e) {
+            } catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
                 Main.error(e);
                 Main.warn(tr("Failed to cancel running OAuth operation"));
             }
@@ -145,10 +138,6 @@ public class OsmOAuthAuthorizationClient {
             monitor.indeterminateSubTask(tr("Retrieving OAuth Request Token from ''{0}''", oauthProviderParameters.getRequestTokenUrl()));
             provider.retrieveRequestToken(consumer, "");
             return OAuthToken.createToken(consumer);
-        } catch(OAuthCommunicationException e){
-            if (canceled)
-                throw new OsmTransferCanceledException(e);
-            throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
                 throw new OsmTransferCanceledException(e);
@@ -179,10 +168,6 @@ public class OsmOAuthAuthorizationClient {
             monitor.indeterminateSubTask(tr("Retrieving OAuth Access Token from ''{0}''", oauthProviderParameters.getAccessTokenUrl()));
             provider.retrieveAccessToken(consumer, null);
             return OAuthToken.createToken(consumer);
-        } catch(OAuthCommunicationException e){
-            if (canceled)
-                throw new OsmTransferCanceledException(e);
-            throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
                 throw new OsmTransferCanceledException(e);
@@ -440,8 +425,6 @@ public class OsmOAuthAuthorizationClient {
             connection.setDoInput(true);
             connection.setDoOutput(false);
             connection.connect();
-        } catch(MalformedURLException e) {
-            throw new OsmOAuthAuthorizationException(e);
         } catch(IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         }  finally {
@@ -503,8 +486,6 @@ public class OsmOAuthAuthorizationClient {
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_OK)
                 throw new OsmOAuthAuthorizationException(tr("Failed to authorize OAuth request  ''{0}''", requestToken.getKey()));
-        } catch(MalformedURLException e) {
-            throw new OsmOAuthAuthorizationException(e);
         } catch(IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         } finally {

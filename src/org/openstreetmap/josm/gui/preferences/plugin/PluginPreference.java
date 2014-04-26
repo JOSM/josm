@@ -371,9 +371,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                                 );
                     }
                 });
-            } catch (InterruptedException e) {
-                Main.error(e);
-            } catch (InvocationTargetException e) {
+            } catch (InterruptedException | InvocationTargetException e) {
                 Main.error(e);
             }
         }

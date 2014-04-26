@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Loads a JOSM session
+ * Loads a JOSM session.
  * @since 4668
  */
 public class SessionLoadAction extends DiskAccessAction {
@@ -173,25 +173,9 @@ public class SessionLoadAction extends DiskAccessAction {
                     }
                 }
             } catch (IllegalDataException e) {
-                Main.error(e);
-                HelpAwareOptionPane.showMessageDialogInEDT(
-                        Main.parent,
-                        tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>", uri != null ? uri : file.getName(), e.getMessage()),
-                        tr("Data Error"),
-                        JOptionPane.ERROR_MESSAGE,
-                        null
-                        );
-                cancel();
+                handleException(tr("Data Error"), e);
             } catch (IOException e) {
-                Main.error(e);
-                HelpAwareOptionPane.showMessageDialogInEDT(
-                        Main.parent,
-                        tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>", uri != null ? uri : file.getName(), e.getMessage()),
-                        tr("IO Error"),
-                        JOptionPane.ERROR_MESSAGE,
-                        null
-                        );
-                cancel();
+                handleException(tr("IO Error"), e);
             } catch (RuntimeException e) {
                 cancel();
                 throw e;
@@ -200,6 +184,17 @@ public class SessionLoadAction extends DiskAccessAction {
                 throw e;
             }
         }
+        
+        private void handleException(String dialogTitle, Exception e) {
+            Main.error(e);
+            HelpAwareOptionPane.showMessageDialogInEDT(
+                    Main.parent,
+                    tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>", uri != null ? uri : file.getName(), e.getMessage()),
+                    dialogTitle,
+                    JOptionPane.ERROR_MESSAGE,
+                    null
+                    );
+            cancel();
+        }
     }
 }
-

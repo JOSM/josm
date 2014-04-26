@@ -195,8 +195,6 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
             if (canceled)
                 return;
             lastException = e;
-        } catch(RuntimeException e) {
-            throw e;
         }
     }
 

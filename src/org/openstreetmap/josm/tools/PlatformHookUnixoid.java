@@ -56,9 +56,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                     Runtime.getRuntime().exec(new String[]{program, url});
                 }
                 return;
-            } catch (IOException e) {
-                Main.warn(e);
-            } catch (URISyntaxException e) {
+            } catch (IOException | URISyntaxException e) {
                 Main.warn(e);
             }
         }
