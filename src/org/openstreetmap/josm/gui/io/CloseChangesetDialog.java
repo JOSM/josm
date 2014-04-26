@@ -37,12 +37,12 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This dialog lets the user select changesets from a list of changesets.
- *
+ * @since 2115
  */
 public class CloseChangesetDialog extends JDialog {
 
     /** the list */
-    private JList lstOpenChangesets;
+    private JList<Changeset> lstOpenChangesets;
     /** true if the user canceled the dialog */
     private boolean canceled;
     /** the list model */
@@ -129,7 +129,8 @@ public class CloseChangesetDialog extends JDialog {
         }
 
         protected void refreshEnabledState() {
-            setEnabled(lstOpenChangesets.getSelectedValues() != null && lstOpenChangesets.getSelectedValues().length > 0);
+            List list = lstOpenChangesets.getSelectedValuesList();
+            setEnabled(list != null && !list.isEmpty());
         }
 
         @Override
@@ -213,11 +214,6 @@ public class CloseChangesetDialog extends JDialog {
      * @return a collection with the changesets the user selected.
      */
     public Collection<Changeset> getSelectedChangesets() {
-        Object [] sel = lstOpenChangesets.getSelectedValues();
-        List<Changeset> ret = new ArrayList<Changeset>(sel.length);
-        for (Object o: sel) {
-            ret.add((Changeset)o);
-        }
-        return ret;
+        return lstOpenChangesets.getSelectedValuesList();
     }
 }

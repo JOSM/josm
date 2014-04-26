@@ -228,7 +228,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         JosmTextField tfGpsTime;
         JosmComboBox cbTimezones;
         ImageDisplay imgDisp;
-        JList imgList;
+        JList<String> imgList;
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
@@ -330,9 +330,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
             JPanel panelLst = new JPanel();
             panelLst.setLayout(new BorderLayout());
 
-            imgList = new JList(new AbstractListModel() {
+            imgList = new JList<String>(new AbstractListModel<String>() {
                 @Override
-                public Object getElementAt(int i) {
+                public String getElementAt(int i) {
                     return yLayer.data.get(i).getFile().getName();
                 }
 

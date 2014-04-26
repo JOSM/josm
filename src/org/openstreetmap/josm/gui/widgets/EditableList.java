@@ -26,7 +26,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 public class EditableList extends JPanel {
 
     public final String title;
-    public final JList sourcesList = new JList(new DefaultListModel());
+    public final JList<String> sourcesList = new JList<String>(new DefaultListModel<String>());
     public final JButton addSrcButton = new JButton(tr("Add"));
     public final JButton editSrcButton = new JButton(tr("Edit"));
     public final JButton deleteSrcButton = new JButton(tr("Delete"));
@@ -53,7 +53,7 @@ public class EditableList extends JPanel {
                         title,
                         JOptionPane.QUESTION_MESSAGE);
                 if (source != null) {
-                    ((DefaultListModel) sourcesList.getModel()).addElement(source);
+                    ((DefaultListModel<String>) sourcesList.getModel()).addElement(source);
                 }
                 sourcesList.clearSelection();
             }
@@ -71,7 +71,7 @@ public class EditableList extends JPanel {
                     if (sourcesList.getModel().getSize() == 0) {
                         String source = JOptionPane.showInputDialog(Main.parent, title, title, JOptionPane.QUESTION_MESSAGE);
                         if (source != null) {
-                            ((DefaultListModel) sourcesList.getModel()).addElement(source);
+                            ((DefaultListModel<String>) sourcesList.getModel()).addElement(source);
                         }
                     } else {
                         JOptionPane.showMessageDialog(
@@ -88,7 +88,7 @@ public class EditableList extends JPanel {
                             JOptionPane.QUESTION_MESSAGE, null, null,
                             sourcesList.getSelectedValue());
                     if (source != null) {
-                        ((DefaultListModel) sourcesList.getModel()).setElementAt(source, row);
+                        ((DefaultListModel<String>) sourcesList.getModel()).setElementAt(source, row);
                     }
                 }
                 sourcesList.clearSelection();
@@ -101,7 +101,7 @@ public class EditableList extends JPanel {
                 if (sourcesList.getSelectedIndex() == -1) {
                     JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."), tr("Information"), JOptionPane.QUESTION_MESSAGE);
                 } else {
-                    ((DefaultListModel) sourcesList.getModel()).remove(sourcesList.getSelectedIndex());
+                    ((DefaultListModel<String>) sourcesList.getModel()).remove(sourcesList.getSelectedIndex());
                 }
             }
         });
@@ -125,14 +125,14 @@ public class EditableList extends JPanel {
 
     public void setItems(final Iterable<String> items) {
         for (String source : items) {
-            ((DefaultListModel) sourcesList.getModel()).addElement(source);
+            ((DefaultListModel<String>) sourcesList.getModel()).addElement(source);
         }
     }
 
     public List<String> getItems() {
         final List<String> items = new ArrayList<String>(sourcesList.getModel().getSize());
         for (int i = 0; i < sourcesList.getModel().getSize(); ++i) {
-            items.add((String) sourcesList.getModel().getElementAt(i));
+            items.add(sourcesList.getModel().getElementAt(i));
         }
         return items;
     }

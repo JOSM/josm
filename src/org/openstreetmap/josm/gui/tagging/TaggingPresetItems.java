@@ -1109,18 +1109,17 @@ public final class TaggingPresetItems {
             return component.requestFocusInWindow();
         }
 
-        private static final ListCellRenderer RENDERER = new ListCellRenderer() {
+        private static final ListCellRenderer<PresetListEntry> RENDERER = new ListCellRenderer<PresetListEntry>() {
 
             JLabel lbl = new JLabel();
 
             @Override
             public Component getListCellRendererComponent(
-                    JList list,
-                    Object value,
+                    JList<? extends PresetListEntry> list,
+                    PresetListEntry item,
                     int index,
                     boolean isSelected,
                     boolean cellHasFocus) {
-                PresetListEntry item = (PresetListEntry) value;
 
                 // Only return cached size, item is not shown
                 if (!list.isShowing() && item.prefferedWidth != -1 && item.prefferedHeight != -1) {
@@ -1162,8 +1161,7 @@ public final class TaggingPresetItems {
             }
         };
 
-
-        protected ListCellRenderer getListCellRenderer() {
+        protected ListCellRenderer<PresetListEntry> getListCellRenderer() {
             return RENDERER;
         }
 
@@ -1179,6 +1177,9 @@ public final class TaggingPresetItems {
         protected JosmComboBox combo;
         public String length;
 
+        /**
+         * Constructs a new {@code Combo}.
+         */
         public Combo() {
             delimiter = ",";
         }

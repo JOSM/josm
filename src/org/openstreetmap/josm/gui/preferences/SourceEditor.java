@@ -102,7 +102,7 @@ public abstract class SourceEditor extends JPanel {
 
     protected final JTable tblActiveSources;
     protected final ActiveSourcesModel activeSourcesModel;
-    protected final JList lstAvailableSources;
+    protected final JList<ExtendedSourceEntry> lstAvailableSources;
     protected final AvailableSourcesListModel availableSourcesModel;
     protected final String availableSourcesUrl;
     protected final List<SourceProvider> sourceProviders;
@@ -126,7 +126,7 @@ public abstract class SourceEditor extends JPanel {
         
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         this.availableSourcesModel = new AvailableSourcesListModel(selectionModel);
-        this.lstAvailableSources = new JList(availableSourcesModel);
+        this.lstAvailableSources = new JList<ExtendedSourceEntry>(availableSourcesModel);
         this.lstAvailableSources.setSelectionModel(selectionModel);
         this.lstAvailableSources.setCellRenderer(new SourceEntryListCellRenderer());
         this.availableSourcesUrl = availableSourcesUrl;
@@ -440,7 +440,7 @@ public abstract class SourceEditor extends JPanel {
         sourcesInitiallyLoaded = true;
     }
 
-    protected static class AvailableSourcesListModel extends DefaultListModel {
+    protected static class AvailableSourcesListModel extends DefaultListModel<ExtendedSourceEntry> {
         private List<ExtendedSourceEntry> data;
         private DefaultListSelectionModel selectionModel;
 
@@ -458,7 +458,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public ExtendedSourceEntry getElementAt(int index) {
             return data.get(index);
         }
 
@@ -1209,10 +1209,10 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
-    static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer {
+    static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer<ExtendedSourceEntry> {
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends ExtendedSourceEntry> list, ExtendedSourceEntry value, 
+                int index, boolean isSelected, boolean cellHasFocus) {
             String s = value.toString();
             setText(s);
             if (isSelected) {
@@ -1226,7 +1226,7 @@ public abstract class SourceEditor extends JPanel {
             setFont(list.getFont());
             setFont(getFont().deriveFont(Font.PLAIN));
             setOpaque(true);
-            setToolTipText(((ExtendedSourceEntry) value).getTooltip());
+            setToolTipText(value.getTooltip());
             return this;
         }
     }

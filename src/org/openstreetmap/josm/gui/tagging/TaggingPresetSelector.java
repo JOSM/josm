@@ -66,10 +66,9 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
     private static final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
     private static final BooleanProperty ONLY_APPLICABLE  = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
-
     
     private JosmTextField edSearchText;
-    private JList lsResult;
+    private JList<TaggingPreset> lsResult;
     private JCheckBox ckOnlyApplicable;
     private JCheckBox ckSearchInTags;
     private final EnumSet<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
@@ -92,7 +91,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         }
     }
 
-    private static class ResultListModel extends AbstractListModel {
+    private static class ResultListModel extends AbstractListModel<TaggingPreset> {
 
         private List<PresetClassification> presets = new ArrayList<PresetClassification>();
 
@@ -106,7 +105,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public TaggingPreset getElementAt(int index) {
             return presets.get(index).preset;
         }
 
@@ -114,7 +113,6 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         public int getSize() {
             return presets.size();
         }
-
     }
 
     private static class PresetClassification implements Comparable<PresetClassification> {
@@ -246,7 +244,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         });
         add(edSearchText, BorderLayout.NORTH);
 
-        lsResult = new JList();
+        lsResult = new JList<TaggingPreset>();
         lsResult.setModel(lsResultModel);
         lsResult.setCellRenderer(new ResultListCellRenderer());
         lsResult.addMouseListener(new MouseAdapter() {

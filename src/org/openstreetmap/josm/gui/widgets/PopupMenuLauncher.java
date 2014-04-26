@@ -77,7 +77,7 @@ public class PopupMenuLauncher extends MouseAdapter {
 
     protected boolean checkSelection(Component component, Point p) {
         if (component instanceof JList) {
-            return checkListSelection((JList) component, p) > -1;
+            return checkListSelection((JList<?>) component, p) > -1;
         } else if (component instanceof JTable) {
             return checkTableSelection((JTable) component, p) > -1;
         } else if (component instanceof JTree) {
@@ -106,7 +106,7 @@ public class PopupMenuLauncher extends MouseAdapter {
         }
     }
 
-    protected int checkListSelection(JList list, Point p) {
+    protected int checkListSelection(JList<?> list, Point p) {
         int idx = list.locationToIndex(p);
         if (idx >= 0 && idx < list.getModel().getSize() && list.getSelectedIndices().length < 2 && !list.isSelectedIndex(idx)) {
             list.setSelectedIndex(idx);

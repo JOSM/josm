@@ -90,7 +90,7 @@ public class MainApplet extends JApplet {
 
     @Override public void start() {
         I18n.init();
-        Main.checkJava6();
+        Main.checkJavaVersion();
 
         String url = getParameter("load_url");
         if(url != null)

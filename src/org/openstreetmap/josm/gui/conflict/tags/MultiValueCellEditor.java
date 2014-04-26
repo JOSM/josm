@@ -34,7 +34,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
  *
  * {@link KeyEvent#VK_ENTER} and {@link KeyEvent#VK_TAB} trigger a {@link NavigationListener#gotoNextDecision()}.
  */
-public class MultiValueCellEditor extends AbstractCellEditor implements TableCellEditor{
+public class MultiValueCellEditor extends AbstractCellEditor implements TableCellEditor {
 
     /**
      * Defines the interface for an object implementing navigation between rows
@@ -223,8 +223,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         }
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             renderColors(isSelected);
             renderValue(value);
             return this;

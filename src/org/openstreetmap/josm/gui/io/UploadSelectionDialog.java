@@ -171,7 +171,7 @@ public class UploadSelectionDialog extends JDialog {
         super.setVisible(visible);
     }
 
-    static class OsmPrimitiveList extends JList {
+    static class OsmPrimitiveList extends JList<OsmPrimitive> {
         protected void init() {
             setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             setCellRenderer(new OsmPrimitivRenderer());
@@ -192,7 +192,7 @@ public class UploadSelectionDialog extends JDialog {
         }
     }
 
-    static class OsmPrimitiveListModel extends AbstractListModel {
+    static class OsmPrimitiveListModel extends AbstractListModel<OsmPrimitive> {
         private List<OsmPrimitive> data;
 
         public OsmPrimitiveListModel() {
@@ -230,7 +230,7 @@ public class UploadSelectionDialog extends JDialog {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public OsmPrimitive getElementAt(int index) {
             if (data == null)
                 return null;
             return data.get(index);

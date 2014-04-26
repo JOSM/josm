@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Calendar;
 
 import javax.swing.JOptionPane;
 
@@ -41,26 +40,6 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void startupHook() {
-        if (isDebianOrUbuntu()) {
-            // Invite users to install Java 7 if they are still with Java 6 and using a compatible distrib (Debian >= 7 or Ubuntu >= 12.04)
-            String java = System.getProperty("java.version");
-            String os = getOSDescription();
-            if (java != null && java.startsWith("1.6") && os != null && (
-                    os.startsWith("Linux Debian GNU/Linux 7") || os.startsWith("Linux Mint") || os.matches("^Linux Ubuntu 1[234].*"))) {
-                String url;
-                // apturl does not exist on Debian (see #8465)
-                if (os.startsWith("Linux Debian")) {
-                    url = "https://packages.debian.org/stable/openjdk-7-jre";
-                } else if (getPackageDetails("apturl") != null) {
-                    url = "apt://openjdk-7-jre";
-                } else if (os.startsWith("Linux Mint")) {
-                    url = "http://community.linuxmint.com/software/view/openjdk-7-jre";
-                } else {
-                    url = "http://packages.ubuntu.com/trusty/openjdk-7-jre";
-                }
-                askUpdateJava(java, url);
-            }
-        }
     }
 
     @Override
@@ -359,14 +338,8 @@ public class PlatformHookUnixoid implements PlatformHook {
         askUpdateJava(version, "https://www.java.com/download");
     }
 
+    // Method kept because strings have already been translated. To enable for Java 8 migration somewhere in 2016 
     protected void askUpdateJava(final String version, final String url) {
-        // Expiration date of this feature around the expected release of our first Java 7 tested version
-        Calendar today = Calendar.getInstance();
-        Calendar expiration = Calendar.getInstance();
-        expiration.set(2014, Calendar.MAY, 25);
-        if (!today.before(expiration)) {
-            return;
-        }
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
             public void run() {
@@ -375,16 +348,16 @@ public class PlatformHookUnixoid implements PlatformHook {
                         tr("Outdated Java version"),
                         new String[]{tr("Update Java"), tr("Cancel")});
                 // Check if the dialog has not already been permanently hidden by user
-                if (!ed.toggleEnable("askUpdateJava7").toggleCheckState()) {
+                if (!ed.toggleEnable("askUpdateJava8").toggleCheckState()) {
                     ed.setButtonIcons(new String[]{"java.png", "cancel.png"}).setCancelButton(2);
                     ed.setMinimumSize(new Dimension(480, 300));
                     ed.setIcon(JOptionPane.WARNING_MESSAGE);
                     String content = tr("You are running version {0} of Java.", "<b>"+version+"</b>")+"<br><br>";
                     if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor")) && !isOpenJDK()) {
                         content += "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
-                                "Oracle", tr("February 2013"))+"</b><br><br>";
+                                "Oracle", tr("April 2015"))+"</b><br><br>";
                     }
-                    content += "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "7")+"</b><br><br>"+
+                    content += "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "8")+"</b><br><br>"+
                             tr("Would you like to update now ?");
                     ed.setContent(content);
 

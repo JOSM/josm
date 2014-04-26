@@ -9,12 +9,12 @@ Installation notes
 To run JOSM, you need:
 
 * The JOSM .jar file, e.g., josm-tested.jar or josm-latest.jar
-* Java Runtime Environment (JRE) 1.6, or later.
+* Java Runtime Environment (JRE) 7, or later.
 
 
 How to get Java Runtime Environment
 -----------------------------------
-You need JRE Version 1.6 (also called Java 6), or later.
+You need JRE Version 7, or later.
 
 Microsoft Windows and Apple Mac OS X users should visit http://www.java.com
 and download the latest Java executable for their system.

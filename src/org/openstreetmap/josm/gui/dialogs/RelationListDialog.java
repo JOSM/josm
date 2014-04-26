@@ -86,7 +86,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class RelationListDialog extends ToggleDialog implements DataSetListener {
     /** The display list. */
-    private final JList displaylist;
+    private final JList<Relation> displaylist;
     /** the list model used */
     private final RelationListModel model;
 
@@ -128,7 +128,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         //
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         model = new RelationListModel(selectionModel);
-        displaylist = new JList(model);
+        displaylist = new JList<Relation>(model);
         displaylist.setSelectionModel(selectionModel);
         displaylist.setCellRenderer(new OsmPrimitivRenderer() {
             /**
@@ -237,10 +237,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      * @return The selected relation in the list
      */
     private Relation getSelected() {
-        if(model.getSize() == 1) {
+        if (model.getSize() == 1) {
             displaylist.setSelectedIndex(0);
         }
-        return (Relation) displaylist.getSelectedValue();
+        return displaylist.getSelectedValue();
     }
 
     /**
@@ -362,7 +362,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         @Override
         public void activeLayerChange(Layer oldLayer, Layer newLayer) {
             updateEnabledState();
-    }
+        }
 
         @Override
         public void layerAdded(Layer newLayer) {
@@ -376,11 +376,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     }
 
     /**
-     * The list model for the list of relations displayed in the relation list
-     * dialog.
+     * The list model for the list of relations displayed in the relation list dialog.
      *
      */
-    private class RelationListModel extends AbstractListModel {
+    private class RelationListModel extends AbstractListModel<Relation> {
         private final List<Relation> relations = new ArrayList<Relation>();
         private List<Relation> filteredRelations;
         private DefaultListSelectionModel selectionModel;
@@ -388,10 +387,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         public RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-        }
-
-        public Relation getRelation(int idx) {
-            return relations.get(idx);
         }
 
         public void sort() {
@@ -521,7 +516,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public Relation getElementAt(int index) {
             return getVisibleRelation(index);
         }
 
@@ -674,8 +669,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         OsmPrimitive prim = event.getPrimitive();
         if (!(prim instanceof Relation))
             return;
-        // trigger a sort of the relation list because the display name may
-        // have changed
+        // trigger a sort of the relation list because the display name may have changed
         //
         List<Relation> sel = model.getSelectedRelations();
         model.sort();
@@ -689,5 +683,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     }
 
     @Override
-    public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignore */}
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        /* ignore */
+    }
 }

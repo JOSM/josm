@@ -56,6 +56,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class PurgeAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code PurgeAction}.
+     */
     public PurgeAction() {
         /* translator note: other expressions for "purge" might be "forget", "clean", "obliterate", "prune" */
         super(tr("Purge..."), "purge",  tr("Forget objects but do not delete them on server when uploading."),
@@ -244,12 +247,12 @@ public class PurgeAction extends JosmAction {
                     return (Long.valueOf(o1.getUniqueId())).compareTo(o2.getUniqueId());
                 }
             });
-            JList list = new JList(toPurgeAdditionally.toArray(new OsmPrimitive[toPurgeAdditionally.size()]));
+            JList<OsmPrimitive> list = new JList<OsmPrimitive>(toPurgeAdditionally.toArray(new OsmPrimitive[toPurgeAdditionally.size()]));
             /* force selection to be active for all entries */
             list.setCellRenderer(new OsmPrimitivRenderer() {
                 @Override
-                public Component getListCellRendererComponent(JList list,
-                        Object value,
+                public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list,
+                        OsmPrimitive value,
                         int index,
                         boolean isSelected,
                         boolean cellHasFocus) {

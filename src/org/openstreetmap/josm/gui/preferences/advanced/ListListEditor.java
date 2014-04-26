@@ -41,7 +41,7 @@ public class ListListEditor extends ExtendedDialog {
     List<List<String>> data;
     PrefEntry entry;
 
-    JList entryList;
+    JList<String> entryList;
     Integer entryIdx;
     JTable table;
 
@@ -81,7 +81,7 @@ public class ListListEditor extends ExtendedDialog {
         JPanel left = new JPanel(new GridBagLayout());
 
         entryModel = new EntryListModel();
-        entryList = new JList(entryModel);
+        entryList = new JList<String>(entryModel);
         entryList.getSelectionModel().addListSelectionListener(new EntryListener());
         JScrollPane scroll = new JScrollPane(entryList);
         left.add(scroll, GBC.eol().fill());
@@ -114,9 +114,9 @@ public class ListListEditor extends ExtendedDialog {
         return p;
     }
 
-    class EntryListModel extends AbstractListModel {
+    class EntryListModel extends AbstractListModel<String> {
         @Override
-        public Object getElementAt(int index) {
+        public String getElementAt(int index) {
             return (index+1) + ": " + data.get(index).toString();
         }
 

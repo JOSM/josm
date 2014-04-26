@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  * @author Frederik Ramm
  */
-public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer {
+public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, TableCellRenderer {
     private DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
 
     /**
@@ -42,7 +42,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
      * Adapter method supporting the ListCellRenderer interface.
      */
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list, OsmPrimitive value, int index, boolean isSelected, boolean cellHasFocus) {
         Component def = defaultListCellRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         return renderer(def, (OsmPrimitive) value);
     }
