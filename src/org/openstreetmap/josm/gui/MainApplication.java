@@ -303,9 +303,6 @@ public class MainApplication extends Main {
         });
 
         Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
-        // https://stackoverflow.com/q/75218/2257172
-        // To be replaced with official API when switching to Java 7: https://bugs.openjdk.java.net/browse/JDK-4714232
-        Preferences.updateSystemProperty("sun.awt.exception.handler", BugReportExceptionHandler.class.getName());
 
         // initialize the platform hook, and
         Main.determinePlatformHook();
