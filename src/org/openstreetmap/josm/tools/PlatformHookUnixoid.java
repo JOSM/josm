@@ -165,11 +165,6 @@ public class PlatformHookUnixoid implements PlatformHook {
     public String getJavaPackageDetails() {
         if (isDebianOrUbuntu()) {
             String javaHome = System.getProperty("java.home");
-            if ("/usr/lib/jvm/java-6-openjdk-amd64/jre".equals(javaHome) ||
-                    "/usr/lib/jvm/java-6-openjdk-i386/jre".equals(javaHome) ||
-                    "/usr/lib/jvm/java-6-openjdk/jre".equals(javaHome)) {
-                return getPackageDetails("openjdk-6-jre");
-            }
             if ("/usr/lib/jvm/java-7-openjdk-amd64/jre".equals(javaHome) ||
                     "/usr/lib/jvm/java-7-openjdk-i386/jre".equals(javaHome)) {
                 return getPackageDetails("openjdk-7-jre");
