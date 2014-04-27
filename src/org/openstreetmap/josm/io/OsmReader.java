@@ -120,7 +120,7 @@ public class OsmReader extends AbstractReader {
         if (v == null) {
             throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
         }
-        if (!("0.5".equals(v) || "0.6".equals(v))) {
+        if (!"0.6".equals(v)) {
             throwException(tr("Unsupported version: {0}", v));
         }
         ds.setVersion(v);
@@ -467,15 +467,6 @@ public class OsmReader extends AbstractReader {
                     version = 0;
                 }
                 break;
-            case "0.5":
-                if (version <= 0 && !current.isNew()) {
-                    Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 1, "0.5"));
-                    version = 1;
-                } else if (version < 0 && current.isNew()) {
-                    Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 0, "0.5"));
-                    version = 0;
-                }
-                break;
             default:
                 // should not happen. API version has been checked before
                 throwException(tr("Unknown or unsupported API version. Got {0}.", ds.getVersion()));
@@ -485,13 +476,6 @@ public class OsmReader extends AbstractReader {
             //
             if (!current.isNew() && ds.getVersion() != null && "0.6".equals(ds.getVersion())) {
                 throwException(tr("Missing attribute ''version'' on OSM primitive with ID {0}.", Long.toString(current.getUniqueId())));
-            } else if (!current.isNew() && ds.getVersion() != null && "0.5".equals(ds.getVersion())) {
-                // default version in 0.5 files for existing primitives
-                Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 1, "0.5"));
-                version= 1;
-            } else if (current.isNew() && ds.getVersion() != null && "0.5".equals(ds.getVersion())) {
-                // default version in 0.5 files for new primitives, no warning necessary. This is (was) legal in API 0.5
-                version= 0;
             }
         }
         current.setVersion(version);

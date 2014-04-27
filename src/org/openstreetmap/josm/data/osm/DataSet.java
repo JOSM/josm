@@ -193,7 +193,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     /**
      * Sets the API version this dataset was created from.
      *
-     * @param version the API version, i.e. "0.5" or "0.6"
+     * @param version the API version, i.e. "0.6"
      */
     public void setVersion(String version) {
         this.version = version;
