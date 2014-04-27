@@ -74,7 +74,7 @@ public abstract class Instruction implements StyleKeys {
             } else {
                 value = val;
             }
-            if (key.equals(ICON_IMAGE) || key.equals(FILL_IMAGE) || key.equals("pattern-image") || key.equals(REPEAT_IMAGE)) {
+            if (key.equals(ICON_IMAGE) || key.equals(FILL_IMAGE) || key.equals(REPEAT_IMAGE)) {
                 if (value instanceof String) {
                     value = new IconReference((String) value, env.source);
                 }
