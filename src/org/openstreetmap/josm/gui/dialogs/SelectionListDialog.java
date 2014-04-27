@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -544,6 +545,16 @@ public class SelectionListDialog extends ToggleDialog  {
                     fireContentsChanged(this, 0, getSize());
                     if (selection != null) {
                         remember(selection);
+                        if (selection.size() == 2) {
+                            Iterator<? extends OsmPrimitive> it = selection.iterator();
+                            OsmPrimitive n1 = it.next(), n2=it.next();
+                            // show distance between two selected nodes
+                            if (n1 instanceof Node && n2 instanceof Node) {
+                                double d = ((Node) n1).getCoor().greatCircleDistance(((Node) n2).getCoor());
+                                Main.map.statusLine.setDist(d);
+                                return;
+                            }
+                        }
                         Main.map.statusLine.setDist(new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate));
                     }
                 }
