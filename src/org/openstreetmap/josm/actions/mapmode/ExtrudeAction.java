@@ -111,6 +111,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     private int initialMoveDelay = 200;
     /**
+     * The minimal shift of mouse (in pixels) befire something counts as move
+     */
+    private int initialMoveThreshold = 10;
+
+    /**
      * The initial EastNorths of node1 and node2
      */
     private EastNorth initialN1en;
@@ -208,6 +213,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             Main.warn(ex);
         }
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
+        initialMoveThreshold = Main.pref.getInteger("extrude.initial-move-threshold", 10);
         mainColor = Main.pref.getColor(marktr("Extrude: main line"), null);
         if (mainColor == null) mainColor = PaintColors.SELECTED.get();
         helperColor = Main.pref.getColor(marktr("Extrude: helper line"), Color.ORANGE);
@@ -361,7 +367,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             // Nothing to be done
         } else {
             if (mode == Mode.create_new) {
-                if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null) {
+                if (e.getPoint().distance(initialMousePos) > initialMoveThreshold && newN1en != null) {
                     createNewRectangle();
                 }
             } else if (mode == Mode.extrude) {
@@ -369,7 +375,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     // double click adds a new node
                     addNewNode(e);
                 }
-                else if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null && selectedSegment != null) {
+                else if (e.getPoint().distance(initialMousePos) > initialMoveThreshold && newN1en != null && selectedSegment != null) {
                     // main extrusion commands
                     performExtrusion();
                 }

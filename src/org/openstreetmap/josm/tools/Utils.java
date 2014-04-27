@@ -74,7 +74,6 @@ public final class Utils {
     private static final int MILLIS_OF_HOUR = 3600000;
     private static final int MILLIS_OF_DAY = 86400000;
 
-    // Should us keep "%" character when fixing URL or encode it? Let us keep them for now, see #9937
     public static final String URL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
 
     /**
