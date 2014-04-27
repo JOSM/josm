@@ -118,7 +118,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     ExtendedDialog syncDialog;
     List<GpxDataWrapper> gpxLst = new ArrayList<>();
     JPanel outerPanel;
-    JosmComboBox cbGpx;
+    JosmComboBox<GpxDataWrapper> cbGpx;
     JosmTextField tfTimezone;
     JosmTextField tfOffset;
     JCheckBox cbExifImg;
@@ -226,7 +226,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         JPanel panel;
         JLabel lbExifTime;
         JosmTextField tfGpsTime;
-        JosmComboBox cbTimezones;
+        JosmComboBox<String> cbTimezones;
         ImageDisplay imgDisp;
         JList<String> imgList;
 
@@ -305,7 +305,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             Collections.sort(vtTimezones);
 
-            cbTimezones = new JosmComboBox(vtTimezones.toArray());
+            cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[0]));
 
             String tzId = Main.pref.get("geoimage.timezoneid", "");
             TimeZone defaultTz;
@@ -375,7 +375,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             openButton.addActionListener(new ActionListener() {
 
                 @Override
-                public void actionPerformed(ActionEvent arg0) {
+                public void actionPerformed(ActionEvent ae) {
                     JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(), JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
                     if (fc == null)
                         return;
@@ -479,7 +479,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         panelCb.add(new JLabel(tr("GPX track: ")));
 
-        cbGpx = new JosmComboBox(gpxLst.toArray());
+        cbGpx = new JosmComboBox<>(gpxLst.toArray(new GpxDataWrapper[0]));
         if (defaultItem != null) {
             cbGpx.setSelectedItem(defaultItem);
         }

@@ -69,7 +69,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
                         synchronized (this) {
                             try {
                                 wait(200);
-                            } catch (InterruptedException e) {
+                            } catch (InterruptedException ex) {
                                 Main.warn("InterruptedException in "+getClass().getSimpleName()+" while precaching WMS");
                             }
                         }
@@ -100,7 +100,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
             warnNoImageryLayers();
             return null;
         }
-        JosmComboBox layerList = new JosmComboBox(targetLayers.toArray());
+        JosmComboBox<WMSLayer> layerList = new JosmComboBox<>(targetLayers.toArray(new WMSLayer[0]));
         layerList.setRenderer(new LayerListCellRenderer());
         layerList.setSelectedIndex(0);
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -119,5 +119,4 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
     protected void warnNoImageryLayers() {
         JOptionPane.showMessageDialog(Main.parent, tr("There are no imagery layers."), tr("No imagery layers"), JOptionPane.WARNING_MESSAGE);
     }
-
 }
