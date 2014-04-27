@@ -394,12 +394,9 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             }
         }
 
-        // copy the merged layer's API version, downgrade if required
+        // copy the merged layer's API version
         if (data.getVersion() == null) {
             data.setVersion(from.getVersion());
-        } else if ("0.5".equals(data.getVersion()) ^ "0.5".equals(from.getVersion())) {
-            Main.warn(tr("Mixing 0.6 and 0.5 data results in version 0.5"));
-            data.setVersion("0.5");
         }
 
         int numNewConflicts = 0;
