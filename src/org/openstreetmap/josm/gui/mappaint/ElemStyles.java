@@ -322,7 +322,6 @@ public class ElemStyles {
             Cascade c = e.getValue();
             if (osm instanceof Way) {
                 addIfNotNull(sl, AreaElemStyle.create(c));
-                addIfNotNull(sl, LinePatternElemStyle.create(env));
                 addIfNotNull(sl, RepeatImageElemStyle.create(env));
                 addIfNotNull(sl, LineElemStyle.createLine(env));
                 addIfNotNull(sl, LineElemStyle.createLeftCasing(env));
@@ -340,7 +339,6 @@ public class ElemStyles {
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {
                     addIfNotNull(sl, AreaElemStyle.create(c));
-                    addIfNotNull(sl, LinePatternElemStyle.create(env));
                     addIfNotNull(sl, RepeatImageElemStyle.create(env));
                     addIfNotNull(sl, LineElemStyle.createLine(env));
                     addIfNotNull(sl, LineElemStyle.createCasing(env));
