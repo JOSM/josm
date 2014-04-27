@@ -132,7 +132,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
         private void setValue(Entry entry, String fieldName, String value) throws SAXException {
             CheckParameterUtil.ensureParameterNotNull(entry, "entry");
-            if (fieldName.equals("class") || fieldName.equals("default") || fieldName.equals("throw") || fieldName.equals("new") || fieldName.equals("null")) {
+            if ("class".equals(fieldName) || "default".equals(fieldName) || "throw".equals(fieldName) || "new".equals(fieldName) || "null".equals(fieldName)) {
                 fieldName += "_";
             }
             try {
@@ -164,7 +164,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
         private boolean parseBoolean(String s) {
             return s != null
-                    && !s.equals("0")
+                    && !"0".equals(s)
                     && !s.startsWith("off")
                     && !s.startsWith("false")
                     && !s.startsWith("no");

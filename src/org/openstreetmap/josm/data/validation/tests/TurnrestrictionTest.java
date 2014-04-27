@@ -74,25 +74,29 @@ public class TurnrestrictionTest extends Test {
                     continue;
                 }
 
-                if ("from".equals(m.getRole())) {
+                switch (m.getRole()) {
+                case "from":
                     if (fromWay != null) {
                         morefrom = true;
                     } else {
                         fromWay = w;
                     }
-                } else if ("to".equals(m.getRole())) {
+                    break;
+                case "to":
                     if (toWay != null) {
                         moreto = true;
                     } else {
                         toWay = w;
                     }
-                } else if ("via".equals(m.getRole())) {
+                    break;
+                case "via":
                     if (!via.isEmpty() && via.get(0) instanceof Node) {
                         mixvia = true;
                     } else {
                         via.add(w);
                     }
-                } else {
+                    break;
+                default:
                     errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
                             l, Collections.singletonList(m)));
                 }

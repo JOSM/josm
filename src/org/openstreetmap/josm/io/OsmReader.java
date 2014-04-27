@@ -108,7 +108,7 @@ public class OsmReader extends AbstractReader {
     }
 
     protected void parseRoot() throws XMLStreamException {
-        if (parser.getLocalName().equals("osm")) {
+        if ("osm".equals(parser.getLocalName())) {
             parseOsm();
         } else {
             parseUnknown();
@@ -120,7 +120,7 @@ public class OsmReader extends AbstractReader {
         if (v == null) {
             throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
         }
-        if (!(v.equals("0.5") || v.equals("0.6"))) {
+        if (!("0.5".equals(v) || "0.6".equals(v))) {
             throwException(tr("Unsupported version: {0}", v));
         }
         ds.setVersion(v);
@@ -142,17 +142,23 @@ public class OsmReader extends AbstractReader {
             }
 
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("bounds")) {
+                switch (parser.getLocalName()) {
+                case "bounds":
                     parseBounds(generator);
-                } else if (parser.getLocalName().equals("node")) {
+                    break;
+                case "node":
                     parseNode();
-                } else if (parser.getLocalName().equals("way")) {
+                    break;
+                case "way":
                     parseWay();
-                } else if (parser.getLocalName().equals("relation")) {
+                    break;
+                case "relation":
                     parseRelation();
-                } else if (parser.getLocalName().equals("changeset")) {
+                    break;
+                case "changeset":
                     parseChangeset(uploadChangesetId);
-                } else {
+                    break;
+                default:
                     parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT)
@@ -204,7 +210,7 @@ public class OsmReader extends AbstractReader {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("tag")) {
+                if ("tag".equals(parser.getLocalName())) {
                     parseTag(n);
                 } else {
                     parseUnknown();
@@ -226,11 +232,14 @@ public class OsmReader extends AbstractReader {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("nd")) {
+                switch (parser.getLocalName()) {
+                case "nd":
                     nodeIds.add(parseWayNode(w));
-                } else if (parser.getLocalName().equals("tag")) {
+                    break;
+                case "tag":
                     parseTag(w);
-                } else {
+                    break;
+                default:
                     parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
@@ -273,11 +282,14 @@ public class OsmReader extends AbstractReader {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("member")) {
+                switch (parser.getLocalName()) {
+                case "member":
                     members.add(parseRelationMember(r));
-                } else if (parser.getLocalName().equals("tag")) {
+                    break;
+                case "tag":
                     parseTag(r);
-                } else {
+                    break;
+                default:
                     parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
@@ -336,7 +348,7 @@ public class OsmReader extends AbstractReader {
             while (true) {
                 int event = parser.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {
-                    if (parser.getLocalName().equals("tag")) {
+                    if ("tag".equals(parser.getLocalName())) {
                         parseTag(uploadChangeset);
                     } else {
                         parseUnknown();
@@ -446,14 +458,16 @@ public class OsmReader extends AbstractReader {
             } catch(NumberFormatException e) {
                 throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString), e);
             }
-            if (ds.getVersion().equals("0.6")){
+            switch (ds.getVersion()) {
+            case "0.6":
                 if (version <= 0 && !current.isNew()) {
                     throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString));
                 } else if (version < 0 && current.isNew()) {
                     Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 0, "0.6"));
                     version = 0;
                 }
-            } else if (ds.getVersion().equals("0.5")) {
+                break;
+            case "0.5":
                 if (version <= 0 && !current.isNew()) {
                     Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 1, "0.5"));
                     version = 1;
@@ -461,22 +475,22 @@ public class OsmReader extends AbstractReader {
                     Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 0, "0.5"));
                     version = 0;
                 }
-            } else {
+                break;
+            default:
                 // should not happen. API version has been checked before
                 throwException(tr("Unknown or unsupported API version. Got {0}.", ds.getVersion()));
             }
         } else {
             // version expected for OSM primitives with an id assigned by the server (id > 0), since API 0.6
             //
-            if (!current.isNew() && ds.getVersion() != null && ds.getVersion().equals("0.6")) {
+            if (!current.isNew() && ds.getVersion() != null && "0.6".equals(ds.getVersion())) {
                 throwException(tr("Missing attribute ''version'' on OSM primitive with ID {0}.", Long.toString(current.getUniqueId())));
-            } else if (!current.isNew() && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
+            } else if (!current.isNew() && ds.getVersion() != null && "0.5".equals(ds.getVersion())) {
                 // default version in 0.5 files for existing primitives
                 Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 1, "0.5"));
                 version= 1;
-            } else if (current.isNew() && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
-                // default version in 0.5 files for new primitives, no warning necessary. This is
-                // (was) legal in API 0.5
+            } else if (current.isNew() && ds.getVersion() != null && "0.5".equals(ds.getVersion())) {
+                // default version in 0.5 files for new primitives, no warning necessary. This is (was) legal in API 0.5
                 version= 0;
             }
         }
@@ -485,10 +499,10 @@ public class OsmReader extends AbstractReader {
         String action = parser.getAttributeValue(null, "action");
         if (action == null) {
             // do nothing
-        } else if (action.equals("delete")) {
+        } else if ("delete".equals(action)) {
             current.setDeleted(true);
             current.setModified(current.isVisible());
-        } else if (action.equals("modify")) {
+        } else if ("modify".equals(action)) {
             current.setModified(true);
         }
 

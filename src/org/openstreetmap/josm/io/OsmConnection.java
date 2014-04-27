@@ -130,9 +130,9 @@ public class OsmConnection {
 
     protected void addAuth(HttpURLConnection connection) throws OsmTransferException {
         String authMethod = Main.pref.get("osm-server.auth-method", "basic");
-        if (authMethod.equals("basic")) {
+        if ("basic".equals(authMethod)) {
             addBasicAuthorizationHeader(connection);
-        } else if (authMethod.equals("oauth")) {
+        } else if ("oauth".equals(authMethod)) {
             addOAuthAuthorizationHeader(connection);
         } else {
             String msg = tr("Unexpected value for preference ''{0}''. Got ''{1}''.", "osm-server.auth-method", authMethod);

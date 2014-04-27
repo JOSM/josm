@@ -46,47 +46,62 @@ public class OsmChangesetContentParser {
             throw new XmlParsingException(e).rememberLocation(locator);
         }
 
-        @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        @Override
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             if (super.doStartElement(qName, atts)) {
                 // done
-            } else if (qName.equals("osmChange")) {
+                return;
+            }
+            switch (qName) { 
+            case "osmChange":
                 // do nothing
-            } else if (qName.equals("create")) {
+                break;
+            case "create":
                 currentModificationType = ChangesetModificationType.CREATED;
-            } else if (qName.equals("modify")) {
+                break;
+            case "modify":
                 currentModificationType = ChangesetModificationType.UPDATED;
-            } else if (qName.equals("delete")) {
+                break;
+            case "delete":
                 currentModificationType = ChangesetModificationType.DELETED;
-            } else {
-                Main.warn(tr("Unsupported start element ''{0}'' in changeset content at position ({1},{2}). Skipping.", qName, locator.getLineNumber(), locator.getColumnNumber()));
+                break;
+            default:
+                Main.warn(tr("Unsupported start element ''{0}'' in changeset content at position ({1},{2}). Skipping.", 
+                        qName, locator.getLineNumber(), locator.getColumnNumber()));
             }
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (qName.equals("node")
-                    || qName.equals("way")
-                    || qName.equals("relation")) {
+            switch (qName) {
+            case "node":
+            case "way":
+            case "relation":
                 if (currentModificationType == null) {
                     throwException(tr("Illegal document structure. Found node, way, or relation outside of ''create'', ''modify'', or ''delete''."));
                 }
                 data.put(currentPrimitive, currentModificationType);
-            } else if (qName.equals("osmChange")) {
+                break;
+            case "osmChange":
                 // do nothing
-            } else if (qName.equals("create")) {
+                break;
+            case "create":
                 currentModificationType = null;
-            } else if (qName.equals("modify")) {
+                break;
+            case "modify":
                 currentModificationType = null;
-            } else if (qName.equals("delete")) {
+                break;
+            case "delete":
                 currentModificationType = null;
-            } else if (qName.equals("tag")) {
+                break;
+            case "tag":
+            case "nd":
+            case "member":
                 // do nothing
-            } else if (qName.equals("nd")) {
-                // do nothing
-            } else if (qName.equals("member")) {
-                // do nothing
-            } else {
-                Main.warn(tr("Unsupported end element ''{0}'' in changeset content at position ({1},{2}). Skipping.", qName, locator.getLineNumber(), locator.getColumnNumber()));
+                break;
+            default:
+                Main.warn(tr("Unsupported end element ''{0}'' in changeset content at position ({1},{2}). Skipping.", 
+                        qName, locator.getLineNumber(), locator.getColumnNumber()));
             }
         }
 

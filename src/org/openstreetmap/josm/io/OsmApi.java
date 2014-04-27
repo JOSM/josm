@@ -619,7 +619,7 @@ public class OsmApi extends OsmConnection {
                     addAuth(activeConnection);
                 }
 
-                if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals("DELETE")) {
+                if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
                     activeConnection.setDoOutput(true);
                     activeConnection.setRequestProperty("Content-type", "text/xml");
                     OutputStream out = activeConnection.getOutputStream();

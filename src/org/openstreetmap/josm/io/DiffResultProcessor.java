@@ -147,12 +147,16 @@ public class DiffResultProcessor  {
             throw new XmlParsingException(msg).rememberLocation(locator);
         }
 
-        @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        @Override
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             try {
-                if (qName.equals("diffResult")) {
+                switch (qName) {
+                case "diffResult":
                     // the root element, ignore
-                } else if (qName.equals("node") || qName.equals("way") || qName.equals("relation")) {
-
+                    break;
+                case "node":
+                case "way":
+                case "relation":
                     PrimitiveId id  = new SimplePrimitiveId(
                             Long.parseLong(atts.getValue("old_id")),
                             OsmPrimitiveType.fromApiTypeName(qName)
@@ -165,7 +169,8 @@ public class DiffResultProcessor  {
                         entry.new_version = Integer.parseInt(atts.getValue("new_version"));
                     }
                     diffResults.put(id, entry);
-                } else {
+                    break;
+                default:
                     throwException(tr("Unexpected XML element with name ''{0}''", qName));
                 }
             } catch (NumberFormatException e) {

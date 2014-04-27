@@ -126,7 +126,7 @@ public class Addresses extends Test {
             for (RelationMember m : r.getMembers()) {
                 String role = m.getRole();
                 OsmPrimitive p = m.getMember();
-                if (role.equals("house")) {
+                if ("house".equals(role)) {
                     houses.add(p);
                     String number = p.get(ADDR_HOUSE_NUMBER);
                     if (number != null) {
@@ -137,7 +137,7 @@ public class Addresses extends Test {
                         }
                         list.add(p);
                     }
-                } else if (role.equals("street")) {
+                } else if ("street".equals(role)) {
                     if (p instanceof Way) {
                         street.add((Way) p);
                     }

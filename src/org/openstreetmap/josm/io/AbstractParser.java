@@ -182,25 +182,26 @@ public abstract class AbstractParser extends DefaultHandler {
     }
     
     protected final boolean doStartElement(String qName, Attributes atts) throws SAXException {
-        if (qName.equals("node")) {
+        switch (qName) {
+        case "node":
             startNode(atts);
             return true;
-        } else if (qName.equals("way")) {
+        case "way":
             startWay(atts);
             return true;
-        } else if (qName.equals("relation")) {
+        case "relation":
             startRelation(atts);
             return true;
-        } else if (qName.equals("tag")) {
+        case "tag":
             handleTag(atts);
             return true;
-        } else if (qName.equals("nd")) {
+        case "nd":
             handleNodeReference(atts);
             return true;
-        } else if (qName.equals("member")) {
+        case "member":
             handleMember(atts);
             return true;
-        } else {
+        default:
             return false;
         }
     }

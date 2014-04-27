@@ -88,8 +88,8 @@ public class Capabilities {
     }
 
     public void put(String element, String attribute, String value) {
-        if (element.equals("blacklist")) {
-            if (attribute.equals("regex")) {
+        if ("blacklist".equals(element)) {
+            if ("regex".equals(attribute)) {
                 imageryBlacklist.add(value);
             }
         } else {

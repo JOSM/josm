@@ -33,7 +33,7 @@ public class OsmChangeReader extends OsmReader {
 
     @Override
     protected void parseRoot() throws XMLStreamException {
-        if (parser.getLocalName().equals("osmChange")) {
+        if ("osmChange".equals(parser.getLocalName())) {
             parseOsmChange();
         } else {
             parseUnknown();
@@ -68,19 +68,23 @@ public class OsmChangeReader extends OsmReader {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 OsmPrimitive p = null;
-                if (parser.getLocalName().equals("node")) {
+                switch (parser.getLocalName()) {
+                case "node":
                     p = parseNode();
-                } else if (parser.getLocalName().equals("way")) {
+                    break;
+                case "way":
                     p = parseWay();
-                } else if (parser.getLocalName().equals("relation")) {
+                    break;
+                case "relation":
                     p = parseRelation();
-                } else {
+                    break;
+                default:
                     parseUnknown();
                 }
                 if (p != null && action != null) {
-                    if (action.equals("modify")) {
+                    if ("modify".equals(action)) {
                         p.setModified(true);
-                    } else if (action.equals("delete")) {
+                    } else if ("delete".equals(action)) {
                         p.setDeleted(true);
                     }
                 }

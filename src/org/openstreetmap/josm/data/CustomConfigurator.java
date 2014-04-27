@@ -489,45 +489,54 @@ public final class CustomConfigurator {
                 String elementName = item.getNodeName();
                 Element elem = (Element) item;
 
-                if ("var".equals(elementName)) {
+                switch(elementName) {
+                case "var":
                     setVar(elem.getAttribute("name"), evalVars(elem.getAttribute("value")));
-                } else if ("task".equals(elementName)) {
+                    break;
+                case "task":
                     tasksMap.put(elem.getAttribute("name"), elem);
-                } else if ("runtask".equals(elementName)) {
+                    break;
+                case "runtask":
                     if (processRunTaskElement(elem)) return;
-                } else if ("ask".equals(elementName)) {
+                    break;
+                case "ask":
                     processAskElement(elem);
-                } else if ("if".equals(elementName)) {
+                    break;
+                case "if":
                     processIfElement(elem);
-                } else if ("else".equals(elementName)) {
+                    break;
+                case "else":
                     processElseElement(elem);
-                } else if ("break".equals(elementName)) {
+                    break;
+                case "break":
                     return;
-                } else if ("plugin".equals(elementName)) {
+                case "plugin":
                     processPluginInstallElement(elem);
-                } else if ("messagebox".equals(elementName)){
+                    break;
+                case "messagebox":
                     processMsgBoxElement(elem);
-                } else if ("preferences".equals(elementName)) {
+                    break;
+                case "preferences":
                     processPreferencesElement(elem);
-                } else if ("download".equals(elementName)) {
+                    break;
+                case "download":
                     processDownloadElement(elem);
-                } else if ("delete".equals(elementName)) {
+                    break;
+                case "delete":
                     processDeleteElement(elem);
-                } else if ("script".equals(elementName)) {
+                    break;
+                case "script":
                     processScriptElement(elem);
-                } else {
+                    break;
+                default:
                     log("Error: Unknown element " + elementName);
                 }
-
             }
         }
-
-
 
         private void processPreferencesElement(Element item) {
             String oper = evalVars(item.getAttribute("operation"));
             String id = evalVars(item.getAttribute("id"));
-
 
             if ("delete-keys".equals(oper)) {
                 String pattern = evalVars(item.getAttribute("pattern"));
@@ -613,7 +622,6 @@ public final class CustomConfigurator {
             messageBox(type, text);
         }
 
-
         private void processAskElement(Element elem) {
             String text = evalVars(elem.getAttribute("text"));
             String locText = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".text"));
@@ -672,7 +680,6 @@ public final class CustomConfigurator {
             return false;
         }
 
-
         private void processScriptElement(Element elem) {
             String js = elem.getChildNodes().item(0).getTextContent();
             log("Processing script...");
@@ -729,8 +736,6 @@ public final class CustomConfigurator {
             if (s.endsWith("/")) s=s.substring(0,s.length()-1);
             return s;
         }
-
-
     }
 
     /**

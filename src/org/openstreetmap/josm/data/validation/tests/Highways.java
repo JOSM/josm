@@ -98,7 +98,7 @@ public class Highways extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (w.hasKey("highway") && w.hasKey("junction") && w.get("junction").equals("roundabout")) {
+            if (w.hasKey("highway") && w.hasKey("junction") && "roundabout".equals(w.get("junction"))) {
                 testWrongRoundabout(w);
             }
             if (w.hasKey("source:maxspeed")) {
@@ -179,12 +179,12 @@ public class Highways extends Test {
         for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
             String highway = w.get("highway");
             if (highway != null) {
-                if (highway.equals("footway") || highway.equals("path")) {
+                if ("footway".equals(highway) || "path".equals(highway)) {
                     handlePedestrianWay(n, w);
                     if (w.hasTag("bicycle", "yes", "designated")) {
                         handleCyclistWay(n, w);
                     }
-                } else if (highway.equals("cycleway")) {
+                } else if ("cycleway".equals(highway)) {
                     handleCyclistWay(n, w);
                     if (w.hasTag("foot", "yes", "designated")) {
                         handlePedestrianWay(n, w);

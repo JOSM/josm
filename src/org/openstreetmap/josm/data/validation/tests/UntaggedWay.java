@@ -86,8 +86,8 @@ public class UntaggedWay extends Test {
                     if (hasName) {
                         break;
                     }
-                    if (key.equals("junction")) {
-                        isRoundabout = w.get("junction").equals("roundabout");
+                    if ("junction".equals(key)) {
+                        isRoundabout = "roundabout".equals(w.get("junction"));
                         break;
                     }
                 }

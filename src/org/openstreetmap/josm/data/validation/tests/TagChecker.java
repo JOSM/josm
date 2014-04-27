@@ -197,13 +197,17 @@ public class TagChecker extends Test.TagTest {
                         String key = line.substring(0, 2);
                         line = line.substring(2);
 
-                        if (key.equals("S:")) {
+                        switch (key) {
+                        case "S:":
                             ignoreDataStartsWith.add(line);
-                        } else if (key.equals("E:")) {
+                            break;
+                        case "E:":
                             ignoreDataEquals.add(line);
-                        } else if (key.equals("F:")) {
+                            break;
+                        case "F:":
                             ignoreDataEndsWith.add(line);
-                        } else if (key.equals("K:")) {
+                            break;
+                        case "K:":
                             IgnoreKeyPair tmp = new IgnoreKeyPair();
                             int mid = line.indexOf('=');
                             tmp.key = line.substring(0, mid);
@@ -636,18 +640,18 @@ public class TagChecker extends Test.TagTest {
 
                 String n = m.group(1).trim();
 
-                if(n.equals("*")) {
+                if ("*".equals(n)) {
                     tagAll = true;
                 } else {
                     tag = n.startsWith("/") ? getPattern(n) : n;
-                    noMatch = m.group(2).equals("!=");
+                    noMatch = "!=".equals(m.group(2));
                     n = m.group(3).trim();
-                    if (n.equals("*")) {
+                    if ("*".equals(n)) {
                         valueAll = true;
-                    } else if (n.equals("BOOLEAN_TRUE")) {
+                    } else if ("BOOLEAN_TRUE".equals(n)) {
                         valueBool = true;
                         value = OsmUtils.trueval;
-                    } else if (n.equals("BOOLEAN_FALSE")) {
+                    } else if ("BOOLEAN_FALSE".equals(n)) {
                         valueBool = true;
                         value = OsmUtils.falseval;
                     } else {
@@ -684,30 +688,41 @@ public class TagChecker extends Test.TagTest {
                 description = null;
             }
             String[] n = SPLIT_TRIMMED_PATTERN.split(trimmed, 3);
-            if (n[0].equals("way")) {
+            switch (n[0]) {
+            case "way":
                 type = OsmPrimitiveType.WAY;
-            } else if (n[0].equals("node")) {
+                break;
+            case "node":
                 type = OsmPrimitiveType.NODE;
-            } else if (n[0].equals("relation")) {
+                break;
+            case "relation":
                 type = OsmPrimitiveType.RELATION;
-            } else if (n[0].equals("*")) {
+                break;
+            case "*":
                 type = null;
-            } else
+                break;
+            default:
                 return tr("Could not find element type");
+            }
             if (n.length != 3)
                 return tr("Incorrect number of parameters");
 
-            if (n[1].equals("W")) {
+            switch (n[1]) {
+            case "W":
                 severity = Severity.WARNING;
                 code = TAG_CHECK_WARN;
-            } else if (n[1].equals("E")) {
+                break;
+            case "E":
                 severity = Severity.ERROR;
                 code = TAG_CHECK_ERROR;
-            } else if(n[1].equals("I")) {
+                break;
+            case "I":
                 severity = Severity.OTHER;
                 code = TAG_CHECK_INFO;
-            } else
+                break;
+            default:
                 return tr("Could not find warning level");
+            }
             for (String exp: SPLIT_ELEMENTS_PATTERN.split(n[2])) {
                 try {
                     data.add(new CheckerElement(exp));
