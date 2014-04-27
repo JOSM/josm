@@ -27,8 +27,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class ChangesetQuery {
 
     /**
-     * Replies a changeset query object from the query part of a OSM API URL for querying
-     * changesets.
+     * Replies a changeset query object from the query part of a OSM API URL for querying changesets.
      *
      * @param query the query part
      * @return the query object
@@ -347,26 +346,17 @@ public class ChangesetQuery {
             return id;
         }
 
-        protected boolean parseOpen(String value) throws ChangesetQueryUrlException {
-            if (value == null || value.trim().isEmpty())
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "open",value));
-            if (value.equals("true"))
-                return true;
-            else if (value.equals("false"))
-                return false;
-            else
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "open",value));
-        }
-
         protected boolean parseBoolean(String value, String parameter) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
                 throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
-            if (value.equals("true"))
+            switch (value) {
+            case "true":
                 return true;
-            else if (value.equals("false"))
+            case "false":
                 return false;
-            else
+            default:
                 throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
+            }
         }
 
         protected Date parseDate(String value, String parameter) throws ChangesetQueryUrlException {
@@ -413,21 +403,24 @@ public class ChangesetQuery {
 
             for (Entry<String, String> entry: queryParams.entrySet()) {
                 String k = entry.getKey();
-                if (k.equals("uid")) {
+                switch(k) {
+                case "uid":
                     if (queryParams.containsKey("display_name"))
                         throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
                     csQuery.forUser(parseUid(queryParams.get("uid")));
-                } else if (k.equals("display_name")) {
+                    break;
+                case "display_name":
                     if (queryParams.containsKey("uid"))
                         throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
                     csQuery.forUser(queryParams.get("display_name"));
-                } else if (k.equals("open")) {
-                    boolean b = parseBoolean(entry.getValue(), "open");
-                    csQuery.beingOpen(b);
-                } else if (k.equals("closed")) {
-                    boolean b = parseBoolean(entry.getValue(), "closed");
-                    csQuery.beingClosed(b);
-                } else if (k.equals("time")) {
+                    break;
+                case "open":
+                    csQuery.beingOpen(parseBoolean(entry.getValue(), "open"));
+                    break;
+                case "closed":
+                    csQuery.beingClosed(parseBoolean(entry.getValue(), "closed"));
+                    break;
+                case "time":
                     Date[] dates = parseTime(entry.getValue());
                     switch(dates.length) {
                     case 1:
@@ -437,20 +430,24 @@ public class ChangesetQuery {
                         csQuery.closedAfterAndCreatedBefore(dates[0], dates[1]);
                         break;
                     }
-                } else if (k.equals("bbox")) {
+                    break;
+                case "bbox":
                     try {
                         csQuery.inBbox(new Bounds(entry.getValue(), ","));
                     } catch(IllegalArgumentException e) {
                         throw new ChangesetQueryUrlException(e);
                     }
-                } else if (k.equals("changesets")) {
+                    break;
+                case "changesets":
                     try {
                         csQuery.forChangesetIds(parseLongs(entry.getValue()));
                     } catch (NumberFormatException e) {
                         throw new ChangesetQueryUrlException(e);
                     }
-                } else
+                    break;
+                default:
                     throw new ChangesetQueryUrlException(tr("Unsupported parameter ''{0}'' in changeset query string", k));
+                }
             }
             return csQuery;
         }

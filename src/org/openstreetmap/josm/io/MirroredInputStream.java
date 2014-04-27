@@ -130,7 +130,7 @@ public class MirroredInputStream extends InputStream {
         URL url;
         try {
             url = new URL(name);
-            if (url.getProtocol().equals("file")) {
+            if ("file".equals(url.getProtocol())) {
                 file = new File(name.substring("file:/".length()));
                 if (!file.exists()) {
                     file = new File(name.substring("file://".length()));
@@ -233,7 +233,7 @@ public class MirroredInputStream extends InputStream {
         URL url;
         try {
             url = new URL(name);
-            if (!url.getProtocol().equals("file")) {
+            if (!"file".equals(url.getProtocol())) {
                 String prefKey = getPrefKey(url, destDir);
                 List<String> localPath = new ArrayList<>(Main.pref.getCollection(prefKey));
                 if (localPath.size() == 2) {

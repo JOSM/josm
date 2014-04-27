@@ -111,9 +111,9 @@ public final class OsmChangesetParser {
             value = atts.getValue("open");
             if (value == null) {
                 throwException(tr("Missing mandatory attribute ''{0}''.", "open"));
-            } else if (value.equals("true")) {
+            } else if ("true".equals(value)) {
                 current.setOpen(true);
-            } else if (value.equals("false")) {
+            } else if ("false".equals(value)) {
                 current.setOpen(false);
             } else {
                 throwException(tr("Illegal boolean value for attribute ''{0}''. Got ''{1}''.", "open", value));
@@ -159,7 +159,8 @@ public final class OsmChangesetParser {
 
         @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-            if (qName.equals("osm")) {
+            switch (qName) {
+            case "osm":
                 if (atts == null) {
                     throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", "osm"));
                 }
@@ -167,24 +168,27 @@ public final class OsmChangesetParser {
                 if (v == null) {
                     throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
                 }
-                if (!(v.equals("0.6"))) {
+                if (!("0.6".equals(v))) {
                     throwException(tr("Unsupported version: {0}", v));
                 }
-            } else if (qName.equals("changeset")) {
+                break;
+            case "changeset":
                 current = new Changeset();
                 parseChangesetAttributes(current, atts);
-            } else if (qName.equals("tag")) {
+                break;
+            case "tag":
                 String key = atts.getValue("k");
                 String value = atts.getValue("v");
                 current.put(key, value);
-            } else {
+                break;
+            default:
                 throwException(tr("Undefined element ''{0}'' found in input stream. Aborting.", qName));
             }
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (qName.equals("changeset")) {
+            if ("changeset".equals(qName)) {
                 changesets.add(current);
             }
         }

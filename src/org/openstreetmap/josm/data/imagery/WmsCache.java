@@ -452,13 +452,18 @@ public class WmsCache {
 
         String zoom = SystemOfMeasurement.METRIC.getDistText(ll1.greatCircleDistance(ll2));
         String extension;
-        if ("image/jpeg".equals(mimeType) || "image/jpg".equals(mimeType)) {
+        switch(mimeType) {
+        case "image/jpeg":
+        case "image/jpg":
             extension = "jpg";
-        } else if ("image/png".equals(mimeType)) {
+            break;
+        case "image/png":
             extension = "png";
-        } else if ("image/gif".equals(mimeType)) {
+            break;
+        case "image/gif":
             extension = "gif";
-        } else {
+            break;
+        default:
             extension = "dat";
         }
 

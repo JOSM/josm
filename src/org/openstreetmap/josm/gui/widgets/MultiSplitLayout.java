@@ -1229,12 +1229,12 @@ public class MultiSplitLayout implements LayoutManager {
                     throwParseException(st, "invalid node type");
                 }
                 String nodeType = st.sval.toUpperCase();
-                if (nodeType.equals("LEAF")) {
+                if ("LEAF".equals(nodeType)) {
                     parseLeaf(st, parent);
                 }
-                else if (nodeType.equals("ROW") || nodeType.equals("COLUMN")) {
+                else if ("ROW".equals(nodeType) || "COLUMN".equals(nodeType)) {
                     Split split = new Split();
-                    split.setRowLayout(nodeType.equals("ROW"));
+                    split.setRowLayout("ROW".equals(nodeType));
                     addSplitChild(parent, split);
                     parseSplit(st, split);
                 }

@@ -605,7 +605,7 @@ public class ImageProvider {
         ZipFile zipFile = null;
         try {
             zipFile = new ZipFile(archive);
-            if (inArchiveDir == null || inArchiveDir.equals(".")) {
+            if (inArchiveDir == null || ".".equals(inArchiveDir)) {
                 inArchiveDir = "";
             } else if (!inArchiveDir.isEmpty()) {
                 inArchiveDir += "/";
@@ -804,7 +804,7 @@ public class ImageProvider {
             img = overlay(img, ImageProvider.get("cursor/modifier/" + overlay), OverlayPosition.SOUTHEAST);
         }
         Cursor c = Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
-                name.equals("crosshair") ? new Point(10, 10) : new Point(3, 2), "Cursor");
+                "crosshair".equals(name) ? new Point(10, 10) : new Point(3, 2), "Cursor");
         return c;
     }
 

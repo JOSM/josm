@@ -354,7 +354,7 @@ public class CreateMultipolygonAction extends JosmAction {
         // filter out empty key conflicts - we need second iteration
         if( !Main.pref.getBoolean("multipoly.alltags", false) )
             for( RelationMember m : relation.getMembers() )
-                if( m.hasRole() && m.getRole().equals("outer") && m.isWay() )
+                if( m.hasRole() && "outer".equals(m.getRole()) && m.isWay() )
                     for( String key : values.keySet() )
                         if( !m.getWay().hasKey(key) && !relation.hasKey(key) )
                             conflictingKeys.add(key);
@@ -406,7 +406,7 @@ public class CreateMultipolygonAction extends JosmAction {
             Relation r2 = new Relation(relation);
             for (Entry<String, String> entry : values.entrySet()) {
                 String key = entry.getKey();
-                if (!r2.hasKey(key) && !key.equals("area") ) {
+                if (!r2.hasKey(key) && !"area".equals(key) ) {
                     if (relation.isNew())
                         relation.put(key, entry.getValue());
                     else

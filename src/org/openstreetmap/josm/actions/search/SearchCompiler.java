@@ -104,58 +104,65 @@ public class SearchCompiler {
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
-            if ("modified".equals(keyword))
+            switch(keyword) {
+            case "modified":
                 return new Modified();
-            else if ("selected".equals(keyword))
+            case "selected":
                 return new Selected();
-            else if ("incomplete".equals(keyword))
+            case "incomplete":
                 return new Incomplete();
-            else if ("untagged".equals(keyword))
+            case "untagged":
                 return new Untagged();
-            else if ("closed".equals(keyword))
+            case "closed":
                 return new Closed();
-            else if ("new".equals(keyword))
+            case "new":
                 return new New();
-            else if ("indownloadedarea".equals(keyword))
+            case "indownloadedarea":
                 return new InDataSourceArea(false);
-            else if ("allindownloadedarea".equals(keyword))
+            case "allindownloadedarea":
                 return new InDataSourceArea(true);
-            else if ("inview".equals(keyword))
+            case "inview":
                 return new InView(false);
-            else if ("allinview".equals(keyword))
+            case "allinview":
                 return new InView(true);
-            else if (tokenizer != null) {
-                if ("id".equals(keyword))
-                    return new Id(tokenizer);
-                else if ("version".equals(keyword))
-                    return new Version(tokenizer);
-                else if ("changeset".equals(keyword))
-                    return new ChangesetId(tokenizer);
-                else if ("nodes".equals(keyword))
-                    return new NodeCountRange(tokenizer);
-                else if ("tags".equals(keyword))
-                    return new TagCountRange(tokenizer);
-                else if ("areasize".equals(keyword))
-                    return new AreaSize(tokenizer);
-                else if ("nth".equals(keyword))
-                    return new Nth(tokenizer, false);
-                else if ("nth%".equals(keyword))
-                    return new Nth(tokenizer, true);
-                else if ("timestamp".equals(keyword)) {
-                    String rangeS = " " + tokenizer.readTextOrNumber() + " "; // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
-                    String[] rangeA = rangeS.split("/");
-                    if (rangeA.length == 1)
-                        return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
-                    else if (rangeA.length == 2) {
-                        String rangeA1 = rangeA[0].trim();
-                        String rangeA2 = rangeA[1].trim();
-                        long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); // if min timestap is empty: use lowest possible date
-                        long maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
-                        return new TimestampRange(minDate, maxDate);
-                    } else
-                        /*
-                         * I18n: Don't translate timestamp keyword
-                         */ throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
+            default:
+                if (tokenizer != null) {
+                    switch (keyword) {
+                    case "id":
+                        return new Id(tokenizer);
+                    case "version":
+                        return new Version(tokenizer);
+                    case "changeset":
+                        return new ChangesetId(tokenizer);
+                    case "nodes":
+                        return new NodeCountRange(tokenizer);
+                    case "tags":
+                        return new TagCountRange(tokenizer);
+                    case "areasize":
+                        return new AreaSize(tokenizer);
+                    case "nth":
+                        return new Nth(tokenizer, false);
+                    case "nth%":
+                        return new Nth(tokenizer, true);
+                    case "timestamp":
+                        // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
+                        String rangeS = " " + tokenizer.readTextOrNumber() + " ";
+                        String[] rangeA = rangeS.split("/");
+                        if (rangeA.length == 1) {
+                            return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
+                        } else if (rangeA.length == 2) {
+                            String rangeA1 = rangeA[0].trim();
+                            String rangeA2 = rangeA[1].trim();
+                            // if min timestap is empty: use lowest possible date
+                            long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); 
+                            // if max timestamp is empty: use "now"
+                            long maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime(); 
+                            return new TimestampRange(minDate, maxDate);
+                        } else {
+                            // I18n: Don't translate timestamp keyword
+                            throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
+                        }
+                    }
                 }
             }
             return null;
@@ -1313,14 +1320,16 @@ public class SearchCompiler {
         if (value == null) {
             value = "";
         }
-        if ("type".equals(key))
+        switch(key) {
+        case "type":
             return new ExactType(value);
-        else if ("user".equals(key))
+        case "user":
             return new UserMatch(value);
-        else if ("role".equals(key))
+        case "role":
             return new RoleMatch(value);
-        else
+        default:
             return new KeyValue(key, value, regexSearch, caseSensitive);
+        }
     }
 
     private static int regexFlags(boolean caseSensitive) {

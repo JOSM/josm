@@ -52,14 +52,19 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     @Override
     public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {
         Boolean handled = Boolean.TRUE;
-        if (method.getName().equals("handleQuit")) {
+        switch (method.getName()) {
+        case "handleQuit":
             handled = Main.exitJosm(false, 0);
-        } else if (method.getName().equals("handleAbout")) {
+            break;
+        case "handleAbout":
             Main.main.menu.about.actionPerformed(null);
-        } else if (method.getName().equals("handlePreferences")) {
+            break;
+        case "handlePreferences":
             Main.main.menu.preferences.actionPerformed(null);
-        } else
+            break;
+        default:
             return null;
+        }
         if (args[0] != null) {
             try {
                 args[0].getClass().getDeclaredMethod("setHandled", new Class[] { boolean.class }).invoke(args[0], new Object[] { handled });

@@ -915,35 +915,33 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         OsmPrimitive via = null;
 
         /* find the "from", "via" and "to" elements */
-        for (RelationMember m : r.getMembers())
-        {
+        for (RelationMember m : r.getMembers()) {
             if(m.getMember().isIncomplete())
                 return;
-            else
-            {
-                if(m.isWay())
-                {
+            else {
+                if(m.isWay()) {
                     Way w = m.getWay();
                     if(w.getNodesCount() < 2) {
                         continue;
                     }
 
-                    if("from".equals(m.getRole())) {
+                    switch(m.getRole()) {
+                    case "from":
                         if(fromWay == null) {
                             fromWay = w;
                         }
-                    } else if("to".equals(m.getRole())) {
+                        break;
+                    case "to":
                         if(toWay == null) {
                             toWay = w;
                         }
-                    } else if("via".equals(m.getRole())) {
+                        break;
+                    case "via":
                         if(via == null) {
                             via = w;
                         }
                     }
-                }
-                else if(m.isNode())
-                {
+                } else if(m.isNode()) {
                     Node n = m.getNode();
                     if("via".equals(m.getRole()) && via == null) {
                         via = n;

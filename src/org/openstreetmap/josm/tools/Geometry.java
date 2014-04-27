@@ -833,9 +833,9 @@ public final class Geometry {
         public MultiPolygonMembers(Relation multiPolygon) {
             for (RelationMember m : multiPolygon.getMembers()) {
                 if (m.getType().equals(OsmPrimitiveType.WAY)) {
-                    if (m.getRole().equals("outer")) {
+                    if ("outer".equals(m.getRole())) {
                         outers.add(m.getWay());
-                    } else if (m.getRole().equals("inner")) {
+                    } else if ("inner".equals(m.getRole())) {
                         inners.add(m.getWay());
                     }
                 }

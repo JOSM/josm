@@ -188,10 +188,10 @@ public class WindowGeometry {
                 if (m.group(3) != null) {
                     x = Integer.valueOf(m.group(5));
                     y = Integer.valueOf(m.group(7));
-                    if (m.group(4).equals("-")) {
+                    if ("-".equals(m.group(4))) {
                         x = screenDimension.x + screenDimension.width - x - w;
                     }
-                    if (m.group(6).equals("-")) {
+                    if ("-".equals(m.group(6))) {
                         y = screenDimension.y + screenDimension.height - y - h;
                     }
                 }

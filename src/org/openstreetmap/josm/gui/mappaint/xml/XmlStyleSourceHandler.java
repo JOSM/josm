@@ -13,8 +13,7 @@ import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class XmlStyleSourceHandler extends DefaultHandler
-{
+public class XmlStyleSourceHandler extends DefaultHandler {
     private boolean inDoc, inRule, inCondition, inLine, inLineMod, inIcon, inArea, inScaleMax, inScaleMin;
     private boolean hadLine, hadLineMod, hadIcon, hadArea;
     private RuleElem rule = new RuleElem();
@@ -78,16 +77,20 @@ public class XmlStyleSourceHandler extends DefaultHandler
 
     private void startElementLine(String qName, Attributes atts, LinePrototype line) {
         for (int count=0; count<atts.getLength(); count++) {
-            if(atts.getQName(count).equals("width")) {
+            switch (atts.getQName(count)) {
+            case "width":
                 String val = atts.getValue(count);
                 if (! (val.startsWith("+") || val.startsWith("-") || val.endsWith("%"))) {
                     line.setWidth(Integer.parseInt(val));
                 }
-            } else if (atts.getQName(count).equals("colour")) {
-                line.color=convertColor(atts.getValue(count));
-            } else if (atts.getQName(count).equals("realwidth")) {
-                line.realWidth=Integer.parseInt(atts.getValue(count));
-            } else if (atts.getQName(count).equals("dashed")) {
+                break;
+            case "colour":
+                line.color = convertColor(atts.getValue(count));
+                break;
+            case "realwidth":
+                line.realWidth = Integer.parseInt(atts.getValue(count));
+                break;
+            case "dashed":
                 Float[] dashed;
                 try {
                     String[] parts = atts.getValue(count).split(",");
@@ -104,11 +107,17 @@ public class XmlStyleSourceHandler extends DefaultHandler
                     }
                 }
                 line.setDashed(dashed == null ? null : Arrays.asList(dashed));
-            } else if (atts.getQName(count).equals("dashedcolour")) {
-                line.dashedColor=convertColor(atts.getValue(count));
-            } else if(atts.getQName(count).equals("priority")) {
+                break;
+            case "dashedcolour":
+                line.dashedColor = convertColor(atts.getValue(count));
+                break;
+            case "priority":
                 line.priority = Integer.parseInt(atts.getValue(count));
-            } else if (!(atts.getQName(count).equals("mode") && line instanceof LinemodPrototype)){
+                break;
+            case "mode":
+                if (line instanceof LinemodPrototype)
+                    break;
+            default:
                 error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
             }
         }
@@ -117,7 +126,8 @@ public class XmlStyleSourceHandler extends DefaultHandler
     private void startElementLinemod(String qName, Attributes atts, LinemodPrototype line) {
         startElementLine(qName, atts, line);
         for (int count=0; count<atts.getLength(); count++) {
-            if (atts.getQName(count).equals("width")) {
+            switch (atts.getQName(count)) {
+            case "width":
                 String val = atts.getValue(count);
                 if (val.startsWith("+")) {
                     line.setWidth(Integer.parseInt(val.substring(1)));
@@ -131,17 +141,22 @@ public class XmlStyleSourceHandler extends DefaultHandler
                 } else {
                     line.setWidth(Integer.parseInt(val));
                 }
-            } else if(atts.getQName(count).equals("mode")) {
-                line.over = !atts.getValue(count).equals("under");
+                break;
+            case "mode":
+                line.over = !"under".equals(atts.getValue(count));
+                break;
             }
         }
     }
 
-    @Override public void startElement(String uri,String name, String qName, Attributes atts) {
+    @Override
+    public void startElement(String uri,String name, String qName, Attributes atts) {
         if (inDoc) {
-            if (qName.equals("rule")) {
-                inRule=true;
-            } else if (qName.equals("rules")) {
+            switch(qName) {
+            case "rule":
+                inRule = true;
+                break;
+            case "rules":
                 if (style.name == null) {
                     style.name = atts.getValue("name");
                 }
@@ -151,119 +166,138 @@ public class XmlStyleSourceHandler extends DefaultHandler
                 if (style.icon == null) {
                     style.icon = atts.getValue("icon");
                 }
-            } else if (qName.equals("scale_max")) {
+                break;
+            case "scale_max":
                 inScaleMax = true;
-            } else if (qName.equals("scale_min")) {
+                break;
+            case "scale_min":
                 inScaleMin = true;
-            } else if (qName.equals("condition") && inRule) {
-                inCondition=true;
-                XmlCondition c = rule.cond;
-                if (c.key != null) {
-                    if(rule.conditions == null) {
-                        rule.conditions = new LinkedList<>();
+                break;
+            case "condition":
+                if (inRule) {
+                    inCondition = true;
+                    XmlCondition c = rule.cond;
+                    if (c.key != null) {
+                        if(rule.conditions == null) {
+                            rule.conditions = new LinkedList<>();
+                        }
+                        rule.conditions.add(new XmlCondition(rule.cond));
+                        c = new XmlCondition();
+                        rule.conditions.add(c);
                     }
-                    rule.conditions.add(new XmlCondition(rule.cond));
-                    c = new XmlCondition();
-                    rule.conditions.add(c);
-                }
-                for (int count=0; count<atts.getLength(); count++) {
-                    if (atts.getQName(count).equals("k")) {
-                        c.key = atts.getValue(count);
-                    } else if (atts.getQName(count).equals("v")) {
-                        c.value = atts.getValue(count);
-                    } else if(atts.getQName(count).equals("b")) {
-                        c.boolValue = atts.getValue(count);
-                    } else {
-                        error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
+                    for (int count=0; count<atts.getLength(); count++) {
+                        switch (atts.getQName(count)) {
+                        case "k":
+                            c.key = atts.getValue(count);
+                            break;
+                        case "v":
+                            c.value = atts.getValue(count);
+                            break;
+                        case "b":
+                            c.boolValue = atts.getValue(count);
+                            break;
+                        default:
+                            error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
+                        }
+                    }
+                    if(c.key == null) {
+                        error("The condition has no key!");
                     }
                 }
-                if(c.key == null) {
-                    error("The condition has no key!");
-                }
-            } else if (qName.equals("line")) {
+                break;
+            case "line":
                 hadLine = inLine = true;
                 startElementLine(qName, atts, rule.line);
-            } else if (qName.equals("linemod")) {
+                break;
+            case "linemod":
                 hadLineMod = inLineMod = true;
                 startElementLinemod(qName, atts, rule.linemod);
-            } else if (qName.equals("icon")) {
+                break;
+            case "icon":
                 inIcon = true;
                 for (int count=0; count<atts.getLength(); count++) {
-                    if (atts.getQName(count).equals("src")) {
+                    switch (atts.getQName(count)) {
+                    case "src":
                         IconReference icon = new IconReference(atts.getValue(count), style);
                         hadIcon = (icon != null);
                         rule.icon.icon = icon;
-                    } else if (atts.getQName(count).equals("annotate")) {
+                        break;
+                    case "annotate":
                         rule.icon.annotate = Boolean.parseBoolean (atts.getValue(count));
-                    } else if(atts.getQName(count).equals("priority")) {
+                        break;
+                    case "priority":
                         rule.icon.priority = Integer.parseInt(atts.getValue(count));
-                    } else {
+                        break;
+                    default:
                         error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
                     }
                 }
-            } else if (qName.equals("area")) {
+                break;
+            case "area":
                 hadArea = inArea = true;
-                for (int count=0; count<atts.getLength(); count++)
-                {
-                    if (atts.getQName(count).equals("colour")) {
+                for (int count=0; count<atts.getLength(); count++) {
+                    switch (atts.getQName(count)) {
+                    case "colour":
                         rule.area.color=convertColor(atts.getValue(count));
-                    } else if (atts.getQName(count).equals("closed")) {
+                        break;
+                    case "closed":
                         rule.area.closed=Boolean.parseBoolean(atts.getValue(count));
-                    } else if(atts.getQName(count).equals("priority")) {
+                        break;
+                    case "priority":
                         rule.area.priority = Integer.parseInt(atts.getValue(count));
-                    } else {
+                        break;
+                    default:
                         error("The element \"" + qName + "\" has unknown attribute \"" + atts.getQName(count) + "\"!");
                     }
                 }
-            } else {
+                break;
+            default:
                 error("The element \"" + qName + "\" is unknown!");
             }
         }
     }
 
-    @Override public void endElement(String uri,String name, String qName)
-    {
-        if (inRule && qName.equals("rule")) {
+    @Override
+    public void endElement(String uri,String name, String qName) {
+        if (inRule && "rule".equals(qName)) {
             if (hadLine) {
                 style.add(rule.cond, rule.conditions,
                         new LinePrototype(rule.line, new Range(rule.scaleMin, rule.scaleMax)));
             }
-            if (hadLineMod)
-            {
+            if (hadLineMod) {
                 style.add(rule.cond, rule.conditions,
                         new LinemodPrototype(rule.linemod, new Range(rule.scaleMin, rule.scaleMax)));
             }
-            if (hadIcon)
-            {
+            if (hadIcon) {
                 style.add(rule.cond, rule.conditions,
                         new IconPrototype(rule.icon, new Range(rule.scaleMin, rule.scaleMax)));
             }
-            if (hadArea)
-            {
+            if (hadArea) {
                 style.add(rule.cond, rule.conditions,
                         new AreaPrototype(rule.area, new Range(rule.scaleMin, rule.scaleMax)));
             }
             inRule = false;
             hadLine = hadLineMod = hadIcon = hadArea = false;
             rule.init();
-        } else if (inCondition && qName.equals("condition")) {
+        } else if (inCondition && "condition".equals(qName)) {
             inCondition = false;
-        } else if (inLine && qName.equals("line")) {
+        } else if (inLine && "line".equals(qName)) {
             inLine = false;
-        } else if (inLineMod && qName.equals("linemod")) {
+        } else if (inLineMod && "linemod".equals(qName)) {
             inLineMod = false;
-        } else if (inIcon && qName.equals("icon")) {
+        } else if (inIcon && "icon".equals(qName)) {
             inIcon = false;
-        } else if (inArea && qName.equals("area")) {
+        } else if (inArea && "area".equals(qName)) {
             inArea = false;
-        } else if (qName.equals("scale_max")) {
+        } else if ("scale_max".equals(qName)) {
             inScaleMax = false;
-        } else if (qName.equals("scale_min")) {
+        } else if ("scale_min".equals(qName)) {
             inScaleMin = false;
         }
     }
 
-    @Override public void characters(char[] ch, int start, int length) {
+    @Override
+    public void characters(char[] ch, int start, int length) {
         if (inScaleMax) {
             rule.scaleMax = Long.parseLong(new String(ch, start, length));
         } else if (inScaleMin) {

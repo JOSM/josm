@@ -94,7 +94,7 @@ public final class Shortcut {
     }
 
     public boolean isChangeable() {
-        return !automatic && !shortText.equals("core:none");
+        return !automatic && !"core:none".equals(shortText);
     }
 
     private boolean getReset() {
@@ -254,7 +254,7 @@ public final class Shortcut {
         List<Shortcut> l = new ArrayList<>();
         for(Shortcut c : shortcuts.values())
         {
-            if(!c.shortText.equals("core:none")) {
+            if(!"core:none".equals(c.shortText)) {
                 l.add(c);
             }
         }

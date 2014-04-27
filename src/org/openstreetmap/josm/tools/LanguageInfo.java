@@ -86,9 +86,9 @@ public final class LanguageInfo {
     public static String getJOSMLocaleCode(Locale locale) {
         if (locale == null) return "en";
         String full = locale.toString();
-        if (full.equals("iw_IL"))
+        if ("iw_IL".equals(full))
             return "he";
-        else if (full.equals("in"))
+        else if ("in".equals(full))
             return "id";
         else if (I18n.hasCode(full)) // catch all non-single codes
             return full;
@@ -106,10 +106,10 @@ public final class LanguageInfo {
      * @return the resulting locale
      */
     public static Locale getLocale(String localeName) {
-        if (localeName.equals("he")) {
+        if ("he".equals(localeName)) {
             localeName = "iw_IL";
         }
-        else if (localeName.equals("id")) {
+        else if ("id".equals(localeName)) {
             localeName = "in";
         }
         Locale l;

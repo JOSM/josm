@@ -239,32 +239,36 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
     /* ------------------------------------------------------------------- */
     @Override
     public void preferenceChanged(PreferenceChangeEvent evt) {
-        if ("osm-server.username".equals(evt.getKey())) {
+        switch (evt.getKey()) {
+        case "osm-server.username":
             if (!(evt.getNewValue() instanceof StringSetting)) return;
-            String newValue = ((StringSetting) evt.getNewValue()).getValue();
-            if (newValue == null || newValue.trim().length() == 0) {
+            String newUserName = ((StringSetting) evt.getNewValue()).getValue();
+            if (newUserName == null || newUserName.trim().isEmpty()) {
                 setAnonymous();
             } else {
-                if (! newValue.equals(userName)) {
-                    setPartiallyIdentified(newValue);
+                if (! newUserName.equals(userName)) {
+                    setPartiallyIdentified(newUserName);
                 }
             }
             return;
 
-        } else if ("osm-server.url".equals(evt.getKey())) {
+        case "osm-server.url":
             if (!(evt.getNewValue() instanceof StringSetting)) return;
-            String newValue = ((StringSetting) evt.getNewValue()).getValue();
-            if (newValue == null || newValue.trim().isEmpty()) {
+            String newUrl = ((StringSetting) evt.getNewValue()).getValue();
+            if (newUrl == null || newUrl.trim().isEmpty()) {
                 setAnonymous();
             } else if (isFullyIdentified()) {
                 setPartiallyIdentified(getUserName());
             }
+            break;
 
-        } else if ("oauth.access-token.key".equals(evt.getKey())) {
+        case "oauth.access-token.key":
             accessTokenKeyChanged = true;
+            break;
 
-        } else if ("oauth.access-token.secret".equals(evt.getKey())) {
+        case "oauth.access-token.secret":
             accessTokenSecretChanged = true;
+            break;
         }
 
         if (accessTokenKeyChanged && accessTokenSecretChanged) {

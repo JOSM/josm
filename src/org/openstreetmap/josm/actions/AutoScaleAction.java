@@ -95,6 +95,7 @@ public class AutoScaleAction extends JosmAction {
     private static int getModeShortcut(String mode) {
         int shortcut = -1;
 
+        // TODO: convert this to switch/case and make sure the parsing still works
         /* leave as single line for shortcut overview parsing! */
         if (mode.equals("data")) { shortcut = KeyEvent.VK_1; }
         else if (mode.equals("layer")) { shortcut = KeyEvent.VK_2; }
@@ -129,23 +130,32 @@ public class AutoScaleAction extends JosmAction {
         String modeHelp = Character.toUpperCase(mode.charAt(0)) + mode.substring(1);
         putValue("help", "Action/AutoScale/" + modeHelp);
         this.mode = mode;
-        if (mode.equals("data")) {
+        switch (mode) {
+        case "data":
             putValue("help", ht("/Action/ZoomToData"));
-        } else if (mode.equals("layer")) {
+            break;
+        case "layer":
             putValue("help", ht("/Action/ZoomToLayer"));
-        } else if (mode.equals("selection")) {
+            break;
+        case "selection":
             putValue("help", ht("/Action/ZoomToSelection"));
-        } else if (mode.equals("conflict")) {
+            break;
+        case "conflict":
             putValue("help", ht("/Action/ZoomToConflict"));
-        } else if (mode.equals("problem")) {
+            break;
+        case "problem":
             putValue("help", ht("/Action/ZoomToProblem"));
-        } else if (mode.equals("download")) {
+            break;
+        case "download":
             putValue("help", ht("/Action/ZoomToDownload"));
-        } else if (mode.equals("previous")) {
+            break;
+        case "previous":
             putValue("help", ht("/Action/ZoomToPrevious"));
-        } else if (mode.equals("next")) {
+            break;
+        case "next":
             putValue("help", ht("/Action/ZoomToNext"));
-        } else {
+            break;
+        default:
             throw new IllegalArgumentException("Unknown mode: "+mode);
         }
         installAdapters();
@@ -153,11 +163,14 @@ public class AutoScaleAction extends JosmAction {
 
     public void autoScale()  {
         if (Main.isDisplayingMapView()) {
-            if (mode.equals("previous")) {
+            switch(mode) {
+            case "previous":
                 Main.map.mapView.zoomPrevious();
-            } else if (mode.equals("next")) {
+                break;
+            case "next":
                 Main.map.mapView.zoomNext();
-            } else {
+                break;
+            default:
                 BoundingXYVisitor bbox = getBoundingBox();
                 if (bbox != null && bbox.getBounds() != null) {
                     Main.map.mapView.recalculateCenterScale(bbox);
@@ -186,30 +199,35 @@ public class AutoScaleAction extends JosmAction {
     }
 
     private BoundingXYVisitor getBoundingBox() {
-        BoundingXYVisitor v = mode.equals("problem") ? new ValidatorBoundingXYVisitor() : new BoundingXYVisitor();
+        BoundingXYVisitor v = "problem".equals(mode) ? new ValidatorBoundingXYVisitor() : new BoundingXYVisitor();
 
-        if (mode.equals("problem")) {
+        switch(mode) {
+        case "problem":
             TestError error = Main.map.validatorDialog.getSelectedError();
             if (error == null) return null;
             ((ValidatorBoundingXYVisitor) v).visit(error);
             if (v.getBounds() == null) return null;
             v.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));
-        } else if (mode.equals("data")) {
+            break;
+        case "data":
             for (Layer l : Main.map.mapView.getAllLayers()) {
                 l.visitBoundingBox(v);
             }
-        } else if (mode.equals("layer")) {
+            break;
+        case "layer":
             if (Main.main.getActiveLayer() == null)
                 return null;
             // try to zoom to the first selected layer
             Layer l = getFirstSelectedLayer();
             if (l == null) return null;
             l.visitBoundingBox(v);
-        } else if (mode.equals("selection") || mode.equals("conflict")) {
+            break;
+        case "selection":
+        case "conflict":
             Collection<OsmPrimitive> sel = new HashSet<>();
-            if (mode.equals("selection")) {
+            if ("selection".equals(mode)) {
                 sel = getCurrentDataSet().getSelected();
-            } else if (mode.equals("conflict")) {
+            } else {
                 Conflict<? extends OsmPrimitive> c = Main.map.conflictDialog.getSelectedConflict();
                 if (c != null) {
                     sel.add(c.getMy());
@@ -220,7 +238,7 @@ public class AutoScaleAction extends JosmAction {
             if (sel.isEmpty()) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        (mode.equals("selection") ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to")),
+                        ("selection".equals(mode) ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to")),
                         tr("Information"),
                         JOptionPane.INFORMATION_MESSAGE
                 );
@@ -235,7 +253,8 @@ public class AutoScaleAction extends JosmAction {
             // Make the bounding box at least 0.0005 degrees (≈ 56 m) wide to
             // ensure reasonable zoom level when zooming onto single nodes.
             v.enlargeToMinDegrees(0.0005);
-        } else if (mode.equals("download")) {
+            break;
+        case "download":
             Bounds bounds = DownloadDialog.getSavedDownloadBounds();
             if (bounds != null) {
                 try {
@@ -244,33 +263,39 @@ public class AutoScaleAction extends JosmAction {
                     Main.warn(e);
                 }
             }
+            break;
         }
         return v;
     }
 
     @Override
     protected void updateEnabledState() {
-        if ("selection".equals(mode)) {
+        switch(mode) {
+        case "selection":
             setEnabled(getCurrentDataSet() != null && ! getCurrentDataSet().getSelected().isEmpty());
-        }  else if ("layer".equals(mode)) {
+            break;
+        case "layer":
             if (!Main.isDisplayingMapView() || Main.map.mapView.getAllLayersAsList().isEmpty()) {
                 setEnabled(false);
             } else {
                 // FIXME: should also check for whether a layer is selected in the layer list dialog
                 setEnabled(true);
             }
-        } else if ("conflict".equals(mode)) {
+            break;
+        case "conflict":
             setEnabled(Main.map != null && Main.map.conflictDialog.getSelectedConflict() != null);
-        } else if ("problem".equals(mode)) {
+            break;
+        case "problem":
             setEnabled(Main.map != null && Main.map.validatorDialog.getSelectedError() != null);
-        } else if ("previous".equals(mode)) {
+            break;
+        case "previous":
             setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomUndoEntries());
-        } else if ("next".equals(mode)) {
+            break;
+        case "next":
             setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomRedoEntries());
-        } else {
-            setEnabled(
-                    Main.isDisplayingMapView()
-                    && Main.map.mapView.hasLayers()
+            break;
+        default:
+            setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasLayers()
             );
         }
     }
@@ -310,13 +335,13 @@ public class AutoScaleAction extends JosmAction {
         private TreeSelectionListener validatorSelectionListener;
 
         public MapFrameAdapter() {
-            if (mode.equals("conflict")) {
+            if ("conflict".equals(mode)) {
                 conflictSelectionListener = new ListSelectionListener() {
                     @Override public void valueChanged(ListSelectionEvent e) {
                         updateEnabledState();
                     }
                 };
-            } else if (mode.equals("problem")) {
+            } else if ("problem".equals(mode)) {
                 validatorSelectionListener = new TreeSelectionListener() {
                     @Override public void valueChanged(TreeSelectionEvent e) {
                         updateEnabledState();

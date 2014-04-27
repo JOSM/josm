@@ -393,9 +393,8 @@ public final class I18n {
         }
     }
 
-    public static void addTexts(File source)
-    {
-        if(loadedCode.equals("en"))
+    public static void addTexts(File source) {
+        if ("en".equals(loadedCode))
             return;
         FileInputStream fis = null;
         JarInputStream jar = null;
@@ -439,10 +438,8 @@ public final class I18n {
         }
     }
 
-    private static boolean load(String l)
-    {
-        if(l.equals("en") || l.equals("en_US"))
-        {
+    private static boolean load(String l) {
+        if ("en".equals(l) || "en_US".equals(l)) {
             strings = null;
             pstrings = null;
             loadedCode = "en";
@@ -450,17 +447,16 @@ public final class I18n {
             return true;
         }
         URL en = getTranslationFile("en");
-        if(en == null)
+        if (en == null)
             return false;
         URL tr = getTranslationFile(l);
-        if(tr == null || !languages.containsKey(l))
-        {
+        if (tr == null || !languages.containsKey(l)) {
             int i = l.indexOf('_');
             if (i > 0) {
                 l = l.substring(0, i);
             }
             tr = getTranslationFile(l);
-            if(tr == null || !languages.containsKey(l))
+            if (tr == null || !languages.containsKey(l))
                 return false;
         }
         InputStream enStream = null;
@@ -642,7 +638,7 @@ public final class I18n {
             if (load(LanguageInfo.getJOSMLocaleCode(l))) {
                 Locale.setDefault(l);
             } else {
-                if (!l.getLanguage().equals("en")) {
+                if (!"en".equals(l.getLanguage())) {
                     Main.info(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
                             l.getDisplayName(), Locale.getDefault().getDisplayName()));
                 } else {

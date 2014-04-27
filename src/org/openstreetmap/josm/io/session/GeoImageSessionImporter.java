@@ -44,33 +44,45 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                         if (attrNode.getNodeType() == Node.ELEMENT_NODE) {
                             Element attrElem = (Element) attrNode;
                             try {
-                                String attrElemName = attrElem.getTagName();
-                                if ("file".equals(attrElemName)) {
+                                switch(attrElem.getTagName()) {
+                                case "file":
                                     entry.setFile(new File(attrElem.getTextContent()));
-                                } else if ("position".equals(attrElemName)) {
+                                    break;
+                                case "position":
                                     double lat = Double.parseDouble(attrElem.getAttribute("lat"));
                                     double lon = Double.parseDouble(attrElem.getAttribute("lon"));
                                     entry.setPos(new LatLon(lat, lon));
-                                } else if ("speed".equals(attrElemName)) {
+                                    break;
+                                case "speed":
                                     entry.setSpeed(Double.parseDouble(attrElem.getTextContent()));
-                                } else if ("elevation".equals(attrElemName)) {
+                                    break;
+                                case "elevation":
                                     entry.setElevation(Double.parseDouble(attrElem.getTextContent()));
-                                } else if ("gps-time".equals(attrElemName)) {
+                                    break;
+                                case "gps-time":
                                     entry.setGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if ("exif-orientation".equals(attrElemName)) {
+                                    break;
+                                case "exif-orientation":
                                     entry.setExifOrientation(Integer.parseInt(attrElem.getTextContent()));
-                                } else if ("exif-time".equals(attrElemName)) {
+                                    break;
+                                case "exif-time":
                                     entry.setExifTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if ("exif-gps-time".equals(attrElemName)) {
+                                    break;
+                                case "exif-gps-time":
                                     entry.setExifGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if ("exif-coordinates".equals(attrElemName)) {
-                                    double lat = Double.parseDouble(attrElem.getAttribute("lat"));
-                                    double lon = Double.parseDouble(attrElem.getAttribute("lon"));
-                                    entry.setExifCoor(new LatLon(lat, lon));
-                                } else if ("exif-image-direction".equals(attrElemName)) {
+                                    break;
+                                case "exif-coordinates":
+                                    entry.setExifCoor(new LatLon(
+                                            Double.parseDouble(attrElem.getAttribute("lat")), 
+                                            Double.parseDouble(attrElem.getAttribute("lon"))));
+                                    break;
+                                case "exif-image-direction":
                                     entry.setExifImgDir(Double.parseDouble(attrElem.getTextContent()));
-                                } else if ("is-new-gps-data".equals(attrElemName) && Boolean.parseBoolean(attrElem.getTextContent())) {
-                                    entry.flagNewGpsData();
+                                    break;
+                                case "is-new-gps-data":
+                                    if (Boolean.parseBoolean(attrElem.getTextContent())) {
+                                        entry.flagNewGpsData();
+                                    }
                                 }
                                 // TODO: handle thumbnail loading
                             } catch (NumberFormatException e) {

@@ -1359,16 +1359,18 @@ public class Preferences {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 String localName = parser.getLocalName();
-                if ("tag".equals(localName)) {
+                switch(localName) {
+                case "tag":
                     settingsMap.put(parser.getAttributeValue(null, "key"), new StringSetting(parser.getAttributeValue(null, "value")));
                     jumpToEnd();
-                } else if ("list".equals(localName) ||
-                        "collection".equals(localName) ||
-                        "lists".equals(localName) ||
-                        "maps".equals(localName)
-                ) {
+                    break;
+                case "list":
+                case "collection":
+                case "lists":
+                case "maps":
                     parseToplevelList();
-                } else {
+                    break;
+                default:
                     throwException("Unexpected element: "+localName);
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
@@ -1399,23 +1401,27 @@ public class Preferences {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 String localName = parser.getLocalName();
-                if ("entry".equals(localName)) {
+                switch(localName) {
+                case "entry":
                     if (entries == null) {
                         entries = new ArrayList<>();
                     }
                     entries.add(parser.getAttributeValue(null, "value"));
                     jumpToEnd();
-                } else if ("list".equals(localName)) {
+                    break;
+                case "list":
                     if (lists == null) {
                         lists = new ArrayList<>();
                     }
                     lists.add(parseInnerList());
-                } else if ("map".equals(localName)) {
+                    break;
+                case "map":
                     if (maps == null) {
                         maps = new ArrayList<>();
                     }
                     maps.add(parseMap());
-                } else {
+                    break;
+                default:
                     throwException("Unexpected element: "+localName);
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {

@@ -350,29 +350,31 @@ public final class PluginHandler {
 
         // check whether automatic update at startup was disabled
         //
-        String policy = Main.pref.get(togglePreferenceKey, "ask");
-        policy = policy.trim().toLowerCase();
-        if ("never".equals(policy)) {
+        String policy = Main.pref.get(togglePreferenceKey, "ask").trim().toLowerCase();
+        switch(policy) {
+        case "never":
             if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Skipping plugin update after JOSM upgrade. Automatic update at startup is disabled."));
             } else if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Skipping plugin update after elapsed update interval. Automatic update at startup is disabled."));
             }
             return false;
-        }
 
-        if ("always".equals(policy)) {
+        case "always":
             if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Running plugin update after JOSM upgrade. Automatic update at startup is enabled."));
             } else if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Running plugin update after elapsed update interval. Automatic update at startup is disabled."));
             }
             return true;
-        }
+            
+        case "ask":
+            break;
 
-        if (!"ask".equals(policy)) {
+        default:
             Main.warn(tr("Unexpected value ''{0}'' for preference ''{1}''. Assuming value ''ask''.", policy, togglePreferenceKey));
         }
+
         int ret = HelpAwareOptionPane.showOptionDialog(
                 parent,
                 pnlMessage,

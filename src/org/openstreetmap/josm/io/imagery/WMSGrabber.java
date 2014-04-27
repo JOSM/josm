@@ -91,7 +91,7 @@ public class WMSGrabber extends Grabber {
             n = ne.lat();
             e = ne.lon();
         }
-        if (myProj.equals("EPSG:4326") && !info.getServerProjections().contains(myProj) && info.getServerProjections().contains("CRS:84")) {
+        if ("EPSG:4326".equals(myProj) && !info.getServerProjections().contains(myProj) && info.getServerProjections().contains("CRS:84")) {
             myProj = "CRS:84";
         }
 
@@ -113,7 +113,7 @@ public class WMSGrabber extends Grabber {
         boolean switchLatLon = false;
         if (baseURL.toLowerCase().contains("crs=epsg:4326")) {
             switchLatLon = true;
-        } else if (baseURL.toLowerCase().contains("crs=") && myProj.equals("EPSG:4326")) {
+        } else if (baseURL.toLowerCase().contains("crs=") && "EPSG:4326".equals(myProj)) {
             switchLatLon = true;
         }
         String bbox;

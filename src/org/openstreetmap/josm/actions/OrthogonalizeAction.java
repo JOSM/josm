@@ -185,7 +185,7 @@ public final class OrthogonalizeAction extends JosmAction {
             }
         } catch (InvalidUserInputException ex) {
             String msg;
-            if (ex.getMessage().equals("usage")) {
+            if ("usage".equals(ex.getMessage())) {
                 msg = "<h2>" + tr("Usage") + "</h2>" + USAGE;
             } else {
                 msg = ex.getMessage() + "<br><hr><h2>" + tr("Usage") + "</h2>" + USAGE;

@@ -54,9 +54,9 @@ public class OsmHistoryReader {
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (qName.equals("node")
-                    || qName.equals("way")
-                    || qName.equals("relation")) {
+            if ("node".equals(qName)
+                    || "way".equals(qName)
+                    || "relation".equals(qName)) {
                 data.put(currentPrimitive);
             }
         }

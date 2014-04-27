@@ -50,14 +50,20 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
             } else {
                 EastNorth center = nc.getCenter();
                 EastNorth newcenter = nc.getEastNorth(nc.getWidth()/2+nc.getWidth()/5, nc.getHeight()/2+nc.getHeight()/5);
-                if ("left".equals(action))
+                switch(action) {
+                case "left":
                     nc.zoomTo(new EastNorth(2*center.east()-newcenter.east(), center.north()));
-                else if ("right".equals(action))
+                    break;
+                case "right":
                     nc.zoomTo(new EastNorth(newcenter.east(), center.north()));
-                else if ("up".equals(action))
+                    break;
+                case "up":
                     nc.zoomTo(new EastNorth(center.east(), 2*center.north()-newcenter.north()));
-                else if ("down".equals(action))
+                    break;
+                case "down":
                     nc.zoomTo(new EastNorth(center.east(), newcenter.north()));
+                    break;
+                }
             }
         }
     }

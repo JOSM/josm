@@ -354,26 +354,27 @@ public abstract class Condition {
         }
 
         public boolean appliesImpl(Environment e) {
-            if ("closed".equals(id)) {
+            switch(id) {
+            case "closed":
                 if (e.osm instanceof Way && ((Way) e.osm).isClosed())
                     return true;
                 if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
                     return true;
-                return false;
-            } else if ("modified".equals(id)) {
+                break;
+            case "modified":
                 return e.osm.isModified() || e.osm.isNewOrUndeleted();
-            } else if ("new".equals(id)) {
+            case "new":
                 return e.osm.isNew();
-            } else if ("connection".equals(id) && (e.osm instanceof Node)) {
-                return ((Node) e.osm).isConnectionNode();
-            } else if ("tagged".equals(id)) {
+            case "connection":
+                return e.osm instanceof Node && ((Node) e.osm).isConnectionNode();
+            case "tagged":
                 return e.osm.isTagged();
-            } else if ("sameTags".equals(id)) {
+            case "sameTags":
                 return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
-            } else if ("areaStyle".equals(id)) {
+            case "areaStyle":
                 return ElemStyles.hasAreaElemStyle(e.osm, false);
-            } else if ("unconnected".equals(id) && (e.osm instanceof Node)) {
-                return OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
+            case "unconnected":
+                return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
             }
             return false;
         }
