@@ -111,7 +111,7 @@ Build-Date: ${build.tstamp}
             <arg value="${javacc.home}/javacc.jar"/>
             <arg value="javacc"/>
             <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
-            <arg value="-JDK_VERSION=1.6"/>
+            <arg value="-JDK_VERSION=1.7"/>
             <arg value="-GRAMMAR_ENCODING=UTF-8"/>
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </exec>
