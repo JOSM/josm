@@ -26,8 +26,8 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
 
     private ImageIcon iconDecided;
     private ImageIcon iconUndecided;
-    private DefaultComboBoxModel model;
-    private JosmComboBox cbDecisionRenderer;
+    private DefaultComboBoxModel<Object> model;
+    private JosmComboBox<Object> cbDecisionRenderer;
 
     /**
      * Constructs a new {@code MultiValueCellRenderer}.
@@ -36,7 +36,8 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
         setOpaque(true);
         iconDecided = ImageProvider.get("dialogs/conflict", "tagconflictresolved");
         iconUndecided = ImageProvider.get("dialogs/conflict", "tagconflictunresolved");
-        cbDecisionRenderer = new JosmComboBox(model = new DefaultComboBoxModel());
+        model = new DefaultComboBoxModel<>();
+        cbDecisionRenderer = new JosmComboBox<>(model);
     }
 
     protected void renderColors(MultiValueResolutionDecision decision, boolean selected, boolean conflict) {

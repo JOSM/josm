@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
  * of open changesets kept in the {@link ChangesetCache}.
  *
  */
-public class OpenChangesetComboBoxModel extends DefaultComboBoxModel implements ChangesetCacheListener {
+public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> implements ChangesetCacheListener {
     private List<Changeset> changesets;
     private Changeset selectedChangeset = null;
 
@@ -27,6 +27,9 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel implements 
         return null;
     }
 
+    /**
+     * Constructs a new {@code OpenChangesetComboBoxModel}.
+     */
     public OpenChangesetComboBoxModel() {
         this.changesets = new ArrayList<>();
     }
@@ -70,7 +73,7 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel implements 
     /* ComboBoxModel                                                                        */
     /* ------------------------------------------------------------------------------------ */
     @Override
-    public Object getElementAt(int index) {
+    public Changeset getElementAt(int index) {
         return changesets.get(index);
     }
 

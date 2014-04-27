@@ -825,7 +825,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         return this.comparePairListModel;
     }
 
-    public class ComparePairListModel extends AbstractListModel implements ComboBoxModel {
+    public class ComparePairListModel extends AbstractListModel<ComparePairType> implements ComboBoxModel<ComparePairType> {
 
         private int selectedIdx;
         private final List<ComparePairType> compareModes;
@@ -842,7 +842,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public ComparePairType getElementAt(int index) {
             if (index < compareModes.size())
                 return compareModes.get(index);
             throw new IllegalArgumentException(tr("Unexpected value of parameter ''index''. Got {0}.", index));

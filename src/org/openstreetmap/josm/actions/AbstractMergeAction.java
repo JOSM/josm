@@ -57,7 +57,7 @@ public abstract class AbstractMergeAction extends JosmAction {
     }
 
     protected Layer askTargetLayer(List<Layer> targetLayers) {
-        JosmComboBox layerList = new JosmComboBox(targetLayers.toArray());
+        JosmComboBox<Layer> layerList = new JosmComboBox<>(targetLayers.toArray(new Layer[0]));
         layerList.setRenderer(new LayerListCellRenderer());
         layerList.setSelectedIndex(0);
 

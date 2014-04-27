@@ -46,7 +46,7 @@ public class CloseChangesetDialog extends JDialog {
     /** true if the user canceled the dialog */
     private boolean canceled;
     /** the list model */
-    private DefaultListModel model;
+    private DefaultListModel<Changeset> model;
 
     private SideButton btnCloseChangesets;
 
@@ -61,8 +61,8 @@ public class CloseChangesetDialog extends JDialog {
     protected JPanel buildCenterPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
-        model = new DefaultListModel();
-        pnl.add(new JScrollPane(lstOpenChangesets = new JList(model)), BorderLayout.CENTER);
+        model = new DefaultListModel<>();
+        pnl.add(new JScrollPane(lstOpenChangesets = new JList<>(model)), BorderLayout.CENTER);
         lstOpenChangesets.setCellRenderer(new ChangesetCellRenderer());
         return pnl;
     }
@@ -109,6 +109,9 @@ public class CloseChangesetDialog extends JDialog {
         super.setVisible(visible);
     }
 
+    /**
+     * Constructs a new {@code CloseChangesetDialog}.
+     */
     public CloseChangesetDialog() {
         super(JOptionPane.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
         build();
@@ -129,7 +132,7 @@ public class CloseChangesetDialog extends JDialog {
         }
 
         protected void refreshEnabledState() {
-            List list = lstOpenChangesets.getSelectedValuesList();
+            List<Changeset> list = lstOpenChangesets.getSelectedValuesList();
             setEnabled(list != null && !list.isEmpty());
         }
 

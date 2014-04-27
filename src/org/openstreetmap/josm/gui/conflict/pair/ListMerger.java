@@ -239,7 +239,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         JPanel p = new JPanel();
         p.setLayout(new FlowLayout(FlowLayout.LEFT));
         p.add(new JLabel(tr("Compare ")));
-        JosmComboBox cbComparePair = new JosmComboBox(model.getComparePairListModel());
+        JosmComboBox<ComparePairType> cbComparePair = new JosmComboBox<>(model.getComparePairListModel());
         cbComparePair.setRenderer(new ComparePairListCellRenderer());
         p.add(cbComparePair);
         return p;

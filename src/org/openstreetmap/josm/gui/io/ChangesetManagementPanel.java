@@ -52,7 +52,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
 
     private JRadioButton rbUseNew;
     private JRadioButton rbExisting;
-    private JosmComboBox cbOpenChangesets;
+    private JosmComboBox<Changeset> cbOpenChangesets;
     private JCheckBox cbCloseAfterUpload;
     private OpenChangesetComboBoxModel model;
     private ChangesetCommentModel changesetCommentModel;
@@ -104,7 +104,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         gc.weightx = 1.0;
         model = new OpenChangesetComboBoxModel();
         ChangesetCache.getInstance().addChangesetCacheListener(model);
-        cbOpenChangesets = new JosmComboBox(model);
+        cbOpenChangesets = new JosmComboBox<>(model);
         cbOpenChangesets.setToolTipText(tr("Select an open changeset"));
         cbOpenChangesets.setRenderer(new ChangesetCellRenderer());
         cbOpenChangesets.addItemListener(new ChangesetListItemStateListener());
@@ -207,9 +207,8 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     }
 
     /**
-     * Replies true if the user has chosen to close the changeset after the
-     * next upload
-     *
+     * Determines if the user has chosen to close the changeset after the next upload.
+     * @return {@code true} if the user has chosen to close the changeset after the next upload
      */
     public boolean isCloseChangesetAfterUpload() {
         return cbCloseAfterUpload.isSelected();

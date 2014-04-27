@@ -19,7 +19,7 @@
         <all-permissions/>
     </security>
     <resources>
-        <j2se version="1.6+"/>
+        <j2se version="1.7+"/>
         <jar href="josm-tested.jar"/>
         <property name="java.util.Arrays.useLegacyMergeSort" value="true"/>
     </resources>

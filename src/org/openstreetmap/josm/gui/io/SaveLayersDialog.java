@@ -160,7 +160,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
     private static class  LayerListWarningMessagePanel extends JPanel {
         private JLabel lblMessage;
-        private JList lstLayers;
+        private JList<SaveLayerInfo> lstLayers;
 
         protected void build() {
             setLayout(new GridBagLayout());
@@ -172,7 +172,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             gc.weighty = 0.0;
             add(lblMessage = new JLabel(), gc);
             lblMessage.setHorizontalAlignment(JLabel.LEFT);
-            lstLayers = new JList<SaveLayerInfo>();
+            lstLayers = new JList<>();
             lstLayers.setCellRenderer(
                     new DefaultListCellRenderer() {
                         @Override
@@ -196,7 +196,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         public LayerListWarningMessagePanel(String msg, List<SaveLayerInfo> infos) {
             build();
             lblMessage.setText(msg);
-            lstLayers.setListData(infos.toArray());
+            lstLayers.setListData(infos.toArray(new SaveLayerInfo[0]));
         }
     }
 
