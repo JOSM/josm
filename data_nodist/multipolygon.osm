@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<osm version='0.5' generator='JOSM'>
+<osm version='0.6' generator='JOSM'>
   <node id='-1' action='modify' visible='true' lat='84.6886106638523' lon='-176.64410351355278' />
   <node id='-2' action='modify' visible='true' lat='84.40349147298387' lon='-178.57369583802236' />
   <node id='-3' action='modify' visible='true' lat='84.09269616851823' lon='-177.10891383398126' />
