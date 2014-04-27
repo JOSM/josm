@@ -20,7 +20,7 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
 
     protected int index;        // 0-based index
     protected int defaultIndex;
-    protected Object[] entries;
+    protected String[] entries;
     protected String label;
 
     /**
@@ -32,7 +32,7 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
      * @param label a label shown left to the combo-box
      * @param defaultIndex the default index for the combo-box
      */
-    public ListProjectionChoice(String name, String id, Object[] entries, String label, int defaultIndex) {
+    public ListProjectionChoice(String name, String id, String[] entries, String label, int defaultIndex) {
         super(name, id);
         this.entries = Utils.copyArray(entries);
         this.label = label;
@@ -46,14 +46,14 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
      * @param entries the list of display entries for the combo-box
      * @param label a label shown left to the combo-box
      */
-    public ListProjectionChoice(String name, String id, Object[] entries, String label) {
+    public ListProjectionChoice(String name, String id, String[] entries, String label) {
         this(name, id, entries, label, 0);
     }
 
     /**
      * Convert 0-based index to preference value.
      */
-    protected abstract String indexToZone(int index);
+    protected abstract String indexToZone(int idx);
 
     /**
      * Convert preference value to 0-based index.
@@ -66,23 +66,23 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
         if (args != null && args.size() >= 1) {
             zone = args.iterator().next();
         }
-        int index;
+        int idx;
         if (zone == null) {
-            index = defaultIndex;
+            idx = defaultIndex;
         } else {
-            index = zoneToIndex(zone);
-            if (index < 0 || index >= entries.length) {
-                index = defaultIndex;
+            idx = zoneToIndex(zone);
+            if (idx < 0 || idx >= entries.length) {
+                idx = defaultIndex;
             }
         }
-        this.index = index;
+        this.index = idx;
     }
 
     protected class CBPanel extends JPanel {
-        public JosmComboBox prefcb;
+        public JosmComboBox<String> prefcb;
 
-        public CBPanel(Object[] entries, int initialIndex, String label, final ActionListener listener) {
-            prefcb = new JosmComboBox(entries);
+        public CBPanel(String[] entries, int initialIndex, String label, final ActionListener listener) {
+            prefcb = new JosmComboBox<>(entries);
 
             prefcb.setSelectedIndex(initialIndex);
             this.setLayout(new GridBagLayout());
@@ -108,8 +108,7 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
             throw new IllegalArgumentException();
         }
         CBPanel p = (CBPanel) panel;
-        int index = p.prefcb.getSelectedIndex();
-        return Collections.singleton(indexToZone(index));
+        int idx = p.prefcb.getSelectedIndex();
+        return Collections.singleton(indexToZone(idx));
     }
-
 }

@@ -47,8 +47,8 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
     }
 
     /** the combo box used as editor */
-    private JosmComboBox editor;
-    private DefaultComboBoxModel editorModel;
+    private JosmComboBox<Object> editor;
+    private DefaultComboBoxModel<Object> editorModel;
     private CopyOnWriteArrayList<NavigationListener> listeners;
 
     public void addNavigationListeners(NavigationListener listener) {
@@ -77,8 +77,8 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
      * Construct a new {@link MultiValueCellEditor}
      */
     public MultiValueCellEditor() {
-        editorModel = new DefaultComboBoxModel();
-        editor = new JosmComboBox(editorModel) {
+        editorModel = new DefaultComboBoxModel<>();
+        editor = new JosmComboBox<Object>(editorModel) {
             @Override
             public void processKeyEvent(KeyEvent e) {
                 if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -171,7 +171,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
      * The cell renderer used in the edit combo box
      *
      */
-    private static class EditorCellRenderer extends JLabel implements ListCellRenderer {
+    private static class EditorCellRenderer extends JLabel implements ListCellRenderer<Object> {
 
         /**
          * Construct a new {@link EditorCellRenderer}.
@@ -223,7 +223,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         }
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             renderColors(isSelected);
             renderValue(value);
             return this;

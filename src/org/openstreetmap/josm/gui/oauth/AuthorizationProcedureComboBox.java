@@ -12,7 +12,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
-public class AuthorizationProcedureComboBox extends JosmComboBox {
+public class AuthorizationProcedureComboBox extends JosmComboBox<AuthorizationProcedure> {
 
     /**
      * Constructs a new {@code AuthorizationProcedureComboBox}.

@@ -9,7 +9,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
  * @see OsmPrimitiveType#dataValues
  * @since 2923
  */
-public class OsmPrimitiveTypesComboBox extends JosmComboBox {
+public class OsmPrimitiveTypesComboBox extends JosmComboBox<Object> {
 
     /**
      * Constructs a new {@code OsmPrimitiveTypesComboBox}.

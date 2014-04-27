@@ -26,7 +26,7 @@ public class WMSSettingsPanel extends JPanel {
 
     // WMS Settings
     private final JCheckBox autozoomActive;
-    private final JosmComboBox browser;
+    private final JosmComboBox<String> browser;
     private final JCheckBox overlapCheckBox;
     private final JSpinner spinEast;
     private final JSpinner spinNorth;
@@ -45,7 +45,7 @@ public class WMSSettingsPanel extends JPanel {
         add(autozoomActive, GBC.eol().fill(GBC.HORIZONTAL));
 
         // Downloader
-        browser = new JosmComboBox(new String[] {
+        browser = new JosmComboBox<>(new String[] {
                 "webkit-image {0}",
                 "gnome-web-photo --mode=photo --format=png {0} /dev/stdout",
                 "gnome-web-photo-fixed {0}",

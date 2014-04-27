@@ -29,7 +29,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 /**
  * @author guilhem.bonnefille@gmail.com
  */
-public class AutoCompletingComboBox extends JosmComboBox {
+public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem> {
 
     private boolean autocompleteEnabled = true;
 
@@ -42,10 +42,10 @@ public class AutoCompletingComboBox extends JosmComboBox {
      * Inspired by http://www.orbital-computer.de/JComboBox/
      */
     class AutoCompletingComboBoxDocument extends PlainDocument {
-        private JosmComboBox comboBox;
+        private JosmComboBox<AutoCompletionListItem> comboBox;
         private boolean selecting = false;
 
-        public AutoCompletingComboBoxDocument(final JosmComboBox comboBox) {
+        public AutoCompletingComboBoxDocument(final JosmComboBox<AutoCompletionListItem> comboBox) {
             this.comboBox = comboBox;
         }
 
@@ -113,15 +113,15 @@ public class AutoCompletingComboBox extends JosmComboBox {
                     end = getLength();
                 }
             }
-            JTextComponent editor = (JTextComponent)comboBox.getEditor().getEditorComponent();
+            JTextComponent editorComponent = (JTextComponent)comboBox.getEditor().getEditorComponent();
             // save unix system selection (middle mouse paste)
             Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
             if(sysSel != null) {
                 Transferable old = sysSel.getContents(null);
-                editor.select(start, end);
+                editorComponent.select(start, end);
                 sysSel.setContents(old, null);
             } else {
-                editor.select(start, end);
+                editorComponent.select(start, end);
             }
         }
 
@@ -132,7 +132,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
         }
 
         private Object lookupItem(String pattern, boolean match) {
-            ComboBoxModel model = comboBox.getModel();
+            ComboBoxModel<AutoCompletionListItem> model = comboBox.getModel();
             AutoCompletionListItem bestItem = null;
             for (int i = 0, n = model.getSize(); i < n; i++) {
                 AutoCompletionListItem currentItem = (AutoCompletionListItem) model.getElementAt(i);
@@ -152,7 +152,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
      * Creates a <code>AutoCompletingComboBox</code> with a default prototype display value.
      */
     public AutoCompletingComboBox() {
-        this(JosmComboBox.DEFAULT_PROTOTYPE_DISPLAY_VALUE);
+        this("Foo");
     }
 
     /**
@@ -164,9 +164,9 @@ public class AutoCompletingComboBox extends JosmComboBox {
     public AutoCompletingComboBox(String prototype) {
         super(new AutoCompletionListItem(prototype));
         setRenderer(new AutoCompleteListCellRenderer());
-        final JTextComponent editor = (JTextComponent) this.getEditor().getEditorComponent();
-        editor.setDocument(new AutoCompletingComboBoxDocument(this));
-        editor.addFocusListener(
+        final JTextComponent editorComponent = (JTextComponent) this.getEditor().getEditorComponent();
+        editorComponent.setDocument(new AutoCompletingComboBoxDocument(this));
+        editorComponent.addFocusListener(
                 new FocusListener() {
                     @Override
                     public void focusLost(FocusEvent e) {
@@ -177,35 +177,34 @@ public class AutoCompletingComboBox extends JosmComboBox {
                         Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
                         if(sysSel != null) {
                             Transferable old = sysSel.getContents(null);
-                            editor.selectAll();
+                            editorComponent.selectAll();
                             sysSel.setContents(old, null);
                         } else {
-                            editor.selectAll();
+                            editorComponent.selectAll();
                         }
                     }
                 }
         );
     }
 
-    public void setMaxTextLength(int length)
-    {
+    public void setMaxTextLength(int length) {
         this.maxTextLength = length;
     }
 
     /**
-     * Convert the selected item into a String
-     * that can be edited in the editor component.
+     * Convert the selected item into a String that can be edited in the editor component.
      *
-     * @param editor    the editor
+     * @param cbEditor    the editor
      * @param item      excepts AutoCompletionListItem, String and null
      */
-    @Override public void configureEditor(ComboBoxEditor editor, Object item) {
+    @Override
+    public void configureEditor(ComboBoxEditor cbEditor, Object item) {
         if (item == null) {
-            editor.setItem(null);
+            cbEditor.setItem(null);
         } else if (item instanceof String) {
-            editor.setItem(item);
+            cbEditor.setItem(item);
         } else if (item instanceof AutoCompletionListItem) {
-            editor.setItem(((AutoCompletionListItem)item).getValue());
+            cbEditor.setItem(((AutoCompletionListItem)item).getValue());
         } else
             throw new IllegalArgumentException();
     }
@@ -214,7 +213,8 @@ public class AutoCompletingComboBox extends JosmComboBox {
      * Selects a given item in the ComboBox model
      * @param item      excepts AutoCompletionListItem, String and null
      */
-    @Override public void setSelectedItem(Object item) {
+    @Override
+    public void setSelectedItem(Object item) {
         if (item == null) {
             super.setSelectedItem(null);
         } else if (item instanceof AutoCompletionListItem) {
@@ -238,14 +238,13 @@ public class AutoCompletingComboBox extends JosmComboBox {
      * sets the items of the combobox to the given strings
      */
     public void setPossibleItems(Collection<String> elems) {
-        DefaultComboBoxModel model = (DefaultComboBoxModel)this.getModel();
+        DefaultComboBoxModel<AutoCompletionListItem> model = (DefaultComboBoxModel<AutoCompletionListItem>)this.getModel();
         Object oldValue = this.getEditor().getItem(); // Do not use getSelectedItem(); (fix #8013)
         model.removeAllElements();
         for (String elem : elems) {
             model.addElement(new AutoCompletionListItem(elem, AutoCompletionItemPriority.UNKNOWN));
         }
-        // disable autocomplete to prevent unnecessary actions in
-        // AutoCompletingComboBoxDocument#insertString
+        // disable autocomplete to prevent unnecessary actions in AutoCompletingComboBoxDocument#insertString
         autocompleteEnabled = false;
         this.getEditor().setItem(oldValue); // Do not use setSelectedItem(oldValue); (fix #8013)
         autocompleteEnabled = true;
@@ -255,7 +254,7 @@ public class AutoCompletingComboBox extends JosmComboBox {
      * sets the items of the combobox to the given AutoCompletionListItems
      */
     public void setPossibleACItems(Collection<AutoCompletionListItem> elems) {
-        DefaultComboBoxModel model = (DefaultComboBoxModel)this.getModel();
+        DefaultComboBoxModel<AutoCompletionListItem> model = (DefaultComboBoxModel<AutoCompletionListItem>)this.getModel();
         Object oldValue = getSelectedItem();
         Object editorOldValue = this.getEditor().getItem();
         model.removeAllElements();
@@ -265,7 +264,6 @@ public class AutoCompletingComboBox extends JosmComboBox {
         setSelectedItem(oldValue);
         this.getEditor().setItem(editorOldValue);
     }
-
 
     protected boolean isAutocompleteEnabled() {
         return autocompleteEnabled;

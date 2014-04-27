@@ -9,7 +9,7 @@ import javax.swing.DefaultComboBoxModel;
 
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 
-public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<AutoCompletionListItem> {
+public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> implements Iterable<AutoCompletionListItem> {
 
     private int maxSize = 10;
 
@@ -19,15 +19,15 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<Au
         maxSize = size;
     }
 
+    public void addElement(String s) {
+        addElement(new AutoCompletionListItem(s));
+    }
+    
     /**
      * Adds or moves an element to the top of the history
      */
     @Override
-    public void addElement(Object o) {
-        if (o instanceof String) {
-            o = new AutoCompletionListItem((String) o);
-        }
-
+    public void addElement(AutoCompletionListItem o) {
         String newEntry = ((AutoCompletionListItem)o).getValue();
 
         // if history contains this object already, delete it,
@@ -76,7 +76,6 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<Au
                 position++;
                 return (AutoCompletionListItem)getElementAt(position);
             }
-
         };
     }
 

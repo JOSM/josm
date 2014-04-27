@@ -96,7 +96,7 @@ public class PrefJPanel extends JPanel {
     private JCheckBox cbShift = new JCheckBox();
     private JCheckBox cbDefault = new JCheckBox();
     private JCheckBox cbDisable = new JCheckBox();
-    private JosmComboBox tfKey = new JosmComboBox();
+    private JosmComboBox<String> tfKey = new JosmComboBox<>();
 
     JTable shortcutTable = new JTable();
 
@@ -217,7 +217,7 @@ public class PrefJPanel extends JPanel {
         cbAlt.setAction(action);
         cbAlt.setText(ALT); // see above for why no tr()
         tfKey.setAction(action);
-        tfKey.setModel(new DefaultComboBoxModel(keyList.values().toArray()));
+        tfKey.setModel(new DefaultComboBoxModel<>(keyList.values().toArray(new String[0])));
         cbMeta.setAction(action);
         cbMeta.setText(META); // see above for why no tr()
 

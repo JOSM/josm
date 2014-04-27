@@ -43,17 +43,16 @@ public class UTMProjectionChoice extends ListProjectionChoice {
      * Constructs a new {@code UTMProjectionChoice}.
      */
     public UTMProjectionChoice() {
-        super(tr("UTM"), "core:utm", cbEntries.toArray(), tr("UTM Zone"));
+        super(tr("UTM"), "core:utm", cbEntries.toArray(new String[0]), tr("UTM Zone"));
     }
 
     private class UTMPanel extends CBPanel {
 
         public JRadioButton north, south;
 
-        public UTMPanel(Object[] entries, int initialIndex, String label, ActionListener listener) {
+        public UTMPanel(String[] entries, int initialIndex, String label, ActionListener listener) {
             super(entries, initialIndex, label, listener);
 
-            //Hemisphere
             north = new JRadioButton();
             north.setSelected(hemisphere == Hemisphere.North);
             south = new JRadioButton();
@@ -109,17 +108,17 @@ public class UTMProjectionChoice extends ListProjectionChoice {
             throw new IllegalArgumentException();
         }
         UTMPanel p = (UTMPanel) panel;
-        int index = p.prefcb.getSelectedIndex();
-        Hemisphere hemisphere = p.south.isSelected()?Hemisphere.South:Hemisphere.North;
-        return Arrays.asList(indexToZone(index), hemisphere.toString());
+        int idx = p.prefcb.getSelectedIndex();
+        Hemisphere hem = p.south.isSelected()?Hemisphere.South:Hemisphere.North;
+        return Arrays.asList(indexToZone(idx), hem.toString());
     }
 
     @Override
     public String[] allCodes() {
         List<String> projections = new ArrayList<>(60*4);
         for (int zone = 1;zone <= 60; zone++) {
-            for (Hemisphere hemisphere : Hemisphere.values()) {
-                projections.add("EPSG:" + (32600 + zone + (hemisphere == Hemisphere.South?100:0)));
+            for (Hemisphere hem : Hemisphere.values()) {
+                projections.add("EPSG:" + (32600 + zone + (hem == Hemisphere.South?100:0)));
             }
         }
         return projections.toArray(new String[projections.size()]);
@@ -130,11 +129,11 @@ public class UTMProjectionChoice extends ListProjectionChoice {
 
         if (code.startsWith("EPSG:326") || code.startsWith("EPSG:327")) {
             try {
-                Hemisphere hemisphere = code.charAt(7)=='6'?Hemisphere.North:Hemisphere.South;
+                Hemisphere hem = code.charAt(7)=='6'?Hemisphere.North:Hemisphere.South;
                 String zonestring = code.substring(8);
                 int zoneval = Integer.parseInt(zonestring);
                 if(zoneval > 0 && zoneval <= 60)
-                    return Arrays.asList(zonestring, hemisphere.toString());
+                    return Arrays.asList(zonestring, hem.toString());
             } catch(NumberFormatException e) {
                 Main.warn(e);
             }
@@ -145,21 +144,21 @@ public class UTMProjectionChoice extends ListProjectionChoice {
     @Override
     public void setPreferences(Collection<String> args) {
         super.setPreferences(args);
-        Hemisphere hemisphere = DEFAULT_HEMISPHERE;
+        Hemisphere hem = DEFAULT_HEMISPHERE;
 
         if (args != null) {
             String[] array = args.toArray(new String[args.size()]);
 
             if (array.length > 1) {
-                hemisphere = Hemisphere.valueOf(array[1]);
+                hem = Hemisphere.valueOf(array[1]);
             }
         }
-        this.hemisphere = hemisphere;
+        this.hemisphere = hem;
     }
 
     @Override
-    protected String indexToZone(int index) {
-        return Integer.toString(index + 1);
+    protected String indexToZone(int idx) {
+        return Integer.toString(idx + 1);
     }
 
     @Override
