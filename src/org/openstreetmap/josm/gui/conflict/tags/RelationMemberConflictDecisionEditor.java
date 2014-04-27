@@ -11,7 +11,7 @@ import javax.swing.table.TableCellEditor;
 import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
-public class RelationMemberConflictDecisionEditor extends JosmComboBox implements TableCellEditor {
+public class RelationMemberConflictDecisionEditor extends JosmComboBox<RelationMemberConflictDecisionType> implements TableCellEditor {
 
     /**
      * Constructs a new {@code RelationMemberConflictDecisionEditor}.

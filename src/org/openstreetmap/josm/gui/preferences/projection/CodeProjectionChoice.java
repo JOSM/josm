@@ -114,7 +114,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
             filter.setColumns(10);
             filter.getDocument().addDocumentListener(this);
 
-            selectionList = new JList(data.toArray());
+            selectionList = new JList<>(data.toArray(new String[0]));
             selectionList.setModel(model = new ProjectionCodeListModel());
             JScrollPane scroll = new JScrollPane(selectionList);
             scroll.setPreferredSize(new Dimension(200, 214));

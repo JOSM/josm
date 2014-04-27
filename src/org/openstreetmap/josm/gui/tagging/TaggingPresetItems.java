@@ -617,7 +617,7 @@ public final class TaggingPresetItems {
                 originalValue = usage.getFirst();
             } else {
                 // the objects have different values
-                JosmComboBox comboBox = new JosmComboBox(usage.values.toArray());
+                JosmComboBox<String> comboBox = new JosmComboBox<>(usage.values.toArray(new String[0]));
                 comboBox.setEditable(true);
                 comboBox.setEditor(textField);
                 comboBox.getEditor().setItem(DIFFERENT);
@@ -696,7 +696,7 @@ public final class TaggingPresetItems {
 
         private static String getValue(Component comp) {
             if (comp instanceof JosmComboBox) {
-                return ((JosmComboBox) comp).getEditor().getItem().toString();
+                return ((JosmComboBox<?>) comp).getEditor().getItem().toString();
             } else if (comp instanceof JosmTextField) {
                 return ((JosmTextField) comp).getText();
             } else if (comp instanceof JPanel) {
@@ -1173,7 +1173,7 @@ public final class TaggingPresetItems {
     public static class Combo extends ComboMultiSelect {
 
         public boolean editable = true;
-        protected JosmComboBox combo;
+        protected JosmComboBox<PresetListEntry> combo;
         public String length;
 
         /**
@@ -1197,7 +1197,7 @@ public final class TaggingPresetItems {
             }
             lhm.put("", new PresetListEntry(""));
 
-            combo = new JosmComboBox(lhm.values().toArray());
+            combo = new JosmComboBox<>(lhm.values().toArray(new PresetListEntry[0]));
             component = combo;
             combo.setRenderer(getListCellRenderer());
             combo.setEditable(editable);
@@ -1264,9 +1264,9 @@ public final class TaggingPresetItems {
 
         @Override
         protected void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches) {
-            list = new ConcatenatingJList(delimiter, lhm.values().toArray());
+            list = new ConcatenatingJList(delimiter, lhm.values().toArray(new PresetListEntry[0]));
             component = list;
-            ListCellRenderer renderer = getListCellRenderer();
+            ListCellRenderer<PresetListEntry> renderer = getListCellRenderer();
             list.setCellRenderer(renderer);
 
             if (usage.hasUniqueValue() && !usage.unused()) {
@@ -1314,9 +1314,9 @@ public final class TaggingPresetItems {
     * Class that allows list values to be assigned and retrieved as a comma-delimited
     * string (extracted from TaggingPreset)
     */
-    private static class ConcatenatingJList extends JList {
+    private static class ConcatenatingJList extends JList<PresetListEntry> {
         private String delimiter;
-        public ConcatenatingJList(String del, Object[] o) {
+        public ConcatenatingJList(String del, PresetListEntry[] o) {
             super(o);
             delimiter = del;
         }
@@ -1327,11 +1327,11 @@ public final class TaggingPresetItems {
             } else {
                 String s = o.toString();
                 TreeSet<String> parts = new TreeSet<>(Arrays.asList(s.split(delimiter)));
-                ListModel lm = getModel();
+                ListModel<PresetListEntry> lm = getModel();
                 int[] intParts = new int[lm.getSize()];
                 int j = 0;
                 for (int i = 0; i < lm.getSize(); i++) {
-                    if (parts.contains((((PresetListEntry)lm.getElementAt(i)).value))) {
+                    if (parts.contains((lm.getElementAt(i).value))) {
                         intParts[j++]=i;
                     }
                 }
@@ -1344,14 +1344,14 @@ public final class TaggingPresetItems {
         }
 
         public String getSelectedItem() {
-            ListModel lm = getModel();
+            ListModel<PresetListEntry> lm = getModel();
             int[] si = getSelectedIndices();
             StringBuilder builder = new StringBuilder();
             for (int i=0; i<si.length; i++) {
                 if (i>0) {
                     builder.append(delimiter);
                 }
-                builder.append(((PresetListEntry)lm.getElementAt(si[i])).value);
+                builder.append(lm.getElementAt(si[i]).value);
             }
             return builder.toString();
         }

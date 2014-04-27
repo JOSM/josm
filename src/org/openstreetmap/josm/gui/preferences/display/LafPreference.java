@@ -48,7 +48,7 @@ public class LafPreference implements SubPreferenceSetting {
     /**
      * ComboBox with all look and feels.
      */
-    private JosmComboBox lafCombo;
+    private JosmComboBox<LookAndFeelInfo> lafCombo;
     JPanel panel;
     private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
@@ -58,7 +58,7 @@ public class LafPreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        lafCombo = new JosmComboBox(UIManager.getInstalledLookAndFeels());
+        lafCombo = new JosmComboBox<>(UIManager.getInstalledLookAndFeels());
 
         // let's try to load additional LookAndFeels and put them into the list
         if (Main.isPlatformOsx()) {

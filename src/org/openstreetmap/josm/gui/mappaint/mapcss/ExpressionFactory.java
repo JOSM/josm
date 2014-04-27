@@ -153,7 +153,7 @@ public final class ExpressionFactory {
          * Creates a list of values, e.g., for the {@code dashes} property.
          * @see Arrays#asList(Object[])
          */
-        public static List list(Object... args) {
+        public static List<Object> list(Object... args) {
             return Arrays.asList(args);
         }
 

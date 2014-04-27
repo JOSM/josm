@@ -257,14 +257,14 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * Combobox with all projections available
      */
-    private final JosmComboBox projectionCombo = new JosmComboBox(projectionChoices.toArray());
+    private final JosmComboBox<ProjectionChoice> projectionCombo = new JosmComboBox<>(projectionChoices.toArray(new ProjectionChoice[0]));
 
     /**
      * Combobox with all coordinate display possibilities
      */
-    private final JosmComboBox coordinatesCombo = new JosmComboBox(CoordinateFormat.values());
+    private final JosmComboBox<CoordinateFormat> coordinatesCombo = new JosmComboBox<>(CoordinateFormat.values());
 
-    private final JosmComboBox unitsCombo = new JosmComboBox(unitsValuesTr);
+    private final JosmComboBox<String> unitsCombo = new JosmComboBox<>(unitsValuesTr);
 
     /**
      * This variable holds the JPanel with the projection's preferences. If the

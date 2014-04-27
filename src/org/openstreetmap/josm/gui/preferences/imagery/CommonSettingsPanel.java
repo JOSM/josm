@@ -29,7 +29,7 @@ public class CommonSettingsPanel extends JPanel {
     // Common Settings
     private final JButton btnFadeColor;
     private final JSlider fadeAmount = new JSlider(0, 100);
-    private final JosmComboBox sharpen;
+    private final JosmComboBox<String> sharpen;
 
     /**
      * Constructs a new {@code CommonSettingsPanel}.
@@ -64,7 +64,7 @@ public class CommonSettingsPanel extends JPanel {
         add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         add(this.fadeAmount, GBC.eol().fill(GBC.HORIZONTAL));
 
-        this.sharpen = new JosmComboBox(new String[] {
+        this.sharpen = new JosmComboBox<>(new String[] {
                 tr("None"),
                 tr("Soft"),
                 tr("Strong")});
