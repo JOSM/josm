@@ -18,6 +18,7 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import org.openstreetmap.josm.Main;
 
 /**
  * This class controls the user input by listening to mouse and key events.
@@ -43,6 +44,8 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     /** The speed increase per timer interval when a cursor button is clicked */
     private static final double ACCELERATION = 0.10;
+    
+    private static final int MAC_MOUSE_BUTTON3_MASK = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
 
     // start and end point of selection rectangle
     private Point iStartSelectionPoint;
@@ -117,7 +120,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON1 && !(Main.isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK)) {
             iStartSelectionPoint = e.getPoint();
             iEndSelectionPoint = e.getPoint();
         }
@@ -125,7 +128,8 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
+        if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK &&
+                !(Main.isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK)) {
             if (iStartSelectionPoint != null) {
                 iEndSelectionPoint = e.getPoint();
                 iSlippyMapChooser.setSelection(iStartSelectionPoint, iEndSelectionPoint);

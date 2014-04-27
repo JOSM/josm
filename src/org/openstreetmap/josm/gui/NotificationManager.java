@@ -46,7 +46,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Don't use this class directly, but use {@link Notification#show()}.
  *
  * If multiple messages are sent in a short period of time, they are put in
- * a queue and displayed on after the other.
+ * a queue and displayed one after the other.
  *
  * The user can stop the timer (freeze the message) by moving the mouse cursor
  * above the panel. As a visual cue, the background color changes from
@@ -55,7 +55,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 class NotificationManager {
 
     private Timer hideTimer; // started when message is shown, responsible for hiding the message
-    private Timer pauseTimer; // makes sure the is a small pause between to consecutive messages
+    private Timer pauseTimer; // makes sure, there is a small pause between two consecutive messages
     private Timer unfreezeDelayTimer; // tiny delay before resuming the timer when mouse cursor
                                       // is moved off the panel
     private boolean running;
