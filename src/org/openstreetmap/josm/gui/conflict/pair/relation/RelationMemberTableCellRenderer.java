@@ -3,9 +3,6 @@ package org.openstreetmap.josm.gui.conflict.pair.relation;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -14,7 +11,6 @@ import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
@@ -35,38 +31,6 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         setIcon(null);
         setOpaque(true);
         rowNumberBorder = BorderFactory.createEmptyBorder(0,4,0,0);
-    }
-
-    public String buildToolTipText(OsmPrimitive primitive) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<strong>id</strong>=")
-        .append(primitive.getId())
-        .append("<br>");
-        List<String> keyList = new ArrayList<>(primitive.keySet());
-        Collections.sort(keyList);
-        for (int i = 0; i < keyList.size(); i++) {
-            if (i > 0) {
-                sb.append("<br>");
-            }
-            String key = keyList.get(i);
-            sb.append("<strong>")
-            .append(key)
-            .append("</strong>")
-            .append("=");
-            String value = primitive.get(key);
-            while(value.length() != 0) {
-                sb.append(value.substring(0,Math.min(50, value.length())));
-                if (value.length() > 50) {
-                    sb.append("<br>");
-                    value = value.substring(50);
-                } else {
-                    value = "";
-                }
-            }
-        }
-        sb.append("</html>");
-        return sb.toString();
     }
 
     /**
@@ -128,7 +92,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     protected void renderPrimitive(RelationMember member) {
         String displayName = member.getMember().getDisplayName(DefaultNameFormatter.getInstance());
         setText(displayName);
-        setToolTipText(buildToolTipText(member.getMember()));
+        setToolTipText(DefaultNameFormatter.getInstance().buildDefaultToolTip(member.getMember()));
         setIcon(ImageProvider.get(member.getDisplayType()));
     }
 

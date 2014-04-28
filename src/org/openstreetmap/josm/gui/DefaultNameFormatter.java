@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -492,12 +493,16 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @return the tooltip text
      */
     public String buildDefaultToolTip(IPrimitive primitive) {
+        return buildDefaultToolTip(primitive.getId(), primitive.getKeys());
+    }
+    
+    private String buildDefaultToolTip(long id, Map<String, String> tags) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append("<strong>id</strong>=")
-        .append(primitive.getId())
+        .append(id)
         .append("<br>");
-        List<String> keyList = new ArrayList<>(primitive.keySet());
+        List<String> keyList = new ArrayList<>(tags.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
             if (i > 0) {
@@ -508,7 +513,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             .append(key)
             .append("</strong>")
             .append("=");
-            String value = primitive.get(key);
+            String value = tags.get(key);
             while(value.length() != 0) {
                 sb.append(value.substring(0,Math.min(50, value.length())));
                 if (value.length() > 50) {
@@ -665,35 +670,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @return the tooltip text
      */
     public String buildDefaultToolTip(HistoryOsmPrimitive primitive) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<strong>id</strong>=")
-        .append(primitive.getId())
-        .append("<br>");
-        List<String> keyList = new ArrayList<>(primitive.getTags().keySet());
-        Collections.sort(keyList);
-        for (int i = 0; i < keyList.size(); i++) {
-            if (i > 0) {
-                sb.append("<br>");
-            }
-            String key = keyList.get(i);
-            sb.append("<strong>")
-            .append(key)
-            .append("</strong>")
-            .append("=");
-            String value = primitive.get(key);
-            while(value.length() != 0) {
-                sb.append(value.substring(0,Math.min(50, value.length())));
-                if (value.length() > 50) {
-                    sb.append("<br>");
-                    value = value.substring(50);
-                } else {
-                    value = "";
-                }
-            }
-        }
-        sb.append("</html>");
-        return sb.toString();
+        return buildDefaultToolTip(primitive.getId(), primitive.getTags());
     }
 
     public String formatAsHtmlUnorderedList(Collection<? extends OsmPrimitive> primitives) {

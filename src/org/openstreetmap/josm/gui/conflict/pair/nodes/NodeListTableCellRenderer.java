@@ -3,9 +3,6 @@ package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
 import java.awt.Component;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -15,7 +12,6 @@ import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
@@ -37,54 +33,6 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         icon = ImageProvider.get("data", "node");
         rowNumberBorder = BorderFactory.createEmptyBorder(0,4,0,0);
         setOpaque(true);
-    }
-
-    /**
-     * build the tool tip text for an {@link OsmPrimitive}. It consist of the formatted
-     * key/value pairs for this primitive.
-     *
-     * @param primitive
-     * @return the tool tip text
-     */
-    public String buildToolTipText(OsmPrimitive primitive) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("<html>");
-        // show the id
-        //
-        sb.append("<strong>id</strong>=")
-        .append(primitive.getId())
-        .append("<br>");
-
-        // show the key/value-pairs, sorted by key
-        //
-        List<String> keyList = new ArrayList<>(primitive.keySet());
-        Collections.sort(keyList);
-        for (int i = 0; i < keyList.size(); i++) {
-            if (i > 0) {
-                sb.append("<br>");
-            }
-            String key = keyList.get(i);
-            sb.append("<strong>")
-            .append(key)
-            .append("</strong>")
-            .append("=");
-            // make sure long values are split into several rows. Otherwise
-            // the tool tip window can become to wide
-            //
-            String value = primitive.get(key);
-            while(value.length() != 0) {
-                sb.append(value.substring(0,Math.min(50, value.length())));
-                if (value.length() > 50) {
-                    sb.append("<br>");
-                    value = value.substring(50);
-                } else {
-                    value = "";
-                }
-            }
-        }
-        sb.append("</html>");
-        return sb.toString();
     }
 
     /**
@@ -121,7 +69,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
             }
         }
         setText(node.getDisplayName(DefaultNameFormatter.getInstance()));
-        setToolTipText(buildToolTipText(node));
+        setToolTipText(DefaultNameFormatter.getInstance().buildDefaultToolTip(node));
     }
 
     /**
