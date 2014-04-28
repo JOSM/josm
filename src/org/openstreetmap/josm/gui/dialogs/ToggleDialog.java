@@ -178,7 +178,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             setIsButtonHiding(ButtonHidingType.ALWAYS_HIDDEN);
         }
     });
-    
+
     /**
      * The linked preferences class (optional). If set, accessible from the title bar with a dedicated button
      */
@@ -861,7 +861,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         return createLayout(data, scroll, buttons, (Collection<SideButton>[]) null);
     }
 
-    protected Component createLayout(Component data, boolean scroll, Collection<SideButton> firstButtons, Collection<SideButton>... nextButtons) {
+    @SafeVarargs
+    protected final Component createLayout(Component data, boolean scroll, Collection<SideButton> firstButtons, Collection<SideButton>... nextButtons) {
         if (scroll) {
             data = new JScrollPane(data);
         }

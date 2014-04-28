@@ -196,8 +196,15 @@ Build-Date: ${build.tstamp}
         </exec>
     </target>
     <target name="compile" depends="init,javacc">
-        <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="iso-8859-1"/>
-        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
+    	<!-- COTS -->
+        <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" nowarn="on"
+        	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="iso-8859-1">
+            <!-- get rid of "internal proprietary API" warning -->
+        	<compilerarg value="-XDignore.symbol.file"/>
+        </javac>
+        <!-- JMapViewer/JOSM -->
+        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
+        	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
