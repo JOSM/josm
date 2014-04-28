@@ -135,7 +135,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             ComboBoxModel<AutoCompletionListItem> model = comboBox.getModel();
             AutoCompletionListItem bestItem = null;
             for (int i = 0, n = model.getSize(); i < n; i++) {
-                AutoCompletionListItem currentItem = (AutoCompletionListItem) model.getElementAt(i);
+                AutoCompletionListItem currentItem = model.getElementAt(i);
                 if (currentItem.getValue().equals(pattern))
                     return currentItem;
                 if (!match && currentItem.getValue().startsWith(pattern)) {
@@ -223,7 +223,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             String s = (String) item;
             // find the string in the model or create a new item
             for (int i=0; i< getModel().getSize(); i++) {
-                AutoCompletionListItem acItem = (AutoCompletionListItem) getModel().getElementAt(i);
+                AutoCompletionListItem acItem = getModel().getElementAt(i);
                 if (s.equals(acItem.getValue())) {
                     super.setSelectedItem(acItem);
                     return;

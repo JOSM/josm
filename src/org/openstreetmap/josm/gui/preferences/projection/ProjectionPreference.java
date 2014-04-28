@@ -299,7 +299,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         ProjectionChoice pc = setupProjectionCombo();
 
         for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {
-            if (((CoordinateFormat)coordinatesCombo.getItemAt(i)).name().equals(PROP_COORDINATES.get())) {
+            if (coordinatesCombo.getItemAt(i).name().equals(PROP_COORDINATES.get())) {
                 coordinatesCombo.setSelectedIndex(i);
                 break;
             }
@@ -444,7 +444,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private ProjectionChoice setupProjectionCombo() {
         ProjectionChoice pc = null;
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
-            ProjectionChoice pc1 = (ProjectionChoice) projectionCombo.getItemAt(i);
+            ProjectionChoice pc1 = projectionCombo.getItemAt(i);
             pc1.setPreferences(getSubprojectionPreference(pc1));
             if (pc1.getId().equals(PROP_PROJECTION.get())) {
                 projectionCombo.setSelectedIndex(i);

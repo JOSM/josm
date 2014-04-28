@@ -1174,7 +1174,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             WayPoint curWp, long curWpTime, long offset) {
         // Time between the track point and the previous one, 5 sec if first point, i.e. photos take
         // 5 sec before the first track point can be assumed to be take at the starting position
-        long interval = prevWpTime > 0 ? ((long)Math.abs(curWpTime - prevWpTime)) : 5*1000;
+        long interval = prevWpTime > 0 ? (Math.abs(curWpTime - prevWpTime)) : 5*1000;
         int ret = 0;
 
         // i is the index of the timewise last photo that has the same or earlier EXIF time

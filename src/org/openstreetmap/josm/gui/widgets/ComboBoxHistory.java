@@ -28,12 +28,12 @@ public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem
      */
     @Override
     public void addElement(AutoCompletionListItem o) {
-        String newEntry = ((AutoCompletionListItem)o).getValue();
+        String newEntry = o.getValue();
 
         // if history contains this object already, delete it,
         // so that it looks like a move to the top
         for (int i = 0; i < getSize(); i++) {
-            String oldEntry = ((AutoCompletionListItem) getElementAt(i)).getValue();
+            String oldEntry = getElementAt(i).getValue();
             if(oldEntry.equals(newEntry)) {
                 removeElementAt(i);
             }
@@ -74,7 +74,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem
             @Override
             public AutoCompletionListItem next() {
                 position++;
-                return (AutoCompletionListItem)getElementAt(position);
+                return getElementAt(position);
             }
         };
     }

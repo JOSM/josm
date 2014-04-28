@@ -622,10 +622,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 final DefaultListCellRenderer def = new DefaultListCellRenderer();
                 @Override
                 public Component getListCellRendererComponent(JList<? extends ActionDefinition> list,
-                        ActionDefinition value, int index, boolean isSelected, boolean cellHasFocus) {
+                        ActionDefinition action, int index, boolean isSelected, boolean cellHasFocus) {
                     String s;
                     Icon i;
-                    ActionDefinition action = (ActionDefinition)value;
                     if (!action.isSeparator()) {
                         s = action.getDisplayName();
                         i = action.getDisplayIcon();
@@ -645,7 +644,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     boolean sel = selectedList.getSelectedIndex() != -1;
                     if (sel) {
                         actionsTree.clearSelection();
-                        ActionDefinition action = (ActionDefinition) selected.get(selectedList.getSelectedIndex());
+                        ActionDefinition action = selected.get(selectedList.getSelectedIndex());
                         actionParametersModel.setCurrentAction(action);
                         actionParametersPanel.setVisible(actionParametersModel.getRowCount() > 0);
                     }
@@ -863,7 +862,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             Collection<String> t = new LinkedList<>();
             ActionParser parser = new ActionParser(null);
             for (int i = 0; i < selected.size(); ++i) {
-                ActionDefinition action = (ActionDefinition)selected.get(i);
+                ActionDefinition action = selected.get(i);
                 if (action.isSeparator()) {
                     t.add("|");
                 } else {

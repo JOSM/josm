@@ -113,7 +113,7 @@ public class BookmarkSelection implements DownloadSelection {
         bookmarks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                Bookmark b = (Bookmark)bookmarks.getSelectedValue();
+                Bookmark b = bookmarks.getSelectedValue();
                 if (b != null) {
                     gui.boundingBoxChanged(b.getArea(),BookmarkSelection.this);
                 }
@@ -281,7 +281,7 @@ public class BookmarkSelection implements DownloadSelection {
             int idx = bookmarks.locationToIndex(e.getPoint());
             if (idx < 0 || idx >= bookmarks.getModel().getSize())
                 return;
-            Bookmark b = (Bookmark)bookmarks.getModel().getElementAt(idx);
+            Bookmark b = bookmarks.getModel().getElementAt(idx);
             parent.startDownload(b.getArea());
         }
     }
