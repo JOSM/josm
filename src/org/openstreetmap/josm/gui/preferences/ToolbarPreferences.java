@@ -618,8 +618,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
             });
 
-            ListCellRenderer renderer = new DefaultListCellRenderer(){
-                @Override public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            ListCellRenderer<ActionDefinition> renderer = new ListCellRenderer<ActionDefinition>() {
+                final DefaultListCellRenderer def = new DefaultListCellRenderer();
+                @Override
+                public Component getListCellRendererComponent(JList<? extends ActionDefinition> list,
+                        ActionDefinition value, int index, boolean isSelected, boolean cellHasFocus) {
                     String s;
                     Icon i;
                     ActionDefinition action = (ActionDefinition)value;
@@ -630,7 +633,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         i = ImageProvider.get("preferences/separator");
                         s = tr("Separator");
                     }
-                    JLabel l = (JLabel)super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
+                    JLabel l = (JLabel)def.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
                     l.setIcon(i);
                     return l;
                 }
@@ -653,6 +656,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             selectedList.setDragEnabled(true);
             selectedList.setTransferHandler(new TransferHandler() {
                 @Override
+                @SuppressWarnings("unchecked")
                 protected Transferable createTransferable(JComponent c) {
                     List<ActionDefinition> actions = new ArrayList<>();
                     for (ActionDefinition o: ((JList<ActionDefinition>)c).getSelectedValuesList()) {
@@ -685,6 +689,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 public boolean importData(JComponent comp, Transferable t) {
                     try {
                         int dropIndex = selectedList.locationToIndex(selectedList.getMousePosition(true));
+                        @SuppressWarnings("unchecked")
                         List<ActionDefinition> draggedData = (List<ActionDefinition>) t.getTransferData(ACTION_FLAVOR);
 
                         Object leadItem = dropIndex >= 0 ? selected.elementAt(dropIndex) : null;
