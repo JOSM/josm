@@ -201,7 +201,7 @@ public class BookmarkSelection implements DownloadSelection {
             );
             b.setArea(currentArea);
             if (b.getName() != null && !b.getName().isEmpty()) {
-                ((DefaultListModel)bookmarks.getModel()).addElement(b);
+                ((DefaultListModel<BookmarkList.Bookmark>)bookmarks.getModel()).addElement(b);
                 bookmarks.save();
             }
         }

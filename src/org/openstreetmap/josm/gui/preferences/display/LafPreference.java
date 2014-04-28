@@ -83,10 +83,12 @@ public class LafPreference implements SubPreferenceSetting {
             }
         }
 
-        final ListCellRenderer oldRenderer = lafCombo.getRenderer();
-        lafCombo.setRenderer(new DefaultListCellRenderer(){
-            @Override public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                return oldRenderer.getListCellRendererComponent(list, ((LookAndFeelInfo)value).getName(), index, isSelected, cellHasFocus);
+        lafCombo.setRenderer(new ListCellRenderer<LookAndFeelInfo>(){
+            final DefaultListCellRenderer def = new DefaultListCellRenderer();
+            @Override
+            public Component getListCellRendererComponent(JList<? extends LookAndFeelInfo> list, LookAndFeelInfo value, 
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                return def.getListCellRendererComponent(list, value.getName(), index, isSelected, cellHasFocus);
             }
         });
 
