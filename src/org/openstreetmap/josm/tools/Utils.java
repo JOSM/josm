@@ -125,7 +125,10 @@ public final class Utils {
 
     /**
      * Returns the first element from {@code items} which is non-null, or null if all elements are null.
+     * @param items the items to look for
+     * @return first non-null item if there is one
      */
+    @SafeVarargs
     public static <T> T firstNonNull(T... items) {
         for (T i : items) {
             if (i != null) {
@@ -971,24 +974,24 @@ public final class Utils {
             return s;
         }
     }
-    
+
     /**
-     * Fixes URL with illegal characters in the query (and fragment) part by 
+     * Fixes URL with illegal characters in the query (and fragment) part by
      * percent encoding those characters.
-     * 
+     *
      * special characters like &amp; and # are not encoded
-     * 
+     *
      * @param url the URL that should be fixed
      * @return the repaired URL
      */
     public static String fixURLQuery(String url) {
-        if (url.indexOf('?') == -1) 
+        if (url.indexOf('?') == -1)
             return url;
-        
+
         String query = url.substring(url.indexOf('?') + 1);
-        
+
         StringBuilder sb = new StringBuilder(url.substring(0, url.indexOf('?') + 1));
-        
+
         for (int i=0; i<query.length(); i++) {
             String c = query.substring(i, i+1);
             if (URL_CHARS.contains(c)) {
@@ -1003,5 +1006,5 @@ public final class Utils {
         }
         return sb.toString();
     }
-    
+
 }
