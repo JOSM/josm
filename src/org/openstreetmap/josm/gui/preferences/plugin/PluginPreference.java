@@ -566,7 +566,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             if (model.getSize() == 0) return Collections.emptyList();
             List<String> ret = new ArrayList<>(model.getSize());
             for (int i=0; i< model.getSize();i++){
-                ret.add((String)model.get(i));
+                ret.add(model.get(i));
             }
             return ret;
         }

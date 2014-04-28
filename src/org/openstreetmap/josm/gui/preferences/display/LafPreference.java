@@ -77,7 +77,7 @@ public class LafPreference implements SubPreferenceSetting {
 
         String laf = Main.pref.get("laf", Main.platform.getDefaultStyle());
         for (int i = 0; i < lafCombo.getItemCount(); ++i) {
-            if (((LookAndFeelInfo)lafCombo.getItemAt(i)).getClassName().equals(laf)) {
+            if (lafCombo.getItemAt(i).getClassName().equals(laf)) {
                 lafCombo.setSelectedIndex(i);
                 break;
             }

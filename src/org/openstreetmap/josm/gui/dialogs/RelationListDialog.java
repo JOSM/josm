@@ -315,7 +315,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         protected void setCurrentRelationAsSelection() {
-            Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
+            Main.main.getCurrentDataSet().setSelected(displaylist.getSelectedValue());
         }
 
         protected void editCurrentRelation() {

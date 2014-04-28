@@ -202,9 +202,9 @@ public class SelectionListDialog extends ToggleDialog  {
             if (isDoubleClick(e)) {
                 OsmDataLayer layer = Main.main.getEditLayer();
                 if (layer == null) return;
-                layer.data.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
+                layer.data.setSelected(Collections.singleton(model.getElementAt(idx)));
             } else if (highlightEnabled && Main.isDisplayingMapView()) {
-                if (helper.highlightOnly((OsmPrimitive)model.getElementAt(idx))) {
+                if (helper.highlightOnly(model.getElementAt(idx))) {
                     Main.map.mapView.repaint();
                 }
             }
