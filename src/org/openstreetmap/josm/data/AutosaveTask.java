@@ -178,7 +178,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
-    private void savelayer(AutosaveLayerInfo info) throws IOException {
+    private void savelayer(AutosaveLayerInfo info) {
         if (!info.layer.getName().equals(info.layerName)) {
             setLayerFileName(info);
             info.layerName = info.layer.getName();
@@ -262,19 +262,15 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                     AutosaveLayerInfo info = it.next();
                     if (info.layer == osmLayer) {
 
-                        try {
-                            savelayer(info);
-                            File lastFile = info.backupFiles.pollLast();
-                            if (lastFile != null) {
-                                moveToDeletedLayersFolder(lastFile);
+                        savelayer(info);
+                        File lastFile = info.backupFiles.pollLast();
+                        if (lastFile != null) {
+                            moveToDeletedLayersFolder(lastFile);
+                        }
+                        for (File file: info.backupFiles) {
+                            if (file.delete()) {
+                                getPidFile(file).delete();
                             }
-                            for (File file: info.backupFiles) {
-                                if (file.delete()) {
-                                    getPidFile(file).delete();
-                                }
-                            }
-                        } catch (IOException e) {
-                            Main.error(tr("Error while creating backup of removed layer: {0}", e.getMessage()));
                         }
 
                         it.remove();

@@ -42,7 +42,7 @@ public class OsmExporter extends FileExporter {
         exportData(file, layer, false);
     }
 
-    public void exportData(File file, Layer layer, boolean noBackup) throws IOException {
+    public void exportData(File file, Layer layer, boolean noBackup) throws IllegalArgumentException {
         if (layer instanceof OsmDataLayer) {
             save(file, (OsmDataLayer) layer, noBackup);
         } else

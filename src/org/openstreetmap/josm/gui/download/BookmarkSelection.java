@@ -220,7 +220,7 @@ public class BookmarkSelection implements DownloadSelection {
             if (sels == null || sels.isEmpty())
                 return;
             for (Object sel: sels) {
-                ((DefaultListModel)bookmarks.getModel()).removeElement(sel);
+                ((DefaultListModel<Bookmark>)bookmarks.getModel()).removeElement(sel);
             }
             bookmarks.save();
         }
