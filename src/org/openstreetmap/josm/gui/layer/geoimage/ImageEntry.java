@@ -241,12 +241,11 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      */
     @Override
     public String toString() {
-        String result = file.getName()+": "+
+        return file.getName()+": "+
         "pos = "+pos+" | "+
         "exifCoor = "+exifCoor+" | "+
         (tmp == null ? " tmp==null" :
             " [tmp] pos = "+tmp.pos);
-        return result;
     }
 
     /**

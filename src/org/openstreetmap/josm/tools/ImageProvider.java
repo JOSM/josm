@@ -803,9 +803,8 @@ public class ImageProvider {
         if (overlay != null) {
             img = overlay(img, ImageProvider.get("cursor/modifier/" + overlay), OverlayPosition.SOUTHEAST);
         }
-        Cursor c = Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
+        return Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
                 "crosshair".equals(name) ? new Point(10, 10) : new Point(3, 2), "Cursor");
-        return c;
     }
 
     /**

@@ -49,11 +49,10 @@ public final class ExceptionUtil {
      */
     public static String explainOsmApiInitializationException(OsmApiInitializationException e) {
         Main.error(e);
-        String msg = tr(
+        return tr(
                 "<html>Failed to initialize communication with the OSM server {0}.<br>"
                 + "Check the server URL in your preferences and your internet connection.",
                 Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
-        return msg;
     }
 
 
@@ -64,7 +63,7 @@ public final class ExceptionUtil {
      */
     public static String explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
         Main.error(e);
-        String msg = tr(
+        return tr(
                 "<html>Failed to authenticate at the OSM server ''{0}''.<br>"
                 + "You are using OAuth to authenticate but currently there is no<br>"
                 + "OAuth Access Token configured.<br>"
@@ -72,7 +71,6 @@ public final class ExceptionUtil {
                 + "</html>",
                 Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL)
         );
-        return msg;
     }
 
     public static Pair<OsmPrimitive, Collection<OsmPrimitive>> parsePreconditionFailed(String msg) {
@@ -410,16 +408,14 @@ public final class ExceptionUtil {
      * @param e the exception
      */
     public static String explainChangesetClosedException(ChangesetClosedException e) {
-        String msg;
         SimpleDateFormat dateFormat = new SimpleDateFormat();
-        msg = tr(
+        Main.error(e);
+        return tr(
                 "<html>Failed to upload to changeset <strong>{0}</strong><br>"
                 +"because it has already been closed on {1}.",
                 e.getChangesetId(),
                 e.getClosedOn() == null ? "?" : dateFormat.format(e.getClosedOn())
         );
-        Main.error(e);
-        return msg;
     }
 
     /**
@@ -453,10 +449,9 @@ public final class ExceptionUtil {
             // shouldn't happen
         }
 
-        String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''<br>"
+        return tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''<br>"
                 + "for security reasons. This is most likely because you are running<br>"
                 + "in an applet and because you did not load your applet from ''{1}''.", apiUrl, host);
-        return message;
     }
 
     /**
@@ -466,13 +461,10 @@ public final class ExceptionUtil {
      *
      * @param e the exception
      */
-
     public static String explainNestedSocketException(OsmTransferException e) {
-        String apiUrl = e.getUrl();
-        String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
-                + "Please check your internet connection.", apiUrl);
         Main.error(e);
-        return message;
+        return tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
+                + "Please check your internet connection.", e.getUrl());
     }
 
     /**
@@ -482,16 +474,13 @@ public final class ExceptionUtil {
      *
      * @param e the exception
      */
-
     public static String explainNestedIOException(OsmTransferException e) {
         IOException ioe = getNestedException(e, IOException.class);
-        String apiUrl = e.getUrl();
-        String message = tr("<html>Failed to upload data to or download data from<br>" + "''{0}''<br>"
-                + "due to a problem with transferring data.<br>"
-                + "Details (untranslated): {1}</html>", apiUrl, ioe
-                .getMessage());
         Main.error(e);
-        return message;
+        return tr("<html>Failed to upload data to or download data from<br>" + "''{0}''<br>"
+                + "due to a problem with transferring data.<br>"
+                + "Details (untranslated): {1}</html>", e.getUrl(), ioe
+                .getMessage());
     }
 
     /**
@@ -502,11 +491,10 @@ public final class ExceptionUtil {
      */
     public static String explainNestedIllegalDataException(OsmTransferException e) {
         IllegalDataException ide = getNestedException(e, IllegalDataException.class);
-        String message = tr("<html>Failed to download data. "
+        Main.error(e);
+        return tr("<html>Failed to download data. "
                 + "Its format is either unsupported, ill-formed, and/or inconsistent.<br>"
                 + "<br>Details (untranslated): {0}</html>", ide.getMessage());
-        Main.error(e);
-        return message;
     }
 
     /**
@@ -515,13 +503,10 @@ public final class ExceptionUtil {
      *
      * @param e the exception
      */
-
     public static String explainInternalServerError(OsmTransferException e) {
-        String apiUrl = e.getUrl();
-        String message = tr("<html>The OSM server<br>" + "''{0}''<br>" + "reported an internal server error.<br>"
-                + "This is most likely a temporary problem. Please try again later.", apiUrl);
         Main.error(e);
-        return message;
+        return tr("<html>The OSM server<br>" + "''{0}''<br>" + "reported an internal server error.<br>"
+                + "This is most likely a temporary problem. Please try again later.", e.getUrl());
     }
 
     /**
@@ -542,9 +527,8 @@ public final class ExceptionUtil {
         } else if (e.getErrorHeader() != null) {
             message += tr("<br>Error message(untranslated): {0}", e.getErrorHeader());
         }
-        message = "<html>" + message + "</html>";
         Main.error(e);
-        return message;
+        return "<html>" + message + "</html>";
     }
 
     /**
@@ -554,12 +538,10 @@ public final class ExceptionUtil {
      * @param e the exception
      */
     public static String explainBandwidthLimitExceeded(OsmApiException e) {
-        // TODO: Write a proper error message
-        String message = explainGenericOsmApiException(e);
         Main.error(e);
-        return message;
+        // TODO: Write a proper error message
+        return explainGenericOsmApiException(e);
     }
-
 
     /**
      * Explains a {@link OsmApiException} which was thrown because a resource wasn't found.
@@ -573,9 +555,8 @@ public final class ExceptionUtil {
                 + "does not exist on the server or you are using an invalid URL to access<br>"
                 + "it. Please carefully check the server''s address ''{0}'' for typos."
                 , apiUrl);
-        message = "<html>" + message + "</html>";
         Main.error(e);
-        return message;
+        return "<html>" + message + "</html>";
     }
 
     /**
@@ -595,11 +576,10 @@ public final class ExceptionUtil {
             // shouldn't happen
         }
 
-        String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
+        Main.error(e);
+        return tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
                 + "Host name ''{1}'' could not be resolved. <br>"
                 + "Please check the API URL in your preferences and your internet connection.", apiUrl, host);
-        Main.error(e);
-        return message;
     }
 
     /**
@@ -668,15 +648,13 @@ public final class ExceptionUtil {
      * @param e the exception
      */
     public static String explainGoneForUnknownPrimitive(OsmApiException e) {
-        String msg = tr(
+        return tr(
                 "<html>The server reports that an object is deleted.<br>"
                 + "<strong>Uploading failed</strong> if you tried to update or delete this object.<br> "
                 + "<strong>Downloading failed</strong> if you tried to download this object.<br>"
                 + "<br>"
                 + "The error message is:<br>" + "{0}"
                 + "</html>", escapeReservedCharactersHTML(e.getMessage()));
-        return msg;
-
     }
 
     /**
@@ -685,14 +663,12 @@ public final class ExceptionUtil {
      * @param e the {@link Exception}
      */
     public static String explainException(Exception e) {
-        String msg = "";
-        if (e instanceof OsmTransferException) {
-            msg = explainOsmTransferException((OsmTransferException) e);
-        } else {
-            msg = explainGeneric(e);
-        }
         Main.error(e);
-        return msg;
+        if (e instanceof OsmTransferException) {
+            return explainOsmTransferException((OsmTransferException) e);
+        } else {
+            return explainGeneric(e);
+        }
     }
 
     /**

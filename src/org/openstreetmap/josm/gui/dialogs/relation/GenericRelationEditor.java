@@ -1419,7 +1419,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     )
             };
 
-            int ret = HelpAwareOptionPane.showOptionDialog(
+            return HelpAwareOptionPane.showOptionDialog(
                     Main.parent,
                     tr("<html>The relation has been changed.<br>"
                             + "<br>"
@@ -1431,7 +1431,6 @@ public class GenericRelationEditor extends RelationEditor  {
                             options[0], // OK is default,
                             "/Dialog/RelationEditor#DiscardChanges"
             );
-            return ret;
         }
     }
 
