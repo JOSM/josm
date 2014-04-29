@@ -631,12 +631,9 @@ public class OsmApi extends OsmConnection {
                     // we use the output stream, we create an output stream for PUT/POST
                     // even if there is no payload.
                     if (requestBody != null) {
-                        BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8));
-                        try {
+                        try (BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8))) {
                             bwr.write(requestBody);
                             bwr.flush();
-                        } finally {
-                            bwr.close();
                         }
                     }
                     Utils.close(out);
@@ -670,15 +667,12 @@ public class OsmApi extends OsmConnection {
                     // are null. Seems to be the case if the OSM server replies a 401
                     // Unauthorized, see #3887.
                     //
-                    BufferedReader in = new BufferedReader(new InputStreamReader(i, Utils.UTF_8));
                     String s;
-                    try {
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(i, Utils.UTF_8))) {
                         while((s = in.readLine()) != null) {
                             responseBody.append(s);
                             responseBody.append("\n");
                         }
-                    } finally {
-                        in.close();
                     }
                 }
                 String errorHeader = null;

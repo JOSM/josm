@@ -59,16 +59,15 @@ public class GeoJSONWriter {
         StringWriter stringWriter = new StringWriter();
         Map<String, Object> config = new HashMap<>(1);
         config.put(JsonGenerator.PRETTY_PRINTING, pretty);
-        JsonWriter writer = Json.createWriterFactory(config).createWriter(stringWriter);
-        JsonObjectBuilder object = Json.createObjectBuilder()
-                .add("type", "FeatureCollection")
-                .add("generator", "JOSM");
-        appendLayerBounds(layer.data, object);
-        appendLayerFeatures(layer.data, object);
-        writer.writeObject(object.build());
-        String result = stringWriter.toString();
-        writer.close();
-        return result;
+        try (JsonWriter writer = Json.createWriterFactory(config).createWriter(stringWriter)) {
+            JsonObjectBuilder object = Json.createObjectBuilder()
+                    .add("type", "FeatureCollection")
+                    .add("generator", "JOSM");
+            appendLayerBounds(layer.data, object);
+            appendLayerFeatures(layer.data, object);
+            writer.writeObject(object.build());
+            return stringWriter.toString();
+        }
     }
     
     private static class GeometryPrimitiveVisitor implements PrimitiveVisitor {

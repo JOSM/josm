@@ -140,16 +140,13 @@ public class WMSImagery {
         Main.info("GET " + getCapabilitiesUrl.toString());
         URLConnection openConnection = Utils.openHttpConnection(getCapabilitiesUrl);
         InputStream inputStream = openConnection.getInputStream();
-        BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream));
-        String line;
         StringBuilder ba = new StringBuilder();
-        try {
+        try (BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream))) {
+            String line;
             while ((line = br.readLine()) != null) {
                 ba.append(line);
                 ba.append("\n");
             }
-        } finally {
-            br.close();
         }
         String incomingData = ba.toString();
 

@@ -382,18 +382,27 @@ public class RequestProcessor extends Thread {
     }
 
     public static String getHandlerInfoAsJSON(String cmd) {
-        StringWriter w = new StringWriter();
-        PrintWriter r = new PrintWriter(w);
-        RequestHandler handler = null;
-        try {
-            Class<?> c = handlers.get(cmd);
-            if (c==null) return null;
-            handler = handlers.get(cmd).newInstance();
-        } catch (Exception ex) {
-            Main.error(ex);
+        try (StringWriter w = new StringWriter()) {
+            PrintWriter r = new PrintWriter(w);
+            RequestHandler handler = null;
+            try {
+                Class<?> c = handlers.get(cmd);
+                if (c==null) return null;
+                handler = handlers.get(cmd).newInstance();
+            } catch (InstantiationException | IllegalAccessException ex) {
+                Main.error(ex);
+                return null;
+            }
+    
+            printJsonInfo(cmd, r, handler);
+            return w.toString();
+        } catch (IOException e) {
+            Main.error(e);
             return null;
         }
+    }
 
+    private static void printJsonInfo(String cmd, PrintWriter r, RequestHandler handler) {
         r.printf("{ \"request\" : \"%s\"", cmd);
         if (handler.getUsage() != null) {
             r.printf(", \"usage\" : \"%s\"", handler.getUsage());
@@ -437,15 +446,6 @@ public class RequestProcessor extends Thread {
             }
         }
         r.append("]}");
-        try {
-            return w.toString();
-        } finally {
-            try {
-                w.close();
-            } catch (IOException ex) {
-                Main.warn(ex);
-            }
-        }
     }
 
     /**
