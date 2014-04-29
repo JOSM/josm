@@ -622,11 +622,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         g.setFont(defaultFont);
     }
 
-    @Deprecated
-    public void drawLinePattern(Way way, Image pattern) {
-        drawRepeatImage(way, pattern, 0f, 0f, 0f, LineImageAlignment.TOP);
-    }
-
     /**
      * Draw an image along a way repeatedly.
      *
