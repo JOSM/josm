@@ -197,16 +197,24 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile" depends="init,javacc">
     	<!-- COTS -->
-        <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" nowarn="on"
+        <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**" nowarn="on"
         	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="iso-8859-1">
             <!-- get rid of "internal proprietary API" warning -->
         	<compilerarg value="-XDignore.symbol.file"/>
         </javac>
         <!-- JMapViewer/JOSM -->
-        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
+        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
         	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
+            <compilerarg value="-Xlint:dep-ann"/>
+            <compilerarg value="-Xlint:divzero"/>
+            <compilerarg value="-Xlint:empty"/>
+            <compilerarg value="-Xlint:finally"/>
+            <compilerarg value="-Xlint:overrides"/>
+            <!--<compilerarg value="-Xlint:rawtypes"/>-->
+            <compilerarg value="-Xlint:static"/>
+            <compilerarg value="-Xlint:try"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
         <copy todir="build" failonerror="no" includeemptydirs="no">

@@ -27,7 +27,7 @@ public class PreferencesAction extends JosmAction implements Runnable {
 
     private PreferencesAction(String name, String icon, String tooltip,
                               Class<? extends TabPreferenceSetting> tab, Class<? extends SubPreferenceSetting> subTab) {
-        super(name, icon, tooltip, null, false, "preference_" + Utils.<Class>firstNonNull(tab, subTab).getName(), false);
+        super(name, icon, tooltip, null, false, "preference_" + Utils.<Class<?>>firstNonNull(tab, subTab).getName(), false);
         this.tab = tab;
         this.subTab = subTab;
     }
