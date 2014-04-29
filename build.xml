@@ -268,12 +268,12 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="test-compile" depends="test-init,dist">
         <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
-            <compilerarg value="-Xlint:deprecation"/>
-            <compilerarg value="-Xlint:unchecked"/>
+            <compilerarg value="-Xlint:all"/>
+            <compilerarg value="-Xlint:-serial"/>
         </javac>
         <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
-            <compilerarg value="-Xlint:deprecation"/>
-            <compilerarg value="-Xlint:unchecked"/>
+            <compilerarg value="-Xlint:all"/>
+            <compilerarg value="-Xlint:-serial"/>
         </javac>
     </target>
     <target name="test" depends="test-compile">

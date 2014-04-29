@@ -54,7 +54,7 @@ public class MapCSSTagCheckerTest {
         assertThat(check.change.get(2).apply(null), is(new Tag("wetland", "marsh")));
         final Node n1 = new Node();
         n1.put("natural", "marsh");
-        assertTrue(check.matchesPrimitive(n1));
+        assertTrue(check.evaluate(n1));
         assertThat(check.getErrorForPrimitive(n1).getMessage(), is("natural=marsh is deprecated"));
         assertThat(check.getErrorForPrimitive(n1).getSeverity(), is(Severity.WARNING));
         assertThat(check.fixPrimitive(n1).getDescriptionText(), is("Sequence: Fix of natural=marsh is deprecated"));
@@ -62,7 +62,7 @@ public class MapCSSTagCheckerTest {
                 is("{natural=}"));
         final Node n2 = new Node();
         n2.put("natural", "wood");
-        assertFalse(check.matchesPrimitive(n2));
+        assertFalse(check.evaluate(n2));
         assertThat(MapCSSTagChecker.TagCheck.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}"),
                 is("The key is natural and the value is marsh"));
     }

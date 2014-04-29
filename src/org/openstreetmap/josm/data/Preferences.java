@@ -88,18 +88,22 @@ public class Preferences {
     private File cacheDirFile = null;
 
     /**
-     * Map the setting name to the current value of the setting.
+     * Maps the setting name to the current value of the setting.
      * The map must not contain null as key or value. The mapped setting objects
      * must not have a null value.
      */
-    protected final SortedMap<String, Setting> settingsMap = new TreeMap<>();
+    protected final SortedMap<String, Setting<?>> settingsMap = new TreeMap<>();
+
     /**
-     * Map the setting name to the default value of the setting.
+     * Maps the setting name to the default value of the setting.
      * The map must not contain null as key or value. The value of the mapped
      * setting objects can be null.
      */
-    protected final SortedMap<String, Setting> defaultsMap = new TreeMap<>();
-    // maps color keys to human readable color name
+    protected final SortedMap<String, Setting<?>> defaultsMap = new TreeMap<>();
+
+    /**
+     * Maps color keys to human readable color name
+     */
     protected final SortedMap<String, String> colornames = new TreeMap<>();
 
     /**
@@ -260,6 +264,7 @@ public class Preferences {
      * Setting containing a {@link List} of {@code List}s of {@link String} values.
      */
     public static class ListListSetting extends AbstractSetting<List<List<String>>> {
+
         /**
          * Constructs a new {@code ListListSetting} with the given value
          * @param value The setting value
@@ -268,6 +273,7 @@ public class Preferences {
             super(value);
             consistencyTest();
         }
+
         /**
          * Convenience factory method.
          * @param value the value
@@ -283,7 +289,9 @@ public class Preferences {
             }
             return new ListListSetting(null);
         }
-        @Override public boolean equalVal(List<List<String>> otherVal) {
+
+        @Override
+        public boolean equalVal(List<List<String>> otherVal) {
             if (value == null) return otherVal == null;
             if (otherVal == null) return false;
             if (value.size() != otherVal.size()) return false;
@@ -294,7 +302,9 @@ public class Preferences {
             }
             return true;
         }
-        @Override public ListListSetting copy() {
+
+        @Override
+        public ListListSetting copy() {
             if (value == null) return new ListListSetting(null);
 
             List<List<String>> copy = new ArrayList<>(value.size());
@@ -304,6 +314,7 @@ public class Preferences {
             }
             return new ListListSetting(Collections.unmodifiableList(copy));
         }
+
         private void consistencyTest() {
             if (value == null) return;
             if (value.contains(null)) throw new RuntimeException("Error: Null as list element in preference setting");
@@ -311,12 +322,17 @@ public class Preferences {
                 if (lst.contains(null)) throw new RuntimeException("Error: Null as inner list element in preference setting");
             }
         }
-        @Override public void visit(SettingVisitor visitor) {
+
+        @Override
+        public void visit(SettingVisitor visitor) {
             visitor.visit(this);
         }
-        @Override public ListListSetting getNullInstance() {
+
+        @Override
+        public ListListSetting getNullInstance() {
             return new ListListSetting(null);
         }
+
         @Override
         public boolean equals(Object other) {
             if (!(other instanceof ListListSetting)) return false;
@@ -328,6 +344,7 @@ public class Preferences {
      * Setting containing a {@link List} of {@link Map}s of {@link String} values.
      */
     public static class MapListSetting extends AbstractSetting<List<Map<String, String>>> {
+
         /**
          * Constructs a new {@code MapListSetting} with the given value
          * @param value The setting value
@@ -336,7 +353,9 @@ public class Preferences {
             super(value);
             consistencyTest();
         }
-        @Override public boolean equalVal(List<Map<String, String>> otherVal) {
+
+        @Override
+        public boolean equalVal(List<Map<String, String>> otherVal) {
             if (value == null) return otherVal == null;
             if (otherVal == null) return false;
             if (value.size() != otherVal.size()) return false;
@@ -347,6 +366,7 @@ public class Preferences {
             }
             return true;
         }
+
         private static boolean equalMap(Map<String, String> a, Map<String, String> b) {
             if (a == null) return b == null;
             if (b == null) return false;
@@ -356,7 +376,9 @@ public class Preferences {
             }
             return true;
         }
-        @Override public MapListSetting copy() {
+
+        @Override
+        public MapListSetting copy() {
             if (value == null) return new MapListSetting(null);
             List<Map<String, String>> copy = new ArrayList<>(value.size());
             for (Map<String, String> map : value) {
@@ -365,6 +387,7 @@ public class Preferences {
             }
             return new MapListSetting(Collections.unmodifiableList(copy));
         }
+
         private void consistencyTest() {
             if (value == null) return;
             if (value.contains(null)) throw new RuntimeException("Error: Null as list element in preference setting");
@@ -373,12 +396,17 @@ public class Preferences {
                 if (map.values().contains(null)) throw new RuntimeException("Error: Null as map value in preference setting");
             }
         }
-        @Override public void visit(SettingVisitor visitor) {
+
+        @Override
+        public void visit(SettingVisitor visitor) {
             visitor.visit(this);
         }
-        @Override public MapListSetting getNullInstance() {
+
+        @Override
+        public MapListSetting getNullInstance() {
             return new MapListSetting(null);
         }
+
         @Override
         public boolean equals(Object other) {
             if (!(other instanceof MapListSetting)) return false;
@@ -395,8 +423,8 @@ public class Preferences {
 
     public interface PreferenceChangeEvent {
         String getKey();
-        Setting getOldValue();
-        Setting getNewValue();
+        Setting<?> getOldValue();
+        Setting<?> getNewValue();
     }
 
     public interface PreferenceChangedListener {
@@ -405,10 +433,10 @@ public class Preferences {
 
     private static class DefaultPreferenceChangeEvent implements PreferenceChangeEvent {
         private final String key;
-        private final Setting oldValue;
-        private final Setting newValue;
+        private final Setting<?> oldValue;
+        private final Setting<?> newValue;
 
-        public DefaultPreferenceChangeEvent(String key, Setting oldValue, Setting newValue) {
+        public DefaultPreferenceChangeEvent(String key, Setting<?> oldValue, Setting<?> newValue) {
             this.key = key;
             this.oldValue = oldValue;
             this.newValue = newValue;
@@ -418,12 +446,14 @@ public class Preferences {
         public String getKey() {
             return key;
         }
+
         @Override
-        public Setting getOldValue() {
+        public Setting<?> getOldValue() {
             return oldValue;
         }
+
         @Override
-        public Setting getNewValue() {
+        public Setting<?> getNewValue() {
             return newValue;
         }
     }
@@ -436,17 +466,25 @@ public class Preferences {
 
     private final CopyOnWriteArrayList<PreferenceChangedListener> listeners = new CopyOnWriteArrayList<>();
 
+    /**
+     * Adds a new preferences listener.
+     * @param listener The listener to add
+     */
     public void addPreferenceChangeListener(PreferenceChangedListener listener) {
         if (listener != null) {
             listeners.addIfAbsent(listener);
         }
     }
 
+    /**
+     * Removes a preferences listener.
+     * @param listener The listener to remove
+     */
     public void removePreferenceChangeListener(PreferenceChangedListener listener) {
         listeners.remove(listener);
     }
 
-    protected void firePreferenceChanged(String key, Setting oldValue, Setting newValue) {
+    protected void firePreferenceChanged(String key, Setting<?> oldValue, Setting<?> newValue) {
         PreferenceChangeEvent evt = new DefaultPreferenceChangeEvent(key, oldValue, newValue);
         for (PreferenceChangedListener l : listeners) {
             l.preferenceChanged(evt);
@@ -594,7 +632,7 @@ public class Preferences {
 
     public synchronized Map<String, String> getAllPrefix(final String prefix) {
         final Map<String,String> all = new TreeMap<>();
-        for (final Entry<String,Setting> e : settingsMap.entrySet()) {
+        for (final Entry<String,Setting<?>> e : settingsMap.entrySet()) {
             if (e.getKey().startsWith(prefix) && (e.getValue() instanceof StringSetting)) {
                 all.put(e.getKey(), ((StringSetting) e.getValue()).getValue());
             }
@@ -604,7 +642,7 @@ public class Preferences {
 
     public synchronized List<String> getAllPrefixCollectionKeys(final String prefix) {
         final List<String> all = new LinkedList<>();
-        for (Map.Entry<String, Setting> entry : settingsMap.entrySet()) {
+        for (Map.Entry<String, Setting<?>> entry : settingsMap.entrySet()) {
             if (entry.getKey().startsWith(prefix) && entry.getValue() instanceof ListSetting) {
                 all.add(entry.getKey());
             }
@@ -614,7 +652,7 @@ public class Preferences {
 
     public synchronized Map<String, String> getAllColors() {
         final Map<String,String> all = new TreeMap<>();
-        for (final Entry<String,Setting> e : defaultsMap.entrySet()) {
+        for (final Entry<String,Setting<?>> e : defaultsMap.entrySet()) {
             if (e.getKey().startsWith("color.") && e.getValue() instanceof StringSetting) {
                 StringSetting d = (StringSetting) e.getValue();
                 if (d.getValue() != null) {
@@ -622,7 +660,7 @@ public class Preferences {
                 }
             }
         }
-        for (final Entry<String,Setting> e : settingsMap.entrySet()) {
+        for (final Entry<String,Setting<?>> e : settingsMap.entrySet()) {
             if (e.getKey().startsWith("color.") && (e.getValue() instanceof StringSetting)) {
                 all.put(e.getKey().substring(6), ((StringSetting) e.getValue()).getValue());
             }
@@ -642,7 +680,7 @@ public class Preferences {
     public synchronized boolean getBoolean(final String key, final String specName, final boolean def) {
         boolean generic = getBoolean(key, def);
         String skey = key+"."+specName;
-        Setting prop = settingsMap.get(skey);
+        Setting<?> prop = settingsMap.get(skey);
         if (prop instanceof StringSetting)
             return Boolean.parseBoolean(((StringSetting)prop).getValue());
         else
@@ -979,12 +1017,12 @@ public class Preferences {
      * entry will be removed.
      * @return true, if something has changed (i.e. value is different than before)
      */
-    public boolean putSetting(final String key, Setting setting) {
+    public boolean putSetting(final String key, Setting<?> setting) {
         CheckParameterUtil.ensureParameterNotNull(key);
         if (setting != null && setting.getValue() == null)
             throw new IllegalArgumentException("setting argument must not have null value");
-        Setting settingOld;
-        Setting settingCopy = null;
+        Setting<?> settingOld;
+        Setting<?> settingCopy = null;
         synchronized (this) {
             if (setting == null) {
                 settingOld = settingsMap.remove(key);
@@ -1010,7 +1048,7 @@ public class Preferences {
         return true;
     }
 
-    public synchronized Setting getSetting(String key, Setting def) {
+    public synchronized Setting<?> getSetting(String key, Setting<?> def) {
         return getSetting(key, def, Setting.class);
     }
 
@@ -1026,17 +1064,17 @@ public class Preferences {
      *  def otherwise
      */
     @SuppressWarnings("unchecked")
-    public synchronized <T extends Setting> T getSetting(String key, T def, Class<T> klass) {
+    public synchronized <T extends Setting<?>> T getSetting(String key, T def, Class<T> klass) {
         CheckParameterUtil.ensureParameterNotNull(key);
         CheckParameterUtil.ensureParameterNotNull(def);
-        Setting oldDef = defaultsMap.get(key);
+        Setting<?> oldDef = defaultsMap.get(key);
         if (oldDef != null && oldDef.getValue() != null && def.getValue() != null && !def.equals(oldDef)) {
             Main.info("Defaults for " + key + " differ: " + def + " != " + defaultsMap.get(key));
         }
         if (def.getValue() != null || oldDef == null) {
             defaultsMap.put(key, def.copy());
         }
-        Setting prop = settingsMap.get(key);
+        Setting<?> prop = settingsMap.get(key);
         if (klass.isInstance(prop)) {
             return (T) prop;
         } else {
@@ -1236,11 +1274,11 @@ public class Preferences {
         return struct;
     }
 
-    public Map<String, Setting> getAllSettings() {
+    public Map<String, Setting<?>> getAllSettings() {
         return new TreeMap<>(settingsMap);
     }
 
-    public Map<String, Setting> getAllDefaults() {
+    public Map<String, Setting<?>> getAllDefaults() {
         return new TreeMap<>(defaultsMap);
     }
 
@@ -1555,7 +1593,7 @@ public class Preferences {
                 "<preferences xmlns=\""+Main.getXMLBase()+"/preferences-1.0\" version=\""+
                 Version.getInstance().getVersion() + "\">\n");
         SettingToXml toXml = new SettingToXml(b, nopass);
-        for (Entry<String, Setting> e : settingsMap.entrySet()) {
+        for (Entry<String, Setting<?>> e : settingsMap.entrySet()) {
             toXml.setKey(e.getKey());
             e.getValue().visit(toXml);
         }
@@ -1583,13 +1621,13 @@ public class Preferences {
                 "gpxLayer.downloadAlongTrack.distance",        // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.distance
                 "gpxLayer.downloadAlongTrack.area",            // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.area
                 "gpxLayer.downloadAlongTrack.near",            // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.near
-                "validator.tests",                             // 01/2014 - can be removed mid-2014. Replaced by validator.skip
-                "validator.testsBeforeUpload",                 // 01/2014 - can be removed mid-2014. Replaced by validator.skipBeforeUpload
-                "validator.TagChecker.sources",                // 01/2014 - can be removed mid-2014. Replaced by validator.TagChecker.source
-                "validator.TagChecker.usedatafile",            // 01/2014 - can be removed mid-2014. Replaced by validator.TagChecker.source
-                "validator.TagChecker.useignorefile",          // 01/2014 - can be removed mid-2014. Replaced by validator.TagChecker.source
-                "validator.TagChecker.usespellfile",           // 01/2014 - can be removed mid-2014. Replaced by validator.TagChecker.source
-                "validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.sources" // 01/2014 - can be removed mid-2014. Replaced by validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.entries
+                "validator.tests",                             // 01/2014 - can be removed end-2014. Replaced by validator.skip
+                "validator.testsBeforeUpload",                 // 01/2014 - can be removed end-2014. Replaced by validator.skipBeforeUpload
+                "validator.TagChecker.sources",                // 01/2014 - can be removed end-2014. Replaced by validator.TagChecker.source
+                "validator.TagChecker.usedatafile",            // 01/2014 - can be removed end-2014. Replaced by validator.TagChecker.source
+                "validator.TagChecker.useignorefile",          // 01/2014 - can be removed end-2014. Replaced by validator.TagChecker.source
+                "validator.TagChecker.usespellfile",           // 01/2014 - can be removed end-2014. Replaced by validator.TagChecker.source
+                "validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.sources" // 01/2014 - can be removed end-2014. Replaced by validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.entries
         };
         for (String key : obsolete) {
             if (settingsMap.containsKey(key)) {
@@ -1599,9 +1637,8 @@ public class Preferences {
         }
     }
 
-    public static boolean isEqual(Setting a, Setting b) {
+    public static boolean isEqual(Setting<?> a, Setting<?> b) {
         if (a == null) return b == null;
         return a.equals(b);
     }
-
 }

@@ -204,18 +204,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         @Override
         public boolean evaluate(OsmPrimitive primitive) {
-            return matchesPrimitive(primitive);
-        }
-
-        /**
-         * Tests whether the {@link OsmPrimitive} contains a deprecated tag which is represented by this {@code MapCSSTagChecker}.
-         *
-         * @param primitive the primitive to test
-         * @return true when the primitive contains a deprecated tag
-         * @deprecated since it does not handle MapCSS-classes
-         */
-        @Deprecated
-        boolean matchesPrimitive(OsmPrimitive primitive) {
+            // Tests whether the primitive contains a deprecated tag which is represented by this MapCSSTagChecker.
             return whichSelectorMatchesPrimitive(primitive) != null;
         }
 

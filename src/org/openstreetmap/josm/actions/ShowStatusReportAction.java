@@ -85,14 +85,14 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("Java version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + ", " + System.getProperty("java.vm.name"));
         text.append("\n");
         if (Main.platform.getClass() == PlatformHookUnixoid.class) {
-            // Add Java package details for Debian/Ubuntu 
+            // Add Java package details for Debian/Ubuntu
             String packageDetails = ((PlatformHookUnixoid) Main.platform).getJavaPackageDetails();
             if (packageDetails != null) {
                 text.append("Java package: ");
                 text.append(packageDetails);
                 text.append("\n");
             }
-            // Add WebStart package details for Debian/Ubuntu, if run from JNLP 
+            // Add WebStart package details for Debian/Ubuntu, if run from JNLP
             if (Package.getPackage("javax.jnlp") != null) {
                 String webStartDetails = ((PlatformHookUnixoid) Main.platform).getWebStartPackageDetails();
                 if (webStartDetails != null) {
@@ -158,7 +158,7 @@ public final class ShowStatusReportAction extends JosmAction {
         String reportHeader = getReportHeader();
         text.append(reportHeader);
         try {
-            Map<String, Setting> settings = Main.pref.getAllSettings();
+            Map<String, Setting<?>> settings = Main.pref.getAllSettings();
             settings.remove("osm-server.username");
             settings.remove("osm-server.password");
             settings.remove("oauth.access-token.key");
@@ -169,7 +169,7 @@ public final class ShowStatusReportAction extends JosmAction {
                     settings.remove(key);
                 }
             }
-            for (Entry<String, Setting> entry : settings.entrySet()) {
+            for (Entry<String, Setting<?>> entry : settings.entrySet()) {
                 text.append(entry.getKey()).append("=").append(entry.getValue().getValue().toString()).append("\n");
             }
         } catch (Exception x) {
