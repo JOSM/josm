@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,7 +92,6 @@ public class RelationChecker extends Test {
         private Collection<Relation> relations = new LinkedList<>();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void visit(Relation n) {
         LinkedList<Role> allroles = new LinkedList<>();
@@ -200,11 +199,13 @@ public class RelationChecker extends Test {
                         }
                         if (r.memberExpression != null) {
                             Set<OsmPrimitive> notMatching = new HashSet<>();
-                            for (Collection<OsmPrimitive> c : Arrays.asList(new Collection[]{ri.nodes, ri.ways, ri.relations})) {
-                                for (OsmPrimitive p : c) {
-                                    if (p.isUsable() && !r.memberExpression.match(p)) {
-                                        notMatching.add(p);
-                                    }
+                            Collection<OsmPrimitive> allPrimitives = new ArrayList<>();
+                            allPrimitives.addAll(ri.nodes);
+                            allPrimitives.addAll(ri.ways);
+                            allPrimitives.addAll(ri.relations);
+                            for (OsmPrimitive p : allPrimitives) {
+                                if (p.isUsable() && !r.memberExpression.match(p)) {
+                                    notMatching.add(p);
                                 }
                             }
                             if (!notMatching.isEmpty()) {

@@ -38,10 +38,10 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Class<?> Ccom_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
             Object Ocom_apple_eawt_Application = Ccom_apple_eawt_Application.getConstructor((Class[])null).newInstance((Object[])null);
             Class<?> Ccom_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
-            Method MaddApplicationListener = Ccom_apple_eawt_Application.getDeclaredMethod("addApplicationListener", new Class[] { Ccom_apple_eawt_ApplicationListener });
-            Object Oproxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class[] { Ccom_apple_eawt_ApplicationListener }, ivhandler);
+            Method MaddApplicationListener = Ccom_apple_eawt_Application.getDeclaredMethod("addApplicationListener", new Class<?>[] { Ccom_apple_eawt_ApplicationListener });
+            Object Oproxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] { Ccom_apple_eawt_ApplicationListener }, ivhandler);
             MaddApplicationListener.invoke(Ocom_apple_eawt_Application, new Object[] { Oproxy });
-            Method MsetEnabledPreferencesMenu = Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", new Class[] { boolean.class });
+            Method MsetEnabledPreferencesMenu = Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", new Class<?>[] { boolean.class });
             MsetEnabledPreferencesMenu.invoke(Ocom_apple_eawt_Application, new Object[] { Boolean.TRUE });
         } catch (Exception ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
@@ -67,7 +67,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         }
         if (args[0] != null) {
             try {
-                args[0].getClass().getDeclaredMethod("setHandled", new Class[] { boolean.class }).invoke(args[0], new Object[] { handled });
+                args[0].getClass().getDeclaredMethod("setHandled", new Class<?>[] { boolean.class }).invoke(args[0], new Object[] { handled });
             } catch (Exception ex) {
                 Main.warn("Failed to report handled event: " + ex);
             }

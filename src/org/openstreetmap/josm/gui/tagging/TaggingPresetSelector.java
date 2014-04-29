@@ -33,6 +33,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -79,11 +80,11 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     private ActionListener dblClickListener;
     private ActionListener clickListener;
 
-    private static class ResultListCellRenderer extends DefaultListCellRenderer {
+    private static class ResultListCellRenderer implements ListCellRenderer<TaggingPreset> {
+        final DefaultListCellRenderer def = new DefaultListCellRenderer();
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            TaggingPreset tp = (TaggingPreset)value;
+        public Component getListCellRendererComponent(JList<? extends TaggingPreset> list, TaggingPreset tp, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel result = (JLabel) def.getListCellRendererComponent(list, tp, index, isSelected, cellHasFocus);
             result.setText(tp.getName());
             result.setIcon((Icon) tp.getValue(Action.SMALL_ICON));
             return result;
