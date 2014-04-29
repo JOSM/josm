@@ -98,13 +98,9 @@ public class LineElemStyle extends ElemStyle {
         Float width;
         switch (type) {
             case NORMAL:
-            {
-                Float widthOnDefault = getWidth(c_def, WIDTH, null);
-                width = getWidth(c, WIDTH, widthOnDefault);
+                width = getWidth(c, WIDTH, getWidth(c_def, WIDTH, null));
                 break;
-            }
             case CASING:
-            {
                 Float casingWidth = c.get(type.prefix + WIDTH, null, Float.class, true);
                 if (casingWidth == null) {
                     RelativeFloat rel_casingWidth = c.get(type.prefix + WIDTH, null, RelativeFloat.class, true);
@@ -114,14 +110,12 @@ public class LineElemStyle extends ElemStyle {
                 }
                 if (casingWidth == null)
                     return null;
-                Float widthOnDefault = getWidth(c_def, WIDTH, null);
-                width = getWidth(c, WIDTH, widthOnDefault);
+                width = getWidth(c, WIDTH, getWidth(c_def, WIDTH, null));
                 if (width == null) {
                     width = 0f;
                 }
                 width += 2 * casingWidth;
                 break;
-            }
             case LEFT_CASING:
             case RIGHT_CASING:
                 width = getWidth(c, type.prefix + WIDTH, null);

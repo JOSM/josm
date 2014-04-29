@@ -88,18 +88,16 @@ public class ParallelWays {
         }
 
         // Ugly method of ensuring that the offset isn't inverted. I'm sure there is a better and more elegant way, but I'm starting to get sleepy, so I do this for now.
-        {
-            Way refWay = ways.get(refWayIndex);
-            boolean refWayReversed = true;
-            for (int i = 0; i < sortedNodes.size() - 1; i++) {
-                if (sortedNodes.get(i) == refWay.firstNode() && sortedNodes.get(i + 1) == refWay.getNode(1)) {
-                    refWayReversed = false;
-                    break;
-                }
+        Way refWay = ways.get(refWayIndex);
+        boolean refWayReversed = true;
+        for (int i = 0; i < sortedNodes.size() - 1; i++) {
+            if (sortedNodes.get(i) == refWay.firstNode() && sortedNodes.get(i + 1) == refWay.getNode(1)) {
+                refWayReversed = false;
+                break;
             }
-            if (refWayReversed) {
-                Collections.reverse(sortedNodes); // need to keep the orientation of the reference way.
-            }
+        }
+        if (refWayReversed) {
+            Collections.reverse(sortedNodes); // need to keep the orientation of the reference way.
         }
 
         // Initialize the required parameters. (segment normals, etc.)

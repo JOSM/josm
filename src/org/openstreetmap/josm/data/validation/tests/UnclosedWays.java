@@ -56,9 +56,8 @@ public class UnclosedWays extends Test {
          * @param key The OSM key checked
          * @param engMessage The English message
          */
-        @SuppressWarnings("unchecked")
         public UnclosedWaysCheck(int code, String key, String engMessage) {
-            this(code, key, engMessage, Collections.EMPTY_LIST);
+            this(code, key, engMessage, Collections.<String>emptyList());
         }
         
         /**

@@ -126,7 +126,7 @@ public class NTV2GridShiftFile implements Serializable {
         NTV2SubGrid[] subGrid = new NTV2SubGrid[subGridCount];
         in.read(b8);
         in.read(b8);
-        shiftType = new String(b8);
+        shiftType = new String(b8, Utils.UTF_8);
         in.read(b8);
         in.read(b8);
         version = new String(b8);

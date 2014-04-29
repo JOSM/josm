@@ -13,8 +13,10 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1141,7 +1143,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         }
                     }
                 });
-            } catch (Exception e1) {
+            } catch (URISyntaxException | UnsupportedEncodingException e1) {
                 Main.error(e1);
             }
         }

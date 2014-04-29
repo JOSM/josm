@@ -769,7 +769,7 @@ public class ImageProvider {
             parser.setContentHandler(new DefaultHandler() {
                 @Override
                 public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-                    if (localName.equalsIgnoreCase("img")) {
+                    if ("img".equalsIgnoreCase(localName)) {
                         String val = atts.getValue("src");
                         if (val.endsWith(fn))
                             throw new SAXReturnException(val);  // parsing done, quit early

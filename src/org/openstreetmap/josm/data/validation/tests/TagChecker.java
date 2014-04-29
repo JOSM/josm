@@ -70,15 +70,15 @@ public class TagChecker extends Test.TagTest {
     public static final String SPELL_FILE = "resource://data/validator/words.cfg";
 
     /** The spell check key substitutions: the key should be substituted by the value */
-    protected static Map<String, String> spellCheckKeyData;
+    private static Map<String, String> spellCheckKeyData;
     /** The spell check preset values */
-    protected static MultiMap<String, String> presetsValueData;
+    private static MultiMap<String, String> presetsValueData;
     /** The TagChecker data */
-    protected static final List<CheckerData> checkerData = new ArrayList<>();
-    protected static final List<String> ignoreDataStartsWith = new ArrayList<>();
-    protected static final List<String> ignoreDataEquals = new ArrayList<>();
-    protected static final List<String> ignoreDataEndsWith = new ArrayList<>();
-    protected static final List<IgnoreKeyPair> ignoreDataKeyPair = new ArrayList<>();
+    private static final List<CheckerData> checkerData = new ArrayList<>();
+    private static final List<String> ignoreDataStartsWith = new ArrayList<>();
+    private static final List<String> ignoreDataEquals = new ArrayList<>();
+    private static final List<String> ignoreDataEndsWith = new ArrayList<>();
+    private static final List<IgnoreKeyPair> ignoreDataKeyPair = new ArrayList<>();
 
     /** The preferences prefix */
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + TagChecker.class.getSimpleName();

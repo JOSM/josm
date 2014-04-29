@@ -21,7 +21,7 @@ public class OsmChangeReader extends OsmReader {
     /**
      * List of possible actions.
      */
-    public static final String[] ACTIONS = {"create", "modify", "delete"};
+    private static final String[] ACTIONS = {"create", "modify", "delete"};
 
     /**
      * constructor (for private and subclasses use only)

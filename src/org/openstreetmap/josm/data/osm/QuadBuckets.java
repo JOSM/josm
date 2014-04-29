@@ -613,31 +613,4 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         }
         return ret;
     }
-
-    public void printTree() {
-        printTreeRecursive(root, 0);
-    }
-
-    private void printTreeRecursive(QBLevel<T> level, int indent) {
-        if (level == null) {
-            printIndented(indent, "<empty child>");
-            return;
-        }
-        printIndented(indent, level);
-        if (level.hasContent()) {
-            for (T o : level.content) {
-                printIndented(indent, o);
-            }
-        }
-        for (QBLevel<T> child : level.getChildren()) {
-            printTreeRecursive(child, indent + 2);
-        }
-    }
-
-    private void printIndented(int indent, Object msg) {
-        for (int i = 0; i < indent; i++) {
-            System.out.print(' ');
-        }
-        System.out.println(msg);
-    }
 }

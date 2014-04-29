@@ -110,8 +110,8 @@ public class MultiFetchServerObjectReaderTest {
         return ds;
     }
 
-    static public DataSet testDataSet;
-    static public Properties testProperties;
+    private static DataSet testDataSet;
+    private static Properties testProperties;
 
     /**
      * creates the dataset on the server.
@@ -119,7 +119,7 @@ public class MultiFetchServerObjectReaderTest {
      * @param ds the data set
      * @throws OsmTransferException
      */
-    static public void createDataSetOnServer(DataSet ds) throws OsmTransferException {
+    public static void createDataSetOnServer(DataSet ds) throws OsmTransferException {
         logger.info("creating data set on the server ...");
         ArrayList<OsmPrimitive> primitives = new ArrayList<>();
         primitives.addAll(testDataSet.getNodes());
@@ -146,7 +146,7 @@ public class MultiFetchServerObjectReaderTest {
             } finally {
                 is.close();
             }
-        } catch(Exception e){
+        } catch(IOException e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
             fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
         }

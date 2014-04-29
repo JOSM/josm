@@ -71,14 +71,11 @@ public class GeorefImage implements Serializable {
 
         switch (state) {
         case FAILED:
-        {
-            BufferedImage img = createImage();
-            layer.drawErrorTile(img);
-            this.image = img;
+            BufferedImage imgFailed = createImage();
+            layer.drawErrorTile(imgFailed);
+            this.image = imgFailed;
             break;
-        }
         case NOT_IN_CACHE:
-        {
             BufferedImage img = createImage();
             Graphics g = img.getGraphics();
             g.setColor(Color.GRAY);
@@ -92,7 +89,6 @@ public class GeorefImage implements Serializable {
             g.setFont(font);
             this.image = img;
             break;
-        }
         default:
             if (this.image != null) {
                 this.image = layer.sharpenImage(this.image);

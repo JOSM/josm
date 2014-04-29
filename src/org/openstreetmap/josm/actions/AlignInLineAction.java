@@ -51,7 +51,7 @@ public final class AlignInLineAction extends JosmAction {
     /**
      * InvalidSelection exception has to be raised when action can't be perform
      */
-    private class InvalidSelection extends Exception {
+    private static class InvalidSelection extends Exception {
 
         /**
          * Create an InvalidSelection exception with default message

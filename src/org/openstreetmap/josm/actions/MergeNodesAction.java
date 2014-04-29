@@ -103,23 +103,21 @@ public class MergeNodesAction extends JosmAction {
             throw new IllegalArgumentException("empty list");
 
         switch (Main.pref.getInteger("merge-nodes.mode", 0)) {
-        case 0: {
+        case 0:
             Node targetNode = candidates.get(size - 1);
             for (final Node n : candidates) { // pick last one
                 targetNode = n;
             }
             return targetNode;
-        }
-        case 1: {
-            double east = 0, north = 0;
+        case 1:
+            double east1 = 0, north1 = 0;
             for (final Node n : candidates) {
-                east += n.getEastNorth().east();
-                north += n.getEastNorth().north();
+                east1 += n.getEastNorth().east();
+                north1 += n.getEastNorth().north();
             }
 
-            return new Node(new EastNorth(east / size, north / size));
-        }
-        case 2: {
+            return new Node(new EastNorth(east1 / size, north1 / size));
+        case 2:
             final double[] weights = new double[size];
 
             for (int i = 0; i < size; i++) {
@@ -132,17 +130,16 @@ public class MergeNodesAction extends JosmAction {
                 }
             }
 
-            double east = 0, north = 0, weight = 0;
+            double east2 = 0, north2 = 0, weight = 0;
             for (int i = 0; i < size; i++) {
                 final EastNorth en = candidates.get(i).getEastNorth();
                 final double w = weights[i];
-                east += en.east() * w;
-                north += en.north() * w;
+                east2 += en.east() * w;
+                north2 += en.north() * w;
                 weight += w;
             }
 
-            return new Node(new EastNorth(east / weight, north / weight));
-        }
+            return new Node(new EastNorth(east2 / weight, north2 / weight));
         default:
             throw new RuntimeException("unacceptable merge-nodes.mode");
         }

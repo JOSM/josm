@@ -28,6 +28,9 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.Proxy
 public class DefaultProxySelector extends ProxySelector {
 
     private static final List<Proxy> NO_PROXY_LIST = Collections.singletonList(Proxy.NO_PROXY);
+    
+    private static final String IPV4_LOOPBACK = "127.0.0.1";
+    private static final String IPV6_LOOPBACK = "::1";
 
     /**
      * The {@link ProxySelector} provided by the JDK will retrieve proxy information
@@ -141,7 +144,7 @@ public class DefaultProxySelector extends ProxySelector {
         }
         proxyExceptions = new HashSet<>(
             Main.pref.getCollection(ProxyPreferencesPanel.PROXY_EXCEPTIONS,
-                    Arrays.asList(new String[]{"localhost", "127.0.0.1"}))
+                    Arrays.asList(new String[]{"localhost", IPV4_LOOPBACK, IPV6_LOOPBACK}))
         );
     }
 

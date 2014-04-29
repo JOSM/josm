@@ -703,7 +703,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 case NOTHING:
                     break;
                 case CANCEL:
-                {
                     if (yLayer != null) {
                         for (ImageEntry ie : yLayer.data) {
                             ie.tmp = null;
@@ -711,12 +710,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         yLayer.updateBufferAndRepaint();
                     }
                     break;
-                }
                 case AGAIN:
                     actionPerformed(null);
                     break;
                 case DONE:
-                {
                     Main.pref.put("geoimage.timezone", formatTimezone(timezone));
                     Main.pref.put("geoimage.delta", Long.toString(delta * 1000));
                     Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
@@ -750,7 +747,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     yLayer.updateBufferAndRepaint();
 
                     break;
-                }
                 default:
                     throw new IllegalStateException();
                 }

@@ -426,21 +426,19 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
                 return isReferencePointInTime(row);
             case 2:
                 return isCurrentPointInTime(row);
-            case 3: {
-                HistoryOsmPrimitive p = getPrimitive(row);
-                if (p != null && p.getTimestamp() != null)
-                    return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p.getTimestamp());
+            case 3:
+                HistoryOsmPrimitive p3 = getPrimitive(row);
+                if (p3 != null && p3.getTimestamp() != null)
+                    return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p3.getTimestamp());
                 return null;
-            }
-            case 4: {
-                HistoryOsmPrimitive p = getPrimitive(row);
-                if (p != null) {
-                    User user = p.getUser();
+            case 4:
+                HistoryOsmPrimitive p4 = getPrimitive(row);
+                if (p4 != null) {
+                    User user = p4.getUser();
                     if (user != null)
                         return user.getName();
                 }
                 return null;
-            }
             }
             return null;
         }

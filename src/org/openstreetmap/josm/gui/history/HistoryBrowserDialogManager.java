@@ -183,7 +183,6 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
                 } catch (final Exception e) {
                     BugReportExceptionHandler.handleException(e);
                 }
-
             }
         };
         Main.worker.submit(r);
@@ -199,11 +198,9 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
             if (h == null)
                 // reload if the history is not in the cache yet
                 return true;
-            else if (!p.isNew() && h.getByVersion(p.getUniqueId()) == null)
-                // reload if the history object of the selected object is not in the cache yet
-                return true;
             else
-                return false;
+                // reload if the history object of the selected object is not in the cache yet
+                return (!p.isNew() && h.getByVersion(p.getUniqueId()) == null);
         }
     };
 
@@ -214,5 +211,4 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
             return !p.isNew();
         }
     };
-
 }
