@@ -144,19 +144,15 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * Tries to load the data using the given ident from disk. If this fails, data will be updated
      */
     private void loadFromDisk() throws T {
-        if (Main.applet)
+        BufferedInputStream input = null;
+        try {
+            input = new BufferedInputStream(new FileInputStream(path));
+            this.data = new byte[input.available()];
+            input.read(this.data);
+        } catch (IOException e) {
             this.data = updateForce();
-        else {
-            BufferedInputStream input = null;
-            try {
-                input = new BufferedInputStream(new FileInputStream(path));
-                this.data = new byte[input.available()];
-                input.read(this.data);
-            } catch (IOException e) {
-                this.data = updateForce();
-            } finally {
-                Utils.close(input);
-            }
+        } finally {
+            Utils.close(input);
         }
     }
 
@@ -164,8 +160,6 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * Stores the data to disk
      */
     private void saveToDisk() {
-        if (Main.applet)
-            return;
         BufferedOutputStream output = null;
         try {
             output = new BufferedOutputStream(new FileOutputStream(path));

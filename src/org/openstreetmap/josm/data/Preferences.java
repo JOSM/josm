@@ -688,8 +688,6 @@ public class Preferences {
         putInteger("josm.version", Version.getInstance().getVersion());
 
         updateSystemProperties();
-        if(Main.applet)
-            return;
 
         File prefFile = getPreferenceFile();
         File backupFile = new File(prefFile + "_backup");
@@ -723,25 +721,21 @@ public class Preferences {
 
     public void load() throws Exception {
         settingsMap.clear();
-        if (!Main.applet) {
-            File pref = getPreferenceFile();
-            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8));
-            try {
-                validateXML(in);
-                Utils.close(in);
-                in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8));
-                fromXML(in);
-            } finally {
-                Utils.close(in);
-            }
+        File pref = getPreferenceFile();
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8));
+        try {
+            validateXML(in);
+            Utils.close(in);
+            in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8));
+            fromXML(in);
+        } finally {
+            Utils.close(in);
         }
         updateSystemProperties();
         removeObsolete();
     }
 
     public void init(boolean reset){
-        if(Main.applet)
-            return;
         // get the preferences.
         File prefDir = getPreferencesDirFile();
         if (prefDir.exists()) {

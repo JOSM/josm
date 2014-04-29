@@ -136,12 +136,7 @@ public class MirroredInputStream extends InputStream {
                     file = new File(name.substring("file://".length()));
                 }
             } else {
-                if (Main.applet) {
-                    fs = new BufferedInputStream(Utils.openURL(url));
-                    file = new File(url.getFile());
-                } else {
-                    file = checkLocal(url, destDir, maxTime, httpAccept);
-                }
+                file = checkLocal(url, destDir, maxTime, httpAccept);
             }
         } catch (java.net.MalformedURLException e) {
             if (name.startsWith("resource://")) {

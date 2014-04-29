@@ -299,8 +299,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
      * Saves preferences.
      */
     public void savePreferences() {
-        if(Main.applet)
-            return;
         // create a task for downloading plugins if the user has activated, yet not downloaded,
         // new plugins
         //
@@ -506,9 +504,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         settingsFactory.add(new MapPaintPreference.Factory());
         settingsFactory.add(new TaggingPresetPreference.Factory());
         settingsFactory.add(new BackupPreference.Factory());
-        if(!Main.applet) {
-            settingsFactory.add(new PluginPreference.Factory());
-        }
+        settingsFactory.add(new PluginPreference.Factory());
         settingsFactory.add(Main.toolbar);
         settingsFactory.add(new AudioPreference.Factory());
         settingsFactory.add(new ShortcutPreference.Factory());

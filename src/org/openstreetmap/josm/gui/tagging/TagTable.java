@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.tagging;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.applet.Applet;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -633,8 +632,7 @@ public class TagTable extends JTable  {
                 if (doNotStopCellEditingWhenFocused.contains(c))
                     // focus remains on one of the associated components
                     return;
-                else if ((c instanceof Window) ||
-                        (c instanceof Applet && c.getParent() == null)) {
+                else if (c instanceof Window) {
                     if (c == SwingUtilities.getRoot(TagTable.this)) {
                         if (!getCellEditor().stopCellEditing()) {
                             getCellEditor().cancelCellEditing();

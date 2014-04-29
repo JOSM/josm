@@ -670,7 +670,7 @@ public class MainMenu extends JMenuBar {
         vft.setAccelerator(viewportFollowToggleAction.getShortcut().getKeyStroke());
         viewportFollowToggleAction.addButtonModel(vft.getModel());
 
-        if(!Main.applet && Main.platform.canFullscreen()) {
+        if(Main.platform.canFullscreen()) {
             // -- fullscreen toggle action
             fullscreenToggleAction = new FullscreenToggleAction();
             final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(fullscreenToggleAction);
