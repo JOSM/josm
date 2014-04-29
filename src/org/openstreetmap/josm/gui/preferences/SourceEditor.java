@@ -1362,10 +1362,8 @@ public abstract class SourceEditor extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null)
                 return this;
-            SourceEntry se = (SourceEntry) value;
-            JLabel label = (JLabel)super.getTableCellRendererComponent(table,
-                    fromSourceEntry(se), isSelected, hasFocus, row, column);
-            return label;
+            return super.getTableCellRendererComponent(table,
+                    fromSourceEntry((SourceEntry) value), isSelected, hasFocus, row, column);
         }
 
         private String fromSourceEntry(SourceEntry entry) {

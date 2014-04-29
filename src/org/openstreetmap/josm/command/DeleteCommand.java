@@ -476,7 +476,7 @@ public class DeleteCommand extends Command {
                 + "Do you really want to delete?",
                 relations.size(), relations.size(), DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(relations))
                 + "</html>"));
-        boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+        return ConditionalOptionPaneUtil.showConfirmationDialog(
                 "delete_relations",
                 Main.parent,
                 msg,
@@ -484,6 +484,5 @@ public class DeleteCommand extends Command {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.YES_OPTION);
-        return answer;
     }
 }

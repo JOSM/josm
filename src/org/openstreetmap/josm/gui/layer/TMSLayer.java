@@ -120,8 +120,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache_path", defPath);
     }
 
-    /*boolean debug = true;*/
-
     public interface TileLoaderFactory {
         OsmTileLoader makeTileLoader(TileLoaderListener listener);
     }
@@ -169,9 +167,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         needRedraw = true;
         Main.map.repaint(100);
         tileRequestsOutstanding.remove(tile);
-        /*if (debug) {
+        if (Main.isDebugEnabled()) {
             Main.debug("tileLoadingFinished() tile: " + tile + " success: " + success);
-        }*/
+        }
     }
 
     @Override
@@ -638,7 +636,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 }.run();
             }
         }));
-        // end of adding menu commands
 
         final MouseAdapter adapter = new MouseAdapter() {
             @Override
@@ -676,9 +673,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     void zoomChanged() {
-        /*if (debug) {
+        if (Main.isDebugEnabled()) {
             Main.debug("zoomChanged(): " + currentZoomLevel);
-        }*/
+        }
         needRedraw = true;
         JobDispatcher.getInstance().cancelOutstandingJobs();
         tileRequestsOutstanding.clear();
@@ -702,18 +699,18 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      */
     public boolean zoomIncreaseAllowed() {
         boolean zia = currentZoomLevel < this.getMaxZoomLvl();
-        /*if (debug) {
+        if (Main.isDebugEnabled()) {
             Main.debug("zoomIncreaseAllowed(): " + zia + " " + currentZoomLevel + " vs. " + this.getMaxZoomLvl() );
-        }*/
+        }
         return zia;
     }
 
     public boolean increaseZoomLevel() {
         if (zoomIncreaseAllowed()) {
             currentZoomLevel++;
-            /*if (debug) {
+            if (Main.isDebugEnabled()) {
                 Main.debug("increasing zoom level to: " + currentZoomLevel);
-            }*/
+            }
             zoomChanged();
         } else {
             Main.warn("Current zoom level ("+currentZoomLevel+") could not be increased. "+
@@ -749,9 +746,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public boolean decreaseZoomLevel() {
         //int minZoom = this.getMinZoomLvl();
         if (zoomDecreaseAllowed()) {
-            /*if (debug) {
+            if (Main.isDebugEnabled()) {
                 Main.debug("decreasing zoom level to: " + currentZoomLevel);
-            }*/
+            }
             currentZoomLevel--;
             zoomChanged();
         } else {
@@ -846,9 +843,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
         boolean done = ((infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0);
         needRedraw = true;
-        /*if (debug) {
+        if (Main.isDebugEnabled()) {
             Main.debug("imageUpdate() done: " + done + " calling repaint");
-        }*/
+        }
         Main.map.repaint(done ? 0 : 100);
         return !done;
     }
@@ -910,9 +907,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         // to draw.
         if (border != null) {
             target = source.intersection(border);
-            /*if (debug) {
+            if (Main.isDebugEnabled()) {
                 Main.debug("source: " + source + "\nborder: " + border + "\nintersection: " + target);
-            }*/
+            }
         }
 
         // All of the rectangles are in screen coordinates.  We need
@@ -937,9 +934,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         int img_x_end   = img_x_offset + (int)(target.getWidth() * imageXScaling);
         int img_y_end   = img_y_offset + (int)(target.getHeight() * imageYScaling);
 
-        /*if (debug) {
+        if (Main.isDebugEnabled()) {
             Main.debug("drawing image into target rect: " + target);
-        }*/
+        }
         g.drawImage(sourceImg,
                 target.x, target.y,
                 target.x + target.width, target.y + target.height,
@@ -979,9 +976,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         for (Tile tile : ts.allTilesCreate()) {
             Image img = getLoadedTileImage(tile);
             if (img == null || tile.hasError()) {
-                /*if (debug) {
+                if (Main.isDebugEnabled()) {
                     Main.debug("missed tile: " + tile);
-                }*/
+                }
                 missedTiles.add(tile);
                 continue;
             }
@@ -990,7 +987,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 continue;
             }
             drawImageInside(g, img, sourceRect, borderRect);
-        }// end of for
+        }
         return missedTiles;
     }
 
@@ -1016,7 +1013,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 myDrawString(g, "x=" + t.getXtile() / 32 + " y=" + t.getYtile() / 32 + " z=7", p.x + 2, texty);
                 texty += 1 + fontHeight;
             }
-        }*/// end of if draw debug
+        }*/
 
         if (tile == showMetadataTile) {
             String md = tile.toString();
@@ -1398,9 +1395,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
             missedTiles = newlyMissedTiles;
         }
-        /*if (debug && missedTiles.size() > 0) {
+        if (Main.isDebugEnabled() && missedTiles.size() > 0) {
             Main.debug("still missed "+missedTiles.size()+" in the end");
-        }*/
+        }
         g.setColor(Color.red);
         g.setFont(InfoFont);
 
@@ -1426,12 +1423,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (noTilesAtZoom) {
             myDrawString(g, tr("No tiles at this zoom level"), 120, 120);
         }
-        /*if (debug) {
+        if (Main.isDebugEnabled()) {
             myDrawString(g, tr("Current zoom: {0}", currentZoomLevel), 50, 140);
             myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
             myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
             myDrawString(g, tr("Best zoom: {0}", Math.log(getScaleFactor(1))/Math.log(2)/2+1), 50, 185);
-        }*/
+        }
     }
 
     /**
@@ -1439,9 +1436,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * user right-clicks on the map.
      */
     Tile getTileForPixelpos(int px, int py) {
-        /*if (debug) {
+        if (Main.isDebugEnabled()) {
             Main.debug("getTileForPixelpos("+px+", "+py+")");
-        }*/
+        }
         MapView mv = Main.map.mapView;
         Point clicked = new Point(px, py);
         EastNorth topLeft = mv.getEastNorth(0, 0);
@@ -1457,9 +1454,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             Tile t2 = tempCornerTile(t1);
             Rectangle r = new Rectangle(pixelPos(t1));
             r.add(pixelPos(t2));
-            /*if (debug) {
+            if (Main.isDebugEnabled()) {
                 Main.debug("r: " + r + " clicked: " + clicked);
-            }*/
+            }
             if (!r.contains(clicked)) {
                 continue;
             }

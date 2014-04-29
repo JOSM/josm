@@ -501,12 +501,10 @@ public class TagEditorModel extends AbstractTableModel {
             }
         }
 
-        SequenceCommand command = new SequenceCommand(
+        return new SequenceCommand(
                 trn("Remove old keys from up to {0} object", "Remove old keys from up to {0} objects", primitives.size(), primitives.size()),
                 commands
         );
-
-        return command;
     }
 
     /**

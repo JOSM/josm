@@ -319,7 +319,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     protected static FilteredCollection<OsmPrimitive> getAffectedPrimitives(TreePath path) {
         PseudoCommand c = ((CommandListMutableTreeNode) path.getLastPathComponent()).getCommand();
         final OsmDataLayer currentLayer = Main.main.getEditLayer();
-        FilteredCollection<OsmPrimitive> prims = new FilteredCollection<>(
+        return new FilteredCollection<>(
                 c.getParticipatingPrimitives(),
                 new Predicate<OsmPrimitive>(){
                     @Override
@@ -329,7 +329,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
                     }
                 }
         );
-        return prims;
     }
 
     @Override
