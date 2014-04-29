@@ -234,8 +234,7 @@ public final class MapPaintStyles {
             if (entry.url.toLowerCase().endsWith(".xml"))
                 return new XmlStyleSource(entry);
             else {
-                InputStreamReader reader = new InputStreamReader(in, Utils.UTF_8);
-                try {
+                try (InputStreamReader reader = new InputStreamReader(in, Utils.UTF_8)) {
                     WHILE: while (true) {
                         int c = reader.read();
                         switch (c) {
@@ -252,8 +251,6 @@ public final class MapPaintStyles {
                                 return new MapCSSStyleSource(entry);
                         }
                     }
-                } finally {
-                    reader.close();
                 }
                 Main.warn("Could not detect style type. Using default (xml).");
                 return new XmlStyleSource(entry);

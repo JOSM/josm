@@ -146,13 +146,8 @@ public class OsmServerBackreferenceReaderTest {
 
         // load properties
         //
-        try {
-            InputStream is = MultiFetchServerObjectReaderTest.class.getResourceAsStream("/test-functional-env.properties");
-            try {
-                testProperties.load(is);
-            } finally {
-                is.close();
-            }
+        try (InputStream is = MultiFetchServerObjectReaderTest.class.getResourceAsStream("/test-functional-env.properties")) {
+            testProperties.load(is);
         } catch(IOException e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
             fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
@@ -217,18 +212,17 @@ public class OsmServerBackreferenceReaderTest {
         logger.info("uploading test data set ...");
         createDataSetOnServer(testDataSet);
 
-        try {
+        try (
             PrintWriter pw = new PrintWriter(
                     new OutputStreamWriter(new FileOutputStream(dataSetCacheOutputFile), Utils.UTF_8)
-            );
+        )) {
             logger.info(MessageFormat.format("caching test data set in ''{0}'' ...", dataSetCacheOutputFile.toString()));
-            OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion());
-            w.header();
-            w.writeDataSources(testDataSet);
-            w.writeContent(testDataSet);
-            w.footer();
-            w.close();
-            pw.close();
+            try (OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion())) {
+                w.header();
+                w.writeDataSources(testDataSet);
+                w.writeContent(testDataSet);
+                w.footer();
+            }
         } catch(IOException e) {
             fail(MessageFormat.format("failed to open file ''{0}'' for writing", dataSetCacheOutputFile.toString()));
         }
@@ -244,9 +238,9 @@ public class OsmServerBackreferenceReaderTest {
         File f = new File(testProperties.getProperty("test.functional.tempdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
-        FileInputStream fis = new FileInputStream(f);
-        ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
-        fis.close();
+        try (FileInputStream fis = new FileInputStream(f)) {
+            ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+        }
     }
 
     @Test

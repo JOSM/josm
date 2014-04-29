@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
@@ -89,53 +88,51 @@ public class ProjectionRegressionTest {
         }
 
         Random rand = new Random();
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PROJECTION_DATA_FILE), Utils.UTF_8));
-        out.write("# Data for test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java\n");
-        out.write("# Format: 1. Projection code; 2. lat/lon; 3. lat/lon projected -> east/north; 4. east/north (3.) inverse projected\n");
-        for (Entry<String, Projection> e : supportedCodesMap.entrySet()) {
-        }
-        for (String code : codesToWrite) {
-            Projection proj = supportedCodesMap.get(code);
-            Bounds b = proj.getWorldBoundsLatLon();
-            double lat, lon;
-            TestData prev = prevCodesMap.get(proj.toCode());
-            if (prev != null) {
-                lat = prev.ll.lat();
-                lon = prev.ll.lon();
-            } else {
-                lat = b.getMin().lat() + rand.nextDouble() * (b.getMax().lat() - b.getMin().lat());
-                lon = b.getMin().lon() + rand.nextDouble() * (b.getMax().lon() - b.getMin().lon());
+        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(PROJECTION_DATA_FILE), Utils.UTF_8))) {
+            out.write("# Data for test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java\n");
+            out.write("# Format: 1. Projection code; 2. lat/lon; 3. lat/lon projected -> east/north; 4. east/north (3.) inverse projected\n");
+            for (String code : codesToWrite) {
+                Projection proj = supportedCodesMap.get(code);
+                Bounds b = proj.getWorldBoundsLatLon();
+                double lat, lon;
+                TestData prev = prevCodesMap.get(proj.toCode());
+                if (prev != null) {
+                    lat = prev.ll.lat();
+                    lon = prev.ll.lon();
+                } else {
+                    lat = b.getMin().lat() + rand.nextDouble() * (b.getMax().lat() - b.getMin().lat());
+                    lon = b.getMin().lon() + rand.nextDouble() * (b.getMax().lon() - b.getMin().lon());
+                }
+                EastNorth en = proj.latlon2eastNorth(new LatLon(lat, lon));
+                LatLon ll2 = proj.eastNorth2latlon(en);
+                out.write(String.format("%s%n  ll  %s %s%n  en  %s %s%n  ll2 %s %s%n", proj.toCode(), lat, lon, en.east(), en.north(), ll2.lat(), ll2.lon()));
             }
-            EastNorth en = proj.latlon2eastNorth(new LatLon(lat, lon));
-            LatLon ll2 = proj.eastNorth2latlon(en);
-            out.write(String.format("%s%n  ll  %s %s%n  en  %s %s%n  ll2 %s %s%n", proj.toCode(), lat, lon, en.east(), en.north(), ll2.lat(), ll2.lon()));
         }
-        out.close();
     }
 
     private static List<TestData> readData() throws IOException, FileNotFoundException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(PROJECTION_DATA_FILE), Utils.UTF_8));
-        List<TestData> result = new ArrayList<>();
-        String line;
-        while ((line = in.readLine()) != null) {
-            if (line.startsWith("#")) {
-                continue;
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(PROJECTION_DATA_FILE), Utils.UTF_8))) {
+            List<TestData> result = new ArrayList<>();
+            String line;
+            while ((line = in.readLine()) != null) {
+                if (line.startsWith("#")) {
+                    continue;
+                }
+                TestData next = new TestData();
+    
+                Pair<Double,Double> ll = readLine("ll", in.readLine());
+                Pair<Double,Double> en = readLine("en", in.readLine());
+                Pair<Double,Double> ll2 = readLine("ll2", in.readLine());
+    
+                next.code = line;
+                next.ll = new LatLon(ll.a, ll.b);
+                next.en = new EastNorth(en.a, en.b);
+                next.ll2 = new LatLon(ll2.a, ll2.b);
+    
+                result.add(next);
             }
-            TestData next = new TestData();
-
-            Pair<Double,Double> ll = readLine("ll", in.readLine());
-            Pair<Double,Double> en = readLine("en", in.readLine());
-            Pair<Double,Double> ll2 = readLine("ll2", in.readLine());
-
-            next.code = line;
-            next.ll = new LatLon(ll.a, ll.b);
-            next.en = new EastNorth(en.a, en.b);
-            next.ll2 = new LatLon(ll2.a, ll2.b);
-
-            result.add(next);
+            return result;
         }
-        in.close();
-        return result;
     }
 
     private static Pair<Double,Double> readLine(String expectedName, String input) {
