@@ -100,7 +100,7 @@ public class DuplicateRelation extends Test {
     /**
      * Class to store relation members
      */
-    private class RelationMembers {
+    private static class RelationMembers {
         /** List of member objects of the relation */
         private List<RelMember> members;
 

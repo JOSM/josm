@@ -367,13 +367,11 @@ public class Entities {
                             try {
                                 switch (isHexChar) {
                                     case 'X' :
-                                    case 'x' : {
+                                    case 'x' :
                                         entityValue = Integer.parseInt(entityContent.substring(2), 16);
                                         break;
-                                    }
-                                    default : {
+                                    default :
                                         entityValue = Integer.parseInt(entityContent.substring(1), 10);
-                                    }
                                 }
                                 if (entityValue > 0xFFFF) {
                                     entityValue = -1;

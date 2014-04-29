@@ -66,7 +66,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         /**
          * Comparator that compares the number part of the code numerically.
          */
-        private class CodeComparator implements Comparator<String> {
+        private static class CodeComparator implements Comparator<String> {
             final Pattern codePattern = Pattern.compile("([a-zA-Z]+):(\\d+)");
             @Override
             public int compare(String c1, String c2) {

@@ -10,7 +10,9 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -338,7 +340,7 @@ public final class AudioPlayer extends Thread {
                             break;
                     }
                     command.ok(stateChange);
-                } catch (Exception startPlayingException) {
+                } catch (LineUnavailableException | IOException | UnsupportedAudioFileException startPlayingException) {
                     command.failed(startPlayingException); // sets state
                 }
             } catch (Exception e) {

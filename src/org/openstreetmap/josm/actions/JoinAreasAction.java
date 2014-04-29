@@ -1171,11 +1171,11 @@ public class JoinAreasAction extends JosmAction {
             innerWays.clear();
 
             for (RelationMember rm : r.getMembers()) {
-                if (rm.getRole().equalsIgnoreCase("outer")) {
+                if ("outer".equalsIgnoreCase(rm.getRole())) {
                     outerWays.add(rm.getWay());
                     hasKnownOuter |= selectedWays.contains(rm.getWay());
                 }
-                else if (rm.getRole().equalsIgnoreCase("inner")) {
+                else if ("inner".equalsIgnoreCase(rm.getRole())) {
                     innerWays.add(rm.getWay());
                 }
             }
@@ -1327,7 +1327,7 @@ public class JoinAreasAction extends JosmAction {
         }
 
         for (RelationRole r : rels) {
-            if (r.rel.isMultipolygon() && r.role.equalsIgnoreCase("outer")) {
+            if (r.rel.isMultipolygon() && "outer".equalsIgnoreCase(r.role)) {
                 multiouters.add(r);
                 continue;
             }

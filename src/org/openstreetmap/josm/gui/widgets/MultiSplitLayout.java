@@ -1155,7 +1155,7 @@ public class MultiSplitLayout implements LayoutManager {
         if ((st.nextToken() != '=')) {
             throwParseException(st, "expected '=' after " + name);
         }
-        if (name.equalsIgnoreCase("WEIGHT")) {
+        if ("WEIGHT".equalsIgnoreCase(name)) {
             if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                 node.setWeight(st.nval);
             }
@@ -1163,7 +1163,7 @@ public class MultiSplitLayout implements LayoutManager {
                 throwParseException(st, "invalid weight");
             }
         }
-        else if (name.equalsIgnoreCase("NAME")) {
+        else if ("NAME".equalsIgnoreCase(name)) {
             if (st.nextToken() == StreamTokenizer.TT_WORD) {
                 if (node instanceof Leaf) {
                     ((Leaf)node).setName(st.sval);
@@ -1217,7 +1217,7 @@ public class MultiSplitLayout implements LayoutManager {
                 break;
             }
             else if (token == StreamTokenizer.TT_WORD) {
-                if (st.sval.equalsIgnoreCase("WEIGHT")) {
+                if ("WEIGHT".equalsIgnoreCase(st.sval)) {
                     parseAttribute(st.sval, st, parent);
                 }
                 else {

@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Properties;
@@ -43,7 +44,7 @@ public class HistoryBrowserTest extends JFrame {
             } finally {
                 is.close();
             }
-        } catch(Exception e){
+        } catch(IOException e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
             fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
         }

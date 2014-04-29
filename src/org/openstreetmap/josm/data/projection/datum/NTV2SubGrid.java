@@ -185,10 +185,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @return true or false
      */
     private boolean isCoordWithin(double lon, double lat) {
-        if ((lon >= minLon) && (lon < maxLon) && (lat >= minLat) && (lat < maxLat))
-            return true;
-        else
-            return false;
+        return (lon >= minLon) && (lon < maxLon) && (lat >= minLat) && (lat < maxLat);
     }
 
     /**

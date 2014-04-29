@@ -1339,7 +1339,7 @@ public abstract class SourceEditor extends JPanel {
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 if (canceled)
                     // ignore the exception and return
                     return;

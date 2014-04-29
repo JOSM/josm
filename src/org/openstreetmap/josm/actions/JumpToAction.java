@@ -148,7 +148,7 @@ public class JumpToAction extends JosmAction {
                 String[] args = urlText.substring(urlText.indexOf('?')+1).split("&");
                 for (String arg : args) {
                     int eq = arg.indexOf('=');
-                    if (eq == -1 || !arg.substring(0, eq).equalsIgnoreCase("zoom")) continue;
+                    if (eq == -1 || !"zoom".equalsIgnoreCase(arg.substring(0, eq))) continue;
     
                     zoomLvl = Integer.parseInt(arg.substring(eq + 1));
                     break;

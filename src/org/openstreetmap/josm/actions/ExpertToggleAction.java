@@ -28,29 +28,25 @@ public class ExpertToggleAction extends ToggleAction {
     private static final ExpertToggleAction INSTANCE = new ExpertToggleAction();
 
     private static synchronized void fireExpertModeChanged(boolean isExpert) {
-        {
-            Iterator<WeakReference<ExpertModeChangeListener>> it = listeners.iterator();
-            while (it.hasNext()) {
-                WeakReference<ExpertModeChangeListener> wr = it.next();
-                ExpertModeChangeListener listener = wr.get();
-                if (listener == null) {
-                    it.remove();
-                    continue;
-                }
-                listener.expertChanged(isExpert);
+        Iterator<WeakReference<ExpertModeChangeListener>> it1 = listeners.iterator();
+        while (it1.hasNext()) {
+            WeakReference<ExpertModeChangeListener> wr = it1.next();
+            ExpertModeChangeListener listener = wr.get();
+            if (listener == null) {
+                it1.remove();
+                continue;
             }
+            listener.expertChanged(isExpert);
         }
-        {
-            Iterator<WeakReference<Component>> it = visibilityToggleListeners.iterator();
-            while (it.hasNext()) {
-                WeakReference<Component> wr = it.next();
-                Component c = wr.get();
-                if (c == null) {
-                    it.remove();
-                    continue;
-                }
-                c.setVisible(isExpert);
+        Iterator<WeakReference<Component>> it2 = visibilityToggleListeners.iterator();
+        while (it2.hasNext()) {
+            WeakReference<Component> wr = it2.next();
+            Component c = wr.get();
+            if (c == null) {
+                it2.remove();
+                continue;
             }
+            c.setVisible(isExpert);
         }
     }
 

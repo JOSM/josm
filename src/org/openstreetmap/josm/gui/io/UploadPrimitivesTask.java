@@ -296,7 +296,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
             if (strategy.isCloseChangesetAfterUpload() && changeset != null && !changeset.isNew() && changeset.isOpen()) {
                 OsmApi.getOsmApi().closeChangeset(changeset, progressMonitor.createSubTaskMonitor(0, false));
             }
-        } catch (Exception e) {
+        } catch (OsmTransferException e) {
             if (uploadCanceled) {
                 Main.info(tr("Ignoring caught exception because upload is canceled. Exception is: {0}", e.toString()));
             } else {

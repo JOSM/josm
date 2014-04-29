@@ -153,7 +153,7 @@ public class OsmServerBackreferenceReaderTest {
             } finally {
                 is.close();
             }
-        } catch(Exception e){
+        } catch(IOException e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
             fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
         }
