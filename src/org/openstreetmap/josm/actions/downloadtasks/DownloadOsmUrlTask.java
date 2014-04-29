@@ -23,7 +23,7 @@ public class DownloadOsmUrlTask extends DownloadOsmTask {
     public String[] getPatterns() {
         return new String[]{
                 "https?://www\\.(osm|openstreetmap)\\.org/\\?lat=.*&lon=.*",
-                "https?://www\\.(osm|openstreetmap)\\.org/#map=\\p{Digit}+/.*/.*"};
+                "https?://www\\.(osm|openstreetmap)\\.org/(.*)?#map=\\p{Digit}+/.*/.*"};
     }
 
     @Override
