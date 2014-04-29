@@ -41,7 +41,7 @@ public class ExportProfileAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent ae) {
         List<String> keys = new ArrayList<>();
-        Map<String, Setting> all = prefs.getAllSettings();
+        Map<String, Setting<?>> all = prefs.getAllSettings();
         for (String key: all.keySet()) {
             if (key.matches(prefPattern)) {
                 keys.add(key);

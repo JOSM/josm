@@ -165,16 +165,16 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
 
     private void readPreferences(Preferences tmpPrefs) {
-        Map<String, Setting> loaded;
-        Map<String, Setting> orig = Main.pref.getAllSettings();
-        Map<String, Setting> defaults = tmpPrefs.getAllDefaults();
+        Map<String, Setting<?>> loaded;
+        Map<String, Setting<?>> orig = Main.pref.getAllSettings();
+        Map<String, Setting<?>> defaults = tmpPrefs.getAllDefaults();
         orig.remove("osm-server.password");
         defaults.remove("osm-server.password");
         if (tmpPrefs != Main.pref) {
             loaded = tmpPrefs.getAllSettings();
             // plugins preference keys may be changed directly later, after plugins are downloaded
             // so we do not want to show it in the table as "changed" now
-            Setting pluginSetting = orig.get("plugins");
+            Setting<?> pluginSetting = orig.get("plugins");
             if (pluginSetting!=null) {
                 loaded.put("plugins", pluginSetting);
             }
@@ -275,12 +275,12 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         }
     };
 
-    private List<PrefEntry> prepareData(Map<String, Setting> loaded, Map<String, Setting> orig, Map<String, Setting> defaults) {
+    private List<PrefEntry> prepareData(Map<String, Setting<?>> loaded, Map<String, Setting<?>> orig, Map<String, Setting<?>> defaults) {
         List<PrefEntry> data = new ArrayList<>();
-        for (Entry<String, Setting> e : loaded.entrySet()) {
-            Setting value = e.getValue();
-            Setting old = orig.get(e.getKey());
-            Setting def = defaults.get(e.getKey());
+        for (Entry<String, Setting<?>> e : loaded.entrySet()) {
+            Setting<?> value = e.getValue();
+            Setting<?> old = orig.get(e.getKey());
+            Setting<?> def = defaults.get(e.getKey());
             if (def == null) {
                 def = value.getNullInstance();
             }
@@ -291,12 +291,12 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             }
             data.add(en);
         }
-        for (Entry<String, Setting> e : defaults.entrySet()) {
+        for (Entry<String, Setting<?>> e : defaults.entrySet()) {
             if (!loaded.containsKey(e.getKey())) {
                 PrefEntry en = new PrefEntry(e.getKey(), e.getValue(), e.getValue(), true);
                 // after changes we have default value. So, value is changed if old value is not default
-                Setting old = orig.get(e.getKey());
-                if ( old!=null ) {
+                Setting<?> old = orig.get(e.getKey());
+                if (old != null) {
                     en.markAsChanged();
                 }
                 data.add(en);
@@ -325,7 +325,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         menu.add(getProfileMenu());
         menu.addSeparator();
         menu.add(new AbstractAction(tr("Reset preferences")) {
-            @Override public void actionPerformed(ActionEvent ae) {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
                 if (!GuiHelper.warnUser(tr("Reset preferences"),
                         "<html>"+
                         tr("You are about to clear all preferences to their default values<br />"+
@@ -411,7 +412,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         displayData.clear();
         for (PrefEntry e : allData) {
             String prefKey = e.getKey();
-            Setting valueSetting = e.getValue();
+            Setting<?> valueSetting = e.getValue();
             String prefValue = valueSetting.getValue() == null ? "" : valueSetting.getValue().toString();
 
             String[] input = txtFilter.getText().split("\\s+");

@@ -59,11 +59,11 @@ import org.w3c.dom.NodeList;
  * can be used to modify preferences, store/delete files in .josm folders etc
  */
 public final class CustomConfigurator {
-    
+
     private CustomConfigurator() {
         // Hide default constructor for utils classes
     }
-    
+
     private static StringBuilder summary = new StringBuilder();
 
     public static void log(String fmt, Object... vars) {
@@ -215,7 +215,7 @@ public final class CustomConfigurator {
      */
     public static void exportPreferencesKeysByPatternToFile(String fileName, boolean append, String pattern) {
         List<String> keySet = new ArrayList<>();
-        Map<String, Setting> allSettings = Main.pref.getAllSettings();
+        Map<String, Setting<?>> allSettings = Main.pref.getAllSettings();
         for (String key: allSettings.keySet()) {
             if (key.matches(pattern)) keySet.add(key);
         }
@@ -750,13 +750,13 @@ public final class CustomConfigurator {
         }
 
         private static void replacePreferences(Preferences fragment, Preferences mainpref) {
-            for (Entry<String, Setting> entry: fragment.settingsMap.entrySet()) {
+            for (Entry<String, Setting<?>> entry: fragment.settingsMap.entrySet()) {
                 mainpref.putSetting(entry.getKey(), entry.getValue());
             }
         }
 
         private static void appendPreferences(Preferences fragment, Preferences mainpref) {
-            for (Entry<String, Setting> entry: fragment.settingsMap.entrySet()) {
+            for (Entry<String, Setting<?>> entry: fragment.settingsMap.entrySet()) {
                 String key = entry.getKey();
                 if (entry.getValue() instanceof StringSetting) {
                     mainpref.putSetting(key, entry.getValue());
@@ -806,7 +806,7 @@ public final class CustomConfigurator {
         */
         private static void deletePreferenceValues(Preferences fragment, Preferences mainpref) {
 
-            for (Entry<String, Setting> entry : fragment.settingsMap.entrySet()) {
+            for (Entry<String, Setting<?>> entry : fragment.settingsMap.entrySet()) {
                 String key = entry.getKey();
                 if (entry.getValue() instanceof StringSetting) {
                     StringSetting sSetting = (StringSetting) entry.getValue();
@@ -866,8 +866,8 @@ public final class CustomConfigurator {
         }
 
     private static void deletePreferenceKeyByPattern(String pattern, Preferences pref) {
-        Map<String, Setting> allSettings = pref.getAllSettings();
-        for (Entry<String, Setting> entry : allSettings.entrySet()) {
+        Map<String, Setting<?>> allSettings = pref.getAllSettings();
+        for (Entry<String, Setting<?>> entry : allSettings.entrySet()) {
             String key = entry.getKey();
             if (key.matches(pattern)) {
                 log("Deleting preferences: deleting key from preferences: " + key);
@@ -877,7 +877,7 @@ public final class CustomConfigurator {
     }
 
     private static void deletePreferenceKey(String key, Preferences pref) {
-        Map<String, Setting> allSettings = pref.getAllSettings();
+        Map<String, Setting<?>> allSettings = pref.getAllSettings();
         if (allSettings.containsKey(key)) {
             log("Deleting preferences: deleting key from preferences: " + key);
             pref.putSetting(key, null);
@@ -1007,7 +1007,7 @@ public final class CustomConfigurator {
 
         tmpPref.settingsMap.clear();
 
-        Map<String, Setting> tmp = new HashMap<>();
+        Map<String, Setting<?>> tmp = new HashMap<>();
         for (Entry<String, String> e : stringMap.entrySet()) {
             tmp.put(e.getKey(), new StringSetting(e.getValue()));
         }
@@ -1016,13 +1016,14 @@ public final class CustomConfigurator {
         }
 
         for (Entry<String, List<Collection<String>>> e : listlistMap.entrySet()) {
-            @SuppressWarnings("unchecked") List<List<String>> value = (List)e.getValue();
+            @SuppressWarnings("unchecked")
+            List<List<String>> value = (List)e.getValue();
             tmp.put(e.getKey(), new ListListSetting(value));
         }
         for (Entry<String, List<Map<String, String>>> e : listmapMap.entrySet()) {
             tmp.put(e.getKey(), new MapListSetting(e.getValue()));
         }
-        for (Entry<String, Setting> e : tmp.entrySet()) {
+        for (Entry<String, Setting<?>> e : tmp.entrySet()) {
             if (e.getValue().equals(tmpPref.defaultsMap.get(e.getKey()))) continue;
             tmpPref.settingsMap.put(e.getKey(), e.getValue());
         }
@@ -1043,8 +1044,8 @@ public final class CustomConfigurator {
         Map<String, List<Map<String, String>>> listmapMap = new TreeMap<>();
 
         if (includeDefaults) {
-            for (Map.Entry<String, Setting> e: tmpPref.defaultsMap.entrySet()) {
-                Setting setting = e.getValue();
+            for (Map.Entry<String, Setting<?>> e: tmpPref.defaultsMap.entrySet()) {
+                Setting<?> setting = e.getValue();
                 if (setting instanceof StringSetting) {
                     stringMap.put(e.getKey(), ((StringSetting) setting).getValue());
                 } else if (setting instanceof ListSetting) {
@@ -1056,16 +1057,16 @@ public final class CustomConfigurator {
                 }
             }
         }
-        Iterator<Map.Entry<String, Setting>> it = tmpPref.settingsMap.entrySet().iterator();
+        Iterator<Map.Entry<String, Setting<?>>> it = tmpPref.settingsMap.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, Setting> e = it.next();
+            Map.Entry<String, Setting<?>> e = it.next();
             if (e.getValue().getValue() == null) {
                 it.remove();
             }
         }
 
-        for (Map.Entry<String, Setting> e: tmpPref.settingsMap.entrySet()) {
-            Setting setting = e.getValue();
+        for (Map.Entry<String, Setting<?>> e: tmpPref.settingsMap.entrySet()) {
+            Setting<?> setting = e.getValue();
             if (setting instanceof StringSetting) {
                 stringMap.put(e.getKey(), ((StringSetting) setting).getValue());
             } else if (setting instanceof ListSetting) {
