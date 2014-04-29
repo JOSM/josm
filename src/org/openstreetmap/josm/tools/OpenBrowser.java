@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 
-import javax.swing.JApplet;
-
 import org.openstreetmap.josm.Main;
 
 /**
@@ -41,16 +39,7 @@ public final class OpenBrowser {
      */
     public static String displayUrl(URI uri) {
         CheckParameterUtil.ensureParameterNotNull(uri, "uri");
-        if (Main.applet) {
-            try {
-                JApplet applet = (JApplet) Main.parent;
-                applet.getAppletContext().showDocument(uri.toURL());
-                return null;
-            } catch (MalformedURLException mue) {
-                return mue.getMessage();
-            }
-        }
-        
+
         Main.info(tr("Opening URL: {0}", uri));
 
         if (Desktop.isDesktopSupported()) {

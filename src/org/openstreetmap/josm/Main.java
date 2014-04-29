@@ -55,7 +55,6 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.ServerSidePreferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -172,11 +171,6 @@ public abstract class Main {
      * The MapFrame. Use {@link Main#setMapFrame} to set or clear it.
      */
     public static MapFrame map;
-
-    /**
-     * Set to <code>true</code>, when in applet mode
-     */
-    public static boolean applet = false;
 
     /**
      * The toolbar preference control to register new actions.
@@ -420,15 +414,6 @@ public abstract class Main {
      * We use this to work around openjdk bugs
      */
     public static boolean isOpenjdk;
-
-    /**
-     * Initializes {@code Main.pref} in applet context.
-     * @param serverURL The server URL hosting the user preferences.
-     * @since 6471
-     */
-    public static void initAppletPreferences(URL serverURL) {
-        Main.pref = new ServerSidePreferences(serverURL);
-    }
 
     /**
      * Initializes {@code Main.pref} in normal application context.

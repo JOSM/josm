@@ -180,59 +180,6 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
                 model.addElement(b);
             }
         }
-        else if(!Main.applet) { /* FIXME: remove else clause after spring 2011, but fix windows installer before */
-            File bookmarkFile = new File(Main.pref.getPreferencesDir(),"bookmarks");
-            try {
-                LinkedList<Bookmark> bookmarks = new LinkedList<>();
-                if (bookmarkFile.exists()) {
-                    Main.info("Try loading obsolete bookmarks file");
-                    BufferedReader in = new BufferedReader(new InputStreamReader(
-                            new FileInputStream(bookmarkFile), Utils.UTF_8));
-
-                    for (String line = in.readLine(); line != null; line = in.readLine()) {
-                        Matcher m = Pattern.compile("^(.+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)$").matcher(line);
-                        if (!m.matches() || m.groupCount() != 5) {
-                            Main.error(tr("Unexpected line ''{0}'' in bookmark file ''{1}''",line, bookmarkFile.toString()));
-                            continue;
-                        }
-                        Bookmark b = new Bookmark();
-                        b.setName(m.group(1));
-                        double[] values= new double[4];
-                        for (int i = 0; i < 4; ++i) {
-                            try {
-                                values[i] = Double.parseDouble(m.group(i+2));
-                            } catch (NumberFormatException e) {
-                                Main.error(tr("Illegal double value ''{0}'' on line ''{1}'' in bookmark file ''{2}''",m.group(i+2),line, bookmarkFile.toString()));
-                                continue;
-                            }
-                        }
-                        b.setArea(new Bounds(values));
-                        bookmarks.add(b);
-                    }
-                    Utils.close(in);
-                    Collections.sort(bookmarks);
-                    for (Bookmark b : bookmarks) {
-                        model.addElement(b);
-                    }
-                    save();
-                    Main.info("Removing obsolete bookmarks file");
-                    if (!bookmarkFile.delete()) {
-                        bookmarkFile.deleteOnExit();
-                    }
-                }
-            } catch (IOException e) {
-                Main.error(e);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("<html>Could not read bookmarks from<br>''{0}''<br>Error was: {1}</html>",
-                                bookmarkFile.toString(),
-                                e.getMessage()
-                        ),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
-        }
     }
 
     /**

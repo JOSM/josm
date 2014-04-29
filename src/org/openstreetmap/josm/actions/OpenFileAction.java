@@ -76,7 +76,7 @@ public class OpenFileAction extends DiskAccessAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(! Main.applet);
+        setEnabled(true);
     }
 
     /**

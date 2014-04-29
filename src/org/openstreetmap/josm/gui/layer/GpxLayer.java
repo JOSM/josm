@@ -260,20 +260,6 @@ public class GpxLayer extends Layer {
 
     @Override
     public Action[] getMenuEntries() {
-        if (Main.applet) {
-            return new Action[] {
-                LayerListDialog.getInstance().createShowHideLayerAction(),
-                LayerListDialog.getInstance().createDeleteLayerAction(),
-                SeparatorLayerAction.INSTANCE,
-                new CustomizeColor(this),
-                new CustomizeDrawingAction(this),
-                new ConvertToDataLayerAction(this),
-                SeparatorLayerAction.INSTANCE,
-                new ChooseTrackVisibilityAction(this),
-                new RenameLayerAction(getAssociatedFile(), this),
-                SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this) };
-        }
         return new Action[] {
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
