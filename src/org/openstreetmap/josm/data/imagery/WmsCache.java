@@ -451,20 +451,22 @@ public class WmsCache {
         int precisionLon = Math.max(0, -(int)Math.ceil(Math.log10(deltaLon)) + 1);
 
         String zoom = SystemOfMeasurement.METRIC.getDistText(ll1.greatCircleDistance(ll2));
-        String extension;
-        switch(mimeType) {
-        case "image/jpeg":
-        case "image/jpg":
-            extension = "jpg";
-            break;
-        case "image/png":
-            extension = "png";
-            break;
-        case "image/gif":
-            extension = "gif";
-            break;
-        default:
-            extension = "dat";
+        String extension = "dat";
+        if (mimeType != null) {
+            switch(mimeType) {
+            case "image/jpeg":
+            case "image/jpg":
+                extension = "jpg";
+                break;
+            case "image/png":
+                extension = "png";
+                break;
+            case "image/gif":
+                extension = "gif";
+                break;
+            default:
+                Main.warn("Unrecognized MIME type: "+mimeType);
+            }
         }
 
         int counter = 0;
