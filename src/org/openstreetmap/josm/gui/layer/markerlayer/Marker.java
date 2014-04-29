@@ -114,12 +114,8 @@ public class Marker implements TemplateEngineDataProvider {
             if (result == null) {
                 String defaultValue = layerName == null ? getDefaultLabelPattern():"";
                 TemplateEntryProperty parent = layerName == null ? null : forMarker(null);
-                try {
-                    result = new TemplateEntryProperty(key, defaultValue, parent);
-                    CACHE.put(key, result);
-                } catch (ParseError e) {
-                    Main.warn("Unable to parse template engine pattern ''{0}'' for property {1}", defaultValue, key);
-                }
+                result = new TemplateEntryProperty(key, defaultValue, parent);
+                CACHE.put(key, result);
             }
             return result;
         }
@@ -133,20 +129,15 @@ public class Marker implements TemplateEngineDataProvider {
             if (result == null) {
                 String defaultValue = layerName == null?"?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }":"";
                 TemplateEntryProperty parent = layerName == null ? null : forAudioMarker(null);
-                try {
-                    result = new TemplateEntryProperty(key, defaultValue, parent);
-                    CACHE.put(key, result);
-                } catch (ParseError e) {
-                    Main.warn("Unable to parse template engine pattern ''{0}'' for property {1}", defaultValue, key);
-                }
+                result = new TemplateEntryProperty(key, defaultValue, parent);
+                CACHE.put(key, result);
             }
             return result;
         }
 
         private TemplateEntryProperty parent;
 
-
-        private TemplateEntryProperty(String key, String defaultValue, TemplateEntryProperty parent) throws ParseError {
+        private TemplateEntryProperty(String key, String defaultValue, TemplateEntryProperty parent) {
             super(key, defaultValue);
             this.parent = parent;
             updateValue(); // Needs to be called because parent wasn't know in super constructor

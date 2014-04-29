@@ -178,7 +178,7 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
         return layerEl;
     }
 
-    protected void addDataFile(OutputStream out) throws IOException {
+    protected void addDataFile(OutputStream out) {
         Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
         GpxWriter w = new GpxWriter(new PrintWriter(writer));
         w.write(layer.data);

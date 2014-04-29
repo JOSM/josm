@@ -36,6 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
 import javax.swing.WindowConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -174,14 +175,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             lblMessage.setHorizontalAlignment(JLabel.LEFT);
             lstLayers = new JList<>();
             lstLayers.setCellRenderer(
-                    new DefaultListCellRenderer() {
+                    new ListCellRenderer<SaveLayerInfo>() {
+                        final DefaultListCellRenderer def = new DefaultListCellRenderer();
                         @Override
-                        public Component getListCellRendererComponent(JList list, Object value, int index,
+                        public Component getListCellRendererComponent(JList<? extends SaveLayerInfo> list, SaveLayerInfo info, int index,
                                 boolean isSelected, boolean cellHasFocus) {
-                            SaveLayerInfo info = (SaveLayerInfo)value;
-                            setIcon(info.getLayer().getIcon());
-                            setText(info.getName());
-                            return this;
+                            def.setIcon(info.getLayer().getIcon());
+                            def.setText(info.getName());
+                            return def;
                         }
                     }
             );

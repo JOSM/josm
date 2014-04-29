@@ -562,19 +562,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             }
         }
 
-        /**
-         * Returns the index of the relation
-         * @param rel The relation to look for
-         *
-         * @return index of relation (null if it cannot be found)
-         */
-        public Integer getRelationIndex(Relation rel) {
-            int i = relations.indexOf(rel);
-            if (i<0)
-                return null;
-            return i;
-        }
-
         private Integer getVisibleRelationIndex(Relation rel) {
             int i = getVisibleRelations().indexOf(rel);
             if (i<0)
@@ -630,6 +617,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         return popupMenuHandler;
     }
 
+    /**
+     * Replies the list of selected relations. Empty list, if there are no selected relations.
+     * @return the list of selected, non-new relations.
+     */
     public Collection<Relation> getSelectedRelations() {
         return model.getSelectedRelations();
     }

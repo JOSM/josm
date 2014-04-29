@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 
 import org.openstreetmap.josm.Main;
@@ -22,7 +21,7 @@ public final class OpenBrowser {
     private OpenBrowser() {
         // Hide default constructor for utils classes
     }
-    
+
     private static void displayUrlFallback(URI uri) throws IOException {
         if (Main.platform == null)
             throw new IllegalStateException(tr("Failed to open URL. There is currently no platform set. Please set a platform first."));
@@ -30,8 +29,8 @@ public final class OpenBrowser {
     }
 
     /**
-     * Displays an external URI using platform associated software. 
-     * A web resource will launch platform's browser, an audio file URI will launch audio player, etc. 
+     * Displays an external URI using platform associated software.
+     * A web resource will launch platform's browser, an audio file URI will launch audio player, etc.
      * @param uri The URI to display
      * @return <code>null</code> for success or a string in case of an error.
      * @throws IllegalStateException thrown if no platform is set to which opening the URL can be dispatched,
@@ -77,8 +76,8 @@ public final class OpenBrowser {
     }
 
     /**
-     * Displays an external URL using platform associated software. 
-     * A web resource will launch platform's browser, an audio file URL will launch audio player, etc. 
+     * Displays an external URL using platform associated software.
+     * A web resource will launch platform's browser, an audio file URL will launch audio player, etc.
      * @param url The URL to display
      * @return <code>null</code> for success or a string in case of an error.
      * @throws IllegalStateException thrown if no platform is set to which opening the URL can be dispatched,

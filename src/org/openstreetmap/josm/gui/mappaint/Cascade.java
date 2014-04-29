@@ -180,7 +180,7 @@ public final class Cascade implements Cloneable {
     @Override
     public Cascade clone() {
         @SuppressWarnings("unchecked")
-        HashMap<String, Object> clonedProp = (HashMap) ((HashMap) this.prop).clone();
+        HashMap<String, Object> clonedProp = (HashMap<String, Object>) ((HashMap) this.prop).clone();
         Cascade c = new Cascade();
         c.prop = clonedProp;
         return c;
