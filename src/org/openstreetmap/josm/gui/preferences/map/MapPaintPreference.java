@@ -213,6 +213,8 @@ public class MapPaintPreference implements SubPreferenceSetting {
          */
         private boolean insertNewDefaults(List<SourceEntry> list) {
             boolean changed = false;
+            
+            boolean addedMapcssStyle = false; // Migration code can be removed ~ Nov. 2014
 
             Collection<String> knownDefaults = new TreeSet<>(Main.pref.getCollection("mappaint.style.known-defaults"));
 
@@ -230,6 +232,10 @@ public class MapPaintPreference implements SubPreferenceSetting {
                     list.add(insertionIdx, def);
                     insertionIdx++;
                     changed = true;
+                    /* Migration code can be removed ~ Nov. 2014 */
+                    if (Utils.equal(def.url, "resource://styles/standard/elemstyles.mapcss")) {
+                        addedMapcssStyle = true;
+                    }
                 } else {
                     if (i >= insertionIdx) {
                         insertionIdx = i + 1;
@@ -242,23 +248,46 @@ public class MapPaintPreference implements SubPreferenceSetting {
             }
             Main.pref.putCollection("mappaint.style.known-defaults", knownDefaults);
 
+            /* Migration code can be removed ~ Nov. 2014 */
+            if (addedMapcssStyle) {
+                // change title of the XML entry
+                // only do this once. If the user changes it afterward, do not touch
+                if (!Main.pref.getBoolean("mappaint.style.migration.changedXmlName", false)) {
+                    SourceEntry josmXml = Utils.find(list, new Predicate<SourceEntry>() {
+                        @Override
+                        public boolean evaluate(SourceEntry se) {
+                            return Utils.equal(se.url, "resource://styles/standard/elemstyles.xml");
+                        }
+                    });
+                    if (josmXml != null) {
+                        josmXml.title = tr("JOSM default (XML; old version)");
+                    }
+                    Main.pref.put("mappaint.style.migration.changedXmlName", true);
+                }
+            }
+            
             return changed;
         }
 
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
-            ExtendedSourceEntry defJOSM = new ExtendedSourceEntry("elemstyles.xml", "resource://styles/standard/elemstyles.xml");
-            defJOSM.active = true;
-            defJOSM.name = "standard";
-            defJOSM.title = tr("JOSM Internal Style");
-            defJOSM.description = tr("Internal style to be used as base for runtime switchable overlay styles");
+            ExtendedSourceEntry defJosmXml = new ExtendedSourceEntry("elemstyles.xml", "resource://styles/standard/elemstyles.xml");
+            defJosmXml.active = true;
+            defJosmXml.name = "standard";
+            defJosmXml.title = tr("JOSM default (XML; old version)");
+            defJosmXml.description = tr("Internal style to be used as base for runtime switchable overlay styles");
+            ExtendedSourceEntry defJosmMapcss = new ExtendedSourceEntry("elemstyles.mapcss", "resource://styles/standard/elemstyles.mapcss");
+            defJosmMapcss.active = false;
+            defJosmMapcss.name = "standard";
+            defJosmMapcss.title = tr("JOSM default (MapCSS)");
+            defJosmMapcss.description = tr("Internal style to be used as base for runtime switchable overlay styles");
             ExtendedSourceEntry defPL2 = new ExtendedSourceEntry("potlatch2.mapcss", "resource://styles/standard/potlatch2.mapcss");
             defPL2.active = false;
             defPL2.name = "standard";
             defPL2.title = tr("Potlatch 2");
             defPL2.description = tr("the main Potlatch 2 style");
 
-            return Arrays.asList(new ExtendedSourceEntry[] { defJOSM, defPL2 });
+            return Arrays.asList(new ExtendedSourceEntry[] { defJosmXml, defJosmMapcss, defPL2 });
         }
 
         @Override
