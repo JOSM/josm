@@ -18,7 +18,7 @@ public class OsmServerHistoryReaderTest {
     }
 
     @Test
-    public void test1()  throws OsmTransferException {
+    public void testNode()  throws OsmTransferException {
         OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.NODE,266187);
         HistoryDataSet ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         History h = ds.getHistory(266187, OsmPrimitiveType.NODE);
@@ -26,15 +26,15 @@ public class OsmServerHistoryReaderTest {
     }
 
     @Test
-    public void test2()  throws OsmTransferException {
-        OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.WAY,32916);
+    public void testWay()  throws OsmTransferException {
+        OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.WAY,3058844);
         HistoryDataSet ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
-        History h = ds.getHistory(32916, OsmPrimitiveType.WAY);
+        History h = ds.getHistory(3058844, OsmPrimitiveType.WAY);
         System.out.println("num versions: " + h.getNumVersions());
     }
 
     @Test
-    public void test3()  throws OsmTransferException {
+    public void testRelation()  throws OsmTransferException {
         OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.RELATION,49);
         HistoryDataSet ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         History h = ds.getHistory(49, OsmPrimitiveType.RELATION);

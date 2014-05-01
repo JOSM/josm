@@ -147,6 +147,9 @@ public class OsmServerBackreferenceReaderTest {
         // load properties
         //
         try (InputStream is = MultiFetchServerObjectReaderTest.class.getResourceAsStream("/test-functional-env.properties")) {
+            if (is == null) {
+                throw new IOException();
+            }
             testProperties.load(is);
         } catch(IOException e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));

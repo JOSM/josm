@@ -1174,7 +1174,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         GeneralPath onewayArrows = showOneway ? new GeneralPath() : null;
         GeneralPath onewayArrowsCasing = showOneway ? new GeneralPath() : null;
         Rectangle bounds = g.getClipBounds();
-        bounds.grow(100, 100);                  // avoid arrow heads at the border
+        if (bounds != null) {
+            // avoid arrow heads at the border
+            bounds.grow(100, 100);
+        }
 
         double wayLength = 0;
         Point lastPoint = null;

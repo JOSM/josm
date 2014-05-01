@@ -198,13 +198,13 @@ Build-Date: ${build.tstamp}
     <target name="compile" depends="init,javacc">
     	<!-- COTS -->
         <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**" nowarn="on"
-        	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="iso-8859-1">
+        	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="iso-8859-1">
             <!-- get rid of "internal proprietary API" warning -->
         	<compilerarg value="-XDignore.symbol.file"/>
         </javac>
         <!-- JMapViewer/JOSM -->
         <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
-        	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
+        	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:dep-ann"/>
@@ -267,11 +267,18 @@ Build-Date: ${build.tstamp}
         <delete file="${test.dir}/jacoco.exec" />
     </target>
     <target name="test-compile" depends="test-init,dist">
-        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
+        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on"
+        	includeantruntime="false" createMissingPackageInfoClass="off" encoding="UTF-8">
             <compilerarg value="-Xlint:all"/>
             <compilerarg value="-Xlint:-serial"/>
         </javac>
-        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on" includeantruntime="false" encoding="UTF-8">
+        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on"
+        	includeantruntime="false" createMissingPackageInfoClass="off" encoding="UTF-8">
+            <compilerarg value="-Xlint:all"/>
+            <compilerarg value="-Xlint:-serial"/>
+        </javac>
+        <javac srcdir="${test.dir}/performance" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on"
+        	includeantruntime="false" createMissingPackageInfoClass="off" encoding="UTF-8">
             <compilerarg value="-Xlint:all"/>
             <compilerarg value="-Xlint:-serial"/>
         </javac>

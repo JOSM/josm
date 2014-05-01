@@ -29,7 +29,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Functional tests for Remote Control
+ * Unit tests for Remote Control
  */
 public class RemoteControlTest {
 

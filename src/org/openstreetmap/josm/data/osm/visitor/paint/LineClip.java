@@ -17,6 +17,12 @@ public class LineClip {
     private Point p1, p2;
     private final Rectangle clipBounds;
 
+    /**
+     * Constructs a new {@code LineClip}.
+     * @param p1 start point of the clipped line
+     * @param p2 end point of the clipped line
+     * @param clipBounds Clip bounds
+     */
     public LineClip(Point p1, Point p2, Rectangle clipBounds) {
         this.p1 = p1;
         this.p2 = p2;
@@ -28,14 +34,16 @@ public class LineClip {
      * @return true if the some parts of the line lies within the clip bounds
      */
     public boolean execute() {
+        if (clipBounds == null) {
+            return false;
+        }
         return cohenSutherland(p1.x, p1.y, p2.x, p2.y, clipBounds.x , clipBounds.y, clipBounds.x + clipBounds.width, clipBounds.y + clipBounds.height);
     }
 
     /**
      * @return start point of the clipped line
      */
-    public Point getP1()
-    {
+    public Point getP1() {
         return p1;
     }
 
