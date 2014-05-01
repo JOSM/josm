@@ -173,10 +173,7 @@ public class NmeaReader {
         data = new GpxData();
         Collection<Collection<WayPoint>> currentTrack = new ArrayList<>();
 
-        BufferedReader rd = null;
-        try {
-            rd = new BufferedReader(new InputStreamReader(source, Utils.UTF_8));
-
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(source, Utils.UTF_8))) {
             StringBuilder sb = new StringBuilder(1024);
             int loopstart_char = rd.read();
             ps = new NMEAParserState();
@@ -208,10 +205,9 @@ public class NmeaReader {
 
         } catch (Exception e) {
             Main.warn(e);
-        } finally {
-            Utils.close(rd);
         }
     }
+
     private static class NMEAParserState {
         protected Collection<WayPoint> waypoints = new ArrayList<>();
         protected String p_Time;

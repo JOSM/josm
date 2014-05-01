@@ -61,15 +61,11 @@ public class OsmImporter extends FileImporter {
      */
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
-        InputStream in = null;
-        try {
-            in = Compression.getUncompressedFileInputStream(file);
+        try (InputStream in = Compression.getUncompressedFileInputStream(file)) {
             importData(in, file, progressMonitor);
         } catch (FileNotFoundException e) {
             Main.error(e);
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()), e);
-        } finally {
-            Utils.close(in);
         }
     }
 

@@ -152,8 +152,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      * @return the downloaded list
      */
     protected String downloadPluginList(String site, final ProgressMonitor monitor) {
-        BufferedReader in = null;
-
         /* replace %<x> with empty string or x=plugins (separated with comma) */
         String pl = Utils.join(",", Main.pref.getCollection("plugins"));
         String printsite = site.replaceAll("%<(.*)>", "");
@@ -173,13 +171,14 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 connection.setRequestProperty("Cache-Control", "no-cache");
                 connection.setRequestProperty("Accept-Charset", "utf-8");
             }
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = in.readLine()) != null) {
-                sb.append(line).append("\n");
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8))) {
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = in.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                return sb.toString();
             }
-            return sb.toString();
         } catch (MalformedURLException e) {
             if (canceled) return null;
             Main.error(e);
@@ -196,7 +195,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 }
                 connection = null;
             }
-            Utils.close(in);
             monitor.finishTask();
         }
     }
@@ -205,18 +203,14 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         StringBuilder sb = new StringBuilder();
         try (InputStream errStream = connection.getErrorStream()) {
             if (errStream != null) {
-                BufferedReader err = null;
-                try {
+                try (BufferedReader err = new BufferedReader(new InputStreamReader(errStream, Utils.UTF_8))) {
                     String line;
-                    err = new BufferedReader(new InputStreamReader(errStream, Utils.UTF_8));
                     while ((line = err.readLine()) != null) {
                         sb.append(line).append("\n");
                     }
                 } catch (Exception ex) {
                     Main.error(e);
                     Main.error(ex);
-                } finally {
-                    Utils.close(err);
                 }
             }
         } catch (IOException ex) {

@@ -800,19 +800,19 @@ public final class Utils {
             Main.debug(join(" ", command));
         }
         Process p = new ProcessBuilder(command).start();
-        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8));
-        StringBuilder all = null;
-        String line;
-        while ((line = input.readLine()) != null) {
-            if (all == null) {
-                all = new StringBuilder(line);
-            } else {
-                all.append("\n");
-                all.append(line);
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8))) {
+            StringBuilder all = null;
+            String line;
+            while ((line = input.readLine()) != null) {
+                if (all == null) {
+                    all = new StringBuilder(line);
+                } else {
+                    all.append("\n");
+                    all.append(line);
+                }
             }
+            return all != null ? all.toString() : null;
         }
-        Utils.close(input);
-        return all != null ? all.toString() : null;
     }
 
     /**

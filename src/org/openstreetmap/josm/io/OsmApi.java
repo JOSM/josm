@@ -628,21 +628,20 @@ public class OsmApi extends OsmConnection {
                 if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
                     activeConnection.setDoOutput(true);
                     activeConnection.setRequestProperty("Content-type", "text/xml");
-                    OutputStream out = activeConnection.getOutputStream();
-
-                    // It seems that certain bits of the Ruby API are very unhappy upon
-                    // receipt of a PUT/POST message without a Content-length header,
-                    // even if the request has no payload.
-                    // Since Java will not generate a Content-length header unless
-                    // we use the output stream, we create an output stream for PUT/POST
-                    // even if there is no payload.
-                    if (requestBody != null) {
-                        try (BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8))) {
-                            bwr.write(requestBody);
-                            bwr.flush();
+                    try (OutputStream out = activeConnection.getOutputStream()) {
+                        // It seems that certain bits of the Ruby API are very unhappy upon
+                        // receipt of a PUT/POST message without a Content-length header,
+                        // even if the request has no payload.
+                        // Since Java will not generate a Content-length header unless
+                        // we use the output stream, we create an output stream for PUT/POST
+                        // even if there is no payload.
+                        if (requestBody != null) {
+                            try (BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8))) {
+                                bwr.write(requestBody);
+                                bwr.flush();
+                            }
                         }
                     }
-                    Utils.close(out);
                 }
 
                 activeConnection.connect();

@@ -164,7 +164,6 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
 
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
-        BufferedReader bin = null;
         try {
             try {
                 new URL(getNormalizedApiUrl());
@@ -194,10 +193,11 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
                 return;
             }
             StringBuilder changesets = new StringBuilder();
-            bin = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8));
-            String line;
-            while ((line = bin.readLine()) != null) {
-                changesets.append(line).append("\n");
+            try (BufferedReader bin = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8))) {
+                String line;
+                while ((line = bin.readLine()) != null) {
+                    changesets.append(line).append("\n");
+                }
             }
             if (! (changesets.toString().contains("<osm") && changesets.toString().contains("</osm>"))) {
                 // heuristic: if there isn't an opening and closing "<osm>" tag in the returned content,
@@ -214,8 +214,6 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
             Main.error(e);
             alertConnectionFailed();
             return;
-        } finally {
-            Utils.close(bin);
         }
     }
 

@@ -210,11 +210,11 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
      * @since 5849
      */
     public static URL getBugReportUrl(String debugText) {
-        try {
+        try (
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            GZIPOutputStream gzip = new GZIPOutputStream(out);
+            GZIPOutputStream gzip = new GZIPOutputStream(out)
+        ) {
             gzip.write(debugText.getBytes(Utils.UTF_8));
-            Utils.close(gzip);
 
             return new URL(Main.getJOSMWebsite()+"/josmticket?" +
                     "gdata="+Base64.encode(ByteBuffer.wrap(out.toByteArray()), true));

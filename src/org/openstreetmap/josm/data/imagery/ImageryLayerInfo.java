@@ -73,17 +73,14 @@ public class ImageryLayerInfo {
             if (clearCache) {
                 MirroredInputStream.cleanup(source);
             }
-            MirroredInputStream stream = null;
             try {
                 ImageryReader reader = new ImageryReader(source);
                 Collection<ImageryInfo> result = reader.parse();
                 defaultLayers.addAll(result);
             } catch (IOException ex) {
-                Utils.close(stream);
                 Main.error(ex, false);
                 continue;
             } catch (SAXException ex) {
-                Utils.close(stream);
                 Main.error(ex);
                 continue;
             }
