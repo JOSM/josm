@@ -1,0 +1,140 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.io.remotecontrol;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Utils;
+
+/**
+ * Functional tests for Remote Control
+ */
+public class RemoteControlTest {
+
+    private String httpBase;
+    private String httpsBase;
+    
+    /**
+     * Starts Remote control before testing requests.
+     */
+    @Before
+    public void setUp() {
+        Main.initApplicationPreferences();
+        RemoteControl.start();
+        disableCertificateValidation();
+        httpBase = "http://127.0.0.1:"+Main.pref.getInteger("remote.control.port", 8111);
+        httpsBase = "https://127.0.0.1:"+Main.pref.getInteger("remote.control.https.port", 8112);
+    }
+    
+    /**
+     * Disable all HTTPS validation mechanisms as described 
+     * <a href="http://stackoverflow.com/a/2893932/2257172">here</a> and
+     * <a href="http://stackoverflow.com/a/19542614/2257172">here</a>
+     */
+    public void disableCertificateValidation() {
+        // Create a trust manager that does not validate certificate chains
+        TrustManager[] trustAllCerts = new TrustManager[] { 
+            new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }
+        };
+
+        // Install the all-trusting trust manager
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (GeneralSecurityException e) {
+            fail(e.getMessage());
+        }
+        
+        // Create all-trusting host name verifier
+        HostnameVerifier allHostsValid = new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        };
+
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+    }
+
+    /**
+     * Stops Remote control after testing requests.
+     */
+    @After
+    public void tearDown() {
+        RemoteControl.stop();
+    }
+
+    /**
+     * Tests that sending an HTTP request without command results in HTTP 400, with all available commands in error message.
+     * @throws IOException if an I/O error occurs
+     * @throws MalformedURLException if HTTP URL is invalid  
+     */
+    @Test
+    public void testHttpListOfCommands() throws MalformedURLException, IOException {
+        testListOfCommands(httpBase);
+    }
+
+    /**
+     * Tests that sending an HTTPS request without command results in HTTP 400, with all available commands in error message.
+     * @throws IOException if an I/O error occurs
+     * @throws MalformedURLException if HTTPS URL is invalid  
+     */
+    @Test
+    public void testHttpsListOfCommands() throws MalformedURLException, IOException {
+        testListOfCommands(httpsBase);
+    }
+
+    private void testListOfCommands(String url) throws MalformedURLException, IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.connect();
+        assertEquals(connection.getResponseCode(), HttpURLConnection.HTTP_BAD_REQUEST);
+        try (InputStream is = connection.getErrorStream()) {
+            // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes 
+            StringBuilder responseBody = new StringBuilder();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(is, Utils.UTF_8))) {
+                String s;
+                while((s = in.readLine()) != null) {
+                    responseBody.append(s);
+                    responseBody.append("\n");
+                }
+            }
+            assert responseBody.toString().contains(RequestProcessor.getUsageAsHtml());
+        } catch (IllegalAccessException e) {
+            fail(e.getMessage());
+        } catch (InstantiationException e) {
+            fail(e.getMessage());
+        }
+    }
+}
