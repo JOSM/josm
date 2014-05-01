@@ -175,7 +175,9 @@ public class RemoteControlHttpsServer extends Thread {
         Main.info(marktr("RemoteControl::Accepting secure connections on port {0}"),
              Integer.toString(server.getLocalPort()));
         while (true) {
-            try (Socket request = server.accept()) {
+            try {
+                @SuppressWarnings("resource")
+                Socket request = server.accept();
                 if (Main.isDebugEnabled() && request instanceof SSLSocket) {
                     SSLSocket sslSocket = (SSLSocket) request;
                     Main.debug("SSL socket - Enabled Cipher suites: "+Arrays.toString(sslSocket.getEnabledCipherSuites()));
