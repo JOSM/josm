@@ -199,16 +199,16 @@ public class PlatformHookUnixoid implements PlatformHook {
             try {
                 // Try lsb_release (only available on LSB-compliant Linux systems, see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
                 Process p = Runtime.getRuntime().exec("lsb_release -ds");
-                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), Utils.UTF_8));
-                String line = Utils.strip(input.readLine());
-                Utils.close(input);
-                if (line != null && !line.isEmpty()) {
-                    line = line.replaceAll("\"+","");
-                    line = line.replaceAll("NAME=",""); // strange code for some Gentoo's
-                    if(line.startsWith("Linux ")) // e.g. Linux Mint
-                        return line;
-                    else if(!line.isEmpty())
-                        return "Linux " + line;
+                try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), Utils.UTF_8))) {
+                    String line = Utils.strip(input.readLine());
+                    if (line != null && !line.isEmpty()) {
+                        line = line.replaceAll("\"+","");
+                        line = line.replaceAll("NAME=",""); // strange code for some Gentoo's
+                        if(line.startsWith("Linux ")) // e.g. Linux Mint
+                            return line;
+                        else if(!line.isEmpty())
+                            return "Linux " + line;
+                    }
                 }
             } catch (IOException e) {
                 // Non LSB-compliant Linux system. List of common fallback release files: http://linuxmafia.com/faq/Admin/release-files.html

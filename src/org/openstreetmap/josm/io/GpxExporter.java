@@ -35,7 +35,6 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Utils;
 
 public class GpxExporter extends FileExporter implements GpxConstants {
     private static final String warningGpl = "<html><font color='red' size='-2'>"
@@ -175,17 +174,14 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             gpxData.attr.put(META_KEYWORDS, keywords.getText());
         }
 
-        OutputStream fo = null;
-        try {
-            fo = Compression.getCompressedFileOutputStream(file);
+        
+        try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
             new GpxWriter(fo).write(gpxData);
             fo.flush();
         } catch (IOException x) {
             Main.error(x);
             JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn, x.getMessage()),
                     tr("Error"), JOptionPane.ERROR_MESSAGE);
-        } finally {
-            Utils.close(fo);
         }
     }
 

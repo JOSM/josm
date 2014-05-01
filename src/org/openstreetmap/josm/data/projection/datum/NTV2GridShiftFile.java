@@ -154,8 +154,6 @@ public class NTV2GridShiftFile implements Serializable {
         }
         topLevelSubGrid = createSubGridTree(subGrid);
         lastSubGrid = topLevelSubGrid[0];
-
-        Utils.close(in);
     }
 
     /**

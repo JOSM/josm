@@ -300,7 +300,6 @@ public class OpenFileAction extends DiskAccessAction {
                                 Main.main.menu.openLocation.openUrl(false, url);
                             }
                         }
-                        Utils.close(reader);
                     } catch (Exception e) {
                         Main.error(e);
                     }

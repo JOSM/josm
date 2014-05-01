@@ -28,7 +28,6 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Simple HTTPS server that spawns a {@link RequestProcessor} for every secure connection.
@@ -59,11 +58,7 @@ public class RemoteControlHttpsServer extends Thread {
                     if (in == null) {
                         Main.error(tr("Unable to find JOSM keystore at {0}. Remote control will not be available on HTTPS.", KEYSTORE_PATH));
                     } else {
-                        try {
-                            ks.load(in, password);
-                        } finally {
-                            Utils.close(in);
-                        }
+                        ks.load(in, password);
                         
                         if (Main.isDebugEnabled()) {
                             for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {

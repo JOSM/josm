@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -196,9 +197,10 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected String extractToken(HttpURLConnection connection) {
-        BufferedReader r = null;
-        try {
-            r = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8));
+        try (
+            InputStream is = connection.getInputStream();
+            BufferedReader r = new BufferedReader(new InputStreamReader(is, Utils.UTF_8))
+        ) {
             String c;
             Pattern p = Pattern.compile(".*authenticity_token.*value=\"([^\"]+)\".*");
             while ((c = r.readLine()) != null) {
@@ -210,8 +212,6 @@ public class OsmOAuthAuthorizationClient {
         } catch (IOException e) {
             Main.error(e);
             return null;
-        } finally {
-            Utils.close(r);
         }
         return null;
     }
@@ -363,7 +363,6 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected void authenticateOsmSession(SessionId sessionId, String userName, String password) throws OsmLoginFailedException {
-        DataOutputStream dout = null;
         try {
             URL url = new URL(buildOsmLoginUrl());
             synchronized(this) {
@@ -391,10 +390,10 @@ public class OsmOAuthAuthorizationClient {
 
             connection.connect();
 
-            dout = new DataOutputStream(connection.getOutputStream());
-            dout.writeBytes(request);
-            dout.flush();
-            Utils.close(dout);
+            try (DataOutputStream dout = new DataOutputStream(connection.getOutputStream())) {
+                dout.writeBytes(request);
+                dout.flush();
+            }
 
             // after a successful login the OSM website sends a redirect to a follow up page. Everything
             // else, including a 200 OK, is a failed login. A 200 OK is replied if the login form with
@@ -408,7 +407,6 @@ public class OsmOAuthAuthorizationClient {
         } catch(IOException e) {
             throw new OsmLoginFailedException(e);
         } finally {
-            Utils.close(dout);
             synchronized(this) {
                 connection = null;
             }
@@ -455,14 +453,13 @@ public class OsmOAuthAuthorizationClient {
         if (privileges.isAllowReadPrefs()) {
             parameters.put("allow_read_prefs", "yes");
         }
-        if(privileges.isAllowModifyNotes()) {
+        if (privileges.isAllowModifyNotes()) {
             parameters.put("allow_write_notes", "yes");
         }
 
         parameters.put("commit", "Save changes");
 
         String request = buildPostRequest(parameters);
-        DataOutputStream dout = null;
         try {
             URL url = new URL(oauthProviderParameters.getAuthoriseUrl());
             synchronized(this) {
@@ -479,17 +476,17 @@ public class OsmOAuthAuthorizationClient {
 
             connection.connect();
 
-            dout = new DataOutputStream(connection.getOutputStream());
-            dout.writeBytes(request);
-            dout.flush();
+            try (DataOutputStream dout = new DataOutputStream(connection.getOutputStream())) {
+                dout.writeBytes(request);
+                dout.flush();
+            }
 
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_OK)
                 throw new OsmOAuthAuthorizationException(tr("Failed to authorize OAuth request  ''{0}''", requestToken.getKey()));
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         } finally {
-            Utils.close(dout);
             synchronized(this) {
                 connection = null;
             }

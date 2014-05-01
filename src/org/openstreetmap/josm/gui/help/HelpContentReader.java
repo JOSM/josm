@@ -44,13 +44,13 @@ public class HelpContentReader extends WikiReader {
         if(helpTopicUrl == null)
             throw new MissingHelpContentException(helpTopicUrl);
         HttpURLConnection con = null;
-        BufferedReader in = null;
         try {
             URL u = new URL(helpTopicUrl);
             con = Utils.openHttpConnection(u);
             con.connect();
-            in = new BufferedReader(new InputStreamReader(con.getInputStream(), Utils.UTF_8));
-            return prepareHelpContent(in, dotest, u);
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), Utils.UTF_8))) {
+                return prepareHelpContent(in, dotest, u);
+            }
         } catch(MalformedURLException e) {
             throw new HelpContentReaderException(e);
         } catch(IOException e) {
@@ -63,8 +63,6 @@ public class HelpContentReader extends WikiReader {
                 }
             }
             throw ex;
-        } finally {
-            Utils.close(in);
         }
     }
 
