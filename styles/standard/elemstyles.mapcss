@@ -2337,6 +2337,7 @@ node[landuse=forest] {
 }
 area[landuse=allotments],
 area[landuse=greenhouse_horticulture],
+area[landuse=plant_nursery],
 area[landuse=grass] {
     fill-color: green#b1e0c2;
 }
@@ -2348,6 +2349,7 @@ node[landuse=greenhouse_horticulture] {
     icon-image: "misc/landuse/greenhouse_horticulture.png";
     text: auto;
 }
+node[landuse=plant_nursery],
 node[landuse=grass] {
     icon-image: "misc/landmark/plant.png";
     text: auto;
