@@ -184,7 +184,7 @@ public class LineElemStyle extends ElemStyle {
         }
         color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 
-        float[] dashes = c.get(type.prefix + DASHES, null, float[].class);
+        float[] dashes = c.get(type.prefix + DASHES, null, float[].class, true);
         if (dashes != null) {
             boolean hasPositive = false;
             for (float f : dashes) {
