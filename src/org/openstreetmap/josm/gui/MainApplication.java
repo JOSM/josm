@@ -153,6 +153,8 @@ public class MainApplication extends Main {
         VERSION(false),
         /** --debug                                   Print debugging messages to console */
         DEBUG(false),
+        /** --trace                                   Print detailed debugging messages to console */
+        TRACE(false),
         /** --language=&lt;language&gt;               Set the language */
         LANGUAGE(true),
         /** --reset-preferences                       Reset the preferences to default */
@@ -317,12 +319,18 @@ public class MainApplication extends Main {
             System.exit(0);
         }
 
-        if (args.containsKey(Option.DEBUG)) {
+        if (args.containsKey(Option.DEBUG) || args.containsKey(Option.TRACE)) {
             // Enable JOSM debug level
             logLevel = 4;
             // Enable debug in OAuth signpost
             Preferences.updateSystemProperty("debug", "true");
-            Main.debug(tr("Print debugging messages to console"));
+            Main.info(tr("Printing debugging messages to console"));
+        }
+
+        if (args.containsKey(Option.TRACE)) {
+            // Enable JOSM debug level
+            logLevel = 5;
+            Main.info(tr("Enabled detailed debug level (trace)"));
         }
 
         Main.pref.init(args.containsKey(Option.RESET_PREFERENCES));

@@ -1403,13 +1403,32 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         styles.setDrawMultipolygon(drawMultipolygon);
 
         highlightWaySegments = data.getHighlightedWaySegments();
+        
+        long timeStart=0, timePhase1=0, timeFinished;
+        if (Main.isTraceEnabled()) {
+            timeStart = System.currentTimeMillis();
+            System.err.print("BENCHMARK: rendering ");
+            Main.debug(null);
+        }
 
         StyleCollector sc = new StyleCollector(drawArea, drawMultipolygon, drawRestriction);
         collectNodeStyles(data, sc, bbox);
         collectWayStyles(data, sc, bbox);
         collectRelationStyles(data, sc, bbox);
+        
+        if (Main.isTraceEnabled()) {
+            timePhase1 = System.currentTimeMillis();
+            System.err.print("phase 1 (calculate styles): " + (timePhase1 - timeStart) + " ms");
+        }
+        
         sc.drawAll();
         sc = null;
+
+        if (Main.isTraceEnabled()) {
+            timeFinished = System.currentTimeMillis();
+            System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms");
+        }
+
         drawVirtualNodes(data, bbox);
     }
 }
