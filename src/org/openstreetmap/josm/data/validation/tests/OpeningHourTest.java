@@ -204,10 +204,10 @@ public class OpeningHourTest extends Test.TagTest {
                 Main.debug(e.getMessage());
             }
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getErrors"))) {
-                errors.add(new OpeningHoursTestError(key + " - " + i.toString().trim(), Severity.ERROR, prettifiedValue));
+                errors.add(new OpeningHoursTestError(getErrorMessage(key, i), Severity.ERROR, prettifiedValue));
             }
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"))) {
-                errors.add(new OpeningHoursTestError(i.toString().trim(), Severity.WARNING, prettifiedValue));
+                errors.add(new OpeningHoursTestError(getErrorMessage(key, i), Severity.WARNING, prettifiedValue));
             }
             if (!ignoreOtherSeverity && errors.isEmpty() && prettifiedValue != null && !value.equals(prettifiedValue)) {
                 errors.add(new OpeningHoursTestError(tr("opening_hours value can be prettified"), Severity.OTHER, prettifiedValue));
@@ -216,6 +216,22 @@ public class OpeningHourTest extends Test.TagTest {
             Main.error(ex);
         }
         return errors;
+    }
+    
+    /**
+     * Translates and shortens the error/warning message.
+     */
+    private String getErrorMessage(String key, Object o) {
+        String msg = o.toString().trim()
+        .replace("Unexpected token:", tr("Unexpected token:"))
+        .replace("Unexpected token (school holiday parser):", tr("Unexpected token (school holiday parser):"))
+        .replace("Unexpected token in number range:", tr("Unexpected token in number range:"))
+        .replace("Unexpected token in week range:", tr("Unexpected token in week range:"))
+        .replace("Unexpected token in weekday range:", tr("Unexpected token in weekday range:"))
+        .replace("Unexpected token in month range:", tr("Unexpected token in month range:"))
+        .replace("Unexpected token in year range:", tr("Unexpected token in year range:"))
+        .replace("This means that the syntax is not valid at that point or it is currently not supported.", tr("Invalid/unsupported syntax."));
+        return key + " - " + msg;
     }
 
     /**
