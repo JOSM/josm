@@ -325,11 +325,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             @Override
             protected byte[] updateData() throws IOException {
                 URL u = getAttributionUrl();
-                UTFInputStreamReader in = UTFInputStreamReader.create(Utils.openURL(u));
-                String r = new Scanner(in).useDelimiter("\\A").next();
-                Utils.close(in);
-                Main.info("Successfully loaded Bing attribution data.");
-                return r.getBytes("utf-8");
+                try (Scanner scanner = new Scanner(UTFInputStreamReader.create(Utils.openURL(u)))) {
+                    String r = scanner.useDelimiter("\\A").next();
+                    Main.info("Successfully loaded Bing attribution data.");
+                    return r.getBytes("UTF-8");
+                }
             }
         }
 

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -505,14 +506,19 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
          */
         protected FetchResult multiGetIdPackage(OsmPrimitiveType type, Set<Long> pkg, ProgressMonitor progressMonitor) throws OsmTransferException {
             String request = buildRequestString(type, pkg);
-            final InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE);
-            if (in == null) return null;
-            progressMonitor.subTask(tr("Downloading OSM data..."));
-            try {
-                return new FetchResult(OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(pkg.size(), false)), null);
-            } catch (Exception e) {
-                throw new OsmTransferException(e);
+            FetchResult result = null;
+            try (InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE)) {
+                if (in == null) return null;
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                try {
+                    result = new FetchResult(OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(pkg.size(), false)), null);
+                } catch (Exception e) {
+                    throw new OsmTransferException(e);
+                }
+            } catch (IOException ex) {
+                Main.warn(ex);
             }
+            return result;
         }
 
         /**
@@ -526,14 +532,19 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
          */
         protected DataSet singleGetId(OsmPrimitiveType type, long id, ProgressMonitor progressMonitor) throws OsmTransferException {
             String request = buildRequestString(type, id);
-            final InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE);
-            if (in == null) return null;
-            progressMonitor.subTask(tr("Downloading OSM data..."));
-            try {
-                return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
-            } catch (Exception e) {
-                throw new OsmTransferException(e);
+            DataSet result = null;
+            try (InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE)) {
+                if (in == null) return null;
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                try {
+                    result = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                } catch (Exception e) {
+                    throw new OsmTransferException(e);
+                }
+            } catch (IOException ex) {
+                Main.warn(ex);
             }
+            return result;
         }
 
         /**

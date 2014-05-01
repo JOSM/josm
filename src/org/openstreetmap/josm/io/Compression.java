@@ -74,6 +74,7 @@ public enum Compression {
      *
      * @throws IOException
      */
+    @SuppressWarnings("resource")
     public static InputStream getUncompressedFileInputStream(File file) throws IOException {
         return byExtension(file.getName()).getUncompressedInputStream(new FileInputStream(file));
     }
@@ -113,6 +114,7 @@ public enum Compression {
      *
      * @throws IOException
      */
+    @SuppressWarnings("resource")
     public static OutputStream getCompressedFileOutputStream(File file) throws IOException {
         return byExtension(file.getName()).getCompressedOutputStream(new FileOutputStream(file));
     }

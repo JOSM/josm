@@ -122,6 +122,7 @@ public class OsmChangesetContentParser {
      * @param source the input stream with the changeset content as XML document. Must not be null.
      * @throws IllegalArgumentException if source is {@code null}.
      */
+    @SuppressWarnings("resource")
     public OsmChangesetContentParser(InputStream source) {
         CheckParameterUtil.ensureParameterNotNull(source, "source");
         this.source = new InputSource(new InputStreamReader(source, Utils.UTF_8));

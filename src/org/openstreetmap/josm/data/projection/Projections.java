@@ -131,15 +131,15 @@ public final class Projections {
      */
     private static void loadInits() {
         Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
-        BufferedReader r = null;
-        try {
+        try (
             InputStream in = new MirroredInputStream("resource://data/projection/epsg");
-            r = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));
+            BufferedReader r = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));
+        ) {
             String line, lastline = "";
             while ((line = r.readLine()) != null) {
                 line = line.trim();
                 if (!line.startsWith("#") && !line.isEmpty()) {
-                    if (!lastline.startsWith("#")) throw new AssertionError();
+                    if (!lastline.startsWith("#")) throw new AssertionError("EPSG file seems corrupted");
                     String name = lastline.substring(1).trim();
                     Matcher m = epsgPattern.matcher(line);
                     if (m.matches()) {
@@ -152,8 +152,6 @@ public final class Projections {
             }
         } catch (IOException ex) {
             throw new RuntimeException(ex);
-        } finally {
-            Utils.close(r);
         }
     }
 

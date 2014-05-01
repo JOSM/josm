@@ -503,10 +503,8 @@ public class ImageProvider {
     }
 
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
-        MirroredInputStream is = null;
-        try {
-            is = new MirroredInputStream(url,
-                    new File(Main.pref.getCacheDirectory(), "images").getPath());
+        try (MirroredInputStream is = new MirroredInputStream(url,
+                    new File(Main.pref.getCacheDirectory(), "images").getPath())) {
             switch (type) {
             case SVG:
                 URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(is.getFile()).toString());
@@ -525,8 +523,6 @@ public class ImageProvider {
             }
         } catch (IOException e) {
             return null;
-        } finally {
-            Utils.close(is);
         }
     }
 
@@ -602,9 +598,7 @@ public class ImageProvider {
     }
 
     private static ImageResource getIfAvailableZip(String fullName, File archive, String inArchiveDir, ImageType type) {
-        ZipFile zipFile = null;
-        try {
-            zipFile = new ZipFile(archive);
+        try (ZipFile zipFile = new ZipFile(archive)) {
             if (inArchiveDir == null || ".".equals(inArchiveDir)) {
                 inArchiveDir = "";
             } else if (!inArchiveDir.isEmpty()) {
@@ -612,14 +606,11 @@ public class ImageProvider {
             }
             String entryName = inArchiveDir + fullName;
             ZipEntry entry = zipFile.getEntry(entryName);
-            if(entry != null)
-            {
+            if (entry != null) {
                 int size = (int)entry.getSize();
                 int offs = 0;
                 byte[] buf = new byte[size];
-                InputStream is = null;
-                try {
-                    is = zipFile.getInputStream(entry);
+                try (InputStream is = zipFile.getInputStream(entry)) {
                     switch (type) {
                     case SVG:
                         URI uri = getSvgUniverse().loadSVG(is, entryName);
@@ -640,16 +631,12 @@ public class ImageProvider {
                         }
                         return img == null ? null : new ImageResource(img);
                     default:
-                        throw new AssertionError();
+                        throw new AssertionError("Unknown ImageType: "+type);
                     }
-                } finally {
-                    Utils.close(is);
                 }
             }
         } catch (Exception e) {
             Main.warn(tr("Failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
-        } finally {
-            Utils.close(zipFile);
         }
         return null;
     }
@@ -784,10 +771,12 @@ public class ImageProvider {
                 }
             });
 
-            parser.parse(new InputSource(new MirroredInputStream(
+            try (InputStream is = new MirroredInputStream(
                     base + fn,
-                    new File(Main.pref.getPreferencesDir(), "images").toString()
-                    )));
+                    new File(Main.pref.getPreferencesDir(), "images").toString())
+            ) {
+                parser.parse(new InputSource(is));
+            }
         } catch (SAXReturnException r) {
             return r.getResult();
         } catch (Exception e) {

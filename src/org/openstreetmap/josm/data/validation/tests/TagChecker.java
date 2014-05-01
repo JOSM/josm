@@ -53,7 +53,6 @@ import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Check for misspelled or wrong tags
@@ -164,11 +163,10 @@ public class TagChecker extends Test.TagTest {
         
         String errorSources = "";
         for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
-            BufferedReader reader = null;
-            try {
+            try (
                 MirroredInputStream s = new MirroredInputStream(source);
-                reader = new BufferedReader(UTFInputStreamReader.create(s));
-
+                BufferedReader reader = new BufferedReader(UTFInputStreamReader.create(s));
+            ) {
                 String okValue = null;
                 boolean tagcheckerfile = false;
                 boolean ignorefile = false;
@@ -241,8 +239,6 @@ public class TagChecker extends Test.TagTest {
                 }
             } catch (IOException e) {
                 errorSources += source + "\n";
-            } finally {
-                Utils.close(reader);
             }
         }
 

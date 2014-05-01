@@ -134,25 +134,21 @@ public class HelpBrowser extends JDialog {
      */
     protected StyleSheet buildStyleSheet() {
         StyleSheet ss = new StyleSheet();
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        getClass().getResourceAsStream("/data/help-browser.css"),
-                        Utils.UTF_8
-                )
-        );
         StringBuilder css = new StringBuilder();
-        try {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        getClass().getResourceAsStream("/data/help-browser.css"), Utils.UTF_8
+                )
+        )) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 css.append(line);
                 css.append("\n");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             Main.error(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));
             Main.error(e);
             return ss;
-        } finally {
-            Utils.close(reader);
         }
         ss.addRule(css.toString());
         return ss;

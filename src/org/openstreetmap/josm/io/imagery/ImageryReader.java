@@ -50,10 +50,11 @@ public class ImageryReader {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
-            InputStream in = new MirroredInputStream(source);
-            InputSource is = new InputSource(UTFInputStreamReader.create(in));
-            factory.newSAXParser().parse(is, parser);
-            return parser.entries;
+            try (InputStream in = new MirroredInputStream(source)) {
+                InputSource is = new InputSource(UTFInputStreamReader.create(in));
+                factory.newSAXParser().parse(is, parser);
+                return parser.entries;
+            }
         } catch (SAXException e) {
             throw e;
         } catch (ParserConfigurationException e) {

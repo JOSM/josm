@@ -75,10 +75,9 @@ public class GpxImporter extends FileImporter {
 
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
-        final InputStream is = Compression.getUncompressedFileInputStream(file);
         final String fileName = file.getName();
 
-        try {
+        try (InputStream is = Compression.getUncompressedFileInputStream(file)) {
             GpxReader r = new GpxReader(is);
             boolean parsedProperly = r.parse(true);
             r.getGpxData().storageFile = file;

@@ -36,15 +36,15 @@ public class GpxTracksSessionImporter implements SessionLayerImporter {
                 throw new IllegalDataException(tr("File name expected for layer no. {0}", support.getLayerIndex()));
             }
 
-            InputStream in = support.getInputStream(fileStr);
-            GpxImporter.GpxImporterData importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
-
-            support.addPostLayersTask(importData.getPostLayerTask());
-            return importData.getGpxLayer();
+            try (InputStream in = support.getInputStream(fileStr)) {
+                GpxImporter.GpxImporterData importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
+    
+                support.addPostLayersTask(importData.getPostLayerTask());
+                return importData.getGpxLayer();
+            }
 
         } catch (XPathExpressionException e) {
             throw new RuntimeException(e);
         }
     }
-
 }

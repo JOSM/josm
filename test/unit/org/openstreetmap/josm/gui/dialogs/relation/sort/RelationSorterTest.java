@@ -2,7 +2,8 @@
 package org.openstreetmap.josm.gui.dialogs.relation.sort;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Assert;
@@ -23,10 +24,12 @@ public class RelationSorterTest {
     private static DataSet testDataset;
 
     @BeforeClass
-    public static void loadData() throws FileNotFoundException, IllegalDataException {
+    public static void loadData() throws IllegalDataException, IOException {
         Main.initApplicationPreferences();
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        testDataset = OsmReader.parseDataSet(new FileInputStream("data_nodist/relation_sort.osm"), NullProgressMonitor.INSTANCE);
+        try (InputStream fis = new FileInputStream("data_nodist/relation_sort.osm")) {
+            testDataset = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+        }
     }
 
     private Relation getRelation(String testType) {

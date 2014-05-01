@@ -139,9 +139,12 @@ public class WMSImagery {
 
         Main.info("GET " + getCapabilitiesUrl.toString());
         URLConnection openConnection = Utils.openHttpConnection(getCapabilitiesUrl);
-        InputStream inputStream = openConnection.getInputStream();
         StringBuilder ba = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream))) {
+        
+        try (
+            InputStream inputStream = openConnection.getInputStream();
+            BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream))
+        ) {
             String line;
             while ((line = br.readLine()) != null) {
                 ba.append(line);
@@ -177,8 +180,8 @@ public class WMSImagery {
                         public String apply(Element x) {
                             return x.getTextContent();
                         }
-                    }
-                    ), new Predicate<String>() {
+                    }),
+                    new Predicate<String>() {
                         @Override
                         public boolean evaluate(String format) {
                             boolean isFormatSupported = isImageFormatSupported(format);
@@ -208,7 +211,6 @@ public class WMSImagery {
         } catch (Exception e) {
             throw new WMSGetCapabilitiesException(e, incomingData);
         }
-
     }
 
     static boolean isImageFormatSupported(final String format) {

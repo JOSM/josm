@@ -13,7 +13,6 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * OsmServerObjectReader reads an individual object from the OSM server.
@@ -115,7 +114,6 @@ public class OsmServerObjectReader extends OsmServerReader {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
         progressMonitor.beginTask("", 1);
-        InputStream in = null;
         try {
             progressMonitor.indeterminateSubTask(tr("Downloading OSM data..."));
             StringBuilder sb = new StringBuilder();
@@ -128,10 +126,11 @@ public class OsmServerObjectReader extends OsmServerReader {
                 sb.append("/").append(version);
             }
 
-            in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
+                if (in == null)
+                    return null;
+                return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            }
         } catch(OsmTransferException e) {
             if (cancel) return null;
             throw e;
@@ -140,7 +139,6 @@ public class OsmServerObjectReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            Utils.close(in);
             activeConnection = null;
         }
     }

@@ -22,6 +22,9 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class OsmExporter extends FileExporter {
 
+    /**
+     * Constructs a new {@code OsmExporter}.
+     */
     public OsmExporter() {
         super(OsmImporter.FILE_FILTER);
     }
@@ -66,18 +69,18 @@ public class OsmExporter extends FileExporter {
             }
 
             // create outputstream and wrap it with gzip or bzip, if necessary
-            OutputStream out = getOutputStream(file);
-            Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
-
-            OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
-            layer.data.getReadLock().lock();
-            try {
-                w.writeLayer(layer);
-            } finally {
-                Utils.close(w);
-                layer.data.getReadLock().unlock();
+            try (
+                OutputStream out = getOutputStream(file);
+                Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
+                OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
+            ) {
+                layer.data.getReadLock().lock();
+                try {
+                    w.writeLayer(layer);
+                } finally {
+                    layer.data.getReadLock().unlock();
+                }
             }
-            // FIXME - how to close?
             if (noBackup || !Main.pref.getBoolean("save.keepbackup", false)) {
                 if (tmpFile != null) {
                     tmpFile.delete();

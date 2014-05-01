@@ -282,9 +282,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             if (path != null) {
                 File file = new File(path);
                 if (file.exists()) {
-                    BufferedReader reader = null;
-                    try {
-                        reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Utils.UTF_8));
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Utils.UTF_8))) {
                         String id = null;
                         String release = null;
                         String line;
@@ -312,8 +310,6 @@ public class PlatformHookUnixoid implements PlatformHook {
                         }
                     } catch (IOException e) {
                         // Ignore
-                    } finally {
-                        Utils.close(reader);
                     }
                 }
             }

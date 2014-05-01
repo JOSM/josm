@@ -156,11 +156,9 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             File result = new File(autosaveDir, filename+".osm");
             try {
                 if (result.createNewFile()) {
-                    try {
-                        File pidFile = new File(autosaveDir, filename+".pid");
-                        PrintStream ps = new PrintStream(pidFile, "UTF-8");
+                    File pidFile = new File(autosaveDir, filename+".pid");
+                    try (PrintStream ps = new PrintStream(pidFile, "UTF-8")) {
                         ps.println(ManagementFactory.getRuntimeMXBean().getName());
-                        Utils.close(ps);
                     } catch (Throwable t) {
                         Main.error(t);
                     }
@@ -304,8 +302,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 boolean skipFile = false;
                 File pidFile = getPidFile(file);
                 if (pidFile.exists()) {
-                    try {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pidFile), Utils.UTF_8));
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pidFile), Utils.UTF_8))) {
                         try {
                             String jvmId = reader.readLine();
                             if (jvmId != null) {

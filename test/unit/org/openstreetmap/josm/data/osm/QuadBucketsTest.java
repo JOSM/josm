@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -65,19 +66,23 @@ public class QuadBucketsTest {
     @Test
     public void testRemove() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
-        removeAllTest(ds);
+        try (InputStream fis = new FileInputStream("data_nodist/restriction.osm")) {
+            DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+            removeAllTest(ds);
+        }
     }
 
     @Test
     public void testMove() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
-
-        for (Node n: ds.getNodes()) {
-            n.setCoor(new LatLon(10, 10));
+        try (InputStream fis = new FileInputStream("data_nodist/restriction.osm")) {
+            DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+    
+            for (Node n: ds.getNodes()) {
+                n.setCoor(new LatLon(10, 10));
+            }
+    
+            removeAllTest(ds);
         }
-
-        removeAllTest(ds);
     }
 }

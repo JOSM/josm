@@ -552,24 +552,26 @@ public class SessionReader {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
 
-        InputStream josIS = null;
+        try (InputStream josIS = createInputStream(sessionFile, zip)) {
+            loadSession(josIS, sessionFile.toURI(), zip, progressMonitor);
+        }
+    }
 
+    private InputStream createInputStream(File sessionFile, boolean zip) throws IOException, IllegalDataException {
         if (zip) {
             try {
                 zipFile = new ZipFile(sessionFile);
-                josIS = getZipInputStream(zipFile);
+                return getZipInputStream(zipFile);
             } catch (ZipException ze) {
                 throw new IOException(ze);
             }
         } else {
             try {
-                josIS = new FileInputStream(sessionFile);
+                return new FileInputStream(sessionFile);
             } catch (FileNotFoundException ex) {
                 throw new IOException(ex);
             }
         }
-
-        loadSession(josIS, sessionFile.toURI(), zip, progressMonitor);
     }
 
     private static InputStream getZipInputStream(ZipFile zipFile) throws ZipException, IOException, IllegalDataException {

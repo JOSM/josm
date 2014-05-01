@@ -166,10 +166,11 @@ public class OsmServerUserInfoReader extends OsmServerReader {
         try {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Reading user info ..."));
-            InputStream in = getInputStream("user/details", monitor.createSubTaskMonitor(1, true), reason);
-            return buildFromXML(
-                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in)
-            );
+            try (InputStream in = getInputStream("user/details", monitor.createSubTaskMonitor(1, true), reason)) {
+                return buildFromXML(
+                        DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in)
+                );
+            }
         } catch(OsmTransferException e) {
             throw e;
         } catch(Exception e) {

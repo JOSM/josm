@@ -152,11 +152,8 @@ public class SessionLoadAction extends DiskAccessAction {
                         // Download and write entire joz file as a temp file on disk as we need random access later
                         file = File.createTempFile("session_", ".joz", Utils.getJosmTempDir());
                         tempFile = true;
-                        FileOutputStream out = new FileOutputStream(file);
-                        try {
+                        try (FileOutputStream out = new FileOutputStream(file)) {
                             Utils.copyStream(is, out);
-                        } finally {
-                            Utils.close(out);
                         }
                     }
                     reader.loadSession(file, zip, monitor);

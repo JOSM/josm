@@ -291,8 +291,7 @@ public class OpenFileAction extends DiskAccessAction {
                 }
 
                 for (File urlFile: urlFiles) {
-                    try {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(urlFile), Utils.UTF_8));
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(urlFile), Utils.UTF_8))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
                             Matcher m = Pattern.compile(".*(https?://.*)").matcher(line);

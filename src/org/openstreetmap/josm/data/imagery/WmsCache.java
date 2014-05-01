@@ -110,50 +110,41 @@ public class WmsCache {
 
     private String getCacheDirectory(String url) {
         String cacheDirName = null;
-        InputStream fis = null;
-        OutputStream fos = null;
-        try {
-            Properties layersIndex = new Properties();
-            File layerIndexFile = new File(cacheDirPath(), LAYERS_INDEX_FILENAME);
-            try {
-                fis = new FileInputStream(layerIndexFile);
-                layersIndex.load(fis);
-            } catch (FileNotFoundException e) {
-                Main.error("Unable to load layers index for wms cache (file " + layerIndexFile + " not found)");
-            } catch (IOException e) {
-                Main.error("Unable to load layers index for wms cache");
-                Main.error(e);
-            }
+        Properties layersIndex = new Properties();
+        File layerIndexFile = new File(cacheDirPath(), LAYERS_INDEX_FILENAME);
+        try (InputStream fis = new FileInputStream(layerIndexFile)) {
+            layersIndex.load(fis);
+        } catch (FileNotFoundException e) {
+            Main.error("Unable to load layers index for wms cache (file " + layerIndexFile + " not found)");
+        } catch (IOException e) {
+            Main.error("Unable to load layers index for wms cache");
+            Main.error(e);
+        }
 
-            for (Object propKey: layersIndex.keySet()) {
-                String s = (String)propKey;
-                if (url.equals(layersIndex.getProperty(s))) {
-                    cacheDirName = s;
+        for (Object propKey: layersIndex.keySet()) {
+            String s = (String)propKey;
+            if (url.equals(layersIndex.getProperty(s))) {
+                cacheDirName = s;
+                break;
+            }
+        }
+
+        if (cacheDirName == null) {
+            int counter = 0;
+            while (true) {
+                counter++;
+                if (!layersIndex.keySet().contains(String.valueOf(counter))) {
                     break;
                 }
             }
-
-            if (cacheDirName == null) {
-                int counter = 0;
-                while (true) {
-                    counter++;
-                    if (!layersIndex.keySet().contains(String.valueOf(counter))) {
-                        break;
-                    }
-                }
-                cacheDirName = String.valueOf(counter);
-                layersIndex.setProperty(cacheDirName, url);
-                try {
-                    fos = new FileOutputStream(layerIndexFile);
-                    layersIndex.store(fos, "");
-                } catch (IOException e) {
-                    Main.error("Unable to save layer index for wms cache");
-                    Main.error(e);
-                }
+            cacheDirName = String.valueOf(counter);
+            layersIndex.setProperty(cacheDirName, url);
+            try (OutputStream fos = new FileOutputStream(layerIndexFile)) {
+                layersIndex.store(fos, "");
+            } catch (IOException e) {
+                Main.error("Unable to save layer index for wms cache");
+                Main.error(e);
             }
-        } finally {
-            Utils.close(fos);
-            Utils.close(fis);
         }
 
         return cacheDirName;
@@ -180,7 +171,10 @@ public class WmsCache {
                     WmsCacheType.class.getPackage().getName(),
                     WmsCacheType.class.getClassLoader());
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            WmsCacheType cacheEntries = (WmsCacheType)unmarshaller.unmarshal(new FileInputStream(indexFile));
+            WmsCacheType cacheEntries;
+            try (InputStream is = new FileInputStream(indexFile)) {
+                cacheEntries = (WmsCacheType)unmarshaller.unmarshal(is);
+            }
             totalFileSize = cacheEntries.getTotalFileSize();
             if (cacheEntries.getTileSize() != tileSize) {
                 Main.info("Cache created with different tileSize, cache will be discarded");
@@ -291,7 +285,9 @@ public class WmsCache {
                     WmsCacheType.class.getPackage().getName(),
                     WmsCacheType.class.getClassLoader());
             Marshaller marshaller = context.createMarshaller();
-            marshaller.marshal(index, new FileOutputStream(new File(cacheDir, INDEX_FILENAME)));
+            try (OutputStream fos = new FileOutputStream(new File(cacheDir, INDEX_FILENAME))) {
+                marshaller.marshal(index, fos);
+            }
         } catch (Exception e) {
             Main.error("Failed to save wms-cache file");
             Main.error(e);
@@ -301,7 +297,6 @@ public class WmsCache {
     private File getImageFile(ProjectionEntries projection, CacheEntry entry) {
         return new File(cacheDir, projection.cacheDirectory + "/" + entry.filename);
     }
-
 
     private BufferedImage loadImage(ProjectionEntries projectionEntries, CacheEntry entry) throws IOException {
 
@@ -523,11 +518,8 @@ public class WmsCache {
             ImageIO.write(copy, "png", imageFile);
             totalFileSize += imageFile.length();
         } else {
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(imageFile));
-            try {
+            try (OutputStream os = new BufferedOutputStream(new FileOutputStream(imageFile))) {
                 totalFileSize += Utils.copyStream(imageData, os);
-            } finally {
-                Utils.close(os);
             }
         }
     }

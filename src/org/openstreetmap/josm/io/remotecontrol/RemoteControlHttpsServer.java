@@ -55,37 +55,38 @@ public class RemoteControlHttpsServer extends Thread {
                 char[] password = KEYSTORE_PASSWORD.toCharArray();
                 
                 // Load keystore
-                InputStream in = RemoteControlHttpsServer.class.getResourceAsStream(KEYSTORE_PATH);
-                if (in == null) {
-                    Main.error(tr("Unable to find JOSM keystore at {0}. Remote control will not be available on HTTPS.", KEYSTORE_PATH));
-                } else {
-                    try {
-                        ks.load(in, password);
-                    } finally {
-                        Utils.close(in);
-                    }
-                    
-                    if (Main.isDebugEnabled()) {
-                        for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {
-                            Main.debug("Alias in keystore: "+aliases.nextElement());
+                try (InputStream in = RemoteControlHttpsServer.class.getResourceAsStream(KEYSTORE_PATH)) {
+                    if (in == null) {
+                        Main.error(tr("Unable to find JOSM keystore at {0}. Remote control will not be available on HTTPS.", KEYSTORE_PATH));
+                    } else {
+                        try {
+                            ks.load(in, password);
+                        } finally {
+                            Utils.close(in);
                         }
+                        
+                        if (Main.isDebugEnabled()) {
+                            for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {
+                                Main.debug("Alias in keystore: "+aliases.nextElement());
+                            }
+                        }
+    
+                        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+                        kmf.init(ks, password);
+                        
+                        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+                        tmf.init(ks);
+                        
+                        sslContext = SSLContext.getInstance("TLS");
+                        sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+                        
+                        if (Main.isDebugEnabled()) {
+                            Main.debug("SSL Context protocol: " + sslContext.getProtocol());
+                            Main.debug("SSL Context provider: " + sslContext.getProvider());
+                        }
+                        
+                        initOK = true;
                     }
-
-                    KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-                    kmf.init(ks, password);
-                    
-                    TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-                    tmf.init(ks);
-                    
-                    sslContext = SSLContext.getInstance("TLS");
-                    sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-                    
-                    if (Main.isDebugEnabled()) {
-                        Main.debug("SSL Context protocol: " + sslContext.getProtocol());
-                        Main.debug("SSL Context provider: " + sslContext.getProvider());
-                    }
-                    
-                    initOK = true;
                 }
             } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | 
                     IOException | UnrecoverableKeyException | KeyManagementException e) {
@@ -174,8 +175,7 @@ public class RemoteControlHttpsServer extends Thread {
         Main.info(marktr("RemoteControl::Accepting secure connections on port {0}"),
              Integer.toString(server.getLocalPort()));
         while (true) {
-            try {
-                Socket request = server.accept();
+            try (Socket request = server.accept()) {
                 if (Main.isDebugEnabled() && request instanceof SSLSocket) {
                     SSLSocket sslSocket = (SSLSocket) request;
                     Main.debug("SSL socket - Enabled Cipher suites: "+Arrays.toString(sslSocket.getEnabledCipherSuites()));

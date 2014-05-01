@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Formatter;
+import java.util.Locale;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -235,9 +237,11 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             // Support projections with very small numbers (e.g. 4326)
             int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
             // US locale to force decimal separator to be '.'
-            tOffset.setText(new java.util.Formatter(java.util.Locale.US).format(
+            try (Formatter us = new Formatter(Locale.US)) {
+                tOffset.setText(us.format(
                     "%1." + precision + "f; %1." + precision + "f",
                     layer.getDx(), layer.getDy()).toString());
+            }
         }
 
         private boolean confirmOverwriteBookmark() {

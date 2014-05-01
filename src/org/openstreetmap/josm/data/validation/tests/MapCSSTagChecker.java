@@ -452,11 +452,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                 } else {
                     Main.info(tr("Adding {0} to tag checker", i));
                 }
-                MirroredInputStream s = new MirroredInputStream(i);
-                try {
+                try (MirroredInputStream s = new MirroredInputStream(i)) {
                     addMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
-                } finally {
-                    Utils.close(s);
                 }
             } catch (IOException ex) {
                 Main.warn(tr("Failed to add {0} to tag checker", i));

@@ -11,7 +11,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Reads the history of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} from the OSM API server.
@@ -55,7 +54,6 @@ public class OsmServerHistoryReader extends OsmServerReader {
      * @throws OsmTransferException thrown, if an exception occurs
      */
     public HistoryDataSet parseHistory(ProgressMonitor progressMonitor) throws OsmTransferException {
-        InputStream in = null;
         progressMonitor.beginTask("");
         try {
             progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
@@ -63,12 +61,13 @@ public class OsmServerHistoryReader extends OsmServerReader {
             sb.append(primitiveType.getAPIName())
             .append("/").append(id).append("/history");
 
-            in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            progressMonitor.indeterminateSubTask(tr("Downloading history..."));
-            final OsmHistoryReader reader = new OsmHistoryReader(in);
-            return reader.parse(progressMonitor.createSubTaskMonitor(1, true));
+            try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
+                if (in == null)
+                    return null;
+                progressMonitor.indeterminateSubTask(tr("Downloading history..."));
+                OsmHistoryReader reader = new OsmHistoryReader(in);
+                return reader.parse(progressMonitor.createSubTaskMonitor(1, true));
+            }
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
@@ -77,7 +76,6 @@ public class OsmServerHistoryReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            Utils.close(in);
             activeConnection = null;
         }
     }

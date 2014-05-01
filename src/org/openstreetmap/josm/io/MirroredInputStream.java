@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -183,6 +184,7 @@ public class MirroredInputStream extends InputStream {
         return ze.b;
     }
 
+    @SuppressWarnings("resource")
     private Pair<String, InputStream> findZipEntryImpl(String extension, String namepart) {
         if (file == null)
             return null;
@@ -292,23 +294,19 @@ public class MirroredInputStream extends InputStream {
         String a = url.toString().replaceAll("[^A-Za-z0-9_.-]", "_");
         String localPath = "mirror_" + a;
         destDirFile = new File(destDir, localPath + ".tmp");
-        BufferedOutputStream bos = null;
-        BufferedInputStream bis = null;
         try {
             HttpURLConnection con = connectFollowingRedirect(url, httpAccept);
-            bis = new BufferedInputStream(con.getInputStream());
-            FileOutputStream fos = new FileOutputStream(destDirFile);
-            bos = new BufferedOutputStream(fos);
-            byte[] buffer = new byte[4096];
-            int length;
-            while ((length = bis.read(buffer)) > -1) {
-                bos.write(buffer, 0, length);
+            try (
+                InputStream bis = new BufferedInputStream(con.getInputStream());
+                OutputStream fos = new FileOutputStream(destDirFile);
+                OutputStream bos = new BufferedOutputStream(fos)
+            ) {
+                byte[] buffer = new byte[4096];
+                int length;
+                while ((length = bis.read(buffer)) > -1) {
+                    bos.write(buffer, 0, length);
+                }
             }
-            Utils.close(bos);
-            bos = null;
-            /* close fos as well to be sure! */
-            Utils.close(fos);
-            fos = null;
             localFile = new File(destDir, localPath);
             if(Main.platform.rename(destDirFile, localFile)) {
                 Main.pref.putCollection(prefKey, Arrays.asList(new String[]
@@ -324,9 +322,6 @@ public class MirroredInputStream extends InputStream {
             } else {
                 throw e;
             }
-        } finally {
-            Utils.close(bis);
-            Utils.close(bos);
         }
 
         return localFile;

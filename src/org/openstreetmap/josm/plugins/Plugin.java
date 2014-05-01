@@ -109,11 +109,10 @@ public abstract class Plugin implements MapFrameListener {
         if (!pluginDir.exists()) {
             pluginDir.mkdirs();
         }
-        FileOutputStream out = null;
-        InputStream in = null;
-        try {
-            out = new FileOutputStream(new File(pluginDirName, to));
-            in = getClass().getResourceAsStream(from);
+        try (
+            FileOutputStream out = new FileOutputStream(new File(pluginDirName, to));
+            InputStream in = getClass().getResourceAsStream(from)
+        ) {
             if (in == null) {
                 throw new IOException("Resource not found: "+from);
             }
@@ -121,9 +120,6 @@ public abstract class Plugin implements MapFrameListener {
             for(int len = in.read(buffer); len > 0; len = in.read(buffer)) {
                 out.write(buffer, 0, len);
             }
-        } finally {
-            Utils.close(in);
-            Utils.close(out);
         }
     }
 

@@ -37,14 +37,11 @@ public class Version {
         if (resource == null) return null;
         String s = null;
         try {
-            BufferedReader in = Utils.openURLReader(resource);
             StringBuilder sb = new StringBuilder();
-            try {
+            try (BufferedReader in = Utils.openURLReader(resource)) {
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
                     sb.append(line).append("\n");
                 }
-            } finally {
-                Utils.close(in);
             }
             s = sb.toString();
         } catch (IOException e) {

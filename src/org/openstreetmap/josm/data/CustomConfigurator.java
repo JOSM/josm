@@ -426,7 +426,9 @@ public final class CustomConfigurator {
             try {
                 String fileDir = file.getParentFile().getAbsolutePath();
                 if (fileDir!=null) engine.eval("scriptDir='"+normalizeDirName(fileDir) +"';");
-                openAndReadXML(new BufferedInputStream(new FileInputStream(file)));
+                try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+                    openAndReadXML(is);
+                }
             } catch (Exception ex) {
                 log("Error reading custom preferences: " + ex.getMessage());
             }
@@ -444,8 +446,6 @@ public final class CustomConfigurator {
                 }
             } catch (Exception ex) {
                 log("Error reading custom preferences: "+ex.getMessage());
-            } finally {
-                Utils.close(is);
             }
             log("-- Reading complete --");
         }
@@ -459,7 +459,7 @@ public final class CustomConfigurator {
 
                 engine.eval("homeDir='"+normalizeDirName(Main.pref.getPreferencesDir()) +"';");
                 engine.eval("josmVersion="+Version.getInstance().getVersion()+";");
-                String className =  CustomConfigurator.class.getName();
+                String className = CustomConfigurator.class.getName();
                 engine.eval("API.messageBox="+className+".messageBox");
                 engine.eval("API.askText=function(text) { return String("+className+".askForText(text));}");
                 engine.eval("API.askOption="+className+".askForOption");

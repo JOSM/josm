@@ -74,18 +74,16 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
     public void loadStyleSource() {
         init();
         try {
-            InputStream in = getSourceInputStream();
-            try {
-                InputStreamReader reader = new InputStreamReader(in, Utils.UTF_8);
+            try (
+                InputStream in = getSourceInputStream();
+                InputStreamReader reader = new InputStreamReader(in, Utils.UTF_8)
+            ) {
                 XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(this));
                 parser.startWithValidation(reader,
                         Main.getXMLBase()+"/mappaint-style-1.0",
                         "resource://data/mappaint-style.xsd");
                 while (parser.hasNext());
-            } finally {
-                closeSourceInputStream(in);
             }
-
         } catch (IOException e) {
             Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
             Main.error(e);
@@ -376,5 +374,4 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             }
         }
     }
-
 }

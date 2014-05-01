@@ -289,14 +289,17 @@ public class OsmApi extends OsmConnection {
      */
     private String toXml(IPrimitive o, boolean addBody) {
         StringWriter swriter = new StringWriter();
-        OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version);
-        swriter.getBuffer().setLength(0);
-        osmWriter.setWithBody(addBody);
-        osmWriter.setChangeset(changeset);
-        osmWriter.header();
-        o.accept(osmWriter);
-        osmWriter.footer();
-        osmWriter.flush();
+        try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version)) {
+            swriter.getBuffer().setLength(0);
+            osmWriter.setWithBody(addBody);
+            osmWriter.setChangeset(changeset);
+            osmWriter.header();
+            o.accept(osmWriter);
+            osmWriter.footer();
+            osmWriter.flush();
+        } catch (IOException e) {
+            Main.warn(e);
+        }
         return swriter.toString();
     }
 
@@ -307,12 +310,15 @@ public class OsmApi extends OsmConnection {
      */
     private String toXml(Changeset s) {
         StringWriter swriter = new StringWriter();
-        OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version);
-        swriter.getBuffer().setLength(0);
-        osmWriter.header();
-        osmWriter.visit(s);
-        osmWriter.footer();
-        osmWriter.flush();
+        try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version)) {
+            swriter.getBuffer().setLength(0);
+            osmWriter.header();
+            osmWriter.visit(s);
+            osmWriter.footer();
+            osmWriter.flush();
+        } catch (IOException e) {
+            Main.warn(e);
+        }
         return swriter.toString();
     }
 
@@ -656,12 +662,7 @@ public class OsmApi extends OsmConnection {
 
                 // If the API returned an error code like 403 forbidden, getInputStream
                 // will fail with an IOException.
-                InputStream i = null;
-                try {
-                    i = activeConnection.getInputStream();
-                } catch (IOException ioe) {
-                    i = activeConnection.getErrorStream();
-                }
+                InputStream i = getConnectionStream();
                 if (i != null) {
                     // the input stream can be null if both the input and the error stream
                     // are null. Seems to be the case if the OSM server replies a 401
@@ -718,6 +719,15 @@ public class OsmApi extends OsmConnection {
             } catch(OsmTransferException e) {
                 throw e;
             }
+        }
+    }
+
+    private InputStream getConnectionStream() {
+        try {
+            return activeConnection.getInputStream();
+        } catch (IOException ioe) {
+            Main.warn(ioe);
+            return activeConnection.getErrorStream();
         }
     }
 
