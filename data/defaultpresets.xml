@@ -5060,7 +5060,7 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
             <text key="operator" text="Operator" />
             <text key="branch" text="Branch operator" />
-            <optional>				
+            <optional>
                 <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
                 <combo key="phases" text="Phases" values="1,3" length="1" />
             </optional>
@@ -5127,7 +5127,7 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <combo key="poles" text="Amount of poles" values="monopole,bipole" />
                 <combo key="rating" text="Power rating (MVA)" values="15 MVA,50 MVA,100 MVA" />
-            </optional>		
+            </optional>
         </item>
         <item name="Power Compensator" icon="presets/power.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=compensator"
@@ -5143,7 +5143,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="branch" text="Branch operator" />
             <optional>
                 <combo key="rating" text="Power rating (kvar/Mvar)" values="500 kvar,1 Mvar,5 Mvar" />
-            </optional>		
+            </optional>
         </item>
         <separator/>
         <item name="Cable Distribution Cabinet" icon="presets/power.png" type="node" preset_name_label="true">
@@ -5153,7 +5153,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="power" value="cable_distribution_cabinet" />
             <text key="ref" text="Reference" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110,low" /> <!-- Recheck values -->			
+            <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110,low" /> <!-- Recheck values -->
             <text key="operator" text="Operator" />
             <text key="branch" text="Branch operator" />
         </item>
@@ -5177,13 +5177,13 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
             <text key="operator" text="Operator" />
             <text key="branch" text="Branch operator" />
-            <optional>			
+            <optional>
                 <combo key="tower:type" text="Tower type" values="suspension,anchor,termination,branch,transposing,crossing,transition" values_context="power" />
                 <combo key="branch:type" text="Branch tower type" values="tap,split,loop,cross" values_context="power" />
                 <combo key="design" text="Tower design" values="one-level,two-level,donau,three-level,barrel,asymmetric,triangle,flag,donau;one-level,four-level,six-level,nine-level,delta,delta_two-level,y-frame,x-frame,h-frame,guyed_h-frame,portal,portal_two-level,portal_three-level,guyed_v-frame,bipole,monopolar" values_context="power" />
                 <check key="triple_tower" text="Triple tower" />
                 <check key="design:incomplete" text="Incomplete tower" />
-            </optional>			
+            </optional>
         </item>
         <item name="Pole" icon="icons/power_tower_low.n.16.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=pole"
@@ -5224,8 +5224,8 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <check key="communication" text="Used to communication data" value_on="line" value_off="" default="off" />
-            </optional>	
-        </item>		
+            </optional>
+        </item>
         <item name="Power Cable" icon="presets/power.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=cable"
@@ -5243,9 +5243,9 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="location" text="Location" values="underground,underwater,overground" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <check key="communication" text="Used to communication data" value_on="line" value_off="" default="off" />
-            </optional>	
-        </item>		
-    </group> <!-- Power -->		
+            </optional>
+        </item>
+    </group> <!-- Power -->
     <group name="Historic Places" icon="presets/State_Tourist.png">
         <item name="Castle" icon="presets/State_Tourist.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=castle"
@@ -6403,6 +6403,15 @@ Note that for a match, at least one positive and no negative is required.
             <key key="landuse" value="greenhouse_horticulture" />
             <text key="name" text="Name" />
             <text key="operator" text="Operator" />
+        </item>
+        <item name="Plant Nursery" icon="styles/standard/misc/landmark/plant.png" type="closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=plant_nursery" />
+            <space />
+            <key key="landuse" value="plant_nursery" />
+            <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
+            <text key="genus" text="Genus" />
+            <text key="species" text="Species" />
         </item>
         <item name="Allotments" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
             <space />

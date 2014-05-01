@@ -2902,6 +2902,12 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="landuse" v="plant_nursery"/>
+		<area colour="green#b1e0c2"/>
+		<icon src="misc/landmark/plant.png"/>
+	</rule>
+
+	<rule>
 		<condition k="landuse" v="grass"/>
 		<area colour="green#b1e0c2"/>
 		<icon src="misc/landmark/plant.png"/>
