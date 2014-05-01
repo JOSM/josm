@@ -140,7 +140,7 @@ way["addr:interpolation"=alphabetic] {
     width: 1;
     realwidth: 1;
     color: address#1C86EE;
-    dashes: 1,1;
+    dashes: 2,2;
 }
 area[building] {
     fill-color: building#cb9999;
@@ -613,7 +613,7 @@ way[highway=steps] {
     width: 1;
     realwidth: 1;
     color: foot#00ff00;
-    dashes: 1,1;
+    dashes: 2,2;
 }
 node[highway=steps] {
     icon-image: "transport/steps.png";
@@ -2812,7 +2812,7 @@ node[aerialway=pylon] {
 way[aerialway=goods] {
     width: 1;
     color: aerialway#663300;
-    dashes: 1,1;
+    dashes: 2,2;
 }
 node[aerialway=goods] {
     icon-image: "transport/aerialway/goods.png";
