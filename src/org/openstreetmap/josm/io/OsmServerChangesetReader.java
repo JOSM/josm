@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -52,6 +54,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
      */
     public List<Changeset> queryChangesets(ChangesetQuery query, ProgressMonitor monitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(query, "query");
+        List<Changeset> result = null;
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -59,11 +62,14 @@ public class OsmServerChangesetReader extends OsmServerReader {
             monitor.beginTask(tr("Reading changesets..."));
             StringBuilder sb = new StringBuilder();
             sb.append("changesets?").append(query.getQueryString());
-            InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            monitor.indeterminateSubTask(tr("Downloading changesets ..."));
-            return OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
+            try (InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true))) {
+                if (in == null)
+                    return null;
+                monitor.indeterminateSubTask(tr("Downloading changesets ..."));
+                result = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
+            } catch (IOException e) {
+                Main.warn(e);
+            }
         } catch(OsmTransferException e) {
             throw e;
         } catch(IllegalDataException e) {
@@ -71,6 +77,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
         } finally {
             monitor.finishTask();
         }
+        return result;
     }
 
     /**
@@ -88,18 +95,22 @@ public class OsmServerChangesetReader extends OsmServerReader {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
+        Changeset result = null;
         try {
             monitor.beginTask(tr("Reading changeset {0} ...",id));
             StringBuilder sb = new StringBuilder();
             sb.append("changeset/").append(id);
-            InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            monitor.indeterminateSubTask(tr("Downloading changeset {0} ...", id));
-            List<Changeset> changesets = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
-            if (changesets == null || changesets.isEmpty())
-                return null;
-            return changesets.get(0);
+            try (InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true))) {
+                if (in == null)
+                    return null;
+                monitor.indeterminateSubTask(tr("Downloading changeset {0} ...", id));
+                List<Changeset> changesets = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
+                if (changesets == null || changesets.isEmpty())
+                    return null;
+                result = changesets.get(0);
+            } catch (IOException e) {
+                Main.warn(e);
+            }
         } catch(OsmTransferException e) {
             throw e;
         } catch(IllegalDataException e) {
@@ -107,6 +118,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
         } finally {
             monitor.finishTask();
         }
+        return result;
     }
 
     /**
@@ -136,15 +148,18 @@ public class OsmServerChangesetReader extends OsmServerReader {
                 i++;
                 StringBuilder sb = new StringBuilder();
                 sb.append("changeset/").append(id);
-                InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
-                if (in == null)
-                    return null;
-                monitor.indeterminateSubTask(tr("({0}/{1}) Downloading changeset {2} ...", i, ids.size(), id));
-                List<Changeset> changesets = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
-                if (changesets == null || changesets.isEmpty()) {
-                    continue;
+                try (InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true))) {
+                    if (in == null)
+                        return null;
+                    monitor.indeterminateSubTask(tr("({0}/{1}) Downloading changeset {2} ...", i, ids.size(), id));
+                    List<Changeset> changesets = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
+                    if (changesets == null || changesets.isEmpty()) {
+                        continue;
+                    }
+                    ret.addAll(changesets);
+                } catch (IOException e) {
+                    Main.warn(e);
                 }
-                ret.addAll(changesets);
                 monitor.worked(1);
             }
             return ret;
@@ -172,20 +187,25 @@ public class OsmServerChangesetReader extends OsmServerReader {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
+        ChangesetDataSet result = null;
         try {
             monitor.beginTask(tr("Downloading changeset content"));
             StringBuilder sb = new StringBuilder();
             sb.append("changeset/").append(id).append("/download");
-            InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            monitor.setCustomText(tr("Downloading content for changeset {0} ...", id));
-            OsmChangesetContentParser parser = new OsmChangesetContentParser(in);
-            return parser.parse(monitor.createSubTaskMonitor(1, true));
+            try (InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true))) {
+                if (in == null)
+                    return null;
+                monitor.setCustomText(tr("Downloading content for changeset {0} ...", id));
+                OsmChangesetContentParser parser = new OsmChangesetContentParser(in);
+                result = parser.parse(monitor.createSubTaskMonitor(1, true));
+            } catch (IOException e) {
+                Main.warn(e);
+            }
         } catch(XmlParsingException e) {
             throw new OsmTransferException(e);
         } finally {
             monitor.finishTask();
         }
+        return result;
     }
 }

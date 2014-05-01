@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.ProxySelector;
 import java.net.URL;
@@ -338,8 +339,8 @@ public class MainApplication extends Main {
             CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 info("Reading preferences from " + i);
-                try {
-                    config.openAndReadXML(Utils.openURL(new URL(i)));
+                try (InputStream is = Utils.openURL(new URL(i))) {
+                    config.openAndReadXML(is);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }

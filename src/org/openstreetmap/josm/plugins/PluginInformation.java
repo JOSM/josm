@@ -106,11 +106,10 @@ public class PluginInformation {
         }
         this.name = name;
         this.file = file;
-        FileInputStream fis = null;
-        JarInputStream jar = null;
-        try {
-            fis = new FileInputStream(file);
-            jar = new JarInputStream(fis);
+        try (
+            FileInputStream fis = new FileInputStream(file);
+            JarInputStream jar = new JarInputStream(fis)
+        ) {
             Manifest manifest = jar.getManifest();
             if (manifest == null)
                 throw new PluginException(name, tr("The plugin file ''{0}'' does not include a Manifest.", file.toString()));
@@ -118,9 +117,6 @@ public class PluginInformation {
             libraries.add(0, Utils.fileToURL(file));
         } catch (IOException e) {
             throw new PluginException(name, e);
-        } finally {
-            Utils.close(jar);
-            Utils.close(fis);
         }
     }
 
@@ -379,9 +375,13 @@ public class PluginInformation {
     public static PluginInformation findPlugin(String pluginName) throws PluginException {
         String name = pluginName;
         name = name.replaceAll("[-. ]", "");
-        InputStream manifestStream = PluginInformation.class.getResourceAsStream("/org/openstreetmap/josm/plugins/"+name+"/MANIFEST.MF");
-        if (manifestStream != null)
-            return new PluginInformation(manifestStream, pluginName, null);
+        try (InputStream manifestStream = PluginInformation.class.getResourceAsStream("/org/openstreetmap/josm/plugins/"+name+"/MANIFEST.MF")) {
+            if (manifestStream != null) {
+                return new PluginInformation(manifestStream, pluginName, null);
+            }
+        } catch (IOException e) {
+            Main.warn(e);
+        }
 
         Collection<String> locations = getPluginLocations();
 

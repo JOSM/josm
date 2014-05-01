@@ -4,7 +4,8 @@ package org.openstreetmap.josm.data.osm;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -62,9 +63,12 @@ public class FilterTest {
     }
 
     @Test
-    public void filter_test() throws ParseError, IllegalDataException, FileNotFoundException {
+    public void filter_test() throws ParseError, IllegalDataException, IOException {
         for (int i : new int [] {1,2,3, 11,12,13,14, 15}) {
-            DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/filterTests.osm"), NullProgressMonitor.INSTANCE);
+            DataSet ds;
+            try (InputStream is = new FileInputStream("data_nodist/filterTests.osm")) {
+                ds = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);
+            }
 
             List<Filter> filters = new LinkedList<>();
             switch (i) {

@@ -40,25 +40,25 @@ public class MarkerSessionImporter implements SessionLayerImporter {
                 throw new IllegalDataException(tr("File name expected for layer no. {0}", support.getLayerIndex()));
             }
 
-            InputStream in = support.getInputStream(fileStr);
-            GpxImporter.GpxImporterData importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
-
-            support.addPostLayersTask(importData.getPostLayerTask());
-
-            GpxLayer gpxLayer = null;
-            List<SessionReader.LayerDependency> deps = support.getLayerDependencies();
-            if (!deps.isEmpty()) {
-                Layer layer = deps.iterator().next().getLayer();
-                if (layer instanceof GpxLayer) {
-                    gpxLayer = (GpxLayer) layer;
+            try (InputStream in = support.getInputStream(fileStr)) {
+                GpxImporter.GpxImporterData importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
+    
+                support.addPostLayersTask(importData.getPostLayerTask());
+    
+                GpxLayer gpxLayer = null;
+                List<SessionReader.LayerDependency> deps = support.getLayerDependencies();
+                if (!deps.isEmpty()) {
+                    Layer layer = deps.iterator().next().getLayer();
+                    if (layer instanceof GpxLayer) {
+                        gpxLayer = (GpxLayer) layer;
+                    }
                 }
+    
+                MarkerLayer markerLayer = importData.getMarkerLayer();
+                markerLayer.fromLayer = gpxLayer;
+    
+                return markerLayer;
             }
-
-            MarkerLayer markerLayer = importData.getMarkerLayer();
-            markerLayer.fromLayer = gpxLayer;
-
-            return markerLayer;
-
         } catch (XPathExpressionException e) {
             throw new RuntimeException(e);
         }

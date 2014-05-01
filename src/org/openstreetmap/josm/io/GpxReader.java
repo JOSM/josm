@@ -506,11 +506,13 @@ public class GpxReader implements GpxConstants {
     }
 
     /**
-     * Parse the input stream and store the result in trackData and markerData
+     * Constructs a new {@code GpxReader}, which can later parse the input stream 
+     * and store the result in trackData and markerData
      *
      * @param source the source input stream
      * @throws IOException if an IO error occurs, e.g. the input stream is closed.
      */
+    @SuppressWarnings("resource")
     public GpxReader(InputStream source) throws IOException {
         Reader utf8stream = UTFInputStreamReader.create(source);
         Reader filtered = new InvalidXmlCharacterFilter(utf8stream);

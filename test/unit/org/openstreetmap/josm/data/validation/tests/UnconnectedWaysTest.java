@@ -5,6 +5,7 @@ import static org.CustomMatchers.isEmpty;
 import static org.junit.Assert.assertThat;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,9 +33,11 @@ public class UnconnectedWaysTest {
 
     @Test
     public void testTicket6313() throws Exception {
-        final DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/UnconnectedWaysTest.osm"), NullProgressMonitor.INSTANCE);
-        bib.visit(ds.allPrimitives());
-        bib.endTest();
-        assertThat(bib.getErrors(), isEmpty());
+        try (InputStream fis = new FileInputStream("data_nodist/UnconnectedWaysTest.osm")) {
+            final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+            bib.visit(ds.allPrimitives());
+            bib.endTest();
+            assertThat(bib.getErrors(), isEmpty());
+        }
     }
 }

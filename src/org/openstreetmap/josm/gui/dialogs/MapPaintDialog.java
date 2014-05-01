@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -515,13 +516,12 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             protected void realRun() {
                 getProgressMonitor().indeterminateSubTask(
                         tr("Save style ''{0}'' as ''{1}''", s.getDisplayString(), file.getPath()));
-                BufferedInputStream bis = null;
-                BufferedOutputStream bos = null;
                 try {
                     InputStream in = s.getSourceInputStream();
-                    try {
-                        bis = new BufferedInputStream(in);
-                        bos = new BufferedOutputStream(new FileOutputStream(file));
+                    try (
+                        InputStream bis = new BufferedInputStream(in);
+                        OutputStream bos = new BufferedOutputStream(new FileOutputStream(file))
+                    ) {
                         byte[] buffer = new byte[4096];
                         int length;
                         while ((length = bis.read(buffer)) > -1 && !canceled) {
@@ -532,9 +532,6 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
                     }
                 } catch (IOException e) {
                     error = true;
-                } finally {
-                    Utils.close(bis);
-                    Utils.close(bos);
                 }
             }
 

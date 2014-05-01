@@ -113,7 +113,9 @@ public class CacheFiles {
             }
 
             byte[] bytes = new byte[(int) data.length()];
-            new RandomAccessFile(data, "r").readFully(bytes);
+            try (RandomAccessFile raf = new RandomAccessFile(data, "r")) {
+                raf.readFully(bytes);
+            }
             return bytes;
         } catch (Exception e) {
             Main.warn(e);
@@ -134,11 +136,8 @@ public class CacheFiles {
                 f.delete();
             }
             // rws also updates the file meta-data, i.e. last mod time
-            RandomAccessFile raf = new RandomAccessFile(f, "rws");
-            try {
+            try (RandomAccessFile raf = new RandomAccessFile(f, "rws")) {
                 raf.write(data);
-            } finally {
-                Utils.close(raf);
             }
         } catch (Exception e) {
             Main.warn(e);

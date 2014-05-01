@@ -211,15 +211,18 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         return layerEl;
     }
 
-    protected void addDataFile(OutputStream out) {
-        Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
-        OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
-        layer.data.getReadLock().lock();
-        try {
-            w.writeLayer(layer);
-            w.flush();
-        } finally {
-            layer.data.getReadLock().unlock();
+    protected void addDataFile(OutputStream out) throws IOException {
+        try (
+            Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
+            OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion())
+        ) {
+            layer.data.getReadLock().lock();
+            try {
+                w.writeLayer(layer);
+                w.flush();
+            } finally {
+                layer.data.getReadLock().unlock();
+            }
         }
     }
 }

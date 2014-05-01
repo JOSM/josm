@@ -239,13 +239,11 @@ public class SessionWriter {
     }
 
     public void write(File f) throws IOException {
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(f);
+        try (OutputStream out = new FileOutputStream(f)) {
+            write(out);
         } catch (FileNotFoundException e) {
             throw new IOException(e);
         }
-        write(out);
     }
 
     public void write (OutputStream out) throws IOException {
@@ -261,6 +259,5 @@ public class SessionWriter {
         } else {
             writeJos(doc, new BufferedOutputStream(out));
         }
-        Utils.close(out);
     }
 }

@@ -40,7 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public final class OsmChangesetParser {
-    private List<Changeset> changesets;
+    private final List<Changeset> changesets;
 
     private OsmChangesetParser() {
         changesets = new LinkedList<>();
@@ -218,6 +218,7 @@ public final class OsmChangesetParser {
      * @return the list of changesets
      * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
      */
+    @SuppressWarnings("resource")
     public static List<Changeset> parse(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         OsmChangesetParser parser = new OsmChangesetParser();
         try {

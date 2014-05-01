@@ -14,7 +14,6 @@ import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Import a WMS layer from a serialized binary file previously exported via {@link WMSLayerExporter}.
@@ -49,13 +48,10 @@ public class WMSLayerImporter extends FileImporter {
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         CheckParameterUtil.ensureParameterNotNull(file, "file");
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-        try {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             wmsLayer.readExternal(ois);
         } catch (ClassNotFoundException e) {
             throw new IllegalDataException(e);
-        } finally {
-            Utils.close(ois);
         }
 
         // FIXME: remove UI stuff from IO subsystem

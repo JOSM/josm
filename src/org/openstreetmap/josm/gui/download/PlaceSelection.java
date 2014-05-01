@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -367,11 +368,15 @@ public class PlaceSelection implements DownloadSelection {
                     connection = Utils.openHttpConnection(url);
                 }
                 connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
-                InputStream inputStream = connection.getInputStream();
-                InputSource inputSource = new InputSource(new InputStreamReader(inputStream, Utils.UTF_8));
-                NameFinderResultParser parser = new NameFinderResultParser();
-                SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
-                this.data = parser.getResult();
+                try (
+                    InputStream inputStream = connection.getInputStream();
+                    Reader reader = new InputStreamReader(inputStream, Utils.UTF_8);
+                ) {
+                    InputSource inputSource = new InputSource(reader);
+                    NameFinderResultParser parser = new NameFinderResultParser();
+                    SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
+                    this.data = parser.getResult();
+                }
             } catch(Exception e) {
                 if (canceled)
                     // ignore exception

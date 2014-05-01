@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -277,9 +279,9 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     public Iterable<Object> startWithValidation(final Reader in, String namespace, String schemaSource) throws SAXException {
-        try {
-            SchemaFactory factory =  SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            Schema schema = factory.newSchema(new StreamSource(new MirroredInputStream(schemaSource)));
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        try (InputStream mis = new MirroredInputStream(schemaSource)) {
+            Schema schema = factory.newSchema(new StreamSource(mis));
             ValidatorHandler validator = schema.newValidatorHandler();
             validator.setContentHandler(parser);
             validator.setErrorHandler(parser);

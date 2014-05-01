@@ -74,8 +74,7 @@ public class MapCSSStyleSource extends StyleSource {
     public void loadStyleSource() {
         init();
         rules.clear();
-        try {
-            InputStream in = getSourceInputStream();
+        try (InputStream in = getSourceInputStream()) {
             try {
                 // evaluate @media { ... } blocks
                 MapCSSParser preprocessor = new MapCSSParser(in, "UTF-8", MapCSSParser.LexicalState.PREPROCESSOR);

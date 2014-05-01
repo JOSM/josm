@@ -171,9 +171,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     protected void processLocalPluginInformationFile(File file) throws PluginListParseException{
-        FileInputStream fin = null;
-        try {
-            fin = new FileInputStream(file);
+        try (FileInputStream fin = new FileInputStream(file)) {
             List<PluginInformation> pis = new PluginListParser().parse(fin);
             for (PluginInformation pi : pis) {
                 // we always keep plugin information from a plugin site because it
@@ -184,8 +182,6 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             }
         } catch(IOException e) {
             throw new PluginListParseException(e);
-        } finally {
-            Utils.close(fin);
         }
     }
 

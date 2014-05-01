@@ -396,45 +396,36 @@ public final class I18n {
     public static void addTexts(File source) {
         if ("en".equals(loadedCode))
             return;
-        FileInputStream fis = null;
-        JarInputStream jar = null;
-        FileInputStream fisTrans = null;
-        JarInputStream jarTrans = null;
         String enfile = "data/en.lang";
         String langfile = "data/"+loadedCode+".lang";
-        try
-        {
+        try (
+            FileInputStream fis = new FileInputStream(source);
+            JarInputStream jar = new JarInputStream(fis)
+        ) {
             ZipEntry e;
-            fis = new FileInputStream(source);
-            jar = new JarInputStream(fis);
             boolean found = false;
-            while(!found && (e = jar.getNextEntry()) != null)
-            {
+            while (!found && (e = jar.getNextEntry()) != null) {
                 String name = e.getName();
                 if(name.equals(enfile))
                     found = true;
             }
-            if(found)
-            {
-                fisTrans = new FileInputStream(source);
-                jarTrans = new JarInputStream(fisTrans);
-                found = false;
-                while(!found && (e = jarTrans.getNextEntry()) != null)
-                {
-                    String name = e.getName();
-                    if(name.equals(langfile))
-                        found = true;
+            if (found) {
+                try (
+                    FileInputStream fisTrans = new FileInputStream(source);
+                    JarInputStream jarTrans = new JarInputStream(fisTrans)
+                ) {
+                    found = false;
+                    while(!found && (e = jarTrans.getNextEntry()) != null) {
+                        String name = e.getName();
+                        if (name.equals(langfile))
+                            found = true;
+                    }
+                    if (found)
+                        load(jar, jarTrans, true);
                 }
-                if(found)
-                    load(jar, jarTrans, true);
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             // Ignore
-        } finally {
-            Utils.close(jar);
-            Utils.close(fis);
-            Utils.close(jarTrans);
-            Utils.close(fisTrans);
         }
     }
 
@@ -459,21 +450,17 @@ public final class I18n {
             if (tr == null || !languages.containsKey(l))
                 return false;
         }
-        InputStream enStream = null;
-        InputStream trStream = null;
-        try {
-            enStream = en.openStream();
-            trStream = tr.openStream();
+        try (
+            InputStream enStream = en.openStream();
+            InputStream trStream = tr.openStream()
+        ) {
             if (load(enStream, trStream, false)) {
                 pluralMode = languages.get(l);
                 loadedCode = l;
                 return true;
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             // Ignore exception
-        } finally {
-            Utils.close(trStream);
-            Utils.close(enStream);
         }
         return false;
     }

@@ -30,9 +30,8 @@ public final class AudioUtil {
      * @return the calibrated length of recording in seconds.
      */
     public static double getCalibratedDuration(File wavFile) {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
-                new URL("file:".concat(wavFile.getAbsolutePath())));
+        try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(
+                new URL("file:".concat(wavFile.getAbsolutePath())))) {
             AudioFormat audioFormat = audioInputStream.getFormat();
             long filesize = wavFile.length();
             double bytesPerSecond = audioFormat.getFrameRate() /* frames per second */

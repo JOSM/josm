@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,9 +42,15 @@ public class MapPaintVisitorPerformanceTest {
         Main.pref.load();
         MapPaintStyles.readFromPreferences();
 
-        dsRestriction = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
-        dsMultipolygon = OsmReader.parseDataSet(new FileInputStream("data_nodist/multipolygon.osm"), NullProgressMonitor.INSTANCE);
-        dsCity = OsmReader.parseDataSet(new FileInputStream("data_nodist/neubrandenburg.osm"), NullProgressMonitor.INSTANCE);
+        try (
+            InputStream fisR = new FileInputStream("data_nodist/restriction.osm");
+            InputStream fisM = new FileInputStream("data_nodist/multipolygon.osm");
+            InputStream fisC = new FileInputStream("data_nodist/neubrandenburg.osm");
+        ) {
+            dsRestriction = OsmReader.parseDataSet(fisR, NullProgressMonitor.INSTANCE);
+            dsMultipolygon = OsmReader.parseDataSet(fisM, NullProgressMonitor.INSTANCE);
+            dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);
+        }
 
         // Warm up
         new MapPaintVisitorPerformanceTest().testRestrictionSmall();
@@ -102,7 +109,4 @@ public class MapPaintVisitorPerformanceTest {
     public void testCitySmallPart2() throws Exception {
         test(200, dsCity, new Bounds(53.56, 13.295, 53.57, 13.30));
     }
-
-
-
 }

@@ -172,11 +172,8 @@ public class WMSGrabber extends Grabber {
             throw new IOException(readException(conn));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        InputStream is = new ProgressInputStream(conn, null);
-        try {
+        try (InputStream is = new ProgressInputStream(conn, null)) {
             Utils.copyStream(is, baos);
-        } finally {
-            Utils.close(is);
         }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
@@ -189,8 +186,7 @@ public class WMSGrabber extends Grabber {
     protected String readException(URLConnection conn) throws IOException {
         StringBuilder exception = new StringBuilder();
         InputStream in = conn.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));
-        try {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(in, Utils.UTF_8))) {
             String line = null;
             while( (line = br.readLine()) != null) {
                 // filter non-ASCII characters and control characters
@@ -198,8 +194,6 @@ public class WMSGrabber extends Grabber {
                 exception.append('\n');
             }
             return exception.toString();
-        } finally {
-            Utils.close(br);
         }
     }
 }

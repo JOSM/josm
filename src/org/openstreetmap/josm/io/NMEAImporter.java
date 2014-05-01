@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -34,26 +35,28 @@ public class NMEAImporter extends FileImporter {
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
         final String fn = file.getName();
-        final NmeaReader r = new NmeaReader(new FileInputStream(file));
-        if (r.getNumberOfCoordinates() > 0) {
-            r.data.storageFile = file;
-            final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
-            final File fileFinal = file;
-
-            GuiHelper.runInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    Main.main.addLayer(gpxLayer);
-                    if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
-                        MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
-                        if (!ml.data.isEmpty()) {
-                            Main.main.addLayer(ml);
+        try (InputStream fis = new FileInputStream(file)) {
+            final NmeaReader r = new NmeaReader(fis);
+            if (r.getNumberOfCoordinates() > 0) {
+                r.data.storageFile = file;
+                final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
+                final File fileFinal = file;
+    
+                GuiHelper.runInEDT(new Runnable() {
+                    @Override
+                    public void run() {
+                        Main.main.addLayer(gpxLayer);
+                        if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
+                            MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
+                            if (!ml.data.isEmpty()) {
+                                Main.main.addLayer(ml);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
+            showNmeaInfobox(r.getNumberOfCoordinates() > 0, r);
         }
-        showNmeaInfobox(r.getNumberOfCoordinates() > 0, r);
     }
 
     private void showNmeaInfobox(boolean success, NmeaReader r) {

@@ -47,8 +47,7 @@ public class NTV2GridShiftFileWrapper {
      */
     public NTV2GridShiftFile getShiftFile() {
         if (instance == null) {
-            try {
-                InputStream is = new MirroredInputStream(gridFileName);
+            try (InputStream is = new MirroredInputStream(gridFileName)) {
                 instance = new NTV2GridShiftFile();
                 instance.loadGridShiftFile(is, false);
             } catch (Exception e) {
@@ -57,5 +56,4 @@ public class NTV2GridShiftFileWrapper {
         }
         return instance;
     }
-
 }

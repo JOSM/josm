@@ -83,11 +83,14 @@ public class MarkerSessionExporter implements SessionLayerExporter {
         return layerEl;
     }
 
-    protected void addDataFile(OutputStream out) {
-        Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
-        MarkerWriter w = new MarkerWriter(new PrintWriter(writer));
-        w.write(layer);
-        w.flush();
+    protected void addDataFile(OutputStream out) throws IOException {
+        try (
+            Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
+            MarkerWriter w = new MarkerWriter(new PrintWriter(writer))
+        ) {
+            w.write(layer);
+            w.flush();
+        }
     }
 
     public static class MarkerWriter extends GpxWriter {

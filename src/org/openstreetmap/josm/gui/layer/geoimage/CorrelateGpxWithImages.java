@@ -20,6 +20,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -170,13 +171,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     }
                 }
                 GpxData data = null;
-                try {
-                    InputStream iStream;
-                    if (sel.getName().toLowerCase().endsWith(".gpx.gz")) {
-                        iStream = new GZIPInputStream(new FileInputStream(sel));
-                    } else {
-                        iStream = new FileInputStream(sel);
-                    }
+                try (InputStream iStream = createInputStream(sel)) {
                     GpxReader reader = new GpxReader(iStream);
                     reader.parse(false);
                     data = reader.getGpxData();
@@ -210,6 +205,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 cbGpx.setSelectedIndex(cbGpx.getItemCount() - 1);
             } finally {
                 outerPanel.setCursor(Cursor.getDefaultCursor());
+            }
+        }
+
+        private InputStream createInputStream(File sel) throws IOException, FileNotFoundException {
+            if (sel.getName().toLowerCase().endsWith(".gpx.gz")) {
+                return new GZIPInputStream(new FileInputStream(sel));
+            } else {
+                return new FileInputStream(sel);
             }
         }
     }

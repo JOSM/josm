@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -718,8 +719,7 @@ public class Preferences {
     }
 
     /**
-     * Called after every put. In case of a problem, do nothing but output the error
-     * in log.
+     * Called after every put. In case of a problem, do nothing but output the error in log.
      */
     public void save() throws IOException {
         /* currently unused, but may help to fix configuration issues in future */
@@ -735,10 +735,10 @@ public class Preferences {
             Utils.copyFile(prefFile, backupFile);
         }
 
-        final PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                new FileOutputStream(prefFile + "_tmp"), Utils.UTF_8), false);
-        out.print(toXML(false));
-        Utils.close(out);
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
+                new FileOutputStream(prefFile + "_tmp"), Utils.UTF_8), false)) {
+            out.print(toXML(false));
+        }
 
         File tmpFile = new File(prefFile + "_tmp");
         Utils.copyFile(tmpFile, prefFile);
@@ -747,7 +747,6 @@ public class Preferences {
         setCorrectPermissions(prefFile);
         setCorrectPermissions(backupFile);
     }
-
 
     private void setCorrectPermissions(File file) {
         file.setReadable(false, false);
@@ -760,14 +759,11 @@ public class Preferences {
     public void load() throws Exception {
         settingsMap.clear();
         File pref = getPreferenceFile();
-        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8));
-        try {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8))) {
             validateXML(in);
-            Utils.close(in);
-            in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8));
+        }
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8))) {
             fromXML(in);
-        } finally {
-            Utils.close(in);
         }
         updateSystemProperties();
         removeObsolete();
@@ -1358,9 +1354,11 @@ public class Preferences {
 
     public void validateXML(Reader in) throws Exception {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = factory.newSchema(new StreamSource(new MirroredInputStream("resource://data/preferences.xsd")));
-        Validator validator = schema.newValidator();
-        validator.validate(new StreamSource(in));
+        try (InputStream xsdStream = new MirroredInputStream("resource://data/preferences.xsd")) {
+            Schema schema = factory.newSchema(new StreamSource(xsdStream));
+            Validator validator = schema.newValidator();
+            validator.validate(new StreamSource(in));
+        }
     }
 
     public void fromXML(Reader in) throws XMLStreamException {

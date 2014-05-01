@@ -82,8 +82,6 @@ public class DownloadFileTask extends PleaseWaitRunnable{
      * @throws DownloadException if the URL is invalid or if any I/O error occurs.
      */
     public void download() throws DownloadException {
-        OutputStream out = null;
-        InputStream in = null;
         try {
             if (mkdir) {
                 File newDir = file.getParentFile();
@@ -104,22 +102,24 @@ public class DownloadFileTask extends PleaseWaitRunnable{
             progressMonitor.setTicksCount(100);
             progressMonitor.subTask(tr("Downloading File {0}: {1} bytes...", file.getName(),size));
 
-            in = downloadConnection.getInputStream();
-            out = new FileOutputStream(file);
-            byte[] buffer = new byte[32768];
-            int count=0;
-            int p1=0, p2=0;
-            for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
-                out.write(buffer, 0, read);
-                count+=read;
-                if (canceled) break;
-                p2 = 100 * count / size;
-                if (p2!=p1) {
-                    progressMonitor.setTicks(p2);
-                    p1=p2;
+            try (
+                InputStream in = downloadConnection.getInputStream();
+                OutputStream out = new FileOutputStream(file)
+            ) {
+                byte[] buffer = new byte[32768];
+                int count=0;
+                int p1=0, p2=0;
+                for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
+                    out.write(buffer, 0, read);
+                    count+=read;
+                    if (canceled) break;
+                    p2 = 100 * count / size;
+                    if (p2!=p1) {
+                        progressMonitor.setTicks(p2);
+                        p1=p2;
+                    }
                 }
             }
-            Utils.close(out);
             if (!canceled) {
                 Main.info(tr("Download finished"));
                 if (unpack) {
@@ -138,7 +138,6 @@ public class DownloadFileTask extends PleaseWaitRunnable{
             throw new DownloadException(e.getMessage());
         } finally {
             closeConnectionIfNeeded();
-            Utils.close(out);
         }
     }
 
@@ -169,33 +168,24 @@ public class DownloadFileTask extends PleaseWaitRunnable{
      * @throws IOException
      */
     public static void unzipFileRecursively(File file, String dir) throws IOException {
-        OutputStream os = null;
-        InputStream is = null;
-        ZipFile zf = null;
-        try {
-            zf = new ZipFile(file);
-            Enumeration<?> es = zf.entries();
-            ZipEntry ze;
+        try (ZipFile zf = new ZipFile(file)) {
+            Enumeration<? extends ZipEntry> es = zf.entries();
             while (es.hasMoreElements()) {
-                ze = (ZipEntry) es.nextElement();
+                ZipEntry ze = es.nextElement();
                 File newFile = new File(dir, ze.getName());
                 if (ze.isDirectory()) {
                     newFile.mkdirs();
-                } else {
-                    is = zf.getInputStream(ze);
-                    os = new BufferedOutputStream(new FileOutputStream(newFile));
+                } else try (
+                    InputStream is = zf.getInputStream(ze);
+                    OutputStream os = new BufferedOutputStream(new FileOutputStream(newFile))
+                ) {
                     byte[] buffer = new byte[8192];
                     int read;
                     while ((read = is.read(buffer)) != -1) {
                         os.write(buffer, 0, read);
                     }
-                    Utils.close(os);
-                    Utils.close(is);
                 }
             }
-        } finally {
-            Utils.close(zf);
         }
     }
 }
-

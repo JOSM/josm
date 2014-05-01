@@ -113,6 +113,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
      * @throws OsmTransferException thrown if data transfer errors occur
      */
+    @SuppressWarnings("resource")
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason, boolean uncompressAccordingToContentDisposition) throws OsmTransferException {
         try {
             URL url = null;

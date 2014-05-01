@@ -17,7 +17,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * OsmServerBackreferenceReader fetches the primitives from the OSM server which
@@ -130,7 +129,6 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @throws OsmTransferException
      */
     protected DataSet getReferringWays(ProgressMonitor progressMonitor) throws OsmTransferException {
-        InputStream in = null;
         progressMonitor.beginTask(null, 2);
         try {
             progressMonitor.indeterminateSubTask(tr("Downloading from OSM Server..."));
@@ -138,11 +136,12 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             sb.append(primitiveType.getAPIName())
             .append("/").append(id).append("/ways");
 
-            in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            progressMonitor.subTask(tr("Downloading referring ways ..."));
-            return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, true));
+            try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
+                if (in == null)
+                    return null;
+                progressMonitor.subTask(tr("Downloading referring ways ..."));
+                return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, true));
+            }
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
@@ -151,7 +150,6 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            Utils.close(in);
             activeConnection = null;
         }
     }
@@ -164,7 +162,6 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @throws OsmTransferException
      */
     protected DataSet getReferringRelations(ProgressMonitor progressMonitor) throws OsmTransferException {
-        InputStream in = null;
         progressMonitor.beginTask(null, 2);
         try {
             progressMonitor.subTask(tr("Contacting OSM Server..."));
@@ -172,11 +169,12 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             sb.append(primitiveType.getAPIName())
             .append("/").append(id).append("/relations");
 
-            in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            progressMonitor.subTask(tr("Downloading referring relations ..."));
-            return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, true));
+            try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
+                if (in == null)
+                    return null;
+                progressMonitor.subTask(tr("Downloading referring relations ..."));
+                return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, true));
+            }
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
@@ -185,7 +183,6 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            Utils.close(in);
             activeConnection = null;
         }
     }

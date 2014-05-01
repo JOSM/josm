@@ -11,7 +11,6 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -47,25 +46,27 @@ public class BoundingBoxDownloader extends OsmServerReader {
         GpxData result = null;
         for (int i = 0;!done;++i) {
             progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * 5000, ((i + 1) * 5000)));
-            InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true));
-            if (in == null) {
-                break;
+            try (InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true))) {
+                if (in == null) {
+                    break;
+                }
+                progressMonitor.setTicks(0);
+                GpxReader reader = new GpxReader(in);
+                gpxParsedProperly = reader.parse(false);
+                GpxData currentGpx = reader.getGpxData();
+                if (result == null) {
+                    result = currentGpx;
+                } else if (currentGpx.hasTrackPoints()) {
+                    result.mergeFrom(currentGpx);
+                } else{
+                    done = true;
+                }
             }
-            progressMonitor.setTicks(0);
-            GpxReader reader = new GpxReader(in);
-            gpxParsedProperly = reader.parse(false);
-            GpxData currentGpx = reader.getGpxData();
-            if (result == null) {
-                result = currentGpx;
-            } else if (currentGpx.hasTrackPoints()) {
-                result.mergeFrom(currentGpx);
-            } else{
-                done = true;
-            }
-            Utils.close(in);
             activeConnection = null;
         }
-        result.fromServer = true;
+        if (result != null) {
+            result.fromServer = true;
+        }
         return result;
     }
 
@@ -112,31 +113,35 @@ public class BoundingBoxDownloader extends OsmServerReader {
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(tr("Contacting OSM Server..."), 10);
-        InputStream in = null;
         try {
             DataSet ds = null;
             progressMonitor.indeterminateSubTask(null);
             if (crosses180th) {
                 // API 0.6 does not support requests crossing the 180th meridian, so make two requests
-                in = getInputStream(getRequestForBbox(lon1, lat1, 180.0, lat2), progressMonitor.createSubTaskMonitor(9, false));
-                if (in == null)
-                    return null;
-                ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                DataSet ds2 = null;
 
-                in = getInputStream(getRequestForBbox(-180.0, lat1, lon2, lat2), progressMonitor.createSubTaskMonitor(9, false));
-                if (in == null)
-                    return null;
-                DataSet ds2 = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                try (InputStream in = getInputStream(getRequestForBbox(lon1, lat1, 180.0, lat2), progressMonitor.createSubTaskMonitor(9, false))) {
+                    if (in == null)
+                        return null;
+                    ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                }
+
+                try (InputStream in = getInputStream(getRequestForBbox(-180.0, lat1, lon2, lat2), progressMonitor.createSubTaskMonitor(9, false))) {
+                    if (in == null)
+                        return null;
+                    ds2 = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                }
                 if (ds2 == null)
                     return null;
                 ds.mergeFrom(ds2);
 
             } else {
                 // Simple request
-                in = getInputStream(getRequestForBbox(lon1, lat1, lon2, lat2), progressMonitor.createSubTaskMonitor(9, false));
-                if (in == null)
-                    return null;
-                ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                try (InputStream in = getInputStream(getRequestForBbox(lon1, lat1, lon2, lat2), progressMonitor.createSubTaskMonitor(9, false))) {
+                    if (in == null)
+                        return null;
+                    ds = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                }
             }
             return ds;
         } catch(OsmTransferException e) {
@@ -145,7 +150,6 @@ public class BoundingBoxDownloader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            Utils.close(in);
             activeConnection = null;
         }
     }
