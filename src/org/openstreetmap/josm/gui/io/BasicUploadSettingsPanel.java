@@ -74,6 +74,8 @@ public class BasicUploadSettingsPanel extends JPanel {
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
                     hcbUploadSource.setText(Main.map.mapView.getLayerInformationForSourceTag());
+                    // Fix #9965
+                    changesetSourceModel.setComment(hcbUploadSource.getText());
                 }
             }
         });
