@@ -21,6 +21,20 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * MapCSS selector.
+ * 
+ * A rule has two parts, a selector and a declaration block
+ * e.g.
+ * <pre>
+ * way[highway=residential]    
+ * { width: 10; color: blue; } 
+ * </pre>
+ * 
+ * The selector decides, if the declaration block gets applied or not.
+ * 
+ * Currently all implementing classes of Selector are immutable.
+ */
 public interface Selector {
 
     /**
@@ -31,11 +45,25 @@ public interface Selector {
      * a side effect! Make sure to clear it before invoking this method.
      * @return true, if the selector applies
      */
-    public boolean matches(Environment env);
+    boolean matches(Environment env);
+    
+    String getSubpart();
 
-    public String getSubpart();
-
-    public Range getRange();
+    Range getRange();
+    
+    /**
+     * Create an "optimized" copy of this selector that omits the base check.
+     * 
+     * For the style source, the list of rules is preprocessed, such that
+     * there is a separate list of rules for nodes, ways, ...
+     * 
+     * This means that the base check does not have to be performed
+     * for each rule, but only once for each primitive.
+     * 
+     * @return a selector that is identical to this object, except the base of the
+     * "rightmost" selector is not checked
+     */
+    Selector optimizedBaseCheck();
 
     public static enum ChildOrParentSelectorType {
         CHILD, PARENT, ELEMENT_OF, CROSSING, SIBLING
@@ -318,6 +346,11 @@ public interface Selector {
         public Range getRange() {
             return right.getRange();
         }
+        
+        @Override
+        public Selector optimizedBaseCheck() {
+            return new ChildOrParentSelector(left, link, right.optimizedBaseCheck(), type);
+        }
 
         @Override
         public String toString() {
@@ -347,7 +380,7 @@ public interface Selector {
          * @param env The environment to check
          * @return {@code true} if all conditions apply, false otherwise.
          */
-        public final boolean matchesConditions(Environment env) {
+        public boolean matches(Environment env) {
             if (conds == null) return true;
             for (Condition c : conds) {
                 try {
@@ -377,7 +410,7 @@ public interface Selector {
         @Override
         public boolean matches(Environment env) {
             Utils.ensure(env.isLinkContext(), "Requires LINK context in environment, got ''{0}''", env.getContext());
-            return matchesConditions(env);
+            return super.matches(env);
         }
 
         @Override
@@ -388,6 +421,11 @@ public interface Selector {
         @Override
         public Range getRange() {
             throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public Selector optimizedBaseCheck() {
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -396,37 +434,12 @@ public interface Selector {
         }
     }
 
-    public static class GeneralSelector extends AbstractSelector {
-        public final String base;
-        public final Range range;
-        public final String subpart;
+    public static class GeneralSelector extends OptimizedGeneralSelector {
 
         public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
-            super(conds);
-            this.base = base;
-            if (zoom != null) {
-                int a = zoom.a == null ? 0 : zoom.a;
-                int b = zoom.b == null ? Integer.MAX_VALUE : zoom.b;
-                if (a <= b) {
-                    range = fromLevel(a, b);
-                } else {
-                    range = Range.ZERO_TO_INFINITY;
-                }
-            } else {
-                range = Range.ZERO_TO_INFINITY;
-            }
-            this.subpart = subpart;
+            super(base, zoom, conds, subpart);
         }
-
-        @Override
-        public String getSubpart() {
-            return subpart;
-        }
-        @Override
-        public Range getRange() {
-            return range;
-        }
-
+        
         public boolean matchesBase(OsmPrimitiveType type) {
             if ("*".equals(base)) {
                 return true;
@@ -458,16 +471,73 @@ public interface Selector {
         public boolean matchesBase(Environment e) {
             return matchesBase(e.osm);
         }
+        
+        public boolean matchesConditions(Environment e) {
+            return super.matches(e);
+        }
+
+        @Override
+        public Selector optimizedBaseCheck() {
+            return new OptimizedGeneralSelector(this);
+        }
 
         @Override
         public boolean matches(Environment e) {
-            return matchesBase(e) && matchesConditions(e);
+            return matchesBase(e) && super.matches(e);
+        }
+    }
+    
+    public static class OptimizedGeneralSelector extends AbstractSelector {
+        public final String base;
+        public final Range range;
+        public final String subpart;
+
+        public OptimizedGeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
+            super(conds);
+            this.base = base;
+            if (zoom != null) {
+                int a = zoom.a == null ? 0 : zoom.a;
+                int b = zoom.b == null ? Integer.MAX_VALUE : zoom.b;
+                if (a <= b) {
+                    range = fromLevel(a, b);
+                } else {
+                    range = Range.ZERO_TO_INFINITY;
+                }
+            } else {
+                range = Range.ZERO_TO_INFINITY;
+            }
+            this.subpart = subpart;
+        }
+        
+        public OptimizedGeneralSelector(String base, Range range, List<Condition> conds, String subpart) {
+            super(conds);
+            this.base = base;
+            this.range = range;
+            this.subpart = subpart;
+        }
+        
+        public OptimizedGeneralSelector(GeneralSelector s) {
+            this(s.base, s.range, s.conds, s.subpart);
+        }
+
+        @Override
+        public String getSubpart() {
+            return subpart;
+        }
+        @Override
+        public Range getRange() {
+            return range;
         }
 
         public String getBase() {
             return base;
         }
 
+        @Override
+        public Selector optimizedBaseCheck() {
+            throw new UnsupportedOperationException();
+        }
+        
         public static Range fromLevel(int a, int b) {
             if (a > b)
                 throw new AssertionError();
