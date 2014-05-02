@@ -570,7 +570,7 @@ public final class PluginHandler {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", plugin.name, plugin.className);
             }
-        }  catch (Throwable e) {
+        }  catch (Exception e) {
             Main.error(e);
         }
         if (msg != null && confirmDisablePlugin(parent, msg, plugin.name)) {

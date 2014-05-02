@@ -178,8 +178,8 @@ public final class Projections {
             pc.setPreferences(pref);
             try {
                 proj = pc.getProjection();
-            } catch (Throwable t) {
-                String cause = t.getMessage();
+            } catch (Exception e) {
+                String cause = e.getMessage();
                 Main.warn("Unable to get projection "+code+" with "+pc + (cause != null ? ". "+cause : ""));
             }
         }

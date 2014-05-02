@@ -63,8 +63,8 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
             if (OsmApi.isUsingOAuth() && OAuthAccessTokenHolder.getInstance().containsAccessToken()) {
                 try {
                     instance.initFromOAuth(Main.parent);
-                } catch (Throwable t) {
-                    Main.error(t);
+                } catch (Exception e) {
+                    Main.error(e);
                     // Fall back to preferences if OAuth identification fails for any reason
                     instance.initFromPreferences();
                 }
@@ -277,8 +277,8 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
             if (OsmApi.isUsingOAuth()) {
                 try {
                     instance.initFromOAuth(Main.parent);
-                } catch (Throwable t) {
-                    Main.error(t);
+                } catch (Exception e) {
+                    Main.error(e);
                 }
             }
         }
