@@ -256,12 +256,6 @@ public class Marker implements TemplateEngineDataProvider {
         return null;
     }
 
-    private static final DateFormat timeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    static {
-         TimeZone tz = TimeZone.getTimeZone("UTC");
-         timeFormatter.setTimeZone(tz);
-    }
-
     public static final String MARKER_OFFSET = "waypointOffset";
     public static final String MARKER_FORMATTED_OFFSET = "formattedWaypointOffset";
 
@@ -269,6 +263,7 @@ public class Marker implements TemplateEngineDataProvider {
     public static final String LABEL_PATTERN_NAME = "{name}";
     public static final String LABEL_PATTERN_DESC = "{desc}";
 
+    private final DateFormat timeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private final TemplateEngineDataProvider dataProvider;
     private final String text;
 
@@ -287,6 +282,15 @@ public class Marker implements TemplateEngineDataProvider {
     private boolean erroneous = false;
 
     public Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String iconName, MarkerLayer parentLayer, double time, double offset) {
+        this(ll, dataProvider, null, iconName, parentLayer, time, offset);
+    }
+
+    public Marker(LatLon ll, String text, String iconName, MarkerLayer parentLayer, double time, double offset) {
+        this(ll, null, text, iconName, parentLayer, time, offset);
+    }
+
+    private Marker(LatLon ll, TemplateEngineDataProvider dataProvider, String text, String iconName, MarkerLayer parentLayer, double time, double offset) {
+        timeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         setCoor(ll);
 
         this.offset = offset;
@@ -295,18 +299,6 @@ public class Marker implements TemplateEngineDataProvider {
         this.parentLayer = parentLayer;
 
         this.dataProvider = dataProvider;
-        this.text = null;
-    }
-
-    public Marker(LatLon ll, String text, String iconName, MarkerLayer parentLayer, double time, double offset) {
-        setCoor(ll);
-
-        this.offset = offset;
-        this.time = time;
-        this.symbol = iconName != null ? ImageProvider.getIfAvailable("markers",iconName) : null;
-        this.parentLayer = parentLayer;
-
-        this.dataProvider = null;
         this.text = text;
     }
 

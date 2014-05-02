@@ -20,8 +20,8 @@ import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Read a nmea file. Based on information from
- * http://www.kowoma.de/gps/zusatzerklaerungen/NMEA.htm
+ * Reads a NMEA file. Based on information from
+ * <a href="http://www.kowoma.de/gps/zusatzerklaerungen/NMEA.htm">http://www.kowoma.de</a>
  *
  * @author cbrill
  */
@@ -131,17 +131,13 @@ public class NmeaReader {
 
     public GpxData data;
 
-    //  private static final SimpleDateFormat GGATIMEFMT =
-    //      new SimpleDateFormat("HHmmss.SSS");
-    private static final SimpleDateFormat RMCTIMEFMT =
-        new SimpleDateFormat("ddMMyyHHmmss.SSS");
-    private static final SimpleDateFormat RMCTIMEFMTSTD =
-        new SimpleDateFormat("ddMMyyHHmmss");
+    private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS");
+    private final SimpleDateFormat rmcTimeFmtStd = new SimpleDateFormat("ddMMyyHHmmss");
 
     private Date readTime(String p) {
-        Date d = RMCTIMEFMT.parse(p, new ParsePosition(0));
+        Date d = rmcTimeFmt.parse(p, new ParsePosition(0));
         if (d == null) {
-            d = RMCTIMEFMTSTD.parse(p, new ParsePosition(0));
+            d = rmcTimeFmtStd.parse(p, new ParsePosition(0));
         }
         if (d == null)
             throw new RuntimeException("Date is malformed"); // malformed
