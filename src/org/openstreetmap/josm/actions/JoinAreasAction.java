@@ -184,33 +184,51 @@ public class JoinAreasAction extends JosmAction {
      * This hepler class implements algorithm traversing trough connected ways.
      * Assumes you are going in clockwise orientation.
      * @author viesturs
-     *
      */
     private static class WayTraverser {
 
+        /** Set of {@link WayInPolygon} to be joined by walk algorithm */
         private Set<WayInPolygon> availableWays;
+        /** Current state of walk algorithm */
         private WayInPolygon lastWay;
+        /** Direction of current way */
         private boolean lastWayReverse;
 
+        /** Constructor */
         public WayTraverser(Collection<WayInPolygon> ways) {
-
             availableWays = new HashSet<>(ways);
             lastWay = null;
         }
 
+        /**
+         *  Remove ways from available ways
+         *  @param ways Collection of WayInPolygon
+         */
         public void removeWays(Collection<WayInPolygon> ways) {
             availableWays.removeAll(ways);
         }
 
+        /**
+         * Remove a single way from available ways
+         * @param way WayInPolygon
+         */
         public void removeWay(WayInPolygon way) {
             availableWays.remove(way);
         }
 
+        /**
+         * Reset walk algorithm to a new start point
+         * @param way New start point
+         */
         public void setStartWay(WayInPolygon way) {
             lastWay = way;
             lastWayReverse = !way.insideToTheRight;
         }
 
+        /**
+         * Reset walk algorithm to a new start point.
+         * @return The new start point or null if no available way remains
+         */
         public WayInPolygon startNewWay() {
             if (availableWays.isEmpty()) {
                 lastWay = null;
@@ -223,12 +241,44 @@ public class JoinAreasAction extends JosmAction {
         }
 
         /**
+         * Walking through {@link WayInPolygon} segments, head node is the current position
+         * @return Head node
+         */
+        private Node getHeadNode() {
+            return !lastWayReverse ? lastWay.way.lastNode() : lastWay.way.firstNode();
+        }
+
+        /**
+         * Node just before head node.
+         * @return Previous node
+         */
+        private Node getPrevNode() {
+            return !lastWayReverse ? lastWay.way.getNode(lastWay.way.getNodesCount() - 2) : lastWay.way.getNode(1);
+        }
+
+        /**
+         * Oriented angle (N1N2, N1N3) in range [0; 2*Math.PI[
+         */
+        private static double getAngle(Node N1, Node N2, Node N3) {
+            EastNorth en1 = N1.getEastNorth();
+            EastNorth en2 = N2.getEastNorth();
+            EastNorth en3 = N3.getEastNorth();
+            double angle = Math.atan2(en3.getY() - en1.getY(), en3.getX() - en1.getX()) -
+                    Math.atan2(en2.getY() - en1.getY(), en2.getX() - en1.getX());
+            while(angle >= 2*Math.PI)
+                angle -= 2*Math.PI;
+            while(angle < 0)
+                angle += 2*Math.PI;
+            return angle;
+        }
+
+        /**
          * Get the next way creating a clockwise path, ensure it is the most right way. #7959
          * @return The next way.
          */
         public  WayInPolygon walk() {
-            Node headNode = !lastWayReverse ? lastWay.way.lastNode() : lastWay.way.firstNode();
-            Node prevNode = !lastWayReverse ? lastWay.way.getNode(lastWay.way.getNodesCount() - 2) : lastWay.way.getNode(1);
+            Node headNode = getHeadNode();
+            Node prevNode = getPrevNode();
 
             double headAngle = Math.atan2(headNode.getEastNorth().east() - prevNode.getEastNorth().east(),
                     headNode.getEastNorth().north() - prevNode.getEastNorth().north());
@@ -275,8 +325,47 @@ public class JoinAreasAction extends JosmAction {
 
             lastWay = bestWay;
             lastWayReverse = bestWayReverse;
-
             return lastWay;
+        }
+
+        /**
+         * Search for an other way coming to the same head node at left side from last way. #9951
+         * @return left way or null if none found
+         */
+        public WayInPolygon leftComingWay() {
+            Node headNode = getHeadNode();
+            Node prevNode = getPrevNode();
+
+            WayInPolygon mostLeft = null; // most left way connected to head node
+            boolean comingToHead = false; // true if candidate come to head node
+            double angle = 2*Math.PI;
+
+            for (WayInPolygon candidateWay : availableWays) {
+                boolean candidateComingToHead;
+                Node candidatePrevNode;
+
+                if(candidateWay.way.firstNode().equals(headNode)) {
+                    candidateComingToHead = !candidateWay.insideToTheRight;
+                    candidatePrevNode = candidateWay.way.getNode(1);
+                } else if(candidateWay.way.lastNode().equals(headNode)) {
+                     candidateComingToHead = candidateWay.insideToTheRight;
+                     candidatePrevNode = candidateWay.way.getNode(candidateWay.way.getNodesCount() - 2);
+                } else
+                    continue;
+                if(candidateWay.equals(lastWay) && candidateComingToHead)
+                    continue;
+
+                double candidateAngle = getAngle(headNode, candidatePrevNode, prevNode);
+
+                if(mostLeft == null || candidateAngle < angle || (candidateAngle == angle && !candidateComingToHead)) {
+                    // Candidate is most left
+                    mostLeft = candidateWay;
+                    comingToHead = candidateComingToHead;
+                    angle = candidateAngle;
+                }
+            }
+
+            return comingToHead ? mostLeft : null;
         }
     }
 
@@ -958,7 +1047,8 @@ public class JoinAreasAction extends JosmAction {
      * @param discardedResult this list is filled with ways that are to be discarded
      * @return A list of ways that form the outer and inner boundaries of the multigon.
      */
-    public static List<AssembledPolygon> findBoundaryPolygons(Collection<WayInPolygon> multigonWays, List<Way> discardedResult) {
+    public static List<AssembledPolygon> findBoundaryPolygons(Collection<WayInPolygon> multigonWays,
+            List<Way> discardedResult) {
         //first find all discardable ways, by getting outer shells.
         //this will produce incorrect boundaries in some cases, but second pass will fix it.
         List<WayInPolygon> discardedWays = new ArrayList<>();
@@ -979,12 +1069,25 @@ public class JoinAreasAction extends JosmAction {
         WayInPolygon startWay;
         while((startWay = traverser.startNewWay()) != null) {
             ArrayList<WayInPolygon> path = new ArrayList<>();
+            List<WayInPolygon> startWays = new ArrayList<>();
             path.add(startWay);
             while(true) {
+                WayInPolygon leftComing;
+                while((leftComing = traverser.leftComingWay()) != null) {
+                    if(startWays.contains(leftComing))
+                        break;
+                    // Need restart traverser walk
+                    path.clear();
+                    path.add(leftComing);
+                    traverser.setStartWay(leftComing);
+                    startWays.add(leftComing);
+                    break;
+                }
                 WayInPolygon nextWay = traverser.walk();
                 if(nextWay == null)
                     throw new RuntimeException("Join areas internal error.");
                 if(path.get(0) == nextWay) {
+                    // path is closed -> stop here
                     AssembledPolygon ring = new AssembledPolygon(path);
                     if(ring.getNodes().size() <= 2) {
                         // Invalid ring (2 nodes) -> remove
