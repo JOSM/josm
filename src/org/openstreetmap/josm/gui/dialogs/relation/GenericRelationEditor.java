@@ -82,6 +82,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -735,13 +736,14 @@ public class GenericRelationEditor extends RelationEditor  {
                 JOptionPane.WARNING_MESSAGE);
     }
 
-    public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd) {
+    public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd) throws IllegalArgumentException {
+        CheckParameterUtil.ensureParameterNotNull(orig, "orig");
         try {
             final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(EnumSet.of(TaggingPresetType.RELATION), orig.getKeys(), false);
             Relation relation = new Relation(orig);
             boolean modified = false;
             for (OsmPrimitive p : primitivesToAdd) {
-                if (p instanceof Relation && orig != null && orig.equals(p)) {
+                if (p instanceof Relation && orig.equals(p)) {
                     warnOfCircularReferences(p);
                     continue;
                 } else if (MemberTableModel.hasMembersReferringTo(relation.getMembers(), Collections.singleton(p))

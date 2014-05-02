@@ -263,8 +263,8 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             DataSetMerger visitor = new DataSetMerger(ret,ds);
             visitor.merge();
             ret = visitor.getTargetDataSet();
-            readIncompletePrimitives(ret, progressMonitor.createSubTaskMonitor(1, false));
             if (ret != null) {
+                readIncompletePrimitives(ret, progressMonitor.createSubTaskMonitor(1, false));
                 ret.deleteInvisible();
             }
             return ret;
