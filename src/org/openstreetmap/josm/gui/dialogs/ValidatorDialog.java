@@ -28,6 +28,7 @@ import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -91,6 +92,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                         KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150, false, ValidatorPreference.class);
 
         popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("problem"));
+        popupMenuHandler.addAction(new EditRelationAction());
 
         tree = new ValidatorTreePanel();
         tree.addMouseListener(new MouseEventHandler());
@@ -502,8 +504,10 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             }
             selectButton.setEnabled(false);
 
-            boolean hasFixes = setSelection(null, false);
+            Collection<OsmPrimitive> sel = new HashSet<>();
+            boolean hasFixes = setSelection(sel, true);
             fixButton.setEnabled(hasFixes);
+            popupMenuHandler.setPrimitives(sel);
             if (Main.map != null) {
                 Main.map.repaint();
             }

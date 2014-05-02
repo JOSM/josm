@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * Ancestor for all actions that want to work with relation collection and 
- * to be disabled is the collection is empty
+ * to be disabled if the collection is empty
  * @since 5793
  */
 public abstract class AbstractRelationAction extends AbstractAction implements OsmPrimitiveAction {
