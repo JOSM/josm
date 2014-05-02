@@ -250,9 +250,9 @@ public class AutoScaleAction extends JosmAction {
 
             // Increase the bounding box by up to 100% to give more context.
             v.enlargeBoundingBoxLogarithmically(100);
-            // Make the bounding box at least 0.0005 degrees (≈ 56 m) wide to
+            // Make the bounding box at least 100 meter wide to
             // ensure reasonable zoom level when zooming onto single nodes.
-            v.enlargeToMinDegrees(0.0005);
+            v.enlargeToMinSize(Main.pref.getDouble("zoom_to_selection_min_size_in_meter", 100));
             break;
         case "download":
             Bounds bounds = DownloadDialog.getSavedDownloadBounds();
