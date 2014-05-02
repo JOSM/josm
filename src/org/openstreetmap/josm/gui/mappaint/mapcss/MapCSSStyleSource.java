@@ -18,12 +18,16 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
@@ -41,19 +45,24 @@ public class MapCSSStyleSource extends StyleSource {
      */
     public static final String MAPCSS_STYLE_MIME_TYPES = "text/x-mapcss, text/mapcss, text/css; q=0.9, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
-    public final List<MapCSSRule> rules;
+    // all rules
+    public final List<MapCSSRule> rules = new ArrayList<>();
+    // rules filtered by primitive type
+    public final List<MapCSSRule> nodeRules = new ArrayList<>();
+    public final List<MapCSSRule> wayRules = new ArrayList<>();
+    public final List<MapCSSRule> relationRules = new ArrayList<>();
+    public final List<MapCSSRule> multipolygonRules = new ArrayList<>();
+    
     private Color backgroundColorOverride;
     private String css = null;
     private ZipFile zipFile;
 
     public MapCSSStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
-        rules = new ArrayList<>();
     }
 
     public MapCSSStyleSource(SourceEntry entry) {
         super(entry);
-        rules = new ArrayList<>();
     }
 
     /**
@@ -67,13 +76,16 @@ public class MapCSSStyleSource extends StyleSource {
         super(null, null, null);
         CheckParameterUtil.ensureParameterNotNull(css);
         this.css = css;
-        rules = new ArrayList<>();
     }
 
     @Override
     public void loadStyleSource() {
         init();
         rules.clear();
+        nodeRules.clear();
+        wayRules.clear();
+        relationRules.clear();
+        multipolygonRules.clear();
         try (InputStream in = getSourceInputStream()) {
             try {
                 // evaluate @media { ... } blocks
@@ -103,8 +115,50 @@ public class MapCSSStyleSource extends StyleSource {
             Main.error(e);
             logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
         }
+        // optimization: filter rules for different primitive types
+        for (MapCSSRule r: rules) {
+            List<Selector> nodeSel = new ArrayList<>();
+            List<Selector> waySel = new ArrayList<>();
+            List<Selector> relationSel = new ArrayList<>();
+            List<Selector> multipolygonSel = new ArrayList<>();
+            for (Selector sel : r.selectors) {
+                // find the rightmost selector, this must be a GeneralSelector
+                Selector selRightmost = sel;
+                while (selRightmost instanceof ChildOrParentSelector) {
+                    selRightmost = ((ChildOrParentSelector) selRightmost).right;
+                }
+                Selector optimizedSel = sel.optimizedBaseCheck();
+                switch (((GeneralSelector) selRightmost).getBase()) {
+                    case "node":
+                        nodeSel.add(optimizedSel);
+                        break;
+                    case "way":
+                        waySel.add(optimizedSel);
+                        break;
+                    case "area":
+                        waySel.add(optimizedSel);
+                        multipolygonSel.add(optimizedSel);
+                        break;
+                    case "relation":
+                        relationSel.add(optimizedSel);
+                        multipolygonSel.add(optimizedSel);
+                        break;
+                    case "*":
+                        nodeSel.add(optimizedSel);
+                        waySel.add(optimizedSel);
+                        relationSel.add(optimizedSel);
+                        multipolygonSel.add(optimizedSel);
+                        break;
+                }
+            }
+            nodeRules.add(new MapCSSRule(nodeSel, r.declaration));
+            wayRules.add(new MapCSSRule(waySel, r.declaration));
+            relationRules.add(new MapCSSRule(relationSel, r.declaration));
+            multipolygonRules.add(new MapCSSRule(multipolygonSel, r.declaration));
+        }
+        rules.clear();
     }
-
+    
     @Override
     public InputStream getSourceInputStream() throws IOException {
         if (css != null) {
@@ -187,7 +241,19 @@ public class MapCSSStyleSource extends StyleSource {
     @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
         Environment env = new Environment(osm, mc, null, this);
-        RULE: for (MapCSSRule r : rules) {
+        List<MapCSSRule> matchingRules;
+        if (osm instanceof Node) {
+            matchingRules = nodeRules;
+        } else if (osm instanceof Way) {
+            matchingRules = wayRules;
+        } else {
+            if (((Relation) osm).isMultipolygon()) {
+                matchingRules = multipolygonRules;
+            } else {
+                matchingRules = relationRules;
+            }
+        }
+        RULE: for (MapCSSRule r : matchingRules) {
             for (Selector s : r.selectors) {
                 env.clearSelectorMatchingInformation();
                 if (s.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
