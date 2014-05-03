@@ -57,6 +57,8 @@ public class MapCSSStyleSource extends StyleSource {
     private String css = null;
     private ZipFile zipFile;
 
+    private static int usedId = 1;
+    
     public MapCSSStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
     }
@@ -117,44 +119,34 @@ public class MapCSSStyleSource extends StyleSource {
         }
         // optimization: filter rules for different primitive types
         for (MapCSSRule r: rules) {
-            List<Selector> nodeSel = new ArrayList<>();
-            List<Selector> waySel = new ArrayList<>();
-            List<Selector> relationSel = new ArrayList<>();
-            List<Selector> multipolygonSel = new ArrayList<>();
-            for (Selector sel : r.selectors) {
-                // find the rightmost selector, this must be a GeneralSelector
-                Selector selRightmost = sel;
-                while (selRightmost instanceof ChildOrParentSelector) {
-                    selRightmost = ((ChildOrParentSelector) selRightmost).right;
-                }
-                Selector optimizedSel = sel.optimizedBaseCheck();
-                switch (((GeneralSelector) selRightmost).getBase()) {
-                    case "node":
-                        nodeSel.add(optimizedSel);
-                        break;
-                    case "way":
-                        waySel.add(optimizedSel);
-                        break;
-                    case "area":
-                        waySel.add(optimizedSel);
-                        multipolygonSel.add(optimizedSel);
-                        break;
-                    case "relation":
-                        relationSel.add(optimizedSel);
-                        multipolygonSel.add(optimizedSel);
-                        break;
-                    case "*":
-                        nodeSel.add(optimizedSel);
-                        waySel.add(optimizedSel);
-                        relationSel.add(optimizedSel);
-                        multipolygonSel.add(optimizedSel);
-                        break;
-                }
+            // find the rightmost selector, this must be a GeneralSelector
+            Selector selRightmost = r.selector;
+            while (selRightmost instanceof ChildOrParentSelector) {
+                selRightmost = ((ChildOrParentSelector) selRightmost).right;
             }
-            nodeRules.add(new MapCSSRule(nodeSel, r.declaration));
-            wayRules.add(new MapCSSRule(waySel, r.declaration));
-            relationRules.add(new MapCSSRule(relationSel, r.declaration));
-            multipolygonRules.add(new MapCSSRule(multipolygonSel, r.declaration));
+            MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
+            switch (((GeneralSelector) selRightmost).getBase()) {
+                case "node":
+                    nodeRules.add(optRule);
+                    break;
+                case "way":
+                    wayRules.add(optRule);
+                    break;
+                case "area":
+                    wayRules.add(optRule);
+                    multipolygonRules.add(optRule);
+                    break;
+                case "relation":
+                    relationRules.add(optRule);
+                    multipolygonRules.add(optRule);
+                    break;
+                case "*":
+                    nodeRules.add(optRule);
+                    wayRules.add(optRule);
+                    relationRules.add(optRule);
+                    multipolygonRules.add(optRule);
+                    break;
+            }
         }
         rules.clear();
     }
@@ -218,15 +210,13 @@ public class MapCSSStyleSource extends StyleSource {
 
         NEXT_RULE:
         for (MapCSSRule r : rules) {
-            for (Selector s : r.selectors) {
-                if ((s instanceof GeneralSelector)) {
-                    GeneralSelector gs = (GeneralSelector) s;
-                    if (gs.getBase().equals(type)) {
-                        if (!gs.matchesConditions(env)) {
-                            continue NEXT_RULE;
-                        }
-                        r.execute(env);
+            if ((r.selector instanceof GeneralSelector)) {
+                GeneralSelector gs = (GeneralSelector) r.selector;
+                if (gs.getBase().equals(type)) {
+                    if (!gs.matchesConditions(env)) {
+                        continue NEXT_RULE;
                     }
+                    r.execute(env);
                 }
             }
         }
@@ -253,34 +243,36 @@ public class MapCSSStyleSource extends StyleSource {
                 matchingRules = relationRules;
             }
         }
+        usedId++;
         RULE: for (MapCSSRule r : matchingRules) {
-            for (Selector s : r.selectors) {
-                env.clearSelectorMatchingInformation();
-                if (s.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
-                    if (s.getRange().contains(scale)) {
-                        mc.range = Range.cut(mc.range, s.getRange());
-                    } else {
-                        mc.range = mc.range.reduceAround(scale, s.getRange());
-                        continue;
-                    }
-
-                    String sub = s.getSubpart();
-                    if (sub == null) {
-                        sub = "default";
-                    }
-                    else if ("*".equals(sub)) {
-                        for (Entry<String, Cascade> entry : mc.getLayers()) {
-                            env.layer = entry.getKey();
-                            if (Utils.equal(env.layer, "*")) {
-                                continue;
-                            }
-                            r.execute(env);
-                        }
-                    }
-                    env.layer = sub;
-                    r.execute(env);
-                    continue RULE;
+            env.clearSelectorMatchingInformation();
+            if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
+                Selector s = r.selector;
+                if (s.getRange().contains(scale)) {
+                    mc.range = Range.cut(mc.range, s.getRange());
+                } else {
+                    mc.range = mc.range.reduceAround(scale, s.getRange());
+                    continue;
                 }
+
+                if (r.declaration.usedId == usedId) continue; // don't apply a declaration block more than once
+                r.declaration.usedId = usedId;
+                String sub = s.getSubpart();
+                if (sub == null) {
+                    sub = "default";
+                }
+                else if ("*".equals(sub)) {
+                    for (Entry<String, Cascade> entry : mc.getLayers()) {
+                        env.layer = entry.getKey();
+                        if (Utils.equal(env.layer, "*")) {
+                            continue;
+                        }
+                        r.execute(env);
+                    }
+                }
+                env.layer = sub;
+                r.execute(env);
+                continue RULE;
             }
         }
     }
