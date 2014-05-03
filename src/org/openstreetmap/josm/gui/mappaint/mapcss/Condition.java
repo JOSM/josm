@@ -28,9 +28,11 @@ public abstract class Condition {
     public static Condition createKeyValueCondition(String k, String v, Op op, Context context, boolean considerValAsKey) {
         switch (context) {
         case PRIMITIVE:
-            return KeyValueRegexpCondition.SUPPORTED_OPS.contains(op) && !considerValAsKey
-                    ? new KeyValueRegexpCondition(k, v, op, false)
-                    : new KeyValueCondition(k, v, op, considerValAsKey);
+            if (KeyValueRegexpCondition.SUPPORTED_OPS.contains(op) && !considerValAsKey)
+                return new KeyValueRegexpCondition(k, v, op, false);
+            if (!considerValAsKey && op.equals(Op.EQ))
+                return new SimpleKeyValueCondition(k, v);
+            return new KeyValueCondition(k, v, op, considerValAsKey);
         case LINK:
             if (considerValAsKey)
                 throw new MapCSSException("''considerValAsKey'' not supported in LINK context");
@@ -147,6 +149,30 @@ public abstract class Condition {
 
     public static final EnumSet<Op> COMPARISON_OPERATERS =
         EnumSet.of(Op.GREATER_OR_EQUAL, Op.GREATER, Op.LESS_OR_EQUAL, Op.LESS);
+
+    /**
+     * Most common case of a KeyValueCondition.
+     * 
+     * Extra class for performance reasons.
+     */
+    public static class SimpleKeyValueCondition extends Condition {
+        public final String k;
+        public final String v;
+
+        public SimpleKeyValueCondition(String k, String v) {
+            this.k = k;
+            this.v = v;
+        }
+
+        @Override
+        public boolean applies(Environment e) {
+            return v.equals(e.osm.get(k));
+        }
+        
+        public Tag asTag() {
+            return new Tag(k, v);
+        }
+    }
 
     /**
      * <p>Represents a key/value condition which is either applied to a primitive.</p>

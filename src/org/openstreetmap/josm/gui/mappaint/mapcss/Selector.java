@@ -524,6 +524,7 @@ public interface Selector {
         public String getSubpart() {
             return subpart;
         }
+
         @Override
         public Range getRange() {
             return range;
