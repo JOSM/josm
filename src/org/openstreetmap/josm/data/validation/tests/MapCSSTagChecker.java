@@ -231,6 +231,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final Condition c = matchingSelector.getConditions().get(index);
                 final Tag tag = c instanceof Condition.KeyCondition
                         ? ((Condition.KeyCondition) c).asTag()
+                        : c instanceof Condition.SimpleKeyValueCondition
+                        ? ((Condition.SimpleKeyValueCondition) c).asTag()
                         : c instanceof Condition.KeyValueCondition
                         ? ((Condition.KeyValueCondition) c).asTag()
                         : null;
