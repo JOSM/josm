@@ -8,11 +8,25 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class MapCSSRule {
 
-    public List<Selector> selectors;
-    public List<Instruction> declaration;
+    public Selector selector;
+    public Declaration declaration;
 
-    public MapCSSRule(List<Selector> selectors, List<Instruction> declaration) {
-        this.selectors = selectors;
+    public static class Declaration {
+        public List<Instruction> instructions;
+        // usedId is an optimized way to make sure that
+        // each declaration is only applied once for each primitive,
+        // even if multiple of the comma separated selectors in the
+        // rule match.
+        public int usedId;
+
+        public Declaration(List<Instruction> instructions) {
+            this.instructions = instructions;
+            usedId = 0;
+        }
+    }
+    
+    public MapCSSRule(Selector selector, Declaration declaration) {
+        this.selector = selector;
         this.declaration = declaration;
     }
 
@@ -22,14 +36,14 @@ public class MapCSSRule {
      * @param env the environment
      */
     public void execute(Environment env) {
-        for (Instruction i : declaration) {
+        for (Instruction i : declaration.instructions) {
             i.execute(env);
         }
     }
 
     @Override
     public String toString() {
-        return Utils.join(",", selectors) + " {\n  " + Utils.join("\n  ", declaration) + "\n}";
+        return selector + " {\n  " + Utils.join("\n  ", declaration.instructions) + "\n}";
     }
 }
 
