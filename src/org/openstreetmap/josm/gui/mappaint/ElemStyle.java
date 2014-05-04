@@ -85,17 +85,39 @@ public abstract class ElemStyle implements StyleKeys {
     /*
      * Two preference values and the set of created fonts are cached in order to avoid
      * expensive lookups and to avoid too many font objects
-     * (in analogy to flyweight pattern).
      *
      * FIXME: cached preference values are not updated if the user changes them during
      * a JOSM session. Should have a listener listening to preference changes.
      */
-    private static String DEFAULT_FONT_NAME = null;
-    private static Float DEFAULT_FONT_SIZE = null;
-    private static void initDefaultFontParameters() {
-        if (DEFAULT_FONT_NAME != null) return; // already initialized - skip initialization
-        DEFAULT_FONT_NAME = Main.pref.get("mappaint.font", "Helvetica");
-        DEFAULT_FONT_SIZE = (float) Main.pref.getInteger("mappaint.fontsize", 8);
+    private static volatile String DEFAULT_FONT_NAME = null;
+    private static volatile Float DEFAULT_FONT_SIZE = null;
+    private static final Object lock = new Object();
+    
+    // thread save access (double-checked locking)
+    private static Float getDefaultFontSize() {
+        Float s = DEFAULT_FONT_SIZE;
+        if (s == null) {
+            synchronized (lock) {
+                s = DEFAULT_FONT_SIZE;
+                if (s == null) {
+                    DEFAULT_FONT_SIZE = s = (float) Main.pref.getInteger("mappaint.fontsize", 8);
+                }
+            }
+        }
+        return s;
+    }
+
+    private static String getDefaultFontName() {
+        String n = DEFAULT_FONT_NAME;
+        if (n == null) {
+            synchronized (lock) {
+                n = DEFAULT_FONT_NAME;
+                if (n == null) {
+                    DEFAULT_FONT_NAME = n = Main.pref.get("mappaint.font", "Helvetica");
+                }
+            }
+        }
+        return n;
     }
 
     private static class FontDescriptor {
@@ -154,9 +176,8 @@ public abstract class ElemStyle implements StyleKeys {
     }
 
     protected static Font getFont(Cascade c) {
-        initDefaultFontParameters(); // populated cached preferences, if necessary
-        String name = c.get("font-family", DEFAULT_FONT_NAME, String.class);
-        float size = c.get("font-size", DEFAULT_FONT_SIZE, Float.class);
+        String name = c.get("font-family", getDefaultFontName(), String.class);
+        float size = c.get("font-size", getDefaultFontSize(), Float.class);
         int weight = Font.PLAIN;
         if ("bold".equalsIgnoreCase(c.get("font-weight", null, String.class))) {
             weight = Font.BOLD;
