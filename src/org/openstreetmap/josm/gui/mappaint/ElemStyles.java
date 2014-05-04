@@ -191,7 +191,10 @@ public class ElemStyles {
                     }
 
                     if (!hasIndependentLineStyle) {
-                        Pair<StyleList, Range> mpElemStyles = getStyleCacheWithRange(r, scale, nc);
+                        Pair<StyleList, Range> mpElemStyles;
+                        synchronized(r) {
+                            mpElemStyles = getStyleCacheWithRange(r, scale, nc);
+                        }
                         ElemStyle mpLine = null;
                         for (ElemStyle s : mpElemStyles.a) {
                             if (s.isProperLineStyle()) {
@@ -248,8 +251,11 @@ public class ElemStyles {
                         }
                     }
                     if (!hasIndependentElemStyle && !multipolygon.getOuterWays().isEmpty()) {
-                        StyleList mpElemStyles = get(ref, scale, nc);
                         Color mpColor = null;
+                        StyleList mpElemStyles = null;
+                        synchronized (ref) {
+                            mpElemStyles = get(ref, scale, nc);
+                        }
                         for (ElemStyle mpS : mpElemStyles) {
                             if (mpS instanceof AreaElemStyle) {
                                 mpColor = ((AreaElemStyle) mpS).color;
