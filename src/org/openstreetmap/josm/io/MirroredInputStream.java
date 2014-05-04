@@ -43,6 +43,7 @@ public class MirroredInputStream extends InputStream {
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
      *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm config directory (since r7058)</li>
      *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
      * @throws IOException when the resource with the given name could not be retrieved
      */
@@ -57,6 +58,7 @@ public class MirroredInputStream extends InputStream {
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
      *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm config directory (since r7058)</li>
      *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
      * @param maxTime the maximum age of the cache file (in seconds)
      * @throws IOException when the resource with the given name could not be retrieved
@@ -72,6 +74,7 @@ public class MirroredInputStream extends InputStream {
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
      *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm config directory (since r7058)</li>
      *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
      * @param destDir the destination directory for the cache file. Only applies for URLs.
      * @throws IOException when the resource with the given name could not be retrieved
@@ -87,6 +90,7 @@ public class MirroredInputStream extends InputStream {
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
      *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm config directory (since r7058)</li>
      *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
      * @param destDir the destination directory for the cache file. Only applies for URLs.
      * @param maxTime the maximum age of the cache file (in seconds)
@@ -103,6 +107,7 @@ public class MirroredInputStream extends InputStream {
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
      *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm config directory (since r7058)</li>
      *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
      * @param destDir the destination directory for the cache file. Only applies for URLs.
      * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Only applies for URLs.
@@ -120,6 +125,7 @@ public class MirroredInputStream extends InputStream {
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
      *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm config directory (since r7058)</li>
      *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
      * @param destDir the destination directory for the cache file. Only applies for URLs.
      * @param maxTime the maximum age of the cache file (in seconds)
@@ -146,8 +152,11 @@ public class MirroredInputStream extends InputStream {
                 if (fs == null)
                     throw new IOException(tr("Failed to open input stream for resource ''{0}''", name));
                 return;
+            } else if (name.startsWith("josmdir://")) {
+                file = new File(Main.pref.getPreferencesDir(), name.substring("josmdir://".length()));
+            } else {
+                file = new File(name);
             }
-            file = new File(name);
         }
         if (file == null)
             throw new IOException();
