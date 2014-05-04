@@ -17,7 +17,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule.Declaration;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
@@ -469,13 +468,14 @@ List<Float> float_array() :
  */
 void sheet(MapCSSStyleSource sheet):
 {
+    MapCSSRule r;
 }
 {
     { this.sheet = sheet; }
     w()
     (
         try {
-            rule() w()
+            r=rule() { if (r != null) { sheet.rules.add(r); } } w()
         } catch (MapCSSException mex) {
             error_skipto(RBRACE, mex);
             w();
@@ -487,11 +487,11 @@ void sheet(MapCSSStyleSource sheet):
     <EOF>
 }
 
-void rule():
+MapCSSRule rule():
 {
     List<Selector> selectors = new ArrayList<Selector>();
     Selector sel;
-    Declaration decl;
+    List<Instruction> decl;
 }
 {
     sel=child_selector() { selectors.add(sel); }
@@ -500,11 +500,7 @@ void rule():
         sel=child_selector() { selectors.add(sel); }
     )*
     decl=declaration()
-    { 
-        for (Selector s : selectors) {
-            sheet.rules.add(new MapCSSRule(s, decl));
-        }
-    }
+    { return new MapCSSRule(selectors, decl); }
 }
 
 Selector child_selector() :
@@ -710,7 +706,7 @@ String subpart() :
     ( s=ident() { return s; } | <STAR> { return "*"; } )
 }
 
-Declaration declaration() :
+List<Instruction> declaration() :
 {
     List<Instruction> ins = new ArrayList<Instruction>();
     Instruction i;
@@ -726,7 +722,7 @@ Declaration declaration() :
             key=<IDENT> w()
             ( <EQUAL> val=expression() )?
             { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val, true)); }
-            ( <RBRACE> { return new Declaration(ins); } | <SEMICOLON> w() )
+            ( <RBRACE> { return ins; } | <SEMICOLON> w() )
         )
     |
         key=<IDENT> w() <COLON> w()
@@ -735,18 +731,18 @@ Declaration declaration() :
                 val=float_array()
                 { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
                 w()
-                ( <RBRACE> { return new Declaration(ins); } | <SEMICOLON> w() )
+                ( <RBRACE> { return ins; } | <SEMICOLON> w() )
             |
             LOOKAHEAD( expression() ( <SEMICOLON> | <RBRACE> ) )
                 val=expression()
                 { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
-                ( <RBRACE> { return new Declaration(ins); } | <SEMICOLON> w() )
+                ( <RBRACE> { return ins; } | <SEMICOLON> w() )
             |
                 val=readRaw() w() { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
         )
     )*
     <RBRACE>
-    { return new Declaration(ins); }
+    { return ins; }
 }
 
 Expression expression():
