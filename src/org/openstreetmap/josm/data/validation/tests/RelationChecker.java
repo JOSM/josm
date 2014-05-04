@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.command.Command;
@@ -31,8 +32,8 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 
 /**
- * Check for wrong relations
- *
+ * Check for wrong relations.
+ * @since 3669
  */
 public class RelationChecker extends Test {
 
@@ -94,6 +95,50 @@ public class RelationChecker extends Test {
 
     @Override
     public void visit(Relation n) {
+        LinkedList<Role> allroles = buildAllRoles(n);
+        if (allroles.isEmpty() && n.hasTag("type", "route")
+                && n.hasTag("route", "train", "subway", "monorail", "tram", "bus", "trolleybus", "aerialway", "ferry")) {
+            errors.add(new TestError(this, Severity.WARNING,
+                    tr("Route scheme (public_transport or legacy) is unspecified. Add {0}", "public_transport:version"),
+                    RELATION_UNKNOWN, n));
+        } else if (allroles.isEmpty()) {
+            errors.add(new TestError(this, Severity.WARNING, tr("Relation type is unknown"), RELATION_UNKNOWN, n));
+        } else {
+            HashMap<String, RoleInfo> map = buildRoleInfoMap(n);
+            if (map.isEmpty()) {
+                errors.add(new TestError(this, Severity.ERROR, tr("Relation is empty"), RELATION_EMPTY, n));
+            } else {
+                checkRoles(n, allroles, map);
+            }
+        }
+    }
+
+    private HashMap<String, RoleInfo> buildRoleInfoMap(Relation n) {
+        HashMap<String,RoleInfo> map = new HashMap<>();
+        for (RelationMember m : n.getMembers()) {
+            String role = m.getRole();
+            RoleInfo ri = map.get(role);
+            if (ri == null) {
+                ri = new RoleInfo();
+            }
+            ri.total++;
+            if (m.isRelation()) {
+                ri.relations.add(m.getRelation());
+            } else if(m.isWay()) {
+                ri.ways.add(m.getWay());
+                if (!m.getWay().isClosed()) {
+                    ri.openways.add(m.getWay());
+                }
+            }
+            else if (m.isNode()) {
+                ri.nodes.add(m.getNode());
+            }
+            map.put(role, ri);
+        }
+        return map;
+    }
+
+    private LinkedList<Role> buildAllRoles(Relation n) {
         LinkedList<Role> allroles = new LinkedList<>();
         for (TaggingPreset p : relationpresets) {
             boolean matches = true;
@@ -113,125 +158,112 @@ public class RelationChecker extends Test {
                 allroles.addAll(r.roles);
             }
         }
-        if (allroles.isEmpty() && n.hasTag("type", "route")
-                && n.hasTag("route", "train", "subway", "monorail", "tram", "bus", "trolleybus", "aerialway", "ferry")) {
-            errors.add(new TestError(this, Severity.WARNING,
-                    tr("Route scheme (public_transport or legacy) is unspecified. Add {0}", "public_transport:version"),
-                    RELATION_UNKNOWN, n));
-        } else if (allroles.isEmpty()) {
-            errors.add( new TestError(this, Severity.WARNING, tr("Relation type is unknown"),
-                    RELATION_UNKNOWN, n) );
-        } else {
-            HashMap<String,RoleInfo> map = new HashMap<>();
-            for (RelationMember m : n.getMembers()) {
-                String s = "";
-                if (m.hasRole()) {
-                    s = m.getRole();
-                }
-                RoleInfo ri = map.get(s);
-                if (ri == null) {
-                    ri = new RoleInfo();
-                }
-                ri.total++;
-                if (m.isRelation()) {
-                    ri.relations.add(m.getRelation());
-                } else if(m.isWay()) {
-                    ri.ways.add(m.getWay());
-                    if (!m.getWay().isClosed()) {
-                        ri.openways.add(m.getWay());
-                    }
-                }
-                else if (m.isNode()) {
-                    ri.nodes.add(m.getNode());
-                }
-                map.put(s, ri);
+        return allroles;
+    }
+
+    private void checkRoles(Relation n, LinkedList<Role> allroles, HashMap<String, RoleInfo> map) {
+        List<String> done = new LinkedList<>();
+        // Remove empty roles if several exist (like in route=hiking, see #9844)
+        List<Role> emptyRoles = new LinkedList<>();
+        for (Role r : allroles) {
+            if ("".equals(r.key)) {
+                emptyRoles.add(r);
             }
-            if(map.isEmpty()) {
-                errors.add( new TestError(this, Severity.ERROR, tr("Relation is empty"),
-                        RELATION_EMPTY, n) );
+        }
+        if (emptyRoles.size() > 1) {
+            allroles.removeAll(emptyRoles);
+        }
+        for (Role r : allroles) {
+            done.add(r.key);
+            String keyname = r.key;
+            if ("".equals(keyname)) {
+                keyname = tr("<empty>");
+            }
+            RoleInfo ri = map.get(r.key);
+            checkRoleCounts(n, r, keyname, ri);
+            if (ri != null) {
+                if (r.types != null) {
+                    checkRoleTypes(n, r, keyname, ri);
+                }
+                if (r.memberExpression != null) {
+                    checkRoleMemberExpressions(n, r, keyname, ri);
+                }
+            }
+        }
+        for (String key : map.keySet()) {
+            if (!done.contains(key)) {
+                if (key.length() > 0) {
+                    String s = marktr("Role {0} unknown");
+                    errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                            tr(s, key), MessageFormat.format(s, key), ROLE_UNKNOWN, n));
+                } else {
+                    String s = marktr("Empty role found");
+                    errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                            tr(s), s, ROLE_EMPTY, n));
+                }
+            }
+        }
+    }
+
+    private void checkRoleMemberExpressions(Relation n, Role r, String keyname, RoleInfo ri) {
+        Set<OsmPrimitive> notMatching = new HashSet<>();
+        Collection<OsmPrimitive> allPrimitives = new ArrayList<>();
+        allPrimitives.addAll(ri.nodes);
+        allPrimitives.addAll(ri.ways);
+        allPrimitives.addAll(ri.relations);
+        for (OsmPrimitive p : allPrimitives) {
+            if (p.isUsable() && !r.memberExpression.match(p)) {
+                notMatching.add(p);
+            }
+        }
+        if (!notMatching.isEmpty()) {
+            String s = marktr("Member for role ''{0}'' does not match ''{1}''");
+            LinkedList<OsmPrimitive> highlight = new LinkedList<>(notMatching);
+            highlight.addFirst(n);
+            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                    tr(s, keyname, r.memberExpression), MessageFormat.format(s, keyname, r.memberExpression), WRONG_TYPE,
+                    highlight, notMatching));
+        }
+    }
+
+    private void checkRoleTypes(Relation n, Role r, String keyname, RoleInfo ri) {
+        Set<OsmPrimitive> wrongTypes = new HashSet<>();
+        if (!r.types.contains(TaggingPresetType.WAY)) {
+            wrongTypes.addAll(r.types.contains(TaggingPresetType.CLOSEDWAY) ? ri.openways : ri.ways);
+        }
+        if (!r.types.contains(TaggingPresetType.NODE)) {
+            wrongTypes.addAll(ri.nodes);
+        }
+        if (!r.types.contains(TaggingPresetType.RELATION)) {
+            wrongTypes.addAll(ri.relations);
+        }
+        if (!wrongTypes.isEmpty()) {
+            String s = marktr("Member for role {0} of wrong type");
+            LinkedList<OsmPrimitive> highlight = new LinkedList<>(wrongTypes);
+            highlight.addFirst(n);
+            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                    tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE,
+                    highlight, wrongTypes));
+        }
+    }
+
+    private void checkRoleCounts(Relation n, Role r, String keyname, RoleInfo ri) {
+        long count = (ri == null) ? 0 : ri.total;
+        long vc = r.getValidCount(count);
+        if (count != vc) {
+            if (count == 0) {
+                String s = marktr("Role {0} missing");
+                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                        tr(s, keyname), MessageFormat.format(s, keyname), ROLE_MISSING, n));
+            }
+            else if (vc > count) {
+                String s = marktr("Number of {0} roles too low ({1})");
+                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                        tr(s, keyname, count), MessageFormat.format(s, keyname, count), LOW_COUNT, n));
             } else {
-                LinkedList<String> done = new LinkedList<>();
-                for (Role r : allroles) {
-                    done.add(r.key);
-                    String keyname = r.key;
-                    if ("".equals(keyname)) {
-                        keyname = tr("<empty>");
-                    }
-                    RoleInfo ri = map.get(r.key);
-                    long count = (ri == null) ? 0 : ri.total;
-                    long vc = r.getValidCount(count);
-                    if (count != vc) {
-                        if (count == 0) {
-                            String s = marktr("Role {0} missing");
-                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                                    tr(s, keyname), MessageFormat.format(s, keyname), ROLE_MISSING, n));
-                        }
-                        else if (vc > count) {
-                            String s = marktr("Number of {0} roles too low ({1})");
-                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                                    tr(s, keyname, count), MessageFormat.format(s, keyname, count), LOW_COUNT, n));
-                        } else {
-                            String s = marktr("Number of {0} roles too high ({1})");
-                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                                    tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n));
-                        }
-                    }
-                    if (ri != null) {
-                        if (r.types != null) {
-                            Set<OsmPrimitive> wrongTypes = new HashSet<>();
-                            if (!r.types.contains(TaggingPresetType.WAY)) {
-                                wrongTypes.addAll(r.types.contains(TaggingPresetType.CLOSEDWAY) ? ri.openways : ri.ways);
-                            }
-                            if (!r.types.contains(TaggingPresetType.NODE)) {
-                                wrongTypes.addAll(ri.nodes);
-                            }
-                            if (!r.types.contains(TaggingPresetType.RELATION)) {
-                                wrongTypes.addAll(ri.relations);
-                            }
-                            if (!wrongTypes.isEmpty()) {
-                                String s = marktr("Member for role {0} of wrong type");
-                                LinkedList<OsmPrimitive> highlight = new LinkedList<>(wrongTypes);
-                                highlight.addFirst(n);
-                                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                                        tr(s, keyname), MessageFormat.format(s, keyname), WRONG_TYPE,
-                                        highlight, wrongTypes));
-                            }
-                        }
-                        if (r.memberExpression != null) {
-                            Set<OsmPrimitive> notMatching = new HashSet<>();
-                            Collection<OsmPrimitive> allPrimitives = new ArrayList<>();
-                            allPrimitives.addAll(ri.nodes);
-                            allPrimitives.addAll(ri.ways);
-                            allPrimitives.addAll(ri.relations);
-                            for (OsmPrimitive p : allPrimitives) {
-                                if (p.isUsable() && !r.memberExpression.match(p)) {
-                                    notMatching.add(p);
-                                }
-                            }
-                            if (!notMatching.isEmpty()) {
-                                String s = marktr("Member for role ''{0}'' does not match ''{1}''");
-                                LinkedList<OsmPrimitive> highlight = new LinkedList<>(notMatching);
-                                highlight.addFirst(n);
-                                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                                        tr(s, keyname, r.memberExpression), MessageFormat.format(s, keyname, r.memberExpression), WRONG_TYPE,
-                                        highlight, notMatching));
-                            }
-                        }
-                    }
-                }
-                for (String key : map.keySet()) {
-                    if (!done.contains(key)) {
-                        if (key.length() > 0) {
-                            String s = marktr("Role {0} unknown");
-                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                                    tr(s, key), MessageFormat.format(s, key), ROLE_UNKNOWN, n));
-                        } else {
-                            String s = marktr("Empty role found");
-                            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                                    tr(s), s, ROLE_EMPTY, n));
-                        }
-                    }
-                }
+                String s = marktr("Number of {0} roles too high ({1})");
+                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
+                        tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n));
             }
         }
     }
