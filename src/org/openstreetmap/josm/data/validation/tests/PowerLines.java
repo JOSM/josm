@@ -42,7 +42,7 @@ public class PowerLines extends Test {
     /** Values for {@code power} key interpreted as power stations */
     public static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "substation", "plant", "generator");
     /** Values for {@code power} key interpreted as allowed power items */
-    public static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator");
+    public static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear");
 
     private final Map<Way, String> towerPoleTagMap = new HashMap<>();
 
@@ -67,8 +67,10 @@ public class PowerLines extends Test {
                 for (Node n : w.getNodes()) {
                     if (!isPowerTower(n)) {
                         if (!isPowerAllowed(n)) {
-                            potentialErrors.add(new PowerLineError(n, w));
-                            erroneous = true;
+                            if (!w.isFirstLastNode(n) || !isPowerStation(n)) {
+                                potentialErrors.add(new PowerLineError(n, w));
+                                erroneous = true;
+                            }
                         }
                     } else if (fixValue == null) {
                         // First tower/pole tag found, remember it
