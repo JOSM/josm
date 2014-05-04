@@ -258,6 +258,7 @@ Build-Date: ${build.tstamp}
             <include name="**/*.jar"/>
         </fileset>
         <pathelement path="dist/josm-custom.jar"/>
+        <pathelement path="tools/groovy-all-2.2.2.jar"/>
     </path>
     <target name="test-init">
         <mkdir dir="${test.dir}/build"/>
@@ -269,21 +270,16 @@ Build-Date: ${build.tstamp}
         <delete file="${test.dir}/jacoco.exec" />
     </target>
     <target name="test-compile" depends="test-init,dist">
-        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on"
-        	includeantruntime="false" createMissingPackageInfoClass="off" encoding="UTF-8">
-            <compilerarg value="-Xlint:all"/>
-            <compilerarg value="-Xlint:-serial"/>
-        </javac>
-        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on"
-        	includeantruntime="false" createMissingPackageInfoClass="off" encoding="UTF-8">
-            <compilerarg value="-Xlint:all"/>
-            <compilerarg value="-Xlint:-serial"/>
-        </javac>
-        <javac srcdir="${test.dir}/performance" classpathref="test.classpath" destdir="${test.dir}/build" target="1.7" source="1.7" debug="on"
-        	includeantruntime="false" createMissingPackageInfoClass="off" encoding="UTF-8">
-            <compilerarg value="-Xlint:all"/>
-            <compilerarg value="-Xlint:-serial"/>
-        </javac>
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.2.2.jar"/>
+        <groovyc classpathref="test.classpath" destdir="${test.dir}/build" encoding="UTF-8">
+        	<src path="${test.dir}/unit"/>
+            <src path="${test.dir}/functional"/>
+            <src path="${test.dir}/performance"/>
+        	<javac target="1.7" source="1.7" debug="on">
+                <compilerarg value="-Xlint:all"/>
+                <compilerarg value="-Xlint:-serial"/>
+        	</javac>
+        </groovyc>
     </target>
     <target name="test" depends="test-compile">
         <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
@@ -301,7 +297,7 @@ Build-Date: ${build.tstamp}
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest fork="yes" todir="${test.dir}/report">
-                    <fileset dir="${test.dir}/unit" includes="**/*.java"/>
+                    <fileset dir="${test.dir}/build" includes="**/*Test.class"/>
                 </batchtest>
             </junit>
         </jacoco:coverage>
