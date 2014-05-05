@@ -4,7 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import static org.junit.Assert.*
 
 import org.junit.*
-import org.openstreetmap.josm.fixtures.JOSMFixture
+import org.openstreetmap.josm.JOSMFixture;
 
 
 class ParsingLinkSelectorTest {

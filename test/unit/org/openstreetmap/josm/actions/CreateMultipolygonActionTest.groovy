@@ -1,7 +1,7 @@
 package org.openstreetmap.josm.actions
 
-import org.openstreetmap.TestUtils
 import org.openstreetmap.josm.Main
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchCompiler
 import org.openstreetmap.josm.data.osm.Relation
 import org.openstreetmap.josm.data.osm.Way

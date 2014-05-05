@@ -4,12 +4,12 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import static org.junit.Assert.*
 
 import org.junit.*
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.Node
 import org.openstreetmap.josm.data.osm.Relation
 import org.openstreetmap.josm.data.osm.RelationMember
-import org.openstreetmap.josm.fixtures.JOSMFixture
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context
 

@@ -1,6 +1,6 @@
 package org.openstreetmap.josm.data.validation.tests
 
-import org.openstreetmap.TestUtils
+import org.openstreetmap.josm.TestUtils;
 
 class LanesTest extends GroovyTestCase {
 
