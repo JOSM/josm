@@ -198,15 +198,15 @@ Build-Date: ${build.tstamp}
         </exec>
     </target>
     <target name="compile" depends="init,javacc">
-    	<!-- COTS -->
+        <!-- COTS -->
         <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**" nowarn="on"
-        	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="iso-8859-1">
+            destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="iso-8859-1">
             <!-- get rid of "internal proprietary API" warning -->
-        	<compilerarg value="-XDignore.symbol.file"/>
+            <compilerarg value="-XDignore.symbol.file"/>
         </javac>
         <!-- JMapViewer/JOSM -->
         <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
-        	destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:dep-ann"/>
@@ -260,47 +260,105 @@ Build-Date: ${build.tstamp}
         <pathelement path="dist/josm-custom.jar"/>
         <pathelement path="tools/groovy-all-2.2.2.jar"/>
     </path>
+    <macrodef name="init-test-preferences">
+        <attribute name="testfamily"/>
+        <sequential>
+            <copy file="${test.dir}/config/preferences.template.xml" tofile="${test.dir}/config/@{testfamily}-josm.home/preferences.xml"/>
+            <replace file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" encoding="UTF-8" token="@OSM_USERNAME@" value="${osm.username}"/>
+            <replace file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" encoding="UTF-8" token="@OSM_PASSWORD@" value="${osm.password}"/>
+        	<!-- Works only on Windows, does nothing on Unix -->
+        	<attrib file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" readonly="true"/>
+            <!-- Works only on Unix, does nothing on Windows -->
+        	<chmod file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" perm="a-w"/>
+        </sequential>
+    </macrodef>
     <target name="test-init">
         <mkdir dir="${test.dir}/build"/>
+        <mkdir dir="${test.dir}/build/unit"/>
+        <mkdir dir="${test.dir}/build/functional"/>
+        <mkdir dir="${test.dir}/build/performance"/>
         <mkdir dir="${test.dir}/report"/>
+        <init-test-preferences testfamily="unit"/>
+        <init-test-preferences testfamily="functional"/>
+        <init-test-preferences testfamily="performance"/>
     </target>
     <target name="test-clean">
         <delete dir="${test.dir}/build"/>
         <delete dir="${test.dir}/report"/>
         <delete file="${test.dir}/jacoco.exec" />
+        <delete file="${test.dir}/config/unit-josm.home/preferences.xml" />
+        <delete file="${test.dir}/config/functional-josm.home/preferences.xml" />
+        <delete file="${test.dir}/config/performance-josm.home/preferences.xml" />
+        <delete dir="${test.dir}/config/unit-josm.home/cache" failonerror="false"/>
+        <delete dir="${test.dir}/config/functional-josm.home/cache" failonerror="false"/>
+        <delete dir="${test.dir}/config/performance-josm.home/cache" failonerror="false"/>
     </target>
+    <macrodef name="call-groovyc">
+        <attribute name="testfamily"/>
+        <element name="cp-elements"/>
+        <sequential>
+            <groovyc srcdir="${test.dir}/@{testfamily}" destdir="${test.dir}/build/@{testfamily}" encoding="UTF-8">
+                <classpath>
+                    <cp-elements/>
+                </classpath>
+                <javac target="1.7" source="1.7" debug="on">
+                    <compilerarg value="-Xlint:all"/>
+                    <compilerarg value="-Xlint:-serial"/>
+                </javac>
+            </groovyc>
+        </sequential>
+    </macrodef>
     <target name="test-compile" depends="test-init,dist">
         <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.2.2.jar"/>
-        <groovyc classpathref="test.classpath" destdir="${test.dir}/build" encoding="UTF-8">
-        	<src path="${test.dir}/unit"/>
-            <src path="${test.dir}/functional"/>
-            <src path="${test.dir}/performance"/>
-        	<javac target="1.7" source="1.7" debug="on">
-                <compilerarg value="-Xlint:all"/>
-                <compilerarg value="-Xlint:-serial"/>
-        	</javac>
-        </groovyc>
+        <call-groovyc testfamily="unit">
+            <cp-elements>
+                <path refid="test.classpath"/>
+            </cp-elements>
+        </call-groovyc>
+        <call-groovyc testfamily="functional">
+            <cp-elements>
+                <path refid="test.classpath"/>
+                <pathelement path="${test.dir}/build/unit"/>
+            </cp-elements>
+        </call-groovyc>
+        <call-groovyc testfamily="performance">
+            <cp-elements>
+                <path refid="test.classpath"/>
+                <pathelement path="${test.dir}/build/unit"/>
+            </cp-elements>
+        </call-groovyc>
     </target>
-    <target name="test" depends="test-compile">
+    <macrodef name="call-junit">
+        <attribute name="testfamily"/>
+        <sequential>
+            <echo message="Running @{testfamily} tests with JUnit"/>
+            <jacoco:coverage destfile="${test.dir}/jacoco.exec">
+                <junit printsummary="yes" fork="true" forkmode="once">
+                    <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
+                    <sysproperty key="josm.test.data" value="${test.dir}/data"/>
+                    <sysproperty key="java.awt.headless" value="true"/>
+                    <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
+                    <classpath>
+                        <path refid="test.classpath"/>
+                        <pathelement path="${test.dir}/build/unit"/>
+                        <pathelement path="${test.dir}/build/@{testfamily}"/>
+                        <pathelement path="${test.dir}/config"/>
+                    </classpath>
+                    <formatter type="plain"/>
+                    <formatter type="xml"/>
+                    <batchtest fork="yes" todir="${test.dir}/report">
+                        <fileset dir="${test.dir}/build/@{testfamily}" includes="**/*Test.class"/>
+                    </batchtest>
+                </junit>
+            </jacoco:coverage>
+        </sequential>
+    </macrodef>
+    <target name="test" depends="test-compile" 
+    	description="Run unit, functional and performance tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
-        <jacoco:coverage destfile="${test.dir}/jacoco.exec">
-            <junit printsummary="yes" fork="true" forkmode="once">
-                <sysproperty key="josm.home" value="${test.dir}/config/unit-josm.home"/>
-                <sysproperty key="josm.test.data" value="${test.dir}/data"/>
-                <sysproperty key="java.awt.headless" value="true"/>
-                <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
-                <classpath>
-                    <path refid="test.classpath"/>
-                    <pathelement path="${test.dir}/build"/>
-                    <pathelement path="${test.dir}/config"/>
-                </classpath>
-                <formatter type="plain"/>
-                <formatter type="xml"/>
-                <batchtest fork="yes" todir="${test.dir}/report">
-                    <fileset dir="${test.dir}/build" includes="**/*Test.class"/>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
+        <call-junit testfamily="unit"/>
+        <call-junit testfamily="functional"/>
+        <call-junit testfamily="performance"/>
     </target>
     <target name="test-html" depends="test" description="Generate HTML test reports">
         <!-- May require additional ant dependencies like ant-trax package -->

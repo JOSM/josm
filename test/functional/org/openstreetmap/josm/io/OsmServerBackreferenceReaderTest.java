@@ -9,20 +9,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -39,6 +37,10 @@ import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Reads primitives referring to a particular primitive (ways including a node, relations referring to a relation)
+ * @since 1806
+ */
 public class OsmServerBackreferenceReaderTest {
     static private final Logger logger = Logger.getLogger(OsmServerBackreferenceReader.class.getName());
 
@@ -46,14 +48,15 @@ public class OsmServerBackreferenceReaderTest {
         for (Node n : ds.getNodes()) {
             if (("node-" + i).equals(n.get("name"))) return n;
         }
+        fail("Cannot find node "+i);
         return null;
     }
-
 
     protected static Way lookupWay(DataSet ds, int i) {
         for (Way w : ds.getWays()) {
             if (("way-" + i).equals(w.get("name"))) return w;
         }
+        fail("Cannot find way "+i);
         return null;
     }
 
@@ -61,6 +64,7 @@ public class OsmServerBackreferenceReaderTest {
         for (Relation r : ds.getRelations()) {
             if (("relation-" + i).equals(r.get("name"))) return r;
         }
+        fail("Cannot find relation "+i);
         return null;
     }
 
@@ -107,7 +111,6 @@ public class OsmServerBackreferenceReaderTest {
         }
     }
 
-
     protected static DataSet buildTestDataSet() {
         DataSet ds = new DataSet();
         ds.setVersion("0.6");
@@ -136,71 +139,23 @@ public class OsmServerBackreferenceReaderTest {
         OsmApi.getOsmApi().closeChangeset(cs, NullProgressMonitor.INSTANCE);
     }
 
-    static Properties testProperties;
     static DataSet testDataSet;
 
     @BeforeClass
-    public static void  init() throws OsmTransferException {
+    public static void init() throws OsmTransferException {
         logger.info("initializing ...");
-        testProperties = new Properties();
 
-        // load properties
-        //
-        try (InputStream is = MultiFetchServerObjectReaderTest.class.getResourceAsStream("/test-functional-env.properties")) {
-            if (is == null) {
-                throw new IOException();
-            }
-            testProperties.load(is);
-        } catch(IOException e){
-            logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
-            fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
-        }
+        JOSMFixture.createFunctionalTestFixture().init();
 
-        // check josm.home
-        //
-        String josmHome = testProperties.getProperty("josm.home");
-        if (josmHome == null) {
-            fail(MessageFormat.format("property ''{0}'' not set in test environment", "josm.home"));
-        } else {
-            File f = new File(josmHome);
-            if (! f.exists() || ! f.canRead()) {
-                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing or not readable", "josm.home", josmHome));
-            }
-        }
-
-        // check temp output dir
-        //
-        String tempOutputDir = testProperties.getProperty("test.functional.tempdir");
-        if (tempOutputDir == null) {
-            fail(MessageFormat.format("property ''{0}'' not set in test environment", "test.functional.tempdir"));
-        } else {
-            File f = new File(tempOutputDir);
-            if (! f.exists() || ! f.isDirectory() || ! f.canWrite()) {
-                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing, not a directory, or not writeable", "test.functional.tempdir", tempOutputDir));
-            }
-        }
-
-
-        // init preferences
-        //
-        System.setProperty("josm.home", josmHome);
-        Main.pref.init(false);
         // don't use atomic upload, the test API server can't cope with large diff uploads
         //
         Main.pref.put("osm-server.atomic-upload", false);
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
+        Main.logLevel = 4;
 
-        File dataSetCacheOutputFile = new File(tempOutputDir, MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
+        File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
 
-        // make sure we don't upload to production
-        //
-        String url = OsmApi.getOsmApi().getBaseUrl().toLowerCase().trim();
-        if (url.startsWith("http://www.openstreetmap.org") || url.startsWith("http://api.openstreetmap.org")
-            || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org")) {
-            fail(MessageFormat.format("configured url ''{0}'' seems to be a productive url, aborting.", url));
-        }
-
-        String p = System.getProperties().getProperty("useCachedDataset");
+        String p = System.getProperty("useCachedDataset");
         if (p != null && Boolean.parseBoolean(p.trim().toLowerCase())) {
             logger.info(MessageFormat.format("property ''{0}'' set, using cached dataset", "useCachedDataset"));
             return;
@@ -238,7 +193,7 @@ public class OsmServerBackreferenceReaderTest {
      */
     @Before
     public void setUp() throws IOException, IllegalDataException {
-        File f = new File(testProperties.getProperty("test.functional.tempdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
+        File f = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
         try (FileInputStream fis = new FileInputStream(f)) {

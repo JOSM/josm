@@ -1,6 +1,5 @@
-
 // License: GPL. For details, see LICENSE file.
-package mapcss.performance;
+package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.junit.Assert.*
 
@@ -15,67 +14,66 @@ import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer
 import org.openstreetmap.josm.gui.MainApplication
 import org.openstreetmap.josm.gui.layer.OsmDataLayer
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
 import org.openstreetmap.josm.gui.preferences.SourceEntry
 import org.openstreetmap.josm.io.OsmReader
 
 /**
- * This performance tests measures the time for a full run of MapPaintVisitor.visitAll()
+ * This performance test measures the time for a full run of MapPaintVisitor.visitAll()
  * against a test data set using a test style.
- * 
+ *
  */
-class PerformanceTest {
+class MapCSSPerformanceTest {
 
     /* ------------------------ configuration section  ---------------------------- */
     /**
-    * The path to the JOSM home environment
-    */
-   def static JOSM_HOME="/my/josm/home/dir"
-   
-   /**
-    * The path to the style file used for rendering.
-    */
-   def static STYLE_FILE="/my/test-style.mapcss"
+     * The path to the JOSM home environment
+     */
+    def static JOSM_HOME="test/config/performance-josm.home"
 
-   /**
-    * The data file to be rendered
-    */
-   def static DATA_FILE = "/my/test-data.osm"
-    /* ------------------------ / configuration section  ---------------------------- */     
-    
+    /**
+     * The path to the style file used for rendering.
+     */
+    def static STYLE_FILE="styles/standard/elemstyles.mapcss"
+
+    /**
+     * The data file to be rendered
+     */
+    def static DATA_FILE = "/my/test-data.osm"
+    /* ------------------------ / configuration section  ---------------------------- */
+
     def DataSet ds
-    
+
     def static boolean checkTestEnvironment() {
           File f = new File(JOSM_HOME)
           if  (!f.isDirectory() || !f.exists()) {
-              fail("JOSM_HOME refers to '${JOSM_HOME}. This is either not a directory or doesn't exist.\nPlease update configuration settings in the unit test file.")              
+              fail("JOSM_HOME refers to '${JOSM_HOME}. This is either not a directory or doesn't exist.\nPlease update configuration settings in the unit test file.")
           }
-          
+
           f = new File(STYLE_FILE);
           if ( !f.isFile() || ! f.exists()) {
               fail("STYLE_FILE refers to '${STYLE_FILE}. This is either not a file or doesn't exist.\nPlease update configuration settings in the unit test file.")
           }
-          
+
           f = new File(DATA_FILE);
           if ( !f.isFile() || ! f.exists()) {
               fail("DATA_FILE refers to '${DATA_FILE}. This is either not a file or doesn't exist.\nPlease update configuration settings in the unit test file.")
           }
     }
-    
+
     @BeforeClass
     public static void createJOSMFixture(){
         checkTestEnvironment()
         System.setProperty("josm.home", JOSM_HOME)
         MainApplication.main(new String[0])
     }
-    
+
     def timed(Closure c){
         long before = System.currentTimeMillis()
         c()
         long after = System.currentTimeMillis()
         return after - before
     }
-    
+
     def  loadStyle() {
         print "Loading style '$STYLE_FILE' ..."
         MapCSSStyleSource source = new MapCSSStyleSource(
@@ -94,7 +92,7 @@ class PerformanceTest {
         MapPaintStyles.getStyles().add(source)
         println "DONE"
     }
-    
+
     def loadData() {
         print "Loading data file '$DATA_FILE' ..."
         new File(DATA_FILE).withInputStream {
@@ -104,20 +102,18 @@ class PerformanceTest {
         Main.main.addLayer(new OsmDataLayer(ds,"test layer",null /* no file */));
         println "DONE"
     }
-    
+
     @Test
     public void measureTimeForStylePreparation() {
         loadStyle()
         loadData()
-        
+
         def mv = Main.map.mapView
-        
+
         BufferedImage img = mv.createImage(mv.getWidth(), mv.getHeight())
         Graphics2D g = img.createGraphics()
         g.setClip(0,0, mv.getWidth(), mv.getHeight())
-        def visitor = new StyledMapRenderer()
-        visitor.setNavigatableComponent(Main.map.mapView)
-        visitor.setGraphics(g)
+        def visitor = new StyledMapRenderer(g, Main.map.mapView, false)
 
         print "Rendering ..."
         long time = timed {
@@ -127,6 +123,6 @@ class PerformanceTest {
         println "data file : ${DATA_FILE}"
         println "style file: ${STYLE_FILE}"
         println ""
-        println "Rendering took $time ms."       
+        println "Rendering took $time ms."
     }
 }

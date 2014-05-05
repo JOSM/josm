@@ -1,15 +1,12 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.fixtures;
+package org.openstreetmap.josm;
 
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
@@ -18,41 +15,33 @@ public class JOSMFixture {
     static private final Logger logger = Logger.getLogger(JOSMFixture.class.getName());
 
     static public JOSMFixture createUnitTestFixture() {
-        return new JOSMFixture("/test-unit-env.properties");
+        return new JOSMFixture("test/config/unit-josm.home");
     }
 
     static public JOSMFixture createFunctionalTestFixture() {
-        return new JOSMFixture("/test-functional-env.properties");
+        return new JOSMFixture("test/config/functional-josm.home");
     }
 
-    private Properties testProperties;
-    private String testPropertiesResourceName;
+    static public JOSMFixture createPerformanceTestFixture() {
+        return new JOSMFixture("test/config/performance-josm.home");
+    }
 
-    public JOSMFixture(String testPropertiesResourceName) {
-        this.testPropertiesResourceName = testPropertiesResourceName;
+    private final String josmHome;
+
+    public JOSMFixture(String josmHome) {
+        this.josmHome = josmHome;
     }
 
     public void init() {
-        testProperties = new Properties();
-
-        // load properties
-        //
-        try {
-            testProperties.load(JOSMFixture.class.getResourceAsStream(testPropertiesResourceName));
-        } catch(Exception e){
-            logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", testPropertiesResourceName));
-            fail(MessageFormat.format("failed to load property file ''{0}''. \nMake sure the path ''$project_root/test/config'' is on the classpath.", testPropertiesResourceName));
-        }
 
         // check josm.home
         //
-        String josmHome = testProperties.getProperty("josm.home");
         if (josmHome == null) {
             fail(MessageFormat.format("property ''{0}'' not set in test environment", "josm.home"));
         } else {
             File f = new File(josmHome);
             if (! f.exists() || ! f.canRead()) {
-                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing or not readable.\nEdit ''{2}'' and update the value ''josm.home''. ", "josm.home", josmHome,testPropertiesResourceName ));
+                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing or not readable.", "josm.home", josmHome));
             }
         }
         System.setProperty("josm.home", josmHome);

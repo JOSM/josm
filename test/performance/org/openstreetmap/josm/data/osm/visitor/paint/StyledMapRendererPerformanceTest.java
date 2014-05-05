@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.osm;
+package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -18,7 +19,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 
-public class MapPaintVisitorPerformanceTest {
+public class StyledMapRendererPerformanceTest {
 
     private static final int IMG_WIDTH = 1400;
     private static final int IMG_HEIGHT = 1050;
@@ -53,8 +54,8 @@ public class MapPaintVisitorPerformanceTest {
         }
 
         // Warm up
-        new MapPaintVisitorPerformanceTest().testRestrictionSmall();
-        new MapPaintVisitorPerformanceTest().testCity();
+        new StyledMapRendererPerformanceTest().testRestrictionSmall();
+        new StyledMapRendererPerformanceTest().testCity();
     }
 
     private static void test(int iterations, DataSet ds, Bounds bounds) throws Exception {

@@ -12,10 +12,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.TestUtils;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -30,8 +30,8 @@ public class MapCSSTagCheckerTest {
     /**
      * Setup test.
      */
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() {
         Main.initApplicationPreferences();
     }
 
