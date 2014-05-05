@@ -13,11 +13,9 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
 
     protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<>();
 
-    /**
-     * @see CredentialsAgent#getCredentials
-     */
     @Override
-    public CredentialsAgentResponse getCredentials(final RequestorType requestorType, final String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException{
+    public CredentialsAgentResponse getCredentials(final RequestorType requestorType, final String host, boolean noSuccessWithLastResponse)
+            throws CredentialsAgentException {
         if (requestorType == null)
             return null;
         PasswordAuthentication credentials =  lookup(requestorType, host);
@@ -62,7 +60,7 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
                     response.setSaveCredentials(dialog.isSaveCredentials());
                 }
             });
-            if (response.isCanceled()) {
+            if (response.isCanceled() || response.getUsername() == null || response.getPassword() == null) {
                 return response;
             }
             if (response.isSaveCredentials()) {
