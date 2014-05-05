@@ -1,5 +1,7 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss
 
+import java.awt.Color
+
 import org.junit.Before
 import org.junit.Test
 import org.openstreetmap.TestUtils
@@ -13,8 +15,6 @@ import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
 import org.openstreetmap.josm.tools.ColorHelper
-
-import java.awt.Color
 
 class MapCSSParserTest {
 
@@ -234,7 +234,7 @@ class MapCSSParserTest {
     @Test
     public void testColorNameTicket9191() throws Exception {
         def e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null)
-        getParser("{color: testcolour1#88DD22}").declaration().get(0).execute(e)
+        getParser("{color: testcolour1#88DD22}").declaration().instructions.get(0).execute(e)
         def expected = new Color(0x88DD22)
         assert e.getCascade(Environment.DEFAULT_LAYER).get("color") == expected
         assert Main.pref.getDefaultColor("mappaint.mapcss.testcolour1") == expected
@@ -243,7 +243,7 @@ class MapCSSParserTest {
     @Test
     public void testColorNameTicket9191Alpha() throws Exception {
         def e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null)
-        getParser("{color: testcolour2#12345678}").declaration().get(0).execute(e)
+        getParser("{color: testcolour2#12345678}").declaration().instructions.get(0).execute(e)
         def expected = new Color(0x12, 0x34, 0x56, 0x78)
         assert e.getCascade(Environment.DEFAULT_LAYER).get("color") == expected
         assert Main.pref.getDefaultColor("mappaint.mapcss.testcolour2") == expected
