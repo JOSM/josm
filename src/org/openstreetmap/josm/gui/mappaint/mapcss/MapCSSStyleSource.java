@@ -27,7 +27,6 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
@@ -117,46 +116,35 @@ public class MapCSSStyleSource extends StyleSource {
         }
         // optimization: filter rules for different primitive types
         for (MapCSSRule r: rules) {
-            List<Selector> nodeSel = new ArrayList<>();
-            List<Selector> waySel = new ArrayList<>();
-            List<Selector> relationSel = new ArrayList<>();
-            List<Selector> multipolygonSel = new ArrayList<>();
-            for (Selector sel : r.selectors) {
-                // find the rightmost selector, this must be a GeneralSelector
-                Selector selRightmost = sel;
-                while (selRightmost instanceof ChildOrParentSelector) {
-                    selRightmost = ((ChildOrParentSelector) selRightmost).right;
-                }
-                Selector optimizedSel = sel.optimizedBaseCheck();
-                switch (((GeneralSelector) selRightmost).getBase()) {
-                    case "node":
-                        nodeSel.add(optimizedSel);
-                        break;
-                    case "way":
-                        waySel.add(optimizedSel);
-                        break;
-                    case "area":
-                        waySel.add(optimizedSel);
-                        multipolygonSel.add(optimizedSel);
-                        break;
-                    case "relation":
-                        relationSel.add(optimizedSel);
-                        multipolygonSel.add(optimizedSel);
-                        break;
-                    case "*":
-                        nodeSel.add(optimizedSel);
-                        waySel.add(optimizedSel);
-                        relationSel.add(optimizedSel);
-                        multipolygonSel.add(optimizedSel);
-                        break;
-                }
+            // find the rightmost selector, this must be a GeneralSelector
+            Selector selRightmost = r.selector;
+            while (selRightmost instanceof ChildOrParentSelector) {
+                selRightmost = ((ChildOrParentSelector) selRightmost).right;
             }
-            nodeRules.add(new MapCSSRule(nodeSel, r.declaration));
-            wayRules.add(new MapCSSRule(waySel, r.declaration));
-            relationRules.add(new MapCSSRule(relationSel, r.declaration));
-            multipolygonRules.add(new MapCSSRule(multipolygonSel, r.declaration));
+            MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
+            switch (((GeneralSelector) selRightmost).getBase()) {
+                case "node":
+                    nodeRules.add(optRule);
+                    break;
+                case "way":
+                    wayRules.add(optRule);
+                    break;
+                case "area":
+                    wayRules.add(optRule);
+                    multipolygonRules.add(optRule);
+                    break;
+                case "relation":
+                    relationRules.add(optRule);
+                    multipolygonRules.add(optRule);
+                    break;
+                case "*":
+                    nodeRules.add(optRule);
+                    wayRules.add(optRule);
+                    relationRules.add(optRule);
+                    multipolygonRules.add(optRule);
+                    break;
+            }
         }
-        rules.clear();
     }
     
     @Override
@@ -216,17 +204,14 @@ public class MapCSSStyleSource extends StyleSource {
         // create a fake environment to read the meta data block
         Environment env = new Environment(n, mc, "default", this);
 
-        NEXT_RULE:
         for (MapCSSRule r : rules) {
-            for (Selector s : r.selectors) {
-                if ((s instanceof GeneralSelector)) {
-                    GeneralSelector gs = (GeneralSelector) s;
-                    if (gs.getBase().equals(type)) {
-                        if (!gs.matchesConditions(env)) {
-                            continue NEXT_RULE;
-                        }
-                        r.execute(env);
+            if ((r.selector instanceof GeneralSelector)) {
+                GeneralSelector gs = (GeneralSelector) r.selector;
+                if (gs.getBase().equals(type)) {
+                    if (!gs.matchesConditions(env)) {
+                        continue;
                     }
+                    r.execute(env);
                 }
             }
         }
@@ -253,34 +238,39 @@ public class MapCSSStyleSource extends StyleSource {
                 matchingRules = relationRules;
             }
         }
-        RULE: for (MapCSSRule r : matchingRules) {
-            for (Selector s : r.selectors) {
-                env.clearSelectorMatchingInformation();
-                if (s.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
-                    if (s.getRange().contains(scale)) {
-                        mc.range = Range.cut(mc.range, s.getRange());
-                    } else {
-                        mc.range = mc.range.reduceAround(scale, s.getRange());
-                        continue;
-                    }
-
-                    String sub = s.getSubpart();
-                    if (sub == null) {
-                        sub = "default";
-                    }
-                    else if ("*".equals(sub)) {
-                        for (Entry<String, Cascade> entry : mc.getLayers()) {
-                            env.layer = entry.getKey();
-                            if (Utils.equal(env.layer, "*")) {
-                                continue;
-                            }
-                            r.execute(env);
-                        }
-                    }
-                    env.layer = sub;
-                    r.execute(env);
-                    continue RULE;
+        
+        // the declaration indices are sorted, so it suffices to save the
+        // last used index
+        int lastDeclUsed = -1;
+        
+        for (MapCSSRule r : matchingRules) {
+            env.clearSelectorMatchingInformation();
+            if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
+                Selector s = r.selector;
+                if (s.getRange().contains(scale)) {
+                    mc.range = Range.cut(mc.range, s.getRange());
+                } else {
+                    mc.range = mc.range.reduceAround(scale, s.getRange());
+                    continue;
                 }
+
+                if (r.declaration.idx == lastDeclUsed) continue; // don't apply one declaration more than once
+                lastDeclUsed = r.declaration.idx;
+                String sub = s.getSubpart();
+                if (sub == null) {
+                    sub = "default";
+                }
+                else if ("*".equals(sub)) {
+                    for (Entry<String, Cascade> entry : mc.getLayers()) {
+                        env.layer = entry.getKey();
+                        if (Utils.equal(env.layer, "*")) {
+                            continue;
+                        }
+                        r.execute(env);
+                    }
+                }
+                env.layer = sub;
+                r.execute(env);
             }
         }
     }

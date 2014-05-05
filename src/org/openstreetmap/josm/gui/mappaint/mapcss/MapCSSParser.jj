@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule.Declaration;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
@@ -47,6 +48,7 @@ import org.openstreetmap.josm.Main;
 public class MapCSSParser {
     MapCSSStyleSource sheet;
     StringBuilder sb;
+    int declarationCounter;
 
     /**
      * Nicer way to refer to a lexical state.
@@ -70,6 +72,7 @@ public class MapCSSParser {
      */
     public MapCSSParser(InputStream in, String encoding, LexicalState initState) {
         this(createTokenManager(in, encoding, initState));
+        declarationCounter = 0;
     }
 
     protected static MapCSSParserTokenManager createTokenManager(InputStream in, String encoding, LexicalState initState) {
@@ -468,14 +471,13 @@ List<Float> float_array() :
  */
 void sheet(MapCSSStyleSource sheet):
 {
-    MapCSSRule r;
 }
 {
     { this.sheet = sheet; }
     w()
     (
         try {
-            r=rule() { if (r != null) { sheet.rules.add(r); } } w()
+            rule() w()
         } catch (MapCSSException mex) {
             error_skipto(RBRACE, mex);
             w();
@@ -487,11 +489,11 @@ void sheet(MapCSSStyleSource sheet):
     <EOF>
 }
 
-MapCSSRule rule():
+void rule():
 {
     List<Selector> selectors = new ArrayList<Selector>();
     Selector sel;
-    List<Instruction> decl;
+    Declaration decl;
 }
 {
     sel=child_selector() { selectors.add(sel); }
@@ -500,7 +502,11 @@ MapCSSRule rule():
         sel=child_selector() { selectors.add(sel); }
     )*
     decl=declaration()
-    { return new MapCSSRule(selectors, decl); }
+    { 
+        for (Selector s : selectors) {
+            sheet.rules.add(new MapCSSRule(s, decl));
+        }
+    }
 }
 
 Selector child_selector() :
@@ -706,7 +712,7 @@ String subpart() :
     ( s=ident() { return s; } | <STAR> { return "*"; } )
 }
 
-List<Instruction> declaration() :
+Declaration declaration() :
 {
     List<Instruction> ins = new ArrayList<Instruction>();
     Instruction i;
@@ -722,7 +728,7 @@ List<Instruction> declaration() :
             key=<IDENT> w()
             ( <EQUAL> val=expression() )?
             { ins.add(new Instruction.AssignmentInstruction(key.image, val == null ? true : val, true)); }
-            ( <RBRACE> { return ins; } | <SEMICOLON> w() )
+            ( <RBRACE> { return new Declaration(ins, declarationCounter++); } | <SEMICOLON> w() )
         )
     |
         key=<IDENT> w() <COLON> w()
@@ -731,18 +737,18 @@ List<Instruction> declaration() :
                 val=float_array()
                 { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
                 w()
-                ( <RBRACE> { return ins; } | <SEMICOLON> w() )
+                ( <RBRACE> { return new Declaration(ins, declarationCounter++); } | <SEMICOLON> w() )
             |
             LOOKAHEAD( expression() ( <SEMICOLON> | <RBRACE> ) )
                 val=expression()
                 { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
-                ( <RBRACE> { return ins; } | <SEMICOLON> w() )
+                ( <RBRACE> { return new Declaration(ins, declarationCounter++); } | <SEMICOLON> w() )
             |
                 val=readRaw() w() { ins.add(new Instruction.AssignmentInstruction(key.image, val, false)); }
         )
     )*
     <RBRACE>
-    { return ins; }
+    { return new Declaration(ins, declarationCounter++); }
 }
 
 Expression expression():

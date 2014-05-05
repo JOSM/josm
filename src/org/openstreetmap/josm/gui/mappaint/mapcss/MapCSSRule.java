@@ -8,11 +8,22 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class MapCSSRule {
 
-    public List<Selector> selectors;
-    public List<Instruction> declaration;
+    public final Selector selector;
+    public final Declaration declaration;
 
-    public MapCSSRule(List<Selector> selectors, List<Instruction> declaration) {
-        this.selectors = selectors;
+    public static class Declaration {
+        public final List<Instruction> instructions;
+        // declarations in the StyleSource are numbered consecutively
+        public final int idx;
+
+        public Declaration(List<Instruction> instructions, int idx) {
+            this.instructions = instructions;
+            this.idx = idx;
+        }
+    }
+    
+    public MapCSSRule(Selector selector, Declaration declaration) {
+        this.selector = selector;
         this.declaration = declaration;
     }
 
@@ -22,14 +33,14 @@ public class MapCSSRule {
      * @param env the environment
      */
     public void execute(Environment env) {
-        for (Instruction i : declaration) {
+        for (Instruction i : declaration.instructions) {
             i.execute(env);
         }
     }
 
     @Override
     public String toString() {
-        return Utils.join(",", selectors) + " {\n  " + Utils.join("\n  ", declaration) + "\n}";
+        return selector + " {\n  " + Utils.join("\n  ", declaration.instructions) + "\n}";
     }
 }
 
