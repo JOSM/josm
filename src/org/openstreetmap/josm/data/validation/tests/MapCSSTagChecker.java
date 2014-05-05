@@ -122,7 +122,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         static TagCheck ofMapCSSRule(final MapCSSRule rule) {
             final TagCheck check = new TagCheck(rule);
             boolean containsSetClassExpression = false;
-            for (Instruction i : rule.declaration) {
+            for (Instruction i : rule.declaration.instructions) {
                 if (i instanceof Instruction.AssignmentInstruction) {
                     final Instruction.AssignmentInstruction ai = (Instruction.AssignmentInstruction) i;
                     if (ai.isSetInstruction) {
@@ -160,9 +160,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
             }
             if (check.errors.isEmpty() && !containsSetClassExpression) {
-                throw new RuntimeException("No throwError/throwWarning/throwOther given! You should specify a validation error message for " + rule.selectors);
+                throw new RuntimeException("No throwError/throwWarning/throwOther given! You should specify a validation error message for " + rule.selector);
             } else if (check.errors.size() > 1) {
-                throw new RuntimeException("More than one throwError/throwWarning/throwOther given! You should specify a single validation error message for " + rule.selectors);
+                throw new RuntimeException("More than one throwError/throwWarning/throwOther given! You should specify a single validation error message for " + rule.selector);
             }
             return check;
         }
@@ -190,13 +190,10 @@ public class MapCSSTagChecker extends Test.TagTest {
         private static void removeMetaRules(MapCSSStyleSource source) {
             for (Iterator<MapCSSRule> it = source.rules.iterator(); it.hasNext(); ) {
                 MapCSSRule x = it.next();
-                if (x.selectors.size() == 1) {
-                    Selector sel = x.selectors.get(0);
-                    if (sel instanceof GeneralSelector) {
-                        GeneralSelector gs = (GeneralSelector) sel;
-                        if ("meta".equals(gs.base) && gs.getConditions().isEmpty()) {
-                            it.remove();
-                        }
+                if (x.selector instanceof GeneralSelector) {
+                    GeneralSelector gs = (GeneralSelector) x.selector;
+                    if ("meta".equals(gs.base) && gs.getConditions().isEmpty()) {
+                        it.remove();
                     }
                 }
             }
@@ -213,11 +210,9 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         Selector whichSelectorMatchesEnvironment(Environment env) {
-            for (Selector i : rule.selectors) {
-                env.clearSelectorMatchingInformation();
-                if (i.matches(env)) {
-                    return i;
-                }
+            env.clearSelectorMatchingInformation();
+            if (rule.selector.matches(env)) {
+                return rule.selector;
             }
             return null;
         }
