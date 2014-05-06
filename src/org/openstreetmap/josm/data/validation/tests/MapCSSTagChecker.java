@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule.Declaration;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
@@ -46,6 +47,7 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRules
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -55,6 +57,15 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class MapCSSTagChecker extends Test.TagTest {
 
+    public static class GroupedMapCSSRule {
+        final public List<Selector> selectors;
+        final public Declaration declaration;
+
+        public GroupedMapCSSRule(List<Selector> selectors, Declaration declaration) {
+            this.selectors = selectors;
+            this.declaration = declaration;
+        }
+    }
     /**
      * The preference key for tag checker source entries.
      * @since 6670
@@ -71,14 +82,14 @@ public class MapCSSTagChecker extends Test.TagTest {
     final List<TagCheck> checks = new ArrayList<>();
 
     static class TagCheck implements Predicate<OsmPrimitive> {
-        protected final MapCSSRule rule;
+        protected final GroupedMapCSSRule rule;
         protected final List<PrimitiveToTag> change = new ArrayList<>();
         protected final Map<String, String> keyChange = new LinkedHashMap<>();
         protected final List<String> alternatives = new ArrayList<>();
         protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<>();
         protected final Map<String, Boolean> assertions = new HashMap<>();
 
-        TagCheck(MapCSSRule rule) {
+        TagCheck(GroupedMapCSSRule rule) {
             this.rule = rule;
         }
 
@@ -119,7 +130,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
         }
 
-        static TagCheck ofMapCSSRule(final MapCSSRule rule) {
+        static TagCheck ofMapCSSRule(final GroupedMapCSSRule rule) {
             final TagCheck check = new TagCheck(rule);
             boolean containsSetClassExpression = false;
             for (Instruction i : rule.declaration.instructions) {
@@ -160,9 +171,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
             }
             if (check.errors.isEmpty() && !containsSetClassExpression) {
-                throw new RuntimeException("No throwError/throwWarning/throwOther given! You should specify a validation error message for " + rule.selector);
+                throw new RuntimeException("No throwError/throwWarning/throwOther given! You should specify a validation error message for " + rule.selectors);
             } else if (check.errors.size() > 1) {
-                throw new RuntimeException("More than one throwError/throwWarning/throwOther given! You should specify a single validation error message for " + rule.selector);
+                throw new RuntimeException("More than one throwError/throwWarning/throwOther given! You should specify a single validation error message for " + rule.selectors);
             }
             return check;
         }
@@ -179,12 +190,23 @@ public class MapCSSTagChecker extends Test.TagTest {
             assert source.getErrors().isEmpty();
             // Ignore "meta" rule(s) from external rules of JOSM wiki
             removeMetaRules(source);
-            return new ArrayList<>(Utils.transform(source.rules, new Utils.Function<MapCSSRule, TagCheck>() {
-                @Override
-                public TagCheck apply(MapCSSRule x) {
-                    return TagCheck.ofMapCSSRule(x);
+            // group rules with common declaration block
+            MultiMap<MapCSSRule.Declaration, MapCSSRule> rules = new MultiMap<>();
+            for (MapCSSRule rule : source.rules) {
+                rules.put(rule.declaration, rule);
+            }
+            List<TagCheck> result = new ArrayList<>();
+            for (Collection<MapCSSRule> rulesCommonDecl : rules.values()) {
+                List<Selector> selectors = new ArrayList<>();
+                for (MapCSSRule rule : rulesCommonDecl) {
+                    selectors.add(rule.selector);
                 }
-            }));
+                if (!rulesCommonDecl.isEmpty()) {
+                    result.add(TagCheck.ofMapCSSRule(
+                            new GroupedMapCSSRule(selectors, rulesCommonDecl.iterator().next().declaration)));
+                }
+            }
+            return result;
         }
 
         private static void removeMetaRules(MapCSSStyleSource source) {
@@ -210,9 +232,11 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         Selector whichSelectorMatchesEnvironment(Environment env) {
-            env.clearSelectorMatchingInformation();
-            if (rule.selector.matches(env)) {
-                return rule.selector;
+            for (Selector i : rule.selectors) {
+                env.clearSelectorMatchingInformation();
+                if (i.matches(env)) {
+                    return i;
+                }
             }
             return null;
         }
@@ -383,9 +407,9 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     static class MapCSSTagCheckerAndRule extends MapCSSTagChecker {
-        public final MapCSSRule rule;
+        public final GroupedMapCSSRule rule;
 
-        MapCSSTagCheckerAndRule(MapCSSRule rule) {
+        MapCSSTagCheckerAndRule(GroupedMapCSSRule rule) {
             this.rule = rule;
         }
 
@@ -393,7 +417,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         public boolean equals(Object obj) {
             return super.equals(obj)
                     || (obj instanceof TagCheck && rule.equals(((TagCheck) obj).rule))
-                    || (obj instanceof MapCSSRule && rule.equals(obj));
+                    || (obj instanceof GroupedMapCSSRule && rule.equals(obj));
         }
     }
 
@@ -409,7 +433,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
             final Selector selector = check.whichSelectorMatchesEnvironment(env);
             if (selector != null) {
-                check.rule.execute(env);
+                check.rule.declaration.execute(env);
                 final TestError error = check.getErrorForPrimitive(p, selector, env);
                 if (error != null) {
                     error.setTester(new MapCSSTagCheckerAndRule(check.rule));
