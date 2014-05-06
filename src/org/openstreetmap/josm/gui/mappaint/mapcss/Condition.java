@@ -172,6 +172,12 @@ public abstract class Condition {
         public Tag asTag() {
             return new Tag(k, v);
         }
+
+        @Override
+        public String toString() {
+            return '[' + k + '=' + v + ']';
+        }
+        
     }
 
     /**

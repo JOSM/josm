@@ -7,8 +7,8 @@ package org.openstreetmap.josm.gui.mappaint;
  * immutable class
  */
 public class Range {
-    private double lower;
-    private double upper;
+    private final double lower;
+    private final double upper;
 
     public static final Range ZERO_TO_INFINITY = new Range(0.0, Double.POSITIVE_INFINITY);
 

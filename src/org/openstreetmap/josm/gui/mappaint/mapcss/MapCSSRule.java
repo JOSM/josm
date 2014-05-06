@@ -20,6 +20,17 @@ public class MapCSSRule {
             this.instructions = instructions;
             this.idx = idx;
         }
+        
+        /**
+         * <p>Executes the instructions against the environment {@code env}</p>
+         *
+         * @param env the environment
+         */
+        public void execute(Environment env) {
+            for (Instruction i : instructions) {
+                i.execute(env);
+            }
+        }
     }
     
     public MapCSSRule(Selector selector, Declaration declaration) {
@@ -33,9 +44,7 @@ public class MapCSSRule {
      * @param env the environment
      */
     public void execute(Environment env) {
-        for (Instruction i : declaration.instructions) {
-            i.execute(env);
-        }
+        declaration.execute(env);
     }
 
     @Override

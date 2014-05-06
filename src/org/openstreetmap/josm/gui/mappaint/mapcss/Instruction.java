@@ -10,9 +10,9 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 
-public abstract class Instruction implements StyleKeys {
+public interface Instruction extends StyleKeys {
 
-    public abstract void execute(Environment env);
+    void execute(Environment env);
 
     public static class RelativeFloat {
         public final float val;
@@ -27,7 +27,7 @@ public abstract class Instruction implements StyleKeys {
         }
     }
 
-    public static class AssignmentInstruction extends Instruction {
+    public static class AssignmentInstruction implements Instruction {
         public final String key;
         public final Object val;
         public final boolean isSetInstruction;
