@@ -54,7 +54,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * Dataset is threadsafe - accessing Dataset simultaneously from different threads should never
  * lead to data corruption or ConccurentModificationException. However when for example one thread
- * removes primitive and other thread try to add another primitive reffering to the removed primitive,
+ * removes primitive and other thread try to add another primitive referring to the removed primitive,
  * DataIntegrityException will occur.
  *
  * To prevent such situations, read/write lock is provided. While read lock is used, it's guaranteed that

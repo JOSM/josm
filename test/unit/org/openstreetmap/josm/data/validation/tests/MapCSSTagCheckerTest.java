@@ -63,7 +63,7 @@ public class MapCSSTagCheckerTest {
         final Node n2 = new Node();
         n2.put("natural", "wood");
         assertFalse(check.evaluate(n2));
-        assertThat(MapCSSTagChecker.TagCheck.insertArguments(check.rule.selector, "The key is {0.key} and the value is {0.value}"),
+        assertThat(MapCSSTagChecker.TagCheck.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}"),
                 is("The key is natural and the value is marsh"));
     }
 
@@ -87,7 +87,7 @@ public class MapCSSTagCheckerTest {
                 });
                 if (isError != i.getValue()) {
                     final String error = MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
-                            check.getMessage(p), check.rule.selector, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
+                            check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
                     System.err.println(error);
                     assertionErrors.add(error);
                 }

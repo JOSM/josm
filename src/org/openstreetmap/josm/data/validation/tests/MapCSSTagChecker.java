@@ -47,7 +47,6 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRules
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -191,20 +190,20 @@ public class MapCSSTagChecker extends Test.TagTest {
             // Ignore "meta" rule(s) from external rules of JOSM wiki
             removeMetaRules(source);
             // group rules with common declaration block
-            MultiMap<MapCSSRule.Declaration, MapCSSRule> rules = new MultiMap<>();
+            Map<Declaration, List<Selector>> g = new LinkedHashMap<>();
             for (MapCSSRule rule : source.rules) {
-                rules.put(rule.declaration, rule);
+                if (!g.containsKey(rule.declaration)) {
+                    List<Selector> sels = new ArrayList<>();
+                    sels.add(rule.selector);
+                    g.put(rule.declaration, sels);
+                } else {
+                    g.get(rule.declaration).add(rule.selector);
+                }
             }
             List<TagCheck> result = new ArrayList<>();
-            for (Collection<MapCSSRule> rulesCommonDecl : rules.values()) {
-                List<Selector> selectors = new ArrayList<>();
-                for (MapCSSRule rule : rulesCommonDecl) {
-                    selectors.add(rule.selector);
-                }
-                if (!rulesCommonDecl.isEmpty()) {
-                    result.add(TagCheck.ofMapCSSRule(
-                            new GroupedMapCSSRule(selectors, rulesCommonDecl.iterator().next().declaration)));
-                }
+            for (Map.Entry<Declaration, List<Selector>> map : g.entrySet()) {
+                result.add(TagCheck.ofMapCSSRule(
+                        new GroupedMapCSSRule(map.getValue(), map.getKey())));
             }
             return result;
         }
