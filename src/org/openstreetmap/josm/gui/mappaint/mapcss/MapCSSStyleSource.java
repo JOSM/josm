@@ -51,6 +51,7 @@ public class MapCSSStyleSource extends StyleSource {
     public final List<MapCSSRule> wayRules = new ArrayList<>();
     public final List<MapCSSRule> relationRules = new ArrayList<>();
     public final List<MapCSSRule> multipolygonRules = new ArrayList<>();
+    public final List<MapCSSRule> canvasRules = new ArrayList<>();
     
     private Color backgroundColorOverride;
     private String css = null;
@@ -85,6 +86,7 @@ public class MapCSSStyleSource extends StyleSource {
         wayRules.clear();
         relationRules.clear();
         multipolygonRules.clear();
+        canvasRules.clear();
         try (InputStream in = getSourceInputStream()) {
             try {
                 // evaluate @media { ... } blocks
@@ -143,6 +145,8 @@ public class MapCSSStyleSource extends StyleSource {
                     relationRules.add(optRule);
                     multipolygonRules.add(optRule);
                     break;
+                case "canvas":
+                    canvasRules.add(r);
             }
         }
     }
@@ -234,6 +238,8 @@ public class MapCSSStyleSource extends StyleSource {
         } else {
             if (((Relation) osm).isMultipolygon()) {
                 matchingRules = multipolygonRules;
+            } else if (osm.hasKey("#canvas")) {
+                matchingRules = canvasRules;
             } else {
                 matchingRules = relationRules;
             }
