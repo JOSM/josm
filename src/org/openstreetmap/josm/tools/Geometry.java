@@ -700,7 +700,7 @@ public final class Geometry {
             EastNorth n0 = nodes.get(i).getEastNorth();
             EastNorth n1 = nodes.get((i+1) % nodes.size()).getEastNorth();
 
-            if (n0.isValid() && n1.isValid()) {
+            if (n0 != null && n1 != null && n0.isValid() && n1.isValid()) {
                 BigDecimal x0 = new BigDecimal(n0.east());
                 BigDecimal y0 = new BigDecimal(n0.north());
                 BigDecimal x1 = new BigDecimal(n1.east());
@@ -726,7 +726,7 @@ public final class Geometry {
 
     /**
      * Compute center of the circle closest to different nodes.
-     * 
+     *
      * Ensure exact center computation in case nodes are already aligned in circle.
      * This is done by least square method.
      * Let be a_i x + b_i y + c_i = 0 equations of bisectors of each edges.
@@ -787,7 +787,7 @@ public final class Geometry {
         double yC = inv12*b1 + inv22*b2;
         return new EastNorth(xC, yC);
     }
-    
+
     /**
      * Returns the coordinate of intersection of segment sp1-sp2 and an altitude
      * to it starting at point ap. If the line defined with sp1-sp2 intersects
