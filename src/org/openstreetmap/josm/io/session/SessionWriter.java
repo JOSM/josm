@@ -27,10 +27,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -44,6 +40,9 @@ import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 public class SessionWriter {
 
@@ -79,7 +78,7 @@ public class SessionWriter {
     }
 
     private final List<Layer> layers;
-    private final int active; 
+    private final int active;
     private final Map<Layer, SessionLayerExporter> exporters;
     private final MultiMap<Layer, Layer> dependencies;
     private final boolean zip;
@@ -90,7 +89,7 @@ public class SessionWriter {
      * Constructs a new {@code SessionWriter}.
      * @param layers The ordered list of layers to save
      * @param active The index of active layer in {@code layers} (starts to 0). Ignored if set to -1
-     * @param exporters The exprters to use to save layers
+     * @param exporters The exporters to use to save layers
      * @param zip {@code true} if a joz archive has to be created, {@code false otherwise}
      * @since 6271
      */
@@ -207,7 +206,7 @@ public class SessionWriter {
                 el.setAttribute("opacity", Double.toString(layer.getOpacity()));
             }
             Set<Layer> deps = dependencies.get(layer);
-            if (!deps.isEmpty()) {
+            if (deps != null && !deps.isEmpty()) {
                 List<Integer> depsInt = new ArrayList<>();
                 for (Layer depLayer : deps) {
                     int depIndex = layers.indexOf(depLayer);
@@ -246,7 +245,7 @@ public class SessionWriter {
         }
     }
 
-    public void write (OutputStream out) throws IOException {
+    public void write(OutputStream out) throws IOException {
         if (zip) {
             zipOut = new ZipOutputStream(new BufferedOutputStream(out));
         }

@@ -55,9 +55,6 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         this.layer = layer;
     }
 
-    public OsmDataSessionExporter() {
-    }
-
     @Override
     public Collection<Layer> getDependencies() {
         return Collections.emptySet();
