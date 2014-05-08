@@ -45,7 +45,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
     }
 
     /** the cached changesets */
-    private final Map<Integer, Changeset> cache  = new HashMap<>();
+    private final Map<Integer, Changeset> cache = new HashMap<>();
 
     private final CopyOnWriteArrayList<ChangesetCacheListener> listeners =
         new CopyOnWriteArrayList<>();
@@ -55,11 +55,15 @@ public final class ChangesetCache implements PreferenceChangedListener{
     }
 
     public void addChangesetCacheListener(ChangesetCacheListener listener) {
-        listeners.addIfAbsent(listener);
+        if (listener != null) {
+            listeners.addIfAbsent(listener);
+        }
     }
 
     public void removeChangesetCacheListener(ChangesetCacheListener listener) {
-        listeners.remove(listener);
+        if (listener != null) {
+            listeners.remove(listener);
+        }
     }
 
     protected void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
