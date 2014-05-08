@@ -24,6 +24,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,10 +35,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import javax.swing.AbstractButton;
 import javax.swing.FocusManager;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -82,8 +81,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     final public static ExecutorService styleCreatorPool;
     
     static {
-        noThreads = Runtime.getRuntime().availableProcessors();
-        styleCreatorPool = Executors.newFixedThreadPool(noThreads);
+        noThreads = Main.pref.getInteger(
+                "mappaint.StyledMapRenderer.style_creation.numberOfThreads", 
+                Runtime.getRuntime().availableProcessors());
+        styleCreatorPool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads);
     }
 
     /**
@@ -233,6 +234,31 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 return -1;
 
             return Float.compare(this.style.object_z_index, other.style.object_z_index);
+        }
+    }
+
+    /**
+     * Joined List build from two Lists (read-only).
+     * 
+     * Extremely simple single-purpose implementation.
+     * @param <T> 
+     */
+    public static class CompositeList<T> extends AbstractList<T> {
+        List<T> a,b;
+
+        public CompositeList(List<T> a, List<T> b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        @Override
+        public T get(int index) {
+            return index < a.size() ? a.get(index) : b.get(index - a.size());
+        }
+
+        @Override
+        public int size() {
+            return a.size() + b.size();
         }
     }
 
@@ -1314,7 +1340,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         styles = MapPaintStyles.getStyles();
         styles.setDrawMultipolygon(drawMultipolygon);
-
+        
         highlightWaySegments = data.getHighlightedWaySegments();
         
         long timeStart=0, timePhase1=0, timeFinished;
@@ -1325,10 +1351,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         class ComputeStyleListWorker implements Callable<List<StyleRecord>>, Visitor {
-            private final List<StyleRecord> styleList;
             private final List<? extends OsmPrimitive> input;
             private final int from;
             private final int to;
+            private final List<StyleRecord> output;
 
             /**
              * Constructor for CreateStyleRecordsWorker.
@@ -1336,11 +1362,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
              * @param from first index of <code>input</code> to use
              * @param to last index + 1
              */
-            public ComputeStyleListWorker(List<? extends OsmPrimitive> input, int from, int to) {
-                this.styleList = new ArrayList<>(to - from);
+            public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output) {
                 this.input = input;
                 this.from = from;
                 this.to = to;
+                this.output = output;
             }
             
             @Override
@@ -1351,7 +1377,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         osm.accept(this);
                     }
                 }
-                return styleList;
+                return output;
             }
             
             @Override
@@ -1399,7 +1425,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             public void add(Node osm, int flags) {
                 StyleList sl = styles.get(osm, circum, nc);
                 for (ElemStyle s : sl) {
-                    styleList.add(new StyleRecord(s, osm, flags));
+                    output.add(new StyleRecord(s, osm, flags));
                 }
             }
 
@@ -1407,9 +1433,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 StyleList sl = styles.get(osm, circum, nc);
                 for (ElemStyle s : sl) {
                     if (drawMultipolygon && drawArea && s instanceof AreaElemStyle && (flags & FLAG_DISABLED) == 0) {
-                        styleList.add(new StyleRecord(s, osm, flags));
+                        output.add(new StyleRecord(s, osm, flags));
                     } else if (drawRestriction && s instanceof NodeElemStyle) {
-                        styleList.add(new StyleRecord(s, osm, flags));
+                        output.add(new StyleRecord(s, osm, flags));
                     }
                 }
             }
@@ -1420,26 +1446,34 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElemStyle) {
                         continue;
                     }
-                    styleList.add(new StyleRecord(s, osm, flags));
+                    output.add(new StyleRecord(s, osm, flags));
                 }
             }
         }
-
-        final List<ComputeStyleListWorker> tasks = new ArrayList<>();
-        final List<StyleRecord> allStyleElems = new ArrayList<>();
+        List<Node> nodes = data.searchNodes(bbox);
+        List<Way> ways = data.searchWays(bbox);
+        List<Relation> relations = data.searchRelations(bbox);
+        
+        final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
         
         class ConcurrentTasksHelper {
-            void createTasks(List<? extends OsmPrimitive> prims) {
-                int bucketsize = Math.max(100, prims.size()/noThreads/3);
-                for (int i=0; i*bucketsize < prims.size(); i++) {
-                    tasks.add(new ComputeStyleListWorker(prims, i*bucketsize, Math.min((i+1)*bucketsize, prims.size())));
-                }
-            }
             
-            void runIt() {
-                if (tasks.size() == 1) {
+            void process(List<? extends OsmPrimitive> prims) {
+                final List<ComputeStyleListWorker> tasks = new ArrayList<>();
+                final int bucketsize = Math.max(100, prims.size()/noThreads/3);
+                final int noBuckets = (prims.size() + bucketsize - 1) / bucketsize;
+                final boolean singleThread = noThreads == 1 || noBuckets == 1;
+                for (int i=0; i<noBuckets; i++) {
+                    int from = i*bucketsize;
+                    int to = Math.min((i+1)*bucketsize, prims.size());
+                    List<StyleRecord> target = singleThread ? allStyleElems : new ArrayList<StyleRecord>(to - from);
+                    tasks.add(new ComputeStyleListWorker(prims, from, to, target));
+                }
+                if (singleThread) {
                     try {
-                        allStyleElems.addAll(tasks.get(0).call());
+                        for (ComputeStyleListWorker task : tasks) {
+                            task.call();
+                        }
                     } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
@@ -1461,14 +1495,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         // not called for the same primtive in parallel threads.
         // (Could be synchronized, but try to avoid this for
         // performance reasons.)
-        helper.createTasks(data.searchRelations(bbox));
-        helper.runIt();
-        
-        tasks.clear();
-        helper.createTasks(data.searchNodes(bbox));
-        helper.createTasks(data.searchWays(bbox));
-        helper.runIt();
-        
+        helper.process(relations);
+        @SuppressWarnings("unchecked")
+        List<OsmPrimitive> nodesAndWays = (List) new CompositeList(nodes, ways);
+        helper.process(nodesAndWays);
         
         if (Main.isTraceEnabled()) {
             timePhase1 = System.currentTimeMillis();
