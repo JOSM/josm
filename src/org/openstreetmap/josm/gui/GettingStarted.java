@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -125,7 +126,9 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
 
         getMOTD();
 
-        new FileDrop(scroller);
+        if (!GraphicsEnvironment.isHeadless()) {
+            new FileDrop(scroller);
+        }
     }
 
     private void getMOTD() {

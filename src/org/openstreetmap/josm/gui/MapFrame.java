@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -52,9 +53,9 @@ import org.openstreetmap.josm.actions.mapmode.ParallelWayAction;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
@@ -160,7 +161,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         setLayout(new BorderLayout());
 
         mapView = new MapView(contentPane, viewportData);
-        new FileDrop(mapView);
+        if (!GraphicsEnvironment.isHeadless()) {
+            new FileDrop(mapView);
+        }
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 
@@ -598,7 +601,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     }
 
     /**
-     * Remove panel from top of MapView by class     
+     * Remove panel from top of MapView by class
      */
     public void removeTopPanel(Class<?> type) {
         int n = leftPanel.getComponentCount();

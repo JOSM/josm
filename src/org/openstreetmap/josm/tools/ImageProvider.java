@@ -7,13 +7,11 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -792,6 +790,10 @@ public class ImageProvider {
         if (overlay != null) {
             img = overlay(img, ImageProvider.get("cursor/modifier/" + overlay), OverlayPosition.SOUTHEAST);
         }
+        if (GraphicsEnvironment.isHeadless()) {
+            Main.warn("Cursors are not available in headless mode. Returning null for '"+name+"'");
+            return null;
+        }
         return Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
                 "crosshair".equals(name) ? new Point(10, 10) : new Point(3, 2), "Cursor");
     }
@@ -807,13 +809,11 @@ public class ImageProvider {
      * on the first relative to the given position.
      */
     public static ImageIcon overlay(Icon ground, Icon overlay, OverlayPosition pos) {
-        GraphicsConfiguration conf = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-                .getDefaultConfiguration();
         int w = ground.getIconWidth();
         int h = ground.getIconHeight();
         int wo = overlay.getIconWidth();
         int ho = overlay.getIconHeight();
-        BufferedImage img = conf.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics g = img.createGraphics();
         ground.paintIcon(null, g, 0, 0);
         int x = 0, y = 0;
