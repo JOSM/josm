@@ -3,7 +3,6 @@ package org.openstreetmap.josm.io.session;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +17,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.MultiMap;
 
 /**
@@ -74,7 +75,8 @@ public class SessionWriterTest {
     public static void setUpBeforeClass() {
         Main.initApplicationPreferences();
         Main.determinePlatformHook();
-        Main.preConstructorInit(new HashMap<MainApplication.Option, Collection<String>>());
+        ProjectionPreference.setProjection();
+        Main.toolbar = new ToolbarPreferences();
         new MainApplication();
         Main.main.createMapFrame(null, null);
     }

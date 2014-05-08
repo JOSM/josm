@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.MenuComponent;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -103,11 +104,13 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         });
         MainMenu.add(subMenu, rectaction);
     }
-    
+
     private void setupMenuScroller() {
-        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
-        int menuItemHeight = singleOffset.getPreferredSize().height;
-        MenuScroller.setScrollerFor(this, (screenHeight / menuItemHeight)-1);
+        if (!GraphicsEnvironment.isHeadless()) {
+            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+            int menuItemHeight = singleOffset.getPreferredSize().height;
+            MenuScroller.setScrollerFor(this, (screenHeight / menuItemHeight)-1);
+        }
     }
 
     /**
@@ -233,12 +236,12 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     }
 
     /**
-     * Collection to store temporary menu items. They will be deleted 
+     * Collection to store temporary menu items. They will be deleted
      * (and possibly recreated) when refreshImageryMenu() is called.
      * @since 5803
      */
     private List <Object> dynamicItems = new ArrayList<>(20);
-    
+
     /**
      * Remove all the items in @field dynamicItems collection
      * @since 5803
@@ -263,11 +266,11 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         dynamicItems.add(s);
         add(s);
     }
-    
+
     private void addDynamic(Action a) {
         dynamicItems.add( this.add(a) );
     }
-    
+
     private void addDynamic(JMenuItem it) {
         dynamicItems.add( this.add(it) );
     }

@@ -98,7 +98,8 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public boolean canFullscreen() {
-        return GraphicsEnvironment.getLocalGraphicsEnvironment()
+        return !GraphicsEnvironment.isHeadless() &&
+                GraphicsEnvironment.getLocalGraphicsEnvironment()
         .getDefaultScreenDevice().isFullScreenSupported();
     }
 
@@ -327,7 +328,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         askUpdateJava(version, "https://www.java.com/download");
     }
 
-    // Method kept because strings have already been translated. To enable for Java 8 migration somewhere in 2016 
+    // Method kept because strings have already been translated. To enable for Java 8 migration somewhere in 2016
     protected void askUpdateJava(final String version, final String url) {
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
