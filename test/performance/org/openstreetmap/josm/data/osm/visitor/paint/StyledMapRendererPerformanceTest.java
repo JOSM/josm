@@ -11,8 +11,6 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
-import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -33,6 +31,7 @@ public class StyledMapRendererPerformanceTest {
 
     @BeforeClass
     public static void load() throws Exception {
+        Main.initApplicationPreferences();
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
         g = (Graphics2D)img.getGraphics();
@@ -40,7 +39,6 @@ public class StyledMapRendererPerformanceTest {
         nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
 
         // TODO Test should have it's own copy of styles because change in style can influence performance
-        Main.pref.load();
         MapPaintStyles.readFromPreferences();
 
         try (
