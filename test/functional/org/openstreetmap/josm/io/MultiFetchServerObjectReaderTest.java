@@ -16,7 +16,6 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.junit.Before;
@@ -109,7 +108,6 @@ public class MultiFetchServerObjectReaderTest {
     }
 
     private static DataSet testDataSet;
-    private static Properties testProperties;
 
     /**
      * creates the dataset on the server.
@@ -140,14 +138,6 @@ public class MultiFetchServerObjectReaderTest {
         Main.pref.put("osm-server.atomic-upload", false);
 
         File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
-
-        // make sure we don't upload to production
-        //
-        String url = OsmApi.getOsmApi().getBaseUrl().toLowerCase().trim();
-        if (url.startsWith("http://www.openstreetmap.org") || url.startsWith("http://api.openstreetmap.org")
-            || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org")) {
-            fail(MessageFormat.format("configured url ''{0}'' seems to be a productive url, aborting.", url));
-        }
 
         String p = System.getProperties().getProperty("useCachedDataset");
         if (p != null && Boolean.parseBoolean(p.trim().toLowerCase())) {
@@ -187,7 +177,7 @@ public class MultiFetchServerObjectReaderTest {
      */
     @Before
     public void setUp() throws IOException, IllegalDataException {
-        File f = new File(testProperties.getProperty("test.functional.tempdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
+        File f = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
         try (FileInputStream fis = new FileInputStream(f)) {

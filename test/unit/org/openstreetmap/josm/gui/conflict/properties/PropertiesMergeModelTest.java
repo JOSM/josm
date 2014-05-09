@@ -24,7 +24,7 @@ import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMergeModel;
 
 public class PropertiesMergeModelTest {
 
-    static public class ObserverTest implements Observer {
+    public static abstract class TestObserver implements Observer {
         public int numInvocations;
 
         public void update(Observable o, Object arg) {
@@ -32,8 +32,7 @@ public class PropertiesMergeModelTest {
             test();
         }
 
-        public void test() {
-        }
+        public abstract void test();
 
         public void assertNumInvocations(int count) {
             assertEquals(count, numInvocations);
@@ -111,9 +110,9 @@ public class PropertiesMergeModelTest {
 
         // decide KEEP_MINE  and ensure notification via Observable
         //
-        ObserverTest observerTest;
+        TestObserver observerTest;
         model.addObserver(
-                observerTest = new ObserverTest() {
+                observerTest = new TestObserver() {
                     @Override
                     public void test() {
                         assertTrue(model.isCoordMergeDecision(MergeDecisionType.KEEP_MINE));
@@ -128,7 +127,7 @@ public class PropertiesMergeModelTest {
         //
         model.deleteObserver(observerTest);
         model.addObserver(
-                observerTest = new ObserverTest() {
+                observerTest = new TestObserver() {
                     @Override
                     public void test() {
                         assertTrue(model.isCoordMergeDecision(MergeDecisionType.KEEP_THEIR));
