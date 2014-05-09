@@ -7,9 +7,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Use this class if you want to cache and store a single file that gets updated regularly.
@@ -118,7 +118,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      */
     public String updateForceString() throws T {
         updateForce();
-        return new String(data, Utils.UTF_8);
+        return new String(data, StandardCharsets.UTF_8);
     }
 
     /**
@@ -137,7 +137,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @return the data as String
      */
     public String getDataString() throws T {
-        return new String(getData(), Utils.UTF_8);
+        return new String(getData(), StandardCharsets.UTF_8);
     }
 
     /**

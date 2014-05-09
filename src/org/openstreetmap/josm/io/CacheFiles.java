@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Iterator;
 import java.util.Set;
@@ -13,7 +14,6 @@ import java.util.TreeMap;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Use this class if you want to cache a lot of files that shouldn't be kept in memory. You can
@@ -320,7 +320,7 @@ public class CacheFiles {
     private static String getUniqueFilename(String ident) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            BigInteger number = new BigInteger(1, md.digest(ident.getBytes(Utils.UTF_8)));
+            BigInteger number = new BigInteger(1, md.digest(ident.getBytes(StandardCharsets.UTF_8)));
             return number.toString(16);
         } catch(Exception e) {
             // Fall back. Remove unsuitable characters and some random ones to shrink down path length.

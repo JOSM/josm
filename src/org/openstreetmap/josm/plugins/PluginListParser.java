@@ -8,11 +8,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A parser for the plugin list provided by a JOSM Plugin Download Site.
@@ -36,7 +36,7 @@ public class PluginListParser {
     protected static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException{
         try {
             return new PluginInformation(
-                    new ByteArrayInputStream(manifest.getBytes(Utils.UTF_8)),
+                    new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8)),
                     name.substring(0, name.length() - 4),
                     url
                     );
@@ -60,7 +60,7 @@ public class PluginListParser {
         List<PluginInformation> ret = new LinkedList<>();
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));
+            r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String name = null;
             String url = null;
             StringBuilder manifest = new StringBuilder();

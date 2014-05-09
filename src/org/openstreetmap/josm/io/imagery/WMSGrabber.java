@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -186,7 +187,7 @@ public class WMSGrabber extends Grabber {
     protected String readException(URLConnection conn) throws IOException {
         StringBuilder exception = new StringBuilder();
         InputStream in = conn.getInputStream();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(in, Utils.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
             String line = null;
             while( (line = br.readLine()) != null) {
                 // filter non-ASCII characters and control characters

@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -37,7 +38,6 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 
 public class GpxTracksSessionExporter implements SessionLayerExporter {
@@ -180,7 +180,7 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
 
     @SuppressWarnings("resource")
     protected void addDataFile(OutputStream out) {
-        Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
+        Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         GpxWriter w = new GpxWriter(new PrintWriter(writer));
         w.write(layer.data);
         w.flush();

@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -27,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Unit tests for Remote Control
@@ -124,7 +124,7 @@ public class RemoteControlTest {
         try (InputStream is = connection.getErrorStream()) {
             // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes
             StringBuilder responseBody = new StringBuilder();
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(is, Utils.UTF_8))) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 String s;
                 while((s = in.readLine()) != null) {
                     responseBody.append(s);

@@ -8,6 +8,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1327,7 +1328,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         String x = center.east() + "_" + center.north() + "_" + scale + "_" +
                 getWidth() + "_" + getHeight() + "_" + getProjection().toString();
         CRC32 id = new CRC32();
-        id.update(x.getBytes(Utils.UTF_8));
+        id.update(x.getBytes(StandardCharsets.UTF_8));
         return (int)id.getValue();
     }
 
@@ -1369,7 +1370,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private LinkedList<CursorInfo> cursors = new LinkedList<>();
-    
+
     /**
      * Set new cursor.
      */
@@ -1383,11 +1384,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
         cursors.add(new CursorInfo(cursor, reference));
         setCursor(cursor);
     }
-    
+
     public void setNewCursor(int cursor, Object reference) {
         setNewCursor(Cursor.getPredefinedCursor(cursor), reference);
     }
-    
+
     /**
      * Remove the new cursor and reset to previous
      */

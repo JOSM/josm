@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -171,7 +172,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 connection.setRequestProperty("Cache-Control", "no-cache");
                 connection.setRequestProperty("Accept-Charset", "utf-8");
             }
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8))) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = in.readLine()) != null) {
@@ -203,7 +204,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         StringBuilder sb = new StringBuilder();
         try (InputStream errStream = connection.getErrorStream()) {
             if (errStream != null) {
-                try (BufferedReader err = new BufferedReader(new InputStreamReader(errStream, Utils.UTF_8))) {
+                try (BufferedReader err = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = err.readLine()) != null) {
                         sb.append(line).append("\n");
@@ -322,7 +323,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
         File cacheFile = createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST);
         getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
-        try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), Utils.UTF_8))) {
+        try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), StandardCharsets.UTF_8))) {
             writer.write(list);
             writer.flush();
         } catch(IOException e) {
@@ -362,7 +363,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     protected void parsePluginListDocument(String site, String doc) {
         try {
             getProgressMonitor().subTask(tr("Parsing plugin list from site ''{0}''", site));
-            InputStream in = new ByteArrayInputStream(doc.getBytes(Utils.UTF_8));
+            InputStream in = new ByteArrayInputStream(doc.getBytes(StandardCharsets.UTF_8));
             List<PluginInformation> pis = new PluginListParser().parse(in);
             availablePlugins.addAll(filterDeprecatedPlugins(pis));
         } catch (PluginListParseException e) {

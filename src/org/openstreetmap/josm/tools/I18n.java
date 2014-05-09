@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -531,7 +532,7 @@ public final class I18n {
                         int rval = ens.read(str, 0, val);
                         if(rval != val) /* file corrupt */
                             return false;
-                        enstrings[i] = new String(str, 0, val, Utils.UTF_8);
+                        enstrings[i] = new String(str, 0, val, StandardCharsets.UTF_8);
                     }
                     for(int i = 0; i < trnum; ++i)
                     {
@@ -545,7 +546,7 @@ public final class I18n {
                         int rval = trs.read(str, 0, val);
                         if(rval != val) /* file corrupt */
                             return false;
-                        trstrings[i] = new String(str, 0, val, Utils.UTF_8);
+                        trstrings[i] = new String(str, 0, val, StandardCharsets.UTF_8);
                     }
                     if(trnum > 0 && !p.containsKey(enstrings[0])) {
                         p.put(enstrings[0], trstrings);
@@ -571,25 +572,22 @@ public final class I18n {
                         multimode = true;
                         if(trval != 0xFFFF) /* files do not match */
                             return false;
-                    }
-                    else
-                    {
-                        if(enval > str.length) {
+                    } else {
+                        if (enval > str.length) {
                             str = new byte[enval];
                         }
-                        if(trval > str.length) {
+                        if (trval > str.length) {
                             str = new byte[trval];
                         }
                         int val = ens.read(str, 0, enval);
                         if(val != enval) /* file corrupt */
                             return false;
-                        String enstr = new String(str, 0, enval, Utils.UTF_8);
-                        if(trval != 0)
-                        {
+                        String enstr = new String(str, 0, enval, StandardCharsets.UTF_8);
+                        if (trval != 0) {
                             val = trs.read(str, 0, trval);
                             if(val != trval) /* file corrupt */
                                 return false;
-                            String trstr = new String(str, 0, trval, Utils.UTF_8);
+                            String trstr = new String(str, 0, trval, StandardCharsets.UTF_8);
                             if(!s.containsKey(enstr))
                                 s.put(enstr, trstr);
                         }
@@ -597,12 +595,10 @@ public final class I18n {
                 }
             }
         }
-        catch(IOException e)
-        {
+        catch (IOException e) {
             return false;
         }
-        if(!s.isEmpty())
-        {
+        if (!s.isEmpty()) {
             strings = s;
             pstrings = p;
             return true;

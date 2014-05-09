@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -174,7 +175,7 @@ public abstract class OsmServerReader extends OsmConnection {
                     try {
                         InputStream i = fixEncoding(activeConnection.getErrorStream(), encoding);
                         if (i != null) {
-                            BufferedReader in = new BufferedReader(new InputStreamReader(i, Utils.UTF_8));
+                            BufferedReader in = new BufferedReader(new InputStreamReader(i, StandardCharsets.UTF_8));
                             String s;
                             while((s = in.readLine()) != null) {
                                 errorBody.append(s);

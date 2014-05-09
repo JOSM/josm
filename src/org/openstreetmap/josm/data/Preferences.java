@@ -18,6 +18,7 @@ import java.io.Reader;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -736,7 +737,7 @@ public class Preferences {
         }
 
         try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                new FileOutputStream(prefFile + "_tmp"), Utils.UTF_8), false)) {
+                new FileOutputStream(prefFile + "_tmp"), StandardCharsets.UTF_8), false)) {
             out.print(toXML(false));
         }
 
@@ -759,10 +760,10 @@ public class Preferences {
     public void load() throws Exception {
         settingsMap.clear();
         File pref = getPreferenceFile();
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), StandardCharsets.UTF_8))) {
             validateXML(in);
         }
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), Utils.UTF_8))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), StandardCharsets.UTF_8))) {
             fromXML(in);
         }
         updateSystemProperties();

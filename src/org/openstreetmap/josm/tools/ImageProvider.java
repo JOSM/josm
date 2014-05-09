@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -536,14 +537,14 @@ public class ImageProvider {
                     bytes = Base64.decodeBase64(data);
                 } else {
                     try {
-                        bytes = URLDecoder.decode(data, "UTF-8").getBytes(Utils.UTF_8);
+                        bytes = URLDecoder.decode(data, "UTF-8").getBytes(StandardCharsets.UTF_8);
                     } catch (IllegalArgumentException ex) {
                         Main.warn("Unable to decode URL data part: "+ex.getMessage() + " (" + data + ")");
                         return null;
                     }
                 }
                 if (mediatype != null && mediatype.contains("image/svg+xml")) {
-                    String s = new String(bytes, Utils.UTF_8);
+                    String s = new String(bytes, StandardCharsets.UTF_8);
                     URI uri = getSvgUniverse().loadSVG(new StringReader(s), URLEncoder.encode(s, "UTF-8"));
                     SVGDiagram svg = getSvgUniverse().getDiagram(uri);
                     if (svg == null) {

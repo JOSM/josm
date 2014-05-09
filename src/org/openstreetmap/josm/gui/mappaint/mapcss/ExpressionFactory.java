@@ -13,6 +13,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -578,7 +579,7 @@ public final class ExpressionFactory {
          */
         public static long CRC32_checksum(String s) {
             CRC32 cs = new CRC32();
-            cs.update(s.getBytes(Utils.UTF_8));
+            cs.update(s.getBytes(StandardCharsets.UTF_8));
             return cs.getValue();
         }
     }

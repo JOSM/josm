@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +39,6 @@ import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -291,7 +291,7 @@ public class OpenFileAction extends DiskAccessAction {
                 }
 
                 for (File urlFile: urlFiles) {
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(urlFile), Utils.UTF_8))) {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(urlFile), StandardCharsets.UTF_8))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
                             Matcher m = Pattern.compile(".*(https?://.*)").matcher(line);

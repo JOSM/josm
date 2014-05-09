@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JCheckBox;
@@ -41,11 +42,11 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     private static BugReporterThread bugReporterThread = null;
     private static int exceptionCounter = 0;
     private static boolean suppressExceptionDialogs = false;
-    
+
     private static class BugReporterThread extends Thread {
-        
+
         final Throwable e;
-        
+
         public BugReporterThread(Throwable t) {
             super("Bug Reporter");
             this.e = t;
@@ -138,7 +139,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             handlingInProgress = false;
         }
     }
-    
+
     private static void askForBugReport(final Throwable e) {
         try {
             final int maxlen = 6000;
@@ -214,7 +215,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             GZIPOutputStream gzip = new GZIPOutputStream(out)
         ) {
-            gzip.write(debugText.getBytes(Utils.UTF_8));
+            gzip.write(debugText.getBytes(StandardCharsets.UTF_8));
             gzip.finish();
 
             return new URL(Main.getJOSMWebsite()+"/josmticket?" +

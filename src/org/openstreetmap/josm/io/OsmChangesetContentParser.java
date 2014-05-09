@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -17,7 +18,6 @@ import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationTyp
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -38,6 +38,7 @@ public class OsmChangesetContentParser {
         /** the current change modification type */
         private ChangesetDataSet.ChangesetModificationType currentModificationType;
 
+        @Override
         protected void throwException(String message) throws XmlParsingException {
             throw new XmlParsingException(message).rememberLocation(locator);
         }
@@ -52,7 +53,7 @@ public class OsmChangesetContentParser {
                 // done
                 return;
             }
-            switch (qName) { 
+            switch (qName) {
             case "osmChange":
                 // do nothing
                 break;
@@ -66,7 +67,7 @@ public class OsmChangesetContentParser {
                 currentModificationType = ChangesetModificationType.DELETED;
                 break;
             default:
-                Main.warn(tr("Unsupported start element ''{0}'' in changeset content at position ({1},{2}). Skipping.", 
+                Main.warn(tr("Unsupported start element ''{0}'' in changeset content at position ({1},{2}). Skipping.",
                         qName, locator.getLineNumber(), locator.getColumnNumber()));
             }
         }
@@ -100,7 +101,7 @@ public class OsmChangesetContentParser {
                 // do nothing
                 break;
             default:
-                Main.warn(tr("Unsupported end element ''{0}'' in changeset content at position ({1},{2}). Skipping.", 
+                Main.warn(tr("Unsupported end element ''{0}'' in changeset content at position ({1},{2}). Skipping.",
                         qName, locator.getLineNumber(), locator.getColumnNumber()));
             }
         }
@@ -125,7 +126,7 @@ public class OsmChangesetContentParser {
     @SuppressWarnings("resource")
     public OsmChangesetContentParser(InputStream source) {
         CheckParameterUtil.ensureParameterNotNull(source, "source");
-        this.source = new InputSource(new InputStreamReader(source, Utils.UTF_8));
+        this.source = new InputSource(new InputStreamReader(source, StandardCharsets.UTF_8));
     }
 
     /**
