@@ -117,10 +117,8 @@ public class ElemStyles {
         try {
             osm.mappaintStyle = style.put(p.a, p.b);
         } catch (StyleCache.RangeViolatedError e) {
-            AssertionError error = new AssertionError("Range violated. object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
-                    + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b);
-            error.initCause(e);
-            throw error;
+            throw new AssertionError("Range violated. object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
+                    + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b, e);
         }
         osm.mappaintCacheIdx = cacheIdx;
         return p;
