@@ -266,10 +266,6 @@ Build-Date: ${build.tstamp}
             <copy file="${test.dir}/config/preferences.template.xml" tofile="${test.dir}/config/@{testfamily}-josm.home/preferences.xml"/>
             <replace file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" encoding="UTF-8" token="@OSM_USERNAME@" value="${osm.username}"/>
             <replace file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" encoding="UTF-8" token="@OSM_PASSWORD@" value="${osm.password}"/>
-        	<!-- Works only on Windows, does nothing on Unix -->
-        	<attrib file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" readonly="true"/>
-            <!-- Works only on Unix, does nothing on Windows -->
-        	<chmod file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" perm="ugo-w" verbose="true"/>
         </sequential>
     </macrodef>
     <target name="test-init">

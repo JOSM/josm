@@ -46,6 +46,7 @@ public class JOSMFixture {
         }
         System.setProperty("josm.home", josmHome);
         Main.initApplicationPreferences();
+        Main.pref.enableSaveOnPut(false);
         I18n.init();
         // initialize the plaform hook, and
         Main.determinePlatformHook();

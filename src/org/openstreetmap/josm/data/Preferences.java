@@ -85,10 +85,16 @@ public class Preferences {
      * @see #getPreferencesDirFile()
      */
     private File preferencesDirFile = null;
+
     /**
      * Internal storage for the cache directory.
      */
     private File cacheDirFile = null;
+
+    /**
+     * Determines if preferences file is saved each time a property is changed.
+     */
+    private boolean saveOnPut = true;
 
     /**
      * Maps the setting name to the current value of the setting.
@@ -1035,10 +1041,12 @@ public class Preferences {
                 settingCopy = setting.copy();
                 settingsMap.put(key, settingCopy);
             }
-            try {
-                save();
-            } catch (IOException e){
-                Main.warn(tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+            if (saveOnPut) {
+                try {
+                    save();
+                } catch (IOException e){
+                    Main.warn(tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+                }
             }
         }
         // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
@@ -1640,5 +1648,17 @@ public class Preferences {
     public static boolean isEqual(Setting<?> a, Setting<?> b) {
         if (a == null) return b == null;
         return a.equals(b);
+    }
+
+    /**
+     * Enables or not the preferences file auto-save mechanism (save each time a setting is changed).
+     * This behaviour is enabled by default.
+     * @param enable if {@code true}, makes JOSM save preferences file each time a setting is changed
+     * @since 7085
+     */
+    public final void enableSaveOnPut(boolean enable) {
+        synchronized (this) {
+            saveOnPut = enable;
+        }
     }
 }
