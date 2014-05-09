@@ -1,9 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import org.apache.tools.bzip2.CBZip2OutputStream;
-import org.openstreetmap.josm.tools.Utils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,8 +8,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipOutputStream;
+
+import org.apache.tools.bzip2.CBZip2OutputStream;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * An enum representing the compression type of a resource.
@@ -102,7 +103,7 @@ public enum Compression {
             case GZIP:
                 return new GZIPOutputStream(out);
             case ZIP:
-                return new ZipOutputStream(out);
+                return new ZipOutputStream(out, StandardCharsets.UTF_8);
             case NONE:
             default:
                 return out;

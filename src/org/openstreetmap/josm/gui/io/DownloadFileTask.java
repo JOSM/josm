@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -168,7 +169,7 @@ public class DownloadFileTask extends PleaseWaitRunnable{
      * @throws IOException
      */
     public static void unzipFileRecursively(File file, String dir) throws IOException {
-        try (ZipFile zf = new ZipFile(file)) {
+        try (ZipFile zf = new ZipFile(file, StandardCharsets.UTF_8)) {
             Enumeration<? extends ZipEntry> es = zf.entries();
             while (es.hasMoreElements()) {
                 ZipEntry ze = es.nextElement();

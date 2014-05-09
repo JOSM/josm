@@ -248,7 +248,7 @@ public class SessionWriter {
 
     public void write(OutputStream out) throws IOException {
         if (zip) {
-            zipOut = new ZipOutputStream(new BufferedOutputStream(out));
+            zipOut = new ZipOutputStream(new BufferedOutputStream(out), StandardCharsets.UTF_8);
         }
         Document doc = createJosDocument(); // as side effect, files may be added to zipOut
         if (zip) {
