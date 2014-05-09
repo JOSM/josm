@@ -35,8 +35,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 import javax.swing.AbstractButton;
 import javax.swing.FocusManager;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -82,7 +84,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     static {
         noThreads = Main.pref.getInteger(
-                "mappaint.StyledMapRenderer.style_creation.numberOfThreads", 
+                "mappaint.StyledMapRenderer.style_creation.numberOfThreads",
                 Runtime.getRuntime().availableProcessors());
         styleCreatorPool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads);
     }
@@ -239,14 +241,19 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     /**
      * Joined List build from two Lists (read-only).
-     * 
+     *
      * Extremely simple single-purpose implementation.
-     * @param <T> 
+     * @param <T>
      */
     public static class CompositeList<T> extends AbstractList<T> {
-        List<T> a,b;
+        List<? extends T> a,b;
 
-        public CompositeList(List<T> a, List<T> b) {
+        /**
+         * Constructs a new {@code CompositeList} from two lists.
+         * @param a First list
+         * @param b Second list
+         */
+        public CompositeList(List<? extends T> a, List<? extends T> b) {
             this.a = a;
             this.b = b;
         }
@@ -292,7 +299,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
     }
 
-    private ElemStyles styles;
     private double circum;
 
     private MapPaintSettings paintSettings;
@@ -1339,18 +1345,162 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return null;
     }
 
+    private class ComputeStyleListWorker implements Callable<List<StyleRecord>>, Visitor {
+        private final List<? extends OsmPrimitive> input;
+        private final int from;
+        private final int to;
+        private final List<StyleRecord> output;
+        private final DataSet data;
+
+        private final ElemStyles styles = MapPaintStyles.getStyles();
+
+        private final boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);
+        private final boolean drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
+        private final boolean drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
+
+        /**
+         * Constructor for CreateStyleRecordsWorker.
+         * @param input the primitives to process
+         * @param from first index of <code>input</code> to use
+         * @param to last index + 1
+         */
+        public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output, DataSet data) {
+            this.input = input;
+            this.from = from;
+            this.to = to;
+            this.output = output;
+            this.data = data;
+            this.styles.setDrawMultipolygon(drawMultipolygon);
+        }
+
+        @Override
+        public List<StyleRecord> call() throws Exception {
+            for (int i = from; i<to; i++) {
+                OsmPrimitive osm = input.get(i);
+                if (osm.isDrawable()) {
+                    osm.accept(this);
+                }
+            }
+            return output;
+        }
+
+        @Override
+        public void visit(Node n) {
+            if (n.isDisabled()) {
+                add(n, FLAG_DISABLED);
+            } else if (data.isSelected(n)) {
+                add(n, FLAG_SELECTED);
+            } else if (n.isMemberOfSelected()) {
+                add(n, FLAG_MEMBER_OF_SELECTED);
+            } else {
+                add(n, FLAG_NORMAL);
+            }
+        }
+
+        @Override
+        public void visit(Way w) {
+            if (w.isDisabled()) {
+                add(w, FLAG_DISABLED);
+            } else if (data.isSelected(w)) {
+                add(w, FLAG_SELECTED);
+            } else if (w.isMemberOfSelected()) {
+                add(w, FLAG_MEMBER_OF_SELECTED);
+            } else {
+                add(w, FLAG_NORMAL);
+            }
+        }
+
+        @Override
+        public void visit(Relation r) {
+            if (r.isDisabled()) {
+                add(r, FLAG_DISABLED);
+            } else if (data.isSelected(r)) {
+                add(r, FLAG_SELECTED);
+            } else {
+                add(r, FLAG_NORMAL);
+            }
+        }
+
+        @Override
+        public void visit(Changeset cs) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void add(Node osm, int flags) {
+            StyleList sl = styles.get(osm, circum, nc);
+            for (ElemStyle s : sl) {
+                output.add(new StyleRecord(s, osm, flags));
+            }
+        }
+
+        public void add(Relation osm, int flags) {
+            StyleList sl = styles.get(osm, circum, nc);
+            for (ElemStyle s : sl) {
+                if (drawMultipolygon && drawArea && s instanceof AreaElemStyle && (flags & FLAG_DISABLED) == 0) {
+                    output.add(new StyleRecord(s, osm, flags));
+                } else if (drawRestriction && s instanceof NodeElemStyle) {
+                    output.add(new StyleRecord(s, osm, flags));
+                }
+            }
+        }
+
+        public void add(Way osm, int flags) {
+            StyleList sl = styles.get(osm, circum, nc);
+            for (ElemStyle s : sl) {
+                if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElemStyle) {
+                    continue;
+                }
+                output.add(new StyleRecord(s, osm, flags));
+            }
+        }
+    }
+
+    private class ConcurrentTasksHelper {
+
+        private final List<StyleRecord> allStyleElems;
+        private final DataSet data;
+
+        public ConcurrentTasksHelper(List<StyleRecord> allStyleElems, DataSet data) {
+            this.allStyleElems = allStyleElems;
+            this.data = data;
+        }
+
+        void process(List<? extends OsmPrimitive> prims) {
+            final List<ComputeStyleListWorker> tasks = new ArrayList<>();
+            final int bucketsize = Math.max(100, prims.size()/noThreads/3);
+            final int noBuckets = (prims.size() + bucketsize - 1) / bucketsize;
+            final boolean singleThread = noThreads == 1 || noBuckets == 1;
+            for (int i=0; i<noBuckets; i++) {
+                int from = i*bucketsize;
+                int to = Math.min((i+1)*bucketsize, prims.size());
+                List<StyleRecord> target = singleThread ? allStyleElems : new ArrayList<StyleRecord>(to - from);
+                tasks.add(new ComputeStyleListWorker(prims, from, to, target, data));
+            }
+            if (singleThread) {
+                try {
+                    for (ComputeStyleListWorker task : tasks) {
+                        task.call();
+                    }
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else if (tasks.size() > 1) {
+                try {
+                    for (Future<List<StyleRecord>> future : styleCreatorPool.invokeAll(tasks)) {
+                            allStyleElems.addAll(future.get());
+                    }
+                } catch (InterruptedException | ExecutionException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+    }
+
     @Override
     public void render(final DataSet data, boolean renderVirtualNodes, Bounds bounds) {
         BBox bbox = bounds.toBBox();
         getSettings(renderVirtualNodes);
 
-        final boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);
-        final boolean drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
-        final boolean drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
-
-        styles = MapPaintStyles.getStyles();
-        styles.setDrawMultipolygon(drawMultipolygon);
-        
         highlightWaySegments = data.getHighlightedWaySegments();
 
         long timeStart=0, timePhase1=0, timeFinished;
@@ -1360,156 +1510,22 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             Main.debug(null);
         }
 
-        class ComputeStyleListWorker implements Callable<List<StyleRecord>>, Visitor {
-            private final List<? extends OsmPrimitive> input;
-            private final int from;
-            private final int to;
-            private final List<StyleRecord> output;
-
-            /**
-             * Constructor for CreateStyleRecordsWorker.
-             * @param input the primitives to process
-             * @param from first index of <code>input</code> to use
-             * @param to last index + 1
-             */
-            public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output) {
-                this.input = input;
-                this.from = from;
-                this.to = to;
-                this.output = output;
-            }
-
-            @Override
-            public List<StyleRecord> call() throws Exception {
-                for (int i = from; i<to; i++) {
-                    OsmPrimitive osm = input.get(i);
-                    if (osm.isDrawable()) {
-                        osm.accept(this);
-                    }
-                }
-                return output;
-            }
-
-            @Override
-            public void visit(Node n) {
-                if (n.isDisabled()) {
-                    add(n, FLAG_DISABLED);
-                } else if (data.isSelected(n)) {
-                    add(n, FLAG_SELECTED);
-                } else if (n.isMemberOfSelected()) {
-                    add(n, FLAG_MEMBER_OF_SELECTED);
-                } else {
-                    add(n, FLAG_NORMAL);
-                }
-            }
-
-            @Override
-            public void visit(Way w) {
-                if (w.isDisabled()) {
-                    add(w, FLAG_DISABLED);
-                } else if (data.isSelected(w)) {
-                    add(w, FLAG_SELECTED);
-                } else if (w.isMemberOfSelected()) {
-                    add(w, FLAG_MEMBER_OF_SELECTED);
-                } else {
-                    add(w, FLAG_NORMAL);
-                }
-            }
-
-            @Override
-            public void visit(Relation r) {
-                if (r.isDisabled()) {
-                    add(r, FLAG_DISABLED);
-                } else if (data.isSelected(r)) {
-                    add(r, FLAG_SELECTED);
-                } else {
-                    add(r, FLAG_NORMAL);
-                }
-            }
-
-            @Override
-            public void visit(Changeset cs) {
-                throw new UnsupportedOperationException();
-            }
-
-            public void add(Node osm, int flags) {
-                StyleList sl = styles.get(osm, circum, nc);
-                for (ElemStyle s : sl) {
-                    output.add(new StyleRecord(s, osm, flags));
-                }
-            }
-
-            public void add(Relation osm, int flags) {
-                StyleList sl = styles.get(osm, circum, nc);
-                for (ElemStyle s : sl) {
-                    if (drawMultipolygon && drawArea && s instanceof AreaElemStyle && (flags & FLAG_DISABLED) == 0) {
-                        output.add(new StyleRecord(s, osm, flags));
-                    } else if (drawRestriction && s instanceof NodeElemStyle) {
-                        output.add(new StyleRecord(s, osm, flags));
-                    }
-                }
-            }
-
-            public void add(Way osm, int flags) {
-                StyleList sl = styles.get(osm, circum, nc);
-                for (ElemStyle s : sl) {
-                    if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElemStyle) {
-                        continue;
-                    }
-                    output.add(new StyleRecord(s, osm, flags));
-                }
-            }
-        }
         List<Node> nodes = data.searchNodes(bbox);
         List<Way> ways = data.searchWays(bbox);
         List<Relation> relations = data.searchRelations(bbox);
-        
+
         final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
 
-        class ConcurrentTasksHelper {
-
-            void process(List<? extends OsmPrimitive> prims) {
-                final List<ComputeStyleListWorker> tasks = new ArrayList<>();
-                final int bucketsize = Math.max(100, prims.size()/noThreads/3);
-                final int noBuckets = (prims.size() + bucketsize - 1) / bucketsize;
-                final boolean singleThread = noThreads == 1 || noBuckets == 1;
-                for (int i=0; i<noBuckets; i++) {
-                    int from = i*bucketsize;
-                    int to = Math.min((i+1)*bucketsize, prims.size());
-                    List<StyleRecord> target = singleThread ? allStyleElems : new ArrayList<StyleRecord>(to - from);
-                    tasks.add(new ComputeStyleListWorker(prims, from, to, target));
-                }
-                if (singleThread) {
-                    try {
-                        for (ComputeStyleListWorker task : tasks) {
-                            task.call();
-                        }
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
-                } else if (tasks.size() > 1) {
-                    try {
-                        for (Future<List<StyleRecord>> future : styleCreatorPool.invokeAll(tasks)) {
-                                allStyleElems.addAll(future.get());
-                        }
-                    } catch (InterruptedException | ExecutionException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-            }
-        }
-        ConcurrentTasksHelper helper = new ConcurrentTasksHelper();
+        ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems, data);
 
         // Need to process all relations first.
         // Reason: Make sure, ElemStyles.getStyleCacheWithRange is
-        // not called for the same primtive in parallel threads.
+        // not called for the same primitive in parallel threads.
         // (Could be synchronized, but try to avoid this for
         // performance reasons.)
         helper.process(relations);
-        @SuppressWarnings("unchecked")
-        List<OsmPrimitive> nodesAndWays = (List) new CompositeList(nodes, ways);
-        helper.process(nodesAndWays);
-        
+        helper.process(new CompositeList<>(nodes, ways));
+
         if (Main.isTraceEnabled()) {
             timePhase1 = System.currentTimeMillis();
             System.err.print("phase 1 (calculate styles): " + (timePhase1 - timeStart) + " ms");

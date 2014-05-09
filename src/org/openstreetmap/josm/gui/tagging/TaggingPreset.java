@@ -125,7 +125,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String getRawName() {
         return group != null ? group.getRawName() + "/" + name : name;
     }
-    
+
     /**
      * Returns the preset icon.
      * @return The preset icon, or {@code null} if none defined
@@ -253,7 +253,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         for(TaggingPresetItem link : l) {
             link.addToPanel(p, selected, presetInitiallyMatches);
         }
-        
+
         // "Add toolbar button"
         JToggleButton tb = new JToggleButton(new ToolbarButtonAction());
         tb.setFocusable(false);
@@ -319,7 +319,37 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     }
 
-    public int showDialog(Collection<OsmPrimitive> sel, final boolean showNewRelation) {
+    private static class PresetDialog extends ExtendedDialog {
+        public PresetDialog(Component content, String title, ImageIcon icon, boolean disableApply, boolean showNewRelation) {
+            super(Main.parent, title,
+                    showNewRelation?
+                            new String[] { tr("Apply Preset"), tr("New relation"), tr("Cancel") }:
+                                new String[] { tr("Apply Preset"), tr("Cancel") },
+                                true);
+            if (icon != null)
+                setIconImage(icon.getImage());
+            contentInsets = new Insets(10,5,0,5);
+            if (showNewRelation) {
+                setButtonIcons(new String[] {"ok.png", "dialogs/addrelation.png", "cancel.png" });
+            } else {
+                setButtonIcons(new String[] {"ok.png", "cancel.png" });
+            }
+            setContent(content);
+            setDefaultButton(1);
+            setupDialog();
+            buttons.get(0).setEnabled(!disableApply);
+            buttons.get(0).setToolTipText(title);
+            // Prevent dialogs of being too narrow (fix #6261)
+            Dimension d = getSize();
+            if (d.width < 350) {
+                d.width = 350;
+                setSize(d);
+            }
+            showDialog();
+        }
+    }
+
+    public int showDialog(Collection<OsmPrimitive> sel, boolean showNewRelation) {
         PresetPanel p = createPanel(sel);
         if (p == null)
             return DIALOG_ANSWER_CANCEL;
@@ -335,38 +365,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 }
             }
 
-            class PresetDialog extends ExtendedDialog {
-                public PresetDialog(Component content, String title, ImageIcon icon, boolean disableApply) {
-                    super(Main.parent,
-                            title,
-                            showNewRelation?
-                                    new String[] { tr("Apply Preset"), tr("New relation"), tr("Cancel") }:
-                                        new String[] { tr("Apply Preset"), tr("Cancel") },
-                                        true);
-                    if (icon != null)
-                        setIconImage(icon.getImage());
-                    contentInsets = new Insets(10,5,0,5);
-                    if (showNewRelation) {
-                        setButtonIcons(new String[] {"ok.png", "dialogs/addrelation.png", "cancel.png" });
-                    } else {
-                        setButtonIcons(new String[] {"ok.png", "cancel.png" });
-                    }
-                    setContent(content);
-                    setDefaultButton(1);
-                    setupDialog();
-                    buttons.get(0).setEnabled(!disableApply);
-                    buttons.get(0).setToolTipText(title);
-                    // Prevent dialogs of being too narrow (fix #6261)
-                    Dimension d = getSize();
-                    if (d.width < 350) {
-                        d.width = 350;
-                        setSize(d);
-                    }
-                    showDialog();
-                }
-            }
-
-            answer = new PresetDialog(p, title, (ImageIcon) getValue(Action.SMALL_ICON), sel.isEmpty()).getValue();
+            answer = new PresetDialog(p, title, (ImageIcon) getValue(Action.SMALL_ICON),
+                    sel.isEmpty(), showNewRelation).getValue();
         }
         if (!showNewRelation && answer == 2)
             return DIALOG_ANSWER_CANCEL;
@@ -501,7 +501,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
         });
     }
-    
+
     /**
      * Action that adds or removes the button on main toolbar
      */
@@ -521,7 +521,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             Main.toolbar.addCustomButton(res, toolbarIndex, true);
         }
     }
-    
+
     public String getToolbarString() {
         ToolbarPreferences.ActionDefinition aDef
             = new ToolbarPreferences.ActionDefinition(this);

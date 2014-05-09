@@ -732,24 +732,23 @@ public class ImageProvider {
         return null;
     }
 
+    /** Quit parsing, when a certain condition is met */
+    private static class SAXReturnException extends SAXException {
+        private final String result;
+
+        public SAXReturnException(String result) {
+            this.result = result;
+        }
+
+        public String getResult() {
+            return result;
+        }
+    }
+
     /**
      * Reads the wiki page on a certain file in html format in order to find the real image URL.
      */
     private static String getImgUrlFromWikiInfoPage(final String base, final String fn) {
-
-        /** Quit parsing, when a certain condition is met */
-        class SAXReturnException extends SAXException {
-            private final String result;
-
-            public SAXReturnException(String result) {
-                this.result = result;
-            }
-
-            public String getResult() {
-                return result;
-            }
-        }
-
         try {
             final XMLReader parser = XMLReaderFactory.createXMLReader();
             parser.setContentHandler(new DefaultHandler() {
