@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.io;
 
 import org.junit.Test
-import org.openstreetmap.josm.tools.Utils
 
-import static org.junit.Assert.*;
+import java.nio.charset.StandardCharsets
+
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
@@ -13,7 +13,6 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.io.OsmChangesetContentParser;
 
 
 class OsmChangesetContentParserTest {
@@ -42,11 +41,11 @@ class OsmChangesetContentParserTest {
 		"""
 		
 		// should be OK 
-		parser = new OsmChangesetContentParser(new ByteArrayInputStream(doc.getBytes(Utils.UTF_8)))
+		parser = new OsmChangesetContentParser(new ByteArrayInputStream(doc.getBytes(StandardCharsets.UTF_8)))
 		parser.parse null
 		
 		// should be OK 
-		parser = new OsmChangesetContentParser(new ByteArrayInputStream(doc.getBytes(Utils.UTF_8)))
+		parser = new OsmChangesetContentParser(new ByteArrayInputStream(doc.getBytes(StandardCharsets.UTF_8)))
 		parser.parse NullProgressMonitor.INSTANCE
 		
 		// should be OK 
