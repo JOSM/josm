@@ -534,11 +534,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
     @Override
     protected void keysChangedImpl(Map<String, String> originalKeys) {
         super.keysChangedImpl(originalKeys);
-        // fix #8346 - Clear style cache for multipolygon members after a tag change
-        if (isMultipolygon()) {
-            for (OsmPrimitive member : getMemberPrimitives()) {
-                member.clearCachedStyle();
-            }
+        for (OsmPrimitive member : getMemberPrimitives()) {
+            member.clearCachedStyle();
         }
     }
 

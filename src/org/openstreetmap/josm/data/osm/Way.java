@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -733,4 +734,13 @@ public final class Way extends OsmPrimitive implements IWay {
         }
         return false;
     }
+
+    @Override
+    protected void keysChangedImpl(Map<String, String> originalKeys) {
+        super.keysChangedImpl(originalKeys);
+        for (final Node n : nodes) {
+            n.clearCachedStyle();
+        }
+    }
+    
 }
