@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,7 +25,6 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.io.MirroredInputStream;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
@@ -39,13 +39,13 @@ public final class TaggingPresetReader {
      * @since 6867
      */
     public static final String PRESET_MIME_TYPES = "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
-    
+
     private TaggingPresetReader() {
         // Hide default constructor for utils classes
     }
-    
+
     private static File zipIcons = null;
-    
+
     /**
      * Returns the set of preset source URLs.
      * @return The set of preset source URLs.
@@ -69,7 +69,7 @@ public final class TaggingPresetReader {
         /** Reference matching a chunk id defined earlier **/
         public String ref;
     }
-    
+
     public static List<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
         XmlObjectParser parser = new XmlObjectParser();
         parser.mapOnStart("item", TaggingPreset.class);
@@ -221,7 +221,7 @@ public final class TaggingPresetReader {
         }
         return all;
     }
-    
+
     public static Collection<TaggingPreset> readAll(String source, boolean validate) throws SAXException, IOException {
         Collection<TaggingPreset> tp;
         try (
@@ -232,7 +232,7 @@ public final class TaggingPresetReader {
             if (zip != null) {
                 zipIcons = s.getFile();
             }
-            try (InputStreamReader r = new InputStreamReader(zip == null ? s : zip, Utils.UTF_8)) {
+            try (InputStreamReader r = new InputStreamReader(zip == null ? s : zip, StandardCharsets.UTF_8)) {
                 tp = readAll(new BufferedReader(r), validate);
             }
         }
@@ -288,7 +288,7 @@ public final class TaggingPresetReader {
         }
         return allPresets;
     }
-    
+
     /**
      * Reads all tagging presets from sources stored in preferences.
      * @param validate if {@code true}, presets will be validated against XML schema
@@ -298,7 +298,7 @@ public final class TaggingPresetReader {
     public static Collection<TaggingPreset> readFromPreferences(boolean validate, boolean displayErrMsg) {
         return readAll(getPresetSources(), validate, displayErrMsg);
     }
-    
+
     public static File getZipIcons() {
         return zipIcons;
     }

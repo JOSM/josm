@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +17,10 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Test projections using reference data. (Currently provided by proj.4)
- * 
+ *
  * The data file data_nodist/projection-reference-data.csv can be created like this:
  *      Fist run this file's main method to collect epsg codes and bounds data.
  *      Then pipe the result into test/generate-proj-data.pl.
@@ -45,11 +45,11 @@ public class ProjectionRefTest {
             System.out.println(String.format("%s %s", e.getKey(), e.getValue().getWorldBoundsLatLon()));
         }
     }
- 
+
     @Test
     public void test() throws IOException, FileNotFoundException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream("data_nodist/projection-reference-data.csv"), Utils.UTF_8))) {
+                new FileInputStream("data_nodist/projection-reference-data.csv"), StandardCharsets.UTF_8))) {
             StringBuilder fail = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {

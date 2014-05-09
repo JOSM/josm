@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -370,7 +371,7 @@ public class PlaceSelection implements DownloadSelection {
                 connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
                 try (
                     InputStream inputStream = connection.getInputStream();
-                    Reader reader = new InputStreamReader(inputStream, Utils.UTF_8);
+                    Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 ) {
                     InputSource inputSource = new InputSource(reader);
                     NameFinderResultParser parser = new NameFinderResultParser();

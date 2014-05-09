@@ -22,6 +22,7 @@ package org.openstreetmap.josm.data.projection.datum;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
@@ -74,16 +75,16 @@ public class NTV2SubGrid implements Cloneable, Serializable {
         byte[] b1 = new byte[1];
         in.read(b8);
         in.read(b8);
-        subGridName = new String(b8, Utils.UTF_8).trim();
+        subGridName = new String(b8, StandardCharsets.UTF_8).trim();
         in.read(b8);
         in.read(b8);
-        parentSubGridName = new String(b8, Utils.UTF_8).trim();
+        parentSubGridName = new String(b8, StandardCharsets.UTF_8).trim();
         in.read(b8);
         in.read(b8);
-        created = new String(b8, Utils.UTF_8);
+        created = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
-        updated = new String(b8, Utils.UTF_8);
+        updated = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
         minLat = NTV2Util.getDouble(b8, bigEndian);

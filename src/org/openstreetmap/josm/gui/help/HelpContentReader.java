@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
@@ -48,7 +49,7 @@ public class HelpContentReader extends WikiReader {
             URL u = new URL(helpTopicUrl);
             con = Utils.openHttpConnection(u);
             con.connect();
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), Utils.UTF_8))) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                 return prepareHelpContent(in, dotest, u);
             }
         } catch(MalformedURLException e) {

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -123,7 +124,7 @@ public abstract class SourceEditor extends JPanel {
 
         this.sourceType = sourceType;
         this.canEnable = sourceType.equals(SourceType.MAP_PAINT_STYLE) || sourceType.equals(SourceType.TAGCHECKER_RULE);
-        
+
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         this.availableSourcesModel = new AvailableSourcesListModel(selectionModel);
         this.lstAvailableSources = new JList<>(availableSourcesModel);
@@ -717,7 +718,7 @@ public abstract class SourceEditor extends JPanel {
             JButton fileChooser = new JButton(new LaunchFileChooserAction());
             fileChooser.setMargin(new Insets(0, 0, 0, 0));
             p.add(fileChooser, GBC.eol().insets(0, 0, 5, 5));
-            
+
             if (e != null) {
                 if (e.title != null) {
                     tfTitle.setText(e.title);
@@ -1211,7 +1212,7 @@ public abstract class SourceEditor extends JPanel {
 
     static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer<ExtendedSourceEntry> {
         @Override
-        public Component getListCellRendererComponent(JList<? extends ExtendedSourceEntry> list, ExtendedSourceEntry value, 
+        public Component getListCellRendererComponent(JList<? extends ExtendedSourceEntry> list, ExtendedSourceEntry value,
                 int index, boolean isSelected, boolean cellHasFocus) {
             String s = value.toString();
             setText(s);
@@ -1279,7 +1280,7 @@ public abstract class SourceEditor extends JPanel {
                 }
 
                 MirroredInputStream stream = new MirroredInputStream(url);
-                reader = new BufferedReader(new InputStreamReader(stream, Utils.UTF_8));
+                reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 
                 String line;
                 ExtendedSourceEntry last = null;
@@ -1604,7 +1605,7 @@ public abstract class SourceEditor extends JPanel {
             return urls;
         }
     }
-    
+
     /**
      * Defers loading of sources to the first time the adequate tab is selected.
      * @param tab The preferences tab

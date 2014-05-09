@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -199,7 +200,7 @@ public class OsmOAuthAuthorizationClient {
     protected String extractToken(HttpURLConnection connection) {
         try (
             InputStream is = connection.getInputStream();
-            BufferedReader r = new BufferedReader(new InputStreamReader(is, Utils.UTF_8))
+            BufferedReader r = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
         ) {
             String c;
             Pattern p = Pattern.compile(".*authenticity_token.*value=\"([^\"]+)\".*");

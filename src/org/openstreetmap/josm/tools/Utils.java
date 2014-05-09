@@ -26,7 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -61,13 +61,6 @@ public final class Utils {
     private Utils() {
         // Hide default constructor for utils classes
     }
-
-    /**
-     * UTF-8 (UCS Transformation Format—8-bit).
-     *
-     * <p>Every implementation of the Java platform is required to support UTF-8 (see {@link Charset}).</p>
-     */
-    public static final Charset UTF_8 = Charset.forName("UTF-8");
 
     private static final int MILLIS_OF_SECOND = 1000;
     private static final int MILLIS_OF_MINUTE = 60000;
@@ -475,7 +468,7 @@ public final class Utils {
      * @return MD5 hash of data, string of length 32 with characters in range [0-9a-f]
      */
     public static String md5Hex(String data) {
-        byte[] byteData = data.getBytes(UTF_8);
+        byte[] byteData = data.getBytes(StandardCharsets.UTF_8);
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("MD5");
@@ -725,7 +718,7 @@ public final class Utils {
      * @since 6421
      */
     public static BufferedReader openURLReaderAndDecompress(final URL url, final boolean decompress) throws IOException {
-        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), UTF_8));
+        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), StandardCharsets.UTF_8));
     }
 
     /**
@@ -800,7 +793,7 @@ public final class Utils {
             Main.debug(join(" ", command));
         }
         Process p = new ProcessBuilder(command).start();
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8))) {
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
             StringBuilder all = null;
             String line;
             while ((line = input.readLine()) != null) {

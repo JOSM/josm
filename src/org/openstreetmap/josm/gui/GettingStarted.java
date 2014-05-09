@@ -11,6 +11,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,6 @@ import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
 
 public final class GettingStarted extends JPanel implements ProxyPreferenceListener {
@@ -91,7 +91,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             Main.pref.putInteger("cache.motd.html.version", myVersion);
             Main.pref.put("cache.motd.html.java", myJava);
             Main.pref.put("cache.motd.html.lang", myLang);
-            return motd.getBytes(Utils.UTF_8);
+            return motd.getBytes(StandardCharsets.UTF_8);
         }
 
         /**

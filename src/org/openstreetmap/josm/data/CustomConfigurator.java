@@ -10,6 +10,7 @@ import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -235,7 +236,7 @@ public final class CustomConfigurator {
 
         try {
             String toXML = Main.pref.toXML(true);
-            InputStream is = new ByteArrayInputStream(toXML.getBytes(Utils.UTF_8));
+            InputStream is = new ByteArrayInputStream(toXML.getBytes(StandardCharsets.UTF_8));
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setValidating(false);
             builderFactory.setNamespaceAware(false);

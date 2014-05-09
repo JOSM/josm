@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -34,7 +35,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.io.UploadStrategy;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.tools.Utils;
 
 public class MultiFetchServerObjectReaderTest {
     private static Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
@@ -166,7 +166,7 @@ public class MultiFetchServerObjectReaderTest {
 
         try (
             PrintWriter pw = new PrintWriter(
-                    new OutputStreamWriter(new FileOutputStream(dataSetCacheOutputFile), Utils.UTF_8)
+                    new OutputStreamWriter(new FileOutputStream(dataSetCacheOutputFile), StandardCharsets.UTF_8)
         )) {
             logger.info(MessageFormat.format("caching test data set in ''{0}'' ...", dataSetCacheOutputFile.toString()));
             try (OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion())) {

@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -52,7 +53,7 @@ public class MapCSSStyleSource extends StyleSource {
     public final List<MapCSSRule> relationRules = new ArrayList<>();
     public final List<MapCSSRule> multipolygonRules = new ArrayList<>();
     public final List<MapCSSRule> canvasRules = new ArrayList<>();
-    
+
     private Color backgroundColorOverride;
     private String css = null;
     private ZipFile zipFile;
@@ -92,12 +93,12 @@ public class MapCSSStyleSource extends StyleSource {
                 // evaluate @media { ... } blocks
                 MapCSSParser preprocessor = new MapCSSParser(in, "UTF-8", MapCSSParser.LexicalState.PREPROCESSOR);
                 String mapcss = preprocessor.pp_root(this);
-                
+
                 // do the actual mapcss parsing
-                InputStream in2 = new ByteArrayInputStream(mapcss.getBytes(Utils.UTF_8));
+                InputStream in2 = new ByteArrayInputStream(mapcss.getBytes(StandardCharsets.UTF_8));
                 MapCSSParser parser = new MapCSSParser(in2, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
                 parser.sheet(this);
-                
+
                 loadMeta();
                 loadCanvas();
             } finally {
@@ -154,7 +155,7 @@ public class MapCSSStyleSource extends StyleSource {
     @Override
     public InputStream getSourceInputStream() throws IOException {
         if (css != null) {
-            return new ByteArrayInputStream(css.getBytes(Utils.UTF_8));
+            return new ByteArrayInputStream(css.getBytes(StandardCharsets.UTF_8));
         }
         MirroredInputStream in = getMirroredInputStream();
         if (isZip) {
@@ -249,11 +250,11 @@ public class MapCSSStyleSource extends StyleSource {
                 matchingRules = relationRules;
             }
         }
-        
+
         // the declaration indices are sorted, so it suffices to save the
         // last used index
         int lastDeclUsed = -1;
-        
+
         for (MapCSSRule r : matchingRules) {
             env.clearSelectorMatchingInformation();
             if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)

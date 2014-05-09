@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -42,7 +43,6 @@ import org.openstreetmap.josm.io.OsmWriterFactory;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 
 public class OsmDataSessionExporter implements SessionLayerExporter {
@@ -209,7 +209,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
     }
 
     protected void addDataFile(OutputStream out) {
-        Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
+        Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
         layer.data.getReadLock().lock();
         try {

@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,7 +25,6 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.IWithAttributes;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Writes GPX files from GPX data or OSM data.
@@ -36,7 +36,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     }
 
     public GpxWriter(OutputStream out) {
-        super(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8))));
+        super(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))));
     }
 
     private GpxData data;

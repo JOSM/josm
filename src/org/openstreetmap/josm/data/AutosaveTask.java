@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Deque;
@@ -39,7 +40,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmExporter;
 import org.openstreetmap.josm.io.OsmImporter;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Saves data layers periodically so they can be recovered in case of a crash.
@@ -302,7 +302,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 boolean skipFile = false;
                 File pidFile = getPidFile(file);
                 if (pidFile.exists()) {
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pidFile), Utils.UTF_8))) {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pidFile), StandardCharsets.UTF_8))) {
                         String jvmId = reader.readLine();
                         if (jvmId != null) {
                             String pid = jvmId.split("@")[0];

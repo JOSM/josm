@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -142,7 +143,7 @@ public class RequestProcessor extends Thread {
         Writer out = null;
         try {
             OutputStream raw = new BufferedOutputStream(request.getOutputStream());
-            out = new OutputStreamWriter(raw, Utils.UTF_8);
+            out = new OutputStreamWriter(raw, StandardCharsets.UTF_8);
             BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII"));
 
             String get = in.readLine();
@@ -393,7 +394,7 @@ public class RequestProcessor extends Thread {
                 Main.error(ex);
                 return null;
             }
-    
+
             printJsonInfo(cmd, r, handler);
             return w.toString();
         } catch (IOException e) {

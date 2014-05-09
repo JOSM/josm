@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.bind.DatatypeConverter;
@@ -48,7 +49,7 @@ public class BugReportExceptionHandlerTest {
         try (GZIPInputStream is = new GZIPInputStream(new ByteArrayInputStream(data))) {
             StringBuilder sb = new StringBuilder();
             for (int n = is.read(buff); n > 0; n = is.read(buff)) {
-                sb.append(new String(buff, 0, n, Utils.UTF_8));
+                sb.append(new String(buff, 0, n, StandardCharsets.UTF_8));
             }
             assertEquals(report, sb.toString());
         }

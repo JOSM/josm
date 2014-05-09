@@ -9,11 +9,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.tools.Utils;
 
 public class GeoJSONExporter extends FileExporter {
 
@@ -31,7 +31,7 @@ public class GeoJSONExporter extends FileExporter {
     public void exportData(File file, Layer layer) throws IOException {
         if (layer instanceof OsmDataLayer) {
             String json = new GeoJSONWriter((OsmDataLayer) layer).write();
-            try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Utils.UTF_8))) {
+            try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
                 out.write(json);
             }
         } else {

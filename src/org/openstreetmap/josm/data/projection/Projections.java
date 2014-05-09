@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +33,6 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class to handle projections
@@ -133,7 +133,7 @@ public final class Projections {
         Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
         try (
             InputStream in = new MirroredInputStream("resource://data/projection/epsg");
-            BufferedReader r = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));
+            BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         ) {
             String line, lastline = "";
             while ((line = r.readLine()) != null) {

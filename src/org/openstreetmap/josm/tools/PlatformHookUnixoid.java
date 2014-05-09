@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
@@ -200,7 +201,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             try {
                 // Try lsb_release (only available on LSB-compliant Linux systems, see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
                 Process p = Runtime.getRuntime().exec("lsb_release -ds");
-                try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), Utils.UTF_8))) {
+                try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
                     String line = Utils.strip(input.readLine());
                     if (line != null && !line.isEmpty()) {
                         line = line.replaceAll("\"+","");
@@ -283,7 +284,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             if (path != null) {
                 File file = new File(path);
                 if (file.exists()) {
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Utils.UTF_8))) {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
                         String id = null;
                         String release = null;
                         String line;

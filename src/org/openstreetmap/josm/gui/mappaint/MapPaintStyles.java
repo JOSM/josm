@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -234,7 +235,7 @@ public final class MapPaintStyles {
             if (entry.url.toLowerCase().endsWith(".xml"))
                 return new XmlStyleSource(entry);
             else {
-                try (InputStreamReader reader = new InputStreamReader(in, Utils.UTF_8)) {
+                try (InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
                     WHILE: while (true) {
                         int c = reader.read();
                         switch (c) {

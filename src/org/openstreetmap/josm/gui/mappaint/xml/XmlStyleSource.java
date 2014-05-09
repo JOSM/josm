@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -76,7 +77,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
         try {
             try (
                 InputStream in = getSourceInputStream();
-                InputStreamReader reader = new InputStreamReader(in, Utils.UTF_8)
+                InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)
             ) {
                 XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(this));
                 parser.startWithValidation(reader,

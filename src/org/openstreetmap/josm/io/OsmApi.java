@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -189,7 +190,7 @@ public class OsmApi extends OsmConnection {
 
         @Override
         protected byte[] updateData() throws OsmTransferException {
-            return sendRequest("GET", "capabilities", null, monitor, false, fastFail).getBytes(Utils.UTF_8);
+            return sendRequest("GET", "capabilities", null, monitor, false, fastFail).getBytes(StandardCharsets.UTF_8);
         }
     }
 
@@ -637,7 +638,7 @@ public class OsmApi extends OsmConnection {
                         // we use the output stream, we create an output stream for PUT/POST
                         // even if there is no payload.
                         if (requestBody != null) {
-                            try (BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8))) {
+                            try (BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
                                 bwr.write(requestBody);
                                 bwr.flush();
                             }
@@ -669,7 +670,7 @@ public class OsmApi extends OsmConnection {
                     // Unauthorized, see #3887.
                     //
                     String s;
-                    try (BufferedReader in = new BufferedReader(new InputStreamReader(i, Utils.UTF_8))) {
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(i, StandardCharsets.UTF_8))) {
                         while((s = in.readLine()) != null) {
                             responseBody.append(s);
                             responseBody.append("\n");

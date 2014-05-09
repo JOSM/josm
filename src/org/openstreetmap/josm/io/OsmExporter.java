@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
@@ -71,7 +72,7 @@ public class OsmExporter extends FileExporter {
             // create outputstream and wrap it with gzip or bzip, if necessary
             try (
                 OutputStream out = getOutputStream(file);
-                Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
+                Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
                 OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
             ) {
                 layer.data.getReadLock().lock();

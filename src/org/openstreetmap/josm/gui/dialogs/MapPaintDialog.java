@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -654,7 +655,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
 
             try {
                 InputStream is = s.getSourceInputStream();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, Utils.UTF_8))) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         txtSource.append(line + "\n");

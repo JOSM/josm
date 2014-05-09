@@ -22,11 +22,10 @@ package org.openstreetmap.josm.data.projection.datum;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Models the NTv2 format Grid Shift File and exposes methods to shift
@@ -103,7 +102,7 @@ public class NTV2GridShiftFile implements Serializable {
         toEllipsoid = "";
         topLevelSubGrid = null;
         in.read(b8);
-        String overviewHeaderCountId = new String(b8, Utils.UTF_8);
+        String overviewHeaderCountId = new String(b8, StandardCharsets.UTF_8);
         if (!"NUM_OREC".equals(overviewHeaderCountId))
             throw new IllegalArgumentException("Input file is not an NTv2 grid shift file");
         in.read(b8);
@@ -126,7 +125,7 @@ public class NTV2GridShiftFile implements Serializable {
         NTV2SubGrid[] subGrid = new NTV2SubGrid[subGridCount];
         in.read(b8);
         in.read(b8);
-        shiftType = new String(b8, Utils.UTF_8);
+        shiftType = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
         version = new String(b8);

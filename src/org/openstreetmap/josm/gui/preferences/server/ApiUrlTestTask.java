@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import javax.swing.JOptionPane;
 
@@ -193,7 +194,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
                 return;
             }
             StringBuilder changesets = new StringBuilder();
-            try (BufferedReader bin = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8))) {
+            try (BufferedReader bin = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = bin.readLine()) != null) {
                     changesets.append(line).append("\n");

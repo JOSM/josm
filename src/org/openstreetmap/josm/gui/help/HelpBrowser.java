@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
@@ -51,7 +52,6 @@ import org.openstreetmap.josm.gui.widgets.JosmHTMLEditorKit;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -137,7 +137,7 @@ public class HelpBrowser extends JDialog {
         StringBuilder css = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
-                        getClass().getResourceAsStream("/data/help-browser.css"), Utils.UTF_8
+                        getClass().getResourceAsStream("/data/help-browser.css"), StandardCharsets.UTF_8
                 )
         )) {
             String line = null;

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -222,7 +223,7 @@ public class SessionWriter {
 
     public void writeJos(Document doc, OutputStream out) throws IOException {
         try {
-            OutputStreamWriter writer = new OutputStreamWriter(out, Utils.UTF_8);
+            OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
             writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();

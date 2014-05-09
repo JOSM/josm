@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.DateUtils;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Reads a NMEA file. Based on information from
@@ -169,7 +169,7 @@ public class NmeaReader {
         data = new GpxData();
         Collection<Collection<WayPoint>> currentTrack = new ArrayList<>();
 
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(source, Utils.UTF_8))) {
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(source, StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder(1024);
             int loopstart_char = rd.read();
             ps = new NMEAParserState();
@@ -234,7 +234,7 @@ public class NmeaReader {
             String[] chkstrings = s.split("\\*");
             if(chkstrings.length > 1)
             {
-                byte[] chb = chkstrings[0].getBytes(Utils.UTF_8);
+                byte[] chb = chkstrings[0].getBytes(StandardCharsets.UTF_8);
                 int chk=0;
                 for (int i = 1; i < chb.length; i++) {
                     chk ^= chb[i];

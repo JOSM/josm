@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -24,7 +25,6 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 
 public class MarkerSessionExporter implements SessionLayerExporter {
@@ -85,7 +85,7 @@ public class MarkerSessionExporter implements SessionLayerExporter {
 
     @SuppressWarnings("resource")
     protected void addDataFile(OutputStream out) {
-        Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
+        Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         MarkerWriter w = new MarkerWriter(new PrintWriter(writer));
         w.write(layer);
         w.flush();
