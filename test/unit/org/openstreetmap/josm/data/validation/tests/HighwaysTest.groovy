@@ -1,18 +1,16 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.data.validation.tests
 
-import org.openstreetmap.josm.Main
+import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.Way
-import org.openstreetmap.josm.data.projection.Projections
 
 class HighwaysTest extends GroovyTestCase {
 
     @Override
     void setUp() {
-        Main.initApplicationPreferences()
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     public static Way createTestSetting(String highway, String highwayLink) {

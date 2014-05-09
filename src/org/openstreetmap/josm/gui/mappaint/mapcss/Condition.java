@@ -64,15 +64,15 @@ public abstract class Condition {
         }
     }
 
-    public static Condition createPseudoClassCondition(String id, boolean not, Context context) {
+    public static PseudoClassCondition createPseudoClassCondition(String id, boolean not, Context context) {
         return new PseudoClassCondition(id, not, context);
     }
 
-    public static Condition createClassCondition(String id, boolean not, Context context) {
+    public static ClassCondition createClassCondition(String id, boolean not, Context context) {
         return new ClassCondition(id, not);
     }
 
-    public static Condition createExpressionCondition(Expression e, Context context) {
+    public static ExpressionCondition createExpressionCondition(Expression e, Context context) {
         return new ExpressionCondition(e);
     }
 
@@ -152,7 +152,7 @@ public abstract class Condition {
 
     /**
      * Most common case of a KeyValueCondition.
-     * 
+     *
      * Extra class for performance reasons.
      */
     public static class SimpleKeyValueCondition extends Condition {
@@ -168,7 +168,7 @@ public abstract class Condition {
         public boolean applies(Environment e) {
             return v.equals(e.osm.get(k));
         }
-        
+
         public Tag asTag() {
             return new Tag(k, v);
         }
@@ -177,7 +177,7 @@ public abstract class Condition {
         public String toString() {
             return '[' + k + '=' + v + ']';
         }
-        
+
     }
 
     /**

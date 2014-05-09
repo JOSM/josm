@@ -79,7 +79,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     final public static int noThreads;
     final public static ExecutorService styleCreatorPool;
-    
+
     static {
         noThreads = Main.pref.getInteger(
                 "mappaint.StyledMapRenderer.style_creation.numberOfThreads", 
@@ -329,6 +329,16 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     private boolean leftHandTraffic;
 
+    /**
+     * Constructs a new {@code StyledMapRenderer}.
+     *
+     * @param g the graphics context. Must not be null.
+     * @param nc the map viewport. Must not be null.
+     * @param isInactiveMode if true, the paint visitor shall render OSM objects such that they
+     * look inactive. Example: rendering of data in an inactive layer using light gray as color only.
+     * @throws IllegalArgumentException thrown if {@code g} is null
+     * @throws IllegalArgumentException thrown if {@code nc} is null
+     */
     public StyledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         super(g, nc, isInactiveMode);
 
@@ -1328,7 +1338,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
         return null;
     }
-    
+
     @Override
     public void render(final DataSet data, boolean renderVirtualNodes, Bounds bounds) {
         BBox bbox = bounds.toBBox();
@@ -1342,7 +1352,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         styles.setDrawMultipolygon(drawMultipolygon);
         
         highlightWaySegments = data.getHighlightedWaySegments();
-        
+
         long timeStart=0, timePhase1=0, timeFinished;
         if (Main.isTraceEnabled()) {
             timeStart = System.currentTimeMillis();
@@ -1368,7 +1378,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 this.to = to;
                 this.output = output;
             }
-            
+
             @Override
             public List<StyleRecord> call() throws Exception {
                 for (int i = from; i<to; i++) {
@@ -1379,7 +1389,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
                 return output;
             }
-            
+
             @Override
             public void visit(Node n) {
                 if (n.isDisabled()) {
@@ -1455,9 +1465,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         List<Relation> relations = data.searchRelations(bbox);
         
         final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
-        
+
         class ConcurrentTasksHelper {
-            
+
             void process(List<? extends OsmPrimitive> prims) {
                 final List<ComputeStyleListWorker> tasks = new ArrayList<>();
                 final int bucketsize = Math.max(100, prims.size()/noThreads/3);
@@ -1489,7 +1499,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
         }
         ConcurrentTasksHelper helper = new ConcurrentTasksHelper();
-        
+
         // Need to process all relations first.
         // Reason: Make sure, ElemStyles.getStyleCacheWithRange is
         // not called for the same primtive in parallel threads.
@@ -1504,9 +1514,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             timePhase1 = System.currentTimeMillis();
             System.err.print("phase 1 (calculate styles): " + (timePhase1 - timeStart) + " ms");
         }
-        
+
         Collections.sort(allStyleElems);
-        
+
         for (StyleRecord r : allStyleElems) {
             r.style.paintPrimitive(
                     r.osm,

@@ -9,9 +9,8 @@ import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 
@@ -25,8 +24,7 @@ public class UnconnectedWaysTest {
     @Before
     public void setUp() throws Exception {
         bib = new UnconnectedWays.UnconnectedHighways();
-        Main.initApplicationPreferences();
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        JOSMFixture.createUnitTestFixture().init();
         bib.initialize();
         bib.startTest(null);
     }

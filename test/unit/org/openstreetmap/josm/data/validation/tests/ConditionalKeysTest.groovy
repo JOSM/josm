@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests
 
-import org.openstreetmap.josm.Main
+import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference
 
 class ConditionalKeysTest extends GroovyTestCase {
 
-    def test = new ConditionalKeys()
+    ConditionalKeys test = new ConditionalKeys()
 
     @Override
     void setUp() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
         TaggingPresetPreference.readFromPreferences()
         test.initialize()
     }
@@ -39,6 +39,5 @@ class ConditionalKeysTest extends GroovyTestCase {
         assert !test.isValueValid("motor_vehicle:conditional", "foo @ (10:00-18:00 AND length>5)")
         assert !test.isValueValid("motor_vehicle:conditional", "no @ (10:00until18:00 AND length>5)")
         assert test.isValueValid("maxspeed:hgv:conditional", "60 @ (weight>7.5)")
-
     }
 }

@@ -227,6 +227,10 @@ public class MirroredInputStream extends InputStream {
         return res;
     }
 
+    /**
+     * Replies the local file.
+     * @return The local file on disk
+     */
     public File getFile() {
         return file;
     }

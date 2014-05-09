@@ -25,6 +25,7 @@ import javax.net.ssl.X509TrustManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -35,27 +36,27 @@ public class RemoteControlTest {
 
     private String httpBase;
     private String httpsBase;
-    
+
     /**
      * Starts Remote control before testing requests.
      */
     @Before
     public void setUp() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
         RemoteControl.start();
         disableCertificateValidation();
         httpBase = "http://127.0.0.1:"+Main.pref.getInteger("remote.control.port", 8111);
         httpsBase = "https://127.0.0.1:"+Main.pref.getInteger("remote.control.https.port", 8112);
     }
-    
+
     /**
-     * Disable all HTTPS validation mechanisms as described 
+     * Disable all HTTPS validation mechanisms as described
      * <a href="http://stackoverflow.com/a/2893932/2257172">here</a> and
      * <a href="http://stackoverflow.com/a/19542614/2257172">here</a>
      */
     public void disableCertificateValidation() {
         // Create a trust manager that does not validate certificate chains
-        TrustManager[] trustAllCerts = new TrustManager[] { 
+        TrustManager[] trustAllCerts = new TrustManager[] {
             new X509TrustManager() {
                 public X509Certificate[] getAcceptedIssuers() {
                     return null;
@@ -75,7 +76,7 @@ public class RemoteControlTest {
         } catch (GeneralSecurityException e) {
             fail(e.getMessage());
         }
-        
+
         // Create all-trusting host name verifier
         HostnameVerifier allHostsValid = new HostnameVerifier() {
             @Override
@@ -99,7 +100,7 @@ public class RemoteControlTest {
     /**
      * Tests that sending an HTTP request without command results in HTTP 400, with all available commands in error message.
      * @throws IOException if an I/O error occurs
-     * @throws MalformedURLException if HTTP URL is invalid  
+     * @throws MalformedURLException if HTTP URL is invalid
      */
     @Test
     public void testHttpListOfCommands() throws MalformedURLException, IOException {
@@ -109,7 +110,7 @@ public class RemoteControlTest {
     /**
      * Tests that sending an HTTPS request without command results in HTTP 400, with all available commands in error message.
      * @throws IOException if an I/O error occurs
-     * @throws MalformedURLException if HTTPS URL is invalid  
+     * @throws MalformedURLException if HTTPS URL is invalid
      */
     @Test
     public void testHttpsListOfCommands() throws MalformedURLException, IOException {
@@ -121,7 +122,7 @@ public class RemoteControlTest {
         connection.connect();
         assertEquals(connection.getResponseCode(), HttpURLConnection.HTTP_BAD_REQUEST);
         try (InputStream is = connection.getErrorStream()) {
-            // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes 
+            // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes
             StringBuilder responseBody = new StringBuilder();
             try (BufferedReader in = new BufferedReader(new InputStreamReader(is, Utils.UTF_8))) {
                 String s;

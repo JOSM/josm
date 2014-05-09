@@ -1,20 +1,20 @@
 package org.openstreetmap.josm.actions
 
-import org.openstreetmap.josm.Main
-import org.openstreetmap.josm.TestUtils;
+import org.junit.BeforeClass
+import org.junit.Test
+import org.openstreetmap.josm.JOSMFixture
+import org.openstreetmap.josm.TestUtils
 import org.openstreetmap.josm.actions.search.SearchCompiler
 import org.openstreetmap.josm.data.osm.Relation
 import org.openstreetmap.josm.data.osm.Way
-import org.openstreetmap.josm.data.projection.Projections
 import org.openstreetmap.josm.io.OsmReader
 import org.openstreetmap.josm.tools.Utils
 
-class CreateMultipolygonActionTest extends GroovyTestCase {
+class CreateMultipolygonActionTest {
 
-    @Override
-    void setUp() {
-        Main.initApplicationPreferences()
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+    @BeforeClass
+    public static void setUp() {
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     static def getRefToRoleMap(Relation relation) {
@@ -25,21 +25,24 @@ class CreateMultipolygonActionTest extends GroovyTestCase {
         return refToRole;
     }
 
-    void testCreate1() {
+    @Test
+    public void testCreate1() {
         def ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
         def mp = CreateMultipolygonAction.createMultipolygonCommand(ds.getWays(), null)
         assert mp.a.getDescriptionText() == "Sequence: Create multipolygon"
         assert getRefToRoleMap(mp.b).toString() == "[1:outer, 1.1:inner, 1.1.1:outer, 1.1.2:outer, 1.2:inner]"
     }
 
-    void testCreate2() {
+    @Test
+    public void testCreate2() {
         def ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
         def ways = Utils.filter(ds.getWays(), SearchCompiler.compile("ref=1 OR ref:1.1.", false, false))
         def mp = CreateMultipolygonAction.createMultipolygonCommand(ways as Collection<Way>, null)
         assert getRefToRoleMap(mp.b).toString() == "[1:outer, 1.1.1:inner, 1.1.2:inner]"
     }
 
-    void testUpdate1() {
+    @Test
+    public void testUpdate1() {
         def ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
         def ways = Utils.filter(ds.getWays(), SearchCompiler.compile("ref=\".*1\$\"", false, true))
         def mp = CreateMultipolygonAction.createMultipolygonCommand(ways as Collection<Way>, null)
@@ -51,7 +54,8 @@ class CreateMultipolygonActionTest extends GroovyTestCase {
         assert getRefToRoleMap(mp2.b).toString() == "[1:outer, 1.1:inner, 1.1.1:outer, 1.2:inner]"
     }
 
-    void testUpdate2() {
+    @Test
+    public void testUpdate2() {
         def ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
         def ways = Utils.filter(ds.getWays(), SearchCompiler.compile("ref=1 OR ref:1.1.1", false, false))
         def mp = CreateMultipolygonAction.createMultipolygonCommand(ways as Collection<Way>, null)

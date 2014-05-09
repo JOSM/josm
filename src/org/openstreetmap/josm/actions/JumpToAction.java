@@ -31,12 +31,12 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 2575
  */
 public class JumpToAction extends JosmAction {
-    
+
     /**
      * Constructs a new {@code JumpToAction}.
      */
     public JumpToAction() {
-        super(tr("Jump To Position"), (Icon) null, tr("Opens a dialog that allows to jump to a specific location"), 
+        super(tr("Jump To Position"), (Icon) null, tr("Opens a dialog that allows to jump to a specific location"),
                 Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump To Position")),
                         KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", true);
     }
@@ -45,6 +45,18 @@ public class JumpToAction extends JosmAction {
     private final JosmTextField lat = new JosmTextField();
     private final JosmTextField lon = new JosmTextField();
     private final JosmTextField zm = new JosmTextField();
+
+    class OsmURLListener implements DocumentListener {
+        @Override public void changedUpdate(DocumentEvent e) { parseURL(); }
+        @Override public void insertUpdate(DocumentEvent e) { parseURL(); }
+        @Override public void removeUpdate(DocumentEvent e) { parseURL(); }
+    }
+
+    class OsmLonLatListener implements DocumentListener {
+        @Override public void changedUpdate(DocumentEvent e) { updateUrl(false); }
+        @Override public void insertUpdate(DocumentEvent e) { updateUrl(false); }
+        @Override public void removeUpdate(DocumentEvent e) { updateUrl(false); }
+    }
 
     /**
      * Displays the "Jump to" dialog.
@@ -72,18 +84,6 @@ public class JumpToAction extends JosmAction {
                               + "<br>"
                               + "</html>"),
                   BorderLayout.NORTH);
-
-        class OsmURLListener implements DocumentListener {
-            @Override public void changedUpdate(DocumentEvent e) { parseURL(); }
-            @Override public void insertUpdate(DocumentEvent e) { parseURL(); }
-            @Override public void removeUpdate(DocumentEvent e) { parseURL(); }
-        }
-
-        class OsmLonLatListener implements DocumentListener {
-            @Override public void changedUpdate(DocumentEvent e) { updateUrl(false); }
-            @Override public void insertUpdate(DocumentEvent e) { updateUrl(false); }
-            @Override public void removeUpdate(DocumentEvent e) { updateUrl(false); }
-        }
 
         OsmLonLatListener x = new OsmLonLatListener();
         lat.getDocument().addDocumentListener(x);
@@ -149,7 +149,7 @@ public class JumpToAction extends JosmAction {
                 for (String arg : args) {
                     int eq = arg.indexOf('=');
                     if (eq == -1 || !"zoom".equalsIgnoreCase(arg.substring(0, eq))) continue;
-    
+
                     zoomLvl = Integer.parseInt(arg.substring(eq + 1));
                     break;
                 }

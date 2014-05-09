@@ -4,7 +4,7 @@ package org.openstreetmap.josm.corrector;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Tag;
 
 /**
@@ -17,7 +17,7 @@ public class ReverseWayTagCorrectorTest {
      */
     @BeforeClass
     public static void setUp() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     /**

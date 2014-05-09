@@ -53,6 +53,7 @@ public class JOSMFixture {
         Main.platform.preStartupHook();
 
         Main.pref.init(false);
+        I18n.set(Main.pref.get("language", "en"));
 
         // init projection
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator

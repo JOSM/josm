@@ -17,6 +17,7 @@ import javax.swing.ImageIcon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -67,6 +68,9 @@ public abstract class StyleSource extends SourceEntry {
      */
     public abstract void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed);
 
+    /**
+     * Loads the style source.
+     */
     public abstract void loadStyleSource();
 
     /**
@@ -76,6 +80,14 @@ public abstract class StyleSource extends SourceEntry {
      * @see #closeSourceInputStream(InputStream)
      */
     public abstract InputStream getSourceInputStream() throws IOException;
+    
+    /**
+     * Returns a new {@code MirroredInputStream} to the local file containing style source (can be a text file or an archive).
+     * @return A new {@code MirroredInputStream} to the local file containing style source
+     * @throws IOException if any I/O error occurs.
+     * @since 7081
+     */
+    public abstract MirroredInputStream getMirroredInputStream() throws IOException;
 
     /**
      * Closes the source input stream previously returned by {@link #getSourceInputStream()} and other linked resources, if applicable.
@@ -151,6 +163,4 @@ public abstract class StyleSource extends SourceEntry {
     public void setLastMTime(long lastMTime) {
         this.lastMTime = lastMTime;
     }
-
-
 }

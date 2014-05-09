@@ -13,11 +13,9 @@ class JosmUserIdentityManagerTest {
 
 	final shouldFail = new GroovyTestCase().&shouldFail
 
-	private static JOSMFixture josmFixture
-
 	@BeforeClass
 	public static void initTestCase() {
-	    josmFixture = JOSMFixture.createFunctionalTestFixture()
+	    JOSMFixture.createUnitTestFixture().init()
 	}
 
 	@Test

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -73,8 +74,7 @@ public class SessionWriterTest {
      */
     @BeforeClass
     public static void setUpBeforeClass() {
-        Main.initApplicationPreferences();
-        Main.determinePlatformHook();
+        JOSMFixture.createUnitTestFixture().init();
         ProjectionPreference.setProjection();
         Main.toolbar = new ToolbarPreferences();
         new MainApplication();
