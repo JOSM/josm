@@ -4,13 +4,13 @@ import java.awt.Color
 
 import org.junit.Before
 import org.junit.Test
+import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.Main
-import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.TestUtils
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.OsmPrimitive
 import org.openstreetmap.josm.data.osm.Way
-import org.openstreetmap.josm.data.projection.Projections
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
@@ -34,8 +34,7 @@ class MapCSSParserTest {
 
     @Before
     public void setUp() throws Exception {
-        Main.initApplicationPreferences()
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Test
@@ -56,7 +55,7 @@ class MapCSSParserTest {
     @Test
     public void testClassCondition() throws Exception {
         def conditions = ((Selector.GeneralSelector) getParser("way[name=X].highway:closed").selector()).conds
-        assert conditions.get(0) instanceof Condition.KeyValueCondition
+        assert conditions.get(0) instanceof Condition.SimpleKeyValueCondition
         assert conditions.get(0).applies(getEnvironment("name", "X"))
         assert conditions.get(1) instanceof Condition.ClassCondition
         assert conditions.get(2) instanceof Condition.PseudoClassCondition
@@ -88,9 +87,8 @@ class MapCSSParserTest {
 
     @Test
     public void testEqualCondition() throws Exception {
-        def condition = (Condition.KeyValueCondition) getParser("[surface=paved]").condition(Condition.Context.PRIMITIVE)
-        assert condition instanceof Condition.KeyValueCondition
-        assert Condition.Op.EQ.equals(condition.op)
+        def condition = (Condition.SimpleKeyValueCondition) getParser("[surface=paved]").condition(Condition.Context.PRIMITIVE)
+        assert condition instanceof Condition.SimpleKeyValueCondition
         assert "surface".equals(condition.k)
         assert "paved".equals(condition.v)
         assert condition.applies(getEnvironment("surface", "paved"))
@@ -214,7 +212,7 @@ class MapCSSParserTest {
     }
 
     @Test
-    public void testTicket80711() throws Exception {
+    public void testTicket8071() throws Exception {
         def sheet = new MapCSSStyleSource("")
         getParser("*[rcn_ref], *[name] {text: concat(tag(rcn_ref), \" \", tag(name)); }").sheet(sheet)
         def mc = new MultiCascade()

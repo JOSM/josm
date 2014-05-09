@@ -1,10 +1,10 @@
 package org.openstreetmap.josm.data.validation.tests
 
-import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.TestUtils
 
 class LanesTest extends GroovyTestCase {
 
-    def lanes = new Lanes()
+    Lanes lanes = new Lanes()
 
     @Override
     void setUp() {

@@ -10,7 +10,7 @@ import java.util.Collection;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.projection.Projections;
 
 public class MergeSourceBuildingVisitorTest {
 
@@ -38,12 +37,11 @@ public class MergeSourceBuildingVisitorTest {
      */
     @BeforeClass
     public static void setUp() {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Test
-    public void test_Nodes() {
+    public void testNodes() {
         DataSet source = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(new LatLon(10.0,10.0));
@@ -78,7 +76,7 @@ public class MergeSourceBuildingVisitorTest {
 
 
     @Test
-    public void test_OneWay() {
+    public void testOneWay() {
         DataSet source = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -110,7 +108,7 @@ public class MergeSourceBuildingVisitorTest {
     }
 
     @Test
-    public void test_OneWay_NodesSelectedToo() {
+    public void testOneWayNodesSelectedToo() {
         DataSet source = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -142,7 +140,7 @@ public class MergeSourceBuildingVisitorTest {
     }
 
     @Test
-    public void test_OneWay_Incomplete() {
+    public void testOneWayIncomplete() {
         DataSet source = new DataSet();
         Way w1 = new Way(3);
         source.addPrimitive(w1);
@@ -160,7 +158,7 @@ public class MergeSourceBuildingVisitorTest {
     }
 
     @Test
-    public void test_OneRelation_ExistingMembersSelected() {
+    public void testOneRelationExistingMembersSelected() {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1, 1);
         Node n20 = new Node(20, 1);
@@ -219,7 +217,7 @@ public class MergeSourceBuildingVisitorTest {
     }
 
     @Test
-    public void test_OneRelation_ExistingMembersNotSelected() {
+    public void testOneRelationExistingMembersNotSelected() {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1, 1);
         Node n20 = new Node(20);
@@ -278,7 +276,7 @@ public class MergeSourceBuildingVisitorTest {
     }
 
     @Test
-    public void test_OneRelation_NewMembersNotSelected() {
+    public void testOneRelationNewMembersNotSelected() {
         DataSet source = new DataSet();
         Relation r1 = new Relation();
         r1.put("name", "r1");
@@ -345,7 +343,7 @@ public class MergeSourceBuildingVisitorTest {
     }
 
     @Test
-    public void test_OneRelation_Existing_Recursive() {
+    public void testOneRelationExistingRecursive() {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1, 1);
         r1.addMember(new RelationMember("relation-1",r1));
@@ -364,7 +362,7 @@ public class MergeSourceBuildingVisitorTest {
     }
 
     @Test
-    public void test_OneRelation_New_Recursive() {
+    public void testOneRelationNewRecursive() {
         DataSet source = new DataSet();
         Relation r1 = new Relation();
         r1.put("name", "r1");
@@ -384,7 +382,7 @@ public class MergeSourceBuildingVisitorTest {
     }
 
     @Test
-    public void test_TwoRelation_Existing_Circular() {
+    public void testTwoRelationExistingCircular() {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1, 1);
         source.addPrimitive(r1);

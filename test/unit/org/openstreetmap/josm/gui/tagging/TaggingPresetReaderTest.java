@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -27,7 +27,7 @@ public class TaggingPresetReaderTest {
      */
     @BeforeClass
     public static void setUp() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     /**

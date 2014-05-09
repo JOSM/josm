@@ -12,6 +12,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 
@@ -26,13 +27,12 @@ public class BugReportExceptionHandlerTest {
     @Before
     public void setUp() {
         Main.commandLineArgs = new String[0];
-        Main.determinePlatformHook();
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     /**
      * Test method for {@link org.openstreetmap.josm.tools.BugReportExceptionHandler#getBugReportUrl(java.lang.String)}.
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testGetBugReportUrl() throws IOException {
@@ -40,7 +40,7 @@ public class BugReportExceptionHandlerTest {
         String url = BugReportExceptionHandler.getBugReportUrl(report).toExternalForm();
         String prefix = Main.getJOSMWebsite()+"/josmticket?gdata=";
         assertTrue(url.startsWith(prefix));
-        
+
         String gdata = url.substring(prefix.length());
         // JAXB only provides support for "base64" decoding while we encode url in "base64url", so switch encoding, only for test purpose
         byte[] data = DatatypeConverter.parseBase64Binary(gdata.replace('-', '+').replace('_', '/'));

@@ -7,7 +7,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItem;
@@ -16,7 +16,7 @@ public class TagMergeItemTest {
 
     @BeforeClass
     public static void init() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Test

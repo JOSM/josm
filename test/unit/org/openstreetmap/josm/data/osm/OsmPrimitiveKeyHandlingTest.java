@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
@@ -17,7 +17,7 @@ public class OsmPrimitiveKeyHandlingTest {
 
     @BeforeClass
     public static void init() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     /**

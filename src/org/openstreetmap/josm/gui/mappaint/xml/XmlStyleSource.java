@@ -101,7 +101,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
 
     @Override
     public InputStream getSourceInputStream() throws IOException {
-        MirroredInputStream in = new MirroredInputStream(url, null, XML_STYLE_MIME_TYPES);
+        MirroredInputStream in = getMirroredInputStream();
         InputStream zip = in.findZipEntryInputStream("xml", "style");
         if (zip != null) {
             zipIcons = in.getFile();
@@ -110,6 +110,11 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             zipIcons = null;
             return in;
         }
+    }
+
+    @Override
+    public MirroredInputStream getMirroredInputStream() throws IOException {
+        return new MirroredInputStream(url, null, XML_STYLE_MIME_TYPES);
     }
 
     private static class WayPrototypesRecord {

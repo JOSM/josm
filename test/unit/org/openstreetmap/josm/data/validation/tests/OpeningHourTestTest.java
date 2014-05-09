@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -36,7 +36,7 @@ public class OpeningHourTestTest {
      */
     @Before
     public void setUp() throws Exception {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
         OPENING_HOUR_TEST.initialize();
     }
 
@@ -134,7 +134,7 @@ public class OpeningHourTestTest {
     public void testCheckOpeningHourSyntaxTicket9367() {
         final String key = "opening_hours";
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getSeverity(), is(Severity.WARNING));
-        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getMessage(), 
+        assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getMessage(),
                 is(key + " - Mo,Tu 04-17 <--- (Time range without minutes specified. Not very explicit! Please use this syntax instead e.g. \"12:00-14:00\".)"));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getPrettifiedValue(), is("Mo,Tu 04:00-17:00"));
     }

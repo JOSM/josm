@@ -1,13 +1,14 @@
 package org.openstreetmap.josm.data
 
-import org.openstreetmap.josm.Main
-
 import java.awt.Color
+
+import org.openstreetmap.josm.JOSMFixture
+import org.openstreetmap.josm.Main
 
 class PreferencesTest extends GroovyTestCase {
     @Override
     void setUp() {
-        Main.initApplicationPreferences()
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     void testColorName() {

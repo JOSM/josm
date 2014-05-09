@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -119,16 +119,16 @@ public class ProjectionRegressionTest {
                     continue;
                 }
                 TestData next = new TestData();
-    
+
                 Pair<Double,Double> ll = readLine("ll", in.readLine());
                 Pair<Double,Double> en = readLine("en", in.readLine());
                 Pair<Double,Double> ll2 = readLine("ll2", in.readLine());
-    
+
                 next.code = line;
                 next.ll = new LatLon(ll.a, ll.b);
                 next.en = new EastNorth(en.a, en.b);
                 next.ll2 = new LatLon(ll2.a, ll2.b);
-    
+
                 result.add(next);
             }
             return result;
@@ -149,7 +149,7 @@ public class ProjectionRegressionTest {
      */
     @BeforeClass
     public static void setUp() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Test

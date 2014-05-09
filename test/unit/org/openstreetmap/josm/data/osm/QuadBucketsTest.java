@@ -13,6 +13,7 @@ import org.fest.reflect.reference.TypeRef;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -23,7 +24,7 @@ public class QuadBucketsTest {
 
     @BeforeClass
     public static void init() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     private void removeAllTest(DataSet ds) {
@@ -77,11 +78,11 @@ public class QuadBucketsTest {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         try (InputStream fis = new FileInputStream("data_nodist/restriction.osm")) {
             DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
-    
+
             for (Node n: ds.getNodes()) {
                 n.setCoor(new LatLon(10, 10));
             }
-    
+
             removeAllTest(ds);
         }
     }

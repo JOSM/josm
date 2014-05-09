@@ -241,20 +241,24 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener{
     public void preferenceChanged(PreferenceChangeEvent evt) {
         switch (evt.getKey()) {
         case "osm-server.username":
-            if (!(evt.getNewValue() instanceof StringSetting)) return;
-            String newUserName = ((StringSetting) evt.getNewValue()).getValue();
+            String newUserName = null;
+            if (evt.getNewValue() instanceof StringSetting) {
+                newUserName = ((StringSetting) evt.getNewValue()).getValue();
+            }
             if (newUserName == null || newUserName.trim().isEmpty()) {
                 setAnonymous();
             } else {
-                if (! newUserName.equals(userName)) {
+                if (!newUserName.equals(userName)) {
                     setPartiallyIdentified(newUserName);
                 }
             }
             return;
 
         case "osm-server.url":
-            if (!(evt.getNewValue() instanceof StringSetting)) return;
-            String newUrl = ((StringSetting) evt.getNewValue()).getValue();
+            String newUrl = null;
+            if (evt.getNewValue() instanceof StringSetting) {
+                newUrl = ((StringSetting) evt.getNewValue()).getValue();
+            }
             if (newUrl == null || newUrl.trim().isEmpty()) {
                 setAnonymous();
             } else if (isFullyIdentified()) {

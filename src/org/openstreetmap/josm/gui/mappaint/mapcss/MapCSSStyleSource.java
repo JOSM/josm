@@ -150,13 +150,13 @@ public class MapCSSStyleSource extends StyleSource {
             }
         }
     }
-    
+
     @Override
     public InputStream getSourceInputStream() throws IOException {
         if (css != null) {
             return new ByteArrayInputStream(css.getBytes(Utils.UTF_8));
         }
-        MirroredInputStream in = new MirroredInputStream(url, null, MAPCSS_STYLE_MIME_TYPES);
+        MirroredInputStream in = getMirroredInputStream();
         if (isZip) {
             File file = in.getFile();
             Utils.close(in);
@@ -169,6 +169,11 @@ public class MapCSSStyleSource extends StyleSource {
             zipIcons = null;
             return in;
         }
+    }
+
+    @Override
+    public MirroredInputStream getMirroredInputStream() throws IOException {
+        return new MirroredInputStream(url, null, MAPCSS_STYLE_MIME_TYPES);
     }
 
     @Override

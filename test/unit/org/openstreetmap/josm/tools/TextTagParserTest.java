@@ -8,7 +8,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 
 public class TextTagParserTest {
 
@@ -17,7 +17,7 @@ public class TextTagParserTest {
      */
     @BeforeClass
     public static void setUp() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Test

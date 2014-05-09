@@ -438,13 +438,10 @@ public class OsmReader extends AbstractReader {
             current.setTimestamp(DateUtils.fromString(time));
         }
 
-        // user attribute added in 0.4 API
         String user = parser.getAttributeValue(null, "user");
-        // uid attribute added in 0.6 API
         String uid = parser.getAttributeValue(null, "uid");
         current.setUser(createUser(uid, user));
 
-        // visible attribute added in 0.4 API
         String visible = parser.getAttributeValue(null, "visible");
         if (visible != null) {
             current.setVisible(Boolean.parseBoolean(visible));
@@ -473,7 +470,6 @@ public class OsmReader extends AbstractReader {
             }
         } else {
             // version expected for OSM primitives with an id assigned by the server (id > 0), since API 0.6
-            //
             if (!current.isNew() && ds.getVersion() != null && "0.6".equals(ds.getVersion())) {
                 throwException(tr("Missing attribute ''version'' on OSM primitive with ID {0}.", Long.toString(current.getUniqueId())));
             }
@@ -496,7 +492,8 @@ public class OsmReader extends AbstractReader {
         } else {
             try {
                 current.setChangesetId(Integer.parseInt(v));
-            } catch(NumberFormatException e) {
+            } catch (IllegalArgumentException e) {
+                Main.debug(e.getMessage());
                 if (current.isNew()) {
                     // for a new primitive we just log a warning
                     Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.getUniqueId()));
@@ -505,8 +502,12 @@ public class OsmReader extends AbstractReader {
                     // for an existing primitive this is a problem
                     throwException(tr("Illegal value for attribute ''changeset''. Got {0}.", v), e);
                 }
+            } catch (IllegalStateException e) {
+                // thrown for positive changeset id on new primitives
+                Main.info(e.getMessage());
+                current.setChangesetId(0);
             }
-            if (current.getChangesetId() <=0) {
+            if (current.getChangesetId() <= 0) {
                 if (current.isNew()) {
                     // for a new primitive we just log a warning
                     Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.getUniqueId()));
