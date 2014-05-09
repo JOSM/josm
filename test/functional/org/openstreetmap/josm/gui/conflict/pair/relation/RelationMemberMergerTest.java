@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+import org.junit.Ignore;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -12,6 +13,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
+@Ignore
 public class RelationMemberMergerTest extends JFrame {
 
     private RelationMemberMerger merger;

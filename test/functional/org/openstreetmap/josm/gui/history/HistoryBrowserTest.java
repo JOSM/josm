@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -17,6 +18,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 
+@Ignore
 public class HistoryBrowserTest extends JFrame {
 
     static private Logger logger = Logger.getLogger(HistoryBrowserTest.class.getName());

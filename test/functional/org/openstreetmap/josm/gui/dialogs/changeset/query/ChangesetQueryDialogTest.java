@@ -1,8 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.changeset.query;
 
+import org.junit.Ignore;
+
 import javax.swing.JFrame;
 
+@Ignore
 public class ChangesetQueryDialogTest extends JFrame {
 
     private ChangesetQueryDialog dialog;
