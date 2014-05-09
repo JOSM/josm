@@ -766,7 +766,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
             try {
                 reversedDirectionKeys = SearchCompiler.compile(reversedDirectionDefault, false, false);
             } catch (ParseError e2) {
-                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage());
+                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
             }
         }
         try {
@@ -777,7 +777,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
             try {
                 directionKeys = SearchCompiler.compile(directionDefault, false, false);
             } catch (ParseError e2) {
-                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage());
+                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
             }
         }
     }
