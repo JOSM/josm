@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -558,7 +559,7 @@ public class SessionReader {
     private InputStream createInputStream(File sessionFile, boolean zip) throws IOException, IllegalDataException {
         if (zip) {
             try {
-                zipFile = new ZipFile(sessionFile);
+                zipFile = new ZipFile(sessionFile, StandardCharsets.UTF_8);
                 return getZipInputStream(zipFile);
             } catch (ZipException ze) {
                 throw new IOException(ze);

@@ -597,7 +597,7 @@ public class ImageProvider {
     }
 
     private static ImageResource getIfAvailableZip(String fullName, File archive, String inArchiveDir, ImageType type) {
-        try (ZipFile zipFile = new ZipFile(archive)) {
+        try (ZipFile zipFile = new ZipFile(archive, StandardCharsets.UTF_8)) {
             if (inArchiveDir == null || ".".equals(inArchiveDir)) {
                 inArchiveDir = "";
             } else if (!inArchiveDir.isEmpty()) {

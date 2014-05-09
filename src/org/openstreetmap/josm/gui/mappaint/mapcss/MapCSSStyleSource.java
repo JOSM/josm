@@ -161,7 +161,7 @@ public class MapCSSStyleSource extends StyleSource {
         if (isZip) {
             File file = in.getFile();
             Utils.close(in);
-            zipFile = new ZipFile(file);
+            zipFile = new ZipFile(file, StandardCharsets.UTF_8);
             zipIcons = file;
             ZipEntry zipEntry = zipFile.getEntry(zipEntryPath);
             return zipFile.getInputStream(zipEntry);

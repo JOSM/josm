@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -38,7 +39,7 @@ public class MirroredInputStream extends InputStream {
 
     /**
      * Constructs an input stream from a given filename, URL or internal resource.
-     * 
+     *
      * @param name can be:<ul>
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
@@ -53,7 +54,7 @@ public class MirroredInputStream extends InputStream {
 
     /**
      * Constructs an input stream from a given filename, URL or internal resource.
-     * 
+     *
      * @param name can be:<ul>
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
@@ -69,7 +70,7 @@ public class MirroredInputStream extends InputStream {
 
     /**
      * Constructs an input stream from a given filename, URL or internal resource.
-     * 
+     *
      * @param name can be:<ul>
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
@@ -85,7 +86,7 @@ public class MirroredInputStream extends InputStream {
 
     /**
      * Constructs an input stream from a given filename, URL or internal resource.
-     * 
+     *
      * @param name can be:<ul>
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
@@ -102,7 +103,7 @@ public class MirroredInputStream extends InputStream {
 
     /**
      * Constructs an input stream from a given filename, URL or internal resource.
-     * 
+     *
      * @param name can be:<ul>
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
@@ -120,7 +121,7 @@ public class MirroredInputStream extends InputStream {
 
     /**
      * Constructs an input stream from a given filename, URL or internal resource.
-     * 
+     *
      * @param name can be:<ul>
      *  <li>relative or absolute file name</li>
      *  <li>{@code file:///SOME/FILE} the same as above</li>
@@ -199,7 +200,7 @@ public class MirroredInputStream extends InputStream {
             return null;
         Pair<String, InputStream> res = null;
         try {
-            ZipFile zipFile = new ZipFile(file);
+            ZipFile zipFile = new ZipFile(file, StandardCharsets.UTF_8);
             ZipEntry resentry = null;
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -238,7 +239,7 @@ public class MirroredInputStream extends InputStream {
     public static void cleanup(String name) {
         cleanup(name, null);
     }
-    
+
     public static void cleanup(String name, String destDir) {
         URL url;
         try {
@@ -348,7 +349,7 @@ public class MirroredInputStream extends InputStream {
      * is going from a http to a https URL, see <a href="https://bugs.openjdk.java.net/browse/JDK-4620571">bug report</a>.
      * <p>
      * This can causes problems when downloading from certain GitHub URLs.
-     * 
+     *
      * @param downloadUrl The resource URL to download
      * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Can be {@code null}
      * @return The HTTP connection effectively linked to the resource, after all potential redirections
