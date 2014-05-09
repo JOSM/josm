@@ -1,11 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -214,11 +213,11 @@ public class LineElemStyle extends ElemStyle {
         Integer cap = null;
         Keyword capKW = c.get(type.prefix + "linecap", null, Keyword.class);
         if (capKW != null) {
-            if (equal(capKW.val, "none")) {
+            if ("none".equals(capKW.val)) {
                 cap = BasicStroke.CAP_BUTT;
-            } else if (equal(capKW.val, "round")) {
+            } else if ("round".equals(capKW.val)) {
                 cap = BasicStroke.CAP_ROUND;
-            } else if (equal(capKW.val, "square")) {
+            } else if ("square".equals(capKW.val)) {
                 cap = BasicStroke.CAP_SQUARE;
             }
         }
@@ -229,11 +228,11 @@ public class LineElemStyle extends ElemStyle {
         Integer join = null;
         Keyword joinKW = c.get(type.prefix + "linejoin", null, Keyword.class);
         if (joinKW != null) {
-            if (equal(joinKW.val, "round")) {
+            if ("round".equals(joinKW.val)) {
                 join = BasicStroke.JOIN_ROUND;
-            } else if (equal(joinKW.val, "miter")) {
+            } else if ("miter".equals(joinKW.val)) {
                 join = BasicStroke.JOIN_MITER;
-            } else if (equal(joinKW.val, "bevel")) {
+            } else if ("bevel".equals(joinKW.val)) {
                 join = BasicStroke.JOIN_BEVEL;
             }
         }
@@ -328,10 +327,10 @@ public class LineElemStyle extends ElemStyle {
         if (!super.equals(obj))
             return false;
         final LineElemStyle other = (LineElemStyle) obj;
-        return  equal(line, other.line) &&
-            equal(color, other.color) &&
-            equal(dashesLine, other.dashesLine) &&
-            equal(dashesBackground, other.dashesBackground) &&
+        return Objects.equals(line, other.line) &&
+            Objects.equals(color, other.color) &&
+            Objects.equals(dashesLine, other.dashesLine) &&
+            Objects.equals(dashesBackground, other.dashesBackground) &&
             offset == other.offset &&
             realWidth == other.realWidth;
     }

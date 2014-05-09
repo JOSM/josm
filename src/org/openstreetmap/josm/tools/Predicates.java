@@ -1,9 +1,10 @@
 package org.openstreetmap.josm.tools;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-
 import java.util.Collection;
+import java.util.Objects;
 import java.util.regex.Pattern;
+
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * Utility class for creating {@link Predicate}s.
@@ -32,7 +33,7 @@ public final class Predicates {
         return new Predicate<T>() {
             @Override
             public boolean evaluate(T obj) {
-                return Utils.equal(obj, ref);
+                return Objects.equals(obj, ref);
             }
         };
     }

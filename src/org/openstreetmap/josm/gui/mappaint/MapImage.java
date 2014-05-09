@@ -1,11 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 import javax.swing.ImageIcon;
 
@@ -18,9 +17,9 @@ import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
 import org.openstreetmap.josm.tools.Utils;
 
 public class MapImage {
-    
+
     private static final int MAX_SIZE = 48;
-    
+
     /**
      * ImageIcon can change while the image is loading.
      */
@@ -157,7 +156,7 @@ public class MapImage {
     public BoxProvider getBoxProvider() {
         return new MapImageBoxProvider();
     }
-    
+
     /**
      * Returns the really displayed node icon for this {@code MapImage}.
      * @param disabled {@code} true to request disabled version, {@code false} for the standard version
@@ -173,9 +172,9 @@ public class MapImage {
             return image;
         }
     }
-    
+
     private boolean mustRescale(Image image) {
-        return ((width  == -1 && image.getWidth(null) > MAX_SIZE) 
+        return ((width  == -1 && image.getWidth(null) > MAX_SIZE)
              && (height == -1 && image.getHeight(null) > MAX_SIZE));
     }
 
@@ -186,8 +185,8 @@ public class MapImage {
         final MapImage other = (MapImage) obj;
         // img changes when image is fully loaded and can't be used for equality check.
         return  alpha == other.alpha &&
-                equal(name, other.name) &&
-                equal(source, other.source) &&
+                Objects.equals(name, other.name) &&
+                Objects.equals(source, other.source) &&
                 width == other.width &&
                 height == other.height;
     }

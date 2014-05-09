@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
@@ -213,7 +214,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
          */
         private boolean insertNewDefaults(List<SourceEntry> list) {
             boolean changed = false;
-            
+
             boolean addedMapcssStyle = false; // Migration code can be removed ~ Nov. 2014
 
             Collection<String> knownDefaults = new TreeSet<>(Main.pref.getCollection("mappaint.style.known-defaults"));
@@ -225,7 +226,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
                         new Predicate<SourceEntry>() {
                     @Override
                     public boolean evaluate(SourceEntry se) {
-                        return Utils.equal(def.url, se.url);
+                        return Objects.equals(def.url, se.url);
                     }
                 });
                 if (i == -1 && !knownDefaults.contains(def.url)) {
@@ -233,7 +234,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
                     insertionIdx++;
                     changed = true;
                     /* Migration code can be removed ~ Nov. 2014 */
-                    if (Utils.equal(def.url, "resource://styles/standard/elemstyles.mapcss")) {
+                    if ("resource://styles/standard/elemstyles.mapcss".equals(def.url)) {
                         addedMapcssStyle = true;
                     }
                 } else {
@@ -256,7 +257,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
                     SourceEntry josmXml = Utils.find(list, new Predicate<SourceEntry>() {
                         @Override
                         public boolean evaluate(SourceEntry se) {
-                            return Utils.equal(se.url, "resource://styles/standard/elemstyles.xml");
+                            return "resource://styles/standard/elemstyles.xml".equals(se.url);
                         }
                     });
                     if (josmXml != null) {
@@ -265,7 +266,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
                     Main.pref.put("mappaint.style.migration.changedXmlName", true);
                 }
             }
-            
+
             return changed;
         }
 

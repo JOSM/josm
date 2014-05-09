@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -180,7 +181,7 @@ public abstract class Main {
     /**
      * The commands undo/redo handler.
      */
-    public UndoRedoHandler undoRedo = new UndoRedoHandler();
+    public final UndoRedoHandler undoRedo = new UndoRedoHandler();
 
     /**
      * The progress monitor being currently displayed.
@@ -579,7 +580,6 @@ public abstract class Main {
 
         toolbar.control.updateUI();
         contentPanePrivate.updateUI();
-
     }
 
     private abstract class InitializationTask implements Callable<Void> {
@@ -1122,7 +1122,7 @@ public abstract class Main {
                 panel.add(link, gbc);
                 final String EXIT = tr("Exit JOSM");
                 final String CONTINUE = tr("Continue, try anyway");
-                int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION, 
+                int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION,
                         JOptionPane.ERROR_MESSAGE, null, new String[] {EXIT, CONTINUE}, EXIT);
                 if (ret == 0) {
                     System.exit(0);
@@ -1177,7 +1177,7 @@ public abstract class Main {
 
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if (newValue == null ^ oldValue == null
-                || (newValue != null && oldValue != null && !Utils.equal(newValue.toCode(), oldValue.toCode()))) {
+                || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
 
             synchronized(Main.class) {
                 Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();

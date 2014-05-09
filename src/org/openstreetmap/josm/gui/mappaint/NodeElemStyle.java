@@ -1,13 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -27,7 +26,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class NodeElemStyle extends ElemStyle implements StyleKeys {
     public final MapImage mapImage;
     public final Symbol symbol;
-    
+
     private Image enabledNodeIcon;
     private Image disabledNodeIcon;
 
@@ -62,9 +61,9 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
             final Symbol other = (Symbol) obj;
             return  symbol == other.symbol &&
                     size == other.size &&
-                    equal(stroke, other.stroke) &&
-                    equal(strokeColor, other.strokeColor) &&
-                    equal(fillColor, other.fillColor);
+                    Objects.equals(stroke, other.stroke) &&
+                    Objects.equals(strokeColor, other.strokeColor) &&
+                    Objects.equals(fillColor, other.fillColor);
         }
 
         @Override
@@ -169,23 +168,23 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         Keyword shapeKW = c.get("symbol-shape", null, Keyword.class);
         if (shapeKW == null)
             return null;
-        if (equal(shapeKW.val, "square")) {
+        if ("square".equals(shapeKW.val)) {
             shape = SymbolShape.SQUARE;
-        } else if (equal(shapeKW.val, "circle")) {
+        } else if ("circle".equals(shapeKW.val)) {
             shape = SymbolShape.CIRCLE;
-        } else if (equal(shapeKW.val, "triangle")) {
+        } else if ("triangle".equals(shapeKW.val)) {
             shape = SymbolShape.TRIANGLE;
-        } else if (equal(shapeKW.val, "pentagon")) {
+        } else if ("pentagon".equals(shapeKW.val)) {
             shape = SymbolShape.PENTAGON;
-        } else if (equal(shapeKW.val, "hexagon")) {
+        } else if ("hexagon".equals(shapeKW.val)) {
             shape = SymbolShape.HEXAGON;
-        } else if (equal(shapeKW.val, "heptagon")) {
+        } else if ("heptagon".equals(shapeKW.val)) {
             shape = SymbolShape.HEPTAGON;
-        } else if (equal(shapeKW.val, "octagon")) {
+        } else if ("octagon".equals(shapeKW.val)) {
             shape = SymbolShape.OCTAGON;
-        } else if (equal(shapeKW.val, "nonagon")) {
+        } else if ("nonagon".equals(shapeKW.val)) {
             shape = SymbolShape.NONAGON;
-        } else if (equal(shapeKW.val, "decagon")) {
+        } else if ("decagon".equals(shapeKW.val)) {
             shape = SymbolShape.DECAGON;
         } else
             return null;
@@ -355,9 +354,9 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
 
         final NodeElemStyle other = (NodeElemStyle) obj;
         // we should get the same image object due to caching
-        if (!equal(mapImage, other.mapImage))
+        if (!Objects.equals(mapImage, other.mapImage))
             return false;
-        if (!equal(symbol, other.symbol))
+        if (!Objects.equals(symbol, other.symbol))
             return false;
         return true;
     }

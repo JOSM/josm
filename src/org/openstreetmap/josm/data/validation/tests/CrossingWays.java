@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -24,7 +25,6 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.ValUtil;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tests if there are segments that crosses in the same layer
@@ -70,10 +70,10 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            if (!Utils.equal(getLayer(w1), getLayer(w2))) {
+            if (!Objects.equals(getLayer(w1), getLayer(w2))) {
                 return true;
             }
-            if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Utils.equal(w1.get("level"), w2.get("level"))) {
+            if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Objects.equals(w1.get("level"), w2.get("level"))) {
                 return true;
             }
             if (isSubwayOrTram(w2)) {
@@ -128,7 +128,7 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            return !Utils.equal(w1.get("boundary"), w2.get("boundary"));
+            return !Objects.equals(w1.get("boundary"), w2.get("boundary"));
         }
 
         @Override

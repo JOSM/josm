@@ -1,10 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
@@ -89,11 +88,10 @@ public class TextElement implements StyleKeys {
             return new TagLookupCompositionStrategy(tkr.key);
 
         /*
-         * Check whether the label composition strategy is given by
-         * a keyword
+         * Check whether the label composition strategy is given by a keyword
          */
         Keyword keyword = c.get(TEXT, null, Keyword.class, true);
-        if (equal(keyword, Keyword.AUTO))
+        if (Keyword.AUTO.equals(keyword))
             return AUTO_LABEL_COMPOSITION_STRATEGY;
 
         /*
@@ -211,12 +209,12 @@ public class TextElement implements StyleKeys {
         if (obj == null || getClass() != obj.getClass())
             return false;
         final TextElement other = (TextElement) obj;
-        return  equal(labelCompositionStrategy, other.labelCompositionStrategy) &&
-        equal(font, other.font) &&
+        return Objects.equals(labelCompositionStrategy, other.labelCompositionStrategy) &&
+        Objects.equals(font, other.font) &&
         xOffset == other.xOffset &&
         yOffset == other.yOffset &&
-        equal(color, other.color) &&
-        equal(haloRadius, other.haloRadius) &&
-        equal(haloColor, other.haloColor);
+        Objects.equals(color, other.color) &&
+        Objects.equals(haloRadius, other.haloRadius) &&
+        Objects.equals(haloColor, other.haloColor);
     }
 }

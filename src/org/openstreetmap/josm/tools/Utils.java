@@ -173,15 +173,6 @@ public final class Utils {
         return Math.max(Math.max(a, b), Math.max(c, d));
     }
 
-    /**
-     * for convenience: test whether 2 objects are either both null or a.equals(b)
-     */
-    public static <T> boolean equal(T a, T b) {
-        if (a == b)
-            return true;
-        return (a != null && a.equals(b));
-    }
-
     public static void ensure(boolean condition, String message, Object...data) {
         if (!condition)
             throw new AssertionError(

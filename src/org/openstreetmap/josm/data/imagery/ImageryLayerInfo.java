@@ -7,12 +7,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -121,7 +121,7 @@ public class ImageryLayerInfo {
 
     // some additional checks to respect extended URLs in preferences (legacy workaround)
     private boolean isSimilar(String a, String b) {
-        return Utils.equal(a, b) || (a != null && b != null && !a.isEmpty() && !b.isEmpty() && (a.contains(b) || b.contains(a)));
+        return Objects.equals(a, b) || (a != null && b != null && !a.isEmpty() && !b.isEmpty() && (a.contains(b) || b.contains(a)));
     }
 
     public void add(ImageryInfo info) {

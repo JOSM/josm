@@ -3,12 +3,12 @@ package org.openstreetmap.josm.actions.search;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 
@@ -206,7 +206,7 @@ public class PushbackTokenizer {
 
     public boolean readIfEqual(Token token) {
         Token nextTok = nextToken();
-        if (equal(nextTok, token))
+        if (Objects.equals(nextTok, token))
             return true;
         currentToken = nextTok;
         return false;

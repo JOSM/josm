@@ -1,10 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.text.MessageFormat;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -87,9 +86,9 @@ public abstract class Condition {
                 return false;
             switch (this) {
             case EQ:
-                return equal(testString, prototypeString);
+                return Objects.equals(testString, prototypeString);
             case NEQ:
-                return !equal(testString, prototypeString);
+                return !Objects.equals(testString, prototypeString);
             case REGEX:
             case NREGEX:
                 final boolean contains = Pattern.compile(prototypeString).matcher(testString).find();
@@ -97,7 +96,7 @@ public abstract class Condition {
             case ONE_OF:
                 String[] parts = testString.split(";");
                 for (String part : parts) {
-                    if (equal(prototypeString, part.trim()))
+                    if (Objects.equals(prototypeString, part.trim()))
                         return true;
                 }
                 return false;

@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -132,9 +130,9 @@ public final class Cascade implements Cloneable {
             return (Boolean) o;
         if (o instanceof Keyword) {
             String s = ((Keyword) o).val;
-            if (equal(s, "true") || equal(s, "yes"))
+            if ("true".equals(s) || "yes".equals(s))
                 return true;
-            if (equal(s, "false") || equal(s, "no"))
+            if ("false".equals(s) || "no".equals(s))
                 return false;
         }
         return null;

@@ -1,13 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.imagery;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -175,7 +174,7 @@ public class ImageryReader {
                 newState = State.UNKNOWN;
             }
             states.push(newState);
-            if (newState == State.UNKNOWN && equal(atts.getValue("mandatory"), "true")) {
+            if (newState == State.UNKNOWN && "true".equals(atts.getValue("mandatory"))) {
                 skipEntry = true;
             }
             return;
@@ -207,7 +206,7 @@ public class ImageryReader {
                 case "type":
                     boolean found = false;
                     for (ImageryType type : ImageryType.values()) {
-                        if (equal(accumulator.toString(), type.getTypeString())) {
+                        if (Objects.equals(accumulator.toString(), type.getTypeString())) {
                             entry.setImageryType(type);
                             found = true;
                             break;

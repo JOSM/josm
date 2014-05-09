@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
@@ -41,9 +39,9 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
 
         LineImageAlignment align = LineImageAlignment.CENTER;
         Keyword alignKW = c.get(REPEAT_IMAGE_ALIGN, Keyword.CENTER, Keyword.class);
-        if (equal(alignKW.val, "top")) {
+        if ("top".equals(alignKW.val)) {
             align = LineImageAlignment.TOP;
-        } else if (equal(alignKW.val, "bottom")) {
+        } else if ("bottom".equals(alignKW.val)) {
             align = LineImageAlignment.BOTTOM;
         }
 

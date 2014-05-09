@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.ElementType;
@@ -593,13 +591,13 @@ public final class ExpressionFactory {
      * returns {@link NullExpression#INSTANCE}.
      */
     public static Expression createFunctionExpression(String name, List<Expression> args) {
-        if (equal(name, "cond") && args.size() == 3)
+        if ("cond".equals(name) && args.size() == 3)
             return new CondOperator(args.get(0), args.get(1), args.get(2));
-        else if (equal(name, "and"))
+        else if ("and".equals(name))
             return new AndOperator(args);
-        else if (equal(name, "or"))
+        else if ("or".equals(name))
             return new OrOperator(args);
-        else if (equal(name, "length") && args.size() == 1)
+        else if ("length".equals(name) && args.size() == 1)
             return new LengthFunction(args.get(0));
 
         for (Method m : arrayFunctions) {

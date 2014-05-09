@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Caches styles for a single primitive.
@@ -90,7 +90,7 @@ public final class StyleCache {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             final StyleList other = (StyleList) obj;
-            return Utils.equal(lst, other.lst);
+            return Objects.equals(lst, other.lst);
         }
 
         @Override
