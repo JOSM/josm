@@ -1,10 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.tags;
 
+import org.junit.Ignore;
+
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+@Ignore
 public class TagMergerTest extends JFrame {
 
     private TagMerger tagMerger;

@@ -5,11 +5,13 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+import org.junit.Ignore;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
+@Ignore
 public class NodeListMergerTest extends JFrame {
 
 

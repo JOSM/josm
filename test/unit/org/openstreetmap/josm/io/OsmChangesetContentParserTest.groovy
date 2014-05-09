@@ -17,17 +17,21 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
 class OsmChangesetContentParserTest {
 	final shouldFail = new GroovyTestCase().&shouldFail
-	
+
 	@Test
 	public void test_Constructor() {
 	    OsmChangesetContentParser parser 
 		
 		// should be OK 
 		parser = new OsmChangesetContentParser(new ByteArrayInputStream("".bytes))
-		
-		shouldFail(IllegalArgumentException) {
-			parser = new OsmChangesetContentParser(null)
-		}
+
+        shouldFail(IllegalArgumentException) {
+            parser = new OsmChangesetContentParser((String) null)
+        }
+
+        shouldFail(IllegalArgumentException) {
+            parser = new OsmChangesetContentParser((InputStream) null)
+        }
 	}
 	
 	

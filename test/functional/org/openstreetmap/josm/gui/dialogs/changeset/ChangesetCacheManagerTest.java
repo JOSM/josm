@@ -1,8 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.changeset;
 
+import org.junit.Ignore;
+
 import javax.swing.JFrame;
 
+@Ignore
 public class ChangesetCacheManagerTest extends JFrame {
 
     private ChangesetCacheManager manager;
