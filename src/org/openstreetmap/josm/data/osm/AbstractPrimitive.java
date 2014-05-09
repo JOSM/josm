@@ -13,10 +13,9 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.openstreetmap.josm.tools.Utils;
 
 /**
 * Abstract class to represent common features of the datatypes primitives.
@@ -729,7 +728,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * @return true iff primitive contains a tag consisting of {@code key} and {@code value}.
      */
     public boolean hasTag(String key, String value) {
-        return Utils.equal(value, get(key));
+        return Objects.equals(value, get(key));
     }
 
     /**

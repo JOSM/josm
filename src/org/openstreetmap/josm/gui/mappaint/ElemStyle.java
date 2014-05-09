@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,9 +64,9 @@ public abstract class ElemStyle implements StyleKeys {
                 return width;
         } else {
             Keyword widthKW = c.get(key, null, Keyword.class, true);
-            if (equal(widthKW, Keyword.THINNEST))
+            if (Keyword.THINNEST.equals(widthKW))
                 return 0f;
-            if (equal(widthKW, Keyword.DEFAULT))
+            if (Keyword.DEFAULT.equals(widthKW))
                 return (float) MapPaintSettings.INSTANCE.getDefaultSegmentWidth();
             if (relativeTo != null) {
                 RelativeFloat width_rel = c.get(key, null, RelativeFloat.class, true);
@@ -92,7 +90,7 @@ public abstract class ElemStyle implements StyleKeys {
     private static volatile String DEFAULT_FONT_NAME = null;
     private static volatile Float DEFAULT_FONT_SIZE = null;
     private static final Object lock = new Object();
-    
+
     // thread save access (double-checked locking)
     private static Float getDefaultFontSize() {
         Float s = DEFAULT_FONT_SIZE;

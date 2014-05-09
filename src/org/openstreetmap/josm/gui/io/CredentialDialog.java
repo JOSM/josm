@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -37,14 +38,13 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class CredentialDialog extends JDialog {
 
     public static CredentialDialog getOsmApiCredentialDialog(String username, String password, String host, String saveUsernameAndPasswordCheckboxText) {
         CredentialDialog dialog = new CredentialDialog(saveUsernameAndPasswordCheckboxText);
-        if (Utils.equal(OsmApi.getOsmApi().getHost(), host)) {
+        if (Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
             dialog.prepareForOsmApiCredentials(username, password);
         } else {
             dialog.prepareForOtherHostCredentials(username, password, host);

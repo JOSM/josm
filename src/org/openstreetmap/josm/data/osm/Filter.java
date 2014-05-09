@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.Preferences.pref;
@@ -25,7 +23,7 @@ public class Filter extends SearchSetting {
     public Filter() {
         super("", SearchMode.add, false, false, false);
     }
-    
+
     public Filter(String text, SearchMode mode, boolean caseSensitive,
             boolean regexSearch, boolean allElements) {
         super(text, mode, caseSensitive, regexSearch, allElements);
@@ -33,13 +31,13 @@ public class Filter extends SearchSetting {
 
     public Filter(FilterPreferenceEntry e) {
         super(e.text, SearchMode.add, false, false, false);
-        if (equal(e.mode, "replace")) {
+        if ("replace".equals(e.mode)) {
             mode = SearchMode.replace;
-        } else if (equal(e.mode, "add")) {
+        } else if ("add".equals(e.mode)) {
             mode = SearchMode.add;
-        } else if (equal(e.mode, "remove")) {
+        } else if ("remove".equals(e.mode)) {
             mode = SearchMode.remove;
-        } else  if (equal(e.mode, "in_selection")) {
+        } else  if ("in_selection".equals(e.mode)) {
             mode = SearchMode.in_selection;
         }
         caseSensitive = e.case_sensitive;

@@ -4,12 +4,12 @@ package org.openstreetmap.josm.io.auth;
 import java.awt.Component;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * CredentialManager is a factory for the single credential agent used.
@@ -71,7 +71,7 @@ public class CredentialsManager implements CredentialsAgent {
         CheckParameterUtil.ensureParameterNotNull(delegate, "delegate");
         this.delegate = delegate;
     }
-    
+
     /**
      * Returns type of credentials agent backing this credentials manager.
      * @return The type of credentials agent
@@ -105,7 +105,7 @@ public class CredentialsManager implements CredentialsAgent {
         }
         if (username == null) return null;
         username = username.trim();
-        return Utils.equal(username, "") ? null : username;
+        return username.isEmpty() ? null : username;
     }
 
     @Override
@@ -115,7 +115,7 @@ public class CredentialsManager implements CredentialsAgent {
 
     @Override
     public void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException {
-        if (requestorType == RequestorType.SERVER && Utils.equal(OsmApi.getOsmApi().getHost(), host)) {
+        if (requestorType == RequestorType.SERVER && Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
             String username = credentials.getUserName();
             if(username != null && !username.trim().isEmpty()) {
                 JosmUserIdentityManager.getInstance().setPartiallyIdentified(username);

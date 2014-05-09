@@ -1,16 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.Color;
 import java.awt.Rectangle;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
-import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -114,31 +112,31 @@ public class BoxTextElemStyle extends ElemStyle {
 
         TextElement text = TextElement.create(c, DEFAULT_TEXT_COLOR, false);
         if (text == null) return null;
-        // Skip any primtives that don't have text to draw. (Styles are recreated for any tag change.)
+        // Skip any primitives that don't have text to draw. (Styles are recreated for any tag change.)
         // The concrete text to render is not cached in this object, but computed for each
         // repaint. This way, one BoxTextElemStyle object can be used by multiple primitives (to save memory).
         if (text.labelCompositionStrategy.compose(env.osm) == null) return null;
 
         HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
         Keyword hAlignKW = c.get("text-anchor-horizontal", Keyword.RIGHT, Keyword.class);
-        if (equal(hAlignKW.val, "left")) {
+        if ("left".equals(hAlignKW.val)) {
             hAlign = HorizontalTextAlignment.LEFT;
-        } else if (equal(hAlignKW.val, "center")) {
+        } else if ("center".equals(hAlignKW.val)) {
             hAlign = HorizontalTextAlignment.CENTER;
-        } else if (equal(hAlignKW.val, "right")) {
+        } else if ("right".equals(hAlignKW.val)) {
             hAlign = HorizontalTextAlignment.RIGHT;
         }
         VerticalTextAlignment vAlign = VerticalTextAlignment.BOTTOM;
         String vAlignStr = c.get("text-anchor-vertical", Keyword.BOTTOM, Keyword.class).val;
-        if (equal(vAlignStr, "above")) {
+        if ("above".equals(vAlignStr)) {
             vAlign = VerticalTextAlignment.ABOVE;
-        } else if (equal(vAlignStr, "top")) {
+        } else if ("top".equals(vAlignStr)) {
             vAlign = VerticalTextAlignment.TOP;
-        } else if (equal(vAlignStr, "center")) {
+        } else if ("center".equals(vAlignStr)) {
             vAlign = VerticalTextAlignment.CENTER;
-        } else if (equal(vAlignStr, "bottom")) {
+        } else if ("bottom".equals(vAlignStr)) {
             vAlign = VerticalTextAlignment.BOTTOM;
-        } else if (equal(vAlignStr, "below")) {
+        } else if ("below".equals(vAlignStr)) {
             vAlign = VerticalTextAlignment.BELOW;
         }
 

@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import org.openstreetmap.josm.tools.Utils;
+import java.util.Objects;
 
 public class Keyword {
     public final String val;
@@ -19,7 +19,7 @@ public class Keyword {
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass())
             return false;
-        return Utils.equal(val, ((Keyword) obj).val);
+        return Objects.equals(val, ((Keyword) obj).val);
     }
 
     @Override

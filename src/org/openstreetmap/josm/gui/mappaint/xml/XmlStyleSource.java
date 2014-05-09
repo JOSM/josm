@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -368,7 +369,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             if (multipolyOuterWay != null) {
                 WayPrototypesRecord p2 = new WayPrototypesRecord();
                 get(multipolyOuterWay, true, p2, (useMinMaxScale ? scale : null), mc);
-                if (Utils.equal(p.area, p2.area)) {
+                if (Objects.equals(p.area, p2.area)) {
                     p.area = null;
                 }
             }

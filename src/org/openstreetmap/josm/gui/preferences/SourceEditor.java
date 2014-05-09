@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -37,6 +36,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
@@ -416,7 +416,7 @@ public abstract class SourceEditor extends JPanel {
         while (p.hasNext()) {
             SourceEntry pe = p.next();
             SourceEntry ce = c.next();
-            if (!equal(pe.url, ce.url) || !equal(pe.name, ce.name) || pe.active != ce.active)
+            if (!Objects.equals(pe.url, ce.url) || !Objects.equals(pe.name, ce.name) || pe.active != ce.active)
                 return true;
         }
         return false;
@@ -915,9 +915,9 @@ public abstract class SourceEditor extends JPanel {
                     SourceEditor.this, tr("Edit source entry:"), e);
             editEntryDialog.showDialog();
             if (editEntryDialog.getValue() == 1) {
-                if (e.title != null || !equal(editEntryDialog.getTitle(), "")) {
+                if (e.title != null || !"".equals(editEntryDialog.getTitle())) {
                     e.title = editEntryDialog.getTitle();
-                    if (equal(e.title, "")) {
+                    if ("".equals(e.title)) {
                         e.title = null;
                     }
                 }

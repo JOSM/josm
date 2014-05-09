@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
@@ -34,7 +35,6 @@ import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Component for editing list of preferences as a table.
@@ -191,7 +191,7 @@ public class PreferencesTable extends JTable {
                 sEditor.showDialog();
                 if (sEditor.getValue() == 1) {
                     String data = sEditor.getData();
-                    if (!Utils.equal(sSetting.getValue(), data)) {
+                    if (!Objects.equals(sSetting.getValue(), data)) {
                         pe.setValue(new StringSetting(data));
                         ok = true;
                     }

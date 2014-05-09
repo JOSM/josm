@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.io.session;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -291,7 +290,7 @@ public class SessionReader {
 
     private void parseJos(Document doc, ProgressMonitor progressMonitor) throws IllegalDataException {
         Element root = doc.getDocumentElement();
-        if (!equal(root.getTagName(), "josm-session")) {
+        if (!"josm-session".equals(root.getTagName())) {
             error(tr("Unexpected root element ''{0}'' in session file", root.getTagName()));
         }
         String version = root.getAttribute("version");
@@ -354,8 +353,7 @@ public class SessionReader {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element e = (Element) node;
-                if (equal(e.getTagName(), "layer")) {
-
+                if ("layer".equals(e.getTagName())) {
                     if (!e.hasAttribute("index")) {
                         error(tr("missing mandatory attribute ''index'' for element ''layer''"));
                     }

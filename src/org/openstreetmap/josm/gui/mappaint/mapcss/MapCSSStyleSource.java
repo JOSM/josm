@@ -275,7 +275,7 @@ public class MapCSSStyleSource extends StyleSource {
                 else if ("*".equals(sub)) {
                     for (Entry<String, Cascade> entry : mc.getLayers()) {
                         env.layer = entry.getKey();
-                        if (Utils.equal(env.layer, "*")) {
+                        if ("*".equals(env.layer)) {
                             continue;
                         }
                         r.execute(env);

@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -238,7 +239,7 @@ public class Preferences {
             while (itA.hasNext()) {
                 String aStr = itA.next();
                 String bStr = itB.next();
-                if (!Utils.equal(aStr,bStr)) return false;
+                if (!Objects.equals(aStr,bStr)) return false;
             }
             return true;
         }
@@ -374,7 +375,7 @@ public class Preferences {
             if (b == null) return false;
             if (a.size() != b.size()) return false;
             for (Entry<String, String> e : a.entrySet()) {
-                if (!Utils.equal(e.getValue(), b.get(e.getKey()))) return false;
+                if (!Objects.equals(e.getValue(), b.get(e.getKey()))) return false;
             }
             return true;
         }
@@ -1209,7 +1210,7 @@ public class Preferences {
                 Object fieldValue = f.get(struct);
                 Object defaultFieldValue = f.get(structPrototype);
                 if (fieldValue != null) {
-                    if (f.getAnnotation(writeExplicitly.class) != null || !Utils.equal(fieldValue, defaultFieldValue)) {
+                    if (f.getAnnotation(writeExplicitly.class) != null || !Objects.equals(fieldValue, defaultFieldValue)) {
                         hash.put(f.getName().replace("_", "-"), fieldValue.toString());
                     }
                 }
