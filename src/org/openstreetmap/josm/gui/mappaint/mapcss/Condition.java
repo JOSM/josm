@@ -418,7 +418,7 @@ public abstract class Condition {
 
     public static class ExpressionCondition extends Condition {
 
-        private Expression e;
+        private final Expression e;
 
         public ExpressionCondition(Expression e) {
             this.e = e;

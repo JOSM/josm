@@ -126,7 +126,7 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
     public static MapImage createIcon(final Environment env, final String[] keys) {
         Cascade c = env.mc.getCascade(env.layer);
 
-        final IconReference iconRef = c.get(keys[ICON_IMAGE_IDX], null, IconReference.class);
+        final IconReference iconRef = c.get(keys[ICON_IMAGE_IDX], null, IconReference.class, true);
         if (iconRef == null)
             return null;
 
