@@ -43,6 +43,7 @@ public final class PlayHeadMarker extends Marker {
     private boolean enabled;
     private boolean wasPlaying = false;
     private int dropTolerance; /* pixels */
+    private boolean jumpToMarker = false;
 
     /**
      * Returns the unique instance of {@code PlayHeadMarker}.
@@ -233,8 +234,7 @@ public final class PlayHeadMarker extends Marker {
         }
 
         /* Actually do the synchronization */
-        if(ca == null)
-        {
+        if(ca == null) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Unable to create new audio marker."),
@@ -279,6 +279,7 @@ public final class PlayHeadMarker extends Marker {
      */
     public void animate() {
         if (! enabled) return;
+        jumpToMarker = true;
         if (timer == null) {
             animationInterval = Main.pref.getDouble("marker.audioanimationinterval", 1.0); //milliseconds
             timer = new Timer((int)(animationInterval * 1000.0), new ActionListener() {
@@ -342,6 +343,10 @@ public final class PlayHeadMarker extends Marker {
                     w1.getEastNorth().interpolate(w2.getEastNorth(),
                             (audioTime - w1.time)/(w2.time - w1.time)));
         time = audioTime;
+        if (jumpToMarker) {
+            jumpToMarker = false;
+            Main.map.mapView.zoomTo(w1.getEastNorth());
+        }
         Main.map.mapView.repaint();
     }
 }
