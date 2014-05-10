@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.FileInputStream;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
@@ -52,8 +54,26 @@ public class DefaultNameFormatterTest {
 
         try (InputStream is = new FileInputStream(TestUtils.getTestDataRoot() + "regress/9632/data.osm.zip")) {
             DataSet ds = OsmReader.parseDataSet(Compression.ZIP.getUncompressedInputStream(is), null);
+
+            // Test with 3 known primitives causing the problem. Correct order is p1, p3, p2 with this preset
+            Relation p1 = (Relation) ds.getPrimitiveById(2983382, OsmPrimitiveType.RELATION);
+            Relation p2 = (Relation) ds.getPrimitiveById(550315, OsmPrimitiveType.RELATION);
+            Relation p3 = (Relation) ds.getPrimitiveById(167042, OsmPrimitiveType.RELATION);
+
+            System.out.println("p1: "+DefaultNameFormatter.getInstance().format(p1)+" - "+p1); // route_master ("Bus 453", 6 members)
+            System.out.println("p2: "+DefaultNameFormatter.getInstance().format(p2)+" - "+p2); // TMC ("A 6 Kaiserslautern - Mannheim [negative]", 123 members)
+            System.out.println("p3: "+DefaultNameFormatter.getInstance().format(p3)+" - "+p3); // route(lcn Sal  Salier-Radweg(412 members)
+
+            assertTrue(comparator.compare(p1, p2) == -1); // p1 < p2
+            assertTrue(comparator.compare(p2, p1) ==  1); // p2 > p1
+
+            assertTrue(comparator.compare(p1, p3) == -1); // p1 < p3
+            assertTrue(comparator.compare(p3, p1) ==  1); // p3 > p1
+            assertTrue(comparator.compare(p2, p3) ==  1); // p2 > p3
+            assertTrue(comparator.compare(p3, p2) == -1); // p3 < p2
+
             Relation[] relations = new ArrayList<>(ds.getRelations()).toArray(new Relation[0]);
-            System.out.println(Arrays.toString(relations));
+
             // Check each compare possibility
             for (int i=0; i<relations.length; i++) {
                 Relation r1 = relations[i];
