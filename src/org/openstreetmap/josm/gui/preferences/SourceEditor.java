@@ -697,6 +697,32 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
+    private static void prepareFileChooser(String url, JFileChooser fc) {
+        if (url == null || url.trim().length() == 0) return;
+        URL sourceUrl = null;
+        try {
+            sourceUrl = new URL(url);
+        } catch(MalformedURLException e) {
+            File f = new File(url);
+            if (f.isFile()) {
+                f = f.getParentFile();
+            }
+            if (f != null) {
+                fc.setCurrentDirectory(f);
+            }
+            return;
+        }
+        if (sourceUrl.getProtocol().startsWith("file")) {
+            File f = new File(sourceUrl.getPath());
+            if (f.isFile()) {
+                f = f.getParentFile();
+            }
+            if (f != null) {
+                fc.setCurrentDirectory(f);
+            }
+        }
+    }
+
     protected class EditSourceEntryDialog extends ExtendedDialog {
 
         private JosmTextField tfTitle;
@@ -764,32 +790,6 @@ public abstract class SourceEditor extends JPanel {
             public LaunchFileChooserAction() {
                 putValue(SMALL_ICON, ImageProvider.get("open"));
                 putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
-            }
-
-            protected void prepareFileChooser(String url, JFileChooser fc) {
-                if (url == null || url.trim().length() == 0) return;
-                URL sourceUrl = null;
-                try {
-                    sourceUrl = new URL(url);
-                } catch(MalformedURLException e) {
-                    File f = new File(url);
-                    if (f.isFile()) {
-                        f = f.getParentFile();
-                    }
-                    if (f != null) {
-                        fc.setCurrentDirectory(f);
-                    }
-                    return;
-                }
-                if (sourceUrl.getProtocol().startsWith("file")) {
-                    File f = new File(sourceUrl.getPath());
-                    if (f.isFile()) {
-                        f = f.getParentFile();
-                    }
-                    if (f != null) {
-                        fc.setCurrentDirectory(f);
-                    }
-                }
             }
 
             @Override
@@ -1498,32 +1498,6 @@ public abstract class SourceEditor extends JPanel {
             public LaunchFileChooserAction() {
                 putValue(NAME, "...");
                 putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
-            }
-
-            protected void prepareFileChooser(String url, JFileChooser fc) {
-                if (url == null || url.trim().length() == 0) return;
-                URL sourceUrl = null;
-                try {
-                    sourceUrl = new URL(url);
-                } catch(MalformedURLException e) {
-                    File f = new File(url);
-                    if (f.isFile()) {
-                        f = f.getParentFile();
-                    }
-                    if (f != null) {
-                        fc.setCurrentDirectory(f);
-                    }
-                    return;
-                }
-                if (sourceUrl.getProtocol().startsWith("file")) {
-                    File f = new File(sourceUrl.getPath());
-                    if (f.isFile()) {
-                        f = f.getParentFile();
-                    }
-                    if (f != null) {
-                        fc.setCurrentDirectory(f);
-                    }
-                }
             }
 
             @Override

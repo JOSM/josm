@@ -49,9 +49,9 @@ import org.xml.sax.SAXException;
 
 /**
  * ChildRelationBrowser is a UI component which provides a tree-like view on the hierarchical
- * structure of relations
+ * structure of relations.
  *
- *
+ * @since 1828
  */
 public class ChildRelationBrowser extends JPanel {
     /** the tree with relation children */
@@ -277,29 +277,13 @@ public class ChildRelationBrowser extends JPanel {
         }
     }
 
-    /**
-     * The asynchronous task for downloading relation members.
-     *
-     *
-     */
-    class DownloadAllChildrenTask extends PleaseWaitRunnable {
-        private boolean canceled;
-        private int conflictsCount;
-        private Exception lastException;
-        private Relation relation;
-        private Stack<Relation> relationsToDownload;
-        private Set<Long> downloadedRelationIds;
+    abstract class DownloadTask extends PleaseWaitRunnable {
+        protected boolean canceled;
+        protected int conflictsCount;
+        protected Exception lastException;
 
-        public DownloadAllChildrenTask(Dialog parent, Relation r) {
-            super(tr("Download relation members"), new PleaseWaitProgressMonitor(parent), false /*
-             * don't
-             * ignore
-             * exception
-             */);
-            this.relation = r;
-            relationsToDownload = new Stack<>();
-            downloadedRelationIds = new HashSet<>();
-            relationsToDownload.push(this.relation);
+        public DownloadTask(String title, Dialog parent) {
+            super(title, new PleaseWaitProgressMonitor(parent), false);
         }
 
         @Override
@@ -336,6 +320,23 @@ public class ChildRelationBrowser extends JPanel {
                                 JOptionPane.WARNING_MESSAGE
                 );
             }
+        }
+    }
+
+    /**
+     * The asynchronous task for downloading relation members.
+     */
+    class DownloadAllChildrenTask extends DownloadTask {
+        private final Relation relation;
+        private final Stack<Relation> relationsToDownload;
+        private final Set<Long> downloadedRelationIds;
+
+        public DownloadAllChildrenTask(Dialog parent, Relation r) {
+            super(tr("Download relation members"), parent);
+            this.relation = r;
+            relationsToDownload = new Stack<>();
+            downloadedRelationIds = new HashSet<>();
+            relationsToDownload.push(this.relation);
         }
 
         /**
@@ -438,55 +439,12 @@ public class ChildRelationBrowser extends JPanel {
     /**
      * The asynchronous task for downloading a set of relations
      */
-    class DownloadRelationSetTask extends PleaseWaitRunnable {
-        private boolean canceled;
-        private int conflictsCount;
-        private Exception lastException;
-        private Set<Relation> relations;
+    class DownloadRelationSetTask extends DownloadTask {
+        private final Set<Relation> relations;
 
         public DownloadRelationSetTask(Dialog parent, Set<Relation> relations) {
-            super(tr("Download relation members"), new PleaseWaitProgressMonitor(parent), false /*
-             * don't
-             * ignore
-             * exception
-             */);
+            super(tr("Download relation members"), parent);
             this.relations = relations;
-        }
-
-        @Override
-        protected void cancel() {
-            canceled = true;
-            OsmApi.getOsmApi().cancel();
-        }
-
-        protected void refreshView(Relation relation){
-            for (int i=0; i < childTree.getRowCount(); i++) {
-                Relation reference = (Relation)childTree.getPathForRow(i).getLastPathComponent();
-                if (reference == relation) {
-                    model.refreshNode(childTree.getPathForRow(i));
-                }
-            }
-        }
-
-        @Override
-        protected void finish() {
-            if (canceled)
-                return;
-            if (lastException != null) {
-                ExceptionDialogUtil.explainException(lastException);
-                return;
-            }
-
-            if (conflictsCount > 0) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        trn("There was {0} conflict during import.",
-                                "There were {0} conflicts during import.",
-                                conflictsCount, conflictsCount),
-                                trn("Conflict in data", "Conflicts in data", conflictsCount),
-                                JOptionPane.WARNING_MESSAGE
-                );
-            }
         }
 
         protected void mergeDataSet(DataSet dataSet) {
