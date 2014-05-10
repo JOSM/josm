@@ -21,8 +21,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 /**
  * OsmServerBackreferenceReader fetches the primitives from the OSM server which
  * refer to a specific primitive. For a {@link org.openstreetmap.josm.data.osm.Node Node}, ways and relations are retrieved
- * which refer to the node. For a {@link Way} or a {@link Relation}, only relations are
- * read.
+ * which refer to the node. For a {@link Way} or a {@link Relation}, only relations are read.
  *
  * OsmServerBackreferenceReader uses the API calls <code>[node|way|relation]/#id/relations</code>
  * and  <code>node/#id/ways</code> to retrieve the referring primitives. The default behaviour
@@ -31,7 +30,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * If you set {@link #setReadFull(boolean)} to true this reader uses a {@link MultiFetchServerObjectReader}
  * to complete incomplete primitives.
  *
- *
+ * @since 1806
  */
 public class OsmServerBackreferenceReader extends OsmServerReader {
 
@@ -122,24 +121,17 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
         this.readFull = readFull;
     }
 
-    /**
-     * Reads referring ways from the API server and replies them in a {@link DataSet}
-     *
-     * @return the data set
-     * @throws OsmTransferException
-     */
-    protected DataSet getReferringWays(ProgressMonitor progressMonitor) throws OsmTransferException {
+    private DataSet getReferringPrimitives(ProgressMonitor progressMonitor, String type, String message) throws OsmTransferException {
         progressMonitor.beginTask(null, 2);
         try {
-            progressMonitor.indeterminateSubTask(tr("Downloading from OSM Server..."));
+            progressMonitor.subTask(tr("Contacting OSM Server..."));
             StringBuilder sb = new StringBuilder();
-            sb.append(primitiveType.getAPIName())
-            .append("/").append(id).append("/ways");
+            sb.append(primitiveType.getAPIName()).append("/").append(id).append(type);
 
             try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
                 if (in == null)
                     return null;
-                progressMonitor.subTask(tr("Downloading referring ways ..."));
+                progressMonitor.subTask(message);
                 return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, true));
             }
         } catch(OsmTransferException e) {
@@ -155,6 +147,16 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     }
 
     /**
+     * Reads referring ways from the API server and replies them in a {@link DataSet}
+     *
+     * @return the data set
+     * @throws OsmTransferException
+     */
+    protected DataSet getReferringWays(ProgressMonitor progressMonitor) throws OsmTransferException {
+        return getReferringPrimitives(progressMonitor, "/ways", tr("Downloading referring ways ..."));
+    }
+
+    /**
      * Reads referring relations from the API server and replies them in a {@link DataSet}
      *
      * @param progressMonitor the progress monitor
@@ -162,29 +164,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @throws OsmTransferException
      */
     protected DataSet getReferringRelations(ProgressMonitor progressMonitor) throws OsmTransferException {
-        progressMonitor.beginTask(null, 2);
-        try {
-            progressMonitor.subTask(tr("Contacting OSM Server..."));
-            StringBuilder sb = new StringBuilder();
-            sb.append(primitiveType.getAPIName())
-            .append("/").append(id).append("/relations");
-
-            try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
-                if (in == null)
-                    return null;
-                progressMonitor.subTask(tr("Downloading referring relations ..."));
-                return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, true));
-            }
-        } catch(OsmTransferException e) {
-            throw e;
-        } catch (Exception e) {
-            if (cancel)
-                return null;
-            throw new OsmTransferException(e);
-        } finally {
-            progressMonitor.finishTask();
-            activeConnection = null;
-        }
+        return getReferringPrimitives(progressMonitor, "/relations", tr("Downloading referring relations ..."));
     }
 
     /**
