@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.data.validation.tests
 
 import org.openstreetmap.josm.JOSMFixture
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference
+import org.openstreetmap.josm.gui.tagging.TaggingPresets
 
 class ConditionalKeysTest extends GroovyTestCase {
 
@@ -11,7 +11,7 @@ class ConditionalKeysTest extends GroovyTestCase {
     @Override
     void setUp() {
         JOSMFixture.createUnitTestFixture().init();
-        TaggingPresetPreference.readFromPreferences()
+        TaggingPresets.readFromPreferences()
         test.initialize()
     }
 
