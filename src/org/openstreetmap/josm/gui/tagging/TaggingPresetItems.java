@@ -49,7 +49,6 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPriority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -401,7 +400,7 @@ public final class TaggingPresetItems {
         @Override
         boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             final String presetName = preset_name;
-            final TaggingPreset t = Utils.filter(TaggingPresetPreference.taggingPresets, new Predicate<TaggingPreset>() {
+            final TaggingPreset t = Utils.filter(TaggingPresets.getTaggingPresets(), new Predicate<TaggingPreset>() {
                 @Override
                 public boolean evaluate(TaggingPreset object) {
                     return presetName.equals(object.name);

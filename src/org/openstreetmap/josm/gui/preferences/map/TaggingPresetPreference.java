@@ -16,11 +16,8 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -35,11 +32,7 @@ import org.openstreetmap.josm.gui.preferences.SourceProvider;
 import org.openstreetmap.josm.gui.preferences.SourceType;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -64,11 +57,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
     }
 
     private static final List<SourceProvider> presetSourceProviders = new ArrayList<>();
-    
-    /**
-     * The collection of tagging presets.
-     */
-    public static Collection<TaggingPreset> taggingPresets;
+
     private SourceEditor sources;
     private JCheckBox sortMenu;
 
@@ -270,50 +259,6 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         restart |= sources.finish();
 
         return restart;
-    }
-
-    /**
-     * Initializes tagging presets from preferences.
-     */
-    public static void readFromPreferences() {
-        taggingPresets = TaggingPresetReader.readFromPreferences(false, false);
-    }
-
-    /**
-     * Initialize the tagging presets (load and may display error)
-     */
-    public static void initialize() {
-        readFromPreferences();
-        for (TaggingPreset tp: taggingPresets) {
-            if (!(tp instanceof TaggingPresetSeparator)) {
-                Main.toolbar.register(tp);
-            }
-        }
-        if (taggingPresets.isEmpty()) {
-            Main.main.menu.presetsMenu.setVisible(false);
-        } else {
-            AutoCompletionManager.cachePresets(taggingPresets);
-            HashMap<TaggingPresetMenu,JMenu> submenus = new HashMap<>();
-            for (final TaggingPreset p : taggingPresets) {
-                JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
-                if (p instanceof TaggingPresetSeparator) {
-                    m.add(new JSeparator());
-                } else if (p instanceof TaggingPresetMenu) {
-                    JMenu submenu = new JMenu(p);
-                    submenu.setText(p.getLocaleName());
-                    ((TaggingPresetMenu)p).menu = submenu;
-                    submenus.put((TaggingPresetMenu)p, submenu);
-                    m.add(submenu);
-                } else {
-                    JMenuItem mi = new JMenuItem(p);
-                    mi.setText(p.getLocaleName());
-                    m.add(mi);
-                }
-            }
-        }
-        if (Main.pref.getBoolean("taggingpreset.sortmenu")) {
-            TaggingPresetMenu.sortMenu(Main.main.menu.presetsMenu);
-        }
     }
 
     /**

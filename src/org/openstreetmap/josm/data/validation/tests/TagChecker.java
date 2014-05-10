@@ -40,7 +40,6 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.Entities;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -48,6 +47,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Check;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
+import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
@@ -60,7 +60,7 @@ import org.openstreetmap.josm.tools.MultiMap;
  * @author frsantos
  */
 public class TagChecker extends Test.TagTest {
-    
+
     /** The default data file of tagchecker rules */
     public static final String DATA_FILE = "resource://data/validator/tagchecker.cfg";
     /** The config file of ignored tags */
@@ -160,7 +160,7 @@ public class TagChecker extends Test.TagTest {
         ignoreDataKeyPair.clear();
 
         spellCheckKeyData = new HashMap<>();
-        
+
         String errorSources = "";
         for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
             try (
@@ -255,8 +255,8 @@ public class TagChecker extends Test.TagTest {
         if (!Main.pref.getBoolean(PREF_CHECK_VALUES, true))
             return;
 
-        Collection<TaggingPreset> presets = TaggingPresetPreference.taggingPresets;
-        if (presets != null) {
+        Collection<TaggingPreset> presets = TaggingPresets.getTaggingPresets();
+        if (!presets.isEmpty()) {
             presetsValueData = new MultiMap<>();
             for (String a : OsmPrimitive.getUninterestingKeys()) {
                 presetsValueData.putVoid(a);

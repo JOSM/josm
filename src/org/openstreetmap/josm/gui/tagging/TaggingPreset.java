@@ -43,7 +43,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Link;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
@@ -198,8 +197,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     private static class PresetPanel extends JPanel {
         boolean hasElements = false;
-        PresetPanel()
-        {
+        PresetPanel() {
             super(new GridBagLayout());
         }
     }
@@ -261,10 +259,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return p;
     }
 
-    public boolean isShowable()
-    {
-        for(TaggingPresetItem i : data)
-        {
+    public boolean isShowable() {
+        for(TaggingPresetItem i : data) {
             if(!(i instanceof TaggingPresetItems.Optional || i instanceof TaggingPresetItems.Space || i instanceof TaggingPresetItems.Key))
                 return true;
         }
@@ -494,7 +490,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public static Collection<TaggingPreset> getMatchingPresets(final Collection<TaggingPresetType> t, final Map<String, String> tags, final boolean onlyShowable) {
-        return Utils.filter(TaggingPresetPreference.taggingPresets, new Predicate<TaggingPreset>() {
+        return Utils.filter(TaggingPresets.getTaggingPresets(), new Predicate<TaggingPreset>() {
             @Override
             public boolean evaluate(TaggingPreset object) {
                 return object.matches(t, tags, onlyShowable);
@@ -507,6 +503,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      */
     public class ToolbarButtonAction extends AbstractAction {
         private final int toolbarIndex;
+
+        /**
+         * Constructs a new {@code ToolbarButtonAction}.
+         */
         public ToolbarButtonAction() {
             super("", ImageProvider.get("styles/standard/waypoint","pin"));
             putValue(SHORT_DESCRIPTION, tr("Add or remove toolbar button"));
@@ -523,9 +523,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public String getToolbarString() {
-        ToolbarPreferences.ActionDefinition aDef
-            = new ToolbarPreferences.ActionDefinition(this);
         ToolbarPreferences.ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
-        return actionParser.saveAction(aDef);
+        return actionParser.saveAction(new ToolbarPreferences.ActionDefinition(this));
     }
 }

@@ -18,8 +18,8 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
+import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
@@ -48,7 +48,7 @@ public class DefaultNameFormatterTest {
     @Test
     public void testTicket9632() throws IllegalDataException, IOException, SAXException {
         String source = "http://josm.openstreetmap.de/josmfile?page=Presets/BicycleJunction&amp;preset";
-        TaggingPresetPreference.taggingPresets = TaggingPresetReader.readAll(source, true);
+        TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll(source, true));
 
         Comparator<Relation> comparator = DefaultNameFormatter.getInstance().getRelationComparator();
 
