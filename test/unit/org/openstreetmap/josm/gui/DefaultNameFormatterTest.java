@@ -75,7 +75,7 @@ public class DefaultNameFormatterTest {
                     }
                     for (int k=j; k<relations.size(); k++) {
                         Relation r3 = relations.get(k);
-                        String r3s = r2.toString();
+                        String r3s = r3.toString();
                         int c = comparator.compare(r1, r3);
                         int d = comparator.compare(r2, r3);
                         String msg2 = msg + "\nCompared\nr1: "+r1s+"\nr3: "+r3s+"gave: "+c+"Compared\nr2: "+r2s+"\nr3: "+r3s+"gave: "+d;
