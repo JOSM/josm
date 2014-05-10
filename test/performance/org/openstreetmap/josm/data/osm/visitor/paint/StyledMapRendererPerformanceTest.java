@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.File;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.io.Compression;
 
 public class StyledMapRendererPerformanceTest {
 
@@ -44,7 +46,7 @@ public class StyledMapRendererPerformanceTest {
         try (
             InputStream fisR = new FileInputStream("data_nodist/restriction.osm");
             InputStream fisM = new FileInputStream("data_nodist/multipolygon.osm");
-            InputStream fisC = new FileInputStream("data_nodist/neubrandenburg.osm");
+            InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
         ) {
             dsRestriction = OsmReader.parseDataSet(fisR, NullProgressMonitor.INSTANCE);
             dsMultipolygon = OsmReader.parseDataSet(fisM, NullProgressMonitor.INSTANCE);
