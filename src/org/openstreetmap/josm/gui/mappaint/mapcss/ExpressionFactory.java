@@ -44,24 +44,19 @@ public final class ExpressionFactory {
     @Retention(RetentionPolicy.RUNTIME)
     static @interface NullableArguments {}
 
-    private static final List<Method> arrayFunctions;
-    private static final List<Method> parameterFunctions;
-    private static final List<Method> parameterFunctionsEnv;
+    private static final List<Method> arrayFunctions = new ArrayList<>();
+    private static final List<Method> parameterFunctions = new ArrayList<>();
+    private static final List<Method> parameterFunctionsEnv = new ArrayList<>();
 
     static {
-        arrayFunctions = new ArrayList<>();
-        parameterFunctions = new ArrayList<>();
-        parameterFunctionsEnv = new ArrayList<>();
         for (Method m : Functions.class.getDeclaredMethods()) {
             Class<?>[] paramTypes = m.getParameterTypes();
             if (paramTypes.length == 1 && paramTypes[0].isArray()) {
                 arrayFunctions.add(m);
+            } else if (paramTypes.length >= 1 && paramTypes[0].equals(Environment.class)) {
+                parameterFunctionsEnv.add(m);
             } else {
-                if (paramTypes[0].equals(Environment.class)) {
-                    parameterFunctionsEnv.add(m);
-                } else {
-                    parameterFunctions.add(m);
-                }
+                parameterFunctions.add(m);
             }
         }
         try {
@@ -97,7 +92,7 @@ public final class ExpressionFactory {
 
     /**
      * List of functions that can be used in MapCSS expressions.
-     * 
+     *
      * First parameter can be of type {@link Environment} (if needed). This is
      * automatically filled in by JOSM and the user only sees the remaining
      * arguments.
@@ -279,7 +274,7 @@ public final class ExpressionFactory {
         public static float alpha(Color c) {
             return Utils.color_int2float(c.getAlpha());
         }
-        
+
         /**
          * Assembles the strings to one.
          * @see Utils#join
@@ -735,7 +730,7 @@ public final class ExpressionFactory {
             return null;
         }
     }
-    
+
     /**
      * Function that takes a certain number of argument with specific type.
      *
@@ -761,7 +756,7 @@ public final class ExpressionFactory {
         @Override
         public Object evaluate(Environment env) {
             Object[] convertedArgs;
-            
+
             if (needsEnvironment) {
                 convertedArgs = new Object[args.size()+1];
                 convertedArgs[0] = env;
