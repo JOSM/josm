@@ -46,17 +46,22 @@ public final class ExpressionFactory {
 
     private static final List<Method> arrayFunctions;
     private static final List<Method> parameterFunctions;
-    private static final Functions FUNCTIONS_INSTANCE = new Functions();
+    private static final List<Method> parameterFunctionsEnv;
 
     static {
         arrayFunctions = new ArrayList<>();
         parameterFunctions = new ArrayList<>();
+        parameterFunctionsEnv = new ArrayList<>();
         for (Method m : Functions.class.getDeclaredMethods()) {
             Class<?>[] paramTypes = m.getParameterTypes();
             if (paramTypes.length == 1 && paramTypes[0].isArray()) {
                 arrayFunctions.add(m);
             } else {
-                parameterFunctions.add(m);
+                if (paramTypes[0].equals(Environment.class)) {
+                    parameterFunctionsEnv.add(m);
+                } else {
+                    parameterFunctions.add(m);
+                }
             }
         }
         try {
@@ -90,10 +95,20 @@ public final class ExpressionFactory {
         // Hide default constructor for utils classes
     }
 
+    /**
+     * List of functions that can be used in MapCSS expressions.
+     * 
+     * First parameter can be of type {@link Environment} (if needed). This is
+     * automatically filled in by JOSM and the user only sees the remaining
+     * arguments.
+     * When one of the user supplied arguments cannot be converted the
+     * expected type or is null, the function is not called and it returns null
+     * immediately. Add the annotation {@link NullableArguments} to allow
+     * null arguments.
+     * Every method must be static.
+     */
     @SuppressWarnings("UnusedDeclaration")
     public static class Functions {
-
-        Environment env;
 
         /**
          * Identity function for compatibility with MapCSS specification.
@@ -264,7 +279,7 @@ public final class ExpressionFactory {
         public static float alpha(Color c) {
             return Utils.color_int2float(c.getAlpha());
         }
-
+        
         /**
          * Assembles the strings to one.
          * @see Utils#join
@@ -286,42 +301,42 @@ public final class ExpressionFactory {
         /**
          * Returns the value of the property {@code key}, e.g., {@code prop("width")}.
          */
-        public Object prop(String key) {
-            return prop(key, null);
+        public static Object prop(final Environment env, String key) {
+            return prop(env, key, null);
         }
 
         /**
          * Returns the value of the property {@code key} from layer {@code layer}.
          */
-        public Object prop(String key, String layer) {
+        public static Object prop(final Environment env, String key, String layer) {
             return env.getCascade(layer).get(key);
         }
 
         /**
          * Determines whether property {@code key} is set.
          */
-        public Boolean is_prop_set(String key) {
-            return is_prop_set(key, null);
+        public static Boolean is_prop_set(final Environment env, String key) {
+            return is_prop_set(env, key, null);
         }
 
         /**
          * Determines whether property {@code key} is set on layer {@code layer}.
          */
-        public Boolean is_prop_set(String key, String layer) {
+        public static Boolean is_prop_set(final Environment env, String key, String layer) {
             return env.getCascade(layer).containsKey(key);
         }
 
         /**
          * Gets the value of the key {@code key} from the object in question.
          */
-        public String tag(String key) {
+        public static String tag(final Environment env, String key) {
             return env.osm == null ? null : env.osm.get(key);
         }
 
         /**
          * Gets the first non-null value of the key {@code key} from the object's parent(s).
          */
-        public String parent_tag(String key) {
+        public static String parent_tag(final Environment env, String key) {
             if (env.parent == null) {
                 if (env.osm != null) {
                     // we don't have a matched parent, so just search all referrers
@@ -337,28 +352,28 @@ public final class ExpressionFactory {
             return env.parent.get(key);
         }
 
-        public String child_tag(String key) {
+        public static String child_tag(final Environment env, String key) {
             return env.child == null ? null : env.child.get(key);
         }
 
         /**
          * Determines whether the object has a tag with the given key.
          */
-        public boolean has_tag_key(String key) {
+        public static boolean has_tag_key(final Environment env, String key) {
             return env.osm.hasKey(key);
         }
 
         /**
          * Returns the index of node in parent way or member in parent relation.
          */
-        public Float index() {
+        public static Float index(final Environment env) {
             if (env.index == null) {
                 return null;
             }
             return new Float(env.index + 1);
         }
 
-        public String role() {
+        public static String role(final Environment env) {
             return env.getRole();
         }
 
@@ -402,7 +417,7 @@ public final class ExpressionFactory {
         /**
          * Determines whether the JOSM search with {@code searchStr} applies to the object.
          */
-        public Boolean JOSM_search(String searchStr) {
+        public static Boolean JOSM_search(final Environment env, String searchStr) {
             Match m;
             try {
                 m = SearchCompiler.compile(searchStr, false, false);
@@ -497,7 +512,7 @@ public final class ExpressionFactory {
          * Returns the OSM id of the current object.
          * @see OsmPrimitive#getUniqueId()
          */
-        public long osm_id() {
+        public static long osm_id(final Environment env) {
             return env.osm.getUniqueId();
         }
 
@@ -606,7 +621,11 @@ public final class ExpressionFactory {
         }
         for (Method m : parameterFunctions) {
             if (m.getName().equals(name) && args.size() == m.getParameterTypes().length)
-                return new ParameterFunction(m, args);
+                return new ParameterFunction(m, args, false);
+        }
+        for (Method m : parameterFunctionsEnv) {
+            if (m.getName().equals(name) && args.size() == m.getParameterTypes().length-1)
+                return new ParameterFunction(m, args, true);
         }
         return NullExpression.INSTANCE;
     }
@@ -716,7 +735,7 @@ public final class ExpressionFactory {
             return null;
         }
     }
-
+    
     /**
      * Function that takes a certain number of argument with specific type.
      *
@@ -726,28 +745,44 @@ public final class ExpressionFactory {
     public static class ParameterFunction implements Expression {
 
         private final Method m;
+        private final boolean nullable;
         private final List<Expression> args;
         private final Class<?>[] expectedParameterTypes;
+        private final boolean needsEnvironment;
 
-        public ParameterFunction(Method m, List<Expression> args) {
+        public ParameterFunction(Method m, List<Expression> args, boolean needsEnvironment) {
             this.m = m;
+            this.nullable = m.getAnnotation(NullableArguments.class) != null;
             this.args = args;
-            expectedParameterTypes = m.getParameterTypes();
+            this.expectedParameterTypes = m.getParameterTypes();
+            this.needsEnvironment = needsEnvironment;
         }
 
         @Override
         public Object evaluate(Environment env) {
-            FUNCTIONS_INSTANCE.env = env;
-            Object[] convertedArgs = new Object[expectedParameterTypes.length];
-            for (int i = 0; i < args.size(); ++i) {
-                convertedArgs[i] = Cascade.convertTo(args.get(i).evaluate(env), expectedParameterTypes[i]);
-                if (convertedArgs[i] == null && m.getAnnotation(NullableArguments.class) == null) {
-                    return null;
+            Object[] convertedArgs;
+            
+            if (needsEnvironment) {
+                convertedArgs = new Object[args.size()+1];
+                convertedArgs[0] = env;
+                for (int i = 1; i < convertedArgs.length; ++i) {
+                    convertedArgs[i] = Cascade.convertTo(args.get(i-1).evaluate(env), expectedParameterTypes[i]);
+                    if (convertedArgs[i] == null && !nullable) {
+                        return null;
+                    }
+                }
+            } else {
+                convertedArgs = new Object[args.size()];
+                for (int i = 0; i < convertedArgs.length; ++i) {
+                    convertedArgs[i] = Cascade.convertTo(args.get(i).evaluate(env), expectedParameterTypes[i]);
+                    if (convertedArgs[i] == null && !nullable) {
+                        return null;
+                    }
                 }
             }
             Object result = null;
             try {
-                result = m.invoke(FUNCTIONS_INSTANCE, convertedArgs);
+                result = m.invoke(null, convertedArgs);
             } catch (IllegalAccessException | IllegalArgumentException ex) {
                 throw new RuntimeException(ex);
             } catch (InvocationTargetException ex) {
@@ -782,24 +817,26 @@ public final class ExpressionFactory {
     public static class ArrayFunction implements Expression {
 
         private final Method m;
+        private final boolean nullable;
         private final List<Expression> args;
+        private final Class<?>[] expectedParameterTypes;
         private final Class<?> arrayComponentType;
-        private final Object[] convertedArgs;
 
         public ArrayFunction(Method m, List<Expression> args) {
             this.m = m;
+            this.nullable = m.getAnnotation(NullableArguments.class) != null;
             this.args = args;
-            Class<?>[] expectedParameterTypes = m.getParameterTypes();
-            convertedArgs = new Object[expectedParameterTypes.length];
-            arrayComponentType = expectedParameterTypes[0].getComponentType();
+            this.expectedParameterTypes = m.getParameterTypes();
+            this.arrayComponentType = expectedParameterTypes[0].getComponentType();
         }
 
         @Override
         public Object evaluate(Environment env) {
+            Object[] convertedArgs = new Object[expectedParameterTypes.length];
             Object arrayArg = Array.newInstance(arrayComponentType, args.size());
             for (int i = 0; i < args.size(); ++i) {
                 Object o = Cascade.convertTo(args.get(i).evaluate(env), arrayComponentType);
-                if (o == null && m.getAnnotation(NullableArguments.class) == null) {
+                if (o == null && !nullable) {
                     return null;
                 }
                 Array.set(arrayArg, i, o);
