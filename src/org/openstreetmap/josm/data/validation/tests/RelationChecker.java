@@ -23,13 +23,13 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Key;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 
 /**
  * Check for wrong relations.
@@ -45,8 +45,8 @@ public class RelationChecker extends Test {
     protected static final int ROLE_MISSING      = 1706;
     protected static final int RELATION_UNKNOWN  = 1707;
     protected static final int RELATION_EMPTY    = 1708;
-    
-    /** 
+
+    /**
      * Error message used to group errors related to role problems.
      * @since 6731
      */
@@ -72,14 +72,11 @@ public class RelationChecker extends Test {
      *
      */
     public void initializePresets() {
-        Collection<TaggingPreset> presets = TaggingPresetPreference.taggingPresets;
-        if (presets != null) {
-            for (TaggingPreset p : presets) {
-                for (TaggingPresetItem i : p.data) {
-                    if (i instanceof Roles) {
-                        relationpresets.add(p);
-                        break;
-                    }
+        for (TaggingPreset p : TaggingPresets.getTaggingPresets()) {
+            for (TaggingPresetItem i : p.data) {
+                if (i instanceof Roles) {
+                    relationpresets.add(p);
+                    break;
                 }
             }
         }

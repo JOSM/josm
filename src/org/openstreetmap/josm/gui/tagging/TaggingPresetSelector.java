@@ -46,7 +46,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Key;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
@@ -59,7 +58,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
  * @since 6068
  */
 public class TaggingPresetSelector extends JPanel implements SelectionChangedListener {
-    
+
     private static final int CLASSIFICATION_IN_FAVORITES = 300;
     private static final int CLASSIFICATION_NAME_MATCH = 300;
     private static final int CLASSIFICATION_GROUP_MATCH = 200;
@@ -67,7 +66,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
     private static final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
     private static final BooleanProperty ONLY_APPLICABLE  = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
-    
+
     private JosmTextField edSearchText;
     private JList<TaggingPreset> lsResult;
     private JCheckBox ckOnlyApplicable;
@@ -207,10 +206,8 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
      */
     public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags) {
         super(new BorderLayout());
-        if (TaggingPresetPreference.taggingPresets!=null) {
-            loadPresets(TaggingPresetPreference.taggingPresets);
-        }
-        
+        loadPresets(TaggingPresets.getTaggingPresets());
+
         edSearchText = new JosmTextField();
         edSearchText.getDocument().addDocumentListener(new DocumentListener() {
             @Override public void removeUpdate(DocumentEvent e) { filterPresets(); }
@@ -303,7 +300,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         });
         lsResult.addMouseListener(new PopupMenuLauncher(popupMenu));
     }
-    
+
     private void selectPreset(int newIndex) {
         if (newIndex < 0) {
             newIndex = 0;
@@ -388,7 +385,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         lsResultModel.setPresets(result);
 
     }
-    
+
     private EnumSet<TaggingPresetType> getTypesInSelection() {
         if (typesInSelectionDirty) {
             synchronized (typesInSelection) {
@@ -411,7 +408,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         }
         return typesInSelection;
     }
-    
+
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         typesInSelectionDirty = true;
@@ -425,17 +422,17 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         edSearchText.setText("");
         filterPresets();
     }
-    
+
     public void init(Collection<TaggingPreset> presets) {
         classifications.clear();
         loadPresets(presets);
         init();
     }
-    
+
     public void clearSelection() {
         lsResult.getSelectionModel().clearSelection();
     }
-    
+
     /**
      * Save checkbox values in preferences for future reuse
      */
@@ -447,7 +444,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             ONLY_APPLICABLE.put(ckOnlyApplicable.isSelected());
         }
     }
-    
+
     /**
      * Determines, which preset is selected at the current moment
      * @return selected preset (as action)
@@ -482,19 +479,19 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     public void setSelectedPreset(TaggingPreset p) {
         lsResult.setSelectedValue(p, true);
     }
-    
+
     public int getItemCount() {
         return lsResultModel.getSize();
     }
-    
+
     public void setDblClickListener(ActionListener dblClickListener) {
         this.dblClickListener = dblClickListener;
     }
-    
+
     public void setClickListener(ActionListener clickListener) {
         this.clickListener = clickListener;
     }
-    
+
     public void addSelectionListener(final ActionListener selectListener) {
         lsResult.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
