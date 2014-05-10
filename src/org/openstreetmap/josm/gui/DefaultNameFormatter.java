@@ -369,7 +369,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 StringBuilder name2 = new StringBuilder();
                 formatRelationNameAndType(r2, name2, preset2);
 
-                int comp = name1.toString().compareTo(name2.toString());
+                int comp = AlphanumComparator.getInstance().compare(name1.toString(), name2.toString());
                 if (comp != 0)
                     return comp;
             } else {
@@ -495,7 +495,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public String buildDefaultToolTip(IPrimitive primitive) {
         return buildDefaultToolTip(primitive.getId(), primitive.getKeys());
     }
-    
+
     private String buildDefaultToolTip(long id, Map<String, String> tags) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
