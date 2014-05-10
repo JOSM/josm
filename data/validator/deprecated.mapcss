@@ -199,3 +199,9 @@
   suggestAlternative: "*:conditional";
   assertMatch: "node day_on=0-12";
 }
+
+/* see #10000, http://wiki.openstreetmap.org/wiki/Tag%3Aaccess%3Ddesignated */
+*[access=designated] {
+  throwWarning: tr("''{0}'' is meaningless, use more specific tags, e.g. ''{1}''", "access=designated", "bicycle=designated");
+  assertMatch: "way access=designated";
+}
