@@ -110,7 +110,7 @@ class MapCSSPerformanceTest {
 
         def mv = Main.map.mapView
 
-        BufferedImage img = mv.createImage(mv.getWidth(), mv.getHeight())
+        BufferedImage img = new BufferedImage(mv.getWidth(), mv.getHeight(), BufferedImage.TYPE_3BYTE_BGR)
         Graphics2D g = img.createGraphics()
         g.setClip(0,0, mv.getWidth(), mv.getHeight())
         def visitor = new StyledMapRenderer(g, Main.map.mapView, false)
