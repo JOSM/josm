@@ -205,3 +205,7 @@
   throwWarning: tr("''{0}'' is meaningless, use more specific tags, e.g. ''{1}''", "access=designated", "bicycle=designated");
   assertMatch: "way access=designated";
 }
+*[access=official] {
+  throwWarning: tr("''{0}'' does not specify the official mode of transportation, use ''{1}'' for example", "access=official", "bicycle=official");
+  assertMatch: "way access=official";
+}
