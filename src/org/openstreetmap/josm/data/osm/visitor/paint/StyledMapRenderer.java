@@ -1510,44 +1510,49 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             Main.debug(null);
         }
 
-        List<Node> nodes = data.searchNodes(bbox);
-        List<Way> ways = data.searchWays(bbox);
-        List<Relation> relations = data.searchRelations(bbox);
+        data.getReadLock().lock();
+        try {
+            List<Node> nodes = data.searchNodes(bbox);
+            List<Way> ways = data.searchWays(bbox);
+            List<Relation> relations = data.searchRelations(bbox);
 
-        final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
+            final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
 
-        ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems, data);
+            ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems, data);
 
-        // Need to process all relations first.
-        // Reason: Make sure, ElemStyles.getStyleCacheWithRange is
-        // not called for the same primitive in parallel threads.
-        // (Could be synchronized, but try to avoid this for
-        // performance reasons.)
-        helper.process(relations);
-        helper.process(new CompositeList<>(nodes, ways));
+            // Need to process all relations first.
+            // Reason: Make sure, ElemStyles.getStyleCacheWithRange is
+            // not called for the same primitive in parallel threads.
+            // (Could be synchronized, but try to avoid this for
+            // performance reasons.)
+            helper.process(relations);
+            helper.process(new CompositeList<>(nodes, ways));
 
-        if (Main.isTraceEnabled()) {
-            timePhase1 = System.currentTimeMillis();
-            System.err.print("phase 1 (calculate styles): " + (timePhase1 - timeStart) + " ms");
+            if (Main.isTraceEnabled()) {
+                timePhase1 = System.currentTimeMillis();
+                System.err.print("phase 1 (calculate styles): " + (timePhase1 - timeStart) + " ms");
+            }
+
+            Collections.sort(allStyleElems);
+
+            for (StyleRecord r : allStyleElems) {
+                r.style.paintPrimitive(
+                        r.osm,
+                        paintSettings,
+                        StyledMapRenderer.this,
+                        (r.flags & FLAG_SELECTED) != 0,
+                        (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
+                );
+            }
+
+            if (Main.isTraceEnabled()) {
+                timeFinished = System.currentTimeMillis();
+                System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms");
+            }
+
+            drawVirtualNodes(data, bbox);
+        } finally {
+            data.getReadLock().unlock();
         }
-
-        Collections.sort(allStyleElems);
-
-        for (StyleRecord r : allStyleElems) {
-            r.style.paintPrimitive(
-                    r.osm,
-                    paintSettings,
-                    StyledMapRenderer.this,
-                    (r.flags & FLAG_SELECTED) != 0,
-                    (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
-            );
-        }
-
-        if (Main.isTraceEnabled()) {
-            timeFinished = System.currentTimeMillis();
-            System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms");
-        }
-
-        drawVirtualNodes(data, bbox);
     }
 }
