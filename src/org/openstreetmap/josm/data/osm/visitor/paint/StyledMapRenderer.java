@@ -1501,17 +1501,17 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         BBox bbox = bounds.toBBox();
         getSettings(renderVirtualNodes);
 
-        highlightWaySegments = data.getHighlightedWaySegments();
-
-        long timeStart=0, timePhase1=0, timeFinished;
-        if (Main.isTraceEnabled()) {
-            timeStart = System.currentTimeMillis();
-            System.err.print("BENCHMARK: rendering ");
-            Main.debug(null);
-        }
-
         data.getReadLock().lock();
         try {
+            highlightWaySegments = data.getHighlightedWaySegments();
+
+            long timeStart=0, timePhase1=0, timeFinished;
+            if (Main.isTraceEnabled()) {
+                timeStart = System.currentTimeMillis();
+                System.err.print("BENCHMARK: rendering ");
+                Main.debug(null);
+            }
+
             List<Node> nodes = data.searchNodes(bbox);
             List<Way> ways = data.searchWays(bbox);
             List<Relation> relations = data.searchRelations(bbox);
