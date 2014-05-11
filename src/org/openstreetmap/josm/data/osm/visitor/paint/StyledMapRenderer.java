@@ -24,7 +24,6 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -70,6 +69,7 @@ import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.RepeatImageElemStyle.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
+import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -236,36 +236,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 return -1;
 
             return Float.compare(this.style.object_z_index, other.style.object_z_index);
-        }
-    }
-
-    /**
-     * Joined List build from two Lists (read-only).
-     *
-     * Extremely simple single-purpose implementation.
-     * @param <T>
-     */
-    public static class CompositeList<T> extends AbstractList<T> {
-        List<? extends T> a,b;
-
-        /**
-         * Constructs a new {@code CompositeList} from two lists.
-         * @param a First list
-         * @param b Second list
-         */
-        public CompositeList(List<? extends T> a, List<? extends T> b) {
-            this.a = a;
-            this.b = b;
-        }
-
-        @Override
-        public T get(int index) {
-            return index < a.size() ? a.get(index) : b.get(index - a.size());
-        }
-
-        @Override
-        public int size() {
-            return a.size() + b.size();
         }
     }
 
@@ -1359,10 +1329,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         private final boolean drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
 
         /**
-         * Constructor for CreateStyleRecordsWorker.
+         * Constructs a new {@code ComputeStyleListWorker}.
          * @param input the primitives to process
          * @param from first index of <code>input</code> to use
          * @param to last index + 1
+         * @param output the list of styles to which styles will be added
+         * @param data the data set
          */
         public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output, DataSet data) {
             this.input = input;
@@ -1515,9 +1487,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             List<Node> nodes = data.searchNodes(bbox);
             List<Way> ways = data.searchWays(bbox);
             List<Relation> relations = data.searchRelations(bbox);
-
+    
             final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
-
+    
             ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems, data);
 
             // Need to process all relations first.
@@ -1544,12 +1516,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
                 );
             }
-
+    
             if (Main.isTraceEnabled()) {
                 timeFinished = System.currentTimeMillis();
                 System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms");
             }
-
+    
             drawVirtualNodes(data, bbox);
         } finally {
             data.getReadLock().unlock();

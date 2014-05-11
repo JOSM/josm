@@ -2,13 +2,11 @@
 package org.openstreetmap.josm.gui;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 
 import org.junit.BeforeClass;
@@ -74,57 +72,7 @@ public class DefaultNameFormatterTest {
 
             Relation[] relations = new ArrayList<>(ds.getRelations()).toArray(new Relation[0]);
 
-            // Check each compare possibility
-            for (int i=0; i<relations.length; i++) {
-                Relation r1 = relations[i];
-                for (int j=i; j<relations.length; j++) {
-                    Relation r2 = relations[j];
-                    int a = comparator.compare(r1, r2);
-                    int b = comparator.compare(r2, r1);
-                    if (i==j || a==b) {
-                        if (a != 0 || b != 0) {
-                            fail(getFailMessage(r1, r2, a, b));
-                        }
-                    } else {
-                        if (a != -b) {
-                            fail(getFailMessage(r1, r2, a, b));
-                        }
-                    }
-                    for (int k=j; k<relations.length; k++) {
-                        Relation r3 = relations[k];
-                        int c = comparator.compare(r1, r3);
-                        int d = comparator.compare(r2, r3);
-                        if (a > 0 && d > 0) {
-                            if (c <= 0) {
-                               fail(getFailMessage(r1, r2, r3, a, b, c, d));
-                            }
-                        } else if (a == 0 && d == 0) {
-                            if (c != 0) {
-                                fail(getFailMessage(r1, r2, r3, a, b, c, d));
-                            }
-                        } else if (a < 0 && d < 0) {
-                            if (c >= 0) {
-                                fail(getFailMessage(r1, r2, r3, a, b, c, d));
-                            }
-                        }
-                    }
-                }
-            }
-            // Sort relation array
-            Arrays.sort(relations, comparator);
+            TestUtils.checkComparableContract(comparator, relations);
         }
-    }
-
-    private static String getFailMessage(Relation r1, Relation r2, int a, int b) {
-        return new StringBuilder("Compared\nr1: ").append(r1).append("\nr2: ")
-        .append(r2).append("\ngave: ").append(a).append("/").append(b)
-        .toString();
-    }
-
-    private static String getFailMessage(Relation r1, Relation r2, Relation r3, int a, int b, int c, int d) {
-        return new StringBuilder(getFailMessage(r1, r2, a, b))
-        .append("\nCompared\nr1: ").append(r1).append("\nr3: ").append(r3).append("\ngave: ").append(c)
-        .append("\nCompared\nr2: ").append(r2).append("\nr3: ").append(r3).append("\ngave: ").append(d)
-        .toString();
     }
 }

@@ -3,21 +3,20 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.File;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.Compression;
+import org.openstreetmap.josm.io.OsmReader;
 
 public class StyledMapRendererPerformanceTest {
 
@@ -33,8 +32,7 @@ public class StyledMapRendererPerformanceTest {
 
     @BeforeClass
     public static void load() throws Exception {
-        Main.initApplicationPreferences();
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
+        JOSMFixture.createPerformanceTestFixture().init();
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
         g = (Graphics2D)img.getGraphics();
         nc = new NavigatableComponent();
@@ -52,10 +50,6 @@ public class StyledMapRendererPerformanceTest {
             dsMultipolygon = OsmReader.parseDataSet(fisM, NullProgressMonitor.INSTANCE);
             dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);
         }
-
-        // Warm up
-        new StyledMapRendererPerformanceTest().testRestrictionSmall();
-        new StyledMapRendererPerformanceTest().testCity();
     }
 
     private static void test(int iterations, DataSet ds, Bounds bounds) throws Exception {
