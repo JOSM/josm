@@ -33,9 +33,6 @@ import org.xml.sax.SAXException;
  */
 public class ValidateAction extends JosmAction {
 
-    /** Serializable ID */
-    private static final long serialVersionUID = -2304521273582574603L;
-
     /** Last selection used to validate */
     private Collection<OsmPrimitive> lastSelection;
 
