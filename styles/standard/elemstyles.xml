@@ -112,28 +112,44 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
-		<condition k="bridge" b="yes"/>
-		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
-		<icon annotate="true" src="vehicle/viaduct.png"/>
+		<condition k="bridge"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
-		<condition k="bridge" b="no"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
+		<condition k="bridge" b="yes"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
 	</rule>
 	<rule>
 		<condition k="bridge" v="viaduct"/>
 		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
-		<icon annotate="true" src="vehicle/viaduct.png"/>
 	</rule>
 	<rule>
 		<condition k="bridge" v="aqueduct"/>
 		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
-		<icon annotate="true" src="nautical/aqueduct.png"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="movable"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="cantilever"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="covered"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="low_water_crossing"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="trestle"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
 	</rule>
 	<rule>
 		<condition k="bridge" v="swing"/>
 		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
-		<icon annotate="true" src="vehicle/viaduct.png"/>
 	</rule>
 	<rule>
 		<condition k="tunnel" b="yes"/>
