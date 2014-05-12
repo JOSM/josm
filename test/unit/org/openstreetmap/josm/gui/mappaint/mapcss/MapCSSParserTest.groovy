@@ -112,6 +112,14 @@ class MapCSSParserTest {
     }
 
     @Test
+    public void testRegexConditionParenthesis() throws Exception {
+        def condition = (Condition.KeyValueCondition) getParser("[name =~ /^\\(foo\\)/]").condition(Condition.Context.PRIMITIVE)
+        assert condition.applies(getEnvironment("name", "(foo)"))
+        assert !condition.applies(getEnvironment("name", "foo"))
+        assert !condition.applies(getEnvironment("name", "((foo))"))
+    }
+
+    @Test
     public void testNegatedRegexCondition() throws Exception {
         def condition = (Condition.KeyValueCondition) getParser("[surface!~/paved|unpaved/]").condition(Condition.Context.PRIMITIVE)
         assert Condition.Op.NREGEX.equals(condition.op)
