@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
@@ -16,6 +18,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 import org.openstreetmap.josm.io.Compression;
@@ -74,5 +77,32 @@ public class DefaultNameFormatterTest {
 
             TestUtils.checkComparableContract(comparator, relations);
         }
+    }
+
+    @Test
+    public void testRelationName() throws Exception {
+        assertThat(getFormattedRelationName("X=Y"), is("relation (0, 0 members)"));
+        assertThat(getFormattedRelationName("name=Foo"), is("relation (\"Foo\", 0 members)"));
+        assertThat(getFormattedRelationName("type=route route=tram ref=123"), is("route (\"123\", 0 members)"));
+        assertThat(getFormattedRelationName("type=multipolygon building=yes"), is("multipolygon (\"building\", 0 members)"));
+        assertThat(getFormattedRelationName("type=multipolygon building=yes ref=123"), is("multipolygon (\"123\", 0 members)"));
+        assertThat(getFormattedRelationName("type=multipolygon building=yes addr:housenumber=123"), is("multipolygon (\"building\", 0 members)"));
+        assertThat(getFormattedRelationName("type=multipolygon building=residential addr:housenumber=123"), is("multipolygon (\"residential\", 0 members)"));
+    }
+
+    @Test
+    public void testWayName() throws Exception {
+        assertThat(getFormattedWayName("building=yes"), is("building (0 nodes)"));
+        assertThat(getFormattedWayName("building=yes addr:housenumber=123"), is("House number 123 (0 nodes)"));
+        assertThat(getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"), is("House number 123 at FooStreet (0 nodes)"));
+        assertThat(getFormattedWayName("building=yes addr:housenumber=123 addr:housename=FooName"), is("House FooName (0 nodes)"));
+    }
+
+    static String getFormattedRelationName(String tagsString) {
+        return DefaultNameFormatter.getInstance().format((Relation) TestUtils.createPrimitive("relation " + tagsString));
+    }
+
+    static String getFormattedWayName(String tagsString) {
+        return DefaultNameFormatter.getInstance().format((Way) TestUtils.createPrimitive("way " + tagsString));
     }
 }

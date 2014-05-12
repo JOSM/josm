@@ -460,6 +460,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             return tr(nameTag.substring(1));
         } else if (nameTag.startsWith("?") && OsmUtils.isFalse(relation.get(nameTag.substring(1)))) {
             return null;
+        } else if (nameTag.startsWith("?")) {
+            return trc_lazy(nameTag, I18n.escape(relation.get(nameTag.substring(1))));
         } else {
             return trc_lazy(nameTag, I18n.escape(relation.get(nameTag)));
         }
