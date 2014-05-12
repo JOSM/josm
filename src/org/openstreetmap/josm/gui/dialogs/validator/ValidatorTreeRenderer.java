@@ -16,10 +16,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Tree renderer for displaying errors
  * @author frsantos
  */
-public class ValidatorTreeRenderer extends DefaultTreeCellRenderer
-{
-    /** Serializable ID */
-    private static final long serialVersionUID = 5567632718124640198L;
+public class ValidatorTreeRenderer extends DefaultTreeCellRenderer {
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value,

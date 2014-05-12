@@ -41,8 +41,6 @@ import org.openstreetmap.josm.tools.MultiMap;
  * @author frsantos
  */
 public class ValidatorTreePanel extends JTree implements Destroyable {
-    /** Serializable ID */
-    private static final long serialVersionUID = 2952292777351992696L;
 
     /**
      * The validation data.
