@@ -1413,6 +1413,14 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="optional_maxwidth" />
             <reference ref="general_access" />
         </item> <!-- lift_gate -->
+        <item name="Swing Gate" icon="presets/swing_gate.png" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=swing_gate" />
+            <key key="barrier" value="swing_gate" />
+            <combo key="swing_gate:type" text="Type" values="single,double" values_context="swing_gate" />
+            <reference ref="barrier_5" />
+            <reference ref="optional_maxwidth" />
+            <reference ref="general_access" />
+        </item> <!-- swing_gate -->
         <item name="Hampshire Gate" icon="presets/empty.png" type="node" preset_name_label="true">
             <key key="barrier" value="hampshire_gate" />
             <reference ref="barrier_5" />
