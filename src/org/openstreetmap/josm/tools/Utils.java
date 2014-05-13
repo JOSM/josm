@@ -44,12 +44,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
-import org.openstreetmap.josm.io.FileImporter;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -664,13 +665,73 @@ public final class Utils {
      */
     public static InputStream openURLAndDecompress(final URL url, final boolean decompress) throws IOException {
         final URLConnection connection = setupURLConnection(url.openConnection());
-        if (decompress && "application/x-gzip".equals(connection.getHeaderField("Content-Type"))) {
-            return new GZIPInputStream(connection.getInputStream());
-        } else if (decompress && "application/x-bzip2".equals(connection.getHeaderField("Content-Type"))) {
-            return FileImporter.getBZip2InputStream(new BufferedInputStream(connection.getInputStream()));
-        } else {
-            return connection.getInputStream();
+        final InputStream in = connection.getInputStream();
+        if (decompress) {
+            switch (connection.getHeaderField("Content-Type")) {
+            case "application/zip":
+                return getZipInputStream(in);
+            case "application/x-gzip":
+                return getGZipInputStream(in);
+            case "application/x-bzip2":
+                return getBZip2InputStream(in);
+            }
         }
+        return in;
+    }
+
+    /**
+     * Returns a Bzip2 input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a Bzip2 input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if the given input stream does not contain valid BZ2 header
+     * @since 7119
+     */
+    public static CBZip2InputStream getBZip2InputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        BufferedInputStream bis = new BufferedInputStream(in);
+        int b = bis.read();
+        if (b != 'B')
+            throw new IOException(tr("Invalid bz2 file."));
+        b = bis.read();
+        if (b != 'Z')
+            throw new IOException(tr("Invalid bz2 file."));
+        return new CBZip2InputStream(bis, /* see #9537 */ true);
+    }
+
+    /**
+     * Returns a Gzip input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a Gzip input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if an I/O error has occurred
+     * @since 7119
+     */
+    public static GZIPInputStream getGZipInputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        return new GZIPInputStream(in);
+    }
+
+    /**
+     * Returns a Zip input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a Zip input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if an I/O error has occurred
+     * @since 7119
+     */
+    public static ZipInputStream getZipInputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        ZipInputStream zis = new ZipInputStream(in, StandardCharsets.UTF_8);
+        // Positions the stream at the beginning of first entry
+        ZipEntry ze = zis.getNextEntry();
+        if (ze != null && Main.isDebugEnabled()) {
+            Main.debug("Zip entry: "+ze.getName());
+        }
+        return zis;
     }
 
     /***

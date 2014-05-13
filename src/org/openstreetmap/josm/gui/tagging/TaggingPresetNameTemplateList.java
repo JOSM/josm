@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.gui.tagging;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,10 +8,6 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetListener;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
-import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 
 /**
  * List of tagging presets with name templates, allows to find appropriate template based on existing primitive
