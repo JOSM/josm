@@ -66,7 +66,6 @@ import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.io.imagery.WMSGrabber;
 import org.openstreetmap.josm.io.imagery.WMSRequest;
 
-
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
  * fetched this way is tiled and managed to the disc to reduce server load.
@@ -155,6 +154,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     /** set to true if the user confirmed to use an potentially invalid WMS base url */
     private boolean isInvalidUrlConfirmed = false;
 
+    /**
+     * Constructs a new {@code WMSLayer}.
+     */
     public WMSLayer() {
         this(new ImageryInfo(tr("Blank Layer")));
     }
@@ -337,7 +339,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
 
         attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), null, null, 0, this);
-
     }
 
     @Override
@@ -452,12 +453,10 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             for(int y = bminy; y<=bmaxy; ++y){
                 GeorefImage img = images[modulo(x,dax)][modulo(y,day)];
                 if (!img.paint(g, mv, x, y, leftEdge, bottomEdge)) {
-                    WMSRequest request = new WMSRequest(x, y, info.getPixelPerDegree(), real, true);
-                    addRequest(request);
+                    addRequest(new WMSRequest(x, y, info.getPixelPerDegree(), real, true));
                     areaToCache.add(new ProjectionBounds(getEastNorth(x, y), getEastNorth(x + 1, y + 1)));
                 } else if (img.getState() == State.PARTLY_IN_CACHE && autoDownloadEnabled) {
-                    WMSRequest request = new WMSRequest(x, y, info.getPixelPerDegree(), real, false);
-                    addRequest(request);
+                    addRequest(new WMSRequest(x, y, info.getPixelPerDegree(), real, false));
                     areaToCache.add(new ProjectionBounds(getEastNorth(x, y), getEastNorth(x + 1, y + 1)));
                 }
             }
@@ -657,6 +656,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public class DownloadAction extends AbstractAction {
+        /**
+         * Constructs a new {@code DownloadAction}.
+         */
         public DownloadAction() {
             super(tr("Download visible tiles"));
         }
@@ -775,6 +777,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public class ReloadErrorTilesAction extends AbstractAction {
+        /**
+         * Constructs a new {@code ReloadErrorTilesAction}.
+         */
         public ReloadErrorTilesAction() {
             super(tr("Reload erroneous tiles"));
         }
@@ -796,6 +801,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public class ToggleAlphaAction extends AbstractAction implements LayerAction {
+        /**
+         * Constructs a new {@code ToggleAlphaAction}.
+         */
         public ToggleAlphaAction() {
             super(tr("Alpha channel"));
         }
@@ -814,20 +822,25 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             }
             Main.map.mapView.repaint();
         }
+
         @Override
         public Component createMenuComponent() {
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
             item.setSelected(PROP_ALPHA_CHANNEL.get());
             return item;
         }
+
         @Override
         public boolean supportLayers(List<Layer> layers) {
             return layers.size() == 1 && layers.get(0) instanceof WMSLayer;
         }
     }
 
-
     public class ToggleAutoResolutionAction extends AbstractAction implements LayerAction {
+
+        /**
+         * Constructs a new {@code ToggleAutoResolutionAction}.
+         */
         public ToggleAutoResolutionAction() {
             super(tr("Automatically change resolution"));
         }
@@ -857,6 +870,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
      * When using the menu entry again, the WMS cache will be used properly.
      */
     public class BookmarkWmsAction extends AbstractAction {
+        /**
+         * Constructs a new {@code BookmarkWmsAction}.
+         */
         public BookmarkWmsAction() {
             super(tr("Set WMS Bookmark"));
         }

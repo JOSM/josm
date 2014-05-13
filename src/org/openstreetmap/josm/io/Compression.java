@@ -59,11 +59,11 @@ public enum Compression {
     public InputStream getUncompressedInputStream(InputStream in) throws IOException {
         switch (this) {
             case BZIP2:
-                return FileImporter.getBZip2InputStream(in);
+                return Utils.getBZip2InputStream(in);
             case GZIP:
-                return FileImporter.getGZipInputStream(in);
+                return Utils.getGZipInputStream(in);
             case ZIP:
-                return FileImporter.getZipInputStream(in);
+                return Utils.getZipInputStream(in);
             case NONE:
             default:
                 return in;
