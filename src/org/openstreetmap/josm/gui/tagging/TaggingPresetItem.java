@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,14 +21,18 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
  */
 public abstract class TaggingPresetItem {
 
-    protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
+    protected void initAutoCompletionField(AutoCompletingTextField field, String... key) {
+        initAutoCompletionField(field, Arrays.asList(key));
+    }
+
+    protected void initAutoCompletionField(AutoCompletingTextField field, List<String> keys) {
         if (Main.main == null) return;
         OsmDataLayer layer = Main.main.getEditLayer();
         if (layer == null) {
             return;
         }
         AutoCompletionList list = new AutoCompletionList();
-        layer.data.getAutoCompletionManager().populateWithTagValues(list, key);
+        layer.data.getAutoCompletionManager().populateWithTagValues(list, keys);
         field.setAutoCompletionList(list);
     }
 

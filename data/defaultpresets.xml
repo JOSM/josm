@@ -58,6 +58,7 @@ text: text box
                   mutually exclusive with use_last_as_default.
   match: none/key/key!/keyvalue (default is "none", see below for more information)
   length: length of input box (number of characters allowed)
+  alternative_autocomplete_keys: comma separated list of alternative keys to use for autocompletion
 
 combo: combo box, with multiple choices and possible to enter free form text
   key: key to set
@@ -6681,8 +6682,8 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <text key="addr:housenumber" text="House number" match="key" auto_increment="-2,-1,+1,+2" />
             <optional>
-                <text key="addr:housename" text="House name" match="key" />
-                <text key="addr:street" text="Street name" use_last_as_default="force" match="key" />
+                <text key="addr:housename" text="House name" match="key" alternative_autocomplete_keys="name" />
+                <text key="addr:street" text="Street name" use_last_as_default="force" match="key" alternative_autocomplete_keys="name" />
                 <text key="addr:city" text="City name" use_last_as_default="force" match="key" />
                 <text key="addr:postcode" text="Post code" use_last_as_default="force" match="key" />
                 <combo key="addr:country" text="Country code" values_from="java.util.Locale#getISOCountries" use_last_as_default="force" match="key" />

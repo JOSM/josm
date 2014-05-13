@@ -576,6 +576,7 @@ public final class TaggingPresetItems {
         public String use_last_as_default = "false";
         public String auto_increment;
         public String length;
+        public String alternative_autocomplete_keys;
 
         private JComponent value;
 
@@ -584,7 +585,11 @@ public final class TaggingPresetItems {
             // find out if our key is already used in the selection.
             Usage usage = determineTextUsage(sel, key);
             AutoCompletingTextField textField = new AutoCompletingTextField();
-            initAutoCompletionField(textField, key);
+            if (alternative_autocomplete_keys != null) {
+                initAutoCompletionField(textField, (key + "," + alternative_autocomplete_keys).split(","));
+            } else {
+                initAutoCompletionField(textField, key);
+            }
             if (length != null && !length.isEmpty()) {
                 textField.setMaxChars(Integer.valueOf(length));
             }

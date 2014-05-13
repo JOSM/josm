@@ -156,6 +156,7 @@
 		<attribute name="auto_increment" type="string" />
 		<attribute name="match" type="tns:match" />
 		<attribute name="length" type="positiveInteger" />
+		<attribute name="alternative_autocomplete_keys" type="string" />
 
 		<attribute name="type" use="prohibited" />
 		<attribute name="name" use="prohibited" />
