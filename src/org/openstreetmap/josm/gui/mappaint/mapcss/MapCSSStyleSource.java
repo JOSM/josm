@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -125,7 +126,8 @@ public class MapCSSStyleSource extends StyleSource {
                 selRightmost = ((ChildOrParentSelector) selRightmost).right;
             }
             MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
-            switch (((GeneralSelector) selRightmost).getBase()) {
+            final String base = ((GeneralSelector) selRightmost).getBase();
+            switch (base) {
                 case "node":
                     nodeRules.add(optRule);
                     break;
@@ -148,6 +150,11 @@ public class MapCSSStyleSource extends StyleSource {
                     break;
                 case "canvas":
                     canvasRules.add(r);
+                default:
+                    final RuntimeException e = new RuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
+                    Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                    Main.error(e);
+                    logError(e);
             }
         }
     }

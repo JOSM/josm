@@ -309,4 +309,12 @@ class MapCSSParserTest {
         assert !s1.matches(new Environment().withPrimitive(n2))
         assert !s1.matches(new Environment().withPrimitive(w))
     }
+
+    @Test
+    public void testInvalidBaseSelector() throws Exception {
+        def css = new MapCSSStyleSource("invalid_base[key=value] {}")
+        css.loadStyleSource()
+        assert !css.getErrors().isEmpty()
+        assert css.getErrors().iterator().next().toString().contains("Unknown MapCSS base selector invalid_base")
+    }
 }
