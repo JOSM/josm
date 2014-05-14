@@ -150,6 +150,9 @@ public class MapCSSStyleSource extends StyleSource {
                     break;
                 case "canvas":
                     canvasRules.add(r);
+                    break;
+                case "meta":
+                    break;
                 default:
                     final RuntimeException e = new RuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
                     Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
