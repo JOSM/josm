@@ -17,9 +17,11 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -48,6 +50,8 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.Utils.Function;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -296,15 +300,31 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     protected void prepareDefaultRelationDecisions() {
-        RelationMemberConflictResolverModel model = getRelationMemberConflictResolverModel();
-        Set<Relation> relations = new HashSet<>();
+        final RelationMemberConflictResolverModel model = getRelationMemberConflictResolverModel();
+        final Map<Relation, Integer> numberOfKeepResolutions = new HashMap<>();
+        final MultiMap<OsmPrimitive, Relation> resolvedRelationsPerPrimitive = new MultiMap<>();
+
         for (int i = 0; i < model.getNumDecisions(); i++) {
-            RelationMemberConflictDecision decision = model.getDecision(i);
-            if (!relations.contains(decision.getRelation())) {
+            final RelationMemberConflictDecision decision = model.getDecision(i);
+            final Relation r = decision.getRelation();
+            final OsmPrimitive p = decision.getOriginalPrimitive();
+            if (!numberOfKeepResolutions.containsKey(r)) {
                 decision.decide(RelationMemberConflictDecisionType.KEEP);
-                relations.add(decision.getRelation());
+                numberOfKeepResolutions.put(r, 1);
+                resolvedRelationsPerPrimitive.put(p, r);
+                continue;
+            }
+
+            final Integer keepResolutions = numberOfKeepResolutions.get(r);
+            final Collection<Relation> resolvedRelations = Utils.firstNonNull(resolvedRelationsPerPrimitive.get(p), Collections.<Relation>emptyList());
+            if (keepResolutions <= Utils.filter(resolvedRelations, Predicates.equalTo(r)).size()) {
+                // old relation contains one primitive more often than the current resolution => keep the current member
+                decision.decide(RelationMemberConflictDecisionType.KEEP);
+                numberOfKeepResolutions.put(r, keepResolutions + 1);
+                resolvedRelationsPerPrimitive.put(p, r);
             } else {
                 decision.decide(RelationMemberConflictDecisionType.REMOVE);
+                resolvedRelationsPerPrimitive.put(p, r);
             }
         }
         model.refresh();
@@ -551,7 +571,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             final Set<Relation> parentRelations) throws UserCancelException {
         /* I18n: object count < 2 is not possible */
         String msg = trn("You are about to combine {1} object, "
-                + "which are part of {0} relation:<br/>{2}"
+                + "which is part of {0} relation:<br/>{2}"
                 + "Combining these objects may break this relation. If you are unsure, please cancel this operation.<br/>"
                 + "If you want to continue, you are shown a dialog to decide how to adapt the relation.<br/><br/>"
                 + "Do you want to continue?",

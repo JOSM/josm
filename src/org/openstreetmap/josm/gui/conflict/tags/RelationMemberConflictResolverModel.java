@@ -229,21 +229,20 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     }
 
     protected Command buildResolveCommand(Relation relation, OsmPrimitive newPrimitive) {
-        Relation modifiedRelation = new Relation(relation);
+        final Relation modifiedRelation = new Relation(relation);
         modifiedRelation.setMembers(null);
         boolean isChanged = false;
         for (int i=0; i < relation.getMembersCount(); i++) {
-            RelationMember rm = relation.getMember(i);
-            RelationMember rmNew;
+            final RelationMember member = relation.getMember(i);
             RelationMemberConflictDecision decision = getDecision(relation, i);
             if (decision == null) {
-                modifiedRelation.addMember(rm);
+                modifiedRelation.addMember(member);
             } else {
                 switch(decision.getDecision()) {
                 case KEEP:
-                    rmNew = new RelationMember(decision.getRole(),newPrimitive);
-                    modifiedRelation.addMember(rmNew);
-                    isChanged |= ! rm.equals(rmNew);
+                    final RelationMember newMember = new RelationMember(decision.getRole(),newPrimitive);
+                    modifiedRelation.addMember(newMember);
+                    isChanged |= ! member.equals(newMember);
                     break;
                 case REMOVE:
                     isChanged = true;
