@@ -9,7 +9,6 @@ import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.TestUtils
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
-import org.openstreetmap.josm.data.osm.OsmPrimitive
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
@@ -18,14 +17,8 @@ import org.openstreetmap.josm.tools.ColorHelper
 
 class MapCSSParserTest {
 
-    protected static OsmPrimitive getPrimitive(String key, String value) {
-        def w = new Way()
-        w.put(key, value)
-        return w
-    }
-
     protected static Environment getEnvironment(String key, String value) {
-        return new Environment().withPrimitive(getPrimitive(key, value))
+        return new Environment().withPrimitive(TestUtils.createPrimitive("way " + key + "=" + value))
     }
 
     protected static MapCSSParser getParser(String stringToParse) {
@@ -63,25 +56,25 @@ class MapCSSParserTest {
 
     @Test
     public void testClassMatching() throws Exception {
-        def css = new MapCSSStyleSource("")
-        getParser("" +
+        def css = new MapCSSStyleSource("" +
                 "way[highway=footway] { set .path; color: #FF6644; width: 2; }\n" +
                 "way[highway=path]    { set path; color: brown; width: 2; }\n" +
                 "way[\"set\"=escape]  {  }\n" +
                 "way.path             { text:auto; text-color: green; text-position: line; text-offset: 5; }\n" +
                 "way!.path            { color: orange; }\n"
-        ).sheet(css)
+        )
+        css.loadStyleSource()
         assert css.getErrors().isEmpty()
         def mc1 = new MultiCascade()
-        css.apply(mc1, getPrimitive("highway", "path"), 1, null, false);
+        css.apply(mc1, TestUtils.createPrimitive("way highway=path"), 1, null, false);
         assert "green".equals(mc1.getCascade("default").get("text-color", null, String.class))
         assert "brown".equals(mc1.getCascade("default").get("color", null, String.class))
         def mc2 = new MultiCascade()
-        css.apply(mc2, getPrimitive("highway", "residential"), 1, null, false);
+        css.apply(mc2, TestUtils.createPrimitive("way highway=residential"), 1, null, false);
         assert "orange".equals(mc2.getCascade("default").get("color", null, String.class))
         assert mc2.getCascade("default").get("text-color", null, String.class) == null
         def mc3 = new MultiCascade()
-        css.apply(mc3, getPrimitive("highway", "footway"), 1, null, false);
+        css.apply(mc3, TestUtils.createPrimitive("way highway=footway"), 1, null, false);
         assert ColorHelper.html2color("#FF6644").equals(mc3.getCascade("default").get("color", null, Color.class))
     }
 
@@ -204,10 +197,10 @@ class MapCSSParserTest {
 
     @Test
     public void testTicket8568() throws Exception {
-        def sheet = new MapCSSStyleSource("")
-        getParser("" +
+        def sheet = new MapCSSStyleSource("" +
                 "way { width: 5; }\n" +
-                "way[keyA], way[keyB] { width: eval(prop(width)+10); }").sheet(sheet)
+                "way[keyA], way[keyB] { width: eval(prop(width)+10); }")
+        sheet.loadStyleSource()
         def mc = new MultiCascade()
         sheet.apply(mc, TestUtils.createPrimitive("way foo=bar"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 5
@@ -221,8 +214,9 @@ class MapCSSParserTest {
 
     @Test
     public void testTicket8071() throws Exception {
-        def sheet = new MapCSSStyleSource("")
-        getParser("*[rcn_ref], *[name] {text: concat(tag(rcn_ref), \" \", tag(name)); }").sheet(sheet)
+        def sheet = new MapCSSStyleSource("" +
+                "*[rcn_ref], *[name] {text: concat(tag(rcn_ref), \" \", tag(name)); }")
+        sheet.loadStyleSource()
         def mc = new MultiCascade()
         sheet.apply(mc, TestUtils.createPrimitive("way name=Foo"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == " Foo"
@@ -231,8 +225,9 @@ class MapCSSParserTest {
         sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15 name=Foo"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 Foo"
 
-        sheet = new MapCSSStyleSource("")
-        getParser("*[rcn_ref], *[name] {text: join(\" - \", tag(rcn_ref), tag(ref), tag(name)); }").sheet(sheet)
+        sheet = new MapCSSStyleSource("" +
+                "*[rcn_ref], *[name] {text: join(\" - \", tag(rcn_ref), tag(ref), tag(name)); }")
+        sheet.loadStyleSource()
         sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15 ref=1.5 name=Foo"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 - 1.5 - Foo"
     }
