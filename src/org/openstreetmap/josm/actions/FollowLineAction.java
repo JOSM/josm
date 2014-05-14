@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,8 @@ import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.SelectCommand;
+import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -109,10 +112,9 @@ public class FollowLineAction extends JosmAction {
             } else {
                 newFollower.addNode(newPoint);
             }
-            Main.main.undoRedo.add(new ChangeCommand(follower, newFollower));
-            osmLayer.data.clearSelection();
-            osmLayer.data.addSelected(newFollower);
-            osmLayer.data.addSelected(newPoint);
+            Main.main.undoRedo.add(new SequenceCommand(tr("Follow line"),
+                    new ChangeCommand(follower, newFollower),
+                    new SelectCommand(Arrays.asList(newFollower, newPoint))));
             // "viewport following" mode for tracing long features
             // from aerial imagery or GPS tracks.
             if (Main.map.mapView.viewportFollowing) {
