@@ -75,8 +75,7 @@ public class APIDataSet {
                 toDelete.add(osm);
             }
         }
-        OsmPrimitiveComparator c = new OsmPrimitiveComparator();
-        c.relationsFirst = true;
+        OsmPrimitiveComparator c = new OsmPrimitiveComparator(false, true);
         Collections.sort(toDelete, c);
         Collections.sort(toAdd, c);
         Collections.sort(toUpdate, c);

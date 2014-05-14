@@ -7,16 +7,39 @@ import java.util.Map;
 
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 
-/** Comparator, comparing by type and objects display names */
+/**
+ * Comparator, comparing pritimives by:<ul>
+ * <li>type and ids in "quick" mode</li>
+ * <li>type and objects display names instead</li>
+ * </ul>
+ * @since 4113
+ */
 public class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
-    private final Map<OsmPrimitive, String> cache= new HashMap<>();
-    private final DefaultNameFormatter df = DefaultNameFormatter.getInstance();
-    public boolean relationsFirst = false;
+    private final Map<OsmPrimitive, String> cache = new HashMap<>();
+    private final boolean relationsFirst;
+    private final boolean quick;
+
+    /**
+     * Constructs a new {@code OsmPrimitiveComparator}.
+     */
+    public OsmPrimitiveComparator() {
+        this(false, false);
+    }
+
+    /**
+     * Constructs a new {@code OsmPrimitiveComparator}.
+     * @param quick if {@code true}, sorts by type and ids (fast), otherwise sort by type and display names (slower)
+     * @param relationsFirst if {@code true}, always list relations first
+     */
+    public OsmPrimitiveComparator(boolean quick, boolean relationsFirst) {
+        this.quick = quick;
+        this.relationsFirst = relationsFirst;
+    }
 
     private String cachedName(OsmPrimitive p) {
         String name = cache.get(p);
         if (name == null) {
-            name = p.getDisplayName(df);
+            name = p.getDisplayName(DefaultNameFormatter.getInstance());
             cache.put(p, name);
         }
         return name;
@@ -35,8 +58,16 @@ public class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
         return an.compareTo(bn);
     }
 
+    private static int compareId(OsmPrimitive a, OsmPrimitive b) {
+        long idA = a.getUniqueId();
+        long idB = b.getUniqueId();
+        if (idA < idB) return -1;
+        if (idA > idB) return 1;
+        return 0;
+    }
+
     private int compareType(OsmPrimitive a, OsmPrimitive b) {
-        if(relationsFirst) {
+        if (relationsFirst) {
             // show relations before ways, then nodes
             if (a.getType().equals(OsmPrimitiveType.RELATION)) return -1;
             if (a.getType().equals(OsmPrimitiveType.NODE)) return 1;
@@ -57,7 +88,7 @@ public class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
     @Override
     public int compare(OsmPrimitive a, OsmPrimitive b) {
         if (a.getType().equals(b.getType()))
-            return compareName(a, b);
+            return quick ? compareId(a, b) : compareName(a, b);
         return compareType(a, b);
     }
 }
