@@ -83,9 +83,9 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
-import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.tagging.PresetHandler;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -266,9 +266,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         tagTable.getSelectionModel().addListSelectionListener(deleteAction);
         membershipTable.getSelectionModel().addListSelectionListener(deleteAction);
 
-        JScrollPane scrollPane = (JScrollPane) createLayout(bothTables, true, Arrays.asList(new SideButton[] {
-                this.btnAdd, this.btnEdit, this.btnDel
-        }));
+        JScrollPane scrollPane = (JScrollPane) createLayout(bothTables, true,
+                Arrays.asList(this.btnAdd, this.btnEdit, this.btnDel));
 
         MouseClickWatch mouseClickWatch = new MouseClickWatch();
         tagTable.addMouseListener(mouseClickWatch);
@@ -459,7 +458,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         // ENTER = editAction, open "edit" dialog
         tagTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"onTableEnter");
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onTableEnter");
         tagTable.getActionMap().put("onTableEnter",editAction);
         membershipTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"onTableEnter");
