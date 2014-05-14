@@ -416,6 +416,10 @@ node[barrier=lift_gate] {
     icon-image: "vehicle/lift_gate.png";
     text: auto;
 }
+node[barrier=swing_gate] {
+    icon-image: "vehicle/swing_gate.png";
+    text: auto;
+}
 area[barrier=toll_booth]:closed {
     fill-color: barrier#F0F050;
 }
