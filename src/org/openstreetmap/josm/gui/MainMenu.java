@@ -247,7 +247,9 @@ public class MainMenu extends JMenuBar {
     /** Tools / Merge Nodes */
     public final MergeNodesAction mergeNodes = new MergeNodesAction();
     /** Tools / Join Node to Way */
-    public final JoinNodeWayAction joinNodeWay = new JoinNodeWayAction();
+    public final JoinNodeWayAction joinNodeWay = JoinNodeWayAction.createJoinNodeToWayAction();
+    /** Tools / Join Way to Node */
+    public final JoinNodeWayAction moveNodeOntoWay = JoinNodeWayAction.createMoveNodeOntoWayAction();
     /** Tools / Disconnect Node from Way */
     public final UnJoinNodeWayAction unJoinNodeWay = new UnJoinNodeWayAction();
     /** Tools / Unglue Ways */
@@ -736,6 +738,7 @@ public class MainMenu extends JMenuBar {
         toolsMenu.addSeparator();
         add(toolsMenu, mergeNodes);
         add(toolsMenu, joinNodeWay);
+        add(toolsMenu, moveNodeOntoWay);
         add(toolsMenu, unJoinNodeWay);
         add(toolsMenu, unglueNodes);
         toolsMenu.addSeparator();
