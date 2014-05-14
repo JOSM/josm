@@ -19,7 +19,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
-import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;

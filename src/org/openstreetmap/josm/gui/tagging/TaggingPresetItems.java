@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -48,7 +49,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPriority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -67,7 +67,8 @@ import org.xml.sax.SAXException;
  * @since 6068
  */
 public final class TaggingPresetItems {
-    private TaggingPresetItems() {    }
+    private TaggingPresetItems() {
+    }
 
     private static int auto_increment_selected = 0;
     public static final String DIFFERENT = tr("<different>");
@@ -75,12 +76,12 @@ public final class TaggingPresetItems {
     private static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
 
     // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
-    private static final Map<String,EnumSet<TaggingPresetType>> typeCache = new LinkedHashMap<>(16, 1.1f, true);
+    private static final Map<String,EnumSet<TaggingPresetType>> TYPE_CACHE = new LinkedHashMap<>(16, 1.1f, true);
 
     /**
      * Last value of each key used in presets, used for prefilling corresponding fields
      */
-    private static final Map<String,String> lastValue = new HashMap<>();
+    private static final Map<String,String> LAST_VALUES = new HashMap<>();
 
     public static class PresetListEntry {
         public String value;
@@ -407,8 +408,8 @@ public final class TaggingPresetItems {
                 }
             }).iterator().next();
             if (t == null) return false;
-            JLabel lbl = PresetListPanel.createLabelForPreset(t);
-            lbl.addMouseListener(new PresetListPanel.PresetLabelML(lbl, t, null) {
+            JLabel lbl = new PresetLabel(t);
+            lbl.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent arg0) {
                     t.actionPerformed(null);
@@ -596,15 +597,15 @@ public final class TaggingPresetItems {
             if (usage.unused()){
                 if (auto_increment_selected != 0  && auto_increment != null) {
                     try {
-                        textField.setText(Integer.toString(Integer.parseInt(lastValue.get(key)) + auto_increment_selected));
+                        textField.setText(Integer.toString(Integer.parseInt(LAST_VALUES.get(key)) + auto_increment_selected));
                     } catch (NumberFormatException ex) {
                         // Ignore - cannot auto-increment if last was non-numeric
                     }
                 }
                 else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default values feature is enabled
-                    if (!"false".equals(use_last_as_default) && lastValue.containsKey(key) && !presetInitiallyMatches) {
-                        textField.setText(lastValue.get(key));
+                    if (!"false".equals(use_last_as_default) && LAST_VALUES.containsKey(key) && !presetInitiallyMatches) {
+                        textField.setText(LAST_VALUES.get(key));
                     } else {
                         textField.setText(default_);
                     }
@@ -723,7 +724,7 @@ public final class TaggingPresetItems {
             v = Tag.removeWhiteSpaces(v);
 
             if (!"false".equals(use_last_as_default) || auto_increment != null) {
-                lastValue.put(key, v);
+                LAST_VALUES.put(key, v);
             }
             if (v.equals(originalValue) || (originalValue == null && v.length() == 0))
                 return;
@@ -1092,7 +1093,7 @@ public final class TaggingPresetItems {
                 return;
 
             if (!"false".equals(use_last_as_default)) {
-                lastValue.put(key, value);
+                LAST_VALUES.put(key, value);
             }
             changedTags.add(new Tag(key, value));
         }
@@ -1234,8 +1235,8 @@ public final class TaggingPresetItems {
             } else if (usage.unused()) {
                 // all items were unset (and so is default)
                 originalValue = lhm.get("");
-                if ("force".equals(use_last_as_default) && lastValue.containsKey(key) && !presetInitiallyMatches) {
-                    combo.setSelectedItem(lhm.get(lastValue.get(key)));
+                if ("force".equals(use_last_as_default) && LAST_VALUES.containsKey(key) && !presetInitiallyMatches) {
+                    combo.setSelectedItem(lhm.get(LAST_VALUES.get(key)));
                 } else {
                     combo.setSelectedItem(originalValue);
                 }
@@ -1362,8 +1363,8 @@ public final class TaggingPresetItems {
     }
 
     public static EnumSet<TaggingPresetType> getType(String types) throws SAXException {
-        if (typeCache.containsKey(types))
-            return typeCache.get(types);
+        if (TYPE_CACHE.containsKey(types))
+            return TYPE_CACHE.get(types);
         EnumSet<TaggingPresetType> result = EnumSet.noneOf(TaggingPresetType.class);
         for (String type : Arrays.asList(types.split(","))) {
             try {
@@ -1373,7 +1374,7 @@ public final class TaggingPresetItems {
                 throw new SAXException(tr("Unknown type: {0}", type), e);
             }
         }
-        typeCache.put(types, result);
+        TYPE_CACHE.put(types, result);
         return result;
     }
 
