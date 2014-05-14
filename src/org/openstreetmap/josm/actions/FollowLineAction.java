@@ -14,10 +14,10 @@ import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Follow line action - Makes easier to draw a line that shares points with another line
@@ -83,20 +83,18 @@ public class FollowLineAction extends JosmAction {
         if (referrers.size() < 2) return; // There's nothing to follow
 
         Node newPoint = null;
-        for (OsmPrimitive referrer : referrers) {
-            if (!referrer.getType().equals(OsmPrimitiveType.WAY)) { // Can't follow points or relations
-                continue;
-            }
-            Way toFollow = (Way) referrer;
+        for (final Way toFollow : Utils.filteredCollection(referrers, Way.class)) {
             if (toFollow.equals(follower)) {
                 continue;
             }
             Set<Node> points = toFollow.getNeighbours(last);
-            if (!points.remove(prev) || points.isEmpty())
+            points.remove(prev);
+            if (points.isEmpty())     // No candidate -> consider next way
                 continue;
             if (points.size() > 1)    // Ambiguous junction?
                 return;
 
+            // points contains exactly one element
             Node newPointCandidate = points.iterator().next();
 
             if ((newPoint != null) && (newPoint != newPointCandidate))
