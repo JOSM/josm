@@ -343,6 +343,10 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="vehicle/lift_gate.png"/>
 	</rule>
 	<rule>
+		<condition k="barrier" v="swing_gate"/>
+		<icon annotate="true" src="vehicle/swing_gate.png"/>
+    </rule>
+	<rule>
 		<condition k="barrier" v="wall"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="3" colour="barrier#F0F050"/>
