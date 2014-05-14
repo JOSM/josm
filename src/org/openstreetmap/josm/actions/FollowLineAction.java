@@ -114,7 +114,11 @@ public class FollowLineAction extends JosmAction {
             }
             Main.main.undoRedo.add(new SequenceCommand(tr("Follow line"),
                     new ChangeCommand(follower, newFollower),
-                    new SelectCommand(Arrays.asList(newFollower, newPoint))));
+                    new SelectCommand(newFollower.isClosed() // see #10028 - unselect last node when closing a way
+                            ? Arrays.<OsmPrimitive>asList(newFollower)
+                            : Arrays.<OsmPrimitive>asList(newFollower, newPoint)
+                    ))
+            );
             // "viewport following" mode for tracing long features
             // from aerial imagery or GPS tracks.
             if (Main.map.mapView.viewportFollowing) {
