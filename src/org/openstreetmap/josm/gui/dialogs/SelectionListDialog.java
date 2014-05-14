@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,7 +42,6 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
@@ -584,11 +582,9 @@ public class SelectionListDialog extends ToggleDialog  {
          * Sorts the current elements in the selection
          */
         public void sort() {
-            if (this.selection.size()>Main.pref.getInteger("selection.no_sort_above",100000)) return;
-            if (this.selection.size()>Main.pref.getInteger("selection.fast_sort_above",10000)) {
-                Collections.sort(this.selection, new OsmPrimitiveQuickComparator());
-            } else {
-                Collections.sort(this.selection, new OsmPrimitiveComparator());
+            if (this.selection.size() <= Main.pref.getInteger("selection.no_sort_above", 100000)) {
+                boolean quick = this.selection.size() > Main.pref.getInteger("selection.fast_sort_above", 10000);
+                Collections.sort(this.selection, new OsmPrimitiveComparator(quick, false));
             }
         }
 
@@ -777,34 +773,4 @@ public class SelectionListDialog extends ToggleDialog  {
             }
         }
     }
-
-    /** Quicker comparator, comparing just by type and ID's */
-    private static class OsmPrimitiveQuickComparator implements Comparator<OsmPrimitive> {
-
-        private int compareId(OsmPrimitive a, OsmPrimitive b) {
-            long id_a=a.getUniqueId();
-            long id_b=b.getUniqueId();
-            if (id_a<id_b) return -1;
-            if (id_a>id_b) return 1;
-            return 0;
-        }
-
-        private int compareType(OsmPrimitive a, OsmPrimitive b) {
-            // show ways before relations, then nodes
-            if (a.getType().equals(OsmPrimitiveType.WAY)) return -1;
-            if (a.getType().equals(OsmPrimitiveType.NODE)) return 1;
-            // a is a relation
-            if (b.getType().equals(OsmPrimitiveType.WAY)) return 1;
-            // b is a node
-            return -1;
-        }
-
-        @Override
-        public int compare(OsmPrimitive a, OsmPrimitive b) {
-            if (a.getType().equals(b.getType()))
-                return compareId(a, b);
-            return compareType(a, b);
-        }
-    }
-
 }
