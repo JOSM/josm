@@ -62,6 +62,7 @@ import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -1271,21 +1272,24 @@ public class ImageProvider {
                     if ("javax_imageio_1.0".equals(f)) {
                         Node root = metadata.getAsTree(f);
                         if (root instanceof Element) {
-                            Node item = ((Element)root).getElementsByTagName("TransparentColor").item(0);
-                            if (item instanceof Element) {
-                                String value = ((Element)item).getAttribute("value");
-                                String[] s = value.split(" ");
-                                if (s.length == 3) {
-                                    int[] rgb = new int[3];
-                                    try {
-                                        for (int i = 0; i<3; i++) {
-                                            rgb[i] = Integer.parseInt(s[i]);
+                            NodeList list = ((Element)root).getElementsByTagName("TransparentColor");
+                            if (list.getLength() > 0) {
+                                Node item = list.item(0);
+                                if (item instanceof Element) {
+                                    String value = ((Element)item).getAttribute("value");
+                                    String[] s = value.split(" ");
+                                    if (s.length == 3) {
+                                        int[] rgb = new int[3];
+                                        try {
+                                            for (int i = 0; i<3; i++) {
+                                                rgb[i] = Integer.parseInt(s[i]);
+                                            }
+                                            return new Color(rgb[0], rgb[1], rgb[2]);
+                                        } catch (IllegalArgumentException e) {
+                                            Main.error(e);
                                         }
-                                        return new Color(rgb[0], rgb[1], rgb[2]);
-                                    } catch (IllegalArgumentException e) {
-                                        Main.error(e);
                                     }
-                                }
+                            }
                             }
                         }
                         break;
