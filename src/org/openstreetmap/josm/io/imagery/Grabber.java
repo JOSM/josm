@@ -43,11 +43,13 @@ public abstract class Grabber implements Runnable {
             if (request.isPrecacheOnly()) {
                 if (!layer.cache.hasExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth)) {
                     attempt(request);
+                } else if (Main.isDebugEnabled()) {
+                    Main.debug("Ignoring "+request+" (precache only + exact match)");
                 }
-            } else {
-                if(!loadFromCache(request)){
-                    attempt(request);
-                }
+            } else if (!loadFromCache(request)){
+                attempt(request);
+            } else if (Main.isDebugEnabled()) {
+                Main.debug("Ignoring "+request+" (loaded from cache)");
             }
             layer.finishRequest(request);
         }
@@ -69,7 +71,7 @@ public abstract class Grabber implements Runnable {
                 } catch (InterruptedException e1) {
                     Main.debug("InterruptedException in "+getClass().getSimpleName()+" during WMS request");
                 }
-                if(i == maxTries) {
+                if (i == maxTries) {
                     Main.error(e);
                     request.finish(State.FAILED, null);
                 }

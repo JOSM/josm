@@ -23,8 +23,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -34,8 +32,8 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.ProgressInputStream;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
-
 
 public class WMSGrabber extends Grabber {
 
@@ -136,13 +134,15 @@ public class WMSGrabber extends Grabber {
 
     @Override
     public boolean loadFromCache(WMSRequest request) {
-        BufferedImage cached = layer.cache.getExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
+        BufferedImage cached = layer.cache.getExactMatch(
+                Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
 
         if (cached != null) {
             request.finish(State.IMAGE, cached);
             return true;
         } else if (request.isAllowPartialCacheMatch()) {
-            BufferedImage partialMatch = layer.cache.getPartialMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
+            BufferedImage partialMatch = layer.cache.getPartialMatch(
+                    Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
             if (partialMatch != null) {
                 request.finish(State.PARTLY_IN_CACHE, partialMatch);
                 return true;
@@ -178,7 +178,7 @@ public class WMSGrabber extends Grabber {
         }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        BufferedImage img = layer.normalizeImage(ImageIO.read(bais));
+        BufferedImage img = layer.normalizeImage(ImageProvider.read(bais, true, WMSLayer.PROP_ALPHA_CHANNEL.get()));
         bais.reset();
         layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
         return img;

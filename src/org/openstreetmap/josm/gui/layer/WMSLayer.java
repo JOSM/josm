@@ -65,6 +65,7 @@ import org.openstreetmap.josm.io.imagery.Grabber;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.io.imagery.WMSGrabber;
 import org.openstreetmap.josm.io.imagery.WMSRequest;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
@@ -812,12 +813,19 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             JCheckBoxMenuItem checkbox = (JCheckBoxMenuItem) ev.getSource();
             boolean alphaChannel = checkbox.isSelected();
             PROP_ALPHA_CHANNEL.put(alphaChannel);
+            Main.info("WMS Alpha channel changed to "+alphaChannel);
 
             // clear all resized cached instances and repaint the layer
             for (int x = 0; x < dax; ++x) {
                 for (int y = 0; y < day; ++y) {
                     GeorefImage img = images[modulo(x, dax)][modulo(y, day)];
-                    img.flushedResizedCachedInstance();
+                    img.flushResizedCachedInstance();
+                    BufferedImage bi = img.getImage();
+                    // Completely erases images for which transparency has been forced,
+                    // or images that should be forced now, as they need to be recreated
+                    if (ImageProvider.isTransparencyForced(bi) || ImageProvider.hasTransparentColor(bi)) {
+                        img.resetImage();
+                    }
                 }
             }
             Main.map.mapView.repaint();

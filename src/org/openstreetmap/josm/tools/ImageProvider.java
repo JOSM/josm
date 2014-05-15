@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -12,7 +13,14 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
+import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,7 +46,12 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -45,6 +60,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -89,6 +106,18 @@ public class ImageProvider {
         /** Everything else, e.g. png, gif (must be supported by Java) */
         OTHER
     }
+
+    /**
+     * Property set on {@code BufferedImage} returned by {@link #makeImageTransparent}.
+     * @since 7132
+     */
+    public static String PROP_TRANSPARENCY_FORCED = "josm.transparency.forced";
+
+    /**
+     * Property set on {@code BufferedImage} returned by {@link #read} if metadata is required.
+     * @since 7132
+     */
+    public static String PROP_TRANSPARENCY_COLOR = "josm.transparency.color";
 
     protected Collection<String> dirs;
     protected String id;
@@ -512,7 +541,7 @@ public class ImageProvider {
             case OTHER:
                 BufferedImage img = null;
                 try {
-                    img = ImageIO.read(Utils.fileToURL(is.getFile()));
+                    img = read(Utils.fileToURL(is.getFile()), false, false);
                 } catch (IOException e) {
                     Main.warn("IOException while reading HTTP image: "+e.getMessage());
                 }
@@ -554,7 +583,7 @@ public class ImageProvider {
                     return new ImageResource(svg);
                 } else {
                     try {
-                        return new ImageResource(ImageIO.read(new ByteArrayInputStream(bytes)));
+                        return new ImageResource(read(new ByteArrayInputStream(bytes), false, false));
                     } catch (IOException e) {
                         Main.warn("IOException while reading image: "+e.getMessage());
                     }
@@ -624,7 +653,7 @@ public class ImageProvider {
                         }
                         BufferedImage img = null;
                         try {
-                            img = ImageIO.read(new ByteArrayInputStream(buf));
+                            img = read(new ByteArrayInputStream(buf), false, false);
                         } catch (IOException e) {
                             Main.warn(e);
                         }
@@ -649,7 +678,7 @@ public class ImageProvider {
         case OTHER:
             BufferedImage img = null;
             try {
-                img = ImageIO.read(path);
+                img = read(path, false, false);
             } catch (IOException e) {
                 Main.warn(e);
             }
@@ -1002,5 +1031,333 @@ public class ImageProvider {
             svgUniverse = new SVGUniverse();
         }
         return svgUniverse;
+    }
+
+    /**
+     * Returns a <code>BufferedImage</code> as the result of decoding
+     * a supplied <code>File</code> with an <code>ImageReader</code>
+     * chosen automatically from among those currently registered.
+     * The <code>File</code> is wrapped in an
+     * <code>ImageInputStream</code>.  If no registered
+     * <code>ImageReader</code> claims to be able to read the
+     * resulting stream, <code>null</code> is returned.
+     *
+     * <p> The current cache settings from <code>getUseCache</code>and
+     * <code>getCacheDirectory</code> will be used to control caching in the
+     * <code>ImageInputStream</code> that is created.
+     *
+     * <p> Note that there is no <code>read</code> method that takes a
+     * filename as a <code>String</code>; use this method instead after
+     * creating a <code>File</code> from the filename.
+     *
+     * <p> This method does not attempt to locate
+     * <code>ImageReader</code>s that can read directly from a
+     * <code>File</code>; that may be accomplished using
+     * <code>IIORegistry</code> and <code>ImageReaderSpi</code>.
+     *
+     * @param input a <code>File</code> to read from.
+     * @param readMetadata if {@code true}, makes sure to read image metadata to detect transparency color, if any.
+     * In that case the color can be retrieved later through {@link #PROP_TRANSPARENCY_COLOR}.
+     * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
+     * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
+     * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     *
+     * @return a <code>BufferedImage</code> containing the decoded
+     * contents of the input, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
+     * @throws IOException if an error occurs during reading.
+     * @since 7132
+     * @see BufferedImage#getProperty
+     */
+    public static BufferedImage read(File input, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(input, "input");
+        if (!input.canRead()) {
+            throw new IIOException("Can't read input file!");
+        }
+
+        ImageInputStream stream = ImageIO.createImageInputStream(input);
+        if (stream == null) {
+            throw new IIOException("Can't create an ImageInputStream!");
+        }
+        BufferedImage bi = read(stream, readMetadata, enforceTransparency);
+        if (bi == null) {
+            stream.close();
+        }
+        return bi;
+    }
+
+    /**
+     * Returns a <code>BufferedImage</code> as the result of decoding
+     * a supplied <code>InputStream</code> with an <code>ImageReader</code>
+     * chosen automatically from among those currently registered.
+     * The <code>InputStream</code> is wrapped in an
+     * <code>ImageInputStream</code>.  If no registered
+     * <code>ImageReader</code> claims to be able to read the
+     * resulting stream, <code>null</code> is returned.
+     *
+     * <p> The current cache settings from <code>getUseCache</code>and
+     * <code>getCacheDirectory</code> will be used to control caching in the
+     * <code>ImageInputStream</code> that is created.
+     *
+     * <p> This method does not attempt to locate
+     * <code>ImageReader</code>s that can read directly from an
+     * <code>InputStream</code>; that may be accomplished using
+     * <code>IIORegistry</code> and <code>ImageReaderSpi</code>.
+     *
+     * <p> This method <em>does not</em> close the provided
+     * <code>InputStream</code> after the read operation has completed;
+     * it is the responsibility of the caller to close the stream, if desired.
+     *
+     * @param input an <code>InputStream</code> to read from.
+     * @param readMetadata if {@code true}, makes sure to read image metadata to detect transparency color for non translucent images, if any.
+     * In that case the color can be retrieved later through {@link #PROP_TRANSPARENCY_COLOR}.
+     * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
+     * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
+     * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     *
+     * @return a <code>BufferedImage</code> containing the decoded
+     * contents of the input, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
+     * @throws IOException if an error occurs during reading.
+     * @since 7132
+     */
+    public static BufferedImage read(InputStream input, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(input, "input");
+
+        ImageInputStream stream = ImageIO.createImageInputStream(input);
+        BufferedImage bi = read(stream, readMetadata, enforceTransparency);
+        if (bi == null) {
+            stream.close();
+        }
+        return bi;
+    }
+
+    /**
+     * Returns a <code>BufferedImage</code> as the result of decoding
+     * a supplied <code>URL</code> with an <code>ImageReader</code>
+     * chosen automatically from among those currently registered.  An
+     * <code>InputStream</code> is obtained from the <code>URL</code>,
+     * which is wrapped in an <code>ImageInputStream</code>.  If no
+     * registered <code>ImageReader</code> claims to be able to read
+     * the resulting stream, <code>null</code> is returned.
+     *
+     * <p> The current cache settings from <code>getUseCache</code>and
+     * <code>getCacheDirectory</code> will be used to control caching in the
+     * <code>ImageInputStream</code> that is created.
+     *
+     * <p> This method does not attempt to locate
+     * <code>ImageReader</code>s that can read directly from a
+     * <code>URL</code>; that may be accomplished using
+     * <code>IIORegistry</code> and <code>ImageReaderSpi</code>.
+     *
+     * @param input a <code>URL</code> to read from.
+     * @param readMetadata if {@code true}, makes sure to read image metadata to detect transparency color for non translucent images, if any.
+     * In that case the color can be retrieved later through {@link #PROP_TRANSPARENCY_COLOR}.
+     * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
+     * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
+     * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     *
+     * @return a <code>BufferedImage</code> containing the decoded
+     * contents of the input, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
+     * @throws IOException if an error occurs during reading.
+     * @since 7132
+     */
+    public static BufferedImage read(URL input, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(input, "input");
+
+        InputStream istream = null;
+        try {
+            istream = input.openStream();
+        } catch (IOException e) {
+            throw new IIOException("Can't get input stream from URL!", e);
+        }
+        ImageInputStream stream = ImageIO.createImageInputStream(istream);
+        BufferedImage bi;
+        try {
+            bi = read(stream, readMetadata, enforceTransparency);
+            if (bi == null) {
+                stream.close();
+            }
+        } finally {
+            istream.close();
+        }
+        return bi;
+    }
+
+    /**
+     * Returns a <code>BufferedImage</code> as the result of decoding
+     * a supplied <code>ImageInputStream</code> with an
+     * <code>ImageReader</code> chosen automatically from among those
+     * currently registered.  If no registered
+     * <code>ImageReader</code> claims to be able to read the stream,
+     * <code>null</code> is returned.
+     *
+     * <p> Unlike most other methods in this class, this method <em>does</em>
+     * close the provided <code>ImageInputStream</code> after the read
+     * operation has completed, unless <code>null</code> is returned,
+     * in which case this method <em>does not</em> close the stream.
+     *
+     * @param stream an <code>ImageInputStream</code> to read from.
+     * @param readMetadata if {@code true}, makes sure to read image metadata to detect transparency color for non translucent images, if any.
+     * In that case the color can be retrieved later through {@link #PROP_TRANSPARENCY_COLOR}.
+     * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
+     * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
+     * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     *
+     * @return a <code>BufferedImage</code> containing the decoded
+     * contents of the input, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException if <code>stream</code> is <code>null</code>.
+     * @throws IOException if an error occurs during reading.
+     * @since 7132
+     */
+    public static BufferedImage read(ImageInputStream stream, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(stream, "stream");
+
+        Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);
+        if (!iter.hasNext()) {
+            return null;
+        }
+
+        ImageReader reader = iter.next();
+        ImageReadParam param = reader.getDefaultReadParam();
+        reader.setInput(stream, true, !readMetadata && !enforceTransparency);
+        BufferedImage bi;
+        try {
+            bi = reader.read(0, param);
+            if (bi.getTransparency() != Transparency.TRANSLUCENT && (readMetadata || enforceTransparency)) {
+                Color color = getTransparentColor(reader);
+                if (color != null) {
+                    Hashtable<String, Object> properties = new Hashtable<>(1);
+                    properties.put(PROP_TRANSPARENCY_COLOR, color);
+                    bi = new BufferedImage(bi.getColorModel(), bi.getRaster(), bi.isAlphaPremultiplied(), properties);
+                    if (enforceTransparency) {
+                        if (Main.isDebugEnabled()) {
+                            Main.debug("Enforcing image transparency of "+stream+" for "+color);
+                        }
+                        bi = makeImageTransparent(bi, color);
+                    }
+                }
+            }
+        } finally {
+            reader.dispose();
+            stream.close();
+        }
+        return bi;
+    }
+
+    /**
+     * Returns the {@code TransparentColor} defined in image reader metadata.
+     * @param reader The image reader
+     * @return the {@code TransparentColor} defined in image reader metadata, or {@code null}
+     * @throws IOException if an error occurs during reading
+     * @since 7132
+     * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html">javax_imageio_1.0 metadata</a>
+     */
+    public static Color getTransparentColor(ImageReader reader) throws IOException {
+        IIOMetadata metadata = reader.getImageMetadata(0);
+        if (metadata != null) {
+            String[] formats = metadata.getMetadataFormatNames();
+            if (formats != null) {
+                for (String f : formats) {
+                    if ("javax_imageio_1.0".equals(f)) {
+                        Node root = metadata.getAsTree(f);
+                        if (root instanceof Element) {
+                            Node item = ((Element)root).getElementsByTagName("TransparentColor").item(0);
+                            if (item instanceof Element) {
+                                String value = ((Element)item).getAttribute("value");
+                                String[] s = value.split(" ");
+                                if (s.length == 3) {
+                                    int[] rgb = new int[3];
+                                    try {
+                                        for (int i = 0; i<3; i++) {
+                                            rgb[i] = Integer.parseInt(s[i]);
+                                        }
+                                        return new Color(rgb[0], rgb[1], rgb[2]);
+                                    } catch (IllegalArgumentException e) {
+                                        Main.error(e);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a transparent version of the given image, based on the given transparent color.
+     * @param bi The image to convert
+     * @param color The transparent color
+     * @return The same image as {@code bi} where all pixels of the given color are transparent.
+     * This resulting image has also the special property {@link #PROP_TRANSPARENCY_FORCED} set to {@code color}
+     * @since 7132
+     * @see BufferedImage#getProperty
+     * @see #isTransparencyForced
+     */
+    public static BufferedImage makeImageTransparent(BufferedImage bi, Color color) {
+        // the color we are looking for. Alpha bits are set to opaque
+        final int markerRGB = color.getRGB() | 0xFFFFFFFF;
+        ImageFilter filter = new RGBImageFilter() {
+            @Override
+            public int filterRGB(int x, int y, int rgb) {
+                if ((rgb | 0xFF000000) == markerRGB) {
+                   // Mark the alpha bits as zero - transparent
+                   return 0x00FFFFFF & rgb;
+                } else {
+                   return rgb;
+                }
+            }
+        };
+        ImageProducer ip = new FilteredImageSource(bi.getSource(), filter);
+        Image img = Toolkit.getDefaultToolkit().createImage(ip);
+        ColorModel colorModel = ColorModel.getRGBdefault();
+        WritableRaster raster = colorModel.createCompatibleWritableRaster(img.getWidth(null), img.getHeight(null));
+        String[] names = bi.getPropertyNames();
+        Hashtable<String, Object> properties = new Hashtable<>(1 + (names != null ? names.length : 0));
+        if (names != null) {
+            for (String name : names) {
+                properties.put(name, bi.getProperty(name));
+            }
+        }
+        properties.put(PROP_TRANSPARENCY_FORCED, Boolean.TRUE);
+        BufferedImage result = new BufferedImage(colorModel, raster, false, properties);
+        Graphics2D g2 = result.createGraphics();
+        g2.drawImage(img, 0, 0, null);
+        g2.dispose();
+        return result;
+    }
+
+    /**
+     * Determines if the transparency of the given {@code BufferedImage} has been enforced by a previous call to {@link #makeImageTransparent}.
+     * @param bi The {@code BufferedImage} to test
+     * @return {@code true} if the transparency of {@code bi} has been enforced by a previous call to {@code makeImageTransparent}.
+     * @since 7132
+     * @see #makeImageTransparent
+     */
+    public static boolean isTransparencyForced(BufferedImage bi) {
+        return bi != null && !bi.getProperty(PROP_TRANSPARENCY_FORCED).equals(Image.UndefinedProperty);
+    }
+
+    /**
+     * Determines if the given {@code BufferedImage} has a transparent color determiend by a previous call to {@link #read}.
+     * @param bi The {@code BufferedImage} to test
+     * @return {@code true} if {@code bi} has a transparent color determined by a previous call to {@code read}.
+     * @since 7132
+     * @see #read
+     */
+    public static boolean hasTransparentColor(BufferedImage bi) {
+        return bi != null && !bi.getProperty(PROP_TRANSPARENCY_COLOR).equals(Image.UndefinedProperty);
     }
 }

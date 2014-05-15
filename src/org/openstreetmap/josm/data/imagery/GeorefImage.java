@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public class GeorefImage implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -46,7 +47,6 @@ public class GeorefImage implements Serializable {
         return layer.getEastNorth(xIndex+1, yIndex+1);
     }
 
-
     public GeorefImage(WMSLayer layer) {
         this.layer = layer;
     }
@@ -56,7 +56,7 @@ public class GeorefImage implements Serializable {
             this.xIndex = xIndex;
             this.yIndex = yIndex;
             this.image = null;
-            flushedResizedCachedInstance();
+            flushResizedCachedInstance();
         }
     }
 
@@ -64,11 +64,23 @@ public class GeorefImage implements Serializable {
         return this.xIndex == xIndex && this.yIndex == yIndex;
     }
 
+    /**
+     * Resets this image to initial state and release all resources being used.
+     * @since 7132
+     */
+    public void resetImage() {
+        if (image != null) {
+            image.flush();
+        }
+        changeImage(null, null);
+    }
+
     public void changeImage(State state, BufferedImage image) {
-        flushedResizedCachedInstance();
+        flushResizedCachedInstance();
         this.image = image;
         this.state = state;
-
+        if (state == null)
+            return;
         switch (state) {
         case FAILED:
             BufferedImage imgFailed = createImage();
@@ -102,7 +114,7 @@ public class GeorefImage implements Serializable {
     }
 
     public boolean paint(Graphics g, NavigatableComponent nc, int xIndex, int yIndex, int leftEdge, int bottomEdge) {
-        if (image == null)
+        if (getImage() == null)
             return false;
 
         if(!(this.xIndex == xIndex && this.yIndex == yIndex))
@@ -173,7 +185,7 @@ public class GeorefImage implements Serializable {
     }
 
     private void fallbackDraw(Graphics g, Image img, int x, int y, int width, int height, boolean alphaChannel) {
-        flushedResizedCachedInstance();
+        flushResizedCachedInstance();
         g.drawImage(
                 img, x, y, x + width, y + height,
                 0, 0, img.getWidth(null), img.getHeight(null),
@@ -194,7 +206,7 @@ public class GeorefImage implements Serializable {
         state = (State) in.readObject();
         boolean hasImage = in.readBoolean();
         if (hasImage) {
-            image = (ImageIO.read(ImageIO.createImageInputStream(in)));
+            image = ImageProvider.read(ImageIO.createImageInputStream(in), true, WMSLayer.PROP_ALPHA_CHANNEL.get());
         } else {
             in.readObject(); // read null from input stream
             image = null;
@@ -212,7 +224,7 @@ public class GeorefImage implements Serializable {
         }
     }
 
-    public void flushedResizedCachedInstance() {
+    public void flushResizedCachedInstance() {
         if (reImg != null) {
             BufferedImage img = reImg.get();
             if (img != null) {
@@ -221,7 +233,6 @@ public class GeorefImage implements Serializable {
         }
         reImg = null;
     }
-
 
     public BufferedImage getImage() {
         return image;

@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Use this class if you want to cache a lot of files that shouldn't be kept in memory. You can
@@ -167,7 +168,7 @@ public class CacheFiles {
             if(updateModTime) {
                 img.setLastModified(System.currentTimeMillis());
             }
-            return ImageIO.read(img);
+            return ImageProvider.read(img, false, false);
         } catch (Exception e) {
             Main.warn(e);
         }
