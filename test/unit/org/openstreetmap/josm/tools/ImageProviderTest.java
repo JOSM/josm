@@ -28,4 +28,14 @@ public class ImageProviderTest {
         assertThat(ImageProvider.read(file, false, false).getTransparency(), is(Transparency.OPAQUE));
         assertThat(ImageProvider.read(file, true, false).getTransparency(), is(Transparency.OPAQUE));
     }
+
+    /**
+     * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/10030">#10030</a>
+     * @throws IOException if an error occurs during reading
+     */
+    @Test
+    public void testTicket10030() throws IOException {
+        File file = new File(TestUtils.getTestDataRoot()+"regress/10030/tile.jpg");
+        ImageProvider.read(file, true, true);
+    }
 }
