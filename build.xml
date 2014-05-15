@@ -4,7 +4,7 @@
 ** To build run
 **    ant clean
 **    ant dist
-** This will create 'josm-custom.jar'  in directory 'dist'. See also
+** This will create 'josm-custom.jar' in directory 'dist'. See also
 **   https://josm.openstreetmap.de/wiki/CreateBuild
 **
 -->
@@ -14,6 +14,7 @@
     <property name="build.dir" location="build"/>
     <property name="javacc.home" location="tools"/>
     <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
+    <property name="imagerytypes.dir" location="${src.dir}/org/openstreetmap/josm/data/imagery/types"/>
     <!-- build parameter: compression level (ant -Dclevel=N)
              N ranges from 0 (no compression) to 9 (maximum compression)
              default: 9 -->
@@ -124,7 +125,7 @@ Build-Date: ${build.tstamp}
             <zipfileset dir="images" prefix="images"/>
             <zipfileset dir="data" prefix="data"/>
             <zipfileset dir="styles" prefix="styles"/>
-            <zipfileset dir="src/org/openstreetmap/gui/jmapviewer/images" prefix="org/openstreetmap/gui/jmapviewer/images"/>
+            <zipfileset dir="${src.dir}/org/openstreetmap/gui/jmapviewer/images" prefix="org/openstreetmap/gui/jmapviewer/images"/>
             <!-- All jar files necessary to run only JOSM (no tests) -->
             <!-- <zipfileset src="lib/metadata-extractor-2.3.1-nosun.jar"/>  -->
             <!-- <zipfileset src="lib/signpost-core-1.2.1.1.jar"/> -->
@@ -197,15 +198,26 @@ Build-Date: ${build.tstamp}
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </exec>
     </target>
-    <target name="compile" depends="init,javacc">
+    <target name="jaxb" depends="init" unless="jaxb.notRequired">
+        <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+            <classpath>
+                <fileset dir="tools/jaxb" includes="*.jar"/>
+            </classpath>
+        </taskdef>
+        <xjc schema="data_nodist/wms-cache.xsd" destdir="${src.dir}" encoding="UTF-8">
+            <depends dir="${src.dir}/org/openstreetmap/josm/data/imagery" includes="WmsCache.java"/>
+            <produces dir="${imagerytypes.dir}" includes="*.java"/>
+        </xjc>
+    </target>
+    <target name="compile" depends="init,javacc,jaxb">
         <!-- COTS -->
-        <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**" nowarn="on"
+        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**" nowarn="on"
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="iso-8859-1">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
         </javac>
         <!-- JMapViewer/JOSM -->
-        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
+        <javac srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
@@ -232,7 +244,7 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="javadoc">
         <javadoc destdir="javadoc" 
-                sourcepath="src"
+                sourcepath="${src.dir}"
                 encoding="UTF-8"    
                 packagenames="org.openstreetmap.josm.*,org.openstreetmap.gui.jmapviewer.*"
                 windowtitle="JOSM"
@@ -249,6 +261,7 @@ Build-Date: ${build.tstamp}
         <delete dir="build"/>
         <delete dir="dist"/>
         <delete dir="${mapcss.dir}/parsergen"/>
+        <delete dir="${imagerytypes.dir}"/>
     </target>
     <path id="test.classpath">
         <fileset dir="${test.dir}/lib">
@@ -350,7 +363,7 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
     <target name="test" depends="test-compile" 
-    	description="Run unit, functional and performance tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
+        description="Run unit, functional and performance tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
         <call-junit testfamily="unit"/>
         <call-junit testfamily="functional"/>
@@ -430,7 +443,7 @@ Build-Date: ${build.tstamp}
         </typedef>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
-        <loadfile property="deprecated-plugins" srcFile="src/org/openstreetmap/josm/plugins/PluginHandler.java">
+        <loadfile property="deprecated-plugins" srcFile="${src.dir}/org/openstreetmap/josm/plugins/PluginHandler.java">
             <filterchain>
                 <linecontains>
                     <contains value="new DeprecatedPlugin("/>
