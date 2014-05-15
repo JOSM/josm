@@ -21,5 +21,10 @@
 	<classpathentry kind="lib" path="test/lib/unitils-core/ognl-2.6.9.jar"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/unitils-core-3.3.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jaxb">
+		<attributes>
+			<attribute name="owner.project.facets" value="jpt.jaxb"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
