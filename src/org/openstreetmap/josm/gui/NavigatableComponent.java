@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.nio.charset.StandardCharsets;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -194,6 +195,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
+     * Returns the text describing the given distance in the current system of measurement.
+     * @param dist The distance in metres
+     * @param format A {@link NumberFormat} to format the area value
+     * @param threshold Values lower than this {@code threshold} are displayed as {@code "< [threshold]"}
+     * @return the text describing the given distance in the current system of measurement.
+     * @since 7135
+     */
+    public static String getDistText(final double dist, final NumberFormat format, final double threshold) {
+        return getSystemOfMeasurement().getDistText(dist, format, threshold);
+    }
+
+    /**
      * Returns the text describing the given area in the current system of measurement.
      * @param area The distance in square metres.
      * @return the text describing the given area in the current system of measurement.
@@ -201,6 +214,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public static String getAreaText(double area) {
         return getSystemOfMeasurement().getAreaText(area);
+    }
+
+    /**
+     * Returns the text describing the given area in the current system of measurement.
+     * @param area The area in square metres
+     * @param format A {@link NumberFormat} to format the area value
+     * @param threshold Values lower than this {@code threshold} are displayed as {@code "< [threshold]"}
+     * @return the text describing the given area in the current system of measurement.
+     * @since 7135
+     */
+    public static String getAreaText(final double area, final NumberFormat format, final double threshold) {
+        return getSystemOfMeasurement().getAreaText(area, format, threshold);
     }
 
     public String getDist100PixelText() {

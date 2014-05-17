@@ -26,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -84,6 +85,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener {
+
+    private static final DecimalFormat ONE_DECIMAL_PLACE = new DecimalFormat("0.0");
 
     /**
      * Property for map status background color.
@@ -722,7 +725,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
         
         private final JSeparator separator = new JSeparator();
-        
+
         private final JMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide status bar")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -742,10 +745,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                 somItems.add(item);
                 add(item);
             }
-            
+
             add(separator);
             add(doNotHide);
-            
+
             addPopupMenuListener(new PopupMenuListener() {
                 @Override
                 public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -946,11 +949,11 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     }
 
     public void setAngle(double a) {
-        angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + " \u00B0");
+        angleText.setText(a < 0 ? "--" : ONE_DECIMAL_PLACE.format(a) + " \u00B0");
     }
 
     public void setHeading(double h) {
-        headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + " \u00B0");
+        headingText.setText(h < 0 ? "--" : ONE_DECIMAL_PLACE.format(h) + " \u00B0");
     }
 
     /**
@@ -959,7 +962,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      */
     public void setDist(double dist) {
         distValue = dist;
-        distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist));
+        distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist, ONE_DECIMAL_PLACE, 0.01));
     }
 
     /**
