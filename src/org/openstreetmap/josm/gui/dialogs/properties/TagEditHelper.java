@@ -215,6 +215,26 @@ class TagEditHelper {
         }
     }
 
+    /**
+     * Warns user about a key being overwritten.
+     * @param action The action done by the user. Must state what key is changed
+     * @param togglePref  The preference to save the checkbox state to
+     * @return {@code true} if the user accepts to overwrite key, {@code false} otherwise
+     */
+    private boolean warnOverwriteKey(String action, String togglePref) {
+        ExtendedDialog ed = new ExtendedDialog(
+                Main.parent,
+                tr("Overwrite key"),
+                new String[]{tr("Replace"), tr("Cancel")});
+        ed.setButtonIcons(new String[]{"purge", "cancel"});
+        ed.setContent(action+"\n"+ tr("The new key is already used, overwrite values?"));
+        ed.setCancelButton(2);
+        ed.toggleEnable(togglePref);
+        ed.showDialog();
+
+        return ed.getValue() == 1;
+    }
+
     public final class EditTagDialog extends AbstractTagsDialog {
         final String key;
         final Map<String, Integer> m;
@@ -350,19 +370,9 @@ class TagEditHelper {
                 Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
             } else {
                 for (OsmPrimitive osm: sel) {
-                    if(osm.get(newkey) != null) {
-                        ExtendedDialog ed = new ExtendedDialog(
-                                Main.parent,
-                                tr("Overwrite key"),
-                                new String[]{tr("Replace"), tr("Cancel")});
-                        ed.setButtonIcons(new String[]{"purge", "cancel"});
-                        ed.setContent(tr("You changed the key from ''{0}'' to ''{1}''.\n"
-                                + "The new key is already used, overwrite values?", key, newkey));
-                        ed.setCancelButton(2);
-                        ed.toggleEnable("overwriteEditKey");
-                        ed.showDialog();
-
-                        if (ed.getValue() != 1)
+                    if (osm.get(newkey) != null) {
+                        if (!warnOverwriteKey(tr("You changed the key from ''{0}'' to ''{1}''.", key, newkey),
+                                "overwriteEditKey"))
                             return;
                         break;
                     }
@@ -747,6 +757,15 @@ class TagEditHelper {
             String key = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
             String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
             if (key.isEmpty() || value.isEmpty()) return;
+            for (OsmPrimitive osm: sel) {
+                String val = osm.get(key);
+                if (val != null) {
+                    if (!warnOverwriteKey(tr("You changed the value of ''{0}'' from ''{1}'' to ''{2}''.", key, val, value),
+                            "overwriteAddKey"))
+                        return;
+                    break;
+                }
+            }
             lastAddKey = key;
             lastAddValue = value;
             recentTags.put(new Tag(key, value), null);
