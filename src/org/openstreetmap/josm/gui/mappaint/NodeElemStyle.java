@@ -215,9 +215,11 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
 
         Stroke stroke = null;
         if (strokeColor != null) {
-            float strokeAlpha = c.get("symbol-stroke-opacity", 1f, Float.class);
-            strokeColor = new Color(strokeColor.getRed(), strokeColor.getGreen(),
-                    strokeColor.getBlue(), Utils.color_float2int(strokeAlpha));
+            Integer strokeAlpha = Utils.color_float2int(c.get("symbol-stroke-opacity", null, Float.class));
+            if (strokeAlpha != null) {
+                strokeColor = new Color(strokeColor.getRed(), strokeColor.getGreen(),
+                        strokeColor.getBlue(), strokeAlpha);
+            }
             stroke = new BasicStroke(strokeWidth);
         }
 
@@ -227,9 +229,11 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         }
 
         if (fillColor != null) {
-            float fillAlpha = c.get("symbol-fill-opacity", 1f, Float.class);
-            fillColor = new Color(fillColor.getRed(), fillColor.getGreen(),
-                    fillColor.getBlue(), Utils.color_float2int(fillAlpha));
+            Integer fillAlpha = Utils.color_float2int(c.get("symbol-fill-opacity", null, Float.class));
+            if (fillAlpha != null) {
+                fillColor = new Color(fillColor.getRed(), fillColor.getGreen(),
+                        fillColor.getBlue(), fillAlpha);
+            }
         }
 
         return new Symbol(shape, Math.round(size), stroke, strokeColor, fillColor);

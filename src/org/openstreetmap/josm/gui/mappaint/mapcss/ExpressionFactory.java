@@ -201,13 +201,19 @@ public final class ExpressionFactory {
          * @see Color#Color(float, float, float)
          */
         public static Color rgb(float r, float g, float b) {
-            Color c;
             try {
-                c = new Color(r, g, b);
+                return new Color(r, g, b);
             } catch (IllegalArgumentException e) {
                 return null;
             }
-            return c;
+        }
+        
+        public static Color rgba(float r, float g, float b, float alpha) {
+            try {
+                return new Color(r, g, b, alpha);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
 
         /**
