@@ -23,6 +23,7 @@ public class LineElemStyle extends ElemStyle {
         Cascade c = mc.getOrCreateCascade("default");
         c.put(WIDTH, Keyword.DEFAULT);
         c.put(COLOR, color != null ? color : PaintColors.UNTAGGED.get());
+        c.put(OPACITY, 1f);
         if (isAreaEdge) {
             c.put(Z_INDEX, -3f);
         }
@@ -168,7 +169,11 @@ public class LineElemStyle extends ElemStyle {
             }
         }
 
+        int alpha = 255;
         Color color = c.get(type.prefix + COLOR, null, Color.class);
+        if (color != null) {
+            alpha = color.getAlpha();
+        }
         if (type == LineType.NORMAL && color == null) {
             color = c.get(FILL_COLOR, null, Color.class);
         }
@@ -176,7 +181,6 @@ public class LineElemStyle extends ElemStyle {
             color = PaintColors.UNTAGGED.get();
         }
 
-        int alpha = 255;
         Integer pAlpha = Utils.color_float2int(c.get(type.prefix + OPACITY, null, Float.class));
         if (pAlpha != null) {
             alpha = pAlpha;

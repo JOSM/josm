@@ -54,7 +54,15 @@ public class AreaElemStyle extends ElemStyle {
         } else {
             color = c.get(FILL_COLOR, null, Color.class);
             if (color != null) {
-                int alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
+                int alpha = color.getAlpha();
+                if (alpha == 255) {
+                    // Assume alpha value has not been specified by the user if
+                    // is set to fully opaque. Use default value in this case.
+                    // It is not an ideal solution, but a little tricky to get this
+                    // right, especially as named map colors can be changed in
+                    // the preference GUI and written to the preferences file.
+                    alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
+                }
                 Integer pAlpha = Utils.color_float2int(c.get(FILL_OPACITY, null, float.class));
                 if (pAlpha != null) {
                     alpha = pAlpha;
