@@ -7,14 +7,16 @@ import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
 import org.junit.*
+import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Bounds
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer
 import org.openstreetmap.josm.gui.MainApplication
-import org.openstreetmap.josm.gui.layer.OsmDataLayer
+import org.openstreetmap.josm.gui.NavigatableComponent
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles
 import org.openstreetmap.josm.gui.preferences.SourceEntry
+import org.openstreetmap.josm.gui.preferences.ToolbarPreferences
 import org.openstreetmap.josm.io.Compression
 import org.openstreetmap.josm.io.OsmReader
 
@@ -26,11 +28,6 @@ import org.openstreetmap.josm.io.OsmReader
 class MapCSSPerformanceTest {
 
     /* ------------------------ configuration section  ---------------------------- */
-    /**
-     * The path to the JOSM home environment
-     */
-    def static JOSM_HOME="test/config/performance-josm.home"
-
     /**
      * The path to the style file used for rendering.
      */
@@ -45,22 +42,17 @@ class MapCSSPerformanceTest {
     def DataSet ds
 
     def static boolean checkTestEnvironment() {
-          File f = new File(JOSM_HOME)
-          if  (!f.isDirectory() || !f.exists()) {
-              fail("JOSM_HOME refers to '${JOSM_HOME}. This is either not a directory or doesn't exist.\nPlease update configuration settings in the unit test file.")
-          }
-
-          f = new File(STYLE_FILE);
+          File f = new File(STYLE_FILE);
           if ( !f.isFile() || ! f.exists()) {
               fail("STYLE_FILE refers to '${STYLE_FILE}. This is either not a file or doesn't exist.\nPlease update configuration settings in the unit test file.")
           }
     }
 
     @BeforeClass
-    public static void createJOSMFixture(){
-        checkTestEnvironment()
-        System.setProperty("josm.home", JOSM_HOME)
-        MainApplication.main(new String[0])
+    public static void createJOSMFixture() {
+        JOSMFixture.createPerformanceTestFixture().init();
+        Main.toolbar = new ToolbarPreferences();
+        new MainApplication();
     }
 
     def timed(Closure c){
@@ -70,7 +62,7 @@ class MapCSSPerformanceTest {
         return after - before
     }
 
-    def  loadStyle() {
+    def loadStyle() {
         print "Loading style '$STYLE_FILE' ..."
         MapCSSStyleSource source = new MapCSSStyleSource(
             new SourceEntry(
@@ -92,7 +84,6 @@ class MapCSSPerformanceTest {
     def loadData() {
         print "Loading data file '$DATA_FILE' ..."
         ds = OsmReader.parseDataSet(Compression.getUncompressedFileInputStream(new File(DATA_FILE)), null);
-        Main.main.addLayer(new OsmDataLayer(ds,"test layer",null /* no file */));
         println "DONE"
     }
 
@@ -101,12 +92,12 @@ class MapCSSPerformanceTest {
         loadStyle()
         loadData()
 
-        def mv = Main.map.mapView
-
+        NavigatableComponent mv = new NavigatableComponent();
+        mv.setBounds(0, 0, 1024, 768)
         BufferedImage img = new BufferedImage(mv.getWidth(), mv.getHeight(), BufferedImage.TYPE_3BYTE_BGR)
         Graphics2D g = img.createGraphics()
         g.setClip(0,0, mv.getWidth(), mv.getHeight())
-        def visitor = new StyledMapRenderer(g, Main.map.mapView, false)
+        StyledMapRenderer visitor = new StyledMapRenderer(g, mv, false)
 
         print "Rendering ..."
         long time = timed {
