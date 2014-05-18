@@ -770,11 +770,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         public Component createMenuComponent() {
             return new JMenuItem(this);
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof ChangeResolutionAction;
-        }
     }
 
     public class ReloadErrorTilesAction extends AbstractAction {
