@@ -11,8 +11,14 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -27,8 +33,10 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
@@ -48,16 +56,105 @@ public class MapCSSStyleSource extends StyleSource {
 
     // all rules
     public final List<MapCSSRule> rules = new ArrayList<>();
-    // rules filtered by primitive type
-    public final List<MapCSSRule> nodeRules = new ArrayList<>();
-    public final List<MapCSSRule> wayRules = new ArrayList<>();
-    public final List<MapCSSRule> relationRules = new ArrayList<>();
-    public final List<MapCSSRule> multipolygonRules = new ArrayList<>();
-    public final List<MapCSSRule> canvasRules = new ArrayList<>();
+    // rule indices, filtered by primitive type
+    public final MapCSSRuleIndex nodeRules = new MapCSSRuleIndex();
+    public final MapCSSRuleIndex wayRules = new MapCSSRuleIndex();
+    public final MapCSSRuleIndex relationRules = new MapCSSRuleIndex();
+    public final MapCSSRuleIndex multipolygonRules = new MapCSSRuleIndex();
+    public final MapCSSRuleIndex canvasRules = new MapCSSRuleIndex();
 
     private Color backgroundColorOverride;
     private String css = null;
     private ZipFile zipFile;
+
+    /**
+     * A collection of {@link MapCSSRule}s, that are indexed by tag key and value.
+     * 
+     * Speeds up the process of finding all rules that match a certain primitive.
+     * 
+     * Rules with a {@link SimpleKeyValueCondition} [key=value] are indexed by
+     * key and value in a HashMap. Now you only need to loop the tags of a
+     * primitive to retrieve the possibly matching rules.
+     * 
+     * Rules with no SimpleKeyValueCondition in the selector have to be
+     * checked separately.
+     * 
+     * The order of rules gets mixed up by this and needs to be sorted later.
+     */
+    public static class MapCSSRuleIndex {
+        /* all rules for this index */
+        public final List<MapCSSRule> rules = new ArrayList<>();
+        /* tag based index */
+        public final Map<String,Map<String,Set<MapCSSRule>>> index = new HashMap<>();
+        /* rules without SimpleKeyValueCondition */
+        public final Set<MapCSSRule> remaining = new HashSet<>();
+        
+        public void add(MapCSSRule rule) {
+            rules.add(rule);
+        }
+
+        /**
+         * Initialize the index.
+         */
+        public void initIndex() {
+            for (MapCSSRule r: rules) {
+                // find the rightmost selector, this must be a GeneralSelector
+                Selector selRightmost = r.selector;
+                while (selRightmost instanceof ChildOrParentSelector) {
+                    selRightmost = ((ChildOrParentSelector) selRightmost).right;
+                }
+                OptimizedGeneralSelector s = (OptimizedGeneralSelector) selRightmost;
+                if (s.conds == null) {
+                    remaining.add(r);
+                    continue;
+                }
+                List<SimpleKeyValueCondition> sk = new ArrayList<>(Utils.filteredCollection(s.conds, SimpleKeyValueCondition.class));
+                if (sk.isEmpty()) {
+                    remaining.add(r);
+                    continue;
+                }
+                SimpleKeyValueCondition c = sk.get(sk.size() - 1);
+                Map<String,Set<MapCSSRule>> rulesWithMatchingKey = index.get(c.k);
+                if (rulesWithMatchingKey == null) {
+                    rulesWithMatchingKey = new HashMap<>();
+                    index.put(c.k, rulesWithMatchingKey);
+                }
+                Set<MapCSSRule> rulesWithMatchingKeyValue = rulesWithMatchingKey.get(c.v);
+                if (rulesWithMatchingKeyValue == null) {
+                    rulesWithMatchingKeyValue = new HashSet<>();
+                    rulesWithMatchingKey.put(c.v, rulesWithMatchingKeyValue);
+                }
+                rulesWithMatchingKeyValue.add(r);
+            }
+        }
+        
+        /**
+         * Get a subset of all rules that might match the primitive.
+         * @param osm the primitive to match
+         * @return a Collection of rules that filters out most of the rules
+         * that cannot match, based on the tags of the primitive
+         */
+        public Collection<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
+            List<MapCSSRule> ruleCandidates = new ArrayList<>(remaining);
+            for (Map.Entry<String,String> e : osm.getKeys().entrySet()) {
+                Map<String,Set<MapCSSRule>> v = index.get(e.getKey());
+                if (v != null) {
+                    Set<MapCSSRule> rs = v.get(e.getValue());
+                    if (rs != null)  {
+                        ruleCandidates.addAll(rs);
+                    }
+                }
+            }
+            Collections.sort(ruleCandidates);
+            return ruleCandidates;
+        } 
+
+        public void clear() {
+            rules.clear();
+            index.clear();
+            remaining.clear();
+        }
+    }
 
     public MapCSSStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
@@ -160,8 +257,13 @@ public class MapCSSStyleSource extends StyleSource {
                     logError(e);
             }
         }
+        nodeRules.initIndex();
+        wayRules.initIndex();
+        relationRules.initIndex();
+        multipolygonRules.initIndex();
+        canvasRules.initIndex();
     }
-
+    
     @Override
     public InputStream getSourceInputStream() throws IOException {
         if (css != null) {
@@ -252,26 +354,26 @@ public class MapCSSStyleSource extends StyleSource {
     @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
         Environment env = new Environment(osm, mc, null, this);
-        List<MapCSSRule> matchingRules;
+        MapCSSRuleIndex matchingRuleIndex;
         if (osm instanceof Node) {
-            matchingRules = nodeRules;
+            matchingRuleIndex = nodeRules;
         } else if (osm instanceof Way) {
-            matchingRules = wayRules;
+            matchingRuleIndex = wayRules;
         } else {
             if (((Relation) osm).isMultipolygon()) {
-                matchingRules = multipolygonRules;
+                matchingRuleIndex = multipolygonRules;
             } else if (osm.hasKey("#canvas")) {
-                matchingRules = canvasRules;
+                matchingRuleIndex = canvasRules;
             } else {
-                matchingRules = relationRules;
+                matchingRuleIndex = relationRules;
             }
         }
-
+        
         // the declaration indices are sorted, so it suffices to save the
         // last used index
         int lastDeclUsed = -1;
 
-        for (MapCSSRule r : matchingRules) {
+        for (MapCSSRule r : matchingRuleIndex.getRuleCandidates(osm)) {
             env.clearSelectorMatchingInformation();
             if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                 Selector s = r.selector;
