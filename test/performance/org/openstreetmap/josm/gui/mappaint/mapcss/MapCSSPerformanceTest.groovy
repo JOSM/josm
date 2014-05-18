@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.MainApplication
 import org.openstreetmap.josm.gui.layer.OsmDataLayer
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles
 import org.openstreetmap.josm.gui.preferences.SourceEntry
+import org.openstreetmap.josm.io.Compression
 import org.openstreetmap.josm.io.OsmReader
 
 /**
@@ -38,7 +39,7 @@ class MapCSSPerformanceTest {
     /**
      * The data file to be rendered
      */
-    def static DATA_FILE = "/my/test-data.osm"
+    def static DATA_FILE = "data_nodist/neubrandenburg.osm.bz2"
     /* ------------------------ / configuration section  ---------------------------- */
 
     def DataSet ds
@@ -52,11 +53,6 @@ class MapCSSPerformanceTest {
           f = new File(STYLE_FILE);
           if ( !f.isFile() || ! f.exists()) {
               fail("STYLE_FILE refers to '${STYLE_FILE}. This is either not a file or doesn't exist.\nPlease update configuration settings in the unit test file.")
-          }
-
-          f = new File(DATA_FILE);
-          if ( !f.isFile() || ! f.exists()) {
-              fail("DATA_FILE refers to '${DATA_FILE}. This is either not a file or doesn't exist.\nPlease update configuration settings in the unit test file.")
           }
     }
 
@@ -78,7 +74,7 @@ class MapCSSPerformanceTest {
         print "Loading style '$STYLE_FILE' ..."
         MapCSSStyleSource source = new MapCSSStyleSource(
             new SourceEntry(
-                new File(STYLE_FILE).toURI().toURL().toString(),
+                STYLE_FILE,
                 "test style",
                 "a test style",
                 true // active
@@ -95,10 +91,7 @@ class MapCSSPerformanceTest {
 
     def loadData() {
         print "Loading data file '$DATA_FILE' ..."
-        new File(DATA_FILE).withInputStream {
-            InputStream is ->
-            ds = OsmReader.parseDataSet(is,null)
-        }
+        ds = OsmReader.parseDataSet(Compression.getUncompressedFileInputStream(new File(DATA_FILE)), null);
         Main.main.addLayer(new OsmDataLayer(ds,"test layer",null /* no file */));
         println "DONE"
     }
