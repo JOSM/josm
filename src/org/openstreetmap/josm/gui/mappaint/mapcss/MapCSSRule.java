@@ -8,7 +8,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A MapCSS rule.
- * 
+ *
  * A MapCSS style is simply a list of MapCSS rules. Each rule has a selector
  * and a declaration. Whenever the selector matches the primitive, the
  * declaration block is executed for this primitive.
@@ -27,7 +27,7 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
             this.instructions = instructions;
             this.idx = idx;
         }
-        
+
         /**
          * <p>Executes the instructions against the environment {@code env}</p>
          *
@@ -38,8 +38,36 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
                 i.execute(env);
             }
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + idx;
+            result = prime * result + ((instructions == null) ? 0 : instructions.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (!(obj instanceof Declaration))
+                return false;
+            Declaration other = (Declaration) obj;
+            if (idx != other.idx)
+                return false;
+            if (instructions == null) {
+                if (other.instructions != null)
+                    return false;
+            } else if (!instructions.equals(other.instructions))
+                return false;
+            return true;
+        }
     }
-    
+
     public MapCSSRule(Selector selector, Declaration declaration) {
         this.selector = selector;
         this.declaration = declaration;
