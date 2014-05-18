@@ -230,6 +230,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
                     }
                 });
                 if (i == -1 && !knownDefaults.contains(def.url)) {
+                    def.active = false;
                     list.add(insertionIdx, def);
                     insertionIdx++;
                     changed = true;
@@ -262,9 +263,34 @@ public class MapPaintPreference implements SubPreferenceSetting {
                     });
                     if (josmXml != null) {
                         josmXml.title = tr("JOSM default (XML; old version)");
+                        changed = true;
                     }
                     Main.pref.put("mappaint.style.migration.changedXmlName", true);
                 }
+            }
+            
+            /* Migration code can be removed ~ Nov. 2014 */
+            if (!Main.pref.getBoolean("mappaint.style.migration.switchedToMapCSS", false)) {
+                SourceEntry josmXml = Utils.find(list, new Predicate<SourceEntry>() {
+                    @Override
+                    public boolean evaluate(SourceEntry se) {
+                        return "resource://styles/standard/elemstyles.xml".equals(se.url);
+                    }
+                });
+                SourceEntry josmMapCSS = Utils.find(list, new Predicate<SourceEntry>() {
+                    @Override
+                    public boolean evaluate(SourceEntry se) {
+                        return "resource://styles/standard/elemstyles.mapcss".equals(se.url);
+                    }
+                });
+                if (josmXml != null && josmMapCSS != null && josmXml.active) {
+                    josmMapCSS.active = true;
+                    josmXml.active = false;
+                    Main.info("Switched mappaint style from XML format to MapCSS (one time migration).");
+                    changed = true;
+                }
+                // in any case, do this check only once:
+                Main.pref.put("mappaint.style.migration.switchedToMapCSS", true);
             }
 
             return changed;
@@ -273,12 +299,12 @@ public class MapPaintPreference implements SubPreferenceSetting {
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
             ExtendedSourceEntry defJosmXml = new ExtendedSourceEntry("elemstyles.xml", "resource://styles/standard/elemstyles.xml");
-            defJosmXml.active = true;
+            defJosmXml.active = false;
             defJosmXml.name = "standard";
             defJosmXml.title = tr("JOSM default (XML; old version)");
             defJosmXml.description = tr("Internal style to be used as base for runtime switchable overlay styles");
             ExtendedSourceEntry defJosmMapcss = new ExtendedSourceEntry("elemstyles.mapcss", "resource://styles/standard/elemstyles.mapcss");
-            defJosmMapcss.active = false;
+            defJosmMapcss.active = true;
             defJosmMapcss.name = "standard";
             defJosmMapcss.title = tr("JOSM default (MapCSS)");
             defJosmMapcss.description = tr("Internal style to be used as base for runtime switchable overlay styles");
