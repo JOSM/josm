@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.Utils;
  * 
  * The selector decides, if the declaration block gets applied or not.
  * 
- * Currently all implementing classes of Selector are immutable.
+ * All implementing classes of Selector are immutable.
  */
 public interface Selector {
 

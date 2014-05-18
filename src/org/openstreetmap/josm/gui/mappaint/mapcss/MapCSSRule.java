@@ -6,7 +6,14 @@ import java.util.List;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.Utils;
 
-public class MapCSSRule {
+/**
+ * A MapCSS rule.
+ * 
+ * A MapCSS style is simply a list of MapCSS rules. Each rule has a selector
+ * and a declaration. Whenever the selector matches the primitive, the
+ * declaration block is executed for this primitive.
+ */
+public class MapCSSRule implements Comparable<MapCSSRule> {
 
     public final Selector selector;
     public final Declaration declaration;
@@ -45,6 +52,11 @@ public class MapCSSRule {
      */
     public void execute(Environment env) {
         declaration.execute(env);
+    }
+
+    @Override
+    public int compareTo(MapCSSRule o) {
+        return declaration.idx - o.declaration.idx;
     }
 
     @Override
