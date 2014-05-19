@@ -23,6 +23,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.MultipolygonCreate;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -859,15 +860,25 @@ public final class Geometry {
      */
     public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
         // Extract outer/inner members from multipolygon
-        MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
+        final MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
+        // Construct complete rings for the inner/outer members
+        final List<MultipolygonCreate.JoinedPolygon> outerRings;
+        final List<MultipolygonCreate.JoinedPolygon> innerRings;
+        try {
+            outerRings = MultipolygonCreate.joinWays(mpm.outers);
+            innerRings = MultipolygonCreate.joinWays(mpm.inners);
+        } catch (MultipolygonCreate.JoinedPolygonCreationException ex) {
+            Main.debug("Invalid multipolygon " + multiPolygon);
+            return false;
+        }
         // Test if object is inside an outer member
-        for (Way out : mpm.outers) {
+        for (MultipolygonCreate.JoinedPolygon out : outerRings) {
             if (nodes.size() == 1
                     ? nodeInsidePolygon(nodes.get(0), out.getNodes())
                     : EnumSet.of(PolygonIntersection.FIRST_INSIDE_SECOND, PolygonIntersection.CROSSING).contains(polygonIntersection(nodes, out.getNodes()))) {
                 boolean insideInner = false;
                 // If inside an outer, check it is not inside an inner
-                for (Way in : mpm.inners) {
+                for (MultipolygonCreate.JoinedPolygon in : innerRings) {
                     if (polygonIntersection(in.getNodes(), out.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND
                             && (nodes.size() == 1
                             ? nodeInsidePolygon(nodes.get(0), in.getNodes())
@@ -879,7 +890,7 @@ public final class Geometry {
                 // Inside outer but not inside inner -> the polygon appears to be inside a the multipolygon
                 if (!insideInner) {
                     // Final check using predicate
-                    if (isOuterWayAMatch == null || isOuterWayAMatch.evaluate(out)) {
+                    if (isOuterWayAMatch == null || isOuterWayAMatch.evaluate(out.ways.get(0) /* TODO give a better representation of the outer ring to the predicate */)) {
                         return true;
                     }
                 }

@@ -47,7 +47,7 @@ public class MultipolygonCreate {
          * Builds a list of nodes for this polygon. First node is not duplicated as last node.
          * @return list of nodes
          */
-        private List<Node> getNodes() {
+        public List<Node> getNodes() {
             List<Node> nodes = new ArrayList<>();
 
             for(int waypos = 0; waypos < this.ways.size(); waypos ++) {
@@ -107,7 +107,32 @@ public class MultipolygonCreate {
      * @param ways ways to analyze
      * @return error description if the ways cannot be split, {@code null} if all fine.
      */
-    public String makeFromWays(Collection<Way> ways){
+    public String makeFromWays(Collection<Way> ways) {
+        try {
+            List<JoinedPolygon> joinedWays = joinWays(ways);
+            //analyze witch way is inside witch outside.
+            return makeFromPolygons(joinedWays);
+        } catch (JoinedPolygonCreationException ex) {
+            return ex.getMessage();
+        }
+    }
+
+    /**
+     * An exception indicating an error while joining ways to multipolygon rings.
+     */
+    public static class JoinedPolygonCreationException extends RuntimeException {
+        public JoinedPolygonCreationException(String message) {
+            super(message);
+        }
+    }
+
+    /**
+     * Joins the given {@code ways} to multipolygon rings.
+     * @param ways the ways to join.
+     * @return a list of multipolygon rings.
+     * @throws JoinedPolygonCreationException if the creation fails.
+     */
+    public static List<JoinedPolygon> joinWays(Collection<Way> ways) throws JoinedPolygonCreationException {
         List<JoinedPolygon> joinedWays = new ArrayList<>();
 
         //collect ways connecting to each node.
@@ -116,7 +141,7 @@ public class MultipolygonCreate {
 
         for(Way w: ways) {
             if (w.getNodesCount() < 2) {
-                return tr("Cannot add a way with only {0} nodes.", w.getNodesCount());
+                throw new JoinedPolygonCreationException(tr("Cannot add a way with only {0} nodes.", w.getNodesCount()));
             }
 
             if (w.isClosed()) {
@@ -161,7 +186,7 @@ public class MultipolygonCreate {
                 Collection<Way> adjacentWays = nodesWithConnectedWays.get(nextNode);
 
                 if (adjacentWays.size() != 2) {
-                    return tr("Each node must connect exactly 2 ways");
+                    throw new JoinedPolygonCreationException(tr("Each node must connect exactly 2 ways"));
                 }
 
                 Way nextWay = null;
@@ -180,8 +205,7 @@ public class MultipolygonCreate {
             joinedWays.add(new JoinedPolygon(collectedWays, collectedWaysReverse));
         }
 
-        //analyze witch way is inside witch outside.
-        return makeFromPolygons(joinedWays);
+        return joinedWays;
     }
 
     /**
