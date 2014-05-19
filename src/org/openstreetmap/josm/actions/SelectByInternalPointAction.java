@@ -19,7 +19,7 @@ import java.util.TreeMap;
 /**
  * This allows to select a polygon/multipolgon by an internal point.
  */
-public class SelectByInternalAction extends JosmAction {
+public class SelectByInternalPointAction extends JosmAction {
 
     /**
      * Returns the surrounding polygons/multipolgons
