@@ -205,10 +205,15 @@ public final class MapPaintStyles {
             }
         }
         for (StyleSource source : styles.getStyleSources()) {
+            final long startTime = System.currentTimeMillis();
             source.loadStyleSource();
             if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true) && source.isLocal()) {
                 File f = new File(source.url);
                 source.setLastMTime(f.lastModified());
+            }
+            if (Main.isDebugEnabled()) {
+                final long elapsedTime = System.currentTimeMillis() - startTime;
+                Main.debug("Initializing map style " + source.url + " completed in " + Utils.getDurationString(elapsedTime));
             }
         }
         fireMapPaintSylesUpdated();

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.progress.ProgressRenderer;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -36,7 +37,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class SplashScreen extends JFrame {
 
-    private SwingRenderingProgressMonitor progressMonitor;
+    private final SwingRenderingProgressMonitor progressMonitor;
 
     /**
      * Constructs a new {@code SplashScreen}.
@@ -197,7 +198,7 @@ public class SplashScreen extends JFrame {
             String prevMessageTitle = messages.getLast();
             if (!prevMessageTitle.isEmpty()) {
                 messages.removeLast();
-                messages.add(tr("{0} ({1} ms)", prevMessageTitle, Long.toString(now - time)));
+                messages.add(tr("{0} ({1})", prevMessageTitle, Utils.getDurationString(now - time)));
             }
             time = now;
             if (!taskTitle.isEmpty()) {
