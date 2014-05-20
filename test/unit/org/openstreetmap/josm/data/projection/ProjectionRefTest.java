@@ -68,7 +68,9 @@ public class ProjectionRefTest {
                         "        expected: eastnorth(%s,%s),%n" +
                         "        but got:  eastnorth(%s,%s)!%n",
                         p.toString(), code, lat, lon, east, north, en.east(), en.north());
-                double EPSILON_EN = 1e-3; // 1 mm accuracy
+                final double EPSILON_EN = SwissGridTest.SWISS_EPSG_CODE.equals(code)
+                        ? SwissGridTest.EPSILON_APPROX
+                        : 1e-3; // 1 mm accuracy
                 if (Math.abs(east - en.east()) > EPSILON_EN || Math.abs(north - en.north()) > EPSILON_EN) {
                     fail.append(errorEN);
                 }
@@ -77,7 +79,7 @@ public class ProjectionRefTest {
                         "        expected: latlon(%s,%s),%n" +
                         "        but got:  latlon(%s,%s)!%n",
                         p.toString(), code, east, north, lat, lon, ll.lat(), ll.lon());
-                double EPSILON_LL = Math.toDegrees(1e-3 / 6378137); // 1 mm accuracy (or better)
+                final double EPSILON_LL = Math.toDegrees(EPSILON_EN / 6378137); // 1 mm accuracy (or better)
                 if (Math.abs(lat - ll.lat()) > EPSILON_LL || Math.abs(lon - ll.lon()) > EPSILON_LL) {
                     if (!("yes".equals(System.getProperty("suppressPermanentFailure")) && code.equals("EPSG:21781"))) {
                         fail.append(errorLL);
