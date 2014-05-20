@@ -383,32 +383,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public Collection<OsmPrimitive> createSelection(Collection<OsmPrimitive> participants) {
         originalSelectionEmpty = participants.isEmpty();
         Collection<OsmPrimitive> sel = new LinkedList<>();
-        for (OsmPrimitive osm : participants)
-        {
-            if (types != null)
-            {
-                if(osm instanceof Relation)
-                {
-                    if(!types.contains(TaggingPresetType.RELATION) &&
-                            !(types.contains(TaggingPresetType.CLOSEDWAY) && ((Relation)osm).isMultipolygon())) {
-                        continue;
-                    }
-                }
-                else if(osm instanceof Node)
-                {
-                    if(!types.contains(TaggingPresetType.NODE)) {
-                        continue;
-                    }
-                }
-                else if(osm instanceof Way)
-                {
-                    if(!types.contains(TaggingPresetType.WAY) &&
-                            !(types.contains(TaggingPresetType.CLOSEDWAY) && ((Way)osm).isClosed())) {
-                        continue;
-                    }
-                }
+        for (OsmPrimitive osm : participants) {
+            if (typeMatches(EnumSet.of(TaggingPresetType.forPrimitive(osm)))) {
+                sel.add(osm);
             }
-            sel.add(osm);
         }
         return sel;
     }

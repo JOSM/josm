@@ -52,6 +52,8 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * GUI component to select tagging preset: the list with filter and two checkboxes
@@ -333,53 +335,54 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
-        List<PresetClassification> result = new ArrayList<>();
-        PRESET_LOOP:
-            for (PresetClassification presetClasification: classifications) {
-                TaggingPreset preset = presetClasification.preset;
-                presetClasification.classification = 0;
+        final List<PresetClassification> result = new ArrayList<>();
+        for (PresetClassification presetClassification : classifications) {
+            TaggingPreset preset = presetClassification.preset;
+            presetClassification.classification = 0;
 
-                if (onlyApplicable && preset.types != null) {
-                    boolean found = false;
-                    for (TaggingPresetType type: preset.types) {
-                        if (getTypesInSelection().contains(type)) {
-                            found = true;
-                            break;
-                        }
+            if (onlyApplicable && !preset.typeMatches(getTypesInSelection())) {
+                final Predicate<Role> memberExpressionMatchesOnePrimitive = new Predicate<Role>() {
+                    @Override
+                    public boolean evaluate(Role object) {
+                        return object.memberExpression != null && Utils.exists(Main.main.getCurrentDataSet().getSelected(), object.memberExpression);
                     }
-                    if (!found) {
-                        continue;
-                    }
-                }
-
-                if (groupWords != null && presetClasification.isMatchingGroup(groupWords) == 0) {
-                    continue PRESET_LOOP;
-                }
-
-                int matchName = presetClasification.isMatchingName(nameWords);
-
-                if (matchName == 0) {
-                    if (groupWords == null) {
-                        int groupMatch = presetClasification.isMatchingGroup(nameWords);
-                        if (groupMatch > 0) {
-                            presetClasification.classification = CLASSIFICATION_GROUP_MATCH + groupMatch;
-                        }
-                    }
-                    if (presetClasification.classification == 0 && inTags) {
-                        int tagsMatch = presetClasification.isMatchingTags(nameWords);
-                        if (tagsMatch > 0) {
-                            presetClasification.classification = CLASSIFICATION_TAGS_MATCH + tagsMatch;
-                        }
-                    }
+                };
+                if (preset.types.contains(TaggingPresetType.RELATION) && preset.roles != null
+                        && Utils.exists(preset.roles.roles, memberExpressionMatchesOnePrimitive)) {
+                    // keep to allow the creation of new relations
                 } else {
-                    presetClasification.classification = CLASSIFICATION_NAME_MATCH + matchName;
-                }
-
-                if (presetClasification.classification > 0) {
-                    presetClasification.classification += presetClasification.favoriteIndex;
-                    result.add(presetClasification);
+                    continue;
                 }
             }
+
+            if (groupWords != null && presetClassification.isMatchingGroup(groupWords) == 0) {
+                continue;
+            }
+
+            int matchName = presetClassification.isMatchingName(nameWords);
+
+            if (matchName == 0) {
+                if (groupWords == null) {
+                    int groupMatch = presetClassification.isMatchingGroup(nameWords);
+                    if (groupMatch > 0) {
+                        presetClassification.classification = CLASSIFICATION_GROUP_MATCH + groupMatch;
+                    }
+                }
+                if (presetClassification.classification == 0 && inTags) {
+                    int tagsMatch = presetClassification.isMatchingTags(nameWords);
+                    if (tagsMatch > 0) {
+                        presetClassification.classification = CLASSIFICATION_TAGS_MATCH + tagsMatch;
+                    }
+                }
+            } else {
+                presetClassification.classification = CLASSIFICATION_NAME_MATCH + matchName;
+            }
+
+            if (presetClassification.classification > 0) {
+                presetClassification.classification += presetClassification.favoriteIndex;
+                result.add(presetClassification);
+            }
+        }
 
         Collections.sort(result);
         lsResultModel.setPresets(result);
