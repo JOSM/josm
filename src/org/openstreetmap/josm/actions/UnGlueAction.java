@@ -10,9 +10,11 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -324,27 +326,27 @@ public class UnGlueAction extends JosmAction {
      */
     private void fixRelations(Node originalNode, List<Command> cmds, List<Node> newNodes) {
         // modify all relations containing the node
-        Relation newRel = null;
-        HashSet<String> rolesToReAdd = null;
         for (Relation r : OsmPrimitive.getFilteredList(originalNode.getReferrers(), Relation.class)) {
             if (r.isDeleted()) {
                 continue;
             }
-            newRel = null;
-            rolesToReAdd = null;
+            Relation newRel = null;
+            HashMap<String, Integer> rolesToReAdd = null; // <role name, index>
+            int i = 0;
             for (RelationMember rm : r.getMembers()) {
                 if (rm.isNode() && rm.getMember() == originalNode) {
                     if (newRel == null) {
                         newRel = new Relation(r);
-                        rolesToReAdd = new HashSet<>();
+                        rolesToReAdd = new HashMap<>();
                     }
-                    rolesToReAdd.add(rm.getRole());
+                    rolesToReAdd.put(rm.getRole(), i);
                 }
+                i++;
             }
             if (newRel != null) {
                 for (Node n : newNodes) {
-                    for (String role : rolesToReAdd) {
-                        newRel.addMember(new RelationMember(role, n));
+                    for (Map.Entry<String, Integer> role : rolesToReAdd.entrySet()) {
+                        newRel.addMember(role.getValue() + 1, new RelationMember(role.getKey(), n));
                     }
                 }
                 cmds.add(new ChangeCommand(r, newRel));
