@@ -13,7 +13,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -23,11 +22,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
+import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -127,22 +127,21 @@ public class OsmServerBackreferenceReaderTest {
      * @param ds the data set
      * @throws OsmTransferException
      */
-    static public void createDataSetOnServer(DataSet ds) throws OsmTransferException {
+    static public void createDataSetOnServer(APIDataSet ds) throws OsmTransferException, CyclicUploadDependencyException {
         logger.info("creating data set on the server ...");
-        ArrayList<OsmPrimitive> primitives = new ArrayList<>();
-        primitives.addAll(ds.getNodes());
-        primitives.addAll(ds.getWays());
-        primitives.addAll(ds.getRelations());
+        ds.adjustRelationUploadOrder();
         OsmServerWriter writer = new OsmServerWriter();
         Changeset cs  = new Changeset();
-        writer.uploadOsm(new UploadStrategySpecification().setStrategy(UploadStrategy.SINGLE_REQUEST_STRATEGY), primitives, cs, NullProgressMonitor.INSTANCE);
+        writer.uploadOsm(
+                new UploadStrategySpecification().setStrategy(UploadStrategy.SINGLE_REQUEST_STRATEGY),
+                ds.getPrimitives(), cs, NullProgressMonitor.INSTANCE);
         OsmApi.getOsmApi().closeChangeset(cs, NullProgressMonitor.INSTANCE);
     }
 
     static DataSet testDataSet;
 
     @BeforeClass
-    public static void init() throws OsmTransferException {
+    public static void init() throws OsmTransferException, CyclicUploadDependencyException {
         logger.info("initializing ...");
 
         JOSMFixture.createFunctionalTestFixture().init();
@@ -168,7 +167,7 @@ public class OsmServerBackreferenceReaderTest {
         logger.info("creating test data set ....");
         testDataSet = buildTestDataSet();
         logger.info("uploading test data set ...");
-        createDataSetOnServer(testDataSet);
+        createDataSetOnServer(new APIDataSet(testDataSet));
 
         try (
             PrintWriter pw = new PrintWriter(
@@ -211,6 +210,7 @@ public class OsmServerBackreferenceReaderTest {
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(n);
         reader.setReadFull(false);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        printNumberOfPrimitives(referers);
         assertEquals(10, referers.getNodes().size());
         assertEquals(1, referers.getWays().size());
         assertEquals(0, referers.getRelations().size());
@@ -218,6 +218,12 @@ public class OsmServerBackreferenceReaderTest {
             assertEquals(w.getId(), way.getId());
             assertEquals(false, way.isIncomplete());
         }
+    }
+
+    private void printNumberOfPrimitives(DataSet referers) {
+        System.out.println("#nodes=" + referers.getNodes().size() +
+                " #ways=" + referers.getWays().size() +
+                " #relations=" + referers.getRelations().size());
     }
 
     @Test
@@ -230,6 +236,7 @@ public class OsmServerBackreferenceReaderTest {
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(n);
         reader.setReadFull(true);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        printNumberOfPrimitives(referers);
         assertEquals(10, referers.getNodes().size());
         assertEquals(1, referers.getWays().size());
         assertEquals(0, referers.getRelations().size());
@@ -250,6 +257,7 @@ public class OsmServerBackreferenceReaderTest {
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(w);
         reader.setReadFull(false);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        printNumberOfPrimitives(referers);
         assertEquals(0, referers.getNodes().size()); // no nodes loaded
         assertEquals(6, referers.getWays().size());  // 6 ways referred by two relations
         for (Way w1 : referers.getWays()) {
@@ -309,6 +317,7 @@ public class OsmServerBackreferenceReaderTest {
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(r);
         reader.setReadFull(false);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        printNumberOfPrimitives(referers);
 
         Set<Long> referringRelationsIds = new HashSet<>();
         r = lookupRelation(referers, 6);
