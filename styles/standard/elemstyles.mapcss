@@ -597,16 +597,16 @@ way[highway=path][bicycle=official][foot=official] {
     dashes-background-color: foot#00ff00;
 /*    priority="200"*/
 }
-way[highway=pedestrian] {
-    width: 3;
-    realwidth: 5;
-    color: foot#00ff00;
-}
-area[highway=pedestrian][area?]:closed {
+way[highway=pedestrian][area?], relation[type=multipolygon][highway=pedestrian] {
     width: 3;
     realwidth: 5;
     color: foot#00ff00;
     fill-color: foot#00ff00;
+}
+way[highway=pedestrian] {
+    width: 3;
+    realwidth: 5;
+    color: foot#00ff00;
 }
 way[highway=steps] {
     width: 1;
@@ -2529,10 +2529,10 @@ node[public_transport=stop_position][train=yes] {
     text: auto;
 /*    priority="10"*/
 }
-area[public_transport=platform]:closed {
+way[public_transport=platform][area?], relation[type=multipolygon][public_transport=platform] {
     fill-color: service#809bc0;
 }
-way[public_transport=platform] {
+way[public_transport=platform][!area?] {
     width: 1;
     realwidth: 1;
     color: service#809bc0;
