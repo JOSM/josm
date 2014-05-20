@@ -37,8 +37,8 @@ import org.xml.sax.SAXException;
 public class DownloadOsmTask extends AbstractDownloadTask {
 
     protected static final String PATTERN_OSM_API_URL           = "https?://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
-    protected static final String PATTERN_OVERPASS_API_URL      = "http://.*/interpreter\\?data=.*";
-    protected static final String PATTERN_OVERPASS_API_XAPI_URL = "http://.*/xapi(\\?.*\\[@meta\\]|_meta\\?).*";
+    protected static final String PATTERN_OVERPASS_API_URL      = "https?://.*/interpreter\\?data=.*";
+    protected static final String PATTERN_OVERPASS_API_XAPI_URL = "https?://.*/xapi(\\?.*\\[@meta\\]|_meta\\?).*";
     protected static final String PATTERN_EXTERNAL_OSM_FILE     = "https?://.*/.*\\.osm";
 
     protected Bounds currentBounds;
