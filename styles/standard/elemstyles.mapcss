@@ -137,11 +137,11 @@ way["addr:interpolation"=alphabetic] {
     color: address#1C86EE;
     dashes: 2,2;
 }
-area[building] {
+area[building][!building?!] {
     fill-color: building#cb9999;
 /*    priority="-10000"*/
 }
-node[building] {
+node[building][!building?!] {
     icon-image: "misc/landmark/building.png";
     text: auto;
 /*    priority="-10000"*/
