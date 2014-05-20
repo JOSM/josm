@@ -1191,12 +1191,7 @@ area[leisure=nature_reserve],
 area[leisure=park],
 area[leisure=playground],
 area[leisure=garden],
-area[leisure=common],
-area[leisure=swimming_pool],
-area[leisure=miniature_golf],
-area[leisure=dog_park],
-area[leisure=ice_rink],
-area[leisure=sauna] {
+area[leisure=common] {
     fill-color: leisure#c7f1a3;
 }
 node[leisure=slipway] {
@@ -1227,9 +1222,18 @@ node[leisure=common] {
     icon-image: "leisure/common.png";
     text: auto;
 }
+area[leisure=swimming_pool] {
+    fill-color: swimming_pool#51c4ef;
+}
 node[leisure=swimming_pool] {
     icon-image: "sport/pool.png";
     text: auto;
+}
+area[leisure=miniature_golf],
+area[leisure=dog_park],
+area[leisure=ice_rink],
+area[leisure=sauna] {
+    fill-color: leisure#c7f1a3;
 }
 node[leisure=miniature_golf] {
     icon-image: "sport/golf.png";
