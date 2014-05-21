@@ -165,6 +165,15 @@ public final class ExpressionFactory {
         public static List<Object> list(Object... args) {
             return Arrays.asList(args);
         }
+        
+        /**
+         * Returns the number of elements in a list.
+         * @param lst the list
+         * @return length of the list
+         */
+        public static Integer count(List<?> lst) {
+            return lst.size();
+        }
 
         /**
          * Returns the first non-null object. The name originates from the {@code COALESCE} SQL function.
@@ -716,6 +725,9 @@ public final class ExpressionFactory {
      *
      * Separate implementation to support overloading for different
      * argument types.
+     * 
+     * The use for calculating the length of a list is deprecated, use
+     * {@link Functions#count(java.util.List)} instead (see #10061).
      */
     public static class LengthFunction implements Expression {
 
