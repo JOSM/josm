@@ -383,6 +383,7 @@ node[barrier=gate] {
 way[barrier=hedge],
 way[barrier=fence],
 way[barrier=wall],
+way[barrier=guard_rail],
 way[barrier=city_wall],
 way[barrier=retaining_wall],
 way[barrier=block] {
@@ -391,6 +392,7 @@ way[barrier=block] {
 }
 node[barrier=hedge],
 node[barrier=wall],
+node[barrier=guard_rail],
 node[barrier=city_wall],
 node[barrier=retaining_wall] {
     icon-image: "misc/deprecated.png";
