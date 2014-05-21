@@ -162,6 +162,7 @@ class TagEditHelper {
     /**
      * If during last editProperty call user changed the key name, this key will be returned
      * Elsewhere, returns null.
+     * @return The modified key, or {@code null}
      */
     public String getChangedKey() {
         return changedKey;
@@ -759,7 +760,7 @@ class TagEditHelper {
             if (key.isEmpty() || value.isEmpty()) return;
             for (OsmPrimitive osm: sel) {
                 String val = osm.get(key);
-                if (val != null) {
+                if (val != null && !val.equals(value)) {
                     if (!warnOverwriteKey(tr("You changed the value of ''{0}'' from ''{1}'' to ''{2}''.", key, val, value),
                             "overwriteAddKey"))
                         return;
