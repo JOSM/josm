@@ -57,11 +57,12 @@ public class MapCSSStyleSource extends StyleSource {
     // all rules
     public final List<MapCSSRule> rules = new ArrayList<>();
     // rule indices, filtered by primitive type
-    public final MapCSSRuleIndex nodeRules = new MapCSSRuleIndex();
-    public final MapCSSRuleIndex wayRules = new MapCSSRuleIndex();
-    public final MapCSSRuleIndex relationRules = new MapCSSRuleIndex();
-    public final MapCSSRuleIndex multipolygonRules = new MapCSSRuleIndex();
-    public final MapCSSRuleIndex canvasRules = new MapCSSRuleIndex();
+    public final MapCSSRuleIndex nodeRules = new MapCSSRuleIndex();         // nodes
+    public final MapCSSRuleIndex wayRules = new MapCSSRuleIndex();          // ways without tag area=no
+    public final MapCSSRuleIndex wayNoAreaRules = new MapCSSRuleIndex();    // ways with tag area=no
+    public final MapCSSRuleIndex relationRules = new MapCSSRuleIndex();     // relations that are not multipolygon relations
+    public final MapCSSRuleIndex multipolygonRules = new MapCSSRuleIndex(); // multipolygon relations
+    public final MapCSSRuleIndex canvasRules = new MapCSSRuleIndex();       // rules to apply canvas properties
 
     private Color backgroundColorOverride;
     private String css = null;
@@ -183,6 +184,7 @@ public class MapCSSStyleSource extends StyleSource {
         rules.clear();
         nodeRules.clear();
         wayRules.clear();
+        wayNoAreaRules.clear();
         relationRules.clear();
         multipolygonRules.clear();
         canvasRules.clear();
@@ -229,6 +231,7 @@ public class MapCSSStyleSource extends StyleSource {
                     nodeRules.add(optRule);
                     break;
                 case "way":
+                    wayNoAreaRules.add(optRule);
                     wayRules.add(optRule);
                     break;
                 case "area":
@@ -242,6 +245,7 @@ public class MapCSSStyleSource extends StyleSource {
                 case "*":
                     nodeRules.add(optRule);
                     wayRules.add(optRule);
+                    wayNoAreaRules.add(optRule);
                     relationRules.add(optRule);
                     multipolygonRules.add(optRule);
                     break;
@@ -259,6 +263,7 @@ public class MapCSSStyleSource extends StyleSource {
         }
         nodeRules.initIndex();
         wayRules.initIndex();
+        wayNoAreaRules.initIndex();
         relationRules.initIndex();
         multipolygonRules.initIndex();
         canvasRules.initIndex();
@@ -358,7 +363,11 @@ public class MapCSSStyleSource extends StyleSource {
         if (osm instanceof Node) {
             matchingRuleIndex = nodeRules;
         } else if (osm instanceof Way) {
-            matchingRuleIndex = wayRules;
+            if (osm.isKeyFalse("area")) {
+                matchingRuleIndex = wayNoAreaRules;
+            } else {
+                matchingRuleIndex = wayRules;
+            }
         } else {
             if (((Relation) osm).isMultipolygon()) {
                 matchingRuleIndex = multipolygonRules;
