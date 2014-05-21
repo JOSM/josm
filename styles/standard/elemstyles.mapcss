@@ -29,10 +29,6 @@ node[note] {
     text: auto;
 /*    priority="-100000"*/
 }
-area[area?] {
-    fill-color: area#ffffff;
-/*     priority="-10000"*/
-}
 
 /*********************/
 /* turn restrictions */
@@ -549,6 +545,9 @@ way[highway=living_street] {
     dashes-background-color: livingdashed#00ff00;
     color: street#c0c0c0;
 }
+area[highway=service][area?] {
+    fill-color: service#809bc0;
+}
 way[highway=service] {
     width: 1;
     realwidth: 3;
@@ -563,6 +562,9 @@ way[highway=cycleway] {
     width: 1;
     realwidth: 2;
     color: bicycle#b100ff;
+}
+area[highway=footway][area?] {
+    fill-color: foot#00ff00;
 }
 way[highway=footway] {
     width: 1;
@@ -1147,7 +1149,7 @@ node[office=government] {
 area[leisure=sports_centre],
 area[leisure=golf_course],
 area[leisure=stadium],
-area[leisure=track]:closed,
+area[leisure=track][!area?!]:closed,
 area[leisure=pitch],
 area[leisure=water_park] {
     fill-color: leisure#c7f1a3;
@@ -2531,15 +2533,14 @@ node[public_transport=stop_position][train=yes] {
     text: auto;
 /*    priority="10"*/
 }
-way[public_transport=platform][area?], relation[type=multipolygon][public_transport=platform] {
+area[public_transport=platform]:closed {
     fill-color: service#809bc0;
 }
-way[public_transport=platform][!area?] {
-    width: 1;
+way[public_transport=platform]!:closed {
+    width: 3;
     realwidth: 1;
     color: service#809bc0;
-    dashes: 9,9;
-    dashes-background-color: livingdashed#00ff00;
+    dashes: 12,3;
 }
 node[public_transport=platform] {
     icon-image: "transport/bus_small.png";
