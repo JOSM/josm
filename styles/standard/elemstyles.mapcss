@@ -2862,8 +2862,10 @@ area[natural=cliff]:closed {
     fill-color: natural#002f00;
 }
 way[natural=cliff] {
-    width: 2;
-    color: natural#002f00;
+    repeat-image: "misc/cliff-pattern.png";
+    repeat-image-align: top;
+    width: 1;
+    color: #b2b2b2;    
 }
 node[natural=cliff] {
     icon-image: "misc/cliff.png";
