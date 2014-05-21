@@ -545,10 +545,10 @@ way[highway=living_street] {
     dashes-background-color: livingdashed#00ff00;
     color: street#c0c0c0;
 }
-area[highway=service][area?] {
+way[highway=service][area?], relation[type=multipolygon][highway=service] {
     fill-color: service#809bc0;
 }
-way[highway=service] {
+way[highway=service][!area?] {
     width: 1;
     realwidth: 3;
     color: service#809bc0;
@@ -563,10 +563,10 @@ way[highway=cycleway] {
     realwidth: 2;
     color: bicycle#b100ff;
 }
-area[highway=footway][area?] {
+way[highway=footway][area?], relation[type=multipolygon][highway=footway] {
     fill-color: foot#00ff00;
 }
-way[highway=footway] {
+way[highway=footway][!area?] {
     width: 1;
     realwidth: 1;
     color: foot#00ff00;
