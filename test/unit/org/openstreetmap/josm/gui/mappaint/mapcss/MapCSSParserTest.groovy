@@ -256,6 +256,12 @@ class MapCSSParserTest {
     }
 
     @Test
+    public void testChildSelectorGreaterThanSignIsOptional() throws Exception {
+        assert getParser("relation[type=route] way[highway]").child_selector().toString() ==
+                getParser("relation[type=route] > way[highway]").child_selector().toString()
+    }
+
+    @Test
     public void testSiblingSelector() throws Exception {
         def s1 = (Selector.ChildOrParentSelector) getParser("*[a?][parent_tag(\"highway\")=\"unclassified\"] + *[b?]").child_selector()
         def ds = new DataSet()

@@ -96,6 +96,10 @@ public interface Selector {
          * @param type the selector type
          */
         public ChildOrParentSelector(Selector a, LinkSelector link, Selector b, ChildOrParentSelectorType type) {
+            CheckParameterUtil.ensureParameterNotNull(a, "a");
+            CheckParameterUtil.ensureParameterNotNull(b, "b");
+            CheckParameterUtil.ensureParameterNotNull(link, "link");
+            CheckParameterUtil.ensureParameterNotNull(type, "type");
             this.left = a;
             this.link = link;
             this.right = b;
