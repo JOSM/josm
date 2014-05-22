@@ -12,7 +12,7 @@ node[source:outline] {
 }
 
 /* Building inside building (spatial test) */
-*[building][building!~/no|entrance/][coalesce(tag("layer"),"0") = coalesce(parent_tag("layer"),"0")] ∈
+*[building][building!~/no|entrance/][any(tag("layer"),"0") = any(parent_tag("layer"),"0")] ∈
 *[building][building!~/no|entrance/] {
   throwWarning: tr("Building inside building");
 }

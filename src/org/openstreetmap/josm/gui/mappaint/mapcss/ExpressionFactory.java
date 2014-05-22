@@ -177,10 +177,21 @@ public final class ExpressionFactory {
 
         /**
          * Returns the first non-null object. The name originates from the {@code COALESCE} SQL function.
-         * @see Utils#firstNonNull(Object[])
+         * @deprecated Deprecated in favour of {@link #any(Object...)} from the MapCSS standard.
          */
         @NullableArguments
         public static Object coalesce(Object... args) {
+            return Utils.firstNonNull(args);
+        }
+
+        /**
+         * Returns the first non-null object.
+         * The name originates from <a href="http://wiki.openstreetmap.org/wiki/MapCSS/0.2/eval">MapCSS standard</a>.
+         * @see #coalesce(Object...)
+         * @see Utils#firstNonNull(Object[])
+         */
+        @NullableArguments
+        public static Object any(Object... args) {
             return Utils.firstNonNull(args);
         }
 
