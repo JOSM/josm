@@ -27,7 +27,7 @@ public final class Predicates {
     }
 
     /**
-     * Returns a {@link Predicate} executing {@link Utils#equal}.
+     * Returns a {@link Predicate} executing {@link Objects#equals}.
      */
     public static <T> Predicate<T> equalTo(final T ref) {
         return new Predicate<T>() {
@@ -106,6 +106,18 @@ public final class Predicates {
             @Override
             public boolean evaluate(T object) {
                 return target.contains(object);
+            }
+        };
+    }
+
+    /**
+     * Returns a {@link Predicate} testing whether objects are {@code null}.
+     */
+    public static <T> Predicate<T> isNull() {
+        return new Predicate<T>() {
+            @Override
+            public boolean evaluate(T object) {
+                return object == null;
             }
         };
     }
