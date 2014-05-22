@@ -208,6 +208,42 @@ public final class ExpressionFactory {
         }
 
         /**
+         * Returns the minimum of the given numbers, or NaN if no number is given.
+         * @see Math#min(float, float)
+         */
+        public static float min(float... args) {
+            if (args.length == 0) {
+                return Float.NaN;
+            } else if (args.length == 1) {
+                return args[0];
+            } else {
+                float min = Math.min(args[0], args[1]);
+                for (int i = 2; i < args.length; i++) {
+                    min = Math.min(min, args[i]);
+                }
+                return min;
+            }
+        }
+
+        /**
+         * Returns the maximum of the given numbers, or NaN if no number is given.
+         * @see Math#max(float, float)
+         */
+        public static float max(float... args) {
+            if (args.length == 0) {
+                return Float.NaN;
+            } else if (args.length == 1) {
+                return args[0];
+            } else {
+                float max = Math.max(args[0], args[1]);
+                for (int i = 2; i < args.length; i++) {
+                    max = Math.max(max, args[i]);
+                }
+                return max;
+            }
+        }
+
+        /**
          * Splits string {@code toSplit} at occurrences of the separator string {@code sep} and returns a list of matches.
          * @see String#split(String)
          * @since 5699
