@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
@@ -94,12 +95,7 @@ public abstract class Condition {
                 final boolean contains = Pattern.compile(prototypeString).matcher(testString).find();
                 return REGEX.equals(this) ? contains : !contains;
             case ONE_OF:
-                String[] parts = testString.split(";");
-                for (String part : parts) {
-                    if (Objects.equals(prototypeString, part.trim()))
-                        return true;
-                }
-                return false;
+                return Arrays.asList(testString.split("\\s*;\\s*")).contains(prototypeString);
             case BEGINS_WITH:
                 return testString.startsWith(prototypeString);
             case ENDS_WITH:

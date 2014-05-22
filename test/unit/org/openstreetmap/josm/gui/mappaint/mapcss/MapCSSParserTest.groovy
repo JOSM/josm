@@ -121,6 +121,29 @@ class MapCSSParserTest {
     }
 
     @Test
+    public void testBeginsEndsWithCondition() throws Exception {
+        def condition = (Condition.KeyValueCondition) getParser('[foo ^= bar]').condition(Condition.Context.PRIMITIVE)
+        assert Condition.Op.BEGINS_WITH.equals(condition.op)
+        assert condition.applies(getEnvironment("foo", "bar123"))
+        assert !condition.applies(getEnvironment("foo", "123bar"))
+        assert !condition.applies(getEnvironment("foo", "123bar123"))
+        condition = (Condition.KeyValueCondition) getParser('[foo $= bar]').condition(Condition.Context.PRIMITIVE)
+        assert Condition.Op.ENDS_WITH.equals(condition.op)
+        assert !condition.applies(getEnvironment("foo", "bar123"))
+        assert condition.applies(getEnvironment("foo", "123bar"))
+        assert !condition.applies(getEnvironment("foo", "123bar123"))
+    }
+
+    @Test
+    public void testOneOfCondition() throws Exception {
+        def condition = getParser('[vending~=stamps]').condition(Condition.Context.PRIMITIVE)
+        assert condition.applies(getEnvironment("vending", "stamps"))
+        assert condition.applies(getEnvironment("vending", "bar;stamps;foo"))
+        assert !condition.applies(getEnvironment("vending", "every;thing;else"))
+        assert !condition.applies(getEnvironment("vending", "or_nothing"))
+    }
+
+    @Test
     public void testStandardKeyCondition() throws Exception {
         def c1 = (Condition.KeyCondition) getParser("[ highway ]").condition(Condition.Context.PRIMITIVE)
         assert c1.matchType == null
