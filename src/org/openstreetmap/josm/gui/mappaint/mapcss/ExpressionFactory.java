@@ -14,6 +14,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +30,7 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -206,42 +209,6 @@ public final class ExpressionFactory {
                 return lst.get(idx);
             }
             return null;
-        }
-
-        /**
-         * Returns the minimum of the given numbers, or NaN if no number is given.
-         * @see Math#min(float, float)
-         */
-        public static float min(float... args) {
-            if (args.length == 0) {
-                return Float.NaN;
-            } else if (args.length == 1) {
-                return args[0];
-            } else {
-                float min = Math.min(args[0], args[1]);
-                for (int i = 2; i < args.length; i++) {
-                    min = Math.min(min, args[i]);
-                }
-                return min;
-            }
-        }
-
-        /**
-         * Returns the maximum of the given numbers, or NaN if no number is given.
-         * @see Math#max(float, float)
-         */
-        public static float max(float... args) {
-            if (args.length == 0) {
-                return Float.NaN;
-            } else if (args.length == 1) {
-                return args[0];
-            } else {
-                float max = Math.max(args[0], args[1]);
-                for (int i = 2; i < args.length; i++) {
-                    max = Math.max(max, args[i]);
-                }
-                return max;
-            }
         }
 
         /**
@@ -672,6 +639,10 @@ public final class ExpressionFactory {
             return new OrOperator(args);
         else if ("length".equals(name) && args.size() == 1)
             return new LengthFunction(args.get(0));
+        else if ("max".equals(name) && !args.isEmpty())
+            return new MinMaxFunction(args, true);
+        else if ("min".equals(name) && !args.isEmpty())
+            return new MinMaxFunction(args, false);
 
         for (Method m : arrayFunctions) {
             if (m.getName().equals(name))
@@ -794,6 +765,44 @@ public final class ExpressionFactory {
             if (s != null)
                 return s.length();
             return null;
+        }
+    }
+
+    /**
+     * Computes the maximum/minimum value an arbitrary number of floats, or a list of floats.
+     */
+    public static class MinMaxFunction implements Expression {
+
+        private final List<Expression> args;
+        private final boolean computeMax;
+
+        public MinMaxFunction(final List<Expression> args, final boolean computeMax) {
+            this.args = args;
+            this.computeMax = computeMax;
+        }
+
+        public Float aggregateList(List<?> lst) {
+            final List<Float> floats = Utils.transform(lst, new Utils.Function<Object, Float>() {
+                @Override
+                public Float apply(Object x) {
+                    return Cascade.convertTo(x, float.class);
+                }
+            });
+            final Collection<Float> nonNullList = Utils.filter(floats, Predicates.not(Predicates.isNull()));
+            return computeMax ? Collections.max(nonNullList) : Collections.min(nonNullList);
+        }
+
+        @Override
+        public Object evaluate(final Environment env) {
+            List<?> l = Cascade.convertTo(args.get(0).evaluate(env), List.class);
+            if (args.size() != 1 || l == null)
+                l = Utils.transform(args, new Utils.Function<Expression, Object>() {
+                    @Override
+                    public Object apply(Expression x) {
+                        return x.evaluate(env);
+                    }
+                });
+            return aggregateList(l);
         }
     }
 

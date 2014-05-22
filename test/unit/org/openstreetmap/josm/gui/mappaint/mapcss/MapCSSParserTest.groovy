@@ -352,6 +352,7 @@ class MapCSSParserTest {
         def sheet = new MapCSSStyleSource("* {" +
                 "min_value: min(tag(x), tag(y), tag(z)); " +
                 "max_value: max(tag(x), tag(y), tag(z)); " +
+                "max_split: max(split(\";\", tag(widths))); " +
                 "}")
         sheet.loadStyleSource()
         def mc = new MultiCascade()
@@ -360,8 +361,9 @@ class MapCSSParserTest {
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", Float.NaN, Float.class) == 4.0f
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", Float.NaN, Float.class) == 8.0f
 
-        sheet.apply(mc, TestUtils.createPrimitive("way x=4 y=6"), 20, null, false)
-        assert mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", -777f, Float.class) == -777f
-        assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", -777f, Float.class) == -777f
+        sheet.apply(mc, TestUtils.createPrimitive("way x=4 y=6 widths=1;2;8;56;3;a"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", -777f, Float.class) == 4
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", -777f, Float.class) == 6
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_split", -777f, Float.class) == 56
     }
 }
