@@ -317,4 +317,22 @@ class MapCSSParserTest {
         assert !css.getErrors().isEmpty()
         assert css.getErrors().iterator().next().toString().contains("Unknown MapCSS base selector invalid_base")
     }
+
+    @Test
+    public void testMinMaxFunctions() throws Exception {
+        def sheet = new MapCSSStyleSource("* {" +
+                "min_value: min(tag(x), tag(y), tag(z)); " +
+                "max_value: max(tag(x), tag(y), tag(z)); " +
+                "}")
+        sheet.loadStyleSource()
+        def mc = new MultiCascade()
+
+        sheet.apply(mc, TestUtils.createPrimitive("way x=4 y=6 z=8 u=100"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", Float.NaN, Float.class) == 4.0f
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", Float.NaN, Float.class) == 8.0f
+
+        sheet.apply(mc, TestUtils.createPrimitive("way x=4 y=6"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", -777f, Float.class) == -777f
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", -777f, Float.class) == -777f
+    }
 }
