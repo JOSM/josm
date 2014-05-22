@@ -523,20 +523,24 @@ Selector child_selector() :
     (
         (
             (
-                <GREATER> { type = Selector.ChildOrParentSelectorType.CHILD; }
+                (
+                    <GREATER> { type = Selector.ChildOrParentSelectorType.CHILD; }
+                |
+                    <LESS> { type = Selector.ChildOrParentSelectorType.PARENT; }
+                |
+                    <PLUS> { type = Selector.ChildOrParentSelectorType.SIBLING; }
+                )
+                ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
             |
-                <LESS> { type = Selector.ChildOrParentSelectorType.PARENT; }
+                <ELEMENT_OF> { type = Selector.ChildOrParentSelectorType.ELEMENT_OF; }
             |
-                <PLUS> { type = Selector.ChildOrParentSelectorType.SIBLING; }
+                <CROSSING> { type = Selector.ChildOrParentSelectorType.CROSSING; }
             )
-            ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
+            w()
         |
-            <ELEMENT_OF> { type = Selector.ChildOrParentSelectorType.ELEMENT_OF; }
-        |
-            <CROSSING> { type = Selector.ChildOrParentSelectorType.CROSSING; }
+            { /* <GREATER> is optional for child selector */ type = Selector.ChildOrParentSelectorType.CHILD; }
         )
         { selLink = new LinkSelector(conditions); }
-        w()
         selRight=selector() w()
     )?
     { return selRight != null ? new ChildOrParentSelector(selLeft, selLink, selRight, type) : selLeft; }
