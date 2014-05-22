@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.Main;
@@ -19,6 +20,7 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -203,10 +205,14 @@ public interface Selector {
                     if (e.child != null) {
                         // abort if first match has been found
                         break;
-                    } else if (!e.osm.equals(p) && p.isUsable()) {
+                    } else if (isPrimitiveUsable(p)) {
                         p.accept(this);
                     }
                 }
+            }
+
+            public boolean isPrimitiveUsable(OsmPrimitive p) {
+                return !e.osm.equals(p) && p.isUsable();
             }
         }
 
@@ -226,7 +232,7 @@ public interface Selector {
             }
         }
 
-        private final class ContainsFinder extends AbstractFinder {
+        private class ContainsFinder extends AbstractFinder {
             private ContainsFinder(Environment e) {
                 super(e);
                 CheckParameterUtil.ensureThat(!(e.osm instanceof Node), "Nodes not supported");
@@ -265,14 +271,34 @@ public interface Selector {
                     // nodes cannot contain elements
                     return false;
                 }
+
+                ContainsFinder containsFinder;
+                try {
+                    // if right selector also matches relations and if matched primitive is a way which is part of a multipolygon,
+                    // use the multipolygon for further analysis
+                    if (!((GeneralSelector) right).matchesBase(OsmPrimitiveType.RELATION) || !(e.osm instanceof Way)) {
+                        throw new NoSuchElementException();
+                    }
+                    final Collection<Relation> multipolygons = Utils.filteredCollection(Utils.filter(
+                            e.osm.getReferrers(), Predicates.hasTag("type", "multipolygon")), Relation.class);
+                    final Relation multipolygon = multipolygons.iterator().next();
+                    if (multipolygon == null) throw new NoSuchElementException();
+                    containsFinder = new ContainsFinder(e.withPrimitive(multipolygon)) {
+                        @Override
+                        public boolean isPrimitiveUsable(OsmPrimitive p) {
+                            return super.isPrimitiveUsable(p) && !multipolygon.getMemberPrimitives().contains(p);
+                        }
+                    };
+                } catch (NoSuchElementException ignore) {
+                    containsFinder = new ContainsFinder(e);
+                }
                 e.parent = e.osm;
 
-                final ContainsFinder containsFinder = new ContainsFinder(e);
-                if (right instanceof GeneralSelector) {
-                    if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.NODE)) {
+                if (left instanceof GeneralSelector) {
+                    if (((GeneralSelector) left).matchesBase(OsmPrimitiveType.NODE)) {
                         containsFinder.visit(e.osm.getDataSet().searchNodes(e.osm.getBBox()));
                     }
-                    if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
+                    if (((GeneralSelector) left).matchesBase(OsmPrimitiveType.WAY)) {
                         containsFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
                     }
                 } else {
