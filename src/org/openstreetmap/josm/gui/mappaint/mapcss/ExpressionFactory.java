@@ -180,8 +180,9 @@ public final class ExpressionFactory {
          * @deprecated Deprecated in favour of {@link #any(Object...)} from the MapCSS standard.
          */
         @NullableArguments
+        @Deprecated
         public static Object coalesce(Object... args) {
-            return Utils.firstNonNull(args);
+            return any(args);
         }
 
         /**
