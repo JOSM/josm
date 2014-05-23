@@ -24,7 +24,7 @@ public class OsmTileLoader implements TileLoader {
     /**
      * Holds the HTTP headers. Insert e.g. User-Agent here when default should not be used.
      */
-    public Map<String, String> headers = new HashMap<String, String>();
+    public Map<String, String> headers = new HashMap<>();
 
     public int timeoutConnect = 0;
     public int timeoutRead = 0;

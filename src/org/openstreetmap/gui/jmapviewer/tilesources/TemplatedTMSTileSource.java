@@ -11,9 +11,9 @@ public class TemplatedTMSTileSource extends TMSTileSource {
 
     private Random rand = null;
     private String[] randomParts = null;
-    private Map<String, String> headers = new HashMap<String, String>();
+    private Map<String, String> headers = new HashMap<>();
 
-    public static final String PATTERN_ZOOM    = "\\{(?:(\\d+)-)?zoom([+-]\\d+)?\\}";
+    public static final String PATTERN_ZOOM    = "\\{(?:(\\d+)-)?z(?:oom)?([+-]\\d+)?\\}";
     public static final String PATTERN_X       = "\\{x\\}";
     public static final String PATTERN_Y       = "\\{y\\}";
     public static final String PATTERN_Y_YAHOO = "\\{!y\\}";

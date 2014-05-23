@@ -107,7 +107,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
             XPathExpression eastLonXpath = xpath.compile("BoundingBox/EastLongitude/text()");
 
             NodeList imageryProviderNodes = (NodeList) xpath.compile("//ImageryMetadata/ImageryProvider").evaluate(document, XPathConstants.NODESET);
-            List<Attribution> attributions = new ArrayList<Attribution>(imageryProviderNodes.getLength());
+            List<Attribution> attributions = new ArrayList<>(imageryProviderNodes.getLength());
             for (int i = 0; i < imageryProviderNodes.getLength(); i++) {
                 Node providerNode = imageryProviderNodes.item(i);
 

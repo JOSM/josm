@@ -93,19 +93,18 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
                 map().setDisplayToFitMapMarkers();
             }
         });
-        JComboBox tileSourceSelector = new JComboBox(new TileSource[] { new OsmTileSource.Mapnik(),
+        JComboBox<TileSource> tileSourceSelector = new JComboBox<>(new TileSource[] { new OsmTileSource.Mapnik(),
                 new OsmTileSource.CycleMap(), new BingAerialTileSource(), new MapQuestOsmTileSource(), new MapQuestOpenAerialTileSource() });
         tileSourceSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 map().setTileSource((TileSource) e.getItem());
             }
         });
-        JComboBox tileLoaderSelector;
+        JComboBox<TileLoader> tileLoaderSelector;
         try {
-            tileLoaderSelector = new JComboBox(new TileLoader[] { new OsmFileCacheTileLoader(map()),
-                    new OsmTileLoader(map()) });
+            tileLoaderSelector = new JComboBox<>(new TileLoader[] { new OsmFileCacheTileLoader(map()), new OsmTileLoader(map()) });
         } catch (IOException e) {
-            tileLoaderSelector = new JComboBox(new TileLoader[] { new OsmTileLoader(map()) });
+            tileLoaderSelector = new JComboBox<>(new TileLoader[] { new OsmTileLoader(map()) });
         }
         tileLoaderSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {

@@ -32,7 +32,7 @@ import java.io.InputStream;
  * character encodings which are compatible with the lower 127 ASCII chart (ISO-8859-1, Windows-1252, UTF-8, etc).
  * </p>
  *
- * @version $Id: Base32InputStream.java 1563226 2014-01-31 19:38:06Z ggregory $
+ * @version $Id: Base32InputStream.java 1586299 2014-04-10 13:50:21Z ggregory $
  * @see <a href="http://www.ietf.org/rfc/rfc4648.txt">RFC 4648</a>
  * @since 1.5
  */
@@ -71,8 +71,8 @@ public class Base32InputStream extends BaseNCodecInputStream {
      *            true if we should encode all data read from us, false if we should decode.
      * @param lineLength
      *            If doEncode is true, each line of encoded data will contain lineLength characters (rounded down to
-     *            nearest multiple of 4). If lineLength &lt;= 0, the encoded data is not divided into lines. If doEncode is
-     *            false, lineLength is ignored.
+     *            nearest multiple of 4). If lineLength &lt;= 0, the encoded data is not divided into lines. If doEncode
+     *            is false, lineLength is ignored.
      * @param lineSeparator
      *            If doEncode is true, each line of encoded data will be terminated with this byte sequence (e.g. \r\n).
      *            If lineLength &lt;= 0, the lineSeparator is not used. If doEncode is false lineSeparator is ignored.

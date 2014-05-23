@@ -99,7 +99,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
 
         log.finest("Tile cache directory: " + cacheDir);
         cacheDirBase = cacheDir.getAbsolutePath();
-        sourceCacheDirMap = new HashMap<TileSource, File>();
+        sourceCacheDirMap = new HashMap<>();
     }
 
     /**
@@ -260,28 +260,23 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         }
 
         protected boolean loadTileFromFile() {
-            FileInputStream fin = null;
             try {
                 tileFile = getTileFile();
                 if (!tileFile.exists())
                     return false;
 
                 loadTagsFromFile();
-                if ("no-tile".equals(tile.getValue("tile-info")))
-                {
+                if ("no-tile".equals(tile.getValue("tile-info"))) {
                     tile.setError("No tile at this zoom level");
                     if (tileFile.exists()) {
                         tileFile.delete();
                     }
                     tileFile = getTagsFile();
                 } else {
-                    fin = new FileInputStream(tileFile);
-                    try {
+                    try (FileInputStream fin = new FileInputStream(tileFile)) {
                         if (fin.available() == 0)
                             throw new IOException("File empty");
                         tile.loadImage(fin);
-                    } finally {
-                        fin.close();
                     }
                 }
 
@@ -296,13 +291,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                 listener.tileLoadingFinished(tile, true);
                 fileTilePainted = true;
             } catch (Exception e) {
-                try {
-                    if (fin != null) {
-                        fin.close();
-                        tileFile.delete();
-                    }
-                } catch (Exception e1) {
-                }
+                tileFile.delete();
                 tileFile = null;
                 fileAge = 0;
             }
@@ -391,12 +380,11 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         }
 
         protected void saveTileToFile(byte[] rawData) {
-            try {
+            try (
                 FileOutputStream f = new FileOutputStream(tileCacheDir + "/" + tile.getZoom() + "_" + tile.getXtile()
-                        + "_" + tile.getYtile() + "." + tile.getSource().getTileType());
+                        + "_" + tile.getYtile() + "." + tile.getSource().getTileType())
+            ) {
                 f.write(rawData);
-                f.close();
-                // System.out.println("Saved tile to file: " + tile);
             } catch (Exception e) {
                 System.err.println("Failed to save tile content: " + e.getLocalizedMessage());
             }
@@ -408,13 +396,10 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                 tagsFile.delete();
                 return;
             }
-            try {
-                final PrintWriter f = new PrintWriter(new OutputStreamWriter(new FileOutputStream(tagsFile),
-                        TAGS_CHARSET));
+            try (PrintWriter f = new PrintWriter(new OutputStreamWriter(new FileOutputStream(tagsFile), TAGS_CHARSET))) {
                 for (Entry<String, String> entry : tile.getMetadata().entrySet()) {
                     f.println(entry.getKey() + "=" + entry.getValue());
                 }
-                f.close();
             } catch (Exception e) {
                 System.err.println("Failed to save tile tags: " + e.getLocalizedMessage());
             }
@@ -425,11 +410,9 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
             File etagFile = new File(tileCacheDir, tile.getZoom() + "_"
                     + tile.getXtile() + "_" + tile.getYtile() + ETAG_FILE_EXT);
             if (!etagFile.exists()) return;
-            try {
-                FileInputStream f = new FileInputStream(etagFile);
+            try (FileInputStream f = new FileInputStream(etagFile)) {
                 byte[] buf = new byte[f.available()];
                 f.read(buf);
-                f.close();
                 String etag = new String(buf, TAGS_CHARSET.name());
                 tile.putValue("etag", etag);
                 if (etagFile.delete()) {
@@ -443,9 +426,7 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
         protected void loadTagsFromFile() {
             loadOldETagfromFile();
             File tagsFile = getTagsFile();
-            try {
-                final BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(tagsFile),
-                        TAGS_CHARSET));
+            try (BufferedReader f = new BufferedReader(new InputStreamReader(new FileInputStream(tagsFile), TAGS_CHARSET))) {
                 for (String line = f.readLine(); line != null; line = f.readLine()) {
                     final int i = line.indexOf('=');
                     if (i == -1 || i == 0) {
@@ -454,13 +435,11 @@ public class OsmFileCacheTileLoader extends OsmTileLoader implements CachedTileL
                     }
                     tile.putValue(line.substring(0,i),line.substring(i+1));
                 }
-                f.close();
             } catch (FileNotFoundException e) {
             } catch (Exception e) {
                 System.err.println("Failed to load tile tags: " + e.getLocalizedMessage());
             }
         }
-
     }
 
     public long getMaxFileAge() {

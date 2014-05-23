@@ -296,7 +296,7 @@ public class Tile {
             return;
         }
         if (metadata == null) {
-            metadata = new HashMap<String,String>();
+            metadata = new HashMap<>();
         }
         metadata.put(key, value);
     }

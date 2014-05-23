@@ -48,7 +48,7 @@ import org.apache.commons.codec.StringEncoder;
  * is used to ensure safe publication of the value between threads, and must not invoke {@link #setMaxCodeLen(int)}
  * after initial setup.
  *
- * @version $Id: Metaphone.java 1542813 2013-11-17 20:52:32Z tn $
+ * @version $Id: Metaphone.java 1586298 2014-04-10 13:45:36Z ggregory $
  */
 public class Metaphone implements StringEncoder {
 
@@ -91,11 +91,12 @@ public class Metaphone implements StringEncoder {
      */
     public String metaphone(final String txt) {
         boolean hard = false;
-        if (txt == null || txt.length() == 0) {
+        int txtLength;
+        if (txt == null || (txtLength = txt.length()) == 0) {
             return "";
         }
         // single character is itself
-        if (txt.length() == 1) {
+        if (txtLength == 1) {
             return txt.toUpperCase(java.util.Locale.ENGLISH);
         }
 

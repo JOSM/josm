@@ -31,7 +31,7 @@ public class JobDispatcher {
         addWorkerThread().firstThread = true;
     }
 
-    protected BlockingDeque<TileJob> jobQueue = new LinkedBlockingDeque<TileJob>();
+    protected BlockingDeque<TileJob> jobQueue = new LinkedBlockingDeque<>();
 
     protected static int workerThreadMaxCount = 8;
 

@@ -71,7 +71,7 @@ public class AbstractLayer {
     }
     public static <E> List<E> add(List<E> list, E element) {
         if(element!=null){
-            if(list==null) list = new ArrayList<E>();
+            if(list==null) list = new ArrayList<>();
             if(!list.contains(element)) list.add(element);
         }
         return list;

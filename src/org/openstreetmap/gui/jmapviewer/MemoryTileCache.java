@@ -32,7 +32,7 @@ public class MemoryTileCache implements TileCache {
     protected final CacheLinkedListElement lruTiles;
 
     public MemoryTileCache() {
-        hash = new HashMap<String, CacheEntry>(cacheSize);
+        hash = new HashMap<>(cacheSize);
         lruTiles = new CacheLinkedListElement();
     }
 

@@ -31,7 +31,7 @@ public class AttributionSupport {
     protected Rectangle attrImageBounds = null;
 
     static {
-        HashMap<TextAttribute, Integer> aUnderline = new HashMap<TextAttribute, Integer>();
+        HashMap<TextAttribute, Integer> aUnderline = new HashMap<>();
         aUnderline.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         ATTR_LINK_FONT = ATTR_FONT.deriveFont(aUnderline);
     }

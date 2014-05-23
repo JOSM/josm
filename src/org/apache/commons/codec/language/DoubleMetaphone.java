@@ -19,6 +19,7 @@ package org.apache.commons.codec.language;
 
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.StringEncoder;
+import org.apache.commons.codec.binary.StringUtils;
 
 /**
  * Encodes a string into a double metaphone value. This Implementation is based on the algorithm by <CITE>Lawrence
@@ -32,7 +33,7 @@ import org.apache.commons.codec.StringEncoder;
  * @see <a href="http://drdobbs.com/184401251?pgno=2">Original Article</a>
  * @see <a href="http://en.wikipedia.org/wiki/Metaphone">http://en.wikipedia.org/wiki/Metaphone</a>
  *
- * @version $Id: DoubleMetaphone.java 1544347 2013-11-21 22:30:31Z ggregory $
+ * @version $Id: DoubleMetaphone.java 1586300 2014-04-10 13:51:06Z ggregory $
  */
 public class DoubleMetaphone implements StringEncoder {
 
@@ -241,7 +242,7 @@ public class DoubleMetaphone implements StringEncoder {
      *          {@code false} otherwise.
      */
     public boolean isDoubleMetaphoneEqual(final String value1, final String value2, final boolean alternate) {
-        return doubleMetaphone(value1, alternate).equals(doubleMetaphone(value2, alternate));
+        return StringUtils.equals(doubleMetaphone(value1, alternate), doubleMetaphone(value2, alternate));
     }
 
     /**
