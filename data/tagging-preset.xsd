@@ -246,6 +246,7 @@
 		<attribute name="default" type="tns:check_default" />
 		<attribute name="value_on" type="string" />
 		<attribute name="value_off" type="string" />
+        <attribute name="disable_off" type="boolean" />
 		<attribute name="match" type="tns:match" />
 
 		<attribute name="name" use="prohibited" />

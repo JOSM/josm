@@ -117,6 +117,7 @@ check: checkbox
   default: ticked on/off (default is "off")
   value_on: the value to set when checked (default is "yes")
   value_off: the value to set when unchecked (default is "no")
+  disable_off: whether the off value is disabled in the dialog, i.e., only unset or yes are provided
   match: none/key/key!/keyvalue (default is "none", see below for more information)
 
 role: type to specify possible roles in relations
@@ -171,10 +172,10 @@ Note that for a match, at least one positive and no negative is required.
         <reference ref="surface" />
     </chunk>
     <chunk id="highway_yesno_incline">
-        <check key="bridge" text="Bridge" />
-        <check key="tunnel" text="Tunnel" />
-        <check key="cutting" text="Cutting" />
-        <check key="embankment" text="Embankment" />
+        <check key="bridge" text="Bridge" disable_off="true" />
+        <check key="tunnel" text="Tunnel" disable_off="true" />
+        <check key="cutting" text="Cutting" disable_off="true" />
+        <check key="embankment" text="Embankment" disable_off="true" />
         <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down"/>
     </chunk>
     <chunk id="highway_yesno_incline_oneway">
@@ -379,10 +380,10 @@ Note that for a match, at least one positive and no negative is required.
                 <reference ref="highway_base" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="bridge" text="Bridge" />
-                    <check key="tunnel" text="Tunnel" />
-                    <check key="cutting" text="Cutting" />
-                    <check key="embankment" text="Embankment" />
+                    <check key="bridge" text="Bridge" disable_off="true" />
+                    <check key="tunnel" text="Tunnel" disable_off="true" />
+                    <check key="cutting" text="Cutting" disable_off="true" />
+                    <check key="embankment" text="Embankment" disable_off="true" />
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
@@ -403,10 +404,10 @@ Note that for a match, at least one positive and no negative is required.
                 <reference ref="highway_base" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="bridge" text="Bridge" />
-                    <check key="tunnel" text="Tunnel" />
-                    <check key="cutting" text="Cutting" />
-                    <check key="embankment" text="Embankment" />
+                    <check key="bridge" text="Bridge" disable_off="true" />
+                    <check key="tunnel" text="Tunnel" disable_off="true" />
+                    <check key="cutting" text="Cutting" disable_off="true" />
+                    <check key="embankment" text="Embankment" disable_off="true" />
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
@@ -431,10 +432,10 @@ Note that for a match, at least one positive and no negative is required.
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="motorroad" text="Motorroad" default="on" />
-                    <check key="bridge" text="Bridge" />
-                    <check key="tunnel" text="Tunnel" />
-                    <check key="cutting" text="Cutting" />
-                    <check key="embankment" text="Embankment" />
+                    <check key="bridge" text="Bridge" disable_off="true" />
+                    <check key="tunnel" text="Tunnel" disable_off="true" />
+                    <check key="cutting" text="Cutting" disable_off="true" />
+                    <check key="embankment" text="Embankment" disable_off="true" />
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
@@ -456,10 +457,10 @@ Note that for a match, at least one positive and no negative is required.
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="motorroad" text="Motorroad" default="on" />
-                    <check key="bridge" text="Bridge" />
-                    <check key="tunnel" text="Tunnel" />
-                    <check key="cutting" text="Cutting" />
-                    <check key="embankment" text="Embankment" />
+                    <check key="bridge" text="Bridge" disable_off="true" />
+                    <check key="tunnel" text="Tunnel" disable_off="true" />
+                    <check key="cutting" text="Cutting" disable_off="true" />
+                    <check key="embankment" text="Embankment" disable_off="true" />
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
@@ -2629,8 +2630,8 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="public_transport" value="station" />
             <text key="name" text="Name" />
-            <check key="area" text="Area" />
-            <check key="building" text="Building" />
+            <check key="area" text="Area" disable_off="true" />
+            <check key="building" text="Building" disable_off="true" />
             <text key="operator" text="Operator" />
             <text key="network" text="Network" />
         </item>
