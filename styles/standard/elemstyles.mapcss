@@ -601,6 +601,24 @@ way[highway=path][bicycle=official][foot=official] {
     dashes-background-color: foot#00ff00;
 /*    priority="200"*/
 }
+way[highway=cycleway][foot=yes],
+way[highway=path][bicycle=designated][foot=yes],
+way[highway=path][bicycle=official][foot=yes] {
+    width: 1;
+    realwidth: 2;
+    color: bicycle#b100ff;
+    dashes: 21,7;
+    dashes-background-color: foot#00ff00;
+}
+way[highway=footway][bicycle=yes],
+way[highway=path][bicycle=yes][foot=designated],
+way[highway=path][bicycle=yes][foot=official] {
+    width: 1;
+    realwidth: 2;
+    color: foot#00ff00;
+    dashes: 21,7;
+    dashes-background-color: bicycle#b100ff;
+}
 way[highway=pedestrian][area?], relation[type=multipolygon][highway=pedestrian] {
     width: 3;
     realwidth: 5;
