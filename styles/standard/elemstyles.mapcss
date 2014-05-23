@@ -19,14 +19,13 @@ meta {
 
 node[fixme]::core_fixme,
 node[FIXME]::core_fixme {
-    z-index: 2;
-    icon-image: "misc/fixme.png";
-    text: auto;
+    object-z-index: 20;
+    icon-image: "misc/fixme-annotation.png";
 /*    priority="10000"*/
 }
-node[note] {
-    icon-image: "misc/note.png";
-    text: auto;
+node[note]::core_note {
+    object-z-index: 10;
+    icon-image: "misc/note-annotation.png";
 /*    priority="-100000"*/
 }
 
