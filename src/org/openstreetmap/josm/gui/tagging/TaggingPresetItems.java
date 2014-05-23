@@ -798,6 +798,7 @@ public final class TaggingPresetItems {
         public String locale_text;
         public String value_on = OsmUtils.trueval;
         public String value_off = OsmUtils.falseval;
+        public boolean disable_off = false;
         public boolean default_ = false; // only used for tagless objects
 
         private QuadStateCheckBox check;
@@ -807,7 +808,8 @@ public final class TaggingPresetItems {
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
 
             // find out if our key is already used in the selection.
-            Usage usage = determineBooleanUsage(sel, key);
+            final Usage usage = determineBooleanUsage(sel, key);
+            final String oneValue = usage.values.isEmpty() ? null : usage.values.last();
             def = default_;
 
             if(locale_text == null) {
@@ -818,10 +820,6 @@ public final class TaggingPresetItems {
                 }
             }
 
-            String oneValue = null;
-            for (String s : usage.values) {
-                oneValue = s;
-            }
             if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
                 if (def && !PROP_FILL_DEFAULT.get()) {
                     // default is set and filling default values feature is disabled - check if all primitives are untagged
@@ -833,30 +831,31 @@ public final class TaggingPresetItems {
 
                 // all selected objects share the same value which is either true or false or unset,
                 // we can display a standard check box.
-                initialState = value_on.equals(oneValue) ?
-                        QuadStateCheckBox.State.SELECTED :
-                            value_off.equals(oneValue) ?
-                                    QuadStateCheckBox.State.NOT_SELECTED :
-                                        def ? QuadStateCheckBox.State.SELECTED
-                                                : QuadStateCheckBox.State.UNSET;
-                check = new QuadStateCheckBox(locale_text, initialState,
-                        new QuadStateCheckBox.State[] {
-                        QuadStateCheckBox.State.SELECTED,
-                        QuadStateCheckBox.State.NOT_SELECTED,
-                        QuadStateCheckBox.State.UNSET });
+                initialState = value_on.equals(oneValue)
+                        ? QuadStateCheckBox.State.SELECTED
+                        : value_off.equals(oneValue)
+                        ? QuadStateCheckBox.State.NOT_SELECTED
+                        : def
+                        ? QuadStateCheckBox.State.SELECTED
+                        : QuadStateCheckBox.State.UNSET;
             } else {
                 def = false;
                 // the objects have different values, or one or more objects have something
                 // else than true/false. we display a quad-state check box
                 // in "partial" state.
                 initialState = QuadStateCheckBox.State.PARTIAL;
-                check = new QuadStateCheckBox(locale_text, QuadStateCheckBox.State.PARTIAL,
-                        new QuadStateCheckBox.State[] {
-                        QuadStateCheckBox.State.PARTIAL,
-                        QuadStateCheckBox.State.SELECTED,
-                        QuadStateCheckBox.State.NOT_SELECTED,
-                        QuadStateCheckBox.State.UNSET });
             }
+
+            final List<QuadStateCheckBox.State> allowedStates = new ArrayList<>(4);
+            if (QuadStateCheckBox.State.PARTIAL.equals(initialState))
+                allowedStates.add(QuadStateCheckBox.State.PARTIAL);
+            allowedStates.add(QuadStateCheckBox.State.SELECTED);
+            if (!disable_off || value_off.equals(oneValue))
+                allowedStates.add(QuadStateCheckBox.State.NOT_SELECTED);
+            allowedStates.add(QuadStateCheckBox.State.UNSET);
+            check = new QuadStateCheckBox(locale_text, initialState,
+                    allowedStates.toArray(new QuadStateCheckBox.State[allowedStates.size()]));
+
             p.add(check, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
         }
@@ -880,7 +879,7 @@ public final class TaggingPresetItems {
 
         @Override
         public Collection<String> getValues() {
-            return Arrays.asList(value_on, value_off);
+            return disable_off ? Arrays.asList(value_on) : Arrays.asList(value_on, value_off);
         }
 
         @Override
