@@ -33,28 +33,32 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-/*
+/**
  * A memory cache for Multipolygon objects.
- * 
+ * @since 4623
  */
 public final class MultipolygonCache implements DataSetListener, LayerChangeListener, ProjectionChangeListener, SelectionChangedListener {
 
-    private static final MultipolygonCache instance = new MultipolygonCache(); 
+    private static final MultipolygonCache INSTANCE = new MultipolygonCache(); 
     
     private final Map<NavigatableComponent, Map<DataSet, Map<Relation, Multipolygon>>> cache;
     
     private final Collection<PolyData> selectedPolyData;
     
     private MultipolygonCache() {
-        this.cache = new HashMap<NavigatableComponent, Map<DataSet, Map<Relation, Multipolygon>>>();
-        this.selectedPolyData = new ArrayList<Multipolygon.PolyData>();
+        this.cache = new HashMap<>();
+        this.selectedPolyData = new ArrayList<>();
         Main.addProjectionChangeListener(this);
         DataSet.addSelectionListener(this);
         MapView.addLayerChangeListener(this);
     }
 
+    /**
+     * Replies the unique instance.
+     * @return the unique instance
+     */
     public static final MultipolygonCache getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public final Multipolygon get(NavigatableComponent nc, Relation r) {
@@ -66,11 +70,11 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         if (nc != null && r != null) {
             Map<DataSet, Map<Relation, Multipolygon>> map1 = cache.get(nc);
             if (map1 == null) {
-                cache.put(nc, map1 = new HashMap<DataSet, Map<Relation, Multipolygon>>());
+                cache.put(nc, map1 = new HashMap<>());
             }
             Map<Relation, Multipolygon> map2 = map1.get(r.getDataSet());
             if (map2 == null) {
-                map1.put(r.getDataSet(), map2 = new HashMap<Relation, Multipolygon>());
+                map1.put(r.getDataSet(), map2 = new HashMap<>());
             }
             multipolygon = map2.get(r);
             if (multipolygon == null || forceRefresh) {
@@ -108,7 +112,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
     }
     
     private final Collection<Map<Relation, Multipolygon>> getMapsFor(DataSet ds) {
-        List<Map<Relation, Multipolygon>> result = new ArrayList<Map<Relation, Multipolygon>>();
+        List<Map<Relation, Multipolygon>> result = new ArrayList<>();
         for (Map<DataSet, Map<Relation, Multipolygon>> map : cache.values()) {
             Map<Relation, Multipolygon> map2 = map.get(ds);
             if (map2 != null) {

@@ -32,10 +32,10 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 @SuppressWarnings("serial")
 public class TagEditorModel extends AbstractTableModel {
-    static public final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
+    public static final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
     /** the list holding the tags */
-    protected final List<TagModel> tags =new ArrayList<TagModel>();
+    protected final List<TagModel> tags =new ArrayList<>();
 
     /** indicates whether the model is dirty */
     private boolean dirty =  false;
@@ -193,10 +193,10 @@ public class TagEditorModel extends AbstractTableModel {
     /**
      * adds a tag given by a name/value pair to the tag editor model.
      *
-     * If there is no tag with name <code>name</name> yet, a new {@link TagModel} is created
+     * If there is no tag with name <code>name</code> yet, a new {@link TagModel} is created
      * and append to this model.
      *
-     * If there is a tag with name <code>name</name>, <code>value</code> is merged to the list
+     * If there is a tag with name <code>name</code>, <code>value</code> is merged to the list
      * of values for this tag.
      *
      * @param name the name; converted to "" if null
@@ -237,11 +237,11 @@ public class TagEditorModel extends AbstractTableModel {
 
     public TagModel get(int idx) {
         if (idx >= tags.size()) return null;
-        TagModel tagModel = tags.get(idx);
-        return tagModel;
+        return tags.get(idx);
     }
 
-    @Override public boolean isCellEditable(int row, int col) {
+    @Override
+    public boolean isCellEditable(int row, int col) {
         // all cells are editable
         return true;
     }
@@ -311,7 +311,7 @@ public class TagEditorModel extends AbstractTableModel {
     public void deleteTags(int [] tagIndices) {
         if (tags == null)
             return;
-        ArrayList<TagModel> toDelete = new ArrayList<TagModel>();
+        ArrayList<TagModel> toDelete = new ArrayList<>();
         for (int tagIdx : tagIndices) {
             TagModel tag = tags.get(tagIdx);
             if (tag != null) {
@@ -442,7 +442,7 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     public Map<String,String> getTags(boolean keepEmpty) {
-        Map<String,String> tags = new HashMap<String, String>();
+        Map<String,String> tags = new HashMap<>();
         applyToTags(tags, keepEmpty);
         return tags;
     }
@@ -483,17 +483,13 @@ public class TagEditorModel extends AbstractTableModel {
         if (tag.getName().trim().isEmpty())
             return null;
 
-        String newkey = tag.getName();
-        String newvalue = tag.getValue();
-
-        ChangePropertyCommand command = new ChangePropertyCommand(primitives,newkey, newvalue);
-        return command;
+        return new ChangePropertyCommand(primitives, tag.getName(), tag.getValue());
     }
 
     protected Command createDeleteTagsCommand(Collection<OsmPrimitive> primitives) {
 
         List<String> currentkeys = getKeys();
-        ArrayList<Command> commands = new ArrayList<Command>();
+        ArrayList<Command> commands = new ArrayList<>();
 
         for (OsmPrimitive primitive : primitives) {
             for (String oldkey : primitive.keySet()) {
@@ -505,12 +501,10 @@ public class TagEditorModel extends AbstractTableModel {
             }
         }
 
-        SequenceCommand command = new SequenceCommand(
+        return new SequenceCommand(
                 trn("Remove old keys from up to {0} object", "Remove old keys from up to {0} objects", primitives.size(), primitives.size()),
                 commands
         );
-
-        return command;
     }
 
     /**
@@ -519,7 +513,7 @@ public class TagEditorModel extends AbstractTableModel {
      * @return the list of keys managed by this model
      */
     public List<String> getKeys() {
-        ArrayList<String> keys = new ArrayList<String>();
+        ArrayList<String> keys = new ArrayList<>();
         for (TagModel tag: tags) {
             if (!tag.getName().trim().isEmpty()) {
                 keys.add(tag.getName());
@@ -587,7 +581,7 @@ public class TagEditorModel extends AbstractTableModel {
          if (tags.isEmpty())
             return;
 
-        Map<String, TagModel> modelTags = new HashMap<String, TagModel>();
+        Map<String, TagModel> modelTags = new HashMap<>();
         for (int i=0; i<getRowCount(); i++) {
             TagModel tagModel = get(i);
             modelTags.put(tagModel.getName(), tagModel);

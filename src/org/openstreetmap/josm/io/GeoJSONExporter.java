@@ -9,17 +9,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.tools.Utils;
 
 public class GeoJSONExporter extends FileExporter {
 
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "json,geojson", "json", tr("GeoJSON Files") + " (*.json *.geojson)");
 
+    /**
+     * Constructs a new {@code GeoJSONExporter}.
+     */
     public GeoJSONExporter() {
         super(FILE_FILTER);
     }
@@ -28,11 +31,8 @@ public class GeoJSONExporter extends FileExporter {
     public void exportData(File file, Layer layer) throws IOException {
         if (layer instanceof OsmDataLayer) {
             String json = new GeoJSONWriter((OsmDataLayer) layer).write();
-            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Utils.UTF_8));
-            try {
+            try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
                 out.write(json);
-            } finally {
-                Utils.close(out);
             }
         } else {
             throw new IllegalArgumentException(tr("Layer ''{0}'' not supported", layer.getClass().toString()));

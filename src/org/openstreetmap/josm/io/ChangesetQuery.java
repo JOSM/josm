@@ -27,15 +27,14 @@ import org.openstreetmap.josm.tools.Utils;
 public class ChangesetQuery {
 
     /**
-     * Replies a changeset query object from the query part of a OSM API URL for querying
-     * changesets.
+     * Replies a changeset query object from the query part of a OSM API URL for querying changesets.
      *
      * @param query the query part
      * @return the query object
      * @throws ChangesetQueryUrlException thrown if query doesn't consist of valid query parameters
      *
      */
-    static public ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException{
+    public static ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException{
         return new ChangesetQueryUrlParser().parse(query);
     }
 
@@ -55,14 +54,19 @@ public class ChangesetQuery {
     /** a collection of changeset ids to query for */
     private Collection<Long> changesetIds = null;
 
-    public ChangesetQuery() {}
+    /**
+     * Constructs a new {@code ChangesetQuery}.
+     */
+    public ChangesetQuery() {
+
+    }
 
     /**
      * Restricts the query to changesets owned by the user with id <code>uid</code>.
      *
-     * @param uid the uid of the user. >0 expected.
+     * @param uid the uid of the user. &gt; 0 expected.
      * @return the query object with the applied restriction
-     * @throws IllegalArgumentException thrown if uid <= 0
+     * @throws IllegalArgumentException thrown if uid &lt;= 0
      * @see #forUser(String)
      */
     public ChangesetQuery forUser(int uid) throws IllegalArgumentException{
@@ -252,7 +256,7 @@ public class ChangesetQuery {
      * @return the query string
      */
     public String getQueryString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (uid != null) {
             sb.append("user").append("=").append(uid);
         } else if (userName != null) {
@@ -342,26 +346,17 @@ public class ChangesetQuery {
             return id;
         }
 
-        protected boolean parseOpen(String value) throws ChangesetQueryUrlException {
-            if (value == null || value.trim().isEmpty())
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "open",value));
-            if (value.equals("true"))
-                return true;
-            else if (value.equals("false"))
-                return false;
-            else
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "open",value));
-        }
-
         protected boolean parseBoolean(String value, String parameter) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
                 throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
-            if (value.equals("true"))
+            switch (value) {
+            case "true":
                 return true;
-            else if (value.equals("false"))
+            case "false":
                 return false;
-            else
+            default:
                 throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
+            }
         }
 
         protected Date parseDate(String value, String parameter) throws ChangesetQueryUrlException {
@@ -395,7 +390,7 @@ public class ChangesetQuery {
         protected Collection<Long> parseLongs(String value) {
             return value == null || value.isEmpty()
                     ? Collections.<Long>emptySet() :
-                    new HashSet<Long>(Utils.transform(Arrays.asList(value.split(",")), new Utils.Function<String, Long>() {
+                    new HashSet<>(Utils.transform(Arrays.asList(value.split(",")), new Utils.Function<String, Long>() {
                         @Override
                         public Long apply(String x) {
                             return Long.valueOf(x);
@@ -408,21 +403,24 @@ public class ChangesetQuery {
 
             for (Entry<String, String> entry: queryParams.entrySet()) {
                 String k = entry.getKey();
-                if (k.equals("uid")) {
+                switch(k) {
+                case "uid":
                     if (queryParams.containsKey("display_name"))
                         throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
                     csQuery.forUser(parseUid(queryParams.get("uid")));
-                } else if (k.equals("display_name")) {
+                    break;
+                case "display_name":
                     if (queryParams.containsKey("uid"))
                         throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
                     csQuery.forUser(queryParams.get("display_name"));
-                } else if (k.equals("open")) {
-                    boolean b = parseBoolean(entry.getValue(), "open");
-                    csQuery.beingOpen(b);
-                } else if (k.equals("closed")) {
-                    boolean b = parseBoolean(entry.getValue(), "closed");
-                    csQuery.beingClosed(b);
-                } else if (k.equals("time")) {
+                    break;
+                case "open":
+                    csQuery.beingOpen(parseBoolean(entry.getValue(), "open"));
+                    break;
+                case "closed":
+                    csQuery.beingClosed(parseBoolean(entry.getValue(), "closed"));
+                    break;
+                case "time":
                     Date[] dates = parseTime(entry.getValue());
                     switch(dates.length) {
                     case 1:
@@ -432,26 +430,30 @@ public class ChangesetQuery {
                         csQuery.closedAfterAndCreatedBefore(dates[0], dates[1]);
                         break;
                     }
-                } else if (k.equals("bbox")) {
+                    break;
+                case "bbox":
                     try {
                         csQuery.inBbox(new Bounds(entry.getValue(), ","));
                     } catch(IllegalArgumentException e) {
                         throw new ChangesetQueryUrlException(e);
                     }
-                } else if (k.equals("changesets")) {
+                    break;
+                case "changesets":
                     try {
                         csQuery.forChangesetIds(parseLongs(entry.getValue()));
                     } catch (NumberFormatException e) {
                         throw new ChangesetQueryUrlException(e);
                     }
-                } else
+                    break;
+                default:
                     throw new ChangesetQueryUrlException(tr("Unsupported parameter ''{0}'' in changeset query string", k));
+                }
             }
             return csQuery;
         }
 
         protected Map<String,String> createMapFromQueryString(String query) {
-            Map<String,String> queryParams  = new HashMap<String, String>();
+            Map<String,String> queryParams  = new HashMap<>();
             String[] keyValuePairs = query.split("&");
             for (String keyValuePair: keyValuePairs) {
                 String[] kv = keyValuePair.split("=");
@@ -461,15 +463,14 @@ public class ChangesetQuery {
         }
 
         /**
-         * Parses the changeset query given as URL query parameters and replies a
-         * {@link ChangesetQuery}
+         * Parses the changeset query given as URL query parameters and replies a {@link ChangesetQuery}.
          *
          * <code>query</code> is the query part of a API url for querying changesets,
          * see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_.2Fapi.2F0.6.2Fchangesets">OSM API</a>.
          *
          * Example for an query string:<br>
          * <pre>
-         *    uid=1234&open=true
+         *    uid=1234&amp;open=true
          * </pre>
          *
          * @param query the query string. If null, an empty query (identical to a query for all changesets) is

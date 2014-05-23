@@ -14,34 +14,32 @@ way[junction                   ][!highway],
 *[sac_scale                    ][!highway],
 *[sidewalk                     ][!highway],
 *[smoothness                   ][!highway],
-*[snowplowing                  ][!highway],
 *[step_count                   ][!highway],
 *[tracktype                    ][!highway],
 *[trail_visibility             ][!highway],
 *[trolley_wire                 ][!highway],
 *[zip_left                     ][!highway],
 *[zip_right                    ][!highway],
-*[detail                       ][!railway],
-*[eddy_current_brake           ][!railway],
-*[electrified                  ][!railway],
-*[etcs                         ][!railway],
-*[gauge                        ][!railway],
-*[grade_of_track               ][!railway],
-*[kursbuchstrecke              ][!railway],
-*[lzb                          ][!railway],
-*[old_railway_operator         ][!railway],
-*[operating_procedure          ][!railway],
-*[pzb                          ][!railway],
-*[radio                        ][!railway],
-*[structure_gauge              ][!railway],
-*[tilting_technology           ][!railway],
-*[track_class                  ][!railway],
-*[tracks                       ][!railway],
-*[traffic_mode                 ][!railway],
-*[usage                        ][!railway],
-*[workrules                    ][!railway],
+*[detail                       ][!railway][route!=railway],
+*[eddy_current_brake           ][!railway][route!=railway],
+*[electrified                  ][!railway][route!=railway],
+*[etcs                         ][!railway][route!=railway],
+*[gauge                        ][!railway][route!=railway],
+*[grade_of_track               ][!railway][route!=railway],
+*[kursbuchstrecke              ][!railway][route!=railway],
+*[lzb                          ][!railway][route!=railway],
+*[old_railway_operator         ][!railway][route!=railway],
+*[operating_procedure          ][!railway][route!=railway],
+*[pzb                          ][!railway][route!=railway],
+*[radio                        ][!railway][route!=railway],
+*[structure_gauge              ][!railway][route!=railway],
+*[tilting_technology           ][!railway][route!=railway],
+*[track_class                  ][!railway][route!=railway],
+*[tracks                       ][!railway][route!=railway],
+*[traffic_mode                 ][!railway][route!=railway],
+*[usage                        ][!railway][route!=railway],
+*[workrules                    ][!railway][route!=railway],
 *[stream                       ][!waterway],
-*[intermittent                 ][!waterway],
 *[length_unit                  ][!waterway],
 *[llid                         ][!waterway],
 *[canal                        ][!waterway],
@@ -107,9 +105,15 @@ way[junction                   ][!highway],
 
 /* {0.key} without {1.key} or {2.tag} */
 *[segregated                   ][!highway][railway=crossing],
-*[toll                         ][!highway][route!=ferry],
-*[boat                         ][!waterway][natural!=water][natural != water] {
+*[toll                         ][!highway][route!~/^(ferry|road)$/],
+*[boat                         ][!waterway][natural!=water],
+*[intermittent                 ][!waterway][natural!=water] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
+}
+
+/* {0.key} without {1.key}, {2.key} or {3.key} */
+*[snowplowing                  ][!highway][!amenity][!leisure] {
+  throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.key}");
 }
 
 /* {0} on suspicious object */
@@ -117,7 +121,7 @@ way[junction                   ][!highway],
 *[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport != platform][man_made !~ /^(bridge|pipeline)$/][building != bridge],
 *[psv     ][!highway][!railway][!waterway][amenity !~ /^parking.*/],
 *[width   ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance],
-*[maxspeed][!highway][!railway][traffic_sign !~ /^(.*;)?maxspeed(;.*)?$/][type != enforcement],
+*[maxspeed][!highway][!railway][traffic_sign !~ /^(.*;)?maxspeed(;.*)?$/][type != enforcement][waterway !~ /^(river|canal|lock)$/],
 *[lit     ][!highway][!railway][!piste:type][amenity !~ /^parking/][public_transport!=platform][advertising!=billboard][leisure!=pitch] {
   throwWarning: tr("{0} on suspicious object", "{0.key}");
 }
@@ -139,4 +143,15 @@ way[highway][barrier],
 *[natural=water][amenity=swimming_pool] {
   /* see #6932 */
   throwWarning: tr("natural water used for swimming pool");
+}
+
+/* see ticket #9593 */
+*[sport][tourism != hotel][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool)$/][natural !~ /^(beach|bare_rock)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste)$/] {
+    throwWarning: tr("sport without physical feature");
+    assertMatch: "node sport=tennis";
+    assertNoMatch: "node sport=tennis leisure=pitch";
+    assertNoMatch: "node sport=beachvolleyball natural=beach";
+    assertNoMatch: "node sport=skiiing landuse=piste";
+    assertNoMatch: "node sport=swimming tourism=hotel";
+    assertNoMatch: "node sport=10pin amenity=restaurant";
 }

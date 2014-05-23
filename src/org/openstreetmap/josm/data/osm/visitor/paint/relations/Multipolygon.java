@@ -31,19 +31,19 @@ public class Multipolygon {
     /** preference key for a collection of roles which indicate that the respective member belongs to an
      * <em>outer</em> polygon. Default is <tt>outer</tt>.
      */
-    static public final String PREF_KEY_OUTER_ROLES = "mappaint.multipolygon.outer.roles";
+    public static final String PREF_KEY_OUTER_ROLES = "mappaint.multipolygon.outer.roles";
     /** preference key for collection of role prefixes which indicate that the respective
      *  member belongs to an <em>outer</em> polygon. Default is empty.
      */
-    static public final String PREF_KEY_OUTER_ROLE_PREFIXES = "mappaint.multipolygon.outer.role-prefixes";
+    public static final String PREF_KEY_OUTER_ROLE_PREFIXES = "mappaint.multipolygon.outer.role-prefixes";
     /** preference key for a collection of roles which indicate that the respective member belongs to an
      * <em>inner</em> polygon. Default is <tt>inner</tt>.
      */
-    static public final String PREF_KEY_INNER_ROLES = "mappaint.multipolygon.inner.roles";
+    public static final String PREF_KEY_INNER_ROLES = "mappaint.multipolygon.inner.roles";
     /** preference key for collection of role prefixes which indicate that the respective
      *  member belongs to an <em>inner</em> polygon. Default is empty.
      */
-    static public final String PREF_KEY_INNER_ROLE_PREFIXES = "mappaint.multipolygon.inner.role-prefixes";
+    public static final String PREF_KEY_INNER_ROLE_PREFIXES = "mappaint.multipolygon.inner.role-prefixes";
 
     /**
      * <p>Kind of strategy object which is responsible for deciding whether a given
@@ -55,10 +55,10 @@ public class Multipolygon {
      *
      */
     private static class MultipolygonRoleMatcher implements PreferenceChangedListener{
-        private final List<String> outerExactRoles = new ArrayList<String>();
-        private final List<String> outerRolePrefixes = new ArrayList<String>();
-        private final List<String> innerExactRoles = new ArrayList<String>();
-        private final List<String> innerRolePrefixes = new ArrayList<String>();
+        private final List<String> outerExactRoles = new ArrayList<>();
+        private final List<String> outerRolePrefixes = new ArrayList<>();
+        private final List<String> innerExactRoles = new ArrayList<>();
+        private final List<String> innerRolePrefixes = new ArrayList<>();
 
         private void initDefaults() {
             outerExactRoles.clear();
@@ -201,9 +201,9 @@ public class Multipolygon {
 
         private PolyData(List<Node> nodes, boolean selected, Collection<Long> wayIds) {
             this.wayIds = Collections.unmodifiableCollection(wayIds);
-            this.nodes = new ArrayList<Node>(nodes);
+            this.nodes = new ArrayList<>(nodes);
             this.selected = selected;
-            this.inners = new ArrayList<Multipolygon.PolyData>();
+            this.inners = new ArrayList<>();
             this.poly = new Path2D.Double();
             this.poly.setWindingRule(Path2D.WIND_EVEN_ODD);
             buildPoly();
@@ -234,8 +234,8 @@ public class Multipolygon {
             this.selected = copy.selected;
             this.poly = (Double) copy.poly.clone();
             this.wayIds = Collections.unmodifiableCollection(copy.wayIds);
-            this.nodes = new ArrayList<Node>(copy.nodes);
-            this.inners = new ArrayList<Multipolygon.PolyData>(copy.inners);
+            this.nodes = new ArrayList<>(copy.nodes);
+            this.inners = new ArrayList<>(copy.inners);
         }
 
         public Intersection contains(Path2D.Double p) {
@@ -296,7 +296,7 @@ public class Multipolygon {
                     Way w = (Way) ds.getPrimitiveById(wayIds.iterator().next(), OsmPrimitiveType.WAY);
                     nodes.addAll(w.getNodes());
                 } else if (!wayIds.isEmpty()) {
-                    List<Way> waysToJoin = new ArrayList<Way>();
+                    List<Way> waysToJoin = new ArrayList<>();
                     for (Long wayId : wayIds) {
                         Way w = (Way) ds.getPrimitiveById(wayId, OsmPrimitiveType.WAY);
                         if (w != null && w.getNodesCount() > 0) { // fix #7173 (empty ways on purge)
@@ -346,11 +346,11 @@ public class Multipolygon {
         }
     }
 
-    private final List<Way> innerWays = new ArrayList<Way>();
-    private final List<Way> outerWays = new ArrayList<Way>();
-    private final List<PolyData> innerPolygons = new ArrayList<PolyData>();
-    private final List<PolyData> outerPolygons = new ArrayList<PolyData>();
-    private final List<PolyData> combinedPolygons = new ArrayList<PolyData>();
+    private final List<Way> innerWays = new ArrayList<>();
+    private final List<Way> outerWays = new ArrayList<>();
+    private final List<PolyData> innerPolygons = new ArrayList<>();
+    private final List<PolyData> outerPolygons = new ArrayList<>();
+    private final List<PolyData> combinedPolygons = new ArrayList<>();
 
     private boolean incomplete;
 
@@ -358,7 +358,7 @@ public class Multipolygon {
         load(r);
     }
 
-    private void load(Relation r) {
+    private final void load(Relation r) {
         MultipolygonRoleMatcher matcher = getMultipolygonRoleMatcher();
 
         // Fill inner and outer list with valid ways
@@ -396,7 +396,7 @@ public class Multipolygon {
     }
 
     private void createPolygons(List<Way> ways, List<PolyData> result) {
-        List<Way> waysToJoin = new ArrayList<Way>();
+        List<Way> waysToJoin = new ArrayList<>();
         for (Way way: ways) {
             if (way.isClosed()) {
                 result.add(new PolyData(way));
@@ -412,14 +412,14 @@ public class Multipolygon {
 
     public static Collection<JoinedWay> joinWays(Collection<Way> waysToJoin)
     {
-        final Collection<JoinedWay> result = new ArrayList<JoinedWay>();
+        final Collection<JoinedWay> result = new ArrayList<>();
         final Way[] joinArray = waysToJoin.toArray(new Way[waysToJoin.size()]);
         int left = waysToJoin.size();
         while (left > 0) {
             Way w = null;
             boolean selected = false;
             List<Node> nodes = null;
-            Set<Long> wayIds = new HashSet<Long>();
+            Set<Long> wayIds = new HashSet<>();
             boolean joined = true;
             while (joined && left > 0) {
                 joined = false;
@@ -527,10 +527,8 @@ public class Multipolygon {
 
         PolyData result = null;
         for (PolyData combined : outerPolygons) {
-            Intersection c = combined.contains(inner.poly);
-            if (c != Intersection.OUTSIDE)
-            {
-                if (result == null || result.contains(combined.poly) != Intersection.INSIDE) {
+            if (combined.contains(inner.poly) != Intersection.OUTSIDE) {
+                if (result == null || result.contains(combined.poly) == Intersection.INSIDE) {
                     result = combined;
                 }
             }
@@ -538,7 +536,7 @@ public class Multipolygon {
         return result;
     }
 
-    private void addInnerToOuters()  {
+    private final void addInnerToOuters()  {
 
         if (innerPolygons.isEmpty()) {
             combinedPolygons.addAll(outerPolygons);

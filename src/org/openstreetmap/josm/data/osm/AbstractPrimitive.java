@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -157,7 +158,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      *
-     * @return True if primitive is new (not yet uploaded the server, id <= 0)
+     * @return True if primitive is new (not yet uploaded the server, id &lt;= 0)
      */
     @Override
     public boolean isNew() {
@@ -181,10 +182,10 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Since we know the id and its version it can't be incomplete anymore. incomplete
      * is set to false.
      *
-     * @param id the id. > 0 required
-     * @param version the version > 0 required
-     * @throws IllegalArgumentException thrown if id <= 0
-     * @throws IllegalArgumentException thrown if version <= 0
+     * @param id the id. &gt; 0 required
+     * @param version the version &gt; 0 required
+     * @throws IllegalArgumentException thrown if id &lt;= 0
+     * @throws IllegalArgumentException thrown if version &lt;= 0
      * @throws DataIntegrityProblemException If id is changed and primitive was already added to the dataset
      */
     @Override
@@ -253,9 +254,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Sets the changeset id of this primitive. Can't be set on a new
      * primitive.
      *
-     * @param changesetId the id. >= 0 required.
+     * @param changesetId the id. &gt;= 0 required.
      * @throws IllegalStateException thrown if this primitive is new.
-     * @throws IllegalArgumentException thrown if id < 0
+     * @throws IllegalArgumentException thrown if id &lt; 0
      */
     @Override
     public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {
@@ -468,7 +469,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public Map<String, String> getKeys() {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         String[] keys = this.keys;
         if (keys != null) {
             for (int i=0; i<keys.length ; i+=2) {
@@ -635,7 +636,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         String[] keys = this.keys;
         if (keys == null)
             return Collections.emptySet();
-        Set<String> result = new HashSet<String>(keys.length / 2);
+        Set<String> result = new HashSet<>(keys.length / 2);
         for (int i=0; i<keys.length; i+=2) {
             result.add(keys[i]);
         }
@@ -672,7 +673,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     /**
      * What to do, when the tags have changed by one of the tag-changing methods.
      */
-    abstract protected void keysChangedImpl(Map<String, String> originalKeys);
+    protected abstract void keysChangedImpl(Map<String, String> originalKeys);
 
     /**
      * Replies the name of this primitive. The default implementation replies the value
@@ -700,16 +701,34 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     @Override
     public String getLocalName() {
-        String key = "name:" + Locale.getDefault().toString();
-        if (get(key) != null)
-            return get(key);
-        key = "name:" + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry();
-        if (get(key) != null)
-            return get(key);
-        key = "name:" + Locale.getDefault().getLanguage();
-        if (get(key) != null)
-            return get(key);
+        final Locale locale = Locale.getDefault();
+        String key = "name:" + locale.toString();
+        String val = get(key);
+        if (val != null)
+            return val;
+
+        final String language = locale.getLanguage();
+        key = "name:" + language + "_" + locale.getCountry();
+        val = get(key);
+        if (val != null)
+            return val;
+
+        key = "name:" + language;
+        val = get(key);
+        if (val != null)
+            return val;
+
         return getName();
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and {@code values}.
+     * @param key the key forming the tag.
+     * @param value value forming the tag.
+     * @return true iff primitive contains a tag consisting of {@code key} and {@code value}.
+     */
+    public boolean hasTag(String key, String value) {
+        return Objects.equals(value, get(key));
     }
 
     /**

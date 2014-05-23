@@ -30,7 +30,7 @@ public class ToolbarPreferencesTest {
         }
 
         public List<ActionParameter<?>> getActionParameters() {
-            List<ActionParameter<?>> result = new ArrayList<ActionParameter<?>>();
+            List<ActionParameter<?>> result = new ArrayList<>();
             result.add(new StringActionParameter("param1"));
             result.add(new StringActionParameter("param2"));
             return result;
@@ -43,7 +43,7 @@ public class ToolbarPreferencesTest {
     }
 
     private void checkAction(ActionDefinition a, Object... params) {
-        Map<String, Object> expected = new HashMap<String, Object>();
+        Map<String, Object> expected = new HashMap<>();
         for (int i=0; i<params.length; i+=2) {
             expected.put((String)params[i], params[i+1]);
         }
@@ -52,7 +52,7 @@ public class ToolbarPreferencesTest {
 
     @Test
     public void test1() {
-        Map<String, Action> actions = new HashMap<String, Action>();
+        Map<String, Action> actions = new HashMap<>();
         actions.put("action", new TestAction());
         ActionParser parser = new ActionParser(actions);
         checkAction(parser.loadAction("action(param1=value1)"), "param1", "value1");

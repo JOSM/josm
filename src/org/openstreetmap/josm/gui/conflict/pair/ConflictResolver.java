@@ -15,9 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.ModifiedConflictResolveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.command.VersionConflictResolveCommand;
+import org.openstreetmap.josm.command.conflict.ModifiedConflictResolveCommand;
+import org.openstreetmap.josm.command.conflict.VersionConflictResolveCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -55,23 +55,23 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     /** name of the property indicating whether all conflicts are resolved,
      *  {@link #isResolvedCompletely()}
      */
-    static public final String RESOLVED_COMPLETELY_PROP = ConflictResolver.class.getName() + ".resolvedCompletely";
+    public static final String RESOLVED_COMPLETELY_PROP = ConflictResolver.class.getName() + ".resolvedCompletely";
     /**
      * name of the property for the {@link OsmPrimitive} in the role "my"
      */
-    static public final String MY_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".myPrimitive";
+    public static final String MY_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".myPrimitive";
 
     /**
      * name of the property for the {@link OsmPrimitive} in the role "my"
      */
-    static public final String THEIR_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".theirPrimitive";
+    public static final String THEIR_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".theirPrimitive";
 
     private JTabbedPane tabbedPane = null;
     private TagMerger tagMerger;
     private NodeListMerger nodeListMerger;
     private RelationMemberMerger relationMemberMerger;
     private PropertiesMerger propertiesMerger;
-    private final List<IConflictResolver> conflictResolvers = new ArrayList<IConflictResolver>();
+    private final List<IConflictResolver> conflictResolvers = new ArrayList<>();
     private OsmPrimitive my;
     private OsmPrimitive their;
     private Conflict<? extends OsmPrimitive> conflict;
@@ -85,15 +85,15 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     /**
      * loads the required icons
      */
-    protected void loadIcons() {
-        mergeComplete = ImageProvider.get("dialogs/conflict","mergecomplete.png" );
-        mergeIncomplete = ImageProvider.get("dialogs/conflict","mergeincomplete.png" );
+    protected final void loadIcons() {
+        mergeComplete = ImageProvider.get("dialogs", "valid.png" );
+        mergeIncomplete = ImageProvider.get("dialogs/conflict", "mergeincomplete.png" );
     }
 
     /**
      * builds the UI
      */
-    protected void build() {
+    protected final void build() {
         tabbedPane = new JTabbedPane();
 
         propertiesMerger = new PropertiesMerger();
@@ -275,7 +275,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      * @return the resolution command
      */
     public Command buildResolveCommand() {
-        List<Command> commands = new ArrayList<Command>();
+        List<Command> commands = new ArrayList<>();
 
         if (tagMerger.getModel().getNumResolvedConflicts() > 0) {
             commands.add(tagMerger.getModel().buildResolveCommand(conflict));

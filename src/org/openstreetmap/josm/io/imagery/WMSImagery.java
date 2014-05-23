@@ -11,11 +11,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -25,6 +27,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -62,7 +65,14 @@ public class WMSImagery {
     }
 
     public List<String> getFormats() {
-        return formats;
+        return Collections.unmodifiableList(formats);
+    }
+
+    public String getPreferredFormats() {
+        return formats.contains("image/jpeg") ? "image/jpeg"
+                : formats.contains("image/png") ? "image/png"
+                : formats.isEmpty() ? null
+                : formats.get(0);
     }
 
     String buildRootUrl() {
@@ -129,17 +139,17 @@ public class WMSImagery {
 
         Main.info("GET " + getCapabilitiesUrl.toString());
         URLConnection openConnection = Utils.openHttpConnection(getCapabilitiesUrl);
-        InputStream inputStream = openConnection.getInputStream();
-        BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream));
-        String line;
         StringBuilder ba = new StringBuilder();
-        try {
+        
+        try (
+            InputStream inputStream = openConnection.getInputStream();
+            BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream))
+        ) {
+            String line;
             while ((line = br.readLine()) != null) {
                 ba.append(line);
                 ba.append("\n");
             }
-        } finally {
-            br.close();
         }
         String incomingData = ba.toString();
 
@@ -164,12 +174,24 @@ public class WMSImagery {
             child = getChild(child, "Request");
             child = getChild(child, "GetMap");
 
-            formats = new ArrayList<String>(Utils.transform(getChildren(child, "Format"), new Utils.Function<Element, String>() {
-                @Override
-                public String apply(Element x) {
-                    return x.getTextContent();
-                }
-            }));
+            formats = new ArrayList<>(Utils.filter(Utils.transform(getChildren(child, "Format"),
+                    new Utils.Function<Element, String>() {
+                        @Override
+                        public String apply(Element x) {
+                            return x.getTextContent();
+                        }
+                    }),
+                    new Predicate<String>() {
+                        @Override
+                        public boolean evaluate(String format) {
+                            boolean isFormatSupported = isImageFormatSupported(format);
+                            if (!isFormatSupported) {
+                                Main.info("Skipping unsupported image format {0}", format);
+                            }
+                            return isFormatSupported;
+                        }
+                    }
+            ));
 
             child = getChild(child, "DCPType");
             child = getChild(child, "HTTP");
@@ -189,13 +211,20 @@ public class WMSImagery {
         } catch (Exception e) {
             throw new WMSGetCapabilitiesException(e, incomingData);
         }
+    }
 
+    static boolean isImageFormatSupported(final String format) {
+        return ImageIO.getImageReadersByMIMEType(format).hasNext()
+                || (format.startsWith("image/tiff") || format.startsWith("image/geotiff")) && ImageIO.getImageReadersBySuffix("tiff").hasNext() // handles image/tiff image/tiff8 image/geotiff image/geotiff8
+                || format.startsWith("image/png") && ImageIO.getImageReadersBySuffix("png").hasNext()
+                || format.startsWith("image/svg") && ImageIO.getImageReadersBySuffix("svg").hasNext()
+                || format.startsWith("image/bmp") && ImageIO.getImageReadersBySuffix("bmp").hasNext();
     }
 
     public ImageryInfo toImageryInfo(String name, Collection<LayerDetails> selectedLayers) {
         ImageryInfo i = new ImageryInfo(name, buildGetMapUrl(selectedLayers));
         if (selectedLayers != null) {
-            HashSet<String> proj = new HashSet<String>();
+            HashSet<String> proj = new HashSet<>();
             for (WMSImagery.LayerDetails l : selectedLayers) {
                 proj.addAll(l.getProjections());
             }
@@ -205,7 +234,7 @@ public class WMSImagery {
     }
 
     private List<LayerDetails> parseLayers(List<Element> children, Set<String> parentCrs) {
-        List<LayerDetails> details = new ArrayList<LayerDetails>(children.size());
+        List<LayerDetails> details = new ArrayList<>(children.size());
         for (Element element : children) {
             details.add(parseLayer(element, parentCrs));
         }
@@ -217,7 +246,7 @@ public class WMSImagery {
         String ident = getChildContent(element, "Name", null, null);
 
         // The set of supported CRS/SRS for this layer
-        Set<String> crsList = new HashSet<String>();
+        Set<String> crsList = new HashSet<>();
         // ...including this layer's already-parsed parent projections
         crsList.addAll(parentCrs);
 
@@ -301,7 +330,7 @@ public class WMSImagery {
     }
 
     private static List<Element> getChildren(Element parent, String name) {
-        List<Element> retVal = new ArrayList<Element>();
+        List<Element> retVal = new ArrayList<>();
         for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
             if (child instanceof Element && name.equals(child.getNodeName())) {
                 retVal.add((Element) child);

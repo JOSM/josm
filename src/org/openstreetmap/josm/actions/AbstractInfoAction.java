@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,58 +34,50 @@ public abstract class AbstractInfoAction extends JosmAction {
     }
 
     /**
-     * replies the base URL for browsing information about about a primitive
+     * Replies the base URL for browsing information about about a primitive.
      *
-     * @return the base URL, i.e. http://api.openstreetmap.org/browse
+     * @return the base URL, i.e. https://www.openstreetmap.org
      */
-    static public String getBaseBrowseUrl() {
+    public static String getBaseBrowseUrl() {
         String baseUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
         Pattern pattern = Pattern.compile("/api/?$");
-        String ret =  pattern.matcher(baseUrl).replaceAll("/browse");
+        String ret = pattern.matcher(baseUrl).replaceAll("");
         if (ret.equals(baseUrl)) {
             Main.warn(tr("Unexpected format of API base URL. Redirection to info or history page for OSM object will probably fail. API base URL is: ''{0}''",baseUrl));
         }
-        if (ret.startsWith("http://api.openstreetmap.org/")) {
-            ret = ret.substring("http://api.openstreetmap.org/".length());
-            ret = Main.OSM_WEBSITE + "/" + ret;
+        for (String prefix : new String[]{"http://api.openstreetmap.org/", "https://api.openstreetmap.org/"}) {
+            if (ret.startsWith(prefix)) {
+                ret = Main.getOSMWebsite() + "/" + ret.substring(prefix.length());
+                break;
+            }
         }
         return ret;
     }
 
     /**
-     * replies the base URL for browsing information about a user
+     * Replies the base URL for browsing information about a user.
      *
-     * @return the base URL, i.e. http://www.openstreetmap.org/user
+     * @return the base URL, i.e. https://www.openstreetmap.org/user
      */
-    static public String getBaseUserUrl() {
+    public static String getBaseUserUrl() {
         String baseUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
         Pattern pattern = Pattern.compile("/api/?$");
         String ret =  pattern.matcher(baseUrl).replaceAll("/user");
         if (ret.equals(baseUrl)) {
             Main.warn(tr("Unexpected format of API base URL. Redirection to user page for OSM user will probably fail. API base URL is: ''{0}''",baseUrl));
         }
-        if (ret.startsWith("http://api.openstreetmap.org/")) {
-            ret = ret.substring("http://api.openstreetmap.org/".length());
-            ret = Main.OSM_WEBSITE + "/" + ret;
+        for (String prefix : new String[]{"http://api.openstreetmap.org/", "https://api.openstreetmap.org/"}) {
+            if (ret.startsWith(prefix)) {
+                ret = Main.getOSMWebsite() + "/" + ret.substring(prefix.length());
+                break;
+            }
         }
         return ret;
     }
 
-    protected void launchBrowser(URL url) {
-        OpenBrowser.displayUrl(
-                url.toString()
-        );
-    }
-
-    protected void launchBrowser(String url) {
-        OpenBrowser.displayUrl(
-                url
-        );
-    }
-
     public static boolean confirmLaunchMultiple(int numBrowsers) {
         String msg  = /* for correct i18n of plural forms - see #9110 */ trn(
-                "You are about to launch {0} browser windows.<br>"
+                "You are about to launch {0} browser window.<br>"
                         + "This may both clutter your screen with browser windows<br>"
                         + "and take some time to finish.",
                 "You are about to launch {0} browser windows.<br>"
@@ -97,7 +88,7 @@ public abstract class AbstractInfoAction extends JosmAction {
                 new ButtonSpec(
                         tr("Continue"),
                         ImageProvider.get("ok"),
-                        trn("Click to continue and to open {0} browsers", "Click to continue and to open {0} browsers", numBrowsers, numBrowsers),
+                        trn("Click to continue and to open {0} browser", "Click to continue and to open {0} browsers", numBrowsers, numBrowsers),
                         null // no specific help topic
                 ),
                 new ButtonSpec(
@@ -121,7 +112,7 @@ public abstract class AbstractInfoAction extends JosmAction {
     }
 
     protected void launchInfoBrowsersForSelectedPrimitives() {
-        List<OsmPrimitive> primitivesToShow = new ArrayList<OsmPrimitive>(getCurrentDataSet().getAllSelected());
+        List<OsmPrimitive> primitivesToShow = new ArrayList<>(getCurrentDataSet().getAllSelected());
 
         // filter out new primitives which are not yet uploaded to the server
         //
@@ -148,7 +139,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         if (primitivesToShow.size() > max && ! confirmLaunchMultiple(primitivesToShow.size()))
             return;
         for(int i = 0; i < max; i++) {
-            launchBrowser(createInfoUrl(primitivesToShow.get(i)));
+            OpenBrowser.displayUrl(createInfoUrl(primitivesToShow.get(i)));
         }
     }
 

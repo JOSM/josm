@@ -31,6 +31,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
@@ -46,7 +47,7 @@ public class RelationMemberConflictResolver extends JPanel {
     private RelationMemberConflictResolverTable tblResolver;
     private JMultilineLabel lblHeader;
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
@@ -188,7 +189,7 @@ public class RelationMemberConflictResolver extends JPanel {
             return null;
         if (primitives == null || primitives.isEmpty())
             return null;
-        return new ChangePropertyCommand(primitives, tfKey.getText(), tfValue.getText());
+        return new ChangePropertyCommand(primitives, Tag.removeWhiteSpaces(tfKey.getText()), Tag.removeWhiteSpaces(tfValue.getText()));
     }
 
     public void prepareForEditing() {

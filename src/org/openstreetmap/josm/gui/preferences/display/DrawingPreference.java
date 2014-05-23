@@ -23,6 +23,9 @@ import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Map drawing preferences.
+ */
 public class DrawingPreference implements SubPreferenceSetting {
 
     /**
@@ -126,7 +129,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         // discardable keys
         discardableKeys.setToolTipText(tr("Display keys which have been deemed uninteresting to the point that they can be silently removed."));
         discardableKeys.setSelected(Main.pref.getBoolean("display.discardable-keys", false));
-        
+
         JLabel performanceLabel = new JLabel(tr("Options that affect drawing performance"));
 
         panel.add(new JLabel(tr("Segment drawing options")),
@@ -168,7 +171,7 @@ public class DrawingPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        gpxPanel.savePreferences();
+        boolean restart = gpxPanel.savePreferences();
         Main.pref.put("draw.data.area_outline_only", outlineOnly.isSelected());
         Main.pref.put("draw.segment.direction", directionHint.isSelected());
         Main.pref.put("draw.segment.head_only", headArrow.isSelected());
@@ -191,7 +194,7 @@ public class DrawingPreference implements SubPreferenceSetting {
             vn = 0;
         }
         Main.pref.putInteger("mappaint.node.virtual-size", vn);
-        return false;
+        return restart;
     }
 
     @Override

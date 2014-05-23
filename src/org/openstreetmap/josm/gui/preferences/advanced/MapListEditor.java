@@ -36,12 +36,15 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Editor for List of Maps preference entries.
+ */
 public class MapListEditor extends ExtendedDialog {
 
     EntryListModel entryModel;
     PrefEntry entry;
 
-    JList entryList;
+    JList<String> entryList;
     JTable table;
     MapTableModel tableModel;
 
@@ -54,12 +57,12 @@ public class MapListEditor extends ExtendedDialog {
         this.entry = entry;
         List<Map<String, String>> orig = setting.getValue();
 
-        dataKeys = new ArrayList<List<String>>();
-        dataValues = new ArrayList<List<String>>();
+        dataKeys = new ArrayList<>();
+        dataValues = new ArrayList<>();
         if (orig != null) {
             for (Map<String, String> m : orig) {
-                List<String> keys = new ArrayList<String>();
-                List<String> values = new ArrayList<String>();
+                List<String> keys = new ArrayList<>();
+                List<String> values = new ArrayList<>();
                 for (Entry<String, String> e : m.entrySet()) {
                     keys.add(e.getKey());
                     values.add(e.getValue());
@@ -73,10 +76,14 @@ public class MapListEditor extends ExtendedDialog {
         setContent(build(), false);
     }
 
+    /**
+     * Returns the data.
+     * @return the preference data
+     */
     public List<Map<String,String>> getData() {
-        List<Map<String,String>> data = new ArrayList<Map<String,String>>();
+        List<Map<String,String>> data = new ArrayList<>();
         for (int i=0; i < dataKeys.size(); ++i) {
-            Map<String,String> m = new LinkedHashMap<String, String>();
+            Map<String,String> m = new LinkedHashMap<>();
             for (int j=0; j < dataKeys.get(i).size(); ++j) {
                 m.put(dataKeys.get(i).get(j), dataValues.get(i).get(j));
             }
@@ -85,14 +92,14 @@ public class MapListEditor extends ExtendedDialog {
         return data;
     }
 
-    protected JPanel build() {
+    protected final JPanel build() {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.std(0,0).span(2).weight(1, 0).insets(0,0,5,10));
 
         JPanel left = new JPanel(new GridBagLayout());
 
         entryModel = new EntryListModel();
-        entryList = new JList(entryModel);
+        entryList = new JList<>(entryModel);
         entryList.getSelectionModel().addListSelectionListener(new EntryListener());
         JScrollPane scroll = new JScrollPane(entryList);
         left.add(scroll, GBC.eol().fill());
@@ -125,9 +132,9 @@ public class MapListEditor extends ExtendedDialog {
         return p;
     }
 
-    class EntryListModel extends AbstractListModel {
+    class EntryListModel extends AbstractListModel<String> {
         @Override
-        public Object getElementAt(int index) {
+        public String getElementAt(int index) {
             return tr("Entry {0}", index+1);
         }
 
@@ -170,7 +177,7 @@ public class MapListEditor extends ExtendedDialog {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(entryList.getSelectedIndices().length == 1);
         }
 
@@ -207,9 +214,7 @@ public class MapListEditor extends ExtendedDialog {
     class MapTableModel extends AbstractTableModel {
         private List<List<String>> data() {
             if (entryIdx == null) return Collections.emptyList();
-            @SuppressWarnings("unchecked")
-            List<List<String>> result = Arrays.asList(dataKeys.get(entryIdx), dataValues.get(entryIdx));
-            return result;
+            return Arrays.asList(dataKeys.get(entryIdx), dataValues.get(entryIdx));
         }
 
         private int size() {

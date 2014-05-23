@@ -18,13 +18,14 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.DateUtils;
+import org.openstreetmap.josm.tools.XmlParsingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class OsmServerUserInfoReader extends OsmServerReader {
 
-    static protected String getAttribute(Node node, String name) {
+    protected static String getAttribute(Node node, String name) {
         return node.getAttributes().getNamedItem(name).getNodeValue();
     }
 
@@ -32,25 +33,25 @@ public class OsmServerUserInfoReader extends OsmServerReader {
      * Parses the given XML data and returns the associated user info.
      * @param document The XML contents
      * @return The user info
-     * @throws OsmDataParsingException if parsing goes wrong
+     * @throws XmlParsingException if parsing goes wrong
      */
-    static public UserInfo buildFromXML(Document document) throws OsmDataParsingException {
+    public static UserInfo buildFromXML(Document document) throws XmlParsingException {
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xpath = factory.newXPath();
             UserInfo userInfo = new UserInfo();
             Node xmlNode = (Node)xpath.compile("/osm/user[1]").evaluate(document, XPathConstants.NODE);
             if ( xmlNode== null)
-                throw new OsmDataParsingException(tr("XML tag <user> is missing."));
+                throw new XmlParsingException(tr("XML tag <user> is missing."));
 
             // -- id
             String v = getAttribute(xmlNode, "id");
             if (v == null)
-                throw new OsmDataParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "id", "user"));
+                throw new XmlParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "id", "user"));
             try {
                 userInfo.setId(Integer.parseInt(v));
             } catch(NumberFormatException e) {
-                throw new OsmDataParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "id", "user", v));
+                throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "id", "user", v));
             }
             // -- display name
             v = getAttribute(xmlNode, "display_name");
@@ -70,32 +71,32 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             if (xmlNode != null) {
                 v = getAttribute(xmlNode, "lat");
                 if (v == null)
-                    throw new OsmDataParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "lat", "home"));
+                    throw new XmlParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "lat", "home"));
                 double lat;
                 try {
                     lat = Double.parseDouble(v);
                 } catch(NumberFormatException e) {
-                    throw new OsmDataParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "lat", "home", v));
+                    throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "lat", "home", v));
                 }
 
                 v = getAttribute(xmlNode, "lon");
                 if (v == null)
-                    throw new OsmDataParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "lon", "home"));
+                    throw new XmlParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "lon", "home"));
                 double lon;
                 try {
                     lon = Double.parseDouble(v);
                 } catch(NumberFormatException e) {
-                    throw new OsmDataParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "lon", "home", v));
+                    throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "lon", "home", v));
                 }
 
                 v = getAttribute(xmlNode, "zoom");
                 if (v == null)
-                    throw new OsmDataParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "zoom", "home"));
+                    throw new XmlParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "zoom", "home"));
                 int zoom;
                 try {
                     zoom = Integer.parseInt(v);
                 } catch(NumberFormatException e) {
-                    throw new OsmDataParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "zoom", "home", v));
+                    throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "zoom", "home", v));
                 }
                 userInfo.setHome(new LatLon(lat,lon));
                 userInfo.setHomeZoom(zoom);
@@ -104,7 +105,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             // -- language list
             NodeList xmlNodeList = (NodeList)xpath.compile("/osm/user[1]/languages[1]/lang/text()").evaluate(document, XPathConstants.NODESET);
             if (xmlNodeList != null) {
-                List<String> languages = new LinkedList<String>();
+                List<String> languages = new LinkedList<>();
                 for (int i=0; i < xmlNodeList.getLength(); i++) {
                     languages.add(xmlNodeList.item(i).getNodeValue());
                 }
@@ -116,17 +117,17 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             if (xmlNode != null) {
                 v = getAttribute(xmlNode, "unread");
                 if (v == null)
-                    throw new OsmDataParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "unread", "received"));
+                    throw new XmlParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "unread", "received"));
                 try {
                     userInfo.setUnreadMessages(Integer.parseInt(v));
                 } catch(NumberFormatException e) {
-                    throw new OsmDataParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "unread", "received", v), e);
+                    throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "unread", "received", v), e);
                 }
             }
             
             return userInfo;
         } catch(XPathException e) {
-            throw new OsmDataParsingException(e);
+            throw new XmlParsingException(e);
         }
     }
 
@@ -143,14 +144,33 @@ public class OsmServerUserInfoReader extends OsmServerReader {
         return null;
     }
 
+    /**
+     * Fetches user info, without explicit reason.
+     * @param monitor The progress monitor
+     * @return The user info
+     * @throws OsmTransferException if something goes wrong
+     */
     public UserInfo fetchUserInfo(ProgressMonitor monitor) throws OsmTransferException {
+        return fetchUserInfo(monitor, null);
+    }
+
+    /**
+     * Fetches user info, with an explicit reason.
+     * @param monitor The progress monitor
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @return The user info
+     * @throws OsmTransferException if something goes wrong
+     * @since 6695
+     */
+    public UserInfo fetchUserInfo(ProgressMonitor monitor, String reason) throws OsmTransferException {
         try {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Reading user info ..."));
-            InputStream in = getInputStream("user/details", monitor.createSubTaskMonitor(1, true));
-            return buildFromXML(
-                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in)
-            );
+            try (InputStream in = getInputStream("user/details", monitor.createSubTaskMonitor(1, true), reason)) {
+                return buildFromXML(
+                        DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in)
+                );
+            }
         } catch(OsmTransferException e) {
             throw e;
         } catch(Exception e) {

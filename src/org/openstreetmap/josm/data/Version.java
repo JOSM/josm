@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class Version {
     /** constant to indicate that the current build isn't assigned a JOSM version number */
-    static public final int JOSM_UNKNOWN_VERSION = 0;
+    public static final int JOSM_UNKNOWN_VERSION = 0;
 
     /** the unique instance */
     private static Version instance;
@@ -33,18 +33,15 @@ public class Version {
      * @param resource the resource url to load
      * @return  the content of the resource file; null, if an error occurred
      */
-    static public String loadResourceFile(URL resource) {
+    public static String loadResourceFile(URL resource) {
         if (resource == null) return null;
         String s = null;
         try {
-            BufferedReader in = Utils.openURLReader(resource);
-            StringBuffer sb = new StringBuffer();
-            try {
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader in = Utils.openURLReader(resource)) {
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
                     sb.append(line).append("\n");
                 }
-            } finally {
-                Utils.close(in);
             }
             s = sb.toString();
         } catch (IOException e) {
@@ -59,8 +56,7 @@ public class Version {
      *
      * @return the unique instance of the version information
      */
-
-    static public Version getInstance() {
+    public static Version getInstance() {
         if (instance == null) {
             instance = new Version();
             instance.init();
@@ -75,7 +71,7 @@ public class Version {
     private boolean isLocalBuild;
 
     protected Map<String, String> parseManifestStyleFormattedString(String content) {
-        Map<String, String> properties = new HashMap<String, String>();
+        Map<String, String> properties = new HashMap<>();
         if (content == null) return properties;
         Pattern p = Pattern.compile("^([^:]+):(.*)$");
         for (String line: content.split("\n")) {
@@ -131,7 +127,7 @@ public class Version {
         //
         isLocalBuild = false;
         value = properties.get("Is-Local-Build");
-        if (value != null && value.trim().equalsIgnoreCase("true"))  {
+        if (value != null && "true".equalsIgnoreCase(value.trim()))  {
             isLocalBuild = true;
         }
 
@@ -145,7 +141,7 @@ public class Version {
 
         // the revision info
         //
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for(Entry<String,String> property: properties.entrySet()) {
             sb.append(property.getKey()).append(":").append(property.getValue()).append("\n");
         }

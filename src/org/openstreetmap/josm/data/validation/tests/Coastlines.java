@@ -58,7 +58,7 @@ public class Coastlines extends Test {
             downloadedArea = layer.data.getDataSourceArea();
         }
 
-        coastlines = new LinkedList<Way>();
+        coastlines = new LinkedList<>();
     }
 
     @Override
@@ -144,11 +144,11 @@ public class Coastlines extends Test {
                 }
             }
 
-            List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> primitives = new ArrayList<>();
             primitives.add(c1);
 
             if (headWays == 0 || tailWays == 0) {
-                List<OsmPrimitive> highlight = new ArrayList<OsmPrimitive>();
+                List<OsmPrimitive> highlight = new ArrayList<>();
 
                 if (headWays == 0 && head.getCoor().isIn(downloadedArea)) {
                     highlight.add(head);
@@ -177,7 +177,7 @@ public class Coastlines extends Test {
             }
 
             if (unordered) {
-                List<OsmPrimitive> highlight = new ArrayList<OsmPrimitive>();
+                List<OsmPrimitive> highlight = new ArrayList<>();
 
                 if (headWays > 1 || headUnordered || headReversed || reversed) {
                     highlight.add(head);

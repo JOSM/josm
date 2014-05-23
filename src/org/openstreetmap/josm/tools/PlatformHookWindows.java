@@ -35,17 +35,6 @@ import java.io.IOException;
   * @since 1023
   */
 public class PlatformHookWindows extends PlatformHookUnixoid implements PlatformHook {
-    
-    @Override
-    public void startupHook() {
-        super.startupHook();
-        // Invite users to install Oracle Java 7 if they are still with Sun/Oracle Java 6
-        String vendor = System.getProperty("java.vendor");
-        String version = System.getProperty("java.version");
-        if ("Sun Microsystems Inc.".equals(vendor) && version != null && version.startsWith("1.6")) {
-            askUpdateJava(version);
-        }
-    }
 
     @Override
     public void openUrl(String url) throws IOException {

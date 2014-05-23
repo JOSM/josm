@@ -22,35 +22,31 @@ public class ExpertToggleAction extends ToggleAction {
         void expertChanged(boolean isExpert);
     }
 
-    private static final List<WeakReference<ExpertModeChangeListener>> listeners = new ArrayList<WeakReference<ExpertModeChangeListener>>();
-    private static final List<WeakReference<Component>> visibilityToggleListeners = new ArrayList<WeakReference<Component>>();
+    private static final List<WeakReference<ExpertModeChangeListener>> listeners = new ArrayList<>();
+    private static final List<WeakReference<Component>> visibilityToggleListeners = new ArrayList<>();
 
-    private static ExpertToggleAction INSTANCE = new ExpertToggleAction();
+    private static final ExpertToggleAction INSTANCE = new ExpertToggleAction();
 
-    private synchronized static void fireExpertModeChanged(boolean isExpert) {
-        {
-            Iterator<WeakReference<ExpertModeChangeListener>> it = listeners.iterator();
-            while (it.hasNext()) {
-                WeakReference<ExpertModeChangeListener> wr = it.next();
-                ExpertModeChangeListener listener = wr.get();
-                if (listener == null) {
-                    it.remove();
-                    continue;
-                }
-                listener.expertChanged(isExpert);
+    private static synchronized void fireExpertModeChanged(boolean isExpert) {
+        Iterator<WeakReference<ExpertModeChangeListener>> it1 = listeners.iterator();
+        while (it1.hasNext()) {
+            WeakReference<ExpertModeChangeListener> wr = it1.next();
+            ExpertModeChangeListener listener = wr.get();
+            if (listener == null) {
+                it1.remove();
+                continue;
             }
+            listener.expertChanged(isExpert);
         }
-        {
-            Iterator<WeakReference<Component>> it = visibilityToggleListeners.iterator();
-            while (it.hasNext()) {
-                WeakReference<Component> wr = it.next();
-                Component c = wr.get();
-                if (c == null) {
-                    it.remove();
-                    continue;
-                }
-                c.setVisible(isExpert);
+        Iterator<WeakReference<Component>> it2 = visibilityToggleListeners.iterator();
+        while (it2.hasNext()) {
+            WeakReference<Component> wr = it2.next();
+            Component c = wr.get();
+            if (c == null) {
+                it2.remove();
+                continue;
             }
+            c.setVisible(isExpert);
         }
     }
 
@@ -63,13 +59,13 @@ public class ExpertToggleAction extends ToggleAction {
         addExpertModeChangeListener(listener, false);
     }
 
-    public synchronized static void addExpertModeChangeListener(ExpertModeChangeListener listener, boolean fireWhenAdding) {
+    public static synchronized void addExpertModeChangeListener(ExpertModeChangeListener listener, boolean fireWhenAdding) {
         if (listener == null) return;
         for (WeakReference<ExpertModeChangeListener> wr : listeners) {
             // already registered ? => abort
             if (wr.get() == listener) return;
         }
-        listeners.add(new WeakReference<ExpertModeChangeListener>(listener));
+        listeners.add(new WeakReference<>(listener));
         if (fireWhenAdding) {
             listener.expertChanged(isExpert());
         }
@@ -80,7 +76,7 @@ public class ExpertToggleAction extends ToggleAction {
      *
      * @param listener the listener. Ignored if null.
      */
-    public synchronized static void removeExpertModeChangeListener(ExpertModeChangeListener listener) {
+    public static synchronized void removeExpertModeChangeListener(ExpertModeChangeListener listener) {
         if (listener == null) return;
         Iterator<WeakReference<ExpertModeChangeListener>> it = listeners.iterator();
         while (it.hasNext()) {
@@ -93,17 +89,17 @@ public class ExpertToggleAction extends ToggleAction {
         }
     }
 
-    public synchronized static void addVisibilitySwitcher(Component c) {
+    public static synchronized void addVisibilitySwitcher(Component c) {
         if (c == null) return;
         for (WeakReference<Component> wr : visibilityToggleListeners) {
             // already registered ? => abort
             if (wr.get() == c) return;
         }
-        visibilityToggleListeners.add(new WeakReference<Component>(c));
+        visibilityToggleListeners.add(new WeakReference<>(c));
         c.setVisible(isExpert());
     }
 
-    public synchronized static void removeVisibilitySwitcher(Component c) {
+    public static synchronized void removeVisibilitySwitcher(Component c) {
         if (c == null) return;
         Iterator<WeakReference<Component>> it = visibilityToggleListeners.iterator();
         while (it.hasNext()) {
@@ -132,7 +128,8 @@ public class ExpertToggleAction extends ToggleAction {
         notifySelectedState();
     }
 
-    protected void notifySelectedState() {
+    @Override
+    protected final void notifySelectedState() {
         super.notifySelectedState();
         fireExpertModeChanged(isSelected());
     }

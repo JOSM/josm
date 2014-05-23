@@ -56,9 +56,8 @@ public class UnclosedWays extends Test {
          * @param key The OSM key checked
          * @param engMessage The English message
          */
-        @SuppressWarnings("unchecked")
         public UnclosedWaysCheck(int code, String key, String engMessage) {
-            this(code, key, engMessage, Collections.EMPTY_LIST);
+            this(code, key, engMessage, Collections.<String>emptyList());
         }
         
         /**
@@ -137,7 +136,7 @@ public class UnclosedWays extends Test {
     }
 
     private final UnclosedWaysCheck[] checks = {
-        new UnclosedWaysCheck(1101, "natural",   marktr("natural type {0}"), Arrays.asList("coastline", "cliff", "tree_row", "ridge", "arete")),
+        new UnclosedWaysCheck(1101, "natural",   marktr("natural type {0}"), Arrays.asList("coastline", "cliff", "tree_row", "ridge", "arete", "gorge")),
         new UnclosedWaysCheck(1102, "landuse",   marktr("landuse type {0}")),
         new UnclosedWaysCheck(1103, "amenities", marktr("amenities type {0}")),
         new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"), Arrays.asList("water_slide", "climbing")),
@@ -155,7 +154,7 @@ public class UnclosedWays extends Test {
      * @since 6390
      */
     public Set<String> getCheckedKeys() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         for (UnclosedWaysCheck c : checks) {
             keys.add(c.key);
         }

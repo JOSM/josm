@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.progress.ProgressRenderer;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -36,7 +37,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class SplashScreen extends JFrame {
 
-    private SwingRenderingProgressMonitor progressMonitor;
+    private final SwingRenderingProgressMonitor progressMonitor;
 
     /**
      * Constructs a new {@code SplashScreen}.
@@ -64,7 +65,7 @@ public class SplashScreen extends JFrame {
         innerContentPane.add(logo, gbc);
 
         // Add the name of this application
-        JLabel caption = new JLabel("JOSM - " + tr("Java OpenStreetMap Editor"));
+        JLabel caption = new JLabel("JOSM – " + tr("Java OpenStreetMap Editor"));
         caption.setFont(GuiHelper.getTitleFont());
         gbc.gridheight = 1;
         gbc.gridx = 1;
@@ -106,11 +107,15 @@ public class SplashScreen extends JFrame {
         });
     }
 
+    /**
+     * Returns the progress monitor.
+     * @return The progress monitor
+     */
     public ProgressMonitor getProgressMonitor() {
         return progressMonitor;
     }
 
-    static private class SplashScreenProgressRenderer extends JPanel implements ProgressRenderer {
+    private static class SplashScreenProgressRenderer extends JPanel implements ProgressRenderer {
         private JLabel lblTaskTitle;
         private JLabel lblCustomText;
         private JProgressBar progressBar;
@@ -176,7 +181,7 @@ public class SplashScreen extends JFrame {
         }
 
         private static final int MAX_NUMBER_OF_MESSAGES = 3;
-        private LinkedList<String> messages = new LinkedList<String>(Arrays.asList("", "", "")); //update when changing MAX_NUMBER_OF_MESSAGES
+        private LinkedList<String> messages = new LinkedList<>(Arrays.asList("", "", "")); //update when changing MAX_NUMBER_OF_MESSAGES
         private long time = System.currentTimeMillis();
 
         /**
@@ -193,7 +198,7 @@ public class SplashScreen extends JFrame {
             String prevMessageTitle = messages.getLast();
             if (!prevMessageTitle.isEmpty()) {
                 messages.removeLast();
-                messages.add(tr("{0} ({1} ms)", prevMessageTitle, Long.toString(now - time)));
+                messages.add(tr("{0} ({1})", prevMessageTitle, Utils.getDurationString(now - time)));
             }
             time = now;
             if (!taskTitle.isEmpty()) {

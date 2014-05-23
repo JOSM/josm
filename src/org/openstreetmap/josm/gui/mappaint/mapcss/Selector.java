@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.Main;
@@ -19,8 +20,23 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * MapCSS selector.
+ * 
+ * A rule has two parts, a selector and a declaration block
+ * e.g.
+ * <pre>
+ * way[highway=residential]    
+ * { width: 10; color: blue; } 
+ * </pre>
+ * 
+ * The selector decides, if the declaration block gets applied or not.
+ * 
+ * All implementing classes of Selector are immutable.
+ */
 public interface Selector {
 
     /**
@@ -31,14 +47,28 @@ public interface Selector {
      * a side effect! Make sure to clear it before invoking this method.
      * @return true, if the selector applies
      */
-    public boolean matches(Environment env);
+    boolean matches(Environment env);
+    
+    String getSubpart();
 
-    public String getSubpart();
-
-    public Range getRange();
+    Range getRange();
+    
+    /**
+     * Create an "optimized" copy of this selector that omits the base check.
+     * 
+     * For the style source, the list of rules is preprocessed, such that
+     * there is a separate list of rules for nodes, ways, ...
+     * 
+     * This means that the base check does not have to be performed
+     * for each rule, but only once for each primitive.
+     * 
+     * @return a selector that is identical to this object, except the base of the
+     * "rightmost" selector is not checked
+     */
+    Selector optimizedBaseCheck();
 
     public static enum ChildOrParentSelectorType {
-        CHILD, PARENT, ELEMENT_OF, CROSSING
+        CHILD, PARENT, ELEMENT_OF, CROSSING, SIBLING
     }
 
     /**
@@ -47,21 +77,19 @@ public interface Selector {
      * <p>In addition to the standard CSS notation for child selectors, JOSM also supports
      * an "inverse" notation:</p>
      * <pre>
-     *    selector_a > selector_b { ... }       // the standard notation (child selector)
-     *    relation[type=route] > way { ... }    // example (all ways of a route)
+     *    selector_a &gt; selector_b { ... }       // the standard notation (child selector)
+     *    relation[type=route] &gt; way { ... }    // example (all ways of a route)
      *
-     *    selector_a < selector_b { ... }       // the inverse notation (parent selector)
-     *    node[traffic_calming] < way { ... }   // example (way that has a traffic calming node)
+     *    selector_a &lt; selector_b { ... }       // the inverse notation (parent selector)
+     *    node[traffic_calming] &lt; way { ... }   // example (way that has a traffic calming node)
      * </pre>
      *
      */
     public static class ChildOrParentSelector implements Selector {
-        private final Selector left;
-        private final LinkSelector link;
-        private final Selector right;
-        /** true, if this represents a parent selector (otherwise it is a child selector)
-         */
-        private final ChildOrParentSelectorType type;
+        public final Selector left;
+        public final LinkSelector link;
+        public final Selector right;
+        public final ChildOrParentSelectorType type;
 
         /**
          *
@@ -70,6 +98,10 @@ public interface Selector {
          * @param type the selector type
          */
         public ChildOrParentSelector(Selector a, LinkSelector link, Selector b, ChildOrParentSelectorType type) {
+            CheckParameterUtil.ensureParameterNotNull(a, "a");
+            CheckParameterUtil.ensureParameterNotNull(b, "b");
+            CheckParameterUtil.ensureParameterNotNull(link, "link");
+            CheckParameterUtil.ensureParameterNotNull(type, "type");
             this.left = a;
             this.link = link;
             this.right = b;
@@ -173,10 +205,14 @@ public interface Selector {
                     if (e.child != null) {
                         // abort if first match has been found
                         break;
-                    } else if (!e.osm.equals(p)) {
+                    } else if (isPrimitiveUsable(p)) {
                         p.accept(this);
                     }
                 }
+            }
+
+            public boolean isPrimitiveUsable(OsmPrimitive p) {
+                return !e.osm.equals(p) && p.isUsable();
             }
         }
 
@@ -196,7 +232,7 @@ public interface Selector {
             }
         }
 
-        private final class ContainsFinder extends AbstractFinder {
+        private class ContainsFinder extends AbstractFinder {
             private ContainsFinder(Environment e) {
                 super(e);
                 CheckParameterUtil.ensureThat(!(e.osm instanceof Node), "Nodes not supported");
@@ -231,18 +267,38 @@ public interface Selector {
 
             if (ChildOrParentSelectorType.ELEMENT_OF.equals(type)) {
 
-                if (e.osm instanceof Node) {
+                if (e.osm instanceof Node || e.osm.getDataSet() == null) {
                     // nodes cannot contain elements
                     return false;
                 }
+
+                ContainsFinder containsFinder;
+                try {
+                    // if right selector also matches relations and if matched primitive is a way which is part of a multipolygon,
+                    // use the multipolygon for further analysis
+                    if (!((GeneralSelector) right).matchesBase(OsmPrimitiveType.RELATION) || !(e.osm instanceof Way)) {
+                        throw new NoSuchElementException();
+                    }
+                    final Collection<Relation> multipolygons = Utils.filteredCollection(Utils.filter(
+                            e.osm.getReferrers(), Predicates.hasTag("type", "multipolygon")), Relation.class);
+                    final Relation multipolygon = multipolygons.iterator().next();
+                    if (multipolygon == null) throw new NoSuchElementException();
+                    containsFinder = new ContainsFinder(e.withPrimitive(multipolygon)) {
+                        @Override
+                        public boolean isPrimitiveUsable(OsmPrimitive p) {
+                            return super.isPrimitiveUsable(p) && !multipolygon.getMemberPrimitives().contains(p);
+                        }
+                    };
+                } catch (NoSuchElementException ignore) {
+                    containsFinder = new ContainsFinder(e);
+                }
                 e.parent = e.osm;
 
-                final ContainsFinder containsFinder = new ContainsFinder(e);
-                if (right instanceof GeneralSelector) {
-                    if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.NODE)) {
+                if (left instanceof GeneralSelector) {
+                    if (((GeneralSelector) left).matchesBase(OsmPrimitiveType.NODE)) {
                         containsFinder.visit(e.osm.getDataSet().searchNodes(e.osm.getBBox()));
                     }
-                    if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
+                    if (((GeneralSelector) left).matchesBase(OsmPrimitiveType.WAY)) {
                         containsFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
                     }
                 } else {
@@ -253,17 +309,34 @@ public interface Selector {
                 return e.child != null;
 
             } else if (ChildOrParentSelectorType.CROSSING.equals(type) && e.osm instanceof Way) {
+                e.parent = e.osm;
                 final CrossingFinder crossingFinder = new CrossingFinder(e);
                 if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
                     crossingFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
                 }
                 return e.child != null;
+            } else if (ChildOrParentSelectorType.SIBLING.equals(type)) {
+                if (e.osm instanceof Node) {
+                    for (Way w : Utils.filteredCollection(e.osm.getReferrers(true), Way.class)) {
+                        final int i = w.getNodes().indexOf(e.osm);
+                        if (i - 1 >= 0) {
+                            final Node n = w.getNode(i - 1);
+                            final Environment e2 = e.withPrimitive(n).withParent(w).withChild(e.osm);
+                            if (left.matches(e2) && link.matches(e2.withLinkContext())) {
+                                e.child = n;
+                                e.index = i;
+                                e.parent = w;
+                                return true;
+                            }
+                        }
+                    }
+                }
             } else if (ChildOrParentSelectorType.CHILD.equals(type)) {
                 MatchingReferrerFinder collector = new MatchingReferrerFinder(e);
                 e.osm.visitReferrers(collector);
                 if (e.parent != null)
                     return true;
-            } else {
+            } else if (ChildOrParentSelectorType.PARENT.equals(type)) {
                 if (e.osm instanceof Way) {
                     List<Node> wayNodes = ((Way) e.osm).getNodes();
                     for (int i=0; i<wayNodes.size(); i++) {
@@ -303,6 +376,11 @@ public interface Selector {
         public Range getRange() {
             return right.getRange();
         }
+        
+        @Override
+        public Selector optimizedBaseCheck() {
+            return new ChildOrParentSelector(left, link, right.optimizedBaseCheck(), type);
+        }
 
         @Override
         public String toString() {
@@ -311,10 +389,11 @@ public interface Selector {
     }
 
     /**
-     * Super class of {@link GeneralSelector} and {@link LinkSelector}
+     * Super class of {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector} and
+     * {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector}.
      * @since 5841
      */
-    public static abstract class AbstractSelector implements Selector {
+    public abstract static class AbstractSelector implements Selector {
 
         protected final List<Condition> conds;
 
@@ -331,7 +410,7 @@ public interface Selector {
          * @param env The environment to check
          * @return {@code true} if all conditions apply, false otherwise.
          */
-        public final boolean matchesConditions(Environment env) {
+        public boolean matches(Environment env) {
             if (conds == null) return true;
             for (Condition c : conds) {
                 try {
@@ -345,6 +424,9 @@ public interface Selector {
         }
 
         public List<Condition> getConditions() {
+            if (conds == null) {
+                return Collections.emptyList();
+            }
             return Collections.unmodifiableList(conds);
         }
     }
@@ -358,7 +440,7 @@ public interface Selector {
         @Override
         public boolean matches(Environment env) {
             Utils.ensure(env.isLinkContext(), "Requires LINK context in environment, got ''{0}''", env.getContext());
-            return matchesConditions(env);
+            return super.matches(env);
         }
 
         @Override
@@ -372,17 +454,75 @@ public interface Selector {
         }
 
         @Override
+        public Selector optimizedBaseCheck() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public String toString() {
             return "LinkSelector{" + "conditions=" + conds + '}';
         }
     }
 
-    public static class GeneralSelector extends AbstractSelector {
+    public static class GeneralSelector extends OptimizedGeneralSelector {
+
+        public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
+            super(base, zoom, conds, subpart);
+        }
+        
+        public boolean matchesBase(OsmPrimitiveType type) {
+            if ("*".equals(base)) {
+                return true;
+            } else if (OsmPrimitiveType.NODE.equals(type)) {
+                return "node".equals(base);
+            } else if (OsmPrimitiveType.WAY.equals(type)) {
+                return "way".equals(base) || "area".equals(base);
+            } else if (OsmPrimitiveType.RELATION.equals(type)) {
+                return "area".equals(base) || "relation".equals(base) || "canvas".equals(base);
+            }
+            return false;
+        }
+
+        public boolean matchesBase(OsmPrimitive p) {
+            if (!matchesBase(p.getType())) {
+                return false;
+            } else {
+                if (p instanceof Relation) {
+                    if ("area".equals(base)) {
+                        return ((Relation) p).isMultipolygon();
+                    } else if ("canvas".equals(base)) {
+                        return p.get("#canvas") != null;
+                    }
+                }
+                return true;
+            }
+        }
+
+        public boolean matchesBase(Environment e) {
+            return matchesBase(e.osm);
+        }
+        
+        public boolean matchesConditions(Environment e) {
+            return super.matches(e);
+        }
+
+        @Override
+        public Selector optimizedBaseCheck() {
+            return new OptimizedGeneralSelector(this);
+        }
+
+        @Override
+        public boolean matches(Environment e) {
+            return matchesBase(e) && super.matches(e);
+        }
+    }
+    
+    public static class OptimizedGeneralSelector extends AbstractSelector {
         public final String base;
         public final Range range;
         public final String subpart;
 
-        public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
+        public OptimizedGeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
             super(conds);
             this.base = base;
             if (zoom != null) {
@@ -398,57 +538,37 @@ public interface Selector {
             }
             this.subpart = subpart;
         }
+        
+        public OptimizedGeneralSelector(String base, Range range, List<Condition> conds, String subpart) {
+            super(conds);
+            this.base = base;
+            this.range = range;
+            this.subpart = subpart;
+        }
+        
+        public OptimizedGeneralSelector(GeneralSelector s) {
+            this(s.base, s.range, s.conds, s.subpart);
+        }
 
         @Override
         public String getSubpart() {
             return subpart;
         }
+
         @Override
         public Range getRange() {
             return range;
-        }
-
-        public boolean matchesBase(OsmPrimitiveType type) {
-            if (base.equals("*")) {
-                return true;
-            } else if (OsmPrimitiveType.NODE.equals(type)) {
-                return base.equals("node");
-            } else if (OsmPrimitiveType.WAY.equals(type)) {
-                return base.equals("way") || base.equals("area");
-            } else if (OsmPrimitiveType.RELATION.equals(type)) {
-                return base.equals("area") || base.equals("relation") || base.equals("canvas");
-            }
-            return false;
-        }
-
-        public boolean matchesBase(OsmPrimitive p) {
-            if (!matchesBase(p.getType())) {
-                return false;
-            } else {
-                if (p instanceof Relation) {
-                    if (base.equals("area")) {
-                        return ((Relation) p).isMultipolygon();
-                    } else if (base.equals("canvas")) {
-                        return p.get("#canvas") != null;
-                    }
-                }
-                return true;
-            }
-        }
-
-        public boolean matchesBase(Environment e) {
-            return matchesBase(e.osm);
-        }
-
-        @Override
-        public boolean matches(Environment e) {
-            return matchesBase(e) && matchesConditions(e);
         }
 
         public String getBase() {
             return base;
         }
 
+        @Override
+        public Selector optimizedBaseCheck() {
+            throw new UnsupportedOperationException();
+        }
+        
         public static Range fromLevel(int a, int b) {
             if (a > b)
                 throw new AssertionError();
@@ -463,7 +583,7 @@ public interface Selector {
             return new Range(lower, upper);
         }
 
-        final static double R = 6378135;
+        static final double R = 6378135;
 
         public static double level2scale(int lvl) {
             if (lvl < 0)

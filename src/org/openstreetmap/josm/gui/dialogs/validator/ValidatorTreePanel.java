@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.MultiMap;
 
@@ -40,8 +41,6 @@ import org.openstreetmap.josm.tools.MultiMap;
  * @author frsantos
  */
 public class ValidatorTreePanel extends JTree implements Destroyable {
-    /** Serializable ID */
-    private static final long serialVersionUID = 2952292777351992696L;
 
     /**
      * The validation data.
@@ -49,7 +48,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
     protected DefaultTreeModel valTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
 
     /** The list of errors shown in the tree */
-    private List<TestError> errors = new ArrayList<TestError>();
+    private List<TestError> errors = new ArrayList<>();
 
     /**
      * If {@link #filter} is not <code>null</code> only errors are displayed
@@ -76,7 +75,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
         setErrorList(errors);
         for (KeyListener keyListener : getKeyListeners()) {
             // Fix #3596 - Remove default keyListener to avoid conflicts with JOSM commands
-            if (keyListener.getClass().getName().equals("javax.swing.plaf.basic.BasicTreeUI$Handler")) {
+            if ("javax.swing.plaf.basic.BasicTreeUI$Handler".equals(keyListener.getClass().getName())) {
                 removeKeyListener(keyListener);
             }
         }
@@ -126,17 +125,22 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      */
     public void buildTree() {
         updateCount++;
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+        final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
         if (errors == null || errors.isEmpty()) {
-            valTreeModel.setRoot(rootNode);
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    valTreeModel.setRoot(rootNode);
+                }
+            });
             return;
         }
         // Sort validation errors - #8517
         Collections.sort(errors);
 
         // Remember the currently expanded rows
-        Set<Object> oldSelectedRows = new HashSet<Object>();
+        Set<Object> oldSelectedRows = new HashSet<>();
         Enumeration<TreePath> expanded = getExpandedDescendants(new TreePath(getRoot()));
         if (expanded != null) {
             while (expanded.hasMoreElements()) {
@@ -153,8 +157,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             }
         }
 
-        Map<Severity, MultiMap<String, TestError>> errorTree = new HashMap<Severity, MultiMap<String, TestError>>();
-        Map<Severity, HashMap<String, MultiMap<String, TestError>>> errorTreeDeep = new HashMap<Severity, HashMap<String, MultiMap<String, TestError>>>();
+        Map<Severity, MultiMap<String, TestError>> errorTree = new HashMap<>();
+        Map<Severity, HashMap<String, MultiMap<String, TestError>>> errorTreeDeep = new HashMap<>();
         for (Severity s : Severity.values()) {
             errorTree.put(s, new MultiMap<String, TestError>(20));
             errorTreeDeep.put(s, new HashMap<String, MultiMap<String, TestError>>());
@@ -186,7 +190,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             if (d != null) {
                 MultiMap<String, TestError> b = errorTreeDeep.get(s).get(m);
                 if (b == null) {
-                    b = new MultiMap<String, TestError>(20);
+                    b = new MultiMap<>(20);
                     errorTreeDeep.get(s).put(m, b);
                 }
                 b.put(d, e);
@@ -195,7 +199,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             }
         }
 
-        List<TreePath> expandedPaths = new ArrayList<TreePath>();
+        List<TreePath> expandedPaths = new ArrayList<>();
         for (Severity s : Severity.values()) {
             MultiMap<String, TestError> severityErrors = errorTree.get(s);
             Map<String, MultiMap<String, TestError>> severityErrorsDeep = errorTreeDeep.get(s);
@@ -285,7 +289,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      * Sets the errors list used by a data layer
      * @param errors The error list that is used by a data layer
      */
-    public void setErrorList(List<TestError> errors) {
+    public final void setErrorList(List<TestError> errors) {
         this.errors = errors;
         if (isVisible()) {
             buildTree();
@@ -349,7 +353,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      * Updates the current errors list
      */
     public void resetErrors() {
-        List<TestError> e = new ArrayList<TestError>(errors);
+        List<TestError> e = new ArrayList<>(errors);
         setErrors(e);
     }
 

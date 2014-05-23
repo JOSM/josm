@@ -7,9 +7,12 @@ import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.xml.XMLConstants;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -22,7 +25,6 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.IWithAttributes;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Writes GPX files from GPX data or OSM data.
@@ -34,15 +36,15 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     }
 
     public GpxWriter(OutputStream out) {
-        super(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8))));
+        super(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))));
     }
 
     private GpxData data;
     private String indent = "";
 
-    private final static int WAY_POINT = 0;
-    private final static int ROUTE_POINT = 1;
-    private final static int TRACK_POINT = 2;
+    private static final int WAY_POINT = 0;
+    private static final int ROUTE_POINT = 1;
+    private static final int TRACK_POINT = 2;
 
     public void write(GpxData data) {
         this.data = data;
@@ -66,7 +68,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
                 (hasExtensions ? String.format("    xmlns:josm=\"%s\"%n", JOSM_EXTENSIONS_NAMESPACE_URI) : "") +
-                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" +
+                "    xmlns:xsi=\""+XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI+"\" \n" +
                 "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">");
         indent = "  ";
         writeMetaData();

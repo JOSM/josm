@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class PropertiesMerger extends JPanel implements Observer, IConflictResolver {
-    private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000000");
+    private static final DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000000");
 
     private JLabel lblMyCoordinates;
     private JLabel lblMergedCoordinates;
@@ -268,7 +268,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(lblTheirReferrers = buildValueLabel("label.theirreferrers"), gc);
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         buildHeaderRow();
         buildCoordinateConflictRows();
@@ -276,6 +276,9 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         buildReferrersRow();
     }
 
+    /**
+     * Constructs a new {@code PropertiesMerger}.
+     */
     public PropertiesMerger() {
         model = new PropertiesMergeModel();
         model.addObserver(this);

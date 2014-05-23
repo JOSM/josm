@@ -1,14 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.imagery;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,10 +49,11 @@ public class ImageryReader {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
-            InputStream in = new MirroredInputStream(source);
-            InputSource is = new InputSource(UTFInputStreamReader.create(in));
-            factory.newSAXParser().parse(is, parser);
-            return parser.entries;
+            try (InputStream in = new MirroredInputStream(source)) {
+                InputSource is = new InputSource(UTFInputStreamReader.create(in));
+                factory.newSAXParser().parse(is, parser);
+                return parser.entries;
+            }
         } catch (SAXException e) {
             throw e;
         } catch (ParserConfigurationException e) {
@@ -84,9 +83,9 @@ public class ImageryReader {
         @Override public void startDocument() {
             accumulator = new StringBuffer();
             skipEntry = false;
-            states = new Stack<State>();
+            states = new Stack<>();
             states.push(State.INIT);
-            entries = new ArrayList<ImageryInfo>();
+            entries = new ArrayList<>();
             entry = null;
             bounds = null;
             projections = null;
@@ -98,12 +97,12 @@ public class ImageryReader {
             State newState = null;
             switch (states.peek()) {
             case INIT:
-                if (qName.equals("imagery")) {
+                if ("imagery".equals(qName)) {
                     newState = State.IMAGERY;
                 }
                 break;
             case IMAGERY:
-                if (qName.equals("entry")) {
+                if ("entry".equals(qName)) {
                     entry = new ImageryInfo();
                     skipEntry = false;
                     newState = State.ENTRY;
@@ -128,7 +127,7 @@ public class ImageryReader {
                         "icon",
                 }).contains(qName)) {
                     newState = State.ENTRY_ATTRIBUTE;
-                } else if (qName.equals("bounds")) {
+                } else if ("bounds".equals(qName)) {
                     try {
                         bounds = new ImageryBounds(
                                 atts.getValue("min-lat") + "," +
@@ -139,19 +138,19 @@ public class ImageryReader {
                         break;
                     }
                     newState = State.BOUNDS;
-                } else if (qName.equals("projections")) {
-                    projections = new ArrayList<String>();
+                } else if ("projections".equals(qName)) {
+                    projections = new ArrayList<>();
                     newState = State.PROJECTIONS;
                 }
                 break;
             case BOUNDS:
-                if (qName.equals("shape")) {
+                if ("shape".equals(qName)) {
                     shape = new Shape();
                     newState = State.SHAPE;
                 }
                 break;
             case SHAPE:
-                if (qName.equals("point")) {
+                if ("point".equals(qName)) {
                     try {
                         shape.addPoint(atts.getValue("lat"), atts.getValue("lon"));
                     } catch (IllegalArgumentException e) {
@@ -160,7 +159,7 @@ public class ImageryReader {
                 }
                 break;
             case PROJECTIONS:
-                if (qName.equals("code")) {
+                if ("code".equals(qName)) {
                     newState = State.CODE;
                 }
                 break;
@@ -175,7 +174,7 @@ public class ImageryReader {
                 newState = State.UNKNOWN;
             }
             states.push(newState);
-            if (newState == State.UNKNOWN && equal(atts.getValue("mandatory"), "true")) {
+            if (newState == State.UNKNOWN && "true".equals(atts.getValue("mandatory"))) {
                 skipEntry = true;
             }
             return;
@@ -192,7 +191,7 @@ public class ImageryReader {
             case INIT:
                 throw new RuntimeException("parsing error: more closing than opening elements");
             case ENTRY:
-                if (qName.equals("entry")) {
+                if ("entry".equals(qName)) {
                     if (!skipEntry) {
                         entries.add(entry);
                     }
@@ -200,12 +199,14 @@ public class ImageryReader {
                 }
                 break;
             case ENTRY_ATTRIBUTE:
-                if (qName.equals("name")) {
-                    entry.setName(tr(accumulator.toString()));
-                } else if (qName.equals("type")) {
+                switch(qName) {
+                case "name":
+                    entry.setTranslatedName(accumulator.toString());
+                    break;
+                case "type":
                     boolean found = false;
                     for (ImageryType type : ImageryType.values()) {
-                        if (equal(accumulator.toString(), type.getUrlString())) {
+                        if (Objects.equals(accumulator.toString(), type.getTypeString())) {
                             entry.setImageryType(type);
                             found = true;
                             break;
@@ -214,19 +215,27 @@ public class ImageryReader {
                     if (!found) {
                         skipEntry = true;
                     }
-                } else if (qName.equals("default")) {
-                    if (accumulator.toString().equals("true")) {
+                    break;
+                case "default":
+                    switch (accumulator.toString()) {
+                    case "true":
                         entry.setDefaultEntry(true);
-                    } else if (accumulator.toString().equals("false")) {
+                        break;
+                    case "false":
                         entry.setDefaultEntry(false);
-                    } else {
+                        break;
+                    default:
                         skipEntry = true;
                     }
-                } else if (qName.equals("url")) {
+                    break;
+                case "url":
                     entry.setUrl(accumulator.toString());
-                } else if (qName.equals("eula")) {
+                    break;
+                case "eula":
                     entry.setEulaAcceptanceRequired(accumulator.toString());
-                } else if (qName.equals("min-zoom") || qName.equals("max-zoom")) {
+                    break;
+                case "min-zoom":
+                case "max-zoom":
                     Integer val = null;
                     try {
                         val = Integer.parseInt(accumulator.toString());
@@ -236,28 +245,37 @@ public class ImageryReader {
                     if (val == null) {
                         skipEntry = true;
                     } else {
-                        if (qName.equals("min-zoom")) {
+                        if ("min-zoom".equals(qName)) {
                             entry.setDefaultMinZoom(val);
                         } else {
                             entry.setDefaultMaxZoom(val);
                         }
                     }
-                } else if (qName.equals("attribution-text")) {
+                    break;
+                case "attribution-text":
                     entry.setAttributionText(accumulator.toString());
-                } else if (qName.equals("attribution-url")) {
+                    break;
+                case "attribution-url":
                     entry.setAttributionLinkURL(accumulator.toString());
-                } else if (qName.equals("logo-image")) {
+                    break;
+                case "logo-image":
                     entry.setAttributionImage(accumulator.toString());
-                } else if (qName.equals("logo-url")) {
+                    break;
+                case "logo-url":
                     entry.setAttributionImageURL(accumulator.toString());
-                } else if (qName.equals("terms-of-use-text")) {
+                    break;
+                case "terms-of-use-text":
                     entry.setTermsOfUseText(accumulator.toString());
-                } else if (qName.equals("terms-of-use-url")) {
+                    break;
+                case "terms-of-use-url":
                     entry.setTermsOfUseURL(accumulator.toString());
-                } else if (qName.equals("country-code")) {
+                    break;
+                case "country-code":
                     entry.setCountryCode(accumulator.toString());
-                } else if (qName.equals("icon")) {
+                    break;
+                case "icon":
                     entry.setIcon(accumulator.toString());
+                    break;
                 }
                 break;
             case BOUNDS:

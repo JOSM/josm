@@ -23,7 +23,7 @@ class DiffTableModel extends AbstractTableModel {
         this.rows = rows;
     }
     public DiffTableModel() {
-        this.rows = new ArrayList<TwoColumnDiff.Item>();
+        this.rows = new ArrayList<>();
     }
     @Override
     public int getRowCount() {

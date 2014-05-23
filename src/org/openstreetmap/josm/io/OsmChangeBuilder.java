@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
  *
  */
 public class OsmChangeBuilder {
-    static public final String DEFAULT_API_VERSION = "0.6";
+    public static final String DEFAULT_API_VERSION = "0.6";
 
     private String currentMode;
     private PrintWriter writer;

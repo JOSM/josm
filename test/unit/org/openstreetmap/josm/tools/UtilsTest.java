@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-
-import java.io.BufferedReader;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Locale;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests of {@link Utils} class.
@@ -23,7 +23,7 @@ public class UtilsTest {
      */
     @Test
     public void testStrip() {
-        final String someWhite = 
+        final String someWhite =
             "\u00A0"+ // SPACE_SEPARATOR
             "\u2007"+ // LINE_SEPARATOR
             "\u202F"+ // PARAGRAPH_SEPARATOR
@@ -75,24 +75,35 @@ public class UtilsTest {
         Assert.assertEquals("fedc", Utils.toHexString(new byte[]{(byte) 0xfe, (byte) 0xdc}));
     }
 
+    /**
+     * Test of {@link Utils#openURLReaderAndDecompress} method with Gzip compression.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
-    public void testOpenUrlGzip() throws Exception {
+    public void testOpenUrlGzip() throws IOException {
         Main.initApplicationPreferences();
-        final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("http://www.openstreetmap.org/trace/1613906/data"), true);
-        Assert.assertTrue(x.readLine().startsWith("<?xml version="));
-        x.close();
+        try (BufferedReader x = Utils.openURLReaderAndDecompress(new URL("https://www.openstreetmap.org/trace/1613906/data"), true)) {
+            Assert.assertTrue(x.readLine().startsWith("<?xml version="));
+        }
     }
 
+    /**
+     * Test of {@link Utils#openURLReaderAndDecompress} method with Bzip compression.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
-    public void testOpenUrlBzip() throws Exception {
+    public void testOpenUrlBzip() throws IOException {
         Main.initApplicationPreferences();
-        final BufferedReader x = Utils.openURLReaderAndDecompress(new URL("http://www.openstreetmap.org/trace/785544/data"), true);
-        Assert.assertTrue(x.readLine().startsWith("<?xml version="));
-        x.close();
+        try (BufferedReader x = Utils.openURLReaderAndDecompress(new URL("https://www.openstreetmap.org/trace/785544/data"), true)) {
+            Assert.assertTrue(x.readLine().startsWith("<?xml version="));
+        }
     }
 
+    /**
+     * Test of {@link Utils#getPositionListString} method.
+     */
     @Test
-    public void testPositionListString() throws Exception {
+    public void testPositionListString() {
         assertThat(Utils.getPositionListString(Arrays.asList(1)), is("1"));
         assertThat(Utils.getPositionListString(Arrays.asList(1, 2, 3)), is("1-3"));
         assertThat(Utils.getPositionListString(Arrays.asList(3, 1, 2)), is("1-3"));
@@ -100,9 +111,12 @@ public class UtilsTest {
         assertThat(Utils.getPositionListString(Arrays.asList(1, 5, 2, 6, 7)), is("1-2,5-7"));
     }
 
+    /**
+     * Test of {@link Utils#getDurationString} method.
+     */
     @Test
-    public void testDurationString() throws Exception {
-        Locale.setDefault(Locale.ENGLISH);
+    public void testDurationString() {
+        I18n.set("en");
         assertThat(Utils.getDurationString(123), is("123 ms"));
         assertThat(Utils.getDurationString(1234), is("1.2 s"));
         assertThat(Utils.getDurationString(57 * 1000), is("57.0 s"));

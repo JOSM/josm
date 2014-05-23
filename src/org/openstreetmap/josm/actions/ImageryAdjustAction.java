@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Formatter;
+import java.util.Locale;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,10 +28,10 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
-import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public class ImageryAdjustAction extends MapMode implements MouseListener, MouseMotionListener, AWTEventListener{
     static ImageryOffsetDialog offsetDialog;
@@ -41,6 +43,10 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
     private ImageryLayer layer;
     private MapMode oldMapMode;
 
+    /**
+     * Constructs a new {@code ImageryAdjustAction} for the given layer.
+     * @param layer The imagery layer
+     */
     public ImageryAdjustAction(ImageryLayer layer) {
         super(tr("New offset"), "adjustimg",
                 tr("Adjust the position of this imagery layer"), Main.map,
@@ -49,7 +55,8 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         this.layer = layer;
     }
 
-    @Override public void enterMode() {
+    @Override
+    public void enterMode() {
         super.enterMode();
         if (layer == null)
             return;
@@ -62,17 +69,19 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         offsetDialog = new ImageryOffsetDialog();
         offsetDialog.setVisible(true);
     }
-    
+
     protected void addListeners() {
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         } catch (SecurityException ex) {
+            Main.error(ex);
         }
     }
 
-    @Override public void exitMode() {
+    @Override
+    public void exitMode() {
         super.exitMode();
         if (offsetDialog != null) {
             layer.setOffset(oldDx, oldDy);
@@ -81,11 +90,12 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         }
         removeListeners();
     }
-    
+
     protected void removeListeners() {
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         } catch (SecurityException ex) {
+            Main.error(ex);
         }
         if (Main.isDisplayingMapView()) {
             Main.map.mapView.removeMouseMotionListener(this);
@@ -118,7 +128,8 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         }
     }
 
-    @Override public void mousePressed(MouseEvent e) {
+    @Override
+    public void mousePressed(MouseEvent e) {
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
 
@@ -129,7 +140,8 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         }
     }
 
-    @Override public void mouseDragged(MouseEvent e) {
+    @Override
+    public void mouseDragged(MouseEvent e) {
         if (layer == null || prevEastNorth == null) return;
         EastNorth eastNorth =
             Main.map.mapView.getEastNorth(e.getX(),e.getY());
@@ -143,7 +155,8 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         prevEastNorth = eastNorth;
     }
 
-    @Override public void mouseReleased(MouseEvent e) {
+    @Override
+    public void mouseReleased(MouseEvent e) {
         Main.map.mapView.repaint();
         Main.map.mapView.resetCursor(this);
         prevEastNorth = null;
@@ -214,19 +227,21 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             }
         }
 
-        public void updateOffset() {
+        public final void updateOffset() {
             ignoreListener = true;
             updateOffsetIntl();
             ignoreListener = false;
         }
 
-        public void updateOffsetIntl() {
+        public final void updateOffsetIntl() {
             // Support projections with very small numbers (e.g. 4326)
             int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
             // US locale to force decimal separator to be '.'
-            tOffset.setText(new java.util.Formatter(java.util.Locale.US).format(
+            try (Formatter us = new Formatter(Locale.US)) {
+                tOffset.setText(us.format(
                     "%1." + precision + "f; %1." + precision + "f",
                     layer.getDx(), layer.getDy()).toString());
+            }
         }
 
         private boolean confirmOverwriteBookmark() {

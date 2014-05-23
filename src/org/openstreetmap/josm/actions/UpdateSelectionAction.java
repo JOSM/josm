@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This action synchronizes a set of primitives with their state on the server.
- *
+ * @since 1670
  */
 public class UpdateSelectionAction extends JosmAction {
 
@@ -33,10 +33,11 @@ public class UpdateSelectionAction extends JosmAction {
      * handle an exception thrown because a primitive was deleted on the server
      *
      * @param id the primitive id
+     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
      */
     public static void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        reader.append(getCurrentDataSet(),id, type);
+        reader.append(getCurrentDataSet(), id, type);
         try {
             DataSet ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
             Main.main.getEditLayer().mergeFrom(ds);
@@ -79,21 +80,34 @@ public class UpdateSelectionAction extends JosmAction {
     }
 
     /**
-     * constructor
+     * Constructs a new {@code UpdateSelectionAction}.
      */
     public UpdateSelectionAction() {
-        super(tr("Update selection"),
-                "updateselection",
+        super(tr("Update selection"), "updatedata",
                 tr("Updates the currently selected objects from the server (re-downloads data)"),
                 Shortcut.registerShortcut("file:updateselection",
                         tr("File: {0}", tr("Update selection")), KeyEvent.VK_U,
                         Shortcut.ALT_CTRL),
-                true);
+                true, "updateselection", true);
         putValue("help", ht("/Action/UpdateSelection"));
     }
-    public UpdateSelectionAction(String name, String iconName, String tooltip,
-            Shortcut shortcut, boolean register) {
-        super(name, iconName, tooltip, shortcut, register);
+
+    /**
+     * Constructs a new {@code UpdateSelectionAction}.
+     *
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName the filename of the icon to use
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip. Please note
+     *           that html is not supported for menu actions on some platforms.
+     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut. But you always
+     *            do want a shortcut, remember you can always register it with group=none, so you
+     *            won't be assigned a shortcut unless the user configures one. If you pass null here,
+     *            the user CANNOT configure a shortcut for your action.
+     * @param register register this action for the toolbar preferences?
+     * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
+     */
+    public UpdateSelectionAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register, String toolbarId) {
+        super(name, iconName, tooltip, shortcut, register, toolbarId, true);
     }
 
     @Override
@@ -110,14 +124,11 @@ public class UpdateSelectionAction extends JosmAction {
         setEnabled(selection != null && !selection.isEmpty());
     }
 
-    /**
-     * action handler
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
-        Collection<OsmPrimitive> toUpdate =getData();
+        Collection<OsmPrimitive> toUpdate = getData();
         if (toUpdate.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -130,6 +141,10 @@ public class UpdateSelectionAction extends JosmAction {
         updatePrimitives(toUpdate);
     }
 
+    /**
+     * Returns the data on which this action operates. Override if needed.
+     * @return the data on which this action operates
+     */
     public Collection<OsmPrimitive> getData() {
         return getCurrentDataSet().getAllSelected();
     }

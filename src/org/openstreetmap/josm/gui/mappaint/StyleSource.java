@@ -17,12 +17,19 @@ import javax.swing.ImageIcon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
-abstract public class StyleSource extends SourceEntry {
+/**
+ * A mappaint style (abstract class).
+ *
+ * Handles everything from parsing the style definition to application
+ * of the style to an osm primitive.
+ */
+public abstract class StyleSource extends SourceEntry {
 
-    private List<Throwable> errors = new ArrayList<Throwable>();
+    private List<Throwable> errors = new ArrayList<>();
     public File zipIcons;
 
     private ImageIcon imageIcon;
@@ -43,9 +50,28 @@ abstract public class StyleSource extends SourceEntry {
         super(entry);
     }
 
-    abstract public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed);
+    /**
+     * Apply style to osm primitive.
+     *
+     * Adds properties to a MultiCascade. All active {@link StyleSource}s add
+     * their properties on after the other. At a later stage, concrete painting
+     * primitives (lines, icons, text, ...) are derived from the MultiCascade.
+     * @param mc the current MultiCascade, empty for the first StyleSource
+     * @param osm the primitive
+     * @param scale the map scale
+     * @param multipolyOuterWay support for a very old multipolygon tagging style
+     * where you add the tags both to the outer and the inner way.
+     * However, independent inner way style is also possible.
+     * @param pretendWayIsClosed For styles that require the way to be closed,
+     * we pretend it is. This is useful for generating area styles from the (segmented)
+     * outer ways of a multipolygon.
+     */
+    public abstract void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed);
 
-    abstract public void loadStyleSource();
+    /**
+     * Loads the style source.
+     */
+    public abstract void loadStyleSource();
 
     /**
      * Returns a new {@code InputStream} to the style source. When finished, {@link #closeSourceInputStream(InputStream)} must be called.
@@ -53,7 +79,15 @@ abstract public class StyleSource extends SourceEntry {
      * @throws IOException if any I/O error occurs.
      * @see #closeSourceInputStream(InputStream)
      */
-    abstract public InputStream getSourceInputStream() throws IOException;
+    public abstract InputStream getSourceInputStream() throws IOException;
+    
+    /**
+     * Returns a new {@code MirroredInputStream} to the local file containing style source (can be a text file or an archive).
+     * @return A new {@code MirroredInputStream} to the local file containing style source
+     * @throws IOException if any I/O error occurs.
+     * @since 7081
+     */
+    public abstract MirroredInputStream getMirroredInputStream() throws IOException;
 
     /**
      * Closes the source input stream previously returned by {@link #getSourceInputStream()} and other linked resources, if applicable.
@@ -100,7 +134,7 @@ abstract public class StyleSource extends SourceEntry {
         return imageIcon;
     }
 
-    final public ImageIcon getIcon() {
+    public final ImageIcon getIcon() {
         if (getErrors().isEmpty())
             return getSourceIcon();
         else
@@ -129,6 +163,4 @@ abstract public class StyleSource extends SourceEntry {
     public void setLastMTime(long lastMTime) {
         this.lastMTime = lastMTime;
     }
-
-
 }

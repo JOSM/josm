@@ -1,9 +1,10 @@
 package org.openstreetmap.josm.tools;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-
 import java.util.Collection;
+import java.util.Objects;
 import java.util.regex.Pattern;
+
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * Utility class for creating {@link Predicate}s.
@@ -26,13 +27,13 @@ public final class Predicates {
     }
 
     /**
-     * Returns a {@link Predicate} executing {@link Utils#equal}.
+     * Returns a {@link Predicate} executing {@link Objects#equals}.
      */
     public static <T> Predicate<T> equalTo(final T ref) {
         return new Predicate<T>() {
             @Override
             public boolean evaluate(T obj) {
-                return Utils.equal(obj, ref);
+                return Objects.equals(obj, ref);
             }
         };
     }
@@ -86,6 +87,18 @@ public final class Predicates {
     }
 
     /**
+     * Returns a {@link Predicate} executing {@link OsmPrimitive#hasKey(String)}.
+     */
+    public static Predicate<OsmPrimitive> hasKey(final String key) {
+        return new Predicate<OsmPrimitive>() {
+            @Override
+            public boolean evaluate(OsmPrimitive p) {
+                return p.hasKey(key);
+            }
+        };
+    }
+
+    /**
      * Returns a {@link Predicate} executing {@link Collection#contains(Object)}.
      */
     public static <T> Predicate<T> inCollection(final Collection<? extends T> target) {
@@ -93,6 +106,18 @@ public final class Predicates {
             @Override
             public boolean evaluate(T object) {
                 return target.contains(object);
+            }
+        };
+    }
+
+    /**
+     * Returns a {@link Predicate} testing whether objects are {@code null}.
+     */
+    public static <T> Predicate<T> isNull() {
+        return new Predicate<T>() {
+            @Override
+            public boolean evaluate(T object) {
+                return object == null;
             }
         };
     }

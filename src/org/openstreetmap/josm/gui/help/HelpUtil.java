@@ -15,6 +15,10 @@ import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 
+/**
+ * Provides utility methods for help system.
+ * @since 2252
+ */
 public final class HelpUtil {
 
     private HelpUtil() {
@@ -26,8 +30,8 @@ public final class HelpUtil {
      *
      * @return the base wiki URL
      */
-    static public String getWikiBaseUrl() {
-        return Main.pref.get("help.baseurl", Main.JOSM_WEBSITE);
+    public static String getWikiBaseUrl() {
+        return Main.pref.get("help.baseurl", Main.getJOSMWebsite());
     }
 
     /**
@@ -35,7 +39,7 @@ public final class HelpUtil {
      *
      * @return the base wiki URL for help pages
      */
-    static public String getWikiBaseHelpUrl() {
+    public static String getWikiBaseHelpUrl() {
         return getWikiBaseUrl() + "/wiki";
     }
 
@@ -46,7 +50,7 @@ public final class HelpUtil {
      * @return the url
      * @see #buildAbsoluteHelpTopic
      */
-    static public String getHelpTopicUrl(String absoluteHelpTopic) {
+    public static String getHelpTopicUrl(String absoluteHelpTopic) {
         if(absoluteHelpTopic == null)
             return null;
         String ret = getWikiBaseHelpUrl();
@@ -62,7 +66,7 @@ public final class HelpUtil {
      * @param absoluteHelpTopic the absolute help topic
      * @return the URL to the edit page
      */
-    static public String getHelpTopicEditUrl(String absoluteHelpTopic) {
+    public static String getHelpTopicEditUrl(String absoluteHelpTopic) {
         String topicUrl = getHelpTopicUrl(absoluteHelpTopic);
         topicUrl = topicUrl.replaceAll("#[^#]*$", ""); // remove optional fragment
         return topicUrl + "?action=edit";
@@ -75,7 +79,7 @@ public final class HelpUtil {
      * @param url the url
      * @return the relative help topic in the URL, i.e. "/Action/New"
      */
-    static public String extractRelativeHelpTopic(String url) {
+    public static String extractRelativeHelpTopic(String url) {
         String topic = extractAbsoluteHelpTopic(url);
         if (topic == null)
             return null;
@@ -93,7 +97,7 @@ public final class HelpUtil {
      * @param url the url
      * @return the absolute help topic in the URL, i.e. "/De:Help/Action/New"
      */
-    static public String extractAbsoluteHelpTopic(String url) {
+    public static String extractAbsoluteHelpTopic(String url) {
         if (!url.startsWith(getWikiBaseHelpUrl())) return null;
         url = url.substring(getWikiBaseHelpUrl().length());
         String prefix = getHelpTopicPrefix(LocaleType.ENGLISH);
@@ -118,7 +122,7 @@ public final class HelpUtil {
      * @return the help topic prefix
      * @since 5915
      */
-    static private String getHelpTopicPrefix(LocaleType type) {
+    private static String getHelpTopicPrefix(LocaleType type) {
         String ret = LanguageInfo.getWikiLanguagePrefix(type);
         if(ret == null)
             return ret;
@@ -137,9 +141,9 @@ public final class HelpUtil {
      * @return the absolute, localized help topic
      * @since 5915
      */
-    static public String buildAbsoluteHelpTopic(String topic, LocaleType type) {
+    public static String buildAbsoluteHelpTopic(String topic, LocaleType type) {
         String prefix = getHelpTopicPrefix(type);
-        if (prefix == null || topic == null || topic.trim().length() == 0 || topic.trim().equals("/"))
+        if (prefix == null || topic == null || topic.trim().length() == 0 || "/".equals(topic.trim()))
             return prefix;
         prefix += "/" + topic;
         return prefix.replaceAll("\\/+", "\\/"); // collapse sequences of //
@@ -150,7 +154,7 @@ public final class HelpUtil {
      *
      * @return the help topic. null, if no context specific help topic is found
      */
-    static public String getContextSpecificHelpTopic(Object context) {
+    public static String getContextSpecificHelpTopic(Object context) {
         if (context == null)
             return null;
         if (context instanceof Helpful)
@@ -182,12 +186,11 @@ public final class HelpUtil {
      *
      * @return instance of help action
      */
-    static private Action getHelpAction() {
-        try {
+    private static Action getHelpAction() {
+        if (Main.main != null && Main.main.menu != null) {
             return Main.main.menu.help;
-        } catch(NullPointerException e) {
-            return new HelpAction();
         }
+        return new HelpAction();
     }
 
     /**
@@ -200,7 +203,7 @@ public final class HelpUtil {
      * @param component the component  the component
      * @param relativeHelpTopic the help topic. Set to the default help topic if null.
      */
-    static public void setHelpContext(JComponent component, String relativeHelpTopic) {
+    public static void setHelpContext(JComponent component, String relativeHelpTopic) {
         if (relativeHelpTopic == null) {
             relativeHelpTopic = "/";
         }
@@ -220,10 +223,10 @@ public final class HelpUtil {
      *     putValue("help", ht("/Dialog/RelationEditor"));
      *  </pre>
      *
-     *
-     * @param helpTopic
+     * @param helpTopic Help topic to mark
+     * @return {@code helpTopic}
      */
-    static public String ht(String helpTopic) {
+    public static String ht(String helpTopic) {
         // this is just a marker method
         return helpTopic;
     }

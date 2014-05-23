@@ -4,7 +4,7 @@
 ** To build run
 **    ant clean
 **    ant dist
-** This will create 'josm-custom.jar'  in directory 'dist'. See also
+** This will create 'josm-custom.jar' in directory 'dist'. See also
 **   https://josm.openstreetmap.de/wiki/CreateBuild
 **
 -->
@@ -14,6 +14,7 @@
     <property name="build.dir" location="build"/>
     <property name="javacc.home" location="tools"/>
     <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
+    <property name="imagerytypes.dir" location="${src.dir}/org/openstreetmap/josm/data/imagery/types"/>
     <!-- build parameter: compression level (ant -Dclevel=N)
              N ranges from 0 (no compression) to 9 (maximum compression)
              default: 9 -->
@@ -124,32 +125,18 @@ Build-Date: ${build.tstamp}
             <zipfileset dir="images" prefix="images"/>
             <zipfileset dir="data" prefix="data"/>
             <zipfileset dir="styles" prefix="styles"/>
-            <zipfileset dir="src/org/openstreetmap/gui/jmapviewer/images" prefix="org/openstreetmap/gui/jmapviewer/images"/>
+            <zipfileset dir="${src.dir}/org/openstreetmap/gui/jmapviewer/images" prefix="org/openstreetmap/gui/jmapviewer/images"/>
             <!-- All jar files necessary to run only JOSM (no tests) -->
             <!-- <zipfileset src="lib/metadata-extractor-2.3.1-nosun.jar"/>  -->
             <!-- <zipfileset src="lib/signpost-core-1.2.1.1.jar"/> -->
         </jar>
     </target>
-    <!-- Compatibility Mac OS X target for Java 6 (incompatible with new on for Java 7, see #8654, #9035) -->
-    <target name="distmac" depends="dist">
-        <!-- modify MacOS X Info.plist file to hold the SVN version number -->
-        <copy file="macosx/JOSM.app/Contents/Info.plist" todir="build"/>
-        <replace file="build/Info.plist" token="@SVNVersion@" value="${version.entry.commit.revision}"/>
-        <!-- create ZIP file with MacOS X application bundle -->
-        <zip destfile="dist/josm-custom-macosx.zip" update="true">
-            <zipfileset dir="build" includes="CONTRIBUTION README LICENSE"/>
-            <zipfileset dir="macosx" includes="JOSM.app/Contents JOSM.app/Contents/MacOS JOSM.app/Contents/Resources JOSM.app/Contents/Resources/Java JOSM.app/Contents/PkgInfo JOSM.app/Contents/Resources/JOSM.icns"/>
-            <zipfileset dir="build" includes="Info.plist" prefix="JOSM.app/Contents"/>
-            <zipfileset dir="dist" includes="josm-custom.jar" prefix="JOSM.app/Contents/Resources/Java"/>
-            <zipfileset dir="macosx" includes="JOSM.app/Contents/MacOS/JOSM" filemode="755"/>
-        </zip>
-    </target>
-    <!-- New Mac OS X target for Java 7 -->
-    <target name="distmac7" depends="dist">
+    <!-- Mac OS X target -->
+    <target name="mac">
         <!-- Using https://bitbucket.org/infinitekind/appbundler to create mac application bundle -->
         <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="tools/appbundler-1.0ea.jar"/>
         <!-- create MacOS X application bundle -->
-        <bundleapp outputdirectory="dist" name="JOSM" displayname="JOSM" executablename="JOSM" identifier="org.openstreetmap.josm"
+        <bundleapp outputdirectory="${bundle.outdir}" name="JOSM" displayname="JOSM" executablename="JOSM" identifier="org.openstreetmap.josm"
                    mainclassname="org.openstreetmap.josm.gui.MainApplication"
                    copyright="JOSM, and all its integral parts, are released under the GNU General Public License v2 or later"
                    applicationCategory="public.app-category.utilities"
@@ -161,7 +148,7 @@ Build-Date: ${build.tstamp}
             <arch name="x86_64"/>
             <arch name="i386"/>
 
-            <classpath file="dist/josm-custom.jar"/>
+            <classpath file="${bundle.jar}"/>
 
             <option value="-Xmx512m"/>
 
@@ -179,17 +166,23 @@ Build-Date: ${build.tstamp}
         <!-- appbundler lacks the possibility of defining our own keys or using a template, so update the .plist manually -->
         <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="tools/xmltask.jar"/>
         
-        <xmltask source="dist/JOSM.app/Contents/Info.plist" dest="dist/JOSM.app/Contents/Info.plist" indent="false">
+        <xmltask source="${bundle.outdir}/JOSM.app/Contents/Info.plist" dest="${bundle.outdir}/JOSM.app/Contents/Info.plist" indent="false">
             <insert position="before" path="/plist/dict/key[1]"><![CDATA[<key>CFBundleAllowMixedLocalizations</key>
 <string>true</string>
 ]]></insert>
         </xmltask>
         
         <!-- create ZIP file with MacOS X application bundle -->
-        <zip destfile="dist/josm-custom-macosx-java7.zip" update="true">
-            <zipfileset dir="build" includes="CONTRIBUTION README LICENSE"/>
-            <zipfileset dir="dist" includes="JOSM.app/**/*" filemode="755" />
+        <zip destfile="${bundle.outdir}/josm-custom-macosx.zip" update="true">
+            <zipfileset dir="." includes="CONTRIBUTION README LICENSE"/>
+            <zipfileset dir="${bundle.outdir}" includes="JOSM.app/**/*" filemode="755" />
         </zip>
+    </target>
+    <target name="distmac" depends="dist">
+        <antcall target="mac">
+            <param name="bundle.outdir" value="dist"/>
+            <param name="bundle.jar" value="dist/josm-custom.jar"/>
+        </antcall>
     </target>
     <target name="javacc" depends="init" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
@@ -197,19 +190,50 @@ Build-Date: ${build.tstamp}
             <arg value="-cp"/>
             <arg value="${javacc.home}/javacc.jar"/>
             <arg value="javacc"/>
-            <arg value="-JDK_VERSION=1.6"/>
+            <arg value="-DEBUG_PARSER=false"/>
+            <arg value="-DEBUG_TOKEN_MANAGER=false"/>
+            <arg value="-JDK_VERSION=1.7"/>
             <arg value="-GRAMMAR_ENCODING=UTF-8"/>
-            <arg value="-UNICODE_INPUT"/>
             <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </exec>
     </target>
-    <target name="compile" depends="init,javacc">
-        <javac srcdir="src" includes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="iso-8859-1"/>
-        <javac srcdir="src" excludes="com/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
+    <target name="jaxb" depends="init" unless="jaxb.notRequired">
+        <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+            <classpath>
+                <fileset dir="tools/jaxb" includes="*.jar"/>
+            </classpath>
+        </taskdef>
+        <xjc schema="data_nodist/wms-cache.xsd" destdir="${src.dir}" encoding="UTF-8">
+            <depends dir="${src.dir}/org/openstreetmap/josm/data/imagery" includes="WmsCache.java"/>
+            <produces dir="${imagerytypes.dir}" includes="*.java"/>
+        </xjc>
+    </target>
+    <target name="compile" depends="init,javacc,jaxb">
+        <!-- COTS -->
+        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**" nowarn="on"
+            destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="iso-8859-1">
+            <!-- get rid of "internal proprietary API" warning -->
+            <compilerarg value="-XDignore.symbol.file"/>
+        </javac>
+        <!-- JMapViewer/JOSM -->
+        <javac srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/codec/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
+            destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
+            <compilerarg value="-Xlint:dep-ann"/>
+            <compilerarg value="-Xlint:divzero"/>
+            <compilerarg value="-Xlint:empty"/>
+            <compilerarg value="-Xlint:finally"/>
+            <compilerarg value="-Xlint:overrides"/>
+            <!--<compilerarg value="-Xlint:rawtypes"/>-->
+            <compilerarg value="-Xlint:static"/>
+            <compilerarg value="-Xlint:try"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>
+        <copy todir="build" failonerror="no" includeemptydirs="no">
+            <fileset dir="resources"/>
+        </copy>
     </target>
     <target name="init">
         <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
@@ -220,22 +244,24 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="javadoc">
         <javadoc destdir="javadoc" 
-                sourcepath="src"
+                sourcepath="${src.dir}"
+                encoding="UTF-8"    
                 packagenames="org.openstreetmap.josm.*,org.openstreetmap.gui.jmapviewer.*"
                 windowtitle="JOSM"
                 use="true"
                 private="true"
                 linksource="true"
                 author="false">
-            <link href="http://docs.oracle.com/javase/6/docs/api"/>
+            <link href="http://docs.oracle.com/javase/7/docs/api"/>
             <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
-            <bottom><![CDATA[<a href="http://josm.openstreetmap.de/">JOSM</a>]]></bottom>
+            <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
         </javadoc>
     </target>
     <target name="clean">
         <delete dir="build"/>
         <delete dir="dist"/>
         <delete dir="${mapcss.dir}/parsergen"/>
+        <delete dir="${imagerytypes.dir}"/>
     </target>
     <path id="test.classpath">
         <fileset dir="${test.dir}/lib">
@@ -245,46 +271,103 @@ Build-Date: ${build.tstamp}
             <include name="**/*.jar"/>
         </fileset>
         <pathelement path="dist/josm-custom.jar"/>
+        <pathelement path="tools/groovy-all-2.2.2.jar"/>
     </path>
+    <macrodef name="init-test-preferences">
+        <attribute name="testfamily"/>
+        <sequential>
+            <copy file="${test.dir}/config/preferences.template.xml" tofile="${test.dir}/config/@{testfamily}-josm.home/preferences.xml"/>
+            <replace file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" encoding="UTF-8" token="@OSM_USERNAME@" value="${osm.username}"/>
+            <replace file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" encoding="UTF-8" token="@OSM_PASSWORD@" value="${osm.password}"/>
+        </sequential>
+    </macrodef>
     <target name="test-init">
         <mkdir dir="${test.dir}/build"/>
+        <mkdir dir="${test.dir}/build/unit"/>
+        <mkdir dir="${test.dir}/build/functional"/>
+        <mkdir dir="${test.dir}/build/performance"/>
         <mkdir dir="${test.dir}/report"/>
+        <init-test-preferences testfamily="unit"/>
+        <init-test-preferences testfamily="functional"/>
+        <init-test-preferences testfamily="performance"/>
     </target>
     <target name="test-clean">
         <delete dir="${test.dir}/build"/>
         <delete dir="${test.dir}/report"/>
         <delete file="${test.dir}/jacoco.exec" />
+        <delete file="${test.dir}/config/unit-josm.home/preferences.xml" />
+        <delete file="${test.dir}/config/functional-josm.home/preferences.xml" />
+        <delete file="${test.dir}/config/performance-josm.home/preferences.xml" />
+        <delete dir="${test.dir}/config/unit-josm.home/cache" failonerror="false"/>
+        <delete dir="${test.dir}/config/functional-josm.home/cache" failonerror="false"/>
+        <delete dir="${test.dir}/config/performance-josm.home/cache" failonerror="false"/>
     </target>
-    <target name="test-compile" depends="test-init,dist">
-        <javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
-            <compilerarg value="-Xlint:deprecation"/>
-            <compilerarg value="-Xlint:unchecked"/>
-        </javac>
-        <javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/build" target="1.6" source="1.6" debug="on" includeantruntime="false" encoding="UTF-8">
-            <compilerarg value="-Xlint:deprecation"/>
-            <compilerarg value="-Xlint:unchecked"/>
-        </javac>
-    </target>
-    <target name="test" depends="test-compile">
-        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
-        <jacoco:coverage destfile="${test.dir}/jacoco.exec">
-            <junit printsummary="yes" fork="true" forkmode="once">
-                <sysproperty key="josm.home" value="${test.dir}/config/unit-josm.home"/>
-                <sysproperty key="josm.test.data" value="${test.dir}/data"/>
-                <sysproperty key="java.awt.headless" value="true"/>
-                <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
+    <macrodef name="call-groovyc">
+        <attribute name="testfamily"/>
+        <element name="cp-elements"/>
+        <sequential>
+            <groovyc srcdir="${test.dir}/@{testfamily}" destdir="${test.dir}/build/@{testfamily}" encoding="UTF-8">
                 <classpath>
-                    <path refid="test.classpath"/>
-                    <pathelement path="${test.dir}/build"/>
-                    <pathelement path="${test.dir}/config"/>
+                    <cp-elements/>
                 </classpath>
-                <formatter type="plain"/>
-                <formatter type="xml"/>
-                <batchtest fork="yes" todir="${test.dir}/report">
-                    <fileset dir="${test.dir}/unit" includes="**/*.java"/>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
+                <javac target="1.7" source="1.7" debug="on">
+                    <compilerarg value="-Xlint:all"/>
+                    <compilerarg value="-Xlint:-serial"/>
+                </javac>
+            </groovyc>
+        </sequential>
+    </macrodef>
+    <target name="test-compile" depends="test-init,dist">
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.2.2.jar"/>
+        <call-groovyc testfamily="unit">
+            <cp-elements>
+                <path refid="test.classpath"/>
+            </cp-elements>
+        </call-groovyc>
+        <call-groovyc testfamily="functional">
+            <cp-elements>
+                <path refid="test.classpath"/>
+                <pathelement path="${test.dir}/build/unit"/>
+            </cp-elements>
+        </call-groovyc>
+        <call-groovyc testfamily="performance">
+            <cp-elements>
+                <path refid="test.classpath"/>
+                <pathelement path="${test.dir}/build/unit"/>
+            </cp-elements>
+        </call-groovyc>
+    </target>
+    <macrodef name="call-junit">
+        <attribute name="testfamily"/>
+        <sequential>
+            <echo message="Running @{testfamily} tests with JUnit"/>
+            <jacoco:coverage destfile="${test.dir}/jacoco.exec">
+                <junit printsummary="yes" fork="true" forkmode="once">
+                    <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
+                    <sysproperty key="josm.test.data" value="${test.dir}/data"/>
+                    <sysproperty key="java.awt.headless" value="true"/>
+                    <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
+                    <classpath>
+                        <path refid="test.classpath"/>
+                        <pathelement path="${test.dir}/build/unit"/>
+                        <pathelement path="${test.dir}/build/@{testfamily}"/>
+                        <pathelement path="${test.dir}/config"/>
+                    </classpath>
+                    <formatter type="plain"/>
+                    <formatter type="xml"/>
+                    <batchtest fork="yes" todir="${test.dir}/report">
+                        <fileset dir="${test.dir}/build/@{testfamily}" includes="**/*Test.class"/>
+                    </batchtest>
+                </junit>
+            </jacoco:coverage>
+        </sequential>
+    </macrodef>
+    <target name="test" depends="test-compile" 
+        description="Run unit, functional and performance tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
+        <call-junit testfamily="unit"/>
+        <call-junit testfamily="functional"/>
+        <call-junit testfamily="performance"/>
     </target>
     <target name="test-html" depends="test" description="Generate HTML test reports">
         <!-- May require additional ant dependencies like ant-trax package -->
@@ -360,7 +443,7 @@ Build-Date: ${build.tstamp}
         </typedef>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
-        <loadfile property="deprecated-plugins" srcFile="src/org/openstreetmap/josm/plugins/PluginHandler.java">
+        <loadfile property="deprecated-plugins" srcFile="${src.dir}/org/openstreetmap/josm/plugins/PluginHandler.java">
             <filterchain>
                 <linecontains>
                     <contains value="new DeprecatedPlugin("/>
@@ -376,7 +459,7 @@ Build-Date: ${build.tstamp}
         </loadfile>
         <!-- Download list of plugins -->
         <loadresource property="plugins">
-            <url url="http://josm.openstreetmap.de/plugin"/>
+            <url url="https://josm.openstreetmap.de/plugin"/>
             <filterchain>
                 <linecontainsregexp negate="true">
                     <regexp pattern="^\t.*"/>

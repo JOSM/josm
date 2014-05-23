@@ -20,19 +20,21 @@ import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * Panel allowing the user to setup advanced OAuth parameters:
+ * <ul>
  * <li>Consumer key</li>
  * <li>Consumer secret</li>
  * <li>Request token URL</li>
  * <li>Access token URL</li>
  * <li>Authorize URL</li>
+ * </ul>
  *
  * @see OAuthParameters
  * @since 2746
@@ -48,7 +50,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     private UseDefaultItemListener ilUseDefault;
     private String apiUrl;
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
         GridBagConstraints gc = new GridBagConstraints();
@@ -236,18 +238,18 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      */
     public void initFromPreferences(Preferences pref) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
-        setApiUrl(pref.get("osm-server-url"));
+        setApiUrl(pref.get("osm-server.url"));
         boolean useDefault = pref.getBoolean("oauth.settings.use-default", true);
         ilUseDefault.setEnabled(false);
         if (useDefault) {
             resetToDefaultSettings();
         } else {
             cbUseDefaults.setSelected(false);
-            tfConsumerKey.setText(pref.get("oauth.settings.consumer-key", ""));
-            tfConsumerSecret.setText(pref.get("oauth.settings.consumer-secret", ""));
-            tfRequestTokenURL.setText(pref.get("oauth.settings.request-token-url", ""));
-            tfAccessTokenURL.setText(pref.get("oauth.settings.access-token-url", ""));
-            tfAuthoriseURL.setText(pref.get("oauth.settings.authorise-url", ""));
+            tfConsumerKey.setText(pref.get("oauth.settings.consumer-key", OAuthParameters.DEFAULT_JOSM_CONSUMER_KEY));
+            tfConsumerSecret.setText(pref.get("oauth.settings.consumer-secret", OAuthParameters.DEFAULT_JOSM_CONSUMER_SECRET));
+            tfRequestTokenURL.setText(pref.get("oauth.settings.request-token-url", OAuthParameters.DEFAULT_REQUEST_TOKEN_URL));
+            tfAccessTokenURL.setText(pref.get("oauth.settings.access-token-url", OAuthParameters.DEFAULT_ACCESS_TOKEN_URL));
+            tfAuthoriseURL.setText(pref.get("oauth.settings.authorise-url", OAuthParameters.DEFAULT_AUTHORISE_URL));
             setChildComponentsEnabled(true);
         }
         ilUseDefault.setEnabled(true);
@@ -285,11 +287,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             if (!enabled) return;
             switch (e.getStateChange()) {
             case ItemEvent.SELECTED:
-                if (hasCustomSettings()) {
-                    if (!confirmOverwriteCustomSettings()) {
-                        cbUseDefaults.setSelected(false);
-                        return;
-                    }
+                if (hasCustomSettings() && !confirmOverwriteCustomSettings()) {
+                    cbUseDefaults.setSelected(false);
+                    return;
                 }
                 resetToDefaultSettings();
                 break;

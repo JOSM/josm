@@ -22,11 +22,11 @@ import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.io.ChangesetQuery;
-import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 
 public class UrlBasedQueryPanel extends JPanel {
@@ -65,17 +65,18 @@ public class UrlBasedQueryPanel extends JPanel {
     }
 
     protected JPanel buildHelpPanel() {
+        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
         HtmlPanel pnl = new HtmlPanel();
         pnl.setText(
                 "<html><body>"
                 + tr("Please enter or paste an URL to retrieve changesets from the OSM API.")
                 + "<p><strong>" + tr("Examples") + "</strong></p>"
                 + "<ul>"
-                + "<li><a href=\""+Main.OSM_WEBSITE+"/browse/changesets?open=true\">"+Main.OSM_WEBSITE+"/browse/changesets?open=true</a></li>"
-                + "<li><a href=\"http://api.openstreetmap.org/api/0.6/changesets?open=true\">http://api.openstreetmap.org/api/0.6/changesets?open=true</a></li>"
+                + "<li><a href=\""+Main.getOSMWebsite()+"/history?open=true\">"+Main.getOSMWebsite()+"/history?open=true</a></li>"
+                + "<li><a href=\""+apiUrl+"/changesets?open=true\">"+apiUrl+"/changesets?open=true</a></li>"
                 + "</ul>"
                 + tr("Note that changeset queries are currently always submitted to ''{0}'', regardless of the "
-                        + "host, port and path of the URL entered below.", OsmApi.getOsmApi().getBaseUrl())
+                        + "host, port and path of the URL entered below.", apiUrl)
                         + "</body></html>"
         );
         pnl.getEditorPane().addHyperlinkListener(
@@ -92,7 +93,7 @@ public class UrlBasedQueryPanel extends JPanel {
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
@@ -112,8 +113,11 @@ public class UrlBasedQueryPanel extends JPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         add(new JPanel(),gc);
-
     }
+
+    /**
+     * Constructs a new {@code UrlBasedQueryPanel}.
+     */
     public UrlBasedQueryPanel() {
         build();
     }
@@ -164,14 +168,14 @@ public class UrlBasedQueryPanel extends JPanel {
             return fb == null ? "none" : fb;
         }
         protected void feedbackValid() {
-            if (getCurrentFeedback().equals("valid")) return;
-            lblValid.setIcon(ImageProvider.get("dialogs/changeset", "valid"));
+            if ("valid".equals(getCurrentFeedback())) return;
+            lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
             lblValid.setToolTipText("");
             lblValid.putClientProperty("valid", "valid");
         }
 
         protected void feedbackInvalid() {
-            if (getCurrentFeedback().equals("invalid")) return;
+            if ("invalid".equals(getCurrentFeedback())) return;
             lblValid.setIcon(ImageProvider.get("warning-small"));
             lblValid.setToolTipText(tr("This changeset query URL is invalid"));
             lblValid.putClientProperty("valid", "invalid");

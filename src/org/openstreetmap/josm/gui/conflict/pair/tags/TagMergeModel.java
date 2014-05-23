@@ -10,7 +10,7 @@ import java.util.Set;
 
 import javax.swing.table.DefaultTableModel;
 
-import org.openstreetmap.josm.command.TagConflictResolveCommand;
+import org.openstreetmap.josm.command.conflict.TagConflictResolveCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
@@ -29,7 +29,7 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
  *
  */
 public class TagMergeModel extends DefaultTableModel {
-    static public final String PROP_NUM_UNDECIDED_TAGS = TagMergeModel.class.getName() + ".numUndecidedTags";
+    public static final String PROP_NUM_UNDECIDED_TAGS = TagMergeModel.class.getName() + ".numUndecidedTags";
 
     /** the list of tag merge items */
     private final List<TagMergeItem> tagMergeItems;
@@ -40,8 +40,8 @@ public class TagMergeModel extends DefaultTableModel {
     private int numUndecidedTags = 0;
 
     public TagMergeModel() {
-        tagMergeItems = new ArrayList<TagMergeItem>();
-        listeners = new ArrayList<PropertyChangeListener>();
+        tagMergeItems = new ArrayList<>();
+        listeners = new ArrayList<>();
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -103,7 +103,7 @@ public class TagMergeModel extends DefaultTableModel {
      */
     public void populate(OsmPrimitive my, OsmPrimitive their) {
         tagMergeItems.clear();
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.addAll(my.keySet());
         keys.addAll(their.keySet());
         for(String key : keys) {

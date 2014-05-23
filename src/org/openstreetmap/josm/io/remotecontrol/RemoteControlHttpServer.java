@@ -83,10 +83,11 @@ public class RemoteControlHttpServer extends Thread {
              Integer.toString(server.getLocalPort()));
         while (true) {
             try {
+                @SuppressWarnings("resource")
                 Socket request = server.accept();
                 RequestProcessor.processRequest(request);
-            } catch( SocketException se) {
-                if( !server.isClosed() )
+            } catch (SocketException se) {
+                if (!server.isClosed())
                     Main.error(se);
             } catch (IOException ioe) {
                 Main.error(ioe);

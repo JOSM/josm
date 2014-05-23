@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +42,6 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
@@ -73,13 +72,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A small tool dialog for displaying the current selection.
  * @since 8
  */
 public class SelectionListDialog extends ToggleDialog  {
-    private JList lstPrimitives;
+    private JList<OsmPrimitive> lstPrimitives;
     private DefaultListSelectionModel selectionModel  = new DefaultListSelectionModel();
     private SelectionListModel model = new SelectionListModel(selectionModel);
 
@@ -99,7 +99,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * Builds the content panel for this dialog
      */
     protected void buildContentPanel() {
-        lstPrimitives = new JList(model);
+        lstPrimitives = new JList<>(model);
         lstPrimitives.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstPrimitives.setSelectionModel(selectionModel);
         lstPrimitives.setCellRenderer(new OsmPrimitivRenderer());
@@ -200,9 +200,9 @@ public class SelectionListDialog extends ToggleDialog  {
             if (isDoubleClick(e)) {
                 OsmDataLayer layer = Main.main.getEditLayer();
                 if (layer == null) return;
-                layer.data.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
+                layer.data.setSelected(Collections.singleton(model.getElementAt(idx)));
             } else if (highlightEnabled && Main.isDisplayingMapView()) {
-                if (helper.highlightOnly((OsmPrimitive)model.getElementAt(idx))) {
+                if (helper.highlightOnly(model.getElementAt(idx))) {
                     Main.map.mapView.repaint();
                 }
             }
@@ -274,7 +274,7 @@ public class SelectionListDialog extends ToggleDialog  {
         public SearchAction() {
             putValue(NAME, tr("Search"));
             putValue(SHORT_DESCRIPTION,   tr("Search for objects"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs","search"));
             updateEnabledState();
         }
 
@@ -405,13 +405,13 @@ public class SelectionListDialog extends ToggleDialog  {
      * JOSM selection.
      *
      */
-    static private class SelectionListModel extends AbstractListModel implements EditLayerChangeListener, SelectionChangedListener, DataSetListener{
+    private static class SelectionListModel extends AbstractListModel<OsmPrimitive> implements EditLayerChangeListener, SelectionChangedListener, DataSetListener{
 
         private static final int SELECTION_HISTORY_SIZE = 10;
 
         // Variable to store history from currentDataSet()
         private LinkedList<Collection<? extends OsmPrimitive>> history;
-        private final List<OsmPrimitive> selection = new ArrayList<OsmPrimitive>();
+        private final List<OsmPrimitive> selection = new ArrayList<>();
         private DefaultListSelectionModel selectionModel;
 
         /**
@@ -479,7 +479,7 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public OsmPrimitive getElementAt(int index) {
             return selection.get(index);
         }
 
@@ -495,7 +495,7 @@ public class SelectionListDialog extends ToggleDialog  {
          * @return choosen elements in the view
          */
         public Collection<OsmPrimitive> getSelected() {
-            Set<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> sel = new HashSet<>();
             for(int i=0; i< getSize();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     sel.add(selection.get(i));
@@ -543,6 +543,16 @@ public class SelectionListDialog extends ToggleDialog  {
                     fireContentsChanged(this, 0, getSize());
                     if (selection != null) {
                         remember(selection);
+                        if (selection.size() == 2) {
+                            Iterator<? extends OsmPrimitive> it = selection.iterator();
+                            OsmPrimitive n1 = it.next(), n2=it.next();
+                            // show distance between two selected nodes
+                            if (n1 instanceof Node && n2 instanceof Node) {
+                                double d = ((Node) n1).getCoor().greatCircleDistance(((Node) n2).getCoor());
+                                Main.map.statusLine.setDist(d);
+                                return;
+                            }
+                        }
                         Main.map.statusLine.setDist(new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate));
                     }
                 }
@@ -572,11 +582,9 @@ public class SelectionListDialog extends ToggleDialog  {
          * Sorts the current elements in the selection
          */
         public void sort() {
-            if (this.selection.size()>Main.pref.getInteger("selection.no_sort_above",100000)) return;
-            if (this.selection.size()>Main.pref.getInteger("selection.fast_sort_above",10000)) {
-                Collections.sort(this.selection, new OsmPrimitiveQuickComparator());
-            } else {
-                Collections.sort(this.selection, new OsmPrimitiveComparator());
+            if (this.selection.size() <= Main.pref.getInteger("selection.no_sort_above", 100000)) {
+                boolean quick = this.selection.size() > Main.pref.getInteger("selection.fast_sort_above", 10000);
+                Collections.sort(this.selection, new OsmPrimitiveComparator(quick, false));
             }
         }
 
@@ -653,10 +661,10 @@ public class SelectionListDialog extends ToggleDialog  {
      * @author Jan Peter Stotz
      */
     protected static class SearchMenuItem extends JMenuItem implements ActionListener {
-        final protected SearchSetting s;
+        protected final SearchSetting s;
 
         public SearchMenuItem(SearchSetting s) {
-            super(s.toString());
+            super(Utils.shortenString(s.toString(), org.openstreetmap.josm.actions.search.SearchAction.MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY));
             this.s = s;
             addActionListener(this);
         }
@@ -672,7 +680,7 @@ public class SelectionListDialog extends ToggleDialog  {
      *
      */
     protected static class SearchPopupMenu extends JPopupMenu {
-        static public void launch(Component parent) {
+        public static void launch(Component parent) {
             if (org.openstreetmap.josm.actions.search.SearchAction.getSearchHistory().isEmpty())
                 return;
             JPopupMenu menu = new SearchPopupMenu();
@@ -693,7 +701,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * @author Jan Peter Stotz
      */
     protected static class SelectionMenuItem extends JMenuItem implements ActionListener {
-        final private DefaultNameFormatter df = DefaultNameFormatter.getInstance();
+        private final DefaultNameFormatter df = DefaultNameFormatter.getInstance();
         protected Collection<? extends OsmPrimitive> sel;
 
         public SelectionMenuItem(Collection<? extends OsmPrimitive> sel) {
@@ -712,7 +720,7 @@ public class SelectionListDialog extends ToggleDialog  {
                     relations++;
                 }
             }
-            StringBuffer text = new StringBuffer();
+            StringBuilder text = new StringBuilder();
             if(ways != 0) {
                 text.append(text.length() > 0 ? ", " : "")
                 .append(trn("{0} way", "{0} ways", ways, ways));
@@ -727,7 +735,7 @@ public class SelectionListDialog extends ToggleDialog  {
             }
             if(ways + nodes + relations == 0) {
                 text.append(tr("Unselectable now"));
-                this.sel=new ArrayList<OsmPrimitive>(); // empty selection
+                this.sel=new ArrayList<>(); // empty selection
             }
             if(ways + nodes + relations == 1)
             {
@@ -752,7 +760,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * The popup menu for the JOSM selection history entries
      */
     protected static class SelectionHistoryPopup extends JPopupMenu {
-        static public void launch(Component parent, Collection<Collection<? extends OsmPrimitive>> history) {
+        public static void launch(Component parent, Collection<Collection<? extends OsmPrimitive>> history) {
             if (history == null || history.isEmpty()) return;
             JPopupMenu menu = new SelectionHistoryPopup(history);
             Rectangle r = parent.getBounds();
@@ -765,34 +773,4 @@ public class SelectionListDialog extends ToggleDialog  {
             }
         }
     }
-
-    /** Quicker comparator, comparing just by type and ID's */
-    static private class OsmPrimitiveQuickComparator implements Comparator<OsmPrimitive> {
-
-        private int compareId(OsmPrimitive a, OsmPrimitive b) {
-            long id_a=a.getUniqueId();
-            long id_b=b.getUniqueId();
-            if (id_a<id_b) return -1;
-            if (id_a>id_b) return 1;
-            return 0;
-        }
-
-        private int compareType(OsmPrimitive a, OsmPrimitive b) {
-            // show ways before relations, then nodes
-            if (a.getType().equals(OsmPrimitiveType.WAY)) return -1;
-            if (a.getType().equals(OsmPrimitiveType.NODE)) return 1;
-            // a is a relation
-            if (b.getType().equals(OsmPrimitiveType.WAY)) return 1;
-            // b is a node
-            return -1;
-        }
-
-        @Override
-        public int compare(OsmPrimitive a, OsmPrimitive b) {
-            if (a.getType().equals(b.getType()))
-                return compareId(a, b);
-            return compareType(a, b);
-        }
-    }
-
 }

@@ -47,12 +47,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * </ul>
  */
 public class ChangesetManagementPanel extends JPanel implements ListDataListener{
-    public final static String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
-    public final static String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
+    public static final String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
+    public static final String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
 
     private JRadioButton rbUseNew;
     private JRadioButton rbExisting;
-    private JosmComboBox cbOpenChangesets;
+    private JosmComboBox<Changeset> cbOpenChangesets;
     private JCheckBox cbCloseAfterUpload;
     private OpenChangesetComboBoxModel model;
     private ChangesetCommentModel changesetCommentModel;
@@ -104,7 +104,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         gc.weightx = 1.0;
         model = new OpenChangesetComboBoxModel();
         ChangesetCache.getInstance().addChangesetCacheListener(model);
-        cbOpenChangesets = new JosmComboBox(model);
+        cbOpenChangesets = new JosmComboBox<>(model);
         cbOpenChangesets.setToolTipText(tr("Select an open changeset"));
         cbOpenChangesets.setRenderer(new ChangesetCellRenderer());
         cbOpenChangesets.addItemListener(new ChangesetListItemStateListener());
@@ -207,9 +207,8 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     }
 
     /**
-     * Replies true if the user has chosen to close the changeset after the
-     * next upload
-     *
+     * Determines if the user has chosen to close the changeset after the next upload.
+     * @return {@code true} if the user has chosen to close the changeset after the next upload
      */
     public boolean isCloseChangesetAfterUpload() {
         return cbCloseAfterUpload.isSelected();

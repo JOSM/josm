@@ -7,11 +7,11 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -61,7 +61,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         super("Download referrers", false /* don't ignore exception*/);
         CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
         canceled = false;
-        this.children = new HashMap<Long, OsmPrimitiveType>();
+        this.children = new HashMap<>();
         if (children != null) {
             for (OsmPrimitive p: children) {
                 if (! p.isNew()) {
@@ -84,7 +84,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         super("Download referrers", false /* don't ignore exception*/);
         CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
         canceled = false;
-        this.children = new HashMap<Long, OsmPrimitiveType>();
+        this.children = new HashMap<>();
         if (children != null) {
             for (Entry<Long, OsmPrimitiveType> entry : children.entrySet()) {
                 if (entry.getKey() > 0 && entry.getValue() != null) {
@@ -100,9 +100,9 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
      * constructor
      *
      * @param targetLayer  the target layer. Must not be null.
-     * @param id the primitive id. id > 0 required.
+     * @param id the primitive id. id &gt; 0 required.
      * @param type the primitive type. type != null required
-     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if id &lt;= 0
      * @exception IllegalArgumentException thrown if type == null
      * @exception IllegalArgumentException thrown if targetLayer == null
      *
@@ -114,7 +114,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             throw new IllegalArgumentException(MessageFormat.format("Id > 0 required, got {0}", id));
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         canceled = false;
-        this.children = new HashMap<Long, OsmPrimitiveType>();
+        this.children = new HashMap<>();
         this.children.put(id, type);
         this.targetLayer = targetLayer;
         parents = new DataSet();
@@ -123,19 +123,34 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
     /**
      * constructor
      *
-     * @param targetLayer  the target layer. Must not be null.
+     * @param targetLayer the target layer. Must not be null.
      * @param primitiveId a PrimitiveId object.
-     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if id &lt;= 0
      * @exception IllegalArgumentException thrown if targetLayer == null
      *
      */
     public DownloadReferrersTask(OsmDataLayer targetLayer, PrimitiveId primitiveId) throws IllegalArgumentException {
-        super("Download referrers", false /* don't ignore exception*/);
+        this(targetLayer,  primitiveId, null);
+    }
+
+    /**
+     * constructor
+     *
+     * @param targetLayer the target layer. Must not be null.
+     * @param primitiveId a PrimitiveId object.
+     * @param progressMonitor ProgressMonitor to use or null to create a new one.
+     * @exception IllegalArgumentException thrown if id &lt;= 0
+     * @exception IllegalArgumentException thrown if targetLayer == null
+     *
+     */
+    public DownloadReferrersTask(OsmDataLayer targetLayer, PrimitiveId primitiveId,
+            ProgressMonitor progressMonitor) throws IllegalArgumentException {
+        super("Download referrers", progressMonitor, false /* don't ignore exception*/);
         CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
         if (primitiveId.isNew())
             throw new IllegalArgumentException(MessageFormat.format("Cannot download referrers for new primitives (ID {0})", primitiveId.getUniqueId()));
         canceled = false;
-        this.children = new HashMap<Long, OsmPrimitiveType>();
+        this.children = new HashMap<>();
         this.children.put(primitiveId.getUniqueId(), primitiveId.getType());
         this.targetLayer = targetLayer;
         parents = new DataSet();
@@ -167,7 +182,8 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                     @Override
                     public void run() {
                         targetLayer.onPostDownloadFromServer();
-                        Main.map.mapView.repaint();
+                        if(Main.map != null)
+                            Main.map.mapView.repaint();
                     }
                 }
         );
@@ -198,7 +214,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
 
         DataSetMerger merger;
         if (!ways.isEmpty()) {
-            Set<Node> nodes = new HashSet<Node>();
+            Set<Node> nodes = new HashSet<>();
             for (Way w: ways) {
                 // Ensure each node is only listed once
                 nodes.addAll(w.getNodes());

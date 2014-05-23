@@ -2,13 +2,13 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 /**
- * An interval of the form "lower < x <= upper" where 0 <= lower < upper.
+ * An interval of the form "lower &lt; x &lt;= upper" where 0 &lt;= lower &lt; upper.
  * (upper can be Double.POSITIVE_INFINITY)
  * immutable class
  */
 public class Range {
-    private double lower;
-    private double upper;
+    private final double lower;
+    private final double upper;
 
     public static final Range ZERO_TO_INFINITY = new Range(0.0, Double.POSITIVE_INFINITY);
 

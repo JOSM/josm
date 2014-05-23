@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
 public class OffsetBookmark {
-    public static final List<OffsetBookmark> allBookmarks = new ArrayList<OffsetBookmark>();
+    public static final List<OffsetBookmark> allBookmarks = new ArrayList<>();
 
     public String projectionCode;
     public String layerName;
@@ -44,7 +44,7 @@ public class OffsetBookmark {
     }
 
     public OffsetBookmark(Collection<String> list) {
-        List<String> array = new ArrayList<String>(list);
+        List<String> array = new ArrayList<>(list);
         this.projectionCode = array.get(0);
         this.layerName = array.get(1);
         this.name = array.get(2);
@@ -60,7 +60,7 @@ public class OffsetBookmark {
     }
 
     public List<String> getInfoArray() {
-        List<String> res = new ArrayList<String>(7);
+        List<String> res = new ArrayList<>(7);
         if (projectionCode != null) {
             res.add(projectionCode);
         } else {
@@ -85,7 +85,7 @@ public class OffsetBookmark {
     }
 
     public static void saveBookmarks() {
-        LinkedList<Collection<String>> coll = new LinkedList<Collection<String>>();
+        LinkedList<Collection<String>> coll = new LinkedList<>();
         for (OffsetBookmark b : allBookmarks) {
             coll.add(b.getInfoArray());
         }

@@ -54,7 +54,7 @@ public class MoveAction extends JosmAction {
             sc = Shortcut.registerShortcut("core:movedown",  tr("Move objects {0}", tr("down")), KeyEvent.VK_DOWN,  Shortcut.SHIFT);
         } else if (dir == Direction.LEFT)  {
             sc = Shortcut.registerShortcut("core:moveleft",  tr("Move objects {0}", tr("left")), KeyEvent.VK_LEFT,  Shortcut.SHIFT);
-        } else { //dir == Direction.RIGHT) {
+        } else { //dir == Direction.RIGHT
             sc = Shortcut.registerShortcut("core:moveright", tr("Move objects {0}", tr("right")), KeyEvent.VK_RIGHT, Shortcut.SHIFT);
         }
         return sc;
@@ -72,7 +72,7 @@ public class MoveAction extends JosmAction {
             putValue("toolbar", "action/move/down");
         } else if (dir == Direction.LEFT)  {
             putValue("toolbar", "action/move/left");
-        } else { //dir == Direction.RIGHT) {
+        } else { //dir == Direction.RIGHT
             putValue("toolbar", "action/move/right");
         }
         Main.toolbar.register(this);

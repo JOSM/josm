@@ -66,7 +66,7 @@ public class ProjectionBounds {
 
     /**
      * The two bounds intersect? Compared to java Shape.intersects, if does not use
-     * the interior but the closure. (">=" instead of ">")
+     * the interior but the closure. ("&gt;=" instead of "&gt;")
      */
     public boolean intersects(ProjectionBounds b) {
         return b.maxEast >= minEast &&

@@ -47,7 +47,7 @@ public class RelationMemberData implements PrimitiveId {
     }
 
     /**
-     * PrimitiveId implementation. Returns the same value as {@link #getMemberId()()}
+     * PrimitiveId implementation. Returns the same value as {@link #getMemberId()}
      */
     @Override
     public long getUniqueId() {

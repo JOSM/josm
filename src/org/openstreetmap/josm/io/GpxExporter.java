@@ -9,8 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.Calendar;
 
@@ -35,10 +35,9 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Utils;
 
 public class GpxExporter extends FileExporter implements GpxConstants {
-    private final static String warningGpl = "<html><font color='red' size='-2'>"
+    private static final String warningGpl = "<html><font color='red' size='-2'>"
         + tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.") + "</html>";
 
     /**
@@ -126,8 +125,11 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         ed.setContent(p);
         ed.showDialog();
 
-        if (ed.getValue() != 1)
+        if (ed.getValue() != 1) {
+            setCanceled(true);
             return;
+        }
+        setCanceled(false);
 
         Main.pref.put("lastAddAuthor", author.isSelected());
         if (authorName.getText().length() != 0) {
@@ -172,17 +174,14 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             gpxData.attr.put(META_KEYWORDS, keywords.getText());
         }
 
-        FileOutputStream fo = null;
-        try {
-            fo = new FileOutputStream(file);
+        
+        try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
             new GpxWriter(fo).write(gpxData);
             fo.flush();
         } catch (IOException x) {
             Main.error(x);
             JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn, x.getMessage()),
                     tr("Error"), JOptionPane.ERROR_MESSAGE);
-        } finally {
-            Utils.close(fo);
         }
     }
 
@@ -207,7 +206,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             if (copyright.getText().length()==0) {
                 String sCopyright = (String) data.attr.get(META_COPYRIGHT_LICENSE);
                 if (sCopyright == null) {
-                    sCopyright = Main.pref.get("lastCopyright", "http://creativecommons.org/licenses/by-sa/2.5");
+                    sCopyright = Main.pref.get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5");
                 }
                 copyright.setText(sCopyright);
                 copyright.setCaretPosition(0);
@@ -286,7 +285,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                         "public domain",
                         "GNU Lesser Public License (LGPL)",
                         "BSD License (MIT/X11)"};
-                JList l = new JList(licenses);
+                JList<String> l = new JList<>(licenses);
                 l.setVisibleRowCount(licenses.length);
                 l.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
                 int answer = JOptionPane.showConfirmDialog(
@@ -299,10 +298,10 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                 if (answer != JOptionPane.OK_OPTION || l.getSelectedIndex() == -1)
                     return;
                 final String[] urls = {
-                        "http://creativecommons.org/licenses/by-sa/2.5",
+                        "https://creativecommons.org/licenses/by-sa/2.5",
                         "http://opendatacommons.org/licenses/odbl/1.0",
                         "public domain",
-                        "http://www.gnu.org/copyleft/lesser.html",
+                        "https://www.gnu.org/copyleft/lesser.html",
                         "http://www.opensource.org/licenses/bsd-license.php"};
                 String license = "";
                 for (int i : l.getSelectedIndices()) {

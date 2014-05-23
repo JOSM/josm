@@ -13,8 +13,11 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-public class ChangesetListCellRenderer extends JLabel implements ListCellRenderer{
+public class ChangesetListCellRenderer extends JLabel implements ListCellRenderer<Changeset> {
 
+    /**
+     * Constructs a new {@code ChangesetListCellRenderer}.
+     */
     public ChangesetListCellRenderer() {
         setOpaque(true);
         setIcon(ImageProvider.get("data", "changeset"));
@@ -31,7 +34,7 @@ public class ChangesetListCellRenderer extends JLabel implements ListCellRendere
     }
 
     protected void renderLabel(Changeset cs) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (cs.isIncomplete()) {
             sb.append(tr("{0} [incomplete]", cs.getId()));
         } else {
@@ -47,9 +50,7 @@ public class ChangesetListCellRenderer extends JLabel implements ListCellRendere
     }
 
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus) {
-        Changeset cs = (Changeset)value;
+    public Component getListCellRendererComponent(JList<? extends Changeset> list, Changeset cs, int index, boolean isSelected, boolean cellHasFocus) {
         renderColors(isSelected);
         renderLabel(cs);
         return this;

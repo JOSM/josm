@@ -4,10 +4,6 @@ package org.openstreetmap.josm.gui.help;
 public class HelpContentReaderException extends Exception {
     private int responseCode;
 
-    public HelpContentReaderException() {
-        super();
-    }
-
     public HelpContentReaderException(String message, Throwable cause) {
         super(message, cause);
     }
@@ -38,5 +34,4 @@ public class HelpContentReaderException extends Exception {
     public void setResponseCode(int responseCode) {
         this.responseCode = responseCode;
     }
-
 }

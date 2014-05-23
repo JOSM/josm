@@ -4,7 +4,8 @@ package org.openstreetmap.josm.data.osm;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,23 +14,22 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 
-
 public class FilterTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void setUp() {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Test
@@ -42,10 +42,10 @@ public class FilterTest {
         ds.addPrimitive(n1);
         ds.addPrimitive(n2);
 
-        Collection<OsmPrimitive> all = new HashSet<OsmPrimitive>();
+        Collection<OsmPrimitive> all = new HashSet<>();
         all.addAll(Arrays.asList(new OsmPrimitive[] {n1, n2}));
 
-        List<Filter> filters = new LinkedList<Filter>();
+        List<Filter> filters = new LinkedList<>();
         Filter f1 = new Filter();
         f1.text = "fixme";
         f1.hiding = true;
@@ -61,11 +61,14 @@ public class FilterTest {
     }
 
     @Test
-    public void filter_test() throws ParseError, IllegalDataException, FileNotFoundException {
+    public void filter_test() throws ParseError, IllegalDataException, IOException {
         for (int i : new int [] {1,2,3, 11,12,13,14, 15}) {
-            DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/filterTests.osm"), NullProgressMonitor.INSTANCE);
+            DataSet ds;
+            try (InputStream is = new FileInputStream("data_nodist/filterTests.osm")) {
+                ds = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);
+            }
 
-            List<Filter> filters = new LinkedList<Filter>();
+            List<Filter> filters = new LinkedList<>();
             switch (i) {
             case 1: {
                 Filter f1 = new Filter();

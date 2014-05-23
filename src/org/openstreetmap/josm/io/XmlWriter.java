@@ -40,7 +40,7 @@ public class XmlWriter implements Closeable {
      * @param unencoded the unencoded input string
      * @param keepApos true if apostrophe sign should stay as it is (in order to work around
      * a Java bug that renders
-     *     new JLabel("<html>&apos;</html>")
+     *     new JLabel("&lt;html&gt;&amp;apos;&lt;/html&gt;")
      * literally as 6 character string, see #7558)
      */
     public static String encode(String unencoded, boolean keepApos) {
@@ -65,7 +65,7 @@ public class XmlWriter implements Closeable {
     /**
      * The output writer to save the values to.
      */
-    private static final Map<Character, String> encoding = new HashMap<Character, String>();
+    private static final Map<Character, String> encoding = new HashMap<>();
     static {
         encoding.put('<', "&lt;");
         encoding.put('>', "&gt;");

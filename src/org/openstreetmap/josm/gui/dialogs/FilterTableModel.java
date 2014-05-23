@@ -53,7 +53,7 @@ public class FilterTableModel extends AbstractTableModel {
         loadPrefs();
     }
 
-    private final List<Filter> filters = new LinkedList<Filter>();
+    private final List<Filter> filters = new LinkedList<>();
     private final FilterMatcher filterMatcher = new FilterMatcher();
 
     private void updateFilters() {
@@ -77,7 +77,7 @@ public class FilterTableModel extends AbstractTableModel {
             disabledCount = 0;
             changed = true;
         } else {
-            final Collection<OsmPrimitive> deselect = new HashSet<OsmPrimitive>();
+            final Collection<OsmPrimitive> deselect = new HashSet<>();
 
             ds.beginUpdate();
             try {
@@ -122,7 +122,7 @@ public class FilterTableModel extends AbstractTableModel {
             return;
 
         boolean changed = false;
-        List<OsmPrimitive> deselect = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> deselect = new ArrayList<>();
 
         ds.beginUpdate();
         try {
@@ -189,7 +189,7 @@ public class FilterTableModel extends AbstractTableModel {
     }
 
     private void savePrefs() {
-        Collection<FilterPreferenceEntry> entries = new ArrayList<FilterPreferenceEntry>();
+        Collection<FilterPreferenceEntry> entries = new ArrayList<>();
         for (Filter flt : filters) {
             entries.add(flt.getPreferenceEntry());
         }
@@ -375,7 +375,7 @@ public class FilterTableModel extends AbstractTableModel {
 
         if (disabledAndHiddenCount != 0) {
             /* for correct i18n of plural forms - see #9110 */
-            message += trn("<p><b>{0}</b> objects hidden", "<p><b>{0}</b> objects hidden", disabledAndHiddenCount, disabledAndHiddenCount);
+            message += trn("<p><b>{0}</b> object hidden", "<p><b>{0}</b> objects hidden", disabledAndHiddenCount, disabledAndHiddenCount);
         }
 
         if (disabledAndHiddenCount != 0 && disabledCount != 0) {
@@ -384,7 +384,7 @@ public class FilterTableModel extends AbstractTableModel {
 
         if (disabledCount != 0) {
             /* for correct i18n of plural forms - see #9110 */
-            message += trn("<b>{0}</b> objects disabled", "<b>{0}</b> objects disabled", disabledCount, disabledCount);
+            message += trn("<b>{0}</b> object disabled", "<b>{0}</b> objects disabled", disabledCount, disabledCount);
         }
 
         message += tr("</p><p>Close the filter dialog to see all objects.<p></html>");

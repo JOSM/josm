@@ -48,8 +48,8 @@ public class BasicChangesetQueryPanel extends JPanel {
         JPanel pnl = new JPanel(new GridBagLayout());
 
         ButtonGroup bgQueries = new ButtonGroup();
-        rbQueries = new HashMap<BasicQuery, JRadioButton>();
-        lblQueries = new HashMap<BasicQuery, JMultilineLabel>();
+        rbQueries = new HashMap<>();
+        lblQueries = new HashMap<>();
         SelectQueryHandler selectedQueryHandler = new SelectQueryHandler();
         for (BasicQuery q: BasicQuery.values()) {
             JRadioButton rb = new JRadioButton();
@@ -128,13 +128,16 @@ public class BasicChangesetQueryPanel extends JPanel {
         return pnlInfos;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout(0,5));
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         add(buildInfoPanel(), BorderLayout.NORTH);
         add(buildQueriesPanel(), BorderLayout.CENTER);
     }
 
+    /**
+     * Constructs a new {@code BasicChangesetQueryPanel}.
+     */
     public BasicChangesetQueryPanel() {
         build();
     }

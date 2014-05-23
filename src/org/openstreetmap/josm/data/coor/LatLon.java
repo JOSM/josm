@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.Utils;
  * <b>Longitude</b> specifies the east-west position in degrees
  * where valid values are in the [-180,180] and positive values specify positions east of the prime meridian.
  * <br>
- * <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Latitude_and_Longitude_of_the_Earth.svg/500px-Latitude_and_Longitude_of_the_Earth.svg.png">
+ * <img alt="lat/lon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Latitude_and_Longitude_of_the_Earth.svg/500px-Latitude_and_Longitude_of_the_Earth.svg.png">
  * <br>
  * This class is immutable.
  *
@@ -135,11 +135,11 @@ public class LatLon extends Coordinate {
         String sMinutes = cDmsMinuteFormatter.format(tMinutes);
         String sSeconds = cDmsSecondFormatter.format(tSeconds);
 
-        if (sSeconds.equals(cDms60)) {
+        if (cDms60.equals(sSeconds)) {
             sSeconds = cDms00;
             sMinutes = cDmsMinuteFormatter.format(tMinutes+1);
         }
-        if (sMinutes.equals("60")) {
+        if ("60".equals(sMinutes)) {
             sMinutes = "00";
             sDegrees = Integer.toString(tDegree+1);
         }
@@ -190,8 +190,8 @@ public class LatLon extends Coordinate {
         return y;
     }
 
-    public final static String SOUTH = trc("compass", "S");
-    public final static String NORTH = trc("compass", "N");
+    public static final String SOUTH = trc("compass", "S");
+    public static final String NORTH = trc("compass", "N");
     public String latToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(y);
@@ -210,8 +210,8 @@ public class LatLon extends Coordinate {
         return x;
     }
 
-    public final static String WEST = trc("compass", "W");
-    public final static String EAST = trc("compass", "E");
+    public static final String WEST = trc("compass", "W");
+    public static final String EAST = trc("compass", "E");
     public String lonToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(x);
@@ -283,15 +283,14 @@ public class LatLon extends Coordinate {
     }
 
     /**
-     * Returns the heading, in radians, that you have to use to get from
-     * this lat/lon to another.
+     * Returns the heading, in radians, that you have to use to get from this lat/lon to another.
      *
      * (I don't know the original source of this formula, but see
-     * http://math.stackexchange.com/questions/720/how-to-calculate-a-heading-on-the-earths-surface
+     * <a href="https://math.stackexchange.com/questions/720/how-to-calculate-a-heading-on-the-earths-surface">this question</a>
      * for some hints how it is derived.)
      *
      * @param other the "destination" position
-     * @return heading in the range 0 <= hd < 2*PI
+     * @return heading in the range 0 &lt;= hd &lt; 2*PI
      */
     public double heading(LatLon other) {
         double hd = atan2(sin(toRadians(this.lon() - other.lon())) * cos(toRadians(other.lat())),
@@ -409,14 +408,7 @@ public class LatLon extends Coordinate {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        long temp;
-        temp = java.lang.Double.doubleToLongBits(x);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = java.lang.Double.doubleToLongBits(y);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return computeHashCode(super.hashCode());
     }
 
     @Override

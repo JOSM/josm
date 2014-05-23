@@ -35,6 +35,10 @@ public class InvalidXmlCharacterFilter extends Reader {
         INVALID_CHARS[0xD] = false; // CR
     }
 
+    /**
+     * Constructs a new {@code InvalidXmlCharacterFilter} for the given Reader.
+     * @param reader The reader to filter
+     */
     public InvalidXmlCharacterFilter(Reader reader) {
         this.reader = reader;
     }
@@ -59,12 +63,11 @@ public class InvalidXmlCharacterFilter extends Reader {
     private char filter(char in) {
         if (in < 0x20 && in >= 0 && INVALID_CHARS[in]) {
             if (firstWarning) {
-                Main.warn("Invalid xml character encountered.");
+                Main.warn("Invalid xml character encountered: '"+in+"'.");
                 firstWarning = false;
             }
             return 0x20;
         }
         return in;
     }
-
 }

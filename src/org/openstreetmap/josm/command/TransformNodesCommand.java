@@ -19,25 +19,25 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * Abstract class with common services for nodes rotation and scaling commands.
  *
- * @author Olivier Croquette <ocroquette@free.fr>
+ * @author Olivier Croquette &lt;ocroquette@free.fr&gt;
  */
 public abstract class TransformNodesCommand extends Command {
 
     /**
      * The nodes to transform.
      */
-    protected Collection<Node> nodes = new LinkedList<Node>();
+    protected Collection<Node> nodes = new LinkedList<>();
 
 
     /**
      * List of all old states of the nodes.
      */
-    protected Map<Node, OldNodeState> oldStates = new HashMap<Node, OldNodeState>();
+    protected Map<Node, OldNodeState> oldStates = new HashMap<>();
 
     /**
      * Stores the state of the nodes before the command.
      */
-    protected void storeOldState() {
+    protected final void storeOldState() {
         for (Node n : this.nodes) {
             oldStates.put(n, new OldNodeState(n));
         }

@@ -29,12 +29,15 @@ import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * An imagery panel used to add WMS imagery sources
+ */
 public class AddWMSLayerPanel extends AddImageryPanel {
 
     private final WMSImagery wms = new WMSImagery();
     private final JCheckBox endpoint = new JCheckBox(tr("Store WMS endpoint only, select layers at usage"));
     private final WMSLayerTree tree = new WMSLayerTree();
-    private final JComboBox formats = new JComboBox();
+    private final JComboBox<String> formats = new JComboBox<>();
     private final JLabel wmsInstruction;
     private final JosmTextArea wmsUrl = new JosmTextArea(3, 40);
     private final JButton showBounds = new JButton(tr("Show bounds"));
@@ -73,7 +76,8 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 try {
                     wms.attemptGetCapabilities(rawUrl.getText());
                     tree.updateTree(wms);
-                    formats.setModel(new DefaultComboBoxModel(wms.getFormats().toArray()));
+                    formats.setModel(new DefaultComboBoxModel<>(wms.getFormats().toArray(new String[0])));
+                    formats.setSelectedItem(wms.getPreferredFormats());
                 } catch (MalformedURLException ex) {
                     JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
                             tr("WMS Error"), JOptionPane.ERROR_MESSAGE);

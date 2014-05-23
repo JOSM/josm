@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<osm version='0.5' generator='JOSM'>
+<osm version='0.6' generator='JOSM'>
   <bounds minlat='49.12' minlon='8.978' maxlat='49.666' maxlon='9.02' origin='JOSM' />
   <node id='-1401' action='modify' visible='true' lat='49.57492636306551' lon='8.979626352024342' />
   <node id='-1399' action='modify' visible='true' lat='49.57231627432242' lon='8.988974722001753' />

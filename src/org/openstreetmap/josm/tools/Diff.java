@@ -56,7 +56,7 @@ import java.util.Map;
     whitespace" are implemented by modifying the <code>equals</code>
     and <code>hashcode</code> methods for the objects compared.
 <p>
-   The basic algorithm is described in: </br>
+   The basic algorithm is described in: <br>
    "An O(ND) Difference Algorithm and its Variations", Eugene Myers,
    Algorithmica Vol. 1 No. 2, 1986, p 251.
 <p>
@@ -95,7 +95,7 @@ public class Diff {
       an edit script, if desired.
      */
     public Diff(Object[] a, Object[] b) {
-        Map<Object,Integer> h = new HashMap<Object,Integer>(a.length + b.length);
+        Map<Object,Integer> h = new HashMap<>(a.length + b.length);
         filevec = new FileData[] { new FileData(a,h),new FileData(b,h) };
     }
 
@@ -490,7 +490,7 @@ public class Diff {
     }
 
     /** Standard ScriptBuilders. */
-    public final static ScriptBuilder
+    public static final ScriptBuilder
     forwardScript = new ForwardScript(),
     reverseScript = new ReverseScript();
 
@@ -588,6 +588,7 @@ public class Diff {
             this.link = old;
         }
 
+        @Override
         public String toString() {
             String s = String.format("%d -%d +%d %d",line0,deleted,inserted,line1);
             return (link != null) ? s = s + '\n' + link : s;
@@ -829,7 +830,7 @@ public class Diff {
             undiscarded = new int[buffered_lines];
             realindexes = new int[buffered_lines];
         }
-        
+
         FileData(Object[] data, Map<Object,Integer> h) {
             this(data.length);
             // FIXME: diff 2.7 removes common prefix and common suffix

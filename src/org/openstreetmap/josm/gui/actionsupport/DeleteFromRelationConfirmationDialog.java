@@ -51,14 +51,14 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class DeleteFromRelationConfirmationDialog extends JDialog implements TableModelListener {
     /** the unique instance of this dialog */
-    static private DeleteFromRelationConfirmationDialog instance;
+    private static DeleteFromRelationConfirmationDialog instance;
 
     /**
      * Replies the unique instance of this dialog
      *
      * @return The unique instance of this dialog
      */
-    static public DeleteFromRelationConfirmationDialog getInstance() {
+    public static DeleteFromRelationConfirmationDialog getInstance() {
         if (instance == null) {
             instance = new DeleteFromRelationConfirmationDialog();
         }
@@ -89,7 +89,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         model = new RelationMemberTableModel();
         model.addTableModelListener(this);
         getContentPane().setLayout(new BorderLayout());
@@ -192,7 +192,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
          * Constructs a new {@code RelationMemberTableModel}.
          */
         public RelationMemberTableModel() {
-            data = new ArrayList<RelationToChildReference>();
+            data = new ArrayList<>();
         }
 
         @Override
@@ -228,7 +228,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
 
         public Set<OsmPrimitive> getObjectsToDelete() {
-            HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+            HashSet<OsmPrimitive> ret = new HashSet<>();
             for (RelationToChildReference ref: data) {
                 ret.add(ref.getChild());
             }
@@ -240,7 +240,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
 
         public Set<OsmPrimitive> getParentRelations() {
-            HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+            HashSet<OsmPrimitive> ret = new HashSet<>();
             for (RelationToChildReference ref: data) {
                 ret.add(ref.getParent());
             }
@@ -274,7 +274,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     private static class RelationMemberTableColumnModel extends DefaultTableColumnModel{
 
-        protected void createColumns() {
+        protected final void createColumns() {
             TableColumn col = null;
 
             // column 0 - To Delete

@@ -35,11 +35,11 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.Entities;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -47,12 +47,12 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Check;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
+import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Check for misspelled or wrong tags
@@ -60,7 +60,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author frsantos
  */
 public class TagChecker extends Test.TagTest {
-    
+
     /** The default data file of tagchecker rules */
     public static final String DATA_FILE = "resource://data/validator/tagchecker.cfg";
     /** The config file of ignored tags */
@@ -69,15 +69,15 @@ public class TagChecker extends Test.TagTest {
     public static final String SPELL_FILE = "resource://data/validator/words.cfg";
 
     /** The spell check key substitutions: the key should be substituted by the value */
-    protected static Map<String, String> spellCheckKeyData;
+    private static Map<String, String> spellCheckKeyData;
     /** The spell check preset values */
-    protected static MultiMap<String, String> presetsValueData;
+    private static MultiMap<String, String> presetsValueData;
     /** The TagChecker data */
-    protected static final List<CheckerData> checkerData = new ArrayList<CheckerData>();
-    protected static final List<String> ignoreDataStartsWith = new ArrayList<String>();
-    protected static final List<String> ignoreDataEquals = new ArrayList<String>();
-    protected static final List<String> ignoreDataEndsWith = new ArrayList<String>();
-    protected static final List<IgnoreKeyPair> ignoreDataKeyPair = new ArrayList<IgnoreKeyPair>();
+    private static final List<CheckerData> checkerData = new ArrayList<>();
+    private static final List<String> ignoreDataStartsWith = new ArrayList<>();
+    private static final List<String> ignoreDataEquals = new ArrayList<>();
+    private static final List<String> ignoreDataEndsWith = new ArrayList<>();
+    private static final List<IgnoreKeyPair> ignoreDataKeyPair = new ArrayList<>();
 
     /** The preferences prefix */
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + TagChecker.class.getSimpleName();
@@ -159,15 +159,14 @@ public class TagChecker extends Test.TagTest {
         ignoreDataEndsWith.clear();
         ignoreDataKeyPair.clear();
 
-        spellCheckKeyData = new HashMap<String, String>();
-        
+        spellCheckKeyData = new HashMap<>();
+
         String errorSources = "";
         for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
-            BufferedReader reader = null;
-            try {
+            try (
                 MirroredInputStream s = new MirroredInputStream(source);
-                reader = new BufferedReader(UTFInputStreamReader.create(s));
-
+                BufferedReader reader = new BufferedReader(UTFInputStreamReader.create(s));
+            ) {
                 String okValue = null;
                 boolean tagcheckerfile = false;
                 boolean ignorefile = false;
@@ -196,13 +195,17 @@ public class TagChecker extends Test.TagTest {
                         String key = line.substring(0, 2);
                         line = line.substring(2);
 
-                        if (key.equals("S:")) {
+                        switch (key) {
+                        case "S:":
                             ignoreDataStartsWith.add(line);
-                        } else if (key.equals("E:")) {
+                            break;
+                        case "E:":
                             ignoreDataEquals.add(line);
-                        } else if (key.equals("F:")) {
+                            break;
+                        case "F:":
                             ignoreDataEndsWith.add(line);
-                        } else if (key.equals("K:")) {
+                            break;
+                        case "K:":
                             IgnoreKeyPair tmp = new IgnoreKeyPair();
                             int mid = line.indexOf('=');
                             tmp.key = line.substring(0, mid);
@@ -236,8 +239,6 @@ public class TagChecker extends Test.TagTest {
                 }
             } catch (IOException e) {
                 errorSources += source + "\n";
-            } finally {
-                Utils.close(reader);
             }
         }
 
@@ -254,9 +255,9 @@ public class TagChecker extends Test.TagTest {
         if (!Main.pref.getBoolean(PREF_CHECK_VALUES, true))
             return;
 
-        Collection<TaggingPreset> presets = TaggingPresetPreference.taggingPresets;
-        if (presets != null) {
-            presetsValueData = new MultiMap<String, String>();
+        Collection<TaggingPreset> presets = TaggingPresets.getTaggingPresets();
+        if (!presets.isEmpty()) {
+            presetsValueData = new MultiMap<>();
             for (String a : OsmPrimitive.getUninterestingKeys()) {
                 presetsValueData.putVoid(a);
             }
@@ -283,9 +284,10 @@ public class TagChecker extends Test.TagTest {
     }
 
     private static void addPresetValue(TaggingPreset p, KeyedItem ky) {
-        if (ky.key != null && ky.getValues() != null) {
+        Collection<String> values = ky.getValues();
+        if (ky.key != null && values != null) {
             try {
-                presetsValueData.putAll(ky.key, ky.getValues());
+                presetsValueData.putAll(ky.key, values);
             } catch (NullPointerException e) {
                 Main.error(p+": Unable to initialize "+ky);
             }
@@ -313,7 +315,7 @@ public class TagChecker extends Test.TagTest {
     @Override
     public void check(OsmPrimitive p) {
         // Just a collection to know if a primitive has been already marked with error
-        MultiMap<OsmPrimitive, String> withErrors = new MultiMap<OsmPrimitive, String>();
+        MultiMap<OsmPrimitive, String> withErrors = new MultiMap<>();
 
         if (checkComplex) {
             Map<String, String> keys = p.getKeys();
@@ -547,7 +549,7 @@ public class TagChecker extends Test.TagTest {
 
     @Override
     public Command fixError(TestError testError) {
-        List<Command> commands = new ArrayList<Command>(50);
+        List<Command> commands = new ArrayList<>(50);
 
         Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();
         for (OsmPrimitive p : primitives) {
@@ -562,9 +564,9 @@ public class TagChecker extends Test.TagTest {
                 if (value == null || value.trim().length() == 0) {
                     commands.add(new ChangePropertyCommand(p, key, null));
                 } else if (value.startsWith(" ") || value.endsWith(" ")) {
-                    commands.add(new ChangePropertyCommand(p, key, value.trim()));
+                    commands.add(new ChangePropertyCommand(p, key, Tag.removeWhiteSpaces(value)));
                 } else if (key.startsWith(" ") || key.endsWith(" ")) {
-                    commands.add(new ChangePropertyKeyCommand(p, key, key.trim()));
+                    commands.add(new ChangePropertyKeyCommand(p, key, Tag.removeWhiteSpaces(key)));
                 } else {
                     String evalue = entities.unescape(value);
                     if (!evalue.equals(value)) {
@@ -604,7 +606,7 @@ public class TagChecker extends Test.TagTest {
 
     protected static class CheckerData {
         private String description;
-        protected List<CheckerElement> data = new ArrayList<CheckerElement>();
+        protected List<CheckerElement> data = new ArrayList<>();
         private OsmPrimitiveType type;
         private int code;
         protected Severity severity;
@@ -634,18 +636,18 @@ public class TagChecker extends Test.TagTest {
 
                 String n = m.group(1).trim();
 
-                if(n.equals("*")) {
+                if ("*".equals(n)) {
                     tagAll = true;
                 } else {
                     tag = n.startsWith("/") ? getPattern(n) : n;
-                    noMatch = m.group(2).equals("!=");
+                    noMatch = "!=".equals(m.group(2));
                     n = m.group(3).trim();
-                    if (n.equals("*")) {
+                    if ("*".equals(n)) {
                         valueAll = true;
-                    } else if (n.equals("BOOLEAN_TRUE")) {
+                    } else if ("BOOLEAN_TRUE".equals(n)) {
                         valueBool = true;
                         value = OsmUtils.trueval;
-                    } else if (n.equals("BOOLEAN_FALSE")) {
+                    } else if ("BOOLEAN_FALSE".equals(n)) {
                         valueBool = true;
                         value = OsmUtils.falseval;
                     } else {
@@ -666,9 +668,13 @@ public class TagChecker extends Test.TagTest {
             }
         }
 
-        public String getData(String str) {
-            Matcher m = Pattern.compile(" *# *([^#]+) *$").matcher(str);
-            str = m.replaceFirst("").trim();
+        private static final Pattern CLEAN_STR_PATTERN = Pattern.compile(" *# *([^#]+) *$");
+        private static final Pattern SPLIT_TRIMMED_PATTERN = Pattern.compile(" *: *");
+        private static final Pattern SPLIT_ELEMENTS_PATTERN = Pattern.compile(" *&& *");
+
+        public String getData(final String str) {
+            Matcher m = CLEAN_STR_PATTERN.matcher(str);
+            String trimmed = m.replaceFirst("").trim();
             try {
                 description = m.group(1);
                 if (description != null && description.length() == 0) {
@@ -677,38 +683,48 @@ public class TagChecker extends Test.TagTest {
             } catch (IllegalStateException e) {
                 description = null;
             }
-            String[] n = str.split(" *: *", 3);
-            if (n[0].equals("way")) {
+            String[] n = SPLIT_TRIMMED_PATTERN.split(trimmed, 3);
+            switch (n[0]) {
+            case "way":
                 type = OsmPrimitiveType.WAY;
-            } else if (n[0].equals("node")) {
+                break;
+            case "node":
                 type = OsmPrimitiveType.NODE;
-            } else if (n[0].equals("relation")) {
+                break;
+            case "relation":
                 type = OsmPrimitiveType.RELATION;
-            } else if (n[0].equals("*")) {
+                break;
+            case "*":
                 type = null;
-            } else
+                break;
+            default:
                 return tr("Could not find element type");
+            }
             if (n.length != 3)
                 return tr("Incorrect number of parameters");
 
-            if (n[1].equals("W")) {
+            switch (n[1]) {
+            case "W":
                 severity = Severity.WARNING;
                 code = TAG_CHECK_WARN;
-            } else if (n[1].equals("E")) {
+                break;
+            case "E":
                 severity = Severity.ERROR;
                 code = TAG_CHECK_ERROR;
-            } else if(n[1].equals("I")) {
+                break;
+            case "I":
                 severity = Severity.OTHER;
                 code = TAG_CHECK_INFO;
-            } else
+                break;
+            default:
                 return tr("Could not find warning level");
-            for (String exp: n[2].split(" *&& *")) {
+            }
+            for (String exp: SPLIT_ELEMENTS_PATTERN.split(n[2])) {
                 try {
                     data.add(new CheckerElement(exp));
                 } catch (IllegalStateException e) {
                     return tr("Illegal expression ''{0}''", exp);
-                }
-                catch (PatternSyntaxException e) {
+                } catch (PatternSyntaxException e) {
                     return tr("Illegal regular expression ''{0}''", exp);
                 }
             }

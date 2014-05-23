@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -12,12 +13,14 @@ import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.SelectCommand;
+import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Follow line action - Makes easier to draw a line that shares points with another line
@@ -83,20 +86,18 @@ public class FollowLineAction extends JosmAction {
         if (referrers.size() < 2) return; // There's nothing to follow
 
         Node newPoint = null;
-        for (OsmPrimitive referrer : referrers) {
-            if (!referrer.getType().equals(OsmPrimitiveType.WAY)) { // Can't follow points or relations
-                continue;
-            }
-            Way toFollow = (Way) referrer;
+        for (final Way toFollow : Utils.filteredCollection(referrers, Way.class)) {
             if (toFollow.equals(follower)) {
                 continue;
             }
             Set<Node> points = toFollow.getNeighbours(last);
-            if (!points.remove(prev) || points.isEmpty())
+            points.remove(prev);
+            if (points.isEmpty())     // No candidate -> consider next way
                 continue;
             if (points.size() > 1)    // Ambiguous junction?
                 return;
 
+            // points contains exactly one element
             Node newPointCandidate = points.iterator().next();
 
             if ((newPoint != null) && (newPoint != newPointCandidate))
@@ -111,10 +112,13 @@ public class FollowLineAction extends JosmAction {
             } else {
                 newFollower.addNode(newPoint);
             }
-            Main.main.undoRedo.add(new ChangeCommand(follower, newFollower));
-            osmLayer.data.clearSelection();
-            osmLayer.data.addSelected(newFollower);
-            osmLayer.data.addSelected(newPoint);
+            Main.main.undoRedo.add(new SequenceCommand(tr("Follow line"),
+                    new ChangeCommand(follower, newFollower),
+                    new SelectCommand(newFollower.isClosed() // see #10028 - unselect last node when closing a way
+                            ? Arrays.<OsmPrimitive>asList(newFollower)
+                            : Arrays.<OsmPrimitive>asList(newFollower, newPoint)
+                    ))
+            );
             // "viewport following" mode for tracing long features
             // from aerial imagery or GPS tracks.
             if (Main.map.mapView.viewportFollowing) {

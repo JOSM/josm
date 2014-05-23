@@ -18,10 +18,9 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
@@ -33,7 +32,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 3707
  */
 public class LoadAndZoomHandler extends RequestHandler {
-    
+
     /**
      * The remote control command name used to load data and zoom.
      */
@@ -51,16 +50,14 @@ public class LoadAndZoomHandler extends RequestHandler {
     private double maxlon;
 
     // Optional argument 'select'
-    private final Set<Long> ways = new HashSet<Long>();
-    private final Set<Long> nodes = new HashSet<Long>();
-    private final Set<Long> relations = new HashSet<Long>();
+    private final Set<SimplePrimitiveId> toSelect = new HashSet<>();
 
     @Override
     public String getPermissionMessage() {
         String msg = tr("Remote Control has been asked to load data from the API.") +
                 "<br>" + tr("Bounding box: ") + new BBox(minlon, minlat, maxlon, maxlat).toStringCSV(", ");
-        if (args.containsKey("select") && ways.size()+nodes.size()+relations.size() > 0) {
-            msg += "<br>" + tr("Sel.: Rel.:{0} / Ways:{1} / Nodes:{2}", relations.size(), ways.size(), nodes.size());
+        if (args.containsKey("select") && toSelect.size() > 0) {
+            msg += "<br>" + tr("Selection: {0}", toSelect.size());
         }
         return msg;
     }
@@ -84,7 +81,7 @@ public class LoadAndZoomHandler extends RequestHandler {
     public String[] getUsageExamples() {
         return getUsageExamples(myCommand);
     }
-    
+
     @Override
     public String[] getUsageExamples(String cmd) {
         if (command.equals(cmd)) {
@@ -139,7 +136,7 @@ public class LoadAndZoomHandler extends RequestHandler {
         } catch (Exception ex) {
             Main.warn("RemoteControl: Error parsing load_and_zoom remote control request:");
             Main.error(ex);
-            throw new RequestHandlerErrorException();
+            throw new RequestHandlerErrorException(ex);
         }
 
         /**
@@ -163,28 +160,17 @@ public class LoadAndZoomHandler extends RequestHandler {
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
                 @Override
                 public void run() {
-                    HashSet<OsmPrimitive> newSel = new HashSet<OsmPrimitive>();
+                    Set<OsmPrimitive> newSel = new HashSet<>();
                     DataSet ds = Main.main.getCurrentDataSet();
                     if(ds == null) // e.g. download failed
                         return;
-                    for (Way w : ds.getWays()) {
-                        if (ways.contains(w.getId())) {
-                            newSel.add(w);
+                    for (SimplePrimitiveId id : toSelect) {
+                        final OsmPrimitive p = ds.getPrimitiveById(id);
+                        if (p != null) {
+                            newSel.add(p);
                         }
                     }
-                    ways.clear();
-                    for (Node n : ds.getNodes()) {
-                        if (nodes.contains(n.getId())) {
-                            newSel.add(n);
-                        }
-                    }
-                    nodes.clear();
-                    for (Relation r : ds.getRelations()) {
-                        if (relations.contains(r.getId())) {
-                            newSel.add(r);
-                        }
-                    }
-                    relations.clear();
+                    toSelect.clear();
                     ds.setSelected(newSel);
                     if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
                         // zoom_mode=(download|selection), defaults to selection
@@ -260,7 +246,7 @@ public class LoadAndZoomHandler extends RequestHandler {
         } catch (NumberFormatException e) {
             throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+")");
         }
-        
+
         // Current API 0.6 check: "The latitudes must be between -90 and 90"
         if (!LatLon.isValidLat(minlat) || !LatLon.isValidLat(maxlat)) {
             throw new RequestHandlerBadRequestException(tr("The latitudes must be between {0} and {1}", -90d, 90d));
@@ -276,24 +262,12 @@ public class LoadAndZoomHandler extends RequestHandler {
 
         // Process optional argument 'select'
         if (args.containsKey("select")) {
-            ways.clear();
-            nodes.clear();
-            relations.clear();
+            toSelect.clear();
             for (String item : args.get("select").split(",")) {
                 try {
-                    if (item.startsWith("way")) {
-                        ways.add(Long.parseLong(item.substring(3)));
-                    } else if (item.startsWith("node")) {
-                        nodes.add(Long.parseLong(item.substring(4)));
-                    } else if (item.startsWith("relation")) {
-                        relations.add(Long.parseLong(item.substring(8)));
-                    } else if (item.startsWith("rel")) {
-                        relations.add(Long.parseLong(item.substring(3)));
-                    } else {
-                        Main.warn("RemoteControl: invalid selection '"+item+"' ignored");
-                    }
-                } catch (NumberFormatException e) {
-                    Main.warn("RemoteControl: invalid selection '"+item+"' ignored");
+                    toSelect.add(SimplePrimitiveId.fromString(item));
+                } catch (IllegalArgumentException ex) {
+                    Main.warn("RemoteControl: invalid selection '" + item + "' ignored");
                 }
             }
         }

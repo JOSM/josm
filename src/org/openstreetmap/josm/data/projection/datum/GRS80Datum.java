@@ -11,7 +11,10 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  */
 public final class GRS80Datum extends NullDatum {
 
-    public final static GRS80Datum INSTANCE = new GRS80Datum();
+    /**
+     * The unique instance.
+     */
+    public static final GRS80Datum INSTANCE = new GRS80Datum();
 
     private GRS80Datum() {
         super(tr("GRS80"), Ellipsoid.GRS80);

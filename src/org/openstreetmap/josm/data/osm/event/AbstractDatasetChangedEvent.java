@@ -21,7 +21,7 @@ public abstract class AbstractDatasetChangedEvent {
 
     /**
      * Returns list of primitives modified by this event.
-     * <br/>
+     * <br>
      * <strong>WARNING</strong> This value might be incorrect in case
      * of {@link DataChangedEvent}. It returns all primitives in the dataset
      * when this method is called (live list), not list of primitives when

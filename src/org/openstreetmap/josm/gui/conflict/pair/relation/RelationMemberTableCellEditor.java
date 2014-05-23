@@ -12,12 +12,11 @@ import javax.swing.table.TableCellEditor;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
-
 /**
  * {@link TableCellEditor} for the role column in a table for {@link RelationMember}s.
- *
+ * @since 1631
  */
-public class RelationMemberTableCellEditor extends AbstractCellEditor implements TableCellEditor{
+public class RelationMemberTableCellEditor extends AbstractCellEditor implements TableCellEditor {
 
     private final JosmTextField editor;
 
@@ -53,5 +52,4 @@ public class RelationMemberTableCellEditor extends AbstractCellEditor implements
     public Object getCellEditorValue() {
         return editor.getText();
     }
-
 }

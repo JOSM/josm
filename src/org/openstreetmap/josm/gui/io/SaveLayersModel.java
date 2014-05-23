@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public class SaveLayersModel extends DefaultTableModel {
-    static final public String MODE_PROP = SaveLayerInfo.class.getName() + ".mode";
+    public static final String MODE_PROP = SaveLayerInfo.class.getName() + ".mode";
     public enum Mode {
         EDITING_DATA,
         UPLOADING_AND_SAVING
@@ -28,6 +28,9 @@ public class SaveLayersModel extends DefaultTableModel {
     private static final int columnFilename = 0;
     private static final int columnActions = 2;
 
+    /**
+     * Constructs a new {@code SaveLayersModel}.
+     */
     public SaveLayersModel() {
         mode = Mode.EDITING_DATA;
         support = new PropertyChangeSupport(this);
@@ -56,7 +59,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public void populate(List<OsmDataLayer> layers) {
-        layerInfo = new ArrayList<SaveLayerInfo>();
+        layerInfo = new ArrayList<>();
         if (layers == null) return;
         for (OsmDataLayer layer: layers) {
             layerInfo.add(new SaveLayerInfo(layer));
@@ -111,7 +114,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersWithoutFilesAndSaveRequest() {
-        List<SaveLayerInfo> ret = new ArrayList<SaveLayerInfo>();
+        List<SaveLayerInfo> ret = new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
             if (info.isDoSaveToFile() && info.getFile() == null) {
                 ret.add(info);
@@ -121,7 +124,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersWithIllegalFilesAndSaveRequest() {
-        List<SaveLayerInfo> ret =new ArrayList<SaveLayerInfo>();
+        List<SaveLayerInfo> ret =new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
             if (info.isDoSaveToFile() && info.getFile() != null && info.getFile().exists() && !info.getFile().canWrite()) {
                 ret.add(info);
@@ -131,7 +134,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersWithConflictsAndUploadRequest() {
-        List<SaveLayerInfo> ret =new ArrayList<SaveLayerInfo>();
+        List<SaveLayerInfo> ret =new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
             if (info.isDoUploadToServer() && !info.getLayer().getConflicts().isEmpty()) {
                 ret.add(info);
@@ -141,7 +144,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersToUpload() {
-        List<SaveLayerInfo> ret =new ArrayList<SaveLayerInfo>();
+        List<SaveLayerInfo> ret =new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
             if (info.isDoUploadToServer()) {
                 ret.add(info);
@@ -151,7 +154,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersToSave() {
-        List<SaveLayerInfo> ret =new ArrayList<SaveLayerInfo>();
+        List<SaveLayerInfo> ret =new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
             if (info.isDoSaveToFile()) {
                 ret.add(info);

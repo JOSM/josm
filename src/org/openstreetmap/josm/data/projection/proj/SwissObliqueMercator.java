@@ -20,13 +20,13 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
- * Projection for the SwissGrid CH1903 / L03, see http://en.wikipedia.org/wiki/Swiss_coordinate_system.
+ * Projection for the SwissGrid CH1903 / L03, see <a href="https://en.wikipedia.org/wiki/Swiss_coordinate_system">Wikipedia article</a>.<br>
  *
- * Calculations were originally based on simple formula from
- * http://www.swisstopo.admin.ch/internet/swisstopo/en/home/topics/survey/sys/refsys/switzerland.parsysrelated1.37696.downloadList.12749.DownloadFile.tmp/ch1903wgs84en.pdf
+ * Calculations were originally based on <a href="http://www.swisstopo.admin.ch/internet/swisstopo/en/home/topics/survey/sys/refsys/switzerland.parsysrelated1.37696.downloadList.12749.DownloadFile.tmp/ch1903wgs84en.pdf">
+ * simple formula</a>.<br>
  *
- * August 2010 update to this formula (rigorous formulas)
- * http://www.swisstopo.admin.ch/internet/swisstopo/en/home/topics/survey/sys/refsys/switzerland.parsysrelated1.37696.downloadList.97912.DownloadFile.tmp/swissprojectionen.pdf
+ * August 2010 update to <a href="http://www.swisstopo.admin.ch/internet/swisstopo/en/home/topics/survey/sys/refsys/switzerland.parsysrelated1.37696.downloadList.97912.DownloadFile.tmp/swissprojectionen.pdf">
+ * this formula (rigorous formulas)</a>.
  */
 public class SwissObliqueMercator implements Proj {
 
@@ -108,5 +108,4 @@ public class SwissObliqueMercator implements Proj {
         }
         return new double[] { phi, lambda };
     }
-
 }

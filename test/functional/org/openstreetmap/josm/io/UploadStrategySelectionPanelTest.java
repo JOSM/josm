@@ -11,10 +11,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.junit.Ignore;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.io.UploadStrategySelectionPanel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
+@Ignore
 public class UploadStrategySelectionPanelTest extends JFrame {
 
     private UploadStrategySelectionPanel uploadStrategySelectionPanel;
@@ -49,7 +51,7 @@ public class UploadStrategySelectionPanelTest extends JFrame {
         );
         return pnl;
     }
-    
+
     /**
      * Constructs a new {@code UploadStrategySelectionPanelTest}.
      */

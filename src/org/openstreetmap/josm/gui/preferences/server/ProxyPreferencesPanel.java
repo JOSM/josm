@@ -71,7 +71,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
          * @param policyName The policy name
          * @return The proxy policy matching the given name, or {@code null}
          */
-        static public ProxyPolicy fromName(String policyName) {
+        public static ProxyPolicy fromName(String policyName) {
             if (policyName == null) return null;
             policyName = policyName.trim().toLowerCase();
             for(ProxyPolicy pp: values()) {
@@ -96,6 +96,8 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     public static final String PROXY_USER = "proxy.user";
     /** Property key for proxy password */
     public static final String PROXY_PASS = "proxy.pass";
+    /** Property key for proxy exceptions list */
+    public static final String PROXY_EXCEPTIONS = "proxy.exceptions";
 
     private Map<ProxyPolicy, JRadioButton> rbProxyPolicy;
     private JosmTextField tfProxyHttpHost;
@@ -113,7 +115,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      *
      * @return panel with HTTP proxy configuration
      */
-    protected JPanel buildHttpProxyConfigurationPanel() {
+    protected final JPanel buildHttpProxyConfigurationPanel() {
         JPanel pnl = new JPanel(new GridBagLayout()) {
             @Override
             public Dimension getMinimumSize() {
@@ -189,7 +191,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      *
      * @return panel with SOCKS proxy configuration
      */
-    protected JPanel buildSocksProxyConfigurationPanel() {
+    protected final JPanel buildSocksProxyConfigurationPanel() {
         JPanel pnl = new JPanel(new GridBagLayout()) {
             @Override
             public Dimension getMinimumSize() {
@@ -229,12 +231,12 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         return pnl;
     }
 
-    protected JPanel buildProxySettingsPanel() {
+    protected final JPanel buildProxySettingsPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
         ButtonGroup bgProxyPolicy = new ButtonGroup();
-        rbProxyPolicy = new HashMap<ProxyPolicy, JRadioButton>();
+        rbProxyPolicy = new HashMap<>();
         ProxyPolicyChangeListener policyChangeListener = new ProxyPolicyChangeListener();
         for (ProxyPolicy pp: ProxyPolicy.values()) {
             rbProxyPolicy.put(pp, new JRadioButton());
@@ -313,7 +315,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     /**
      * Initializes the panel with the values from the preferences
      */
-    public void initFromPreferences() {
+    public final void initFromPreferences() {
         String policy = Main.pref.get(PROXY_POLICY, null);
         ProxyPolicy pp = ProxyPolicy.fromName(policy);
         if (pp == null) {
@@ -364,7 +366,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         }
     }
 
-    protected void updateEnabledState() {
+    protected final void updateEnabledState() {
         boolean isHttpProxy = rbProxyPolicy.get(ProxyPolicy.USE_HTTP_PROXY).isSelected();
         for (Component c: pnlHttpProxyConfigurationPanel.getComponents()) {
             c.setEnabled(isHttpProxy);

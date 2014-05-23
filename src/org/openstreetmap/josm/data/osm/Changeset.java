@@ -51,14 +51,14 @@ public final class Changeset implements Tagged {
     }
 
     /**
-     * Creates a changeset with id <code>id</code>. If id > 0, sets incomplete to true.
+     * Creates a changeset with id <code>id</code>. If id &gt; 0, sets incomplete to true.
      *
      * @param id the id
      */
     public Changeset(int id) {
         this.id = id;
         this.incomplete = id > 0;
-        this.tags = new HashMap<String, String>();
+        this.tags = new HashMap<>();
     }
 
     /**
@@ -69,11 +69,11 @@ public final class Changeset implements Tagged {
     public Changeset(Changeset other) {
         if (other == null) {
             this.id = 0;
-            this.tags = new HashMap<String, String>();
+            this.tags = new HashMap<>();
         } else if (other.isIncomplete()) {
             setId(other.getId());
             this.incomplete = true;
-            this.tags = new HashMap<String, String>();
+            this.tags = new HashMap<>();
         } else {
             this.id = other.id;
             mergeFrom(other);
@@ -285,7 +285,7 @@ public final class Changeset implements Tagged {
         this.open  = other.open;
         this.min = other.min;
         this.max = other.max;
-        this.tags = new HashMap<String, String>(other.tags);
+        this.tags = new HashMap<>(other.tags);
         this.incomplete = other.incomplete;
 
         // FIXME: merging of content required?

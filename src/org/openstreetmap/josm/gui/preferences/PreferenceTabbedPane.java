@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.preferences.server.ServerAccessPreference;
 import org.openstreetmap.josm.gui.preferences.shortcut.ShortcutPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTestsPreference;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -140,14 +141,14 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     // all created tabs
-    private final List<PreferenceTab> tabs = new ArrayList<PreferenceTab>();
-    private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
-    private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
+    private final List<PreferenceTab> tabs = new ArrayList<>();
+    private static final Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<>();
+    private final List<PreferenceSetting> settings = new ArrayList<>();
 
     // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)
-    private final List<PreferenceSetting> settingsInitialized = new ArrayList<PreferenceSetting>();
+    private final List<PreferenceSetting> settingsInitialized = new ArrayList<>();
 
-    List<ValidationListener> validationListeners = new ArrayList<ValidationListener>();
+    List<ValidationListener> validationListeners = new ArrayList<>();
 
     /**
      * Add validation listener to currently open preferences dialog. Calling to removeValidationListener is not necessary, all listeners will
@@ -298,8 +299,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
      * Saves preferences.
      */
     public void savePreferences() {
-        if(Main.applet)
-            return;
         // create a task for downloading plugins if the user has activated, yet not downloaded,
         // new plugins
         //
@@ -505,14 +504,13 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         settingsFactory.add(new MapPaintPreference.Factory());
         settingsFactory.add(new TaggingPresetPreference.Factory());
         settingsFactory.add(new BackupPreference.Factory());
-        if(!Main.applet) {
-            settingsFactory.add(new PluginPreference.Factory());
-        }
+        settingsFactory.add(new PluginPreference.Factory());
         settingsFactory.add(Main.toolbar);
         settingsFactory.add(new AudioPreference.Factory());
         settingsFactory.add(new ShortcutPreference.Factory());
         settingsFactory.add(new ValidatorPreference.Factory());
         settingsFactory.add(new ValidatorTestsPreference.Factory());
+        settingsFactory.add(new ValidatorTagCheckerRulesPreference.Factory());
         settingsFactory.add(new RemoteControlPreference.Factory());
         settingsFactory.add(new ImageryPreference.Factory());
 
@@ -563,7 +561,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                                     sps.addGui(this);
                                 } catch (SecurityException ex) {
                                     Main.error(ex);
-                                } catch (Throwable ex) {
+                                } catch (Exception ex) {
                                     BugReportExceptionHandler.handleException(ex);
                                 } finally {
                                     settingsInitialized.add(sps);
@@ -577,7 +575,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                     setSelectedIndex(index);
                 } catch (SecurityException ex) {
                     Main.error(ex);
-                } catch (Throwable ex) {
+                } catch (Exception ex) {
                     // allow to change most settings even if e.g. a plugin fails
                     BugReportExceptionHandler.handleException(ex);
                 } finally {

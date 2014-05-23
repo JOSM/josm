@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
@@ -27,21 +30,39 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class LayerListPopup extends JPopupMenu {
 
-    public final static class InfoAction extends AbstractAction {
+    public static final class InfoAction extends AbstractAction {
         private final Layer layer;
+        
+        /**
+         * Constructs a new {@code InfoAction} for the given layer.
+         * @param layer The layer
+         */
         public InfoAction(Layer layer) {
             super(tr("Info"), ImageProvider.get("info"));
             putValue("help", ht("/Action/LayerInfo"));
             this.layer = layer;
         }
+        
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    layer.getInfoComponent(),
-                    tr("Information about layer"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            Object object = layer.getInfoComponent();
+            if (object instanceof Component) {
+                ExtendedDialog ed = new ExtendedDialog(
+                        Main.parent, tr("Information about layer"),
+                        new String[] {tr("OK")});
+                ed.setButtonIcons(new String[] {"ok"});
+                ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
+                ed.setContent((Component) object);
+                ed.setResizable(layer.isInfoResizable());
+                ed.setMinimumSize(new Dimension(270, 170));
+                ed.showDialog();
+            } else {
+                JOptionPane.showMessageDialog(
+                        Main.parent, object,
+                        tr("Information about layer"),
+                        JOptionPane.INFORMATION_MESSAGE
+                        );
+            }
         }
     }
 
@@ -52,7 +73,7 @@ public class LayerListPopup extends JPopupMenu {
             actions = Arrays.asList(selectedLayers.get(0).getMenuEntries());
         } else {
             // Very simple algorithm - first selected layer has actions order as in getMenuEntries, actions from other layers go to the end
-            actions = new ArrayList<Action>();
+            actions = new ArrayList<>();
             boolean separatorAdded = true;
             for (Action a: selectedLayers.get(0).getMenuEntries()) {
                 if (!separatorAdded && a instanceof SeparatorLayerAction) {

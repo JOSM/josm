@@ -33,7 +33,7 @@ public class ElemStyles {
      * Constructs a new {@code ElemStyles}.
      */
     public ElemStyles() {
-        styleSources = new ArrayList<StyleSource>();
+        styleSources = new ArrayList<>();
     }
 
     public void clearCached() {
@@ -117,10 +117,8 @@ public class ElemStyles {
         try {
             osm.mappaintStyle = style.put(p.a, p.b);
         } catch (StyleCache.RangeViolatedError e) {
-            AssertionError error = new AssertionError("Range violated. object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
-                    + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b);
-            error.initCause(e);
-            throw error;
+            throw new AssertionError("Range violated. object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
+                    + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b, e);
         }
         osm.mappaintCacheIdx = cacheIdx;
         return p;
@@ -175,7 +173,7 @@ public class ElemStyles {
                 if (multipolygon.getOuterWays().contains(osm)) {
                     boolean hasIndependentLineStyle = false;
                     if (!isOuterWayOfSomeMP) { // do this only one time
-                        List<ElemStyle> tmp = new ArrayList<ElemStyle>(p.a.size());
+                        List<ElemStyle> tmp = new ArrayList<>(p.a.size());
                         for (ElemStyle s : p.a) {
                             if (s instanceof AreaElemStyle) {
                                 wayColor = ((AreaElemStyle) s).color;
@@ -191,7 +189,10 @@ public class ElemStyles {
                     }
 
                     if (!hasIndependentLineStyle) {
-                        Pair<StyleList, Range> mpElemStyles = getStyleCacheWithRange(r, scale, nc);
+                        Pair<StyleList, Range> mpElemStyles;
+                        synchronized(r) {
+                            mpElemStyles = getStyleCacheWithRange(r, scale, nc);
+                        }
                         ElemStyle mpLine = null;
                         for (ElemStyle s : mpElemStyles.a) {
                             if (s.isProperLineStyle()) {
@@ -248,8 +249,11 @@ public class ElemStyles {
                         }
                     }
                     if (!hasIndependentElemStyle && !multipolygon.getOuterWays().isEmpty()) {
-                        StyleList mpElemStyles = get(ref, scale, nc);
                         Color mpColor = null;
+                        StyleList mpElemStyles = null;
+                        synchronized (ref) {
+                            mpElemStyles = get(ref, scale, nc);
+                        }
                         for (ElemStyle mpS : mpElemStyles) {
                             if (mpS instanceof AreaElemStyle) {
                                 mpColor = ((AreaElemStyle) mpS).color;
@@ -293,7 +297,7 @@ public class ElemStyles {
      * From these properties, it generates the different types of styles.
      *
      * @param osm the primitive to create styles for
-     * @param scale the scale (in meters per 100 px), must be > 0
+     * @param scale the scale (in meters per 100 px), must be &gt; 0
      * @param multipolyOuterWay support for a very old multipolygon tagging style
      * where you add the tags both to the outer and the inner way.
      * However, independent inner way style is also possible.
@@ -304,7 +308,7 @@ public class ElemStyles {
      */
     public Pair<StyleList, Range> generateStyles(OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
 
-        List<ElemStyle> sl = new ArrayList<ElemStyle>();
+        List<ElemStyle> sl = new ArrayList<>();
         MultiCascade mc = new MultiCascade();
         Environment env = new Environment(osm, mc, null, null);
 
@@ -322,7 +326,6 @@ public class ElemStyles {
             Cascade c = e.getValue();
             if (osm instanceof Way) {
                 addIfNotNull(sl, AreaElemStyle.create(c));
-                addIfNotNull(sl, LinePatternElemStyle.create(env));
                 addIfNotNull(sl, RepeatImageElemStyle.create(env));
                 addIfNotNull(sl, LineElemStyle.createLine(env));
                 addIfNotNull(sl, LineElemStyle.createLeftCasing(env));
@@ -340,7 +343,6 @@ public class ElemStyles {
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {
                     addIfNotNull(sl, AreaElemStyle.create(c));
-                    addIfNotNull(sl, LinePatternElemStyle.create(env));
                     addIfNotNull(sl, RepeatImageElemStyle.create(env));
                     addIfNotNull(sl, LineElemStyle.createLine(env));
                     addIfNotNull(sl, LineElemStyle.createCasing(env));
@@ -350,7 +352,7 @@ public class ElemStyles {
                 }
             }
         }
-        return new Pair<StyleList, Range>(new StyleList(sl), mc.range);
+        return new Pair<>(new StyleList(sl), mc.range);
     }
 
     private static <T> void addIfNotNull(List<T> list, T obj) {
@@ -391,8 +393,7 @@ public class ElemStyles {
                 s.apply(mc, r, 1, null, false);
             }
         }
-        T res = mc.getCascade("default").get(key, def, c);
-        return res;
+        return mc.getCascade("default").get(key, def, c);
     }
 
     public boolean isDrawMultipolygon() {

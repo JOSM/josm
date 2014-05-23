@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     private boolean canceled;
     private Exception lastException;
-    private final Set<Relation> parents = new HashSet<Relation>();
+    private final Set<Relation> parents = new HashSet<>();
     private Collection<OsmPrimitive> children;
     private OsmDataLayer curLayer;
     private MultiFetchServerObjectReader objectReader;

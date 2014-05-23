@@ -73,8 +73,8 @@ import org.openstreetmap.josm.tools.OpenBrowser;
 public class ChangesetDialog extends ToggleDialog{
     private ChangesetInSelectionListModel inSelectionModel;
     private ChangesetsInActiveDataLayerListModel inActiveDataLayerModel;
-    private JList lstInSelection;
-    private JList lstInActiveDataLayer;
+    private JList<Changeset> lstInSelection;
+    private JList<Changeset> lstInActiveDataLayer;
     private JCheckBox cbInSelectionOnly;
     private JPanel pnlList;
 
@@ -91,14 +91,14 @@ public class ChangesetDialog extends ToggleDialog{
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         inSelectionModel = new ChangesetInSelectionListModel(selectionModel);
 
-        lstInSelection = new JList(inSelectionModel);
+        lstInSelection = new JList<>(inSelectionModel);
         lstInSelection.setSelectionModel(selectionModel);
         lstInSelection.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstInSelection.setCellRenderer(new ChangesetListCellRenderer());
 
         selectionModel = new DefaultListSelectionModel();
         inActiveDataLayerModel = new ChangesetsInActiveDataLayerListModel(selectionModel);
-        lstInActiveDataLayer = new JList(inActiveDataLayerModel);
+        lstInActiveDataLayer = new JList<>(inActiveDataLayerModel);
         lstInActiveDataLayer.setSelectionModel(selectionModel);
         lstInActiveDataLayer.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstInActiveDataLayer.setCellRenderer(new ChangesetListCellRenderer());
@@ -109,8 +109,7 @@ public class ChangesetDialog extends ToggleDialog{
     }
 
     protected void registerAsListener() {
-        // let the model for changesets in the current selection listen to various
-        // events
+        // let the model for changesets in the current selection listen to various events
         ChangesetCache.getInstance().addChangesetCacheListener(inSelectionModel);
         MapView.addEditLayerChangeListener(inSelectionModel);
         DataSet.addSelectionListener(inSelectionModel);
@@ -221,7 +220,7 @@ public class ChangesetDialog extends ToggleDialog{
         }));
     }
 
-    protected JList getCurrentChangesetList() {
+    protected JList<Changeset> getCurrentChangesetList() {
         if (cbInSelectionOnly.isSelected())
             return lstInSelection;
         return lstInActiveDataLayer;
@@ -302,7 +301,7 @@ public class ChangesetDialog extends ToggleDialog{
         public void selectObjectsByChangesetIds(DataSet ds, Set<Integer> ids) {
             if (ds == null || ids == null)
                 return;
-            Set<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> sel = new HashSet<>();
             for (OsmPrimitive p: ds.allPrimitives()) {
                 if (ids.contains(p.getChangesetId())) {
                     sel.add(p);
@@ -485,7 +484,7 @@ public class ChangesetDialog extends ToggleDialog{
         public void actionPerformed(ActionEvent arg0) {
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();
-            final Set<Integer> toDownload = new HashSet<Integer>();
+            final Set<Integer> toDownload = new HashSet<>();
             ChangesetCache cc = ChangesetCache.getInstance();
             for (int id: sel) {
                 if (!cc.contains(id)) {
@@ -545,7 +544,7 @@ public class ChangesetDialog extends ToggleDialog{
     }
 
     class ChangesetDialogPopup extends ListPopupMenu {
-        public ChangesetDialogPopup(JList ... lists) {
+        public ChangesetDialogPopup(JList<?> ... lists) {
             super(lists);
             add(selectObjectsAction);
             addSeparator();

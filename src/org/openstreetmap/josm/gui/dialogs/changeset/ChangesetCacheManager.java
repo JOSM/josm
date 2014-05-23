@@ -625,7 +625,7 @@ public class ChangesetCacheManager extends JFrame {
             setSelectedChangesets(null);
             return;
         }
-        Set<Changeset> toSelect = new HashSet<Changeset>();
+        Set<Changeset> toSelect = new HashSet<>();
         ChangesetCache cc = ChangesetCache.getInstance();
         for (int id: ids) {
             if (cc.contains(id)) {

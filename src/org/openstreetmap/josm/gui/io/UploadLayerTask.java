@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * <pre>
  *     ExecutorService executorService = ...
  *     UploadLayerTask task = new UploadLayerTask(layer, monitor);
- *     Future<?> taskFuture = executorServce.submit(task)
+ *     Future&lt;?&gt; taskFuture = executorServce.submit(task)
  *     try {
  *        // wait for the task to complete
  *        taskFuture.get();
@@ -68,7 +68,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         this.monitor = monitor;
         this.changeset = changeset;
         this.strategy = strategy;
-        processedPrimitives = new HashSet<IPrimitive>();
+        processedPrimitives = new HashSet<>();
     }
 
     protected OsmPrimitive getPrimitive(OsmPrimitiveType type, long id) {

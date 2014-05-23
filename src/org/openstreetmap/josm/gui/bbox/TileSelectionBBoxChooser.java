@@ -41,7 +41,6 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
@@ -96,7 +95,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     /**
      * builds the UI
      */
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gc = new GridBagConstraints();
@@ -157,7 +156,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
         MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
 
-        List<MapMarker> marker = new ArrayList<MapMarker>(2);
+        List<MapMarker> marker = new ArrayList<>(2);
         marker.add(xmin_ymin);
         marker.add(xmax_ymax);
         mapViewer.setBoundingBox(bbox);
@@ -217,8 +216,8 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * when the user successfully enters a valid tile grid specification.
      *
      */
-    static private class TileGridInputPanel extends JPanel implements PropertyChangeListener{
-        static public final String TILE_BOUNDS_PROP = TileGridInputPanel.class.getName() + ".tileBounds";
+    private static class TileGridInputPanel extends JPanel implements PropertyChangeListener{
+        public static final String TILE_BOUNDS_PROP = TileGridInputPanel.class.getName() + ".tileBounds";
 
         private JosmTextField tfMaxY;
         private JosmTextField tfMinY;
@@ -328,7 +327,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
             add(buildTextPanel(), BorderLayout.NORTH);
             add(buildTileGridInputPanel(), BorderLayout.CENTER);
 
-            Set<AWTKeyStroke> forwardKeys = new HashSet<AWTKeyStroke>(getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
+            Set<AWTKeyStroke> forwardKeys = new HashSet<>(getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
             forwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
             setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,forwardKeys);
         }
@@ -437,9 +436,9 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * A panel for entering the address of a single OSM tile at a given zoom level.
      *
      */
-    static private class TileAddressInputPanel extends JPanel {
+    private static class TileAddressInputPanel extends JPanel {
 
-        static public final String TILE_BOUNDS_PROP = TileAddressInputPanel.class.getName() + ".tileBounds";
+        public static final String TILE_BOUNDS_PROP = TileAddressInputPanel.class.getName() + ".tileBounds";
 
         private JosmTextField tfTileAddress;
         private TileAddressValidator valTileAddress;
@@ -526,7 +525,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     /**
      * Validates a tile address
      */
-    static private class TileAddressValidator extends AbstractTextComponentValidator {
+    private static class TileAddressValidator extends AbstractTextComponentValidator {
 
         private TileBounds tileBounds = null;
 
@@ -585,7 +584,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * Validates the x- or y-coordinate of a tile at a given zoom level.
      *
      */
-    static private class TileCoordinateValidator extends AbstractTextComponentValidator {
+    private static class TileCoordinateValidator extends AbstractTextComponentValidator {
         private int zoomLevel;
         private int tileIndex;
 
@@ -633,7 +632,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * Represents a rectangular area of tiles at a given zoom level.
      *
      */
-    static private class TileBounds {
+    private static class TileBounds {
         public Point min;
         public Point max;
         public int zoomLevel;
@@ -652,7 +651,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
         @Override
         public String toString() {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("min=").append(min.x).append(",").append(min.y).append(",");
             sb.append("max=").append(max.x).append(",").append(max.y).append(",");
             sb.append("zoom=").append(zoomLevel);
@@ -663,7 +662,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
     /**
      * The map view used in this bounding box chooser
      */
-    static private class TileBoundsMapView extends JMapViewer {
+    private static class TileBoundsMapView extends JMapViewer {
         private Point min;
         private Point max;
 
@@ -680,10 +679,10 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
                 min = null;
                 max = null;
             } else {
-                int y1 = OsmMercator.LatToY(bbox.getMinLat(), MAX_ZOOM);
-                int y2 = OsmMercator.LatToY(bbox.getMaxLat(), MAX_ZOOM);
-                int x1 = OsmMercator.LonToX(bbox.getMinLon(), MAX_ZOOM);
-                int x2 = OsmMercator.LonToX(bbox.getMaxLon(), MAX_ZOOM);
+                int y1 = tileSource.LatToY(bbox.getMinLat(), MAX_ZOOM);
+                int y2 = tileSource.LatToY(bbox.getMaxLat(), MAX_ZOOM);
+                int x1 = tileSource.LonToX(bbox.getMinLon(), MAX_ZOOM);
+                int x2 = tileSource.LonToX(bbox.getMaxLon(), MAX_ZOOM);
 
                 min = new Point(Math.min(x1, x2), Math.min(y1, y2));
                 max = new Point(Math.max(x1, x2), Math.max(y1, y2));

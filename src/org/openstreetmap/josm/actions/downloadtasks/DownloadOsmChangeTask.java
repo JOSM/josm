@@ -43,7 +43,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
 
     @Override
     public String[] getPatterns() {
-        return new String[]{"http://.*/api/0.6/changeset/\\p{Digit}+/download", // OSM API 0.6 changesets
+        return new String[]{"https?://.*/api/0.6/changeset/\\p{Digit}+/download", // OSM API 0.6 changesets
             "https?://.*/.*\\.osc" // Remote .osc files
         };
     }
@@ -52,7 +52,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
     public String getTitle() {
         return tr("Download OSM Change");
     }
-        
+
     /* (non-Javadoc)
      * @see org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask#download(boolean, org.openstreetmap.josm.data.Bounds, org.openstreetmap.josm.gui.progress.ProgressMonitor)
      */
@@ -102,7 +102,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
             try {
                 // A changeset does not contain all referred primitives, this is the map of incomplete ones
                 // For each incomplete primitive, we'll have to get its state at date it was referred
-                Map<OsmPrimitive, Date> toLoad = new HashMap<OsmPrimitive, Date>();
+                Map<OsmPrimitive, Date> toLoad = new HashMap<>();
                 for (OsmPrimitive p : downloadedData.allNonDeletedPrimitives()) {
                     if (p.isIncomplete()) {
                         Date timestamp = null;
@@ -124,7 +124,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
             }
         }
     }
-    
+
     /**
      * Loads history and updates incomplete primitives.
      */
@@ -141,7 +141,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
 
         @Override
         public void historyUpdated(HistoryDataSet source, PrimitiveId id) {
-            Map<OsmPrimitive, Date> toLoadNext = new HashMap<OsmPrimitive, Date>();
+            Map<OsmPrimitive, Date> toLoadNext = new HashMap<>();
             for (Iterator<OsmPrimitive> it = toLoad.keySet().iterator(); it.hasNext();) {
                 OsmPrimitive p = it.next();
                 History history = source.getHistory(p.getPrimitiveId());

@@ -7,8 +7,8 @@ import java.util.HashSet;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
 
@@ -16,16 +16,19 @@ public class OsmPrimitiveTest {
 
     @BeforeClass
     public static void init() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     private void compareReferrers(OsmPrimitive actual, OsmPrimitive... expected) {
-        Assert.assertEquals(new HashSet<OsmPrimitive>(Arrays.asList(expected)),
-                new HashSet<OsmPrimitive>(actual.getReferrers()));
+        Assert.assertEquals(new HashSet<>(Arrays.asList(expected)),
+                new HashSet<>(actual.getReferrers()));
     }
 
     private DataSet dataSet = new DataSet();
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void setUp() {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator

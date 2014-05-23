@@ -27,14 +27,12 @@ public abstract class AbstractMergeAction extends JosmAction {
      * the list cell renderer used to render layer list entries
      *
      */
-    static public class LayerListCellRenderer extends DefaultListCellRenderer {
+    public static class LayerListCellRenderer extends DefaultListCellRenderer {
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Layer layer = (Layer) value;
-            JLabel label = (JLabel) super.getListCellRendererComponent(list, layer.getName(), index, isSelected,
-                    cellHasFocus);
+            JLabel label = (JLabel) super.getListCellRendererComponent(list, layer.getName(), index, isSelected, cellHasFocus);
             Icon icon = layer.getIcon();
             label.setIcon(icon);
             label.setToolTipText(layer.getToolTipText());
@@ -42,6 +40,9 @@ public abstract class AbstractMergeAction extends JosmAction {
         }
     }
 
+    /**
+     * Constructs a new {@code AbstractMergeAction}.
+     */
     public AbstractMergeAction() {
         super();
     }
@@ -56,7 +57,7 @@ public abstract class AbstractMergeAction extends JosmAction {
     }
 
     protected Layer askTargetLayer(List<Layer> targetLayers) {
-        JosmComboBox layerList = new JosmComboBox(targetLayers.toArray());
+        JosmComboBox<Layer> layerList = new JosmComboBox<>(targetLayers.toArray(new Layer[0]));
         layerList.setRenderer(new LayerListCellRenderer());
         layerList.setSelectedIndex(0);
 
@@ -73,8 +74,7 @@ public abstract class AbstractMergeAction extends JosmAction {
         if (ed.getValue() != 1)
             return null;
 
-        Layer targetLayer = (Layer) layerList.getSelectedItem();
-        return targetLayer;
+        return (Layer) layerList.getSelectedItem();
     }
 
     protected void warnNoTargetLayersForSourceLayer(Layer sourceLayer) {

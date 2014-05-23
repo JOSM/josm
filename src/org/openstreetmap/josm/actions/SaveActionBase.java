@@ -67,16 +67,20 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
         try {
             boolean exported = false;
+            boolean canceled = false;
             for (FileExporter exporter : ExtensionFileFilter.exporters) {
                 if (exporter.acceptFile(file, layer)) {
                     exporter.exportData(file, layer);
                     exported = true;
+                    canceled = exporter.isCanceled();
                     break;
                 }
             }
             if (!exported) {
                 JOptionPane.showMessageDialog(Main.parent, tr("No Exporter found! Nothing saved."), tr("Warning"),
                         JOptionPane.WARNING_MESSAGE);
+                return false;
+            } else if (canceled) {
                 return false;
             }
             layer.setName(file.getName());
@@ -100,10 +104,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     @Override
     protected void updateEnabledState() {
-        if (Main.applet) {
-            setEnabled(false);
-            return;
-        }
         boolean check = Main.isDisplayingMapView()
         && Main.map.mapView.getActiveLayer() != null;
         if(!check) {
@@ -115,7 +115,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     /**
-     * Creates a new "Save" dialog for a single {@link ExtensionFileFilter} and makes it visible.<br/>
+     * Creates a new "Save" dialog for a single {@link ExtensionFileFilter} and makes it visible.<br>
      * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
      *
      * @param title The dialog title
@@ -130,7 +130,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     /**
-     * Creates a new "Save" dialog for a given file extension and makes it visible.<br/>
+     * Creates a new "Save" dialog for a given file extension and makes it visible.<br>
      * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
      *
      * @param title The dialog title
@@ -195,7 +195,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
         int maxsize = Math.max(0, Main.pref.getInteger("file-open.history.max-size", 15));
         Collection<String> oldHistory = Main.pref.getCollection("file-open.history");
-        List<String> history = new LinkedList<String>(oldHistory);
+        List<String> history = new LinkedList<>(oldHistory);
         history.remove(filepath);
         history.add(0, filepath);
         Main.pref.putCollectionBounded("file-open.history", maxsize, history);

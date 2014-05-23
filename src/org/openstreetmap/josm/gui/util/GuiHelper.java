@@ -38,11 +38,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * basic gui utils
  */
 public final class GuiHelper {
-    
+
     private GuiHelper() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * disable / enable a component and all its child components
      */
@@ -81,17 +81,14 @@ public final class GuiHelper {
         } else {
             try {
                 SwingUtilities.invokeAndWait(task);
-            } catch (InterruptedException e) {
-                Main.error(e);
-            } catch (InvocationTargetException e) {
+            } catch (InterruptedException | InvocationTargetException e) {
                 Main.error(e);
             }
         }
     }
 
     /**
-     * returns true if the user wants to cancel, false if they
-     * want to continue
+     * @return true if the user wants to cancel, false if they want to continue
      */
     public static final boolean warnUser(String title, String content, ImageIcon baseActionIcon, String continueToolTip) {
         ExtendedDialog dlg = new ExtendedDialog(Main.parent,
@@ -179,7 +176,7 @@ public final class GuiHelper {
 
     /**
      * Return s new BasicStroke object with given thickness and style
-     * @param code = 3.5 -> thickness=3.5px; 3.5 10 5 -> thickness=3.5px, dashed: 10px filled + 5px empty
+     * @param code = 3.5 -&gt; thickness=3.5px; 3.5 10 5 -&gt; thickness=3.5px, dashed: 10px filled + 5px empty
      * @return stroke for drawing
      */
     public static Stroke getCustomizedStroke(String code) {
@@ -234,7 +231,7 @@ public final class GuiHelper {
     public static Font getTitleFont() {
         List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         // Helvetica is the preferred choice but is not available by default on Windows
-        // (http://www.microsoft.com/typography/fonts/product.aspx?pid=161)
+        // (https://www.microsoft.com/typography/fonts/product.aspx?pid=161)
         if (fonts.contains("Helvetica")) {
             return new Font("Helvetica", Font.BOLD, 20);
         // Calibri is the default Windows font since Windows Vista but is not available on older versions of Windows, where Arial is preferred

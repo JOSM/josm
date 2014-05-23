@@ -30,7 +30,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
 
     /**
      * Closes all changesets in <code>changesets</code> if they are not null, if they
-     * are still open and if they have an id > 0. Other changesets in the collection
+     * are still open and if they have an id &gt; 0. Other changesets in the collection
      * are ignored.
      *
      * @param changesets  the collection of changesets. Empty collection assumes, if null.
@@ -38,10 +38,10 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
     public CloseChangesetTask(Collection<Changeset> changesets) {
         super(tr("Closing changeset"), false /* don't ignore exceptions */);
         if (changesets == null) {
-            changesets = new ArrayList<Changeset>();
+            changesets = new ArrayList<>();
         }
         this.changesets = changesets;
-        this.closedChangesets = new ArrayList<Changeset>();
+        this.closedChangesets = new ArrayList<>();
     }
 
     @Override

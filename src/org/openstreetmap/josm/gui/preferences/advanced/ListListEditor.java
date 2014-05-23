@@ -32,26 +32,33 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Editor for List of Lists preference entries.
+ */
 public class ListListEditor extends ExtendedDialog {
 
     EntryListModel entryModel;
     List<List<String>> data;
     PrefEntry entry;
 
-    JList entryList;
+    JList<String> entryList;
     Integer entryIdx;
     JTable table;
 
     ListTableModel tableModel;
 
+    /**
+     * Constructs a new {@code ListListEditor}.
+     * @param gui The parent component
+     */
     public ListListEditor(final JComponent gui, PrefEntry entry, ListListSetting setting) {
         super(gui, tr("Change list of lists setting"), new String[] {tr("OK"), tr("Cancel")});
         this.entry = entry;
         List<List<String>> orig = setting.getValue();
-        data = new ArrayList<List<String>>();
+        data = new ArrayList<>();
         if (orig != null) {
             for (List<String> l : orig) {
-                data.add(new ArrayList<String>(l));
+                data.add(new ArrayList<>(l));
             }
         }
         setButtonIcons(new String[] {"ok.png", "cancel.png"});
@@ -59,18 +66,22 @@ public class ListListEditor extends ExtendedDialog {
         setContent(build(), false);
     }
 
+    /**
+     * Returns the data.
+     * @return the preference data
+     */
     public List<List<String>> getData() {
         return data;
     }
 
-    protected JPanel build() {
+    protected final JPanel build() {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.std(0,0).span(2).weight(1, 0).insets(0,0,5,10));
 
         JPanel left = new JPanel(new GridBagLayout());
 
         entryModel = new EntryListModel();
-        entryList = new JList(entryModel);
+        entryList = new JList<>(entryModel);
         entryList.getSelectionModel().addListSelectionListener(new EntryListener());
         JScrollPane scroll = new JScrollPane(entryList);
         left.add(scroll, GBC.eol().fill());
@@ -103,9 +114,9 @@ public class ListListEditor extends ExtendedDialog {
         return p;
     }
 
-    class EntryListModel extends AbstractListModel {
+    class EntryListModel extends AbstractListModel<String> {
         @Override
-        public Object getElementAt(int index) {
+        public String getElementAt(int index) {
             return (index+1) + ": " + data.get(index).toString();
         }
 
@@ -146,7 +157,7 @@ public class ListListEditor extends ExtendedDialog {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(entryList.getSelectedIndices().length == 1);
         }
 
@@ -219,5 +230,4 @@ public class ListListEditor extends ExtendedDialog {
             return true;
         }
     }
-
 }

@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  *
  * Provides max/min lat/lon input fields as well as the "URL from www.openstreetmap.org" text field.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  *
  */
 public class BoundingBoxSelection implements DownloadSelection {

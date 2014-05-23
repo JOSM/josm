@@ -49,7 +49,7 @@ public enum UploadStrategy {
     /**
      * the default upload strategy
      */
-    public final static UploadStrategy DEFAULT_UPLOAD_STRATEGY = SINGLE_REQUEST_STRATEGY;
+    public static final UploadStrategy DEFAULT_UPLOAD_STRATEGY = SINGLE_REQUEST_STRATEGY;
 
     /**
      * Replies the upload strategy currently configured in the preferences.
@@ -76,9 +76,9 @@ public enum UploadStrategy {
                 v = "";
             }
             v = v.trim().toLowerCase();
-            if (v.equals("true"))
+            if ("true".equals(v))
                 return SINGLE_REQUEST_STRATEGY;
-            else if (v.equals("false"))
+            else if ("false".equals(v))
                 return INDIVIDUAL_OBJECTS_STRATEGY;
             else
                 return DEFAULT_UPLOAD_STRATEGY;

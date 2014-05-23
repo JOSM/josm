@@ -29,14 +29,14 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
             throw new IllegalDataException(tr("Version ''{0}'' of meta data for geoimage layer is not supported. Expected: 0.1", version));
         }
 
-        List<ImageEntry> entries = new ArrayList<ImageEntry>();
+        List<ImageEntry> entries = new ArrayList<>();
         NodeList imgNodes = elem.getChildNodes();
         boolean useThumbs = false;
         for (int i=0; i<imgNodes.getLength(); ++i) {
             Node imgNode = imgNodes.item(i);
             if (imgNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element imgElem = (Element) imgNode;
-                if (imgElem.getTagName().equals("geoimage")) {
+                if ("geoimage".equals(imgElem.getTagName())) {
                     ImageEntry entry = new ImageEntry();
                     NodeList attrNodes = imgElem.getChildNodes();
                     for (int j=0; j<attrNodes.getLength(); ++j) {
@@ -44,32 +44,45 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                         if (attrNode.getNodeType() == Node.ELEMENT_NODE) {
                             Element attrElem = (Element) attrNode;
                             try {
-                                if (attrElem.getTagName().equals("file")) {
+                                switch(attrElem.getTagName()) {
+                                case "file":
                                     entry.setFile(new File(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("position")) {
+                                    break;
+                                case "position":
                                     double lat = Double.parseDouble(attrElem.getAttribute("lat"));
                                     double lon = Double.parseDouble(attrElem.getAttribute("lon"));
                                     entry.setPos(new LatLon(lat, lon));
-                                } else if (attrElem.getTagName().equals("speed")) {
+                                    break;
+                                case "speed":
                                     entry.setSpeed(Double.parseDouble(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("elevation")) {
+                                    break;
+                                case "elevation":
                                     entry.setElevation(Double.parseDouble(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("gps-time")) {
+                                    break;
+                                case "gps-time":
                                     entry.setGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if (attrElem.getTagName().equals("exif-orientation")) {
+                                    break;
+                                case "exif-orientation":
                                     entry.setExifOrientation(Integer.parseInt(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("exif-time")) {
+                                    break;
+                                case "exif-time":
                                     entry.setExifTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if (attrElem.getTagName().equals("exif-gps-time")) {
+                                    break;
+                                case "exif-gps-time":
                                     entry.setExifGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                } else if (attrElem.getTagName().equals("exif-coordinates")) {
-                                    double lat = Double.parseDouble(attrElem.getAttribute("lat"));
-                                    double lon = Double.parseDouble(attrElem.getAttribute("lon"));
-                                    entry.setExifCoor(new LatLon(lat, lon));
-                                } else if (attrElem.getTagName().equals("exif-image-direction")) {
+                                    break;
+                                case "exif-coordinates":
+                                    entry.setExifCoor(new LatLon(
+                                            Double.parseDouble(attrElem.getAttribute("lat")), 
+                                            Double.parseDouble(attrElem.getAttribute("lon"))));
+                                    break;
+                                case "exif-image-direction":
                                     entry.setExifImgDir(Double.parseDouble(attrElem.getTextContent()));
-                                } else if (attrElem.getTagName().equals("is-new-gps-data") && Boolean.parseBoolean(attrElem.getTextContent())) {
-                                    entry.flagNewGpsData();
+                                    break;
+                                case "is-new-gps-data":
+                                    if (Boolean.parseBoolean(attrElem.getTextContent())) {
+                                        entry.flagNewGpsData();
+                                    }
                                 }
                                 // TODO: handle thumbnail loading
                             } catch (NumberFormatException e) {
@@ -78,7 +91,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                         }
                     }
                     entries.add(entry);
-                } else if (imgElem.getTagName().equals("show-thumbnails")) {
+                } else if ("show-thumbnails".equals(imgElem.getTagName())) {
                     useThumbs = Boolean.parseBoolean(imgElem.getTextContent());
                 }
             }

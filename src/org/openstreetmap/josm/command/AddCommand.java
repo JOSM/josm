@@ -16,8 +16,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * A command that adds an osm primitive to a dataset. Keys cannot be added this
- * way.
+ * A command that adds an osm primitive to a dataset. Keys cannot be added this way.
  *
  * See {@link ChangeCommand} for comments on relation back references.
  *
@@ -31,32 +30,37 @@ public class AddCommand extends Command {
     private final OsmPrimitive osm;
 
     /**
-     * Create the command and specify the element to add.
+     * Creates the command and specify the element to add in the context of the current edit layer, if any.
+     * @param osm The primitive to add
      */
     public AddCommand(OsmPrimitive osm) {
-        super();
         this.osm = osm;
     }
 
     /**
-     * Create the command and specify the element to add.
+     * Creates the command and specify the element to add in the context of the given data layer.
+     * @param layer The data layer. Must not be {@code null}
+     * @param osm The primitive to add
      */
     public AddCommand(OsmDataLayer layer, OsmPrimitive osm) {
         super(layer);
         this.osm = osm;
     }
 
-    @Override public boolean executeCommand() {
+    @Override
+    public boolean executeCommand() {
         getLayer().data.addPrimitive(osm);
         osm.setModified(true);
         return true;
     }
 
-    @Override public void undoCommand() {
+    @Override
+    public void undoCommand() {
         getLayer().data.removePrimitive(osm);
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         added.add(osm);
     }
 

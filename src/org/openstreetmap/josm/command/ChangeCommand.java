@@ -26,20 +26,30 @@ public class ChangeCommand extends Command {
     private final OsmPrimitive osm;
     private final OsmPrimitive newOsm;
 
+    /**
+     * Constructs a new {@code ChangeCommand} in the context of the current edit layer, if any.
+     * @param osm The existing primitive to modify
+     * @param newOsm The new primitive
+     */
     public ChangeCommand(OsmPrimitive osm, OsmPrimitive newOsm) {
-        super();
         this.osm = osm;
         this.newOsm = newOsm;
         sanityChecks();
     }
 
+    /**
+     * Constructs a new {@code ChangeCommand} in the context of a given data layer.
+     * @param layer The data layer
+     * @param osm The existing primitive to modify
+     * @param newOsm The new primitive
+     */
     public ChangeCommand(OsmDataLayer layer, OsmPrimitive osm, OsmPrimitive newOsm) {
         super(layer);
         this.osm = osm;
         this.newOsm = newOsm;
         sanityChecks();
     }
-    
+
     private void sanityChecks() {
         CheckParameterUtil.ensureParameterNotNull(osm, "osm");
         CheckParameterUtil.ensureParameterNotNull(newOsm, "newOsm");

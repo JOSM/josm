@@ -59,7 +59,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.ConflictAddCommand;
+import org.openstreetmap.josm.command.conflict.ConflictAddCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -73,15 +73,16 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.tagging.PresetHandler;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -301,8 +302,7 @@ public class GenericRelationEditor extends RelationEditor  {
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;
-        gc.gridheight = 1;
-        gc.gridwidth = 3;
+        gc.gridwidth = 2;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 1.0;
@@ -311,7 +311,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
         gc.gridx = 0;
         gc.gridy = 1;
-        gc.gridheight = 1;
+        gc.gridheight = 2;
         gc.gridwidth = 1;
         gc.fill = GridBagConstraints.VERTICAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
@@ -321,6 +321,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
         gc.gridx = 1;
         gc.gridy = 1;
+        gc.gridheight = 1;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.6;
@@ -373,8 +374,8 @@ public class GenericRelationEditor extends RelationEditor  {
 
         gc.gridx = 1;
         gc.gridy = 2;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.LAST_LINE_START;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
         pnl.add(p3, gc);
@@ -645,7 +646,7 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      */
     protected void cleanSelfReferences() {
-        List<OsmPrimitive> toCheck = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> toCheck = new ArrayList<>();
         toCheck.add(getRelation());
         if (memberTableModel.hasMembersReferringTo(toCheck)) {
             int ret = ConditionalOptionPaneUtil.showOptionDialog(
@@ -735,13 +736,14 @@ public class GenericRelationEditor extends RelationEditor  {
                 JOptionPane.WARNING_MESSAGE);
     }
 
-    public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd) {
+    public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd) throws IllegalArgumentException {
+        CheckParameterUtil.ensureParameterNotNull(orig, "orig");
         try {
             final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(EnumSet.of(TaggingPresetType.RELATION), orig.getKeys(), false);
             Relation relation = new Relation(orig);
             boolean modified = false;
             for (OsmPrimitive p : primitivesToAdd) {
-                if (p instanceof Relation && orig != null && orig.equals(p)) {
+                if (p instanceof Relation && orig.equals(p)) {
                     warnOfCircularReferences(p);
                     continue;
                 } else if (MemberTableModel.hasMembersReferringTo(relation.getMembers(), Collections.singleton(p))
@@ -766,7 +768,7 @@ public class GenericRelationEditor extends RelationEditor  {
         protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {
             if (primitives == null || primitives.isEmpty())
                 return primitives;
-            List<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> ret = new ArrayList<>();
             ConditionalOptionPaneUtil.startBulkOperation("add_primitive_to_relation");
             for (OsmPrimitive primitive : primitives) {
                 if (primitive instanceof Relation && getRelation() != null && getRelation().equals(primitive)) {
@@ -1168,7 +1170,7 @@ public class GenericRelationEditor extends RelationEditor  {
             final Relation newRelation = new Relation();
             tagEditorPanel.getModel().applyToPrimitive(newRelation);
             memberTableModel.applyToRelation(newRelation);
-            List<RelationMember> newMembers = new ArrayList<RelationMember>();
+            List<RelationMember> newMembers = new ArrayList<>();
             for (RelationMember rm: newRelation.getMembers()) {
                 if (!rm.getMember().isDeleted()) {
                     newMembers.add(rm);
@@ -1213,7 +1215,7 @@ public class GenericRelationEditor extends RelationEditor  {
             Relation editedRelation = new Relation(getRelation());
             tagEditorPanel.getModel().applyToPrimitive(editedRelation);
             memberTableModel.applyToRelation(editedRelation);
-            Conflict<Relation> conflict = new Conflict<Relation>(getRelation(), editedRelation);
+            Conflict<Relation> conflict = new Conflict<>(getRelation(), editedRelation);
             Main.main.undoRedo.add(new ConflictAddCommand(getLayer(),conflict));
         }
 
@@ -1419,7 +1421,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     )
             };
 
-            int ret = HelpAwareOptionPane.showOptionDialog(
+            return HelpAwareOptionPane.showOptionDialog(
                     Main.parent,
                     tr("<html>The relation has been changed.<br>"
                             + "<br>"
@@ -1431,7 +1433,6 @@ public class GenericRelationEditor extends RelationEditor  {
                             options[0], // OK is default,
                             "/Dialog/RelationEditor#DiscardChanges"
             );
-            return ret;
         }
     }
 
@@ -1627,7 +1628,6 @@ public class GenericRelationEditor extends RelationEditor  {
         public EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
-            //putValue(NAME, tr("Edit"));
             refreshEnabled();
         }
 
@@ -1637,7 +1637,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
-            Collection<RelationMember> members = new HashSet<RelationMember>();
+            Collection<RelationMember> members = new HashSet<>();
             Collection<OsmPrimitive> selection = getLayer().data.getSelected();
             for (RelationMember member: r.getMembers()) {
                 if (selection.contains(member.getMember())) {
@@ -1682,7 +1682,7 @@ public class GenericRelationEditor extends RelationEditor  {
             try {
                 List<PrimitiveData> primitives = Main.pasteBuffer.getDirectlyAdded();
                 DataSet ds = getLayer().data;
-                List<OsmPrimitive> toAdd = new ArrayList<OsmPrimitive>();
+                List<OsmPrimitive> toAdd = new ArrayList<>();
                 boolean hasNewInOtherLayer = false;
 
                 for (PrimitiveData primitive: primitives) {
@@ -1722,7 +1722,7 @@ public class GenericRelationEditor extends RelationEditor  {
     class CopyMembersAction extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent e) {
-            Set<OsmPrimitive> primitives = new HashSet<OsmPrimitive>();
+            Set<OsmPrimitive> primitives = new HashSet<>();
             for (RelationMember rm: memberTableModel.getSelectedMembers()) {
                 primitives.add(rm.getMember());
             }

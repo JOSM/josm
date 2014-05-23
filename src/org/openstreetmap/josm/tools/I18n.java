@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,11 +32,11 @@ import org.openstreetmap.josm.Main;
  * @author Immanuel.Scholz
  */
 public final class I18n {
-    
+
     private I18n() {
         // Hide default constructor for utils classes
     }
-    
+
     private enum PluralMode { MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
         MODE_CS/*, MODE_AR*/, MODE_PL/*, MODE_RO*/, MODE_RU, MODE_SK/*, MODE_SL*/}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
@@ -128,15 +129,15 @@ public final class I18n {
     };
     private static Map<String, String> strings = null;
     private static Map<String, String[]> pstrings = null;
-    private static Map<String, PluralMode> languages = new HashMap<String, PluralMode>();
+    private static Map<String, PluralMode> languages = new HashMap<>();
 
     /**
      * Translates some text for the current locale.
      * These strings are collected by a script that runs on the source code files.
      * After translation, the localizations are distributed with the main program.
-     * <br/>
+     * <br>
      * For example, {@code tr("JOSM''s default value is ''{0}''.", val)}.
-     * <br/>
+     * <br>
      * Use {@link #trn} for distinguishing singular from plural text, i.e.,
      * do not use {@code tr(size == 1 ? "singular" : "plural")} nor
      * {@code size == 1 ? tr("singular") : tr("plural")}
@@ -206,7 +207,7 @@ public final class I18n {
     /**
      * Translates some text for the current locale and distinguishes between
      * {@code singularText} and {@code pluralText} depending on {@code n}.
-     * <br/>
+     * <br>
      * For instance, {@code trn("There was an error!", "There were errors!", i)} or
      * {@code trn("Found {0} error in {1}!", "Found {0} errors in {1}!", i, Integer.toString(i), url)}.
      *
@@ -272,9 +273,10 @@ public final class I18n {
                 return trans;
         }
         if(pstrings != null) {
+            i = pluralEval(1);
             String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
-            if(trans != null)
-                return trans[0];
+            if(trans != null && trans.length > i)
+                return trans[i];
         }
         return lazy ? gettext(text, null) : text;
     }
@@ -322,7 +324,7 @@ public final class I18n {
      * @return an array of locale objects.
      */
     public static final Locale[] getAvailableTranslations() {
-        Collection<Locale> v = new ArrayList<Locale>(languages.size());
+        Collection<Locale> v = new ArrayList<>(languages.size());
         if(getTranslationFile("en") != null)
         {
             for (String loc : languages.keySet()) {
@@ -361,7 +363,7 @@ public final class I18n {
         languages.put("en_GB", PluralMode.MODE_NOTONE);
         languages.put("es", PluralMode.MODE_NOTONE);
         languages.put("et", PluralMode.MODE_NOTONE);
-        languages.put("eu", PluralMode.MODE_NOTONE);
+        //languages.put("eu", PluralMode.MODE_NOTONE);
         languages.put("fi", PluralMode.MODE_NOTONE);
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
@@ -371,7 +373,7 @@ public final class I18n {
         //languages.put("is", PluralMode.MODE_NOTONE);
         languages.put("it", PluralMode.MODE_NOTONE);
         languages.put("ja", PluralMode.MODE_NONE);
-        languages.put("nb", PluralMode.MODE_NOTONE);
+        //languages.put("nb", PluralMode.MODE_NOTONE);
         languages.put("nl", PluralMode.MODE_NOTONE);
         languages.put("pl", PluralMode.MODE_PL);
         languages.put("pt", PluralMode.MODE_NOTONE);
@@ -381,7 +383,7 @@ public final class I18n {
         languages.put("sk", PluralMode.MODE_SK);
         //languages.put("sl", PluralMode.MODE_SL);
         languages.put("sv", PluralMode.MODE_NOTONE);
-        languages.put("tr", PluralMode.MODE_NONE);
+        //languages.put("tr", PluralMode.MODE_NONE);
         languages.put("uk", PluralMode.MODE_RU);
         languages.put("zh_CN", PluralMode.MODE_NONE);
         languages.put("zh_TW", PluralMode.MODE_NONE);
@@ -392,56 +394,44 @@ public final class I18n {
         }
     }
 
-    public static void addTexts(File source)
-    {
-        if(loadedCode.equals("en"))
+    public static void addTexts(File source) {
+        if ("en".equals(loadedCode))
             return;
-        FileInputStream fis = null;
-        JarInputStream jar = null;
-        FileInputStream fisTrans = null;
-        JarInputStream jarTrans = null;
         String enfile = "data/en.lang";
         String langfile = "data/"+loadedCode+".lang";
-        try
-        {
+        try (
+            FileInputStream fis = new FileInputStream(source);
+            JarInputStream jar = new JarInputStream(fis)
+        ) {
             ZipEntry e;
-            fis = new FileInputStream(source);
-            jar = new JarInputStream(fis);
             boolean found = false;
-            while(!found && (e = jar.getNextEntry()) != null)
-            {
+            while (!found && (e = jar.getNextEntry()) != null) {
                 String name = e.getName();
                 if(name.equals(enfile))
                     found = true;
             }
-            if(found)
-            {
-                fisTrans = new FileInputStream(source);
-                jarTrans = new JarInputStream(fisTrans);
-                found = false;
-                while(!found && (e = jarTrans.getNextEntry()) != null)
-                {
-                    String name = e.getName();
-                    if(name.equals(langfile))
-                        found = true;
+            if (found) {
+                try (
+                    FileInputStream fisTrans = new FileInputStream(source);
+                    JarInputStream jarTrans = new JarInputStream(fisTrans)
+                ) {
+                    found = false;
+                    while(!found && (e = jarTrans.getNextEntry()) != null) {
+                        String name = e.getName();
+                        if (name.equals(langfile))
+                            found = true;
+                    }
+                    if (found)
+                        load(jar, jarTrans, true);
                 }
-                if(found)
-                    load(jar, jarTrans, true);
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             // Ignore
-        } finally {
-            Utils.close(jar);
-            Utils.close(fis);
-            Utils.close(jarTrans);
-            Utils.close(fisTrans);
         }
     }
 
-    private static boolean load(String l)
-    {
-        if(l.equals("en") || l.equals("en_US"))
-        {
+    private static boolean load(String l) {
+        if ("en".equals(l) || "en_US".equals(l)) {
             strings = null;
             pstrings = null;
             loadedCode = "en";
@@ -449,34 +439,29 @@ public final class I18n {
             return true;
         }
         URL en = getTranslationFile("en");
-        if(en == null)
+        if (en == null)
             return false;
         URL tr = getTranslationFile(l);
-        if(tr == null || !languages.containsKey(l))
-        {
+        if (tr == null || !languages.containsKey(l)) {
             int i = l.indexOf('_');
             if (i > 0) {
                 l = l.substring(0, i);
             }
             tr = getTranslationFile(l);
-            if(tr == null || !languages.containsKey(l))
+            if (tr == null || !languages.containsKey(l))
                 return false;
         }
-        InputStream enStream = null;
-        InputStream trStream = null;
-        try {
-            enStream = en.openStream();
-            trStream = tr.openStream();
+        try (
+            InputStream enStream = en.openStream();
+            InputStream trStream = tr.openStream()
+        ) {
             if (load(enStream, trStream, false)) {
                 pluralMode = languages.get(l);
                 loadedCode = l;
                 return true;
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             // Ignore exception
-        } finally {
-            Utils.close(trStream);
-            Utils.close(enStream);
         }
         return false;
     }
@@ -488,8 +473,8 @@ public final class I18n {
             s = strings;
             p = pstrings;
         } else {
-            s = new HashMap<String, String>();
-            p = new HashMap<String, String[]>();
+            s = new HashMap<>();
+            p = new HashMap<>();
         }
         /* file format:
            Files are always a group. English file and translated file must provide identical datasets.
@@ -547,7 +532,7 @@ public final class I18n {
                         int rval = ens.read(str, 0, val);
                         if(rval != val) /* file corrupt */
                             return false;
-                        enstrings[i] = new String(str, 0, val, Utils.UTF_8);
+                        enstrings[i] = new String(str, 0, val, StandardCharsets.UTF_8);
                     }
                     for(int i = 0; i < trnum; ++i)
                     {
@@ -561,7 +546,7 @@ public final class I18n {
                         int rval = trs.read(str, 0, val);
                         if(rval != val) /* file corrupt */
                             return false;
-                        trstrings[i] = new String(str, 0, val, Utils.UTF_8);
+                        trstrings[i] = new String(str, 0, val, StandardCharsets.UTF_8);
                     }
                     if(trnum > 0 && !p.containsKey(enstrings[0])) {
                         p.put(enstrings[0], trstrings);
@@ -587,25 +572,22 @@ public final class I18n {
                         multimode = true;
                         if(trval != 0xFFFF) /* files do not match */
                             return false;
-                    }
-                    else
-                    {
-                        if(enval > str.length) {
+                    } else {
+                        if (enval > str.length) {
                             str = new byte[enval];
                         }
-                        if(trval > str.length) {
+                        if (trval > str.length) {
                             str = new byte[trval];
                         }
                         int val = ens.read(str, 0, enval);
                         if(val != enval) /* file corrupt */
                             return false;
-                        String enstr = new String(str, 0, enval, Utils.UTF_8);
-                        if(trval != 0)
-                        {
+                        String enstr = new String(str, 0, enval, StandardCharsets.UTF_8);
+                        if (trval != 0) {
                             val = trs.read(str, 0, trval);
                             if(val != trval) /* file corrupt */
                                 return false;
-                            String trstr = new String(str, 0, trval, Utils.UTF_8);
+                            String trstr = new String(str, 0, trval, StandardCharsets.UTF_8);
                             if(!s.containsKey(enstr))
                                 s.put(enstr, trstr);
                         }
@@ -613,12 +595,10 @@ public final class I18n {
                 }
             }
         }
-        catch(IOException e)
-        {
+        catch (IOException e) {
             return false;
         }
-        if(!s.isEmpty())
-        {
+        if (!s.isEmpty()) {
             strings = s;
             pstrings = p;
             return true;
@@ -641,7 +621,7 @@ public final class I18n {
             if (load(LanguageInfo.getJOSMLocaleCode(l))) {
                 Locale.setDefault(l);
             } else {
-                if (!l.getLanguage().equals("en")) {
+                if (!"en".equals(l.getLanguage())) {
                     Main.info(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
                             l.getDisplayName(), Locale.getDefault().getDisplayName()));
                 } else {

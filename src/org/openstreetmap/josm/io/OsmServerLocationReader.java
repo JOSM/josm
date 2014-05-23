@@ -39,15 +39,6 @@ public class OsmServerLocationReader extends OsmServerReader {
             this.compression = compression;
         }
         
-        protected final InputStream getUncompressedInputStream() throws IOException {
-            switch (compression) {
-                case BZIP2: return FileImporter.getBZip2InputStream(in);
-                case GZIP: return FileImporter.getGZipInputStream(in);
-                case NONE: 
-                default: return in;
-            }
-        }
-        
         public abstract T parse() throws OsmTransferException, IllegalDataException, IOException, SAXException;
     }
 
@@ -82,6 +73,11 @@ public class OsmServerLocationReader extends OsmServerReader {
     @Override
     public DataSet parseOsmGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return doParse(new OsmParser(progressMonitor, Compression.GZIP), progressMonitor);
+    }
+
+    @Override
+    public DataSet parseOsmZip(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new OsmParser(progressMonitor, Compression.ZIP), progressMonitor);
     }
 
     @Override
@@ -120,7 +116,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             if (in == null)
                 return null;
             progressMonitor.subTask(tr("Downloading OSM data..."));
-            return OsmReader.parseDataSet(getUncompressedInputStream(), progressMonitor.createSubTaskMonitor(1, false));
+            return OsmReader.parseDataSet(compression.getUncompressedInputStream(in), progressMonitor.createSubTaskMonitor(1, false));
         }
     }
     
@@ -135,7 +131,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             if (in == null)
                 return null;
             progressMonitor.subTask(tr("Downloading OSM data..."));
-            return OsmChangeReader.parseDataSet(getUncompressedInputStream(), progressMonitor.createSubTaskMonitor(1, false));
+            return OsmChangeReader.parseDataSet(compression.getUncompressedInputStream(in), progressMonitor.createSubTaskMonitor(1, false));
         }
     }
 
@@ -146,11 +142,11 @@ public class OsmServerLocationReader extends OsmServerReader {
         
         @Override
         public GpxData parse() throws OsmTransferException, IllegalDataException, IOException, SAXException {
-            in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(1, true));
+            in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(1, true), null, true);
             if (in == null)
                 return null;
             progressMonitor.subTask(tr("Downloading OSM data..."));
-            GpxReader reader = new GpxReader(getUncompressedInputStream());
+            GpxReader reader = new GpxReader(compression.getUncompressedInputStream(in));
             gpxParsedProperly = reader.parse(false);
             GpxData result = reader.getGpxData();
             result.fromServer = DownloadGpsTask.isFromServer(url);

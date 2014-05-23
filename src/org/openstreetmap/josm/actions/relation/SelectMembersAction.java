@@ -35,7 +35,7 @@ public class SelectMembersAction extends AbstractRelationAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty() || !Main.isDisplayingMapView()) return;
         
-        HashSet<OsmPrimitive> members = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> members = new HashSet<>();
         for (Relation r: relations) {
             members.addAll(r.getMemberPrimitives());
         }

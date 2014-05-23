@@ -19,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -45,9 +46,9 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Class that encapsulates the communications with the <a href="http://wiki.openstreetmap.org/wiki/API_v0.6">OSM API</a>.<br/><br/>
+ * Class that encapsulates the communications with the <a href="http://wiki.openstreetmap.org/wiki/API_v0.6">OSM API</a>.<br><br>
  *
- * All interaction with the server-side OSM API should go through this class.<br/><br/>
+ * All interaction with the server-side OSM API should go through this class.<br><br>
  *
  * It is conceivable to extract this into an interface later and create various
  * classes implementing the interface, to be able to talk to various kinds of servers.
@@ -58,7 +59,7 @@ public class OsmApi extends OsmConnection {
     /**
      * Maximum number of retries to send a request in case of HTTP 500 errors or timeouts
      */
-    static public final int DEFAULT_MAX_NUM_RETRIES = 5;
+    public static final int DEFAULT_MAX_NUM_RETRIES = 5;
 
     /**
      * Maximum number of concurrent download threads, imposed by
@@ -66,16 +67,16 @@ public class OsmApi extends OsmConnection {
      * OSM API usage policy.</a>
      * @since 5386
      */
-    static public final int MAX_DOWNLOAD_THREADS = 2;
+    public static final int MAX_DOWNLOAD_THREADS = 2;
 
     /**
      * Default URL of the standard OSM API.
      * @since 5422
      */
-    static public final String DEFAULT_API_URL = "http://api.openstreetmap.org/api";
+    public static final String DEFAULT_API_URL = "https://api.openstreetmap.org/api";
 
     // The collection of instantiated OSM APIs
-    private static Map<String, OsmApi> instances = new HashMap<String, OsmApi>();
+    private static Map<String, OsmApi> instances = new HashMap<>();
 
     private URL url = null;
 
@@ -87,7 +88,7 @@ public class OsmApi extends OsmConnection {
      * @throws IllegalArgumentException thrown, if serverUrl is null
      *
      */
-    static public OsmApi getOsmApi(String serverUrl) {
+    public static OsmApi getOsmApi(String serverUrl) {
         OsmApi api = instances.get(serverUrl);
         if (api == null) {
             api = new OsmApi(serverUrl);
@@ -101,7 +102,7 @@ public class OsmApi extends OsmConnection {
      *
      * @return the OsmApi
      */
-    static public OsmApi getOsmApi() {
+    public static OsmApi getOsmApi() {
         String serverUrl = Main.pref.get("osm-server.url", DEFAULT_API_URL);
         return getOsmApi(serverUrl);
     }
@@ -171,6 +172,7 @@ public class OsmApi extends OsmConnection {
         try {
             host = (new URL(serverUrl)).getHost();
         } catch (MalformedURLException e) {
+            Main.warn(e);
         }
         return host;
     }
@@ -188,7 +190,7 @@ public class OsmApi extends OsmConnection {
 
         @Override
         protected byte[] updateData() throws OsmTransferException {
-            return sendRequest("GET", "capabilities", null, monitor, false, fastFail).getBytes();
+            return sendRequest("GET", "capabilities", null, monitor, false, fastFail).getBytes(StandardCharsets.UTF_8);
         }
     }
 
@@ -288,14 +290,17 @@ public class OsmApi extends OsmConnection {
      */
     private String toXml(IPrimitive o, boolean addBody) {
         StringWriter swriter = new StringWriter();
-        OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version);
-        swriter.getBuffer().setLength(0);
-        osmWriter.setWithBody(addBody);
-        osmWriter.setChangeset(changeset);
-        osmWriter.header();
-        o.accept(osmWriter);
-        osmWriter.footer();
-        osmWriter.flush();
+        try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version)) {
+            swriter.getBuffer().setLength(0);
+            osmWriter.setWithBody(addBody);
+            osmWriter.setChangeset(changeset);
+            osmWriter.header();
+            o.accept(osmWriter);
+            osmWriter.footer();
+            osmWriter.flush();
+        } catch (IOException e) {
+            Main.warn(e);
+        }
         return swriter.toString();
     }
 
@@ -306,12 +311,15 @@ public class OsmApi extends OsmConnection {
      */
     private String toXml(Changeset s) {
         StringWriter swriter = new StringWriter();
-        OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version);
-        swriter.getBuffer().setLength(0);
-        osmWriter.header();
-        osmWriter.visit(s);
-        osmWriter.footer();
-        osmWriter.flush();
+        try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version)) {
+            swriter.getBuffer().setLength(0);
+            osmWriter.header();
+            osmWriter.visit(s);
+            osmWriter.footer();
+            osmWriter.flush();
+        } catch (IOException e) {
+            Main.warn(e);
+        }
         return swriter.toString();
     }
 
@@ -320,7 +328,7 @@ public class OsmApi extends OsmConnection {
      * @return base URL string
      */
     public String getBaseUrl() {
-        StringBuffer rv = new StringBuffer(serverUrl);
+        StringBuilder rv = new StringBuilder(serverUrl);
         if (version != null) {
             rv.append("/");
             rv.append(version);
@@ -328,7 +336,7 @@ public class OsmApi extends OsmConnection {
         rv.append("/");
         // this works around a ruby (or lighttpd) bug where two consecutive slashes in
         // an URL will cause a "404 not found" response.
-        int p; while ((p = rv.indexOf("//", 6)) > -1) { rv.delete(p, p + 1); }
+        int p; while ((p = rv.indexOf("//", rv.indexOf("://")+2)) > -1) { rv.delete(p, p + 1); }
         return rv.toString();
     }
 
@@ -424,14 +432,14 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Updates a changeset with the keys in  <code>changesetUpdate</code>. The changeset must not
-     * be null and id > 0 must be true.
+     * be null and id &gt; 0 must be true.
      *
      * @param changeset the changeset to update. Must not be null.
      * @param monitor the progress monitor. If null, uses the {@link NullProgressMonitor#INSTANCE}.
      *
      * @throws OsmTransferException if something goes wrong.
      * @throws IllegalArgumentException if changeset is null
-     * @throws IllegalArgumentException if changeset.getId() <= 0
+     * @throws IllegalArgumentException if changeset.getId() &lt;= 0
      *
      */
     public void updateChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
@@ -464,15 +472,14 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Closes a changeset on the server. Sets changeset.setOpen(false) if this operation
-     * succeeds.
+     * Closes a changeset on the server. Sets changeset.setOpen(false) if this operation succeeds.
      *
-     * @param changeset the changeset to be closed. Must not be null. changeset.getId() > 0 required.
+     * @param changeset the changeset to be closed. Must not be null. changeset.getId() &gt; 0 required.
      * @param monitor the progress monitor. If null, uses {@link NullProgressMonitor#INSTANCE}
      *
      * @throws OsmTransferException if something goes wrong.
      * @throws IllegalArgumentException thrown if changeset is null
-     * @throws IllegalArgumentException thrown if changeset.getId() <= 0
+     * @throws IllegalArgumentException thrown if changeset.getId() &lt;= 0
      */
     public void closeChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
@@ -534,7 +541,7 @@ public class OsmApi extends OsmConnection {
             );
         } catch(OsmTransferException e) {
             throw e;
-        } catch(OsmDataParsingException e) {
+        } catch(XmlParsingException e) {
             throw new OsmTransferException(e);
         } finally {
             monitor.finishTask();
@@ -577,7 +584,7 @@ public class OsmApi extends OsmConnection {
         return "oauth".equals(Main.pref.get("osm-server.auth-method", "basic"));
     }
 
-    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
+    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
         return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true, false);
     }
 
@@ -600,14 +607,15 @@ public class OsmApi extends OsmConnection {
      * @throws OsmTransferException if the HTTP return code was not 200 (and retries have
      *    been exhausted), or rewrapping a Java exception.
      */
-    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
-        StringBuffer responseBody = new StringBuffer();
+    protected final String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
+        StringBuilder responseBody = new StringBuilder();
         int retries = fastFail ? 0 : getMaxRetries();
 
         while(true) { // the retry loop
             try {
                 url = new URL(new URL(getBaseUrl()), urlSuffix);
                 Main.info(requestMethod + " " + url + "... ");
+                Main.debug(requestBody);
                 // fix #5369, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
                 activeConnection = Utils.openHttpConnection(url, false);
                 activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect",15)*1000);
@@ -619,27 +627,23 @@ public class OsmApi extends OsmConnection {
                     addAuth(activeConnection);
                 }
 
-                if (requestMethod.equals("PUT") || requestMethod.equals("POST") || requestMethod.equals("DELETE")) {
+                if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
                     activeConnection.setDoOutput(true);
                     activeConnection.setRequestProperty("Content-type", "text/xml");
-                    OutputStream out = activeConnection.getOutputStream();
-
-                    // It seems that certain bits of the Ruby API are very unhappy upon
-                    // receipt of a PUT/POST message without a Content-length header,
-                    // even if the request has no payload.
-                    // Since Java will not generate a Content-length header unless
-                    // we use the output stream, we create an output stream for PUT/POST
-                    // even if there is no payload.
-                    if (requestBody != null) {
-                        BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, Utils.UTF_8));
-                        try {
-                            bwr.write(requestBody);
-                            bwr.flush();
-                        } finally {
-                            bwr.close();
+                    try (OutputStream out = activeConnection.getOutputStream()) {
+                        // It seems that certain bits of the Ruby API are very unhappy upon
+                        // receipt of a PUT/POST message without a Content-length header,
+                        // even if the request has no payload.
+                        // Since Java will not generate a Content-length header unless
+                        // we use the output stream, we create an output stream for PUT/POST
+                        // even if there is no payload.
+                        if (requestBody != null) {
+                            try (BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
+                                bwr.write(requestBody);
+                                bwr.flush();
+                            }
                         }
                     }
-                    Utils.close(out);
                 }
 
                 activeConnection.connect();
@@ -659,26 +663,18 @@ public class OsmApi extends OsmConnection {
 
                 // If the API returned an error code like 403 forbidden, getInputStream
                 // will fail with an IOException.
-                InputStream i = null;
-                try {
-                    i = activeConnection.getInputStream();
-                } catch (IOException ioe) {
-                    i = activeConnection.getErrorStream();
-                }
+                InputStream i = getConnectionStream();
                 if (i != null) {
                     // the input stream can be null if both the input and the error stream
                     // are null. Seems to be the case if the OSM server replies a 401
                     // Unauthorized, see #3887.
                     //
-                    BufferedReader in = new BufferedReader(new InputStreamReader(i));
                     String s;
-                    try {
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(i, StandardCharsets.UTF_8))) {
                         while((s = in.readLine()) != null) {
                             responseBody.append(s);
                             responseBody.append("\n");
                         }
-                    } finally {
-                        in.close();
                     }
                 }
                 String errorHeader = null;
@@ -686,10 +682,14 @@ public class OsmApi extends OsmConnection {
                 if (activeConnection.getHeaderField("Error") != null) {
                     errorHeader = activeConnection.getHeaderField("Error");
                     Main.error("Error header: " + errorHeader);
-                } else if (retCode != 200 && responseBody.length()>0) {
+                } else if (retCode != HttpURLConnection.HTTP_OK && responseBody.length()>0) {
                     Main.error("Error body: " + responseBody);
                 }
                 activeConnection.disconnect();
+
+                if (Main.isDebugEnabled()) {
+                    Main.debug("RESPONSE: "+ activeConnection.getHeaderFields());
+                }
 
                 errorHeader = errorHeader == null? null : errorHeader.trim();
                 String errorBody = responseBody.length() == 0? null : responseBody.toString().trim();
@@ -710,25 +710,25 @@ public class OsmApi extends OsmConnection {
                 default:
                     throw new OsmApiException(retCode, errorHeader, errorBody);
                 }
-            } catch (UnknownHostException e) {
-                throw new OsmTransferException(e);
-            } catch (SocketTimeoutException e) {
+            } catch (SocketTimeoutException | ConnectException e) {
                 if (retries-- > 0) {
                     continue;
                 }
                 throw new OsmTransferException(e);
-            } catch (ConnectException e) {
-                if (retries-- > 0) {
-                    continue;
-                }
+            } catch(IOException e) {
                 throw new OsmTransferException(e);
-            } catch(IOException e){
-                throw new OsmTransferException(e);
-            } catch(OsmTransferCanceledException e){
-                throw e;
             } catch(OsmTransferException e) {
                 throw e;
             }
+        }
+    }
+
+    private InputStream getConnectionStream() {
+        try {
+            return activeConnection.getInputStream();
+        } catch (IOException ioe) {
+            Main.warn(ioe);
+            return activeConnection.getErrorStream();
         }
     }
 
@@ -765,11 +765,11 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Sets the changesets to which further data uploads are directed. The changeset
-     * can be null. If it isn't null it must have been created, i.e. id > 0 is required. Furthermore,
+     * can be null. If it isn't null it must have been created, i.e. id &gt; 0 is required. Furthermore,
      * it must be open.
      *
      * @param changeset the changeset
-     * @throws IllegalArgumentException thrown if changeset.getId() <= 0
+     * @throws IllegalArgumentException thrown if changeset.getId() &lt;= 0
      * @throws IllegalArgumentException thrown if !changeset.isOpen()
      */
     public void setChangeset(Changeset changeset) {

@@ -34,7 +34,7 @@ public class AddWayHandler extends RequestHandler {
      */
     public static final String command = "add_way";
 
-    private final List<LatLon> allCoordinates = new ArrayList<LatLon>();
+    private final List<LatLon> allCoordinates = new ArrayList<>();
 
     /**
      * The place to remeber already added nodes (they are reused if needed @since 5845
@@ -150,9 +150,9 @@ public class AddWayHandler extends RequestHandler {
      * This function creates the way with given coordinates of nodes
      */
     private void addWay() {
-        addedNodes = new HashMap<LatLon, Node>();
+        addedNodes = new HashMap<>();
         Way way = new Way();
-        List<Command> commands = new LinkedList<Command>();
+        List<Command> commands = new LinkedList<>();
         for (LatLon ll : allCoordinates) {
             Node node = findOrCreateNode(ll, commands);
             way.addNode(node);

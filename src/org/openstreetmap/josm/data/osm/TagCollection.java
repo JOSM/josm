@@ -15,25 +15,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.openstreetmap.josm.tools.Utils;
 
 /**
  * TagCollection is a collection of tags which can be used to manipulate
- * tags managed by {@link OsmPrimitive}s.
+ * tags managed by {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s.
  *
  * A TagCollection can be created:
  * <ul>
- *  <li>from the tags managed by a specific {@link OsmPrimitive} with {@link #from(Tagged)}</li>
- *  <li>from the union of all tags managed by a collection of {@link OsmPrimitive}s with {@link #unionOfAllPrimitives(Collection)}</li>
- *  <li>from the union of all tags managed by a {@link DataSet} with {@link #unionOfAllPrimitives(DataSet)}</li>
- *  <li>from the intersection of all tags managed by a collection of primitives with {@link #commonToAllPrimitives(Collection)}</li>
+ *  <li>from the tags managed by a specific {@link org.openstreetmap.josm.data.osm.OsmPrimitive} with {@link #from(org.openstreetmap.josm.data.osm.Tagged)}</li>
+ *  <li>from the union of all tags managed by a collection of {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s with {@link #unionOfAllPrimitives(java.util.Collection)}</li>
+ *  <li>from the union of all tags managed by a {@link org.openstreetmap.josm.data.osm.DataSet} with {@link #unionOfAllPrimitives(org.openstreetmap.josm.data.osm.DataSet)}</li>
+ *  <li>from the intersection of all tags managed by a collection of primitives with {@link #commonToAllPrimitives(java.util.Collection)}</li>
  * </ul>
  *
  * It  provides methods to query the collection, like {@link #size()}, {@link #hasTagsFor(String)}, etc.
  *
  * Basic set operations allow to create the union, the intersection and  the difference
- * of tag collections, see {@link #union(TagCollection)}, {@link #intersect(TagCollection)},
- * and {@link #minus(TagCollection)}.
+ * of tag collections, see {@link #union(org.openstreetmap.josm.data.osm.TagCollection)}, {@link #intersect(org.openstreetmap.josm.data.osm.TagCollection)},
+ * and {@link #minus(org.openstreetmap.josm.data.osm.TagCollection)}.
  *
  *
  */
@@ -41,12 +43,12 @@ public class TagCollection implements Iterable<Tag> {
 
     /**
      * Creates a tag collection from the tags managed by a specific
-     * {@link OsmPrimitive}. If <code>primitive</code> is null, replies
+     * {@link org.openstreetmap.josm.data.osm.OsmPrimitive}. If <code>primitive</code> is null, replies
      * an empty tag collection.
      *
      * @param primitive  the primitive
      * @return a tag collection with the tags managed by a specific
-     * {@link OsmPrimitive}
+     * {@link org.openstreetmap.josm.data.osm.OsmPrimitive}
      */
     public static TagCollection from(Tagged primitive) {
         TagCollection tags = new TagCollection();
@@ -138,7 +140,7 @@ public class TagCollection implements Iterable<Tag> {
         return tags;
     }
 
-    private final Set<Tag> tags = new HashSet<Tag>();
+    private final Set<Tag> tags = new HashSet<>();
 
     /**
      * Creates an empty tag collection
@@ -190,7 +192,7 @@ public class TagCollection implements Iterable<Tag> {
      *
      * @param tag the tag to add
      */
-    public void add(Tag tag){
+    public final void add(Tag tag){
         if (tag == null) return;
         if (tags.contains(tag)) return;
         tags.add(tag);
@@ -202,7 +204,7 @@ public class TagCollection implements Iterable<Tag> {
      *
      * @param tags the collection of tags
      */
-    public void add(Collection<Tag> tags) {
+    public final void add(Collection<Tag> tags) {
         if (tags == null) return;
         for (Tag tag: tags){
             add(tag);
@@ -215,7 +217,7 @@ public class TagCollection implements Iterable<Tag> {
      *
      * @param tags the other tag collection
      */
-    public void add(TagCollection tags) {
+    public final void add(TagCollection tags) {
         if (tags == null) return;
         this.tags.addAll(tags.tags);
     }
@@ -466,7 +468,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the tags of this tag collection as set
      */
     public Set<Tag> asSet() {
-        return new HashSet<Tag>(tags);
+        return new HashSet<>(tags);
     }
 
     /**
@@ -476,7 +478,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the tags of this tag collection as list.
      */
     public List<Tag> asList() {
-        return new ArrayList<Tag>(tags);
+        return new ArrayList<>(tags);
     }
 
     /**
@@ -495,7 +497,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of keys of this tag collection
      */
     public Set<String> getKeys() {
-        HashSet<String> ret = new HashSet<String>();
+        HashSet<String> ret = new HashSet<>();
         for (Tag tag: tags) {
             ret.add(tag.getKey());
         }
@@ -508,12 +510,12 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of keys which have at least 2 matching tags.
      */
     public Set<String> getKeysWithMultipleValues() {
-        HashMap<String, Integer> counters = new HashMap<String, Integer>();
+        HashMap<String, Integer> counters = new HashMap<>();
         for (Tag tag: tags) {
             Integer v = counters.get(tag.getKey());
             counters.put(tag.getKey(),(v==null) ? 1 : v+1);
         }
-        Set<String> ret = new HashSet<String>();
+        Set<String> ret = new HashSet<>();
         for (Entry<String, Integer> e : counters.entrySet()) {
             if (e.getValue() > 1) {
                 ret.add(e.getKey());
@@ -553,7 +555,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of values
      */
     public Set<String> getValues() {
-        HashSet<String> ret = new HashSet<String>();
+        HashSet<String> ret = new HashSet<>();
         for (Tag tag: tags) {
             ret.add(tag.getValue());
         }
@@ -569,7 +571,7 @@ public class TagCollection implements Iterable<Tag> {
      * are no values for the given key
      */
     public Set<String> getValues(String key) {
-        HashSet<String> ret = new HashSet<String>();
+        HashSet<String> ret = new HashSet<>();
         if (key == null) return ret;
         for (Tag tag: tags) {
             if (tag.matchesKey(key)) {
@@ -589,7 +591,7 @@ public class TagCollection implements Iterable<Tag> {
     }
 
     /**
-     * Applies this tag collection to an {@link OsmPrimitive}. Does nothing if
+     * Applies this tag collection to an {@link org.openstreetmap.josm.data.osm.OsmPrimitive}. Does nothing if
      * primitive is null
      *
      * @param primitive  the primitive
@@ -610,7 +612,7 @@ public class TagCollection implements Iterable<Tag> {
     }
 
     /**
-     * Applies this tag collection to a collection of {@link OsmPrimitive}s. Does nothing if
+     * Applies this tag collection to a collection of {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s. Does nothing if
      * primitives is null
      *
      * @param primitives  the collection of primitives
@@ -627,7 +629,7 @@ public class TagCollection implements Iterable<Tag> {
     }
 
     /**
-     * Replaces the tags of an {@link OsmPrimitive} by the tags in this collection . Does nothing if
+     * Replaces the tags of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} by the tags in this collection . Does nothing if
      * primitive is null
      *
      * @param primitive  the primitive
@@ -645,7 +647,7 @@ public class TagCollection implements Iterable<Tag> {
     }
 
     /**
-     * Replaces the tags of a collection of{@link OsmPrimitive}s by the tags in this collection.
+     * Replaces the tags of a collection of{@link org.openstreetmap.josm.data.osm.OsmPrimitive}s by the tags in this collection.
      * Does nothing if primitives is null
      *
      * @param primitives the collection of primitives
@@ -715,6 +717,8 @@ public class TagCollection implements Iterable<Tag> {
         return ret;
     }
 
+    private static final Pattern SPLIT_VALUES_PATTERN = Pattern.compile(";\\s*");
+
     /**
      * Replies the concatenation of all tag values (concatenated by a semicolon)
      *
@@ -728,10 +732,10 @@ public class TagCollection implements Iterable<Tag> {
             return originalValues.iterator().next();
         }
 
-        Set<String> values = new LinkedHashSet<String>();
-        Map<String, Collection<String>> originalSplitValues = new LinkedHashMap<String, Collection<String>>();
+        Set<String> values = new LinkedHashSet<>();
+        Map<String, Collection<String>> originalSplitValues = new LinkedHashMap<>();
         for (String v : originalValues) {
-            List<String> vs = Arrays.asList(v.split(";\\s*"));
+            List<String> vs = Arrays.asList(SPLIT_VALUES_PATTERN.split(v));
             originalSplitValues.put(v, vs);
             values.addAll(vs);
         }

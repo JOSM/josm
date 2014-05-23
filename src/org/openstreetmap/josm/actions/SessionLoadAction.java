@@ -18,8 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.NavigatableComponent.ViewportData;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Loads a JOSM session
+ * Loads a JOSM session.
  * @since 4668
  */
 public class SessionLoadAction extends DiskAccessAction {
@@ -152,11 +152,8 @@ public class SessionLoadAction extends DiskAccessAction {
                         // Download and write entire joz file as a temp file on disk as we need random access later
                         file = File.createTempFile("session_", ".joz", Utils.getJosmTempDir());
                         tempFile = true;
-                        FileOutputStream out = new FileOutputStream(file);
-                        try {
+                        try (FileOutputStream out = new FileOutputStream(file)) {
                             Utils.copyStream(is, out);
-                        } finally {
-                            Utils.close(out);
                         }
                     }
                     reader.loadSession(file, zip, monitor);
@@ -173,33 +170,25 @@ public class SessionLoadAction extends DiskAccessAction {
                     }
                 }
             } catch (IllegalDataException e) {
-                Main.error(e);
-                HelpAwareOptionPane.showMessageDialogInEDT(
-                        Main.parent,
-                        tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>", uri != null ? uri : file.getName(), e.getMessage()),
-                        tr("Data Error"),
-                        JOptionPane.ERROR_MESSAGE,
-                        null
-                        );
-                cancel();
+                handleException(tr("Data Error"), e);
             } catch (IOException e) {
-                Main.error(e);
-                HelpAwareOptionPane.showMessageDialogInEDT(
-                        Main.parent,
-                        tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>", uri != null ? uri : file.getName(), e.getMessage()),
-                        tr("IO Error"),
-                        JOptionPane.ERROR_MESSAGE,
-                        null
-                        );
-                cancel();
-            } catch (RuntimeException e) {
-                cancel();
-                throw e;
-            } catch (Error e) {
+                handleException(tr("IO Error"), e);
+            } catch (Exception e) {
                 cancel();
                 throw e;
             }
         }
+        
+        private void handleException(String dialogTitle, Exception e) {
+            Main.error(e);
+            HelpAwareOptionPane.showMessageDialogInEDT(
+                    Main.parent,
+                    tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>", uri != null ? uri : file.getName(), e.getMessage()),
+                    dialogTitle,
+                    JOptionPane.ERROR_MESSAGE,
+                    null
+                    );
+            cancel();
+        }
     }
 }
-

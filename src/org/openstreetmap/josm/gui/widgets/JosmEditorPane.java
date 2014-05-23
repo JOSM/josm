@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,9 +10,12 @@ import java.net.URLConnection;
 import java.text.MessageFormat;
 
 import javax.swing.JEditorPane;
+import javax.swing.LookAndFeel;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.text.html.StyleSheet;
 
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -78,30 +82,55 @@ public class JosmEditorPane extends JEditorPane {
         }
         return result;
     }
-
+    
     /**
-     * Creates a {@link JosmEditorPane} which is meant to be used as a powerful replacement of {@link javax.swing.JLabel}.
+     * Adapts a {@link JEditorPane} to be used as a powerful replacement of {@link javax.swing.JLabel}.
+     * @param pane The editor pane to adapt
+     * @param allBold If {@code true}, makes all text to be displayed in bold
      */
-    public static JosmEditorPane createJLabelLikePane() {
-        final JosmEditorPane pane = new JosmEditorPane("text/html", "");
+    public static void makeJLabelLike(JEditorPane pane, boolean allBold) {
+        pane.setContentType("text/html");
         pane.setOpaque(false);
         pane.setEditable(false);
+        adaptForNimbus(pane);
 
         JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
         final Font f = UIManager.getFont("Label.font");
         final StyleSheet ss = new StyleSheet();
-        final String rule = MessageFormat.format(
+        ss.addRule((allBold ? "html" : "strong, b") + " {" + getFontRule(f) + "}");
+        ss.addRule("a {text-decoration: underline; color: blue}");
+        ss.addRule("h1 {" + getFontRule(GuiHelper.getTitleFont()) + "}");
+        ss.addRule("ol {margin-left: 1cm; margin-top: 0.1cm; margin-bottom: 0.2cm; list-style-type: decimal}");
+        ss.addRule("ul {margin-left: 1cm; margin-top: 0.1cm; margin-bottom: 0.2cm; list-style-type: disc}");
+        kit.setStyleSheet(ss);
+        pane.setEditorKit(kit);
+    }
+
+    /**
+     * Adapts a {@link JEditorPane} for Nimbus look and feel.
+     * See <a href="https://stackoverflow.com/q/15228336/2257172">this StackOverflow question</a>.
+     * @param pane The editor pane to adapt
+     * @since 6935
+     */
+    public static void adaptForNimbus(JEditorPane pane) {
+        LookAndFeel currentLAF = UIManager.getLookAndFeel();
+        if (currentLAF != null && "Nimbus".equals(currentLAF.getName())) {
+            Color bgColor = UIManager.getColor("Label.background");
+            UIDefaults defaults = new UIDefaults();
+            defaults.put("EditorPane[Enabled].backgroundPainter", bgColor);
+            pane.putClientProperty("Nimbus.Overrides", defaults);
+            pane.putClientProperty("Nimbus.Overrides.InheritDefaults", true);
+            pane.setBackground(bgColor);
+        }
+    }
+
+    private static String getFontRule(Font f) {
+        return MessageFormat.format(
                 "font-family: ''{0}'';font-size: {1,number}pt; font-weight: {2}; font-style: {3}",
                 f.getName(),
                 f.getSize(),
                 "bold",
                 f.isItalic() ? "italic" : "normal"
         );
-        ss.addRule("strong {" + rule + "}");
-        ss.addRule("a {text-decoration: underline; color: blue}");
-        kit.setStyleSheet(ss);
-        pane.setEditorKit(kit);
-
-        return pane;
     }
 }

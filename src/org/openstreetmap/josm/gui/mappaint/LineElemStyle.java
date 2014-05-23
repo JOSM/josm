@@ -1,11 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -24,6 +23,7 @@ public class LineElemStyle extends ElemStyle {
         Cascade c = mc.getOrCreateCascade("default");
         c.put(WIDTH, Keyword.DEFAULT);
         c.put(COLOR, color != null ? color : PaintColors.UNTAGGED.get());
+        c.put(OPACITY, 1f);
         if (isAreaEdge) {
             c.put(Z_INDEX, -3f);
         }
@@ -98,13 +98,9 @@ public class LineElemStyle extends ElemStyle {
         Float width;
         switch (type) {
             case NORMAL:
-            {
-                Float widthOnDefault = getWidth(c_def, WIDTH, null);
-                width = getWidth(c, WIDTH, widthOnDefault);
+                width = getWidth(c, WIDTH, getWidth(c_def, WIDTH, null));
                 break;
-            }
             case CASING:
-            {
                 Float casingWidth = c.get(type.prefix + WIDTH, null, Float.class, true);
                 if (casingWidth == null) {
                     RelativeFloat rel_casingWidth = c.get(type.prefix + WIDTH, null, RelativeFloat.class, true);
@@ -114,14 +110,12 @@ public class LineElemStyle extends ElemStyle {
                 }
                 if (casingWidth == null)
                     return null;
-                Float widthOnDefault = getWidth(c_def, WIDTH, null);
-                width = getWidth(c, WIDTH, widthOnDefault);
+                width = getWidth(c, WIDTH, getWidth(c_def, WIDTH, null));
                 if (width == null) {
                     width = 0f;
                 }
                 width += 2 * casingWidth;
                 break;
-            }
             case LEFT_CASING:
             case RIGHT_CASING:
                 width = getWidth(c, type.prefix + WIDTH, null);
@@ -175,7 +169,11 @@ public class LineElemStyle extends ElemStyle {
             }
         }
 
+        int alpha = 255;
         Color color = c.get(type.prefix + COLOR, null, Color.class);
+        if (color != null) {
+            alpha = color.getAlpha();
+        }
         if (type == LineType.NORMAL && color == null) {
             color = c.get(FILL_COLOR, null, Color.class);
         }
@@ -183,14 +181,13 @@ public class LineElemStyle extends ElemStyle {
             color = PaintColors.UNTAGGED.get();
         }
 
-        int alpha = 255;
         Integer pAlpha = Utils.color_float2int(c.get(type.prefix + OPACITY, null, Float.class));
         if (pAlpha != null) {
             alpha = pAlpha;
         }
         color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 
-        float[] dashes = c.get(type.prefix + DASHES, null, float[].class);
+        float[] dashes = c.get(type.prefix + DASHES, null, float[].class, true);
         if (dashes != null) {
             boolean hasPositive = false;
             for (float f : dashes) {
@@ -220,11 +217,11 @@ public class LineElemStyle extends ElemStyle {
         Integer cap = null;
         Keyword capKW = c.get(type.prefix + "linecap", null, Keyword.class);
         if (capKW != null) {
-            if (equal(capKW.val, "none")) {
+            if ("none".equals(capKW.val)) {
                 cap = BasicStroke.CAP_BUTT;
-            } else if (equal(capKW.val, "round")) {
+            } else if ("round".equals(capKW.val)) {
                 cap = BasicStroke.CAP_ROUND;
-            } else if (equal(capKW.val, "square")) {
+            } else if ("square".equals(capKW.val)) {
                 cap = BasicStroke.CAP_SQUARE;
             }
         }
@@ -235,11 +232,11 @@ public class LineElemStyle extends ElemStyle {
         Integer join = null;
         Keyword joinKW = c.get(type.prefix + "linejoin", null, Keyword.class);
         if (joinKW != null) {
-            if (equal(joinKW.val, "round")) {
+            if ("round".equals(joinKW.val)) {
                 join = BasicStroke.JOIN_ROUND;
-            } else if (equal(joinKW.val, "miter")) {
+            } else if ("miter".equals(joinKW.val)) {
                 join = BasicStroke.JOIN_MITER;
-            } else if (equal(joinKW.val, "bevel")) {
+            } else if ("bevel".equals(joinKW.val)) {
                 join = BasicStroke.JOIN_BEVEL;
             }
         }
@@ -334,10 +331,10 @@ public class LineElemStyle extends ElemStyle {
         if (!super.equals(obj))
             return false;
         final LineElemStyle other = (LineElemStyle) obj;
-        return  equal(line, other.line) &&
-            equal(color, other.color) &&
-            equal(dashesLine, other.dashesLine) &&
-            equal(dashesBackground, other.dashesBackground) &&
+        return Objects.equals(line, other.line) &&
+            Objects.equals(color, other.color) &&
+            Objects.equals(dashesLine, other.dashesLine) &&
+            Objects.equals(dashesBackground, other.dashesBackground) &&
             offset == other.offset &&
             realWidth == other.realWidth;
     }

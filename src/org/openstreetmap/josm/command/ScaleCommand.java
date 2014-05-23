@@ -53,7 +53,7 @@ public class ScaleCommand extends TransformNodesCommand {
      * Compute new scaling factor and transform nodes accordingly.
      */
     @Override
-    public void handleEvent(EastNorth currentEN) {
+    public final void handleEvent(EastNorth currentEN) {
         double startAngle = Math.atan2(startEN.east()-pivot.east(), startEN.north()-pivot.north());
         double endAngle = Math.atan2(currentEN.east()-pivot.east(), currentEN.north()-pivot.north());
         double startDistance = pivot.distance(startEN);
@@ -61,7 +61,6 @@ public class ScaleCommand extends TransformNodesCommand {
         scalingFactor = Math.cos(startAngle-endAngle) * currentDistance / startDistance;
         transformNodes();
     }
-
 
     /**
      * Scale nodes.

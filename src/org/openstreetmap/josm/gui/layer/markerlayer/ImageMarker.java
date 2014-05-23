@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Marker representing an image. Uses a special icon, and when clicked,
  * displays an image view dialog. Re-uses some code from GeoImageLayer.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  *
  */
 public class ImageMarker extends ButtonMarker {

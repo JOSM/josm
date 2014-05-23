@@ -39,7 +39,7 @@ public class ParallelWays {
 
         // Make a deep copy of the ways, keeping the copied ways connected
         // TODO: This assumes the first/last nodes of the ways are the only possible shared nodes.
-        HashMap<Node, Node> splitNodeMap = new HashMap<Node, Node>(sourceWays.size());
+        HashMap<Node, Node> splitNodeMap = new HashMap<>(sourceWays.size());
         for (Way w : sourceWays) {
             if (!splitNodeMap.containsKey(w.firstNode())) {
                 splitNodeMap.put(w.firstNode(), copyNode(w.firstNode(), copyTags));
@@ -48,7 +48,7 @@ public class ParallelWays {
                 splitNodeMap.put(w.lastNode(), copyNode(w.lastNode(), copyTags));
             }
         }
-        ways = new ArrayList<Way>(sourceWays.size());
+        ways = new ArrayList<>(sourceWays.size());
         for (Way w : sourceWays) {
             Way wCopy = new Way();
             wCopy.addNode(splitNodeMap.get(w.firstNode()));
@@ -70,8 +70,8 @@ public class ParallelWays {
             throw new IllegalArgumentException("Ways must have spanning path"); // Create a dedicated exception?
 
         // Fix #8631 - Remove duplicated nodes from graph to be robust with self-intersecting ways
-        Set<Node> removedNodes = new HashSet<Node>();
-        sortedNodes = new ArrayList<Node>();
+        Set<Node> removedNodes = new HashSet<>();
+        sortedNodes = new ArrayList<>();
         for (int i = 0; i < sortedNodesPath.size(); i++) {
             Node n = sortedNodesPath.get(i);
             if (i < sortedNodesPath.size()-1) {
@@ -88,18 +88,16 @@ public class ParallelWays {
         }
 
         // Ugly method of ensuring that the offset isn't inverted. I'm sure there is a better and more elegant way, but I'm starting to get sleepy, so I do this for now.
-        {
-            Way refWay = ways.get(refWayIndex);
-            boolean refWayReversed = true;
-            for (int i = 0; i < sortedNodes.size() - 1; i++) {
-                if (sortedNodes.get(i) == refWay.firstNode() && sortedNodes.get(i + 1) == refWay.getNode(1)) {
-                    refWayReversed = false;
-                    break;
-                }
+        Way refWay = ways.get(refWayIndex);
+        boolean refWayReversed = true;
+        for (int i = 0; i < sortedNodes.size() - 1; i++) {
+            if (sortedNodes.get(i) == refWay.firstNode() && sortedNodes.get(i + 1) == refWay.getNode(1)) {
+                refWayReversed = false;
+                break;
             }
-            if (refWayReversed) {
-                Collections.reverse(sortedNodes); // need to keep the orientation of the reference way.
-            }
+        }
+        if (refWayReversed) {
+            Collections.reverse(sortedNodes); // need to keep the orientation of the reference way.
         }
 
         // Initialize the required parameters. (segment normals, etc.)
@@ -177,7 +175,7 @@ public class ParallelWays {
     }
 
     private List<Command> makeAddWayAndNodesCommandList() {
-        List<Command> commands = new ArrayList<Command>(sortedNodes.size() + ways.size());
+        List<Command> commands = new ArrayList<>(sortedNodes.size() + ways.size());
         for (int i = 0; i < sortedNodes.size() - (isClosedPath() ? 1 : 0); i++) {
             commands.add(new AddCommand(sortedNodes.get(i)));
         }
@@ -187,7 +185,7 @@ public class ParallelWays {
         return commands;
     }
 
-    static private Node copyNode(Node source, boolean copyTags) {
+    private static Node copyNode(Node source, boolean copyTags) {
         if (copyTags)
             return new Node(source, true);
         else {

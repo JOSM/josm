@@ -22,6 +22,7 @@ package org.openstreetmap.josm.data.projection.datum;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
@@ -74,16 +75,16 @@ public class NTV2SubGrid implements Cloneable, Serializable {
         byte[] b1 = new byte[1];
         in.read(b8);
         in.read(b8);
-        subGridName = new String(b8).trim();
+        subGridName = new String(b8, StandardCharsets.UTF_8).trim();
         in.read(b8);
         in.read(b8);
-        parentSubGridName = new String(b8).trim();
+        parentSubGridName = new String(b8, StandardCharsets.UTF_8).trim();
         in.read(b8);
         in.read(b8);
-        created = new String(b8);
+        created = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
-        updated = new String(b8);
+        updated = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
         minLat = NTV2Util.getDouble(b8, bigEndian);
@@ -185,10 +186,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @return true or false
      */
     private boolean isCoordWithin(double lon, double lat) {
-        if ((lon >= minLon) && (lon < maxLon) && (lat >= minLat) && (lat < maxLat))
-            return true;
-        else
-            return false;
+        return (lon >= minLon) && (lon < maxLon) && (lat >= minLat) && (lat < maxLat);
     }
 
     /**
@@ -295,7 +293,7 @@ public class NTV2SubGrid implements Cloneable, Serializable {
      * @return textual details about the sub grid
      */
     public String getDetails() {
-        StringBuffer buf = new StringBuffer("Sub Grid : ");
+        StringBuilder buf = new StringBuilder("Sub Grid : ");
         buf.append(subGridName);
         buf.append("\nParent   : ");
         buf.append(parentSubGridName);

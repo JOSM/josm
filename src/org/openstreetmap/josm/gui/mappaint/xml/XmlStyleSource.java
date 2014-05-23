@@ -6,12 +6,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -34,14 +36,20 @@ import org.xml.sax.SAXParseException;
 
 public class XmlStyleSource extends StyleSource implements StyleKeys {
 
-    protected final Map<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
-    protected final Map<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
-    protected final Map<String, LinemodPrototype> modifiers = new HashMap<String, LinemodPrototype>();
-    protected final Map<String, AreaPrototype> areas = new HashMap<String, AreaPrototype>();
-    protected final List<IconPrototype> iconsList = new LinkedList<IconPrototype>();
-    protected final List<LinePrototype> linesList = new LinkedList<LinePrototype>();
-    protected final List<LinemodPrototype> modifiersList = new LinkedList<LinemodPrototype>();
-    protected final List<AreaPrototype> areasList = new LinkedList<AreaPrototype>();
+    /**
+     * The accepted MIME types sent in the HTTP Accept header.
+     * @since 6867
+     */
+    public static final String XML_STYLE_MIME_TYPES = "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
+
+    protected final Map<String, IconPrototype> icons = new HashMap<>();
+    protected final Map<String, LinePrototype> lines = new HashMap<>();
+    protected final Map<String, LinemodPrototype> modifiers = new HashMap<>();
+    protected final Map<String, AreaPrototype> areas = new HashMap<>();
+    protected final List<IconPrototype> iconsList = new LinkedList<>();
+    protected final List<LinePrototype> linesList = new LinkedList<>();
+    protected final List<LinemodPrototype> modifiersList = new LinkedList<>();
+    protected final List<AreaPrototype> areasList = new LinkedList<>();
 
     public XmlStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
@@ -68,18 +76,16 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
     public void loadStyleSource() {
         init();
         try {
-            InputStream in = getSourceInputStream();
-            try {
-                InputStreamReader reader = new InputStreamReader(in);
+            try (
+                InputStream in = getSourceInputStream();
+                InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)
+            ) {
                 XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(this));
                 parser.startWithValidation(reader,
-                        Main.JOSM_WEBSITE+"/mappaint-style-1.0",
+                        Main.getXMLBase()+"/mappaint-style-1.0",
                         "resource://data/mappaint-style.xsd");
                 while (parser.hasNext());
-            } finally {
-                closeSourceInputStream(in);
             }
-
         } catch (IOException e) {
             Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
             Main.error(e);
@@ -97,7 +103,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
 
     @Override
     public InputStream getSourceInputStream() throws IOException {
-        MirroredInputStream in = new MirroredInputStream(url);
+        MirroredInputStream in = getMirroredInputStream();
         InputStream zip = in.findZipEntryInputStream("xml", "style");
         if (zip != null) {
             zipIcons = in.getFile();
@@ -106,6 +112,11 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             zipIcons = null;
             return in;
         }
+    }
+
+    @Override
+    public MirroredInputStream getMirroredInputStream() throws IOException {
+        return new MirroredInputStream(url, null, XML_STYLE_MIME_TYPES);
     }
 
     private static class WayPrototypesRecord {
@@ -175,7 +186,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
      */
     private void get(OsmPrimitive primitive, boolean closed, WayPrototypesRecord p, Double scale, MultiCascade mc) {
         String lineIdx = null;
-        HashMap<String, LinemodPrototype> overlayMap = new HashMap<String, LinemodPrototype>();
+        HashMap<String, LinemodPrototype> overlayMap = new HashMap<>();
         boolean isNotArea = primitive.isKeyFalse("area");
         for (String key : primitive.keySet()) {
             String val = primitive.get(key);
@@ -247,7 +258,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
         }
         overlayMap.remove(lineIdx); // do not use overlay if linestyle is from the same rule (example: railway=tram)
         if (!overlayMap.isEmpty()) {
-            List<LinemodPrototype> tmp = new LinkedList<LinemodPrototype>();
+            List<LinemodPrototype> tmp = new LinkedList<>();
             if (p.linemods != null) {
                 tmp.addAll(p.linemods);
             }
@@ -358,7 +369,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             if (multipolyOuterWay != null) {
                 WayPrototypesRecord p2 = new WayPrototypesRecord();
                 get(multipolyOuterWay, true, p2, (useMinMaxScale ? scale : null), mc);
-                if (Utils.equal(p.area, p2.area)) {
+                if (Objects.equals(p.area, p2.area)) {
                     p.area = null;
                 }
             }
@@ -370,5 +381,4 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
             }
         }
     }
-
 }

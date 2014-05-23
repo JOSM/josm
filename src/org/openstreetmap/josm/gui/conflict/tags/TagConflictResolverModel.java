@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class TagConflictResolverModel extends DefaultTableModel {
-    static public final String NUM_CONFLICTS_PROP = TagConflictResolverModel.class.getName() + ".numConflicts";
+    public static final String NUM_CONFLICTS_PROP = TagConflictResolverModel.class.getName() + ".numConflicts";
 
     private TagCollection tags;
     private List<String> displayedKeys;
@@ -97,7 +97,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
         if (showTagsWithConflictsOnly) {
             keys.retainAll(keysWithConflicts);
             if (showTagsWithMultiValuesOnly) {
-                Set<String> keysWithMultiValues = new HashSet<String>();
+                Set<String> keysWithMultiValues = new HashSet<>();
                 for (String key: keys) {
                     if (decisions.get(key).canKeepAll()) {
                         keysWithMultiValues.add(key);
@@ -131,9 +131,9 @@ public class TagConflictResolverModel extends DefaultTableModel {
     public void populate(TagCollection tags, Set<String> keysWithConflicts) {
         CheckParameterUtil.ensureParameterNotNull(tags, "tags");
         this.tags = tags;
-        displayedKeys = new ArrayList<String>();
+        displayedKeys = new ArrayList<>();
         this.keysWithConflicts = keysWithConflicts == null ? new HashSet<String>() : keysWithConflicts;
-        decisions = new HashMap<String, MultiValueResolutionDecision>();
+        decisions = new HashMap<>();
         rebuild();
     }
     
@@ -261,9 +261,10 @@ public class TagConflictResolverModel extends DefaultTableModel {
             List<String> values = decision.getValues();
             values.remove("");
             if (values.size() == 1) {
+                // TODO: Do not suggest to keep the single value in order to avoid long highways to become tunnels+bridges+... (only if both primitives are tagged)
                 decision.keepOne(values.get(0));
             } else {
-                decision.keepAll();
+                // Do not suggest to keep all values in order to reduce the wrong usage of semicolon values, see #9104!
             }
         }
         rebuild();
@@ -275,6 +276,6 @@ public class TagConflictResolverModel extends DefaultTableModel {
      * @since 6616
      */
     public final Set<String> getKeysWithConflicts() {
-        return new HashSet<String>(keysWithConflicts);
+        return new HashSet<>(keysWithConflicts);
     }
 }

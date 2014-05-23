@@ -69,7 +69,7 @@ public class FullscreenToggleAction extends ToggleAction {
     protected void setMode() {
         JFrame frame = (JFrame) Main.parent;
 
-        List<Window> visibleWindows = new ArrayList<Window>();
+        List<Window> visibleWindows = new ArrayList<>();
         visibleWindows.add(frame);
         for (Window w : Frame.getWindows()) {
             if (w.isVisible() && w != frame) {

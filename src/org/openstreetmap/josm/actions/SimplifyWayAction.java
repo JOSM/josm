@@ -95,20 +95,18 @@ public class SimplifyWayAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         DataSet ds = getCurrentDataSet();
         ds.beginUpdate();
-        try
-        {
+        try {
             List<Way> ways = OsmPrimitive.getFilteredList(ds.getSelected(), Way.class);
             if (ways.isEmpty()) {
                 alertSelectAtLeastOneWay();
                 return;
-            } else if (!confirmWayWithNodesOutsideBoundingBox(ways))
+            } else if (!confirmWayWithNodesOutsideBoundingBox(ways)) {
                 return;
-            else if (ways.size() > 10) {
-                if (!confirmSimplifyManyWays(ways.size()))
-                    return;
+            } else if (ways.size() > 10 && !confirmSimplifyManyWays(ways.size())) {
+                return;
             }
 
-            Collection<Command> allCommands = new LinkedList<Command>();
+            Collection<Command> allCommands = new LinkedList<>();
             for (Way way: ways) {
                 SequenceCommand simplifyCommand = simplifyWay(way);
                 if (simplifyCommand == null) {
@@ -140,7 +138,7 @@ public class SimplifyWayAction extends JosmAction {
     protected boolean isRequiredNode(Way way, Node node) {
         boolean isRequired =  Collections.frequency(way.getNodes(), node) > 1;
         if (! isRequired) {
-            List<OsmPrimitive> parents = new LinkedList<OsmPrimitive>();
+            List<OsmPrimitive> parents = new LinkedList<>();
             parents.addAll(node.getReferrers());
             parents.remove(way);
             isRequired = !parents.isEmpty();
@@ -172,7 +170,7 @@ public class SimplifyWayAction extends JosmAction {
     public SequenceCommand simplifyWay(Way w, double threshold) {
         int lower = 0;
         int i = 0;
-        List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
+        List<Node> newNodes = new ArrayList<>(w.getNodesCount());
         while(i < w.getNodesCount()){
             if (isRequiredNode(w,w.getNode(i))) {
                 // copy a required node to the list of new nodes. Simplify not possible
@@ -192,13 +190,13 @@ public class SimplifyWayAction extends JosmAction {
             i++;
         }
 
-        HashSet<Node> delNodes = new HashSet<Node>();
+        HashSet<Node> delNodes = new HashSet<>();
         delNodes.addAll(w.getNodes());
         delNodes.removeAll(newNodes);
 
         if (delNodes.isEmpty()) return null;
 
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
         Way newWay = new Way(w);
         newWay.setNodes(newNodes);
         cmds.add(new ChangeCommand(w, newWay));
@@ -268,10 +266,10 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     public static double xtd(double lat1, double lon1, double lat2, double lon2, double lat3, double lon3) {
-        double dist_AD = dist(lat1, lon1, lat3, lon3);
-        double crs_AD = course(lat1, lon1, lat3, lon3);
-        double crs_AB = course(lat1, lon1, lat2, lon2);
-        return Math.asin(Math.sin(dist_AD) * Math.sin(crs_AD - crs_AB));
+        double distAD = dist(lat1, lon1, lat3, lon3);
+        double crsAD = course(lat1, lon1, lat3, lon3);
+        double crsAB = course(lat1, lon1, lat2, lon2);
+        return Math.asin(Math.sin(distAD) * Math.sin(crsAD - crsAB));
     }
 
     @Override

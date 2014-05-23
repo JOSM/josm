@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -26,10 +28,13 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
@@ -82,9 +87,15 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
         tfId.getKeymap().removeKeyStrokeBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false));
         tfId.setPreferredSize(new Dimension(400, tfId.getPreferredSize().height));
 
-        HtmlPanel help = new HtmlPanel(tr("Object IDs can be separated by comma or space.<br/>"
-                + " Examples: <b><ul><li>1 2 5</li><li>1,2,5</li></ul><br/></b>"
-                + " In mixed mode, specify objects like this: <b>w123, n110, w12, r15</b><br/>"));
+        HtmlPanel help = new HtmlPanel(/* I18n: {0} and {1} contains example strings not meant for translation. {2}=n, {3}=w, {4}=r. */
+                tr("Object IDs can be separated by comma or space.<br/>"
+                        + "Examples: {0}<br/>"
+                        + "In mixed mode, specify objects like this: {1}<br/>"
+                        + "({2} stands for <i>node</i>, {3} for <i>way</i>, and {4} for <i>relation</i>)",
+                        "<b>" + Utils.joinAsHtmlUnorderedList(Arrays.asList("1 2 5", "1,2,5")) + "</b>",
+                        "<b>w123, n110, w12, r15</b>",
+                        "<b>n</b>", "<b>w</b>", "<b>r</b>"
+                ));
         help.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
         cbType.addItemListener(new ItemListener() {
@@ -145,7 +156,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
      * @param cbHistory the {@link HistoryComboBox} to which the history is restored to
      */
     protected void restorePrimitivesHistory(HistoryComboBox cbHistory) {
-        java.util.List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(getClass().getName() + ".primitivesHistory", new LinkedList<String>()));
+        java.util.List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(getClass().getName() + ".primitivesHistory", new LinkedList<String>()));
         // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         Collections.reverse(cmtHistory);
         cbHistory.setPossibleItems(cmtHistory);
@@ -185,21 +196,33 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
 
     protected void tryToPasteFromClipboard(OsmIdTextField tfId, OsmPrimitiveTypesComboBox cbType) {
         String buf = Utils.getClipboardContent();
-        if (buf != null) {
-            if (buf.contains("node")) cbType.setSelectedIndex(0);
-            if (buf.contains("way")) cbType.setSelectedIndex(1);
-            if (buf.contains("relation")) cbType.setSelectedIndex(2);
-            String[] res = buf.split("/");
-            String txt;
-            if (res.length > 0) {
-                txt = res[res.length - 1];
-                if (txt.isEmpty() && txt.length() > 1) txt = res[res.length - 2];
+        if (buf == null || buf.length()==0) return;
+        if (buf.length() > Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) return;
+        final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
+        if (!ids.isEmpty()) {
+            final String parsedText = Utils.join(", ", Utils.transform(ids, new Utils.Function<SimplePrimitiveId, String>() {
+                @Override
+                public String apply(SimplePrimitiveId x) {
+                    return x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId());
+                }
+            }));
+            tfId.tryToPasteFrom(parsedText);
+            final Set<OsmPrimitiveType> types = new HashSet<>(Utils.transform(ids, new Utils.Function<SimplePrimitiveId, OsmPrimitiveType>() {
+                @Override
+                public OsmPrimitiveType apply(SimplePrimitiveId x) {
+                    return x.getType();
+                }
+            }));
+            if (types.size() == 1) {
+                // select corresponding type
+                cbType.setSelectedItem(types.iterator().next());
             } else {
-                txt = buf;
+                // select "mixed"
+                cbType.setSelectedIndex(3);
             }
-            if (buf.length() <= Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) {
-                tfId.tryToPasteFrom(txt.replaceAll("[^0-9]+", " ").replaceAll("\\s\\s+", " "));
-            }
+        } else if (buf.matches("[\\d,v\\s]+")) { 
+            //fallback solution for id1,id2,id3 format 
+            tfId.tryToPasteFrom(buf);
         }
     }
 

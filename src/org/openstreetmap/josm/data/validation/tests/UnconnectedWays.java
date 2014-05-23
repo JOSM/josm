@@ -22,7 +22,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -33,7 +32,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Tests if there are segments that crosses in the same layer.
- * <br/>
+ * <br>
  * This class is abstract since highway/railway/waterway/… ways must be handled separately.
  * An actual implementation must override {@link #isPrimitiveUsable(OsmPrimitive)}
  * to denote which kind of primitives can be handled.
@@ -42,7 +41,17 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public abstract class UnconnectedWays extends Test {
 
+    /**
+     * Unconnected highways test.
+     */
     public static class UnconnectedHighways extends UnconnectedWays {
+
+        /**
+         * Constructs a new {@code UnconnectedHighways} test.
+         */
+        public UnconnectedHighways() {
+            super(tr("Unconnected highways"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
@@ -50,7 +59,17 @@ public abstract class UnconnectedWays extends Test {
         }
     }
 
+    /**
+     * Unconnected railways test.
+     */
     public static class UnconnectedRailways extends UnconnectedWays {
+
+        /**
+         * Constructs a new {@code UnconnectedRailways} test.
+         */
+        public UnconnectedRailways() {
+            super(tr("Unconnected railways"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
@@ -58,7 +77,17 @@ public abstract class UnconnectedWays extends Test {
         }
     }
 
+    /**
+     * Unconnected waterways test.
+     */
     public static class UnconnectedWaterways extends UnconnectedWays {
+
+        /**
+         * Constructs a new {@code UnconnectedWaterways} test.
+         */
+        public UnconnectedWaterways() {
+            super(tr("Unconnected waterways"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
@@ -66,7 +95,17 @@ public abstract class UnconnectedWays extends Test {
         }
     }
 
+    /**
+     * Unconnected natural/landuse test.
+     */
     public static class UnconnectedNaturalOrLanduse extends UnconnectedWays {
+
+        /**
+         * Constructs a new {@code UnconnectedNaturalOrLanduse} test.
+         */
+        public UnconnectedNaturalOrLanduse() {
+            super(tr("Unconnected natural lands and landuses"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
@@ -74,11 +113,21 @@ public abstract class UnconnectedWays extends Test {
         }
     }
 
+    /**
+     * Unconnected power ways test.
+     */
     public static class UnconnectedPower extends UnconnectedWays {
+
+        /**
+         * Constructs a new {@code UnconnectedPower} test.
+         */
+        public UnconnectedPower() {
+            super(tr("Unconnected power ways"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && p.hasKey("power");
+            return super.isPrimitiveUsable(p) && p.hasTag("power", "line", "minor_line", "cable");
         }
     }
 
@@ -96,33 +145,36 @@ public abstract class UnconnectedWays extends Test {
     private double minmiddledist;
 
     /**
-     * Constructor
+     * Constructs a new {@code UnconnectedWays} test.
+     * @param title The test title
+     * @since 6691
      */
-    public UnconnectedWays() {
-        super(tr("Unconnected ways"),
-                tr("This test checks if a way has an endpoint very near to another way."));
+    public UnconnectedWays(String title) {
+        super(title, tr("This test checks if a way has an endpoint very near to another way."));
     }
 
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        ways = new HashSet<MyWaySegment>();
-        endnodes = new QuadBuckets<Node>();
-        endnodes_highway = new QuadBuckets<Node>();
-        middlenodes = new QuadBuckets<Node>();
-        othernodes = new HashSet<Node>();
+        ways = new HashSet<>();
+        endnodes = new QuadBuckets<>();
+        endnodes_highway = new QuadBuckets<>();
+        middlenodes = new QuadBuckets<>();
+        othernodes = new HashSet<>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
         dsArea = Main.main == null || !Main.main.hasEditLayer() ? null : Main.main.getCurrentDataSet().getDataSourceArea();
     }
 
-    @Override
-    public void endTest() {
-        Map<Node, Way> map = new HashMap<Node, Way>();
+    protected Map<Node, Way> getWayEndNodesNearOtherHighway() {
+        Map<Node, Way> map = new HashMap<>();
         for (int iter = 0; iter < 1; iter++) {
             for (MyWaySegment s : ways) {
-                Collection<Node> nearbyNodes = s.nearbyNodes(mindist);
-                for (Node en : nearbyNodes) {
+                if (isCanceled()) {
+                    map.clear();
+                    return map;
+                }
+                for (Node en : s.nearbyNodes(mindist)) {
                     if (en == null || !s.highway || !endnodes_highway.contains(en)) {
                         continue;
                     }
@@ -140,21 +192,18 @@ public abstract class UnconnectedWays extends Test {
                     }
                     map.put(en, s.w);
                 }
-                if(isCanceled())
-                    return;
             }
         }
-        for (Map.Entry<Node, Way> error : map.entrySet()) {
-            errors.add(new TestError(this, Severity.WARNING,
-                    tr("Way end node near other highway"),
-                    UNCONNECTED_WAYS,
-                    Arrays.asList(error.getKey(), error.getValue()),
-                    Arrays.asList(error.getKey())));
-        }
-        map.clear();
+        return map;
+    }
+
+    protected Map<Node, Way> getWayEndNodesNearOtherWay() {
+        Map<Node, Way> map = new HashMap<>();
         for (MyWaySegment s : ways) {
-            if(isCanceled())
-                return;
+            if (isCanceled()) {
+                map.clear();
+                return map;
+            }
             for (Node en : s.nearbyNodes(mindist)) {
                 if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
                     continue;
@@ -166,57 +215,65 @@ public abstract class UnconnectedWays extends Test {
                 }
             }
         }
-        for (Map.Entry<Node, Way> error : map.entrySet()) {
-            errors.add(new TestError(this, Severity.WARNING,
-                    tr("Way end node near other way"),
-                    UNCONNECTED_WAYS,
+        return map;
+    }
+
+    protected Map<Node, Way> getWayNodesNearOtherWay() {
+        Map<Node, Way> map = new HashMap<>();
+        for (MyWaySegment s : ways) {
+            if (isCanceled()) {
+                map.clear();
+                return map;
+            }
+            for (Node en : s.nearbyNodes(minmiddledist)) {
+                if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                    continue;
+                }
+                if (!middlenodes.contains(en)) {
+                    continue;
+                }
+                map.put(en, s.w);
+            }
+        }
+        return map;
+    }
+
+    protected Map<Node, Way> getConnectedWayEndNodesNearOtherWay() {
+        Map<Node, Way> map = new HashMap<>();
+        for (MyWaySegment s : ways) {
+            if (isCanceled()) {
+                map.clear();
+                return map;
+            }
+            for (Node en : s.nearbyNodes(minmiddledist)) {
+                if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
+                    continue;
+                }
+                if (!othernodes.contains(en)) {
+                    continue;
+                }
+                map.put(en, s.w);
+            }
+        }
+        return map;
+    }
+
+    protected final void addErrors(Severity severity, Map<Node, Way> errorMap, String message) {
+        for (Map.Entry<Node, Way> error : errorMap.entrySet()) {
+            errors.add(new TestError(this, severity, message, UNCONNECTED_WAYS,
                     Arrays.asList(error.getKey(), error.getValue()),
                     Arrays.asList(error.getKey())));
         }
+    }
+
+    @Override
+    public void endTest() {
+        addErrors(Severity.WARNING, getWayEndNodesNearOtherHighway(), tr("Way end node near other highway"));
+        addErrors(Severity.WARNING, getWayEndNodesNearOtherWay(), tr("Way end node near other way"));
         /* the following two use a shorter distance */
         if (minmiddledist > 0.0) {
-            map.clear();
-            for (MyWaySegment s : ways) {
-                if(isCanceled())
-                    return;
-                for (Node en : s.nearbyNodes(minmiddledist)) {
-                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                        continue;
-                    }
-                    if (!middlenodes.contains(en)) {
-                        continue;
-                    }
-                    map.put(en, s.w);
-                }
-            }
-            for (Map.Entry<Node, Way> error : map.entrySet()) {
-                errors.add(new TestError(this, Severity.OTHER,
-                        tr("Way node near other way"),
-                        UNCONNECTED_WAYS,
-                        Arrays.asList(error.getKey(), error.getValue()),
-                        Arrays.asList(error.getKey())));
-            }
-            map.clear();
-            for (MyWaySegment s : ways) {
-                for (Node en : s.nearbyNodes(minmiddledist)) {
-                    if (en.isConnectedTo(s.w.getNodes(), 3 /* hops */, null)) {
-                        continue;
-                    }
-                    if(isCanceled())
-                        return;
-                    if (!othernodes.contains(en)) {
-                        continue;
-                    }
-                    map.put(en, s.w);
-                }
-            }
-            for (Map.Entry<Node, Way> error : map.entrySet()) {
-                errors.add(new TestError(this, Severity.OTHER,
-                        tr("Connected way end node near other way"),
-                        UNCONNECTED_WAYS,
-                        Arrays.asList(error.getKey(), error.getValue()),
-                        Arrays.asList(error.getKey())));
-            }
+            addErrors(Severity.OTHER, getWayNodesNearOtherWay(), tr("Way node near other way"));
+            addErrors(Severity.OTHER, getConnectedWayEndNodesNearOtherWay(), tr("Connected way end node near other way"));
         }
         ways = null;
         endnodes = null;
@@ -290,7 +347,7 @@ public abstract class UnconnectedWays extends Test {
             }
             LatLon topLeft  = new LatLon(y2+fudge, x1-fudge);
             LatLon botRight = new LatLon(y1-fudge, x2+fudge);
-            List<LatLon> ret = new ArrayList<LatLon>(2);
+            List<LatLon> ret = new ArrayList<>(2);
             ret.add(topLeft);
             ret.add(botRight);
             return ret;
@@ -310,8 +367,8 @@ public abstract class UnconnectedWays extends Test {
                     // Used the cached result and trim out
                     // the nodes that are not in the smaller
                     // area, but keep the old larger cache.
-                    Set<Node> trimmed = new HashSet<Node>(nearbyNodeCache);
-                    Set<Node> initial = new HashSet<Node>(nearbyNodeCache);
+                    Set<Node> trimmed = new HashSet<>(nearbyNodeCache);
+                    Set<Node> initial = new HashSet<>(nearbyNodeCache);
                     for (Node n : initial) {
                         if (!nearby(n, dist)) {
                             trimmed.remove(n);
@@ -342,7 +399,7 @@ public abstract class UnconnectedWays extends Test {
                 // so defer as much of the work as possible, like
                 // allocating the hash set
                 if (nearbyNodeCache == null) {
-                    nearbyNodeCache = new HashSet<Node>();
+                    nearbyNodeCache = new HashSet<>();
                 }
                 nearbyNodeCache.add(n);
             }
@@ -355,7 +412,7 @@ public abstract class UnconnectedWays extends Test {
     }
 
     List<MyWaySegment> getWaySegments(Way w) {
-        List<MyWaySegment> ret = new ArrayList<MyWaySegment>();
+        List<MyWaySegment> ret = new ArrayList<>();
         if (!w.isUsable()
                 || w.hasKey("barrier")
                 || w.hasTag("natural", "cliff"))

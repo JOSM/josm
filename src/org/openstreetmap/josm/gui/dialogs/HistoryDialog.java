@@ -155,7 +155,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         private DefaultListSelectionModel selectionModel;
 
         public HistoryItemTableModel(DefaultListSelectionModel selectionModel) {
-            data = new ArrayList<OsmPrimitive>();
+            data = new ArrayList<>();
             this.selectionModel = selectionModel;
         }
 
@@ -177,7 +177,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         }
 
         protected List<OsmPrimitive> getSelectedPrimitives() {
-            List<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> ret = new ArrayList<>();
             for (int i=0; i< data.size(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     ret.add(data.get(i));
@@ -229,7 +229,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
 
         public List<OsmPrimitive> getPrimitives(int [] rows) {
             if (rows == null || rows.length == 0) return Collections.emptyList();
-            List<OsmPrimitive> ret = new ArrayList<OsmPrimitive>(rows.length);
+            List<OsmPrimitive> ret = new ArrayList<>(rows.length);
             for (int row: rows) {
                 ret.add(data.get(row));
             }

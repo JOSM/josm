@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -36,7 +37,6 @@ import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -56,8 +56,8 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.ServerSidePreferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -72,7 +72,6 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.NavigatableComponent.ViewportData;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
@@ -82,11 +81,12 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
+import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
@@ -105,19 +105,19 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * Abstract class holding various static global variables and methods used in large parts of JOSM application.
  * @since 98
  */
-abstract public class Main {
+public abstract class Main {
 
     /**
      * The JOSM website URL.
-     * @since 6143
+     * @since 6897 (was public from 6143 to 6896)
      */
-    public static final String JOSM_WEBSITE = "http://josm.openstreetmap.de";
+    private static final String JOSM_WEBSITE = "https://josm.openstreetmap.de";
 
     /**
      * The OSM website URL.
-     * @since 6453
+     * @since 6897 (was public from 6453 to 6896)
      */
-    public static final String OSM_WEBSITE = "http://www.openstreetmap.org";
+    private static final String OSM_WEBSITE = "https://www.openstreetmap.org";
 
     /**
      * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
@@ -125,7 +125,7 @@ abstract public class Main {
      *
      * @return <code>true</code> if JOSM currently displays a map view
      */
-    static public boolean isDisplayingMapView() {
+    public static boolean isDisplayingMapView() {
         if (map == null) return false;
         if (map.mapView == null) return false;
         return true;
@@ -151,7 +151,7 @@ abstract public class Main {
      * calculations. The executed runnables are guaranteed to be executed separately
      * and sequential.
      */
-    public final static ExecutorService worker = new ProgressMonitorExecutor();
+    public static final ExecutorService worker = new ProgressMonitorExecutor();
 
     /**
      * Global application preferences
@@ -174,11 +174,6 @@ abstract public class Main {
     public static MapFrame map;
 
     /**
-     * Set to <code>true</code>, when in applet mode
-     */
-    public static boolean applet = false;
-
-    /**
      * The toolbar preference control to register new actions.
      */
     public static ToolbarPreferences toolbar;
@@ -186,7 +181,7 @@ abstract public class Main {
     /**
      * The commands undo/redo handler.
      */
-    public UndoRedoHandler undoRedo = new UndoRedoHandler();
+    public final UndoRedoHandler undoRedo = new UndoRedoHandler();
 
     /**
      * The progress monitor being currently displayed.
@@ -208,12 +203,12 @@ abstract public class Main {
      */
     private GettingStarted gettingStarted = new GettingStarted();
 
-    private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<MapFrameListener>();
+    private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<>();
 
-    protected static final Map<String, Throwable> networkErrors = new HashMap<String, Throwable>();
+    protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
     /**
-     * Logging level (4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
+     * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
      * @since 6248
      */
     public static int logLevel = 3;
@@ -265,6 +260,39 @@ abstract public class Main {
         if (msg != null && !msg.isEmpty()) {
             System.out.println(tr("DEBUG: {0}", msg));
         }
+    }
+
+    /**
+     * Prints a trace message if logging is on.
+     * @param msg The message to print.
+     */
+    public static void trace(String msg) {
+        if (logLevel < 5)
+            return;
+        if (msg != null && !msg.isEmpty()) {
+            System.out.print("TRACE: ");
+            System.out.println(msg);
+        }
+    }
+
+    /**
+     * Determines if debug log level is enabled.
+     * Useful to avoid costly construction of debug messages when not enabled.
+     * @return {@code true} if log level is at least debug, {@code false} otherwise
+     * @since 6852
+     */
+    public static boolean isDebugEnabled() {
+        return logLevel >= 4;
+    }
+
+    /**
+     * Determines if trace log level is enabled.
+     * Useful to avoid costly construction of trace messages when not enabled.
+     * @return {@code true} if log level is at least trace, {@code false} otherwise
+     * @since 6852
+     */
+    public static boolean isTraceEnabled() {
+        return logLevel >= 5;
     }
 
     /**
@@ -359,9 +387,9 @@ abstract public class Main {
      * @since 6642
      */
     public static String getErrorMessage(Throwable t) {
-    	if (t == null) {
-    		return null;
-    	}
+        if (t == null) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder(t.getClass().getName());
         String msg = t.getMessage();
         if (msg != null) {
@@ -387,15 +415,6 @@ abstract public class Main {
      * We use this to work around openjdk bugs
      */
     public static boolean isOpenjdk;
-
-    /**
-     * Initializes {@code Main.pref} in applet context.
-     * @param serverURL The server URL hosting the user preferences.
-     * @since 6471
-     */
-    public static void initAppletPreferences(URL serverURL) {
-        Main.pref = new ServerSidePreferences(serverURL);
-    }
 
     /**
      * Initializes {@code Main.pref} in normal application context.
@@ -485,67 +504,53 @@ abstract public class Main {
                 KeyEvent.VK_F1, Shortcut.DIRECT));
 
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
-        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
+        List<Callable<Void>> tasks = new ArrayList<>();
 
-        tasks.add(new Callable<Void>() {
+        tasks.add(new InitializationTask(tr("Initializing OSM API")) {
 
             @Override
-            public Void call() throws Exception {
+            public void initialize() throws Exception {
                 // We try to establish an API connection early, so that any API
                 // capabilities are already known to the editor instance. However
                 // if it goes wrong that's not critical at this stage.
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Initializing OSM API"));
-                }
                 try {
                     OsmApi.getOsmApi().initialize(null, true);
                 } catch (Exception e) {
                     Main.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
-                return null;
             }
         });
 
-        tasks.add(new Callable<Void>() {
+        tasks.add(new InitializationTask(tr("Initializing validator")) {
 
             @Override
-            public Void call() throws Exception {
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Initializing presets"));
-                }
-                TaggingPresetPreference.initialize();
-                // some validator tests require the presets to be initialized
-                // TODO remove this dependency for parallel initialization
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Initializing validator"));
-                }
+            public void initialize() throws Exception {
                 validator = new OsmValidator();
                 MapView.addLayerChangeListener(validator);
-                return null;
             }
         });
 
-        tasks.add(new Callable<Void>() {
+        tasks.add(new InitializationTask(tr("Initializing presets")) {
 
             @Override
-            public Void call() throws Exception {
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Initializing map styles"));
-                }
+            public void initialize() throws Exception {
+                TaggingPresets.initialize();
+            }
+        });
+
+        tasks.add(new InitializationTask(tr("Initializing map styles")) {
+
+            @Override
+            public void initialize() throws Exception {
                 MapPaintPreference.initialize();
-                return null;
             }
         });
 
-        tasks.add(new Callable<Void>() {
+        tasks.add(new InitializationTask(tr("Loading imagery preferences")) {
 
             @Override
-            public Void call() throws Exception {
-                if (initListener != null) {
-                    initListener.updateStatus(tr("Loading imagery preferences"));
-                }
+            public void initialize() throws Exception {
                 ImageryPreference.initialize();
-                return null;
             }
         });
 
@@ -575,7 +580,31 @@ abstract public class Main {
 
         toolbar.control.updateUI();
         contentPanePrivate.updateUI();
+    }
 
+    private abstract class InitializationTask implements Callable<Void> {
+
+        private final String name;
+
+        protected InitializationTask(String name) {
+            this.name = name;
+        }
+
+        public abstract void initialize() throws Exception;
+
+        @Override
+        public Void call() throws Exception {
+            if (initListener != null) {
+                initListener.updateStatus(name);
+            }
+            final long startTime = System.currentTimeMillis();
+            initialize();
+            if (isDebugEnabled()) {
+                final long elapsedTime = System.currentTimeMillis() - startTime;
+                Main.debug(tr("{0} completed in {1}", name, Utils.getDurationString(elapsedTime)));
+            }
+            return null;
+        }
     }
 
     /**
@@ -637,13 +666,13 @@ abstract public class Main {
         if (!hasEditLayer()) return null;
         return getEditLayer().data;
     }
-    
+
     /**
      * Replies the current selected primitives, from a end-user point of view.
      * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
      * Indeed, if the user is currently in drawing mode, only the way currently being drawn is returned,
      * see {@link DrawAction#getInProgressSelection()}.
-     * 
+     *
      * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
      * @since 6546
      */
@@ -790,7 +819,7 @@ abstract public class Main {
 
     protected static void postConstructorProcessCmdLine(Map<Option, Collection<String>> args) {
         if (args.containsKey(Option.DOWNLOAD)) {
-            List<File> fileList = new ArrayList<File>();
+            List<File> fileList = new ArrayList<>();
             for (String s : args.get(Option.DOWNLOAD)) {
                 File f = null;
                 switch(paramType(s)) {
@@ -873,7 +902,7 @@ abstract public class Main {
      */
     public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, boolean exit) {
         SaveLayersDialog dialog = new SaveLayersDialog(parent);
-        List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<OsmDataLayer>();
+        List<OsmDataLayer> layersWithUnmodifiedChanges = new ArrayList<>();
         for (Layer l: selectedLayers) {
             if (!(l instanceof OsmDataLayer)) {
                 continue;
@@ -917,7 +946,7 @@ abstract public class Main {
             pref.put("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
             // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
             if (Main.isDisplayingMapView()) {
-                Collection<Layer> layers = new ArrayList<Layer>(Main.map.mapView.getAllLayers());
+                Collection<Layer> layers = new ArrayList<>(Main.map.mapView.getAllLayers());
                 for (Layer l: layers) {
                     Main.main.removeLayer(l);
                 }
@@ -942,7 +971,7 @@ abstract public class Main {
      * @return The guessed parameter type
      */
     private static DownloadParamType paramType(String s) {
-        if(s.startsWith("http:")) return DownloadParamType.httpUrl;
+        if(s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
         if(s.startsWith("file:")) return DownloadParamType.fileUrl;
         String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
         if(s.matches(coorPattern+"(,"+coorPattern+"){3}")) return DownloadParamType.bounds;
@@ -1011,9 +1040,9 @@ abstract public class Main {
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase().startsWith("windows")) {
             platform = new PlatformHookWindows();
-        } else if (os.equals("Linux") || os.equals("Solaris") ||
-                os.equals("SunOS") || os.equals("AIX") ||
-                os.equals("FreeBSD") || os.equals("NetBSD") || os.equals("OpenBSD")) {
+        } else if ("Linux".equals(os) || "Solaris".equals(os) ||
+                "SunOS".equals(os) || "AIX".equals(os) ||
+                "FreeBSD".equals(os) || "NetBSD".equals(os) || "OpenBSD".equals(os)) {
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase().startsWith("mac os x")) {
             platform = new PlatformHookOsx();
@@ -1066,24 +1095,21 @@ abstract public class Main {
     }
 
     /**
-     * Checks that JOSM is at least running with Java 6.
-     * @since 3815
+     * Checks that JOSM is at least running with Java 7.
+     * @since 7001
      */
-    public static void checkJava6() {
+    public static void checkJavaVersion() {
         String version = System.getProperty("java.version");
         if (version != null) {
-            if (version.startsWith("1.6") || version.startsWith("6") ||
-                    version.startsWith("1.7") || version.startsWith("7") ||
-                    version.startsWith("1.8") || version.startsWith("8") ||
-                    version.startsWith("1.9") || version.startsWith("9"))
+            if (version.matches("^(1\\.)?[789].*"))
                 return;
-            if (version.startsWith("1.5") || version.startsWith("5")) {
-                JLabel ho = new JLabel("<html>"+
-                        tr("<h2>JOSM requires Java version 6.</h2>"+
-                                "Detected Java version: {0}.<br>"+
+            if (version.matches("^(1\\.)?[56].*")) {
+                JMultilineLabel ho = new JMultilineLabel("<html>"+
+                        tr("<h2>JOSM requires Java version {0}.</h2>"+
+                                "Detected Java version: {1}.<br>"+
                                 "You can <ul><li>update your Java (JRE) or</li>"+
-                                "<li>use an earlier (Java 5 compatible) version of JOSM.</li></ul>"+
-                                "More Info:", version)+"</html>");
+                                "<li>use an earlier (Java {2} compatible) version of JOSM.</li></ul>"+
+                                "More Info:", "7", version, "6")+"</html>");
                 JTextArea link = new JTextArea(HelpUtil.getWikiBaseHelpUrl()+"/Help/SystemRequirements");
                 link.setEditable(false);
                 link.setBackground(panel.getBackground());
@@ -1096,7 +1122,8 @@ abstract public class Main {
                 panel.add(link, gbc);
                 final String EXIT = tr("Exit JOSM");
                 final String CONTINUE = tr("Continue, try anyway");
-                int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, new String[] {EXIT, CONTINUE}, EXIT);
+                int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION,
+                        JOptionPane.ERROR_MESSAGE, null, new String[] {EXIT, CONTINUE}, EXIT);
                 if (ret == 0) {
                     System.exit(0);
                 }
@@ -1146,11 +1173,11 @@ abstract public class Main {
      * explicitly removing the listeners and allows us to transparently register every
      * created dataset as projection change listener.
      */
-    private static final List<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<WeakReference<ProjectionChangeListener>>();
+    private static final List<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<>();
 
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if (newValue == null ^ oldValue == null
-                || (newValue != null && oldValue != null && !Utils.equal(newValue.toCode(), oldValue.toCode()))) {
+                || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
 
             synchronized(Main.class) {
                 Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
@@ -1183,7 +1210,7 @@ abstract public class Main {
                 // already registered ? => abort
                 if (wr.get() == listener) return;
             }
-            listeners.add(new WeakReference<ProjectionChangeListener>(listener));
+            listeners.add(new WeakReference<>(listener));
         }
     }
 
@@ -1226,7 +1253,7 @@ abstract public class Main {
         void fromOtherApplication();
     }
 
-    private static final List<WeakReference<WindowSwitchListener>> windowSwitchListeners = new ArrayList<WeakReference<WindowSwitchListener>>();
+    private static final List<WeakReference<WindowSwitchListener>> windowSwitchListeners = new ArrayList<>();
 
     /**
      * Register a window switch listener.
@@ -1241,7 +1268,7 @@ abstract public class Main {
                 if (wr.get() == listener) return;
             }
             boolean wasEmpty = windowSwitchListeners.isEmpty();
-            windowSwitchListeners.add(new WeakReference<WindowSwitchListener>(listener));
+            windowSwitchListeners.add(new WeakReference<>(listener));
             if (wasEmpty) {
                 // The following call will have no effect, when there is no window
                 // at the time. Therefore, MasterWindowListener.setup() will also be
@@ -1398,7 +1425,7 @@ abstract public class Main {
     /**
      * Adds a new network error that occur to give a hint about broken Internet connection.
      * Do not use this method for errors known for sure thrown because of a bad proxy configuration.
-     * 
+     *
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}
@@ -1418,7 +1445,7 @@ abstract public class Main {
     /**
      * Adds a new network error that occur to give a hint about broken Internet connection.
      * Do not use this method for errors known for sure thrown because of a bad proxy configuration.
-     * 
+     *
      * @param url The accessed URL that caused the error
      * @param t The network error
      * @return The previous error associated to the given resource, if any. Can be {@code null}
@@ -1426,7 +1453,7 @@ abstract public class Main {
      */
     public static Throwable addNetworkError(String url, Throwable t) {
         if (url != null && t != null) {
-            return networkErrors.put(url, t);
+            return NETWORK_ERRORS.put(url, t);
         }
         return null;
     }
@@ -1437,6 +1464,47 @@ abstract public class Main {
      * @since 6639
      */
     public static Map<String, Throwable> getNetworkErrors() {
-        return new HashMap<String, Throwable>(networkErrors);
+        return new HashMap<>(NETWORK_ERRORS);
+    }
+
+    /**
+     * Returns the JOSM website URL.
+     * @return the josm website URL
+     * @since 6897
+     */
+    public static String getJOSMWebsite() {
+        if (Main.pref != null)
+            return Main.pref.get("josm.url", JOSM_WEBSITE);
+        return JOSM_WEBSITE;
+    }
+
+    /**
+     * Returns the JOSM XML URL.
+     * @return the josm XML URL
+     * @since 6897
+     */
+    public static String getXMLBase() {
+        // Always return HTTP (issues reported with HTTPS)
+        return "http://josm.openstreetmap.de";
+    }
+
+    /**
+     * Returns the OSM website URL.
+     * @return the OSM website URL
+     * @since 6897
+     */
+    public static String getOSMWebsite() {
+        if (Main.pref != null)
+            return Main.pref.get("osm.url", OSM_WEBSITE);
+        return OSM_WEBSITE;
+    }
+
+    /**
+     * Determines if we are currently running on OSX.
+     * @return {@code true} if we are currently running on OSX
+     * @since 6957
+     */
+    public static boolean isPlatformOsx() {
+        return Main.platform instanceof PlatformHookOsx;
     }
 }

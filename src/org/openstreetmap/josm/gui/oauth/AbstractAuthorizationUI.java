@@ -16,7 +16,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
     /**
      * The property name for the Access Token property
      */
-    static public final String ACCESS_TOKEN_PROP = AbstractAuthorizationUI.class.getName() + ".accessToken";
+    public static final String ACCESS_TOKEN_PROP = AbstractAuthorizationUI.class.getName() + ".accessToken";
 
     private String apiUrl;
     private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties;

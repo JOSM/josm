@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
@@ -24,9 +25,9 @@ import org.openstreetmap.josm.tools.WikiReader;
 public class HelpContentReader extends WikiReader {
 
     /**
-     * constructor
+     * Constructs a new {@code HelpContentReader}.
      *
-     * @param baseUrl the base url of the JOSM help wiki, i.e. http://josm.openstreetmap.org
+     * @param baseUrl the base url of the JOSM help wiki, i.e. https://josm.openstreetmap.org
      */
     public HelpContentReader(String baseUrl) {
         super(baseUrl);
@@ -42,15 +43,15 @@ public class HelpContentReader extends WikiReader {
      */
     public String fetchHelpTopicContent(String helpTopicUrl, boolean dotest) throws HelpContentReaderException {
         if(helpTopicUrl == null)
-            throw new MissingHelpContentException();
+            throw new MissingHelpContentException(helpTopicUrl);
         HttpURLConnection con = null;
-        BufferedReader in = null;
         try {
             URL u = new URL(helpTopicUrl);
             con = Utils.openHttpConnection(u);
             con.connect();
-            in = new BufferedReader(new InputStreamReader(con.getInputStream(), Utils.UTF_8));
-            return prepareHelpContent(in, dotest, u);
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+                return prepareHelpContent(in, dotest, u);
+            }
         } catch(MalformedURLException e) {
             throw new HelpContentReaderException(e);
         } catch(IOException e) {
@@ -63,8 +64,6 @@ public class HelpContentReader extends WikiReader {
                 }
             }
             throw ex;
-        } finally {
-            Utils.close(in);
         }
     }
 
@@ -89,7 +88,7 @@ public class HelpContentReader extends WikiReader {
             throw new HelpContentReaderException(e);
         }
         if(dotest && s.isEmpty())
-            throw new MissingHelpContentException();
+            throw new MissingHelpContentException(s);
         return s;
     }
 }

@@ -43,9 +43,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class PasteTagsConflictResolverDialog extends JDialog  implements PropertyChangeListener {
-    static private final Map<OsmPrimitiveType, String> PANE_TITLES;
+    private static final Map<OsmPrimitiveType, String> PANE_TITLES;
     static {
-        PANE_TITLES = new HashMap<OsmPrimitiveType, String>();
+        PANE_TITLES = new HashMap<>();
         PANE_TITLES.put(OsmPrimitiveType.NODE, tr("Tags from nodes"));
         PANE_TITLES.put(OsmPrimitiveType.WAY, tr("Tags from ways"));
         PANE_TITLES.put(OsmPrimitiveType.RELATION, tr("Tags from relations"));
@@ -74,10 +74,10 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         iconUnresolved = ImageProvider.get("dialogs/conflict", "tagconflictunresolved");
     }
 
-    protected void build() {
+    protected final void build() {
         setTitle(tr("Conflicts in pasted tags"));
         allPrimitivesResolver = new TagConflictResolver();
-        resolvers = new HashMap<OsmPrimitiveType, TagConflictResolver>();
+        resolvers = new HashMap<>();
         for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
             resolvers.put(type, new TagConflictResolver());
             resolvers.get(type).getModel().addPropertyChangeListener(this);
@@ -353,18 +353,18 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    static public class StatisticsInfo {
+    public static class StatisticsInfo {
         public int numTags;
         public Map<OsmPrimitiveType, Integer> sourceInfo;
         public Map<OsmPrimitiveType, Integer> targetInfo;
 
         public StatisticsInfo() {
-            sourceInfo = new HashMap<OsmPrimitiveType, Integer>();
-            targetInfo = new HashMap<OsmPrimitiveType, Integer>();
+            sourceInfo = new HashMap<>();
+            targetInfo = new HashMap<>();
         }
     }
 
-    static private class StatisticsTableColumnModel extends DefaultTableColumnModel {
+    private static class StatisticsTableColumnModel extends DefaultTableColumnModel {
         public StatisticsTableColumnModel() {
             TableCellRenderer renderer = new StatisticsInfoRenderer();
             TableColumn col = null;
@@ -392,12 +392,12 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    static private class StatisticsTableModel extends DefaultTableModel {
+    private static class StatisticsTableModel extends DefaultTableModel {
         private static final String[] HEADERS = new String[] {tr("Paste ..."), tr("From ..."), tr("To ...") };
         private List<StatisticsInfo> data;
 
         public StatisticsTableModel() {
-            data = new ArrayList<StatisticsInfo>();
+            data = new ArrayList<>();
         }
 
         @Override
@@ -431,7 +431,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    static private class StatisticsInfoRenderer extends JLabel implements TableCellRenderer {
+    private static class StatisticsInfoRenderer extends JLabel implements TableCellRenderer {
         protected void reset() {
             setIcon(null);
             setText("");
@@ -502,7 +502,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         }
     }
 
-    static private class StatisticsInfoTable extends JPanel {
+    private static class StatisticsInfoTable extends JPanel {
 
         private JTable infoTable;
 

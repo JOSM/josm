@@ -31,10 +31,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.jar.JarFile;
 
 import javax.swing.AbstractAction;
@@ -57,9 +59,9 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -75,7 +77,7 @@ public final class PluginHandler {
     /**
      * Deprecated plugins that are removed on start
      */
-    public final static Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
+    public static final Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
     static {
         String IN_CORE = tr("integrated into main program");
 
@@ -119,7 +121,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("wayselector", IN_CORE),
         });
     }
-    
+
     private PluginHandler() {
         // Hide default constructor for utils classes
     }
@@ -182,7 +184,7 @@ public final class PluginHandler {
     /**
      * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not really maintained after a few months, sadly...
      */
-    final public static String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
+    private static final String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
 
     /**
      * Default time-based update interval, in days (pluginmanager.time-based-update.interval)
@@ -192,12 +194,12 @@ public final class PluginHandler {
     /**
      * All installed and loaded plugins (resp. their main classes)
      */
-    public final static Collection<PluginProxy> pluginList = new LinkedList<PluginProxy>();
+    public static final Collection<PluginProxy> pluginList = new LinkedList<>();
 
     /**
      * Add here all ClassLoader whose resource should be searched.
      */
-    private static final List<ClassLoader> sources = new LinkedList<ClassLoader>();
+    private static final List<ClassLoader> sources = new LinkedList<>();
 
     static {
         try {
@@ -207,6 +209,8 @@ public final class PluginHandler {
             sources.add(ImageProvider.class.getClassLoader());
         }
     }
+
+    private static PluginDownloadTask pluginDownloadTask = null;
 
     public static Collection<ClassLoader> getResourceClassLoaders() {
         return Collections.unmodifiableCollection(sources);
@@ -222,7 +226,7 @@ public final class PluginHandler {
      * @param plugins the collection of plugins
      */
     private static void filterDeprecatedPlugins(Component parent, Collection<String> plugins) {
-        Set<DeprecatedPlugin> removedPlugins = new TreeSet<DeprecatedPlugin>();
+        Set<DeprecatedPlugin> removedPlugins = new TreeSet<>();
         for (DeprecatedPlugin depr : DEPRECATED_PLUGINS) {
             if (plugins.contains(depr.name)) {
                 plugins.remove(depr.name);
@@ -346,29 +350,31 @@ public final class PluginHandler {
 
         // check whether automatic update at startup was disabled
         //
-        String policy = Main.pref.get(togglePreferenceKey, "ask");
-        policy = policy.trim().toLowerCase();
-        if (policy.equals("never")) {
+        String policy = Main.pref.get(togglePreferenceKey, "ask").trim().toLowerCase();
+        switch(policy) {
+        case "never":
             if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Skipping plugin update after JOSM upgrade. Automatic update at startup is disabled."));
             } else if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Skipping plugin update after elapsed update interval. Automatic update at startup is disabled."));
             }
             return false;
-        }
 
-        if (policy.equals("always")) {
+        case "always":
             if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Running plugin update after JOSM upgrade. Automatic update at startup is enabled."));
             } else if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 Main.info(tr("Running plugin update after elapsed update interval. Automatic update at startup is disabled."));
             }
             return true;
-        }
+            
+        case "ask":
+            break;
 
-        if (!policy.equals("ask")) {
+        default:
             Main.warn(tr("Unexpected value ''{0}'' for preference ''{1}''. Assuming value ''ask''.", policy, togglePreferenceKey));
         }
+
         int ret = HelpAwareOptionPane.showOptionDialog(
                 parent,
                 pnlMessage,
@@ -456,7 +462,7 @@ public final class PluginHandler {
         }
 
         // Add all plugins already loaded (to include early plugins when checking late ones)
-        Collection<PluginInformation> allPlugins = new HashSet<PluginInformation>(plugins);
+        Collection<PluginInformation> allPlugins = new HashSet<>(plugins);
         for (PluginProxy proxy : pluginList) {
             allPlugins.add(proxy.getPluginInformation());
         }
@@ -482,11 +488,11 @@ public final class PluginHandler {
         // make sure the dependencies to other plugins are not broken
         //
         if (requires != null) {
-            Set<String> pluginNames = new HashSet<String>();
+            Set<String> pluginNames = new HashSet<>();
             for (PluginInformation pi: plugins) {
                 pluginNames.add(pi.name);
             }
-            Set<String> missingPlugins = new HashSet<String>();
+            Set<String> missingPlugins = new HashSet<>();
             List<String> requiredPlugins = local ? plugin.getLocalRequiredPlugins() : plugin.getRequiredPlugins();
             for (String requiredPlugin : requiredPlugins) {
                 if (!pluginNames.contains(requiredPlugin)) {
@@ -510,11 +516,11 @@ public final class PluginHandler {
      */
     public static ClassLoader createClassLoader(Collection<PluginInformation> plugins) {
         // iterate all plugins and collect all libraries of all plugins:
-        List<URL> allPluginLibraries = new LinkedList<URL>();
+        List<URL> allPluginLibraries = new LinkedList<>();
         File pluginDir = Main.pref.getPluginsDirectory();
 
         // Add all plugins already loaded (to include early plugins in the classloader, allowing late plugins to rely on early ones)
-        Collection<PluginInformation> allPlugins = new HashSet<PluginInformation>(plugins);
+        Collection<PluginInformation> allPlugins = new HashSet<>(plugins);
         for (PluginProxy proxy : pluginList) {
             allPlugins.add(proxy.getPluginInformation());
         }
@@ -564,7 +570,7 @@ public final class PluginHandler {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", plugin.name, plugin.className);
             }
-        }  catch (Throwable e) {
+        }  catch (Exception e) {
             Main.error(e);
         }
         if (msg != null && confirmDisablePlugin(parent, msg, plugin.name)) {
@@ -587,7 +593,7 @@ public final class PluginHandler {
         try {
             monitor.beginTask(tr("Loading plugins ..."));
             monitor.subTask(tr("Checking plugin preconditions..."));
-            List<PluginInformation> toLoad = new LinkedList<PluginInformation>();
+            List<PluginInformation> toLoad = new LinkedList<>();
             for (PluginInformation pi: plugins) {
                 if (checkLoadPreconditions(parent, plugins, pi)) {
                     toLoad.add(pi);
@@ -631,7 +637,7 @@ public final class PluginHandler {
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
     public static void loadEarlyPlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
-        List<PluginInformation> earlyPlugins = new ArrayList<PluginInformation>(plugins.size());
+        List<PluginInformation> earlyPlugins = new ArrayList<>(plugins.size());
         for (PluginInformation pi: plugins) {
             if (pi.early) {
                 earlyPlugins.add(pi);
@@ -649,7 +655,7 @@ public final class PluginHandler {
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
     public static void loadLatePlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
-        List<PluginInformation> latePlugins = new ArrayList<PluginInformation>(plugins.size());
+        List<PluginInformation> latePlugins = new ArrayList<>(plugins.size());
         for (PluginInformation pi: plugins) {
             if (!pi.early) {
                 latePlugins.add(pi);
@@ -683,7 +689,7 @@ public final class PluginHandler {
                 Main.warn("InterruptedException in "+PluginHandler.class.getSimpleName()+" while loading locally available plugin information");
                 return null;
             }
-            HashMap<String, PluginInformation> ret = new HashMap<String, PluginInformation>();
+            HashMap<String, PluginInformation> ret = new HashMap<>();
             for (PluginInformation pi: task.getAvailablePlugins()) {
                 ret.put(pi.name, pi);
             }
@@ -728,7 +734,7 @@ public final class PluginHandler {
         }
         try {
             monitor.beginTask(tr("Determine plugins to load..."));
-            Set<String> plugins = new HashSet<String>();
+            Set<String> plugins = new HashSet<>();
             plugins.addAll(Main.pref.getCollection("plugins",  new LinkedList<String>()));
             if (System.getProperty("josm.plugins") != null) {
                 plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
@@ -738,7 +744,7 @@ public final class PluginHandler {
             monitor.subTask(tr("Removing unmaintained plugins..."));
             filterUnmaintainedPlugins(parent, plugins);
             Map<String, PluginInformation> infos = loadLocallyAvailablePluginInformation(monitor.createSubTaskMonitor(1,false));
-            List<PluginInformation> ret = new LinkedList<PluginInformation>();
+            List<PluginInformation> ret = new LinkedList<>();
             for (Iterator<String> it = plugins.iterator(); it.hasNext();) {
                 String plugin = it.next();
                 if (infos.containsKey(plugin)) {
@@ -756,7 +762,7 @@ public final class PluginHandler {
     }
 
     private static void alertFailedPluginUpdate(Component parent, Collection<PluginInformation> plugins) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(trn(
                 "Updating the following plugin has failed:",
@@ -786,7 +792,7 @@ public final class PluginHandler {
 
     private static Set<PluginInformation> findRequiredPluginsToDownload(
             Collection<PluginInformation> pluginsToUpdate, List<PluginInformation> allPlugins, Set<PluginInformation> pluginsToDownload) {
-        Set<PluginInformation> result = new HashSet<PluginInformation>();
+        Set<PluginInformation> result = new HashSet<>();
         for (PluginInformation pi : pluginsToUpdate) {
             for (String name : pi.getRequiredPlugins()) {
                 try {
@@ -818,14 +824,16 @@ public final class PluginHandler {
      * Updates the plugins in <code>plugins</code>.
      *
      * @param parent the parent component for message boxes
-     * @param plugins the collection of plugins to update. Must not be null.
+     * @param pluginsWanted the collection of plugins to update. Updates all plugins if {@code null}
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
+     * @param displayErrMsg if {@code true}, a blocking error message is displayed in case of I/O exception.
      * @throws IllegalArgumentException thrown if plugins is null
      */
-    public static List<PluginInformation> updatePlugins(Component parent,
-            List<PluginInformation> plugins, ProgressMonitor monitor)
-            throws IllegalArgumentException{
-        CheckParameterUtil.ensureParameterNotNull(plugins, "plugins");
+    public static Collection<PluginInformation> updatePlugins(Component parent,
+            Collection<PluginInformation> pluginsWanted, ProgressMonitor monitor, boolean displayErrMsg)
+            throws IllegalArgumentException {
+        Collection<PluginInformation> plugins = null;
+        pluginDownloadTask = null;
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -837,7 +845,7 @@ public final class PluginHandler {
             //
             ReadRemotePluginInformationTask task1 = new ReadRemotePluginInformationTask(
                     monitor.createSubTaskMonitor(1,false),
-                    Main.pref.getPluginSites()
+                    Main.pref.getPluginSites(), displayErrMsg
             );
             Future<?> future = service.submit(task1);
             List<PluginInformation> allPlugins = null;
@@ -846,6 +854,22 @@ public final class PluginHandler {
                 future.get();
                 allPlugins = task1.getAvailablePlugins();
                 plugins = buildListOfPluginsToLoad(parent,monitor.createSubTaskMonitor(1, false));
+                // If only some plugins have to be updated, filter the list
+                if (pluginsWanted != null && !pluginsWanted.isEmpty()) {
+                    for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
+                        PluginInformation pi = it.next();
+                        boolean found = false;
+                        for (PluginInformation piw : pluginsWanted) {
+                            if (pi.name.equals(piw.name)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            it.remove();
+                        }
+                    }
+                }
             } catch (ExecutionException e) {
                 Main.warn(tr("Failed to download plugin information list")+": ExecutionException");
                 Main.error(e);
@@ -857,7 +881,7 @@ public final class PluginHandler {
 
             // filter plugins which actually have to be updated
             //
-            Collection<PluginInformation> pluginsToUpdate = new ArrayList<PluginInformation>();
+            Collection<PluginInformation> pluginsToUpdate = new ArrayList<>();
             for (PluginInformation pi: plugins) {
                 if (pi.isUpdateRequired()) {
                     pluginsToUpdate.add(pi);
@@ -866,7 +890,7 @@ public final class PluginHandler {
 
             if (!pluginsToUpdate.isEmpty()) {
 
-                Set<PluginInformation> pluginsToDownload = new HashSet<PluginInformation>(pluginsToUpdate);
+                Set<PluginInformation> pluginsToDownload = new HashSet<>(pluginsToUpdate);
 
                 if (allPlugins != null) {
                     // Updated plugins may need additional plugin dependencies currently not installed
@@ -885,13 +909,13 @@ public final class PluginHandler {
 
                 // try to update the locally installed plugins
                 //
-                PluginDownloadTask task2 = new PluginDownloadTask(
+                pluginDownloadTask = new PluginDownloadTask(
                         monitor.createSubTaskMonitor(1,false),
                         pluginsToDownload,
                         tr("Update plugins")
                 );
 
-                future = service.submit(task2);
+                future = service.submit(pluginDownloadTask);
                 try {
                     future.get();
                 } catch(ExecutionException e) {
@@ -906,28 +930,30 @@ public final class PluginHandler {
 
                 // Update Plugin info for downloaded plugins
                 //
-                refreshLocalUpdatedPluginInfo(task2.getDownloadedPlugins());
+                refreshLocalUpdatedPluginInfo(pluginDownloadTask.getDownloadedPlugins());
 
                 // notify user if downloading a locally installed plugin failed
                 //
-                if (! task2.getFailedPlugins().isEmpty()) {
-                    alertFailedPluginUpdate(parent, task2.getFailedPlugins());
+                if (! pluginDownloadTask.getFailedPlugins().isEmpty()) {
+                    alertFailedPluginUpdate(parent, pluginDownloadTask.getFailedPlugins());
                     return plugins;
                 }
             }
         } finally {
             monitor.finishTask();
         }
-        // remember the update because it was successful
-        //
-        Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion());
-        Main.pref.put("pluginmanager.lastupdate", Long.toString(System.currentTimeMillis()));
+        if (pluginsWanted == null) {
+            // if all plugins updated, remember the update because it was successful
+            //
+            Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion());
+            Main.pref.put("pluginmanager.lastupdate", Long.toString(System.currentTimeMillis()));
+        }
         return plugins;
     }
 
     /**
      * Ask the user for confirmation that a plugin shall be disabled.
-     * 
+     *
      * @param parent The parent component to be used for the displayed dialog
      * @param reason the reason for disabling the plugin
      * @param name the plugin name
@@ -1010,12 +1036,10 @@ public final class PluginHandler {
             final String filePath = updatedPlugin.getPath();
             File plugin = new File(filePath.substring(0, filePath.length() - 4));
             String pluginName = updatedPlugin.getName().substring(0, updatedPlugin.getName().length() - 8);
-            if (plugin.exists()) {
-                if (!plugin.delete() && dowarn) {
-                    Main.warn(tr("Failed to delete outdated plugin ''{0}''.", plugin.toString()));
-                    Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
-                    continue;
-                }
+            if (plugin.exists() && !plugin.delete() && dowarn) {
+                Main.warn(tr("Failed to delete outdated plugin ''{0}''.", plugin.toString()));
+                Main.warn(tr("Failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
+                continue;
             }
             try {
                 // Check the plugin is a valid and accessible JAR file before installing it (fix #7754)
@@ -1093,8 +1117,14 @@ public final class PluginHandler {
         }
     }
 
-    private static boolean confirmDeactivatingPluginAfterException(PluginProxy plugin) {
-        ButtonSpec [] options = new ButtonSpec[] {
+    private static int askUpdateDisableKeepPluginAfterException(PluginProxy plugin) {
+        final ButtonSpec[] options = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Update plugin"),
+                        ImageProvider.get("dialogs", "refresh"),
+                        tr("Click to update the plugin ''{0}''", plugin.getPluginInformation().name),
+                        null /* no specific help context */
+                ),
                 new ButtonSpec(
                         tr("Disable plugin"),
                         ImageProvider.get("dialogs", "delete"),
@@ -1109,30 +1139,39 @@ public final class PluginHandler {
                 )
         };
 
-        StringBuffer msg = new StringBuffer();
+        final StringBuilder msg = new StringBuilder();
         msg.append("<html>");
         msg.append(tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.getPluginInformation().name));
         msg.append("<br>");
-        if(plugin.getPluginInformation().author != null) {
+        if (plugin.getPluginInformation().author != null) {
             msg.append(tr("According to the information within the plugin, the author is {0}.", plugin.getPluginInformation().author));
             msg.append("<br>");
         }
         msg.append(tr("Try updating to the newest version of this plugin before reporting a bug."));
-        msg.append("<br>");
-        msg.append(tr("Should the plugin be disabled?"));
         msg.append("</html>");
 
-        int ret = HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
-                msg.toString(),
-                tr("Update plugins"),
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0],
-                ht("/ErrorMessages#ErrorInPlugin")
-        );
-        return ret == 0;
+        try {
+            FutureTask<Integer> task = new FutureTask<>(new Callable<Integer>() {
+                @Override
+                public Integer call() {
+                    return HelpAwareOptionPane.showOptionDialog(
+                            Main.parent,
+                            msg.toString(),
+                            tr("Update plugins"),
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[0],
+                            ht("/ErrorMessages#ErrorInPlugin")
+                    );
+                }
+            });
+            GuiHelper.runInEDT(task);
+            return task.get();
+        } catch (InterruptedException | ExecutionException e) {
+            Main.warn(e);
+        }
+        return -1;
     }
 
     /**
@@ -1162,11 +1201,12 @@ public final class PluginHandler {
 
     /**
      * Checks whether the exception <code>e</code> was thrown by a plugin. If so,
-     * conditionally deactivates the plugin, but asks the user first.
+     * conditionally updates or deactivates the plugin, but asks the user first.
      *
      * @param e the exception
+     * @return plugin download task if the plugin has been updated to a newer version, {@code null} if it has been disabled or kept as it
      */
-    public static void disablePluginAfterException(Throwable e) {
+    public static PluginDownloadTask updateOrdisablePluginAfterException(Throwable e) {
         PluginProxy plugin = null;
         // Check for an explicit problem when calling a plugin function
         if (e instanceof PluginException) {
@@ -1177,30 +1217,42 @@ public final class PluginHandler {
         }
         if (plugin == null)
             // don't know what plugin threw the exception
-            return;
+            return null;
 
-        Set<String> plugins = new HashSet<String>(
+        Set<String> plugins = new HashSet<>(
                 Main.pref.getCollection("plugins",Collections.<String> emptySet())
         );
-        if (! plugins.contains(plugin.getPluginInformation().name))
+        final PluginInformation pluginInfo = plugin.getPluginInformation();
+        if (! plugins.contains(pluginInfo.name))
             // plugin not activated ? strange in this context but anyway, don't bother
             // the user with dialogs, skip conditional deactivation
-            return;
+            return null;
 
-        if (!confirmDeactivatingPluginAfterException(plugin))
+        switch (askUpdateDisableKeepPluginAfterException(plugin)) {
+        case 0:
+            // update the plugin
+            updatePlugins(Main.parent, Collections.singleton(pluginInfo), null, true);
+            return pluginDownloadTask;
+        case 1:
+            // deactivate the plugin
+            plugins.remove(plugin.getPluginInformation().name);
+            Main.pref.putCollection("plugins", plugins);
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
+                            tr("Information"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+            });
+            return null;
+        default:
             // user doesn't want to deactivate the plugin
-            return;
-
-        // deactivate the plugin
-        plugins.remove(plugin.getPluginInformation().name);
-        Main.pref.putCollection("plugins", plugins);
-        JOptionPane.showMessageDialog(
-                Main.parent,
-                tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
-                tr("Information"),
-                JOptionPane.INFORMATION_MESSAGE
-        );
-        return;
+            return null;
+        }
     }
 
     /**
@@ -1209,7 +1261,7 @@ public final class PluginHandler {
      */
     public static String getBugReportText() {
         StringBuilder text = new StringBuilder();
-        LinkedList <String> pl = new LinkedList<String>(Main.pref.getCollection("plugins", new LinkedList<String>()));
+        LinkedList <String> pl = new LinkedList<>(Main.pref.getCollection("plugins", new LinkedList<String>()));
         for (final PluginProxy pp : pluginList) {
             PluginInformation pi = pp.getPluginInformation();
             pl.remove(pi.name);
@@ -1269,11 +1321,11 @@ public final class PluginHandler {
         return pluginTab;
     }
 
-    static private class UpdatePluginsMessagePanel extends JPanel {
+    private static class UpdatePluginsMessagePanel extends JPanel {
         private JMultilineLabel lblMessage;
         private JCheckBox cbDontShowAgain;
 
-        protected void build() {
+        protected final void build() {
             setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
             gc.anchor = GridBagConstraints.NORTHWEST;
@@ -1302,7 +1354,7 @@ public final class PluginHandler {
         public void initDontShowAgain(String preferencesKey) {
             String policy = Main.pref.get(preferencesKey, "ask");
             policy = policy.trim().toLowerCase();
-            cbDontShowAgain.setSelected(! policy.equals("ask"));
+            cbDontShowAgain.setSelected(!"ask".equals(policy));
         }
 
         public boolean isRememberDecision() {

@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +33,6 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class to handle projections
@@ -59,11 +59,11 @@ public final class Projections {
      *
      * should be compatible to PROJ.4
      */
-    final public static Map<String, ProjFactory> projs = new HashMap<String, ProjFactory>();
-    final public static Map<String, Ellipsoid> ellipsoids = new HashMap<String, Ellipsoid>();
-    final public static Map<String, Datum> datums = new HashMap<String, Datum>();
-    final public static Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<String, NTV2GridShiftFileWrapper>();
-    final public static Map<String, Pair<String, String>> inits = new HashMap<String, Pair<String, String>>();
+    public static final Map<String, ProjFactory> projs = new HashMap<>();
+    public static final Map<String, Ellipsoid> ellipsoids = new HashMap<>();
+    public static final Map<String, Datum> datums = new HashMap<>();
+    public static final Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<>();
+    public static final Map<String, Pair<String, String>> inits = new HashMap<>();
 
     static {
         registerBaseProjection("lonlat", LonLat.class, "core");
@@ -131,15 +131,15 @@ public final class Projections {
      */
     private static void loadInits() {
         Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
-        BufferedReader r = null;
-        try {
+        try (
             InputStream in = new MirroredInputStream("resource://data/projection/epsg");
-            r = new BufferedReader(new InputStreamReader(in));
+            BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        ) {
             String line, lastline = "";
             while ((line = r.readLine()) != null) {
                 line = line.trim();
                 if (!line.startsWith("#") && !line.isEmpty()) {
-                    if (!lastline.startsWith("#")) throw new AssertionError();
+                    if (!lastline.startsWith("#")) throw new AssertionError("EPSG file seems corrupted");
                     String name = lastline.substring(1).trim();
                     Matcher m = epsgPattern.matcher(line);
                     if (m.matches()) {
@@ -152,14 +152,12 @@ public final class Projections {
             }
         } catch (IOException ex) {
             throw new RuntimeException(ex);
-        } finally {
-            Utils.close(r);
         }
     }
 
-    private final static Set<String> allCodes = new HashSet<String>();
-    private final static Map<String, ProjectionChoice> allProjectionChoicesByCode = new HashMap<String, ProjectionChoice>();
-    private final static Map<String, Projection> projectionsByCode_cache = new HashMap<String, Projection>();
+    private static final Set<String> allCodes = new HashSet<>();
+    private static final Map<String, ProjectionChoice> allProjectionChoicesByCode = new HashMap<>();
+    private static final Map<String, Projection> projectionsByCode_cache = new HashMap<>();
 
     static {
         for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
@@ -180,8 +178,8 @@ public final class Projections {
             pc.setPreferences(pref);
             try {
                 proj = pc.getProjection();
-            } catch (Throwable t) {
-                String cause = t.getMessage();
+            } catch (Exception e) {
+                String cause = e.getMessage();
                 Main.warn("Unable to get projection "+code+" with "+pc + (cause != null ? ". "+cause : ""));
             }
         }

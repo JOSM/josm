@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,11 +10,16 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.CRC32;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
@@ -24,7 +28,9 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -41,17 +47,17 @@ public final class ExpressionFactory {
     @Retention(RetentionPolicy.RUNTIME)
     static @interface NullableArguments {}
 
-    private static final List<Method> arrayFunctions;
-    private static final List<Method> parameterFunctions;
-    private static final Functions FUNCTIONS_INSTANCE = new Functions();
+    private static final List<Method> arrayFunctions = new ArrayList<>();
+    private static final List<Method> parameterFunctions = new ArrayList<>();
+    private static final List<Method> parameterFunctionsEnv = new ArrayList<>();
 
     static {
-        arrayFunctions = new ArrayList<Method>();
-        parameterFunctions = new ArrayList<Method>();
         for (Method m : Functions.class.getDeclaredMethods()) {
             Class<?>[] paramTypes = m.getParameterTypes();
             if (paramTypes.length == 1 && paramTypes[0].isArray()) {
                 arrayFunctions.add(m);
+            } else if (paramTypes.length >= 1 && paramTypes[0].equals(Environment.class)) {
+                parameterFunctionsEnv.add(m);
             } else {
                 parameterFunctions.add(m);
             }
@@ -78,21 +84,29 @@ public final class ExpressionFactory {
             parameterFunctions.add(Math.class.getMethod("sqrt", double.class));
             parameterFunctions.add(Math.class.getMethod("tan", double.class));
             parameterFunctions.add(Math.class.getMethod("tanh", double.class));
-        } catch (NoSuchMethodException ex) {
-            throw new RuntimeException(ex);
-        } catch (SecurityException ex) {
+        } catch (NoSuchMethodException | SecurityException ex) {
             throw new RuntimeException(ex);
         }
     }
-    
+
     private ExpressionFactory() {
         // Hide default constructor for utils classes
     }
 
+    /**
+     * List of functions that can be used in MapCSS expressions.
+     *
+     * First parameter can be of type {@link Environment} (if needed). This is
+     * automatically filled in by JOSM and the user only sees the remaining
+     * arguments.
+     * When one of the user supplied arguments cannot be converted the
+     * expected type or is null, the function is not called and it returns null
+     * immediately. Add the annotation {@link NullableArguments} to allow
+     * null arguments.
+     * Every method must be static.
+     */
     @SuppressWarnings("UnusedDeclaration")
     public static class Functions {
-
-        Environment env;
 
         /**
          * Identity function for compatibility with MapCSS specification.
@@ -151,16 +165,37 @@ public final class ExpressionFactory {
          * Creates a list of values, e.g., for the {@code dashes} property.
          * @see Arrays#asList(Object[])
          */
-        public static List list(Object... args) {
+        public static List<Object> list(Object... args) {
             return Arrays.asList(args);
+        }
+        
+        /**
+         * Returns the number of elements in a list.
+         * @param lst the list
+         * @return length of the list
+         */
+        public static Integer count(List<?> lst) {
+            return lst.size();
         }
 
         /**
          * Returns the first non-null object. The name originates from the {@code COALESCE} SQL function.
+         * @deprecated Deprecated in favour of {@link #any(Object...)} from the MapCSS standard.
+         */
+        @NullableArguments
+        @Deprecated
+        public static Object coalesce(Object... args) {
+            return any(args);
+        }
+
+        /**
+         * Returns the first non-null object.
+         * The name originates from <a href="http://wiki.openstreetmap.org/wiki/MapCSS/0.2/eval">MapCSS standard</a>.
+         * @see #coalesce(Object...)
          * @see Utils#firstNonNull(Object[])
          */
         @NullableArguments
-        public static Object coalesce(Object... args) {
+        public static Object any(Object... args) {
             return Utils.firstNonNull(args);
         }
 
@@ -190,13 +225,34 @@ public final class ExpressionFactory {
          * @see Color#Color(float, float, float)
          */
         public static Color rgb(float r, float g, float b) {
-            Color c;
             try {
-                c = new Color(r, g, b);
+                return new Color(r, g, b);
             } catch (IllegalArgumentException e) {
                 return null;
             }
-            return c;
+        }
+        
+        public static Color rgba(float r, float g, float b, float alpha) {
+            try {
+                return new Color(r, g, b, alpha);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+
+        /**
+         * Create color from hsb color model. (arguments form 0.0 to 1.0)
+         * @param h hue
+         * @param s saturation
+         * @param b brightness
+         * @return the corresponding color
+         */
+        public static Color hsb_color(float h, float s, float b) {
+            try {
+                return Color.getHSBColor(h, s, b);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
 
         /**
@@ -215,6 +271,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the red color channel in the rgb color model
+         * @return the red color channel in the range [0;1]
          * @see java.awt.Color#getRed()
          */
         public static float red(Color c) {
@@ -223,6 +280,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the green color channel in the rgb color model
+         * @return the green color channel in the range [0;1]
          * @see java.awt.Color#getGreen()
          */
         public static float green(Color c) {
@@ -231,6 +289,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the blue color channel in the rgb color model
+         * @return the blue color channel in the range [0;1]
          * @see java.awt.Color#getBlue()
          */
         public static float blue(Color c) {
@@ -238,56 +297,71 @@ public final class ExpressionFactory {
         }
 
         /**
+         * Get the value of the alpha channel in the rgba color model
+         * @return the alpha channel in the range [0;1]
+         * @see java.awt.Color#getAlpha()
+         */
+        public static float alpha(Color c) {
+            return Utils.color_int2float(c.getAlpha());
+        }
+
+        /**
          * Assembles the strings to one.
+         * @see Utils#join
          */
         @NullableArguments
         public static String concat(Object... args) {
-            StringBuilder res = new StringBuilder();
-            for (Object f : args) {
-                res.append(String.valueOf(f));
-            }
-            return res.toString();
+            return Utils.join("", Arrays.asList(args));
+        }
+
+        /**
+         * Assembles the strings to one, where the first entry is used as separator.
+         * @see Utils#join
+         */
+        @NullableArguments
+        public static String join(String... args) {
+            return Utils.join(args[0], Arrays.asList(args).subList(1, args.length));
         }
 
         /**
          * Returns the value of the property {@code key}, e.g., {@code prop("width")}.
          */
-        public Object prop(String key) {
-            return prop(key, null);
+        public static Object prop(final Environment env, String key) {
+            return prop(env, key, null);
         }
 
         /**
          * Returns the value of the property {@code key} from layer {@code layer}.
          */
-        public Object prop(String key, String layer) {
+        public static Object prop(final Environment env, String key, String layer) {
             return env.getCascade(layer).get(key);
         }
 
         /**
          * Determines whether property {@code key} is set.
          */
-        public Boolean is_prop_set(String key) {
-            return is_prop_set(key, null);
+        public static Boolean is_prop_set(final Environment env, String key) {
+            return is_prop_set(env, key, null);
         }
 
         /**
          * Determines whether property {@code key} is set on layer {@code layer}.
          */
-        public Boolean is_prop_set(String key, String layer) {
+        public static Boolean is_prop_set(final Environment env, String key, String layer) {
             return env.getCascade(layer).containsKey(key);
         }
 
         /**
          * Gets the value of the key {@code key} from the object in question.
          */
-        public String tag(String key) {
+        public static String tag(final Environment env, String key) {
             return env.osm == null ? null : env.osm.get(key);
         }
 
         /**
          * Gets the first non-null value of the key {@code key} from the object's parent(s).
          */
-        public String parent_tag(String key) {
+        public static String parent_tag(final Environment env, String key) {
             if (env.parent == null) {
                 if (env.osm != null) {
                     // we don't have a matched parent, so just search all referrers
@@ -303,24 +377,28 @@ public final class ExpressionFactory {
             return env.parent.get(key);
         }
 
+        public static String child_tag(final Environment env, String key) {
+            return env.child == null ? null : env.child.get(key);
+        }
+
         /**
          * Determines whether the object has a tag with the given key.
          */
-        public boolean has_tag_key(String key) {
+        public static boolean has_tag_key(final Environment env, String key) {
             return env.osm.hasKey(key);
         }
 
         /**
          * Returns the index of node in parent way or member in parent relation.
          */
-        public Float index() {
+        public static Float index(final Environment env) {
             if (env.index == null) {
                 return null;
             }
             return new Float(env.index + 1);
         }
 
-        public String role() {
+        public static String role(final Environment env) {
             return env.getRole();
         }
 
@@ -351,7 +429,7 @@ public final class ExpressionFactory {
         public static boolean equal(Object a, Object b) {
             // make sure the casts are done in a meaningful way, so
             // the 2 objects really can be considered equal
-            for (Class<?> klass : new Class[]{Float.class, Boolean.class, Color.class, float[].class, String.class}) {
+            for (Class<?> klass : new Class<?>[]{Float.class, Boolean.class, Color.class, float[].class, String.class}) {
                 Object a2 = Cascade.convertTo(a, klass);
                 Object b2 = Cascade.convertTo(b, klass);
                 if (a2 != null && b2 != null && a2.equals(b2)) {
@@ -364,7 +442,7 @@ public final class ExpressionFactory {
         /**
          * Determines whether the JOSM search with {@code searchStr} applies to the object.
          */
-        public Boolean JOSM_search(String searchStr) {
+        public static Boolean JOSM_search(final Environment env, String searchStr) {
             Match m;
             try {
                 m = SearchCompiler.compile(searchStr, false, false);
@@ -459,7 +537,7 @@ public final class ExpressionFactory {
          * Returns the OSM id of the current object.
          * @see OsmPrimitive#getUniqueId()
          */
-        public long osm_id() {
+        public static long osm_id(final Environment env) {
             return env.osm.getUniqueId();
         }
 
@@ -467,6 +545,7 @@ public final class ExpressionFactory {
          * Translates some text for the current locale. The first argument is the text to translate,
          * and the subsequent arguments are parameters for the string indicated by {@code {0}}, {@code {1}}, …
          */
+        @NullableArguments
         public static String tr(String... args) {
             final String text = args[0];
             System.arraycopy(args, 1, args, 0, args.length - 1);
@@ -504,6 +583,43 @@ public final class ExpressionFactory {
         public static String replace(String s, String target, String replacement) {
             return s == null ? null : s.replace(target, replacement);
         }
+
+        /**
+         * Percent-encode a string. (See https://en.wikipedia.org/wiki/Percent-encoding)
+         * This is especially useful for data urls, e.g.
+         * <code>icon-image: concat("data:image/svg+xml,", URL_encode("&lt;svg&gt;...&lt;/svg&gt;"));</code>
+         * @param s arbitrary string
+         * @return the encoded string
+         */
+        public static String URL_encode(String s) {
+            try {
+                return s == null ? null : URLEncoder.encode(s, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        /**
+         * XML-encode a string.
+         *
+         * Escapes special characters in xml. Alternative to using &lt;![CDATA[ ... ]]&gt; blocks.
+         * @param s arbitrary string
+         * @return the encoded string
+         */
+        public static String XML_encode(String s) {
+            return s == null ? null : XmlWriter.encode(s);
+        }
+
+        /**
+         * Calculates the CRC32 checksum from a string (based on RFC 1952).
+         * @param s the string
+         * @return long value from 0 to 2^32-1
+         */
+        public static long CRC32_checksum(String s) {
+            CRC32 cs = new CRC32();
+            cs.update(s.getBytes(StandardCharsets.UTF_8));
+            return cs.getValue();
+        }
     }
 
     /**
@@ -515,14 +631,18 @@ public final class ExpressionFactory {
      * returns {@link NullExpression#INSTANCE}.
      */
     public static Expression createFunctionExpression(String name, List<Expression> args) {
-        if (equal(name, "cond") && args.size() == 3)
+        if ("cond".equals(name) && args.size() == 3)
             return new CondOperator(args.get(0), args.get(1), args.get(2));
-        else if (equal(name, "and"))
+        else if ("and".equals(name))
             return new AndOperator(args);
-        else if (equal(name, "or"))
+        else if ("or".equals(name))
             return new OrOperator(args);
-        else if (equal(name, "length") && args.size() == 1)
+        else if ("length".equals(name) && args.size() == 1)
             return new LengthFunction(args.get(0));
+        else if ("max".equals(name) && !args.isEmpty())
+            return new MinMaxFunction(args, true);
+        else if ("min".equals(name) && !args.isEmpty())
+            return new MinMaxFunction(args, false);
 
         for (Method m : arrayFunctions) {
             if (m.getName().equals(name))
@@ -530,7 +650,11 @@ public final class ExpressionFactory {
         }
         for (Method m : parameterFunctions) {
             if (m.getName().equals(name) && args.size() == m.getParameterTypes().length)
-                return new ParameterFunction(m, args);
+                return new ParameterFunction(m, args, false);
+        }
+        for (Method m : parameterFunctionsEnv) {
+            if (m.getName().equals(name) && args.size() == m.getParameterTypes().length-1)
+                return new ParameterFunction(m, args, true);
         }
         return NullExpression.INSTANCE;
     }
@@ -540,7 +664,10 @@ public final class ExpressionFactory {
      */
     public static class NullExpression implements Expression {
 
-        final public static NullExpression INSTANCE = new NullExpression();
+        /**
+         * The unique instance.
+         */
+        public static final NullExpression INSTANCE = new NullExpression();
 
         @Override
         public Object evaluate(Environment env) {
@@ -617,6 +744,9 @@ public final class ExpressionFactory {
      *
      * Separate implementation to support overloading for different
      * argument types.
+     * 
+     * The use for calculating the length of a list is deprecated, use
+     * {@link Functions#count(java.util.List)} instead (see #10061).
      */
     public static class LengthFunction implements Expression {
 
@@ -639,6 +769,44 @@ public final class ExpressionFactory {
     }
 
     /**
+     * Computes the maximum/minimum value an arbitrary number of floats, or a list of floats.
+     */
+    public static class MinMaxFunction implements Expression {
+
+        private final List<Expression> args;
+        private final boolean computeMax;
+
+        public MinMaxFunction(final List<Expression> args, final boolean computeMax) {
+            this.args = args;
+            this.computeMax = computeMax;
+        }
+
+        public Float aggregateList(List<?> lst) {
+            final List<Float> floats = Utils.transform(lst, new Utils.Function<Object, Float>() {
+                @Override
+                public Float apply(Object x) {
+                    return Cascade.convertTo(x, float.class);
+                }
+            });
+            final Collection<Float> nonNullList = Utils.filter(floats, Predicates.not(Predicates.isNull()));
+            return computeMax ? Collections.max(nonNullList) : Collections.min(nonNullList);
+        }
+
+        @Override
+        public Object evaluate(final Environment env) {
+            List<?> l = Cascade.convertTo(args.get(0).evaluate(env), List.class);
+            if (args.size() != 1 || l == null)
+                l = Utils.transform(args, new Utils.Function<Expression, Object>() {
+                    @Override
+                    public Object apply(Expression x) {
+                        return x.evaluate(env);
+                    }
+                });
+            return aggregateList(l);
+        }
+    }
+
+    /**
      * Function that takes a certain number of argument with specific type.
      *
      * Implementation is based on a Method object.
@@ -647,31 +815,45 @@ public final class ExpressionFactory {
     public static class ParameterFunction implements Expression {
 
         private final Method m;
+        private final boolean nullable;
         private final List<Expression> args;
         private final Class<?>[] expectedParameterTypes;
+        private final boolean needsEnvironment;
 
-        public ParameterFunction(Method m, List<Expression> args) {
+        public ParameterFunction(Method m, List<Expression> args, boolean needsEnvironment) {
             this.m = m;
+            this.nullable = m.getAnnotation(NullableArguments.class) != null;
             this.args = args;
-            expectedParameterTypes = m.getParameterTypes();
+            this.expectedParameterTypes = m.getParameterTypes();
+            this.needsEnvironment = needsEnvironment;
         }
 
         @Override
         public Object evaluate(Environment env) {
-            FUNCTIONS_INSTANCE.env = env;
-            Object[] convertedArgs = new Object[expectedParameterTypes.length];
-            for (int i = 0; i < args.size(); ++i) {
-                convertedArgs[i] = Cascade.convertTo(args.get(i).evaluate(env), expectedParameterTypes[i]);
-                if (convertedArgs[i] == null && m.getAnnotation(NullableArguments.class) == null) {
-                    return null;
+            Object[] convertedArgs;
+
+            if (needsEnvironment) {
+                convertedArgs = new Object[args.size()+1];
+                convertedArgs[0] = env;
+                for (int i = 1; i < convertedArgs.length; ++i) {
+                    convertedArgs[i] = Cascade.convertTo(args.get(i-1).evaluate(env), expectedParameterTypes[i]);
+                    if (convertedArgs[i] == null && !nullable) {
+                        return null;
+                    }
+                }
+            } else {
+                convertedArgs = new Object[args.size()];
+                for (int i = 0; i < convertedArgs.length; ++i) {
+                    convertedArgs[i] = Cascade.convertTo(args.get(i).evaluate(env), expectedParameterTypes[i]);
+                    if (convertedArgs[i] == null && !nullable) {
+                        return null;
+                    }
                 }
             }
             Object result = null;
             try {
-                result = m.invoke(FUNCTIONS_INSTANCE, convertedArgs);
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex);
-            } catch (IllegalArgumentException ex) {
+                result = m.invoke(null, convertedArgs);
+            } catch (IllegalAccessException | IllegalArgumentException ex) {
                 throw new RuntimeException(ex);
             } catch (InvocationTargetException ex) {
                 Main.error(ex);
@@ -679,6 +861,20 @@ public final class ExpressionFactory {
             }
             return result;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder b = new StringBuilder("ParameterFunction~");
+            b.append(m.getName()).append("(");
+            for (int i = 0; i < args.size(); ++i) {
+                if (i > 0) b.append(",");
+                b.append(expectedParameterTypes[i]);
+                b.append(" ").append(args.get(i));
+            }
+            b.append(')');
+            return b.toString();
+        }
+
     }
 
     /**
@@ -691,24 +887,26 @@ public final class ExpressionFactory {
     public static class ArrayFunction implements Expression {
 
         private final Method m;
+        private final boolean nullable;
         private final List<Expression> args;
+        private final Class<?>[] expectedParameterTypes;
         private final Class<?> arrayComponentType;
-        private final Object[] convertedArgs;
 
         public ArrayFunction(Method m, List<Expression> args) {
             this.m = m;
+            this.nullable = m.getAnnotation(NullableArguments.class) != null;
             this.args = args;
-            Class<?>[] expectedParameterTypes = m.getParameterTypes();
-            convertedArgs = new Object[expectedParameterTypes.length];
-            arrayComponentType = expectedParameterTypes[0].getComponentType();
+            this.expectedParameterTypes = m.getParameterTypes();
+            this.arrayComponentType = expectedParameterTypes[0].getComponentType();
         }
 
         @Override
         public Object evaluate(Environment env) {
+            Object[] convertedArgs = new Object[expectedParameterTypes.length];
             Object arrayArg = Array.newInstance(arrayComponentType, args.size());
             for (int i = 0; i < args.size(); ++i) {
                 Object o = Cascade.convertTo(args.get(i).evaluate(env), arrayComponentType);
-                if (o == null && m.getAnnotation(NullableArguments.class) == null) {
+                if (o == null && !nullable) {
                     return null;
                 }
                 Array.set(arrayArg, i, o);
@@ -718,9 +916,7 @@ public final class ExpressionFactory {
             Object result = null;
             try {
                 result = m.invoke(null, convertedArgs);
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex);
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalAccessException | IllegalArgumentException ex) {
                 throw new RuntimeException(ex);
             } catch (InvocationTargetException ex) {
                 Main.error(ex);
@@ -728,6 +924,19 @@ public final class ExpressionFactory {
             }
             return result;
         }
+        @Override
+        public String toString() {
+            StringBuilder b = new StringBuilder("ArrayFunction~");
+            b.append(m.getName()).append("(");
+            for (int i = 0; i < args.size(); ++i) {
+                if (i > 0) b.append(",");
+                b.append(arrayComponentType);
+                b.append(" ").append(args.get(i));
+            }
+            b.append(')');
+            return b.toString();
+        }
+
     }
 
 }

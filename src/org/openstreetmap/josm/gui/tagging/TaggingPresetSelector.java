@@ -1,9 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -17,6 +20,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
@@ -26,11 +31,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
@@ -38,20 +46,21 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Key;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * GUI component to select tagging preset: the list with filter and two checkboxes
  * @since 6068
  */
 public class TaggingPresetSelector extends JPanel implements SelectionChangedListener {
-    
+
     private static final int CLASSIFICATION_IN_FAVORITES = 300;
     private static final int CLASSIFICATION_NAME_MATCH = 300;
     private static final int CLASSIFICATION_GROUP_MATCH = 200;
@@ -60,34 +69,32 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     private static final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
     private static final BooleanProperty ONLY_APPLICABLE  = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
 
-    
     private JosmTextField edSearchText;
-    private JList lsResult;
+    private JList<TaggingPreset> lsResult;
     private JCheckBox ckOnlyApplicable;
     private JCheckBox ckSearchInTags;
     private final EnumSet<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
     private boolean typesInSelectionDirty = true;
-    private final List<PresetClassification> classifications = new ArrayList<PresetClassification>();
+    private final List<PresetClassification> classifications = new ArrayList<>();
     private ResultListModel lsResultModel = new ResultListModel();
-    
+
     private ActionListener dblClickListener;
     private ActionListener clickListener;
 
-    private static class ResultListCellRenderer extends DefaultListCellRenderer {
+    private static class ResultListCellRenderer implements ListCellRenderer<TaggingPreset> {
+        final DefaultListCellRenderer def = new DefaultListCellRenderer();
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
-            JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            TaggingPreset tp = (TaggingPreset)value;
+        public Component getListCellRendererComponent(JList<? extends TaggingPreset> list, TaggingPreset tp, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel result = (JLabel) def.getListCellRendererComponent(list, tp, index, isSelected, cellHasFocus);
             result.setText(tp.getName());
             result.setIcon((Icon) tp.getValue(Action.SMALL_ICON));
             return result;
         }
     }
 
-    private static class ResultListModel extends AbstractListModel {
+    private static class ResultListModel extends AbstractListModel<TaggingPreset> {
 
-        private List<PresetClassification> presets = new ArrayList<PresetClassification>();
+        private List<PresetClassification> presets = new ArrayList<>();
 
         public void setPresets(List<PresetClassification> presets) {
             this.presets = presets;
@@ -99,7 +106,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public TaggingPreset getElementAt(int index) {
             return presets.get(index).preset;
         }
 
@@ -107,16 +114,15 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         public int getSize() {
             return presets.size();
         }
-
     }
 
     private static class PresetClassification implements Comparable<PresetClassification> {
         public final TaggingPreset preset;
         public int classification;
         public int favoriteIndex;
-        private final Collection<String> groups = new HashSet<String>();
-        private final Collection<String> names = new HashSet<String>();
-        private final Collection<String> tags = new HashSet<String>();
+        private final Collection<String> groups = new HashSet<>();
+        private final Collection<String> names = new HashSet<>();
+        private final Collection<String> tags = new HashSet<>();
 
         PresetClassification(TaggingPreset preset) {
             this.preset = preset;
@@ -200,12 +206,10 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     /**
      * Constructs a new {@code TaggingPresetSelector}.
      */
-    public TaggingPresetSelector() {
+    public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags) {
         super(new BorderLayout());
-        if (TaggingPresetPreference.taggingPresets!=null) {
-            loadPresets(TaggingPresetPreference.taggingPresets);
-        }
-        
+        loadPresets(TaggingPresets.getTaggingPresets());
+
         edSearchText = new JosmTextField();
         edSearchText.getDocument().addDocumentListener(new DocumentListener() {
             @Override public void removeUpdate(DocumentEvent e) { filterPresets(); }
@@ -239,7 +243,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         });
         add(edSearchText, BorderLayout.NORTH);
 
-        lsResult = new JList();
+        lsResult = new JList<>();
         lsResult.setModel(lsResultModel);
         lsResult.setCellRenderer(new ResultListCellRenderer());
         lsResult.addMouseListener(new MouseAdapter() {
@@ -259,34 +263,46 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         JPanel pnChecks = new JPanel();
         pnChecks.setLayout(new BoxLayout(pnChecks, BoxLayout.Y_AXIS));
 
-        ckOnlyApplicable = new JCheckBox();
-        ckOnlyApplicable.setText(tr("Show only applicable to selection"));
-        pnChecks.add(ckOnlyApplicable);
-        ckOnlyApplicable.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                filterPresets();
-            }
-        });
+        if (displayOnlyApplicable) {
+            ckOnlyApplicable = new JCheckBox();
+            ckOnlyApplicable.setText(tr("Show only applicable to selection"));
+            pnChecks.add(ckOnlyApplicable);
+            ckOnlyApplicable.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    filterPresets();
+                }
+            });
+        }
 
-        ckSearchInTags = new JCheckBox();
-        ckSearchInTags.setText(tr("Search in tags"));
-        ckSearchInTags.setSelected(SEARCH_IN_TAGS.get());
-        ckSearchInTags.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                filterPresets();
-            }
-        });
-        pnChecks.add(ckSearchInTags);
+        if (displaySearchInTags) {
+            ckSearchInTags = new JCheckBox();
+            ckSearchInTags.setText(tr("Search in tags"));
+            ckSearchInTags.setSelected(SEARCH_IN_TAGS.get());
+            ckSearchInTags.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent e) {
+                    filterPresets();
+                }
+            });
+            pnChecks.add(ckSearchInTags);
+        }
 
         add(pnChecks, BorderLayout.SOUTH);
 
         setPreferredSize(new Dimension(400, 300));
-        
         filterPresets();
+        JPopupMenu popupMenu = new JPopupMenu();
+        popupMenu.add(new AbstractAction(tr("Add toolbar button")) {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                String res = getSelectedPreset().getToolbarString();
+                Main.toolbar.addCustomButton(res, -1, false);
+            }
+        });
+        lsResult.addMouseListener(new PopupMenuLauncher(popupMenu));
     }
-    
+
     private void selectPreset(int newIndex) {
         if (newIndex < 0) {
             newIndex = 0;
@@ -316,62 +332,63 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             nameWords = text.split("\\s");
         }
 
-        boolean onlyApplicable = ckOnlyApplicable.isSelected();
-        boolean inTags = ckSearchInTags.isSelected();
+        boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
+        boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
-        List<PresetClassification> result = new ArrayList<PresetClassification>();
-        PRESET_LOOP:
-            for (PresetClassification presetClasification: classifications) {
-                TaggingPreset preset = presetClasification.preset;
-                presetClasification.classification = 0;
+        final List<PresetClassification> result = new ArrayList<>();
+        for (PresetClassification presetClassification : classifications) {
+            TaggingPreset preset = presetClassification.preset;
+            presetClassification.classification = 0;
 
-                if (onlyApplicable && preset.types != null) {
-                    boolean found = false;
-                    for (TaggingPresetType type: preset.types) {
-                        if (getTypesInSelection().contains(type)) {
-                            found = true;
-                            break;
-                        }
+            if (onlyApplicable && !preset.typeMatches(getTypesInSelection())) {
+                final Predicate<Role> memberExpressionMatchesOnePrimitive = new Predicate<Role>() {
+                    @Override
+                    public boolean evaluate(Role object) {
+                        return object.memberExpression != null && Utils.exists(Main.main.getCurrentDataSet().getSelected(), object.memberExpression);
                     }
-                    if (!found) {
-                        continue;
-                    }
-                }
-
-                if (groupWords != null && presetClasification.isMatchingGroup(groupWords) == 0) {
-                    continue PRESET_LOOP;
-                }
-
-                int matchName = presetClasification.isMatchingName(nameWords);
-
-                if (matchName == 0) {
-                    if (groupWords == null) {
-                        int groupMatch = presetClasification.isMatchingGroup(nameWords);
-                        if (groupMatch > 0) {
-                            presetClasification.classification = CLASSIFICATION_GROUP_MATCH + groupMatch;
-                        }
-                    }
-                    if (presetClasification.classification == 0 && inTags) {
-                        int tagsMatch = presetClasification.isMatchingTags(nameWords);
-                        if (tagsMatch > 0) {
-                            presetClasification.classification = CLASSIFICATION_TAGS_MATCH + tagsMatch;
-                        }
-                    }
+                };
+                if (preset.types.contains(TaggingPresetType.RELATION) && preset.roles != null
+                        && Utils.exists(preset.roles.roles, memberExpressionMatchesOnePrimitive)) {
+                    // keep to allow the creation of new relations
                 } else {
-                    presetClasification.classification = CLASSIFICATION_NAME_MATCH + matchName;
-                }
-
-                if (presetClasification.classification > 0) {
-                    presetClasification.classification += presetClasification.favoriteIndex;
-                    result.add(presetClasification);
+                    continue;
                 }
             }
+
+            if (groupWords != null && presetClassification.isMatchingGroup(groupWords) == 0) {
+                continue;
+            }
+
+            int matchName = presetClassification.isMatchingName(nameWords);
+
+            if (matchName == 0) {
+                if (groupWords == null) {
+                    int groupMatch = presetClassification.isMatchingGroup(nameWords);
+                    if (groupMatch > 0) {
+                        presetClassification.classification = CLASSIFICATION_GROUP_MATCH + groupMatch;
+                    }
+                }
+                if (presetClassification.classification == 0 && inTags) {
+                    int tagsMatch = presetClassification.isMatchingTags(nameWords);
+                    if (tagsMatch > 0) {
+                        presetClassification.classification = CLASSIFICATION_TAGS_MATCH + tagsMatch;
+                    }
+                }
+            } else {
+                presetClassification.classification = CLASSIFICATION_NAME_MATCH + matchName;
+            }
+
+            if (presetClassification.classification > 0) {
+                presetClassification.classification += presetClassification.favoriteIndex;
+                result.add(presetClassification);
+            }
+        }
 
         Collections.sort(result);
         lsResultModel.setPresets(result);
 
     }
-    
+
     private EnumSet<TaggingPresetType> getTypesInSelection() {
         if (typesInSelectionDirty) {
             synchronized (typesInSelection) {
@@ -394,40 +411,43 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         }
         return typesInSelection;
     }
-    
+
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         typesInSelectionDirty = true;
     }
 
     public void init() {
-        ckOnlyApplicable.setEnabled(!getTypesInSelection().isEmpty());
-        ckOnlyApplicable.setSelected(!getTypesInSelection().isEmpty() && ONLY_APPLICABLE.get());
+        if (ckOnlyApplicable != null) {
+            ckOnlyApplicable.setEnabled(!getTypesInSelection().isEmpty());
+            ckOnlyApplicable.setSelected(!getTypesInSelection().isEmpty() && ONLY_APPLICABLE.get());
+        }
         edSearchText.setText("");
         filterPresets();
     }
-    
+
     public void init(Collection<TaggingPreset> presets) {
         classifications.clear();
         loadPresets(presets);
         init();
     }
 
-    
     public void clearSelection() {
         lsResult.getSelectionModel().clearSelection();
     }
-    
+
     /**
      * Save checkbox values in preferences for future reuse
      */
     public void savePreferences() {
-        SEARCH_IN_TAGS.put(ckSearchInTags.isSelected());
-        if (ckOnlyApplicable.isEnabled()) {
+        if (ckSearchInTags != null) {
+            SEARCH_IN_TAGS.put(ckSearchInTags.isSelected());
+        }
+        if (ckOnlyApplicable != null && ckOnlyApplicable.isEnabled()) {
             ONLY_APPLICABLE.put(ckOnlyApplicable.isSelected());
         }
     }
-    
+
     /**
      * Determines, which preset is selected at the current moment
      * @return selected preset (as action)
@@ -462,19 +482,19 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     public void setSelectedPreset(TaggingPreset p) {
         lsResult.setSelectedValue(p, true);
     }
-    
+
     public int getItemCount() {
         return lsResultModel.getSize();
     }
-    
+
     public void setDblClickListener(ActionListener dblClickListener) {
         this.dblClickListener = dblClickListener;
     }
-    
+
     public void setClickListener(ActionListener clickListener) {
         this.clickListener = clickListener;
     }
-    
+
     public void addSelectionListener(final ActionListener selectListener) {
         lsResult.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override

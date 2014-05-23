@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * An relation, having a set of tags and any number (0...n) of members.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  */
 public final class Relation extends OsmPrimitive implements IRelation {
 
@@ -34,7 +34,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @since 1925
      */
     public List<RelationMember> getMembers() {
-        return new CopyList<RelationMember>(members);
+        return new CopyList<>(members);
     }
 
     /**
@@ -81,10 +81,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     public void addMember(RelationMember member) {
         boolean locked = writeLock();
         try {
-            RelationMember[] newMembers = new RelationMember[members.length + 1];
-            System.arraycopy(members, 0, newMembers, 0, members.length);
-            newMembers[members.length] = member;
-            members = newMembers;
+            members = Utils.addInArrayCopy(members, member);
             member.getMember().addReferrer(this);
             member.getMember().clearCachedStyle();
             fireMembersChanged();
@@ -206,11 +203,11 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     /**
-     * Creates a new relation for the given id. If the id > 0, the way is marked
+     * Creates a new relation for the given id. If the id &gt; 0, the way is marked
      * as incomplete.
      *
-     * @param id the id. > 0 required
-     * @throws IllegalArgumentException thrown if id < 0
+     * @param id the id. &gt; 0 required
+     * @throws IllegalArgumentException thrown if id &lt; 0
      */
     public Relation(long id) throws IllegalArgumentException {
         super(id, false);
@@ -243,7 +240,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
             RelationData relationData = (RelationData) data;
 
-            List<RelationMember> newMembers = new ArrayList<RelationMember>();
+            List<RelationMember> newMembers = new ArrayList<>();
             for (RelationMemberData member : relationData.getMembers()) {
                 OsmPrimitive primitive = getDataSet().getPrimitiveById(member);
                 if (primitive == null)
@@ -386,7 +383,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * member of this relation
      */
     public Set<OsmPrimitive> getMemberPrimitives() {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         RelationMember[] members = this.members;
         for (RelationMember m: members) {
             if (m.getMember() != null) {
@@ -479,7 +476,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         bbox = null; // bbox might have changed if relation was in ds, was removed, modified, added back to dataset
     }
 
-    private void checkMembers() {
+    private void checkMembers() throws DataIntegrityProblemException {
         DataSet dataSet = getDataSet();
         if (dataSet != null) {
             RelationMember[] members = this.members;
@@ -496,7 +493,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
-    private void fireMembersChanged() {
+    private void fireMembersChanged() throws DataIntegrityProblemException {
         checkMembers();
         if (getDataSet() != null) {
             getDataSet().fireRelationMembersChanged(this);
@@ -523,7 +520,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @return the incomplete children. Empty collection if no children are incomplete.
      */
     public Collection<OsmPrimitive> getIncompleteMembers() {
-        Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        Set<OsmPrimitive> ret = new HashSet<>();
         RelationMember[] members = this.members;
         for (RelationMember rm: members) {
             if (!rm.getMember().isIncomplete()) {
@@ -537,11 +534,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
     @Override
     protected void keysChangedImpl(Map<String, String> originalKeys) {
         super.keysChangedImpl(originalKeys);
-        // fix #8346 - Clear style cache for multipolygon members after a tag change
-        if (isMultipolygon()) {
-            for (OsmPrimitive member : getMemberPrimitives()) {
-                member.clearCachedStyle();
-            }
+        for (OsmPrimitive member : getMemberPrimitives()) {
+            member.clearCachedStyle();
         }
     }
 

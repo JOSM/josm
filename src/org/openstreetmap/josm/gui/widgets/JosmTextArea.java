@@ -43,8 +43,8 @@ public class JosmTextArea extends JTextArea {
      * rows and columns. A default model is created, and the initial
      * string is null.
      *
-     * @param rows the number of rows >= 0
-     * @param columns the number of columns >= 0
+     * @param rows the number of rows &gt;= 0
+     * @param columns the number of columns &gt;= 0
      * @exception IllegalArgumentException if the rows or columns
      *  arguments are negative.
      */
@@ -57,8 +57,8 @@ public class JosmTextArea extends JTextArea {
      * of rows and columns. A default model is created.
      *
      * @param text the text to be displayed, or null
-     * @param rows the number of rows >= 0
-     * @param columns the number of columns >= 0
+     * @param rows the number of rows &gt;= 0
+     * @param columns the number of columns &gt;= 0
      * @exception IllegalArgumentException if the rows or columns
      *  arguments are negative.
      */
@@ -73,8 +73,8 @@ public class JosmTextArea extends JTextArea {
      *
      * @param doc the model to use, or create a default one if null
      * @param text the text to be displayed, null if none
-     * @param rows the number of rows >= 0
-     * @param columns the number of columns >= 0
+     * @param rows the number of rows &gt;= 0
+     * @param columns the number of columns &gt;= 0
      * @exception IllegalArgumentException if the rows or columns
      *  arguments are negative.
      */

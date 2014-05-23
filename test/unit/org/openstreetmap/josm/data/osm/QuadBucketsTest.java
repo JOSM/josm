@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,8 +13,8 @@ import org.fest.reflect.reference.TypeRef;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -23,13 +24,13 @@ public class QuadBucketsTest {
 
     @BeforeClass
     public static void init() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     private void removeAllTest(DataSet ds) {
-        List<Node> allNodes = new ArrayList<Node>(ds.getNodes());
-        List<Way> allWays = new ArrayList<Way>(ds.getWays());
-        List<Relation> allRelations = new ArrayList<Relation>(ds.getRelations());
+        List<Node> allNodes = new ArrayList<>(ds.getNodes());
+        List<Way> allWays = new ArrayList<>(ds.getWays());
+        List<Relation> allRelations = new ArrayList<>(ds.getRelations());
 
         QuadBuckets<Node> nodes = Reflection.field("nodes").ofType(new TypeRef<QuadBuckets<Node>>() {}).in(ds).get();
         QuadBuckets<Way> ways = Reflection.field("ways").ofType(new TypeRef<QuadBuckets<Way>>() {}).in(ds).get();
@@ -66,20 +67,23 @@ public class QuadBucketsTest {
     @Test
     public void testRemove() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
-        removeAllTest(ds);
+        try (InputStream fis = new FileInputStream("data_nodist/restriction.osm")) {
+            DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+            removeAllTest(ds);
+        }
     }
 
     @Test
     public void testMove() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
+        try (InputStream fis = new FileInputStream("data_nodist/restriction.osm")) {
+            DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
 
-        for (Node n: ds.getNodes()) {
-            n.setCoor(new LatLon(10, 10));
+            for (Node n: ds.getNodes()) {
+                n.setCoor(new LatLon(10, 10));
+            }
+
+            removeAllTest(ds);
         }
-
-        removeAllTest(ds);
     }
-
 }

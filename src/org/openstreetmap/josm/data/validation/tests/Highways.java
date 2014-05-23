@@ -98,7 +98,7 @@ public class Highways extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (w.hasKey("highway") && w.hasKey("junction") && w.get("junction").equals("roundabout")) {
+            if (w.hasKey("highway") && w.hasKey("junction") && "roundabout".equals(w.get("junction"))) {
                 testWrongRoundabout(w);
             }
             if (w.hasKey("source:maxspeed")) {
@@ -110,15 +110,16 @@ public class Highways extends Test {
     }
 
     private void testWrongRoundabout(Way w) {
-        Map<String, List<Way>> map = new HashMap<String, List<Way>>();
-        // Count all highways (per type) connected to this roundabout
+        Map<String, List<Way>> map = new HashMap<>();
+        // Count all highways (per type) connected to this roundabout, except links
         // As roundabouts are closed ways, take care of not processing the first/last node twice
-        for (Node n : new HashSet<Node>(w.getNodes())) {
+        for (Node n : new HashSet<>(w.getNodes())) {
             for (Way h : Utils.filteredCollection(n.getReferrers(), Way.class)) {
-                if (h != w && h.hasKey("highway")) {
-                    List<Way> list = map.get(h.get("highway"));
+                String value = h.get("highway");
+                if (h != w && value != null && !value.endsWith("_link")) {
+                    List<Way> list = map.get(value);
                     if (list == null) {
-                        map.put(h.get("highway"), list = new ArrayList<Way>());
+                        map.put(value, list = new ArrayList<>());
                     }
                     list.add(h);
                 }
@@ -148,7 +149,7 @@ public class Highways extends Test {
             return true;
         }
 
-        final HashSet<OsmPrimitive> referrers = new HashSet<OsmPrimitive>();
+        final HashSet<OsmPrimitive> referrers = new HashSet<>();
         referrers.addAll(way.firstNode().getReferrers());
         referrers.addAll(way.lastNode().getReferrers());
 
@@ -178,12 +179,12 @@ public class Highways extends Test {
         for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
             String highway = w.get("highway");
             if (highway != null) {
-                if (highway.equals("footway") || highway.equals("path")) {
+                if ("footway".equals(highway) || "path".equals(highway)) {
                     handlePedestrianWay(n, w);
                     if (w.hasTag("bicycle", "yes", "designated")) {
                         handleCyclistWay(n, w);
                     }
-                } else if (highway.equals("cycleway")) {
+                } else if ("cycleway".equals(highway)) {
                     handleCyclistWay(n, w);
                     if (w.hasTag("foot", "yes", "designated")) {
                         handlePedestrianWay(n, w);

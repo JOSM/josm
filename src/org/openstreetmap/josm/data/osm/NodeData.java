@@ -31,7 +31,7 @@ public class NodeData extends PrimitiveData implements INode {
     }
 
     @Override
-    public void setCoor(LatLon coor) {
+    public final void setCoor(LatLon coor) {
         if (coor == null) {
             this.lat = Double.NaN;
             this.lon = Double.NaN;

@@ -20,7 +20,7 @@ public class AllNodesVisitor extends AbstractVisitor {
     /**
      * The resulting nodes collected so far.
      */
-    public Collection<Node> nodes = new HashSet<Node>();
+    public Collection<Node> nodes = new HashSet<>();
 
     /**
      * Nodes have only itself as nodes.

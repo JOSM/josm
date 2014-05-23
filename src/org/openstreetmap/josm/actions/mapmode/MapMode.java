@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * MapModes should register/deregister all necessary listeners on the map's view
  * control.
  */
-abstract public class MapMode extends JosmAction implements MouseListener, MouseMotionListener {
+public abstract class MapMode extends JosmAction implements MouseListener, MouseMotionListener {
     protected final Cursor cursor;
     protected boolean ctrl;
     protected boolean alt;

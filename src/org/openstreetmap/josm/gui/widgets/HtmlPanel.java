@@ -22,7 +22,7 @@ import javax.swing.text.html.StyleSheet;
 public class HtmlPanel extends JPanel {
     private JosmEditorPane jepMessage;
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout());
         jepMessage = new JosmEditorPane("text/html", "");
         jepMessage.setOpaque(false);
@@ -86,7 +86,7 @@ public class HtmlPanel extends JPanel {
      *
      * @param text the text to display
      */
-    public void setText(String text) {
+    public final void setText(String text) {
         if (text == null) {
             text = "";
         }

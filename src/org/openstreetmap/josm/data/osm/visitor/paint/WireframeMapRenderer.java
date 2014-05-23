@@ -11,7 +11,6 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -167,8 +166,8 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         }
 
         // draw tagged ways first, then untagged ways, then highlighted ways
-        List<Way> highlightedWays = new ArrayList<Way>();
-        List<Way> untaggedWays = new ArrayList<Way>();
+        List<Way> highlightedWays = new ArrayList<>();
+        List<Way> untaggedWays = new ArrayList<>();
 
         for (final Way way : data.searchWays(bbox)){
             if (way.isDrawable() && !ds.isSelected(way) && !way.isDisabledAndHidden()) {
@@ -184,13 +183,13 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         displaySegments();
 
         // Display highlighted ways after the other ones (fix #8276)
-        for (List<Way> specialWays : Arrays.asList(new List[]{untaggedWays, highlightedWays})) {
-            for (final Way way : specialWays){
-                way.accept(this);
-            }
-            specialWays.clear();
-            displaySegments();
+        List<Way> specialWays = new ArrayList<>(untaggedWays);
+        specialWays.addAll(highlightedWays);
+        for (final Way way : specialWays){
+            way.accept(this);
         }
+        specialWays.clear();
+        displaySegments();
 
         for (final OsmPrimitive osm : data.getSelected()) {
             if (osm.isDrawable()) {

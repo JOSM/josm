@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -111,6 +112,36 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             sb.append("</ul>");
         }
         return sb.toString();
+    }
+    
+    /**
+     * Notifies user about result of a finished plugin download task.
+     * @param parent The parent component
+     * @param task The finished plugin download task
+     * @since 6797
+     */
+    public static void notifyDownloadResults(final Component parent, PluginDownloadTask task) {
+        final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
+        final Collection<PluginInformation> failed = task.getFailedPlugins();
+        final StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append(buildDownloadSummary(task));
+        if (!downloaded.isEmpty()) {
+            sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
+        }
+        sb.append("</html>");
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override
+            public void run() {
+                HelpAwareOptionPane.showOptionDialog(
+                        parent,
+                        sb.toString(),
+                        tr("Update plugins"),
+                        !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
+                                HelpUtil.ht("/Preferences/Plugins")
+                        );
+            }
+        });
     }
 
     private JosmTextField tfFilter;
@@ -248,7 +279,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             return false;
         pnlPluginUpdatePolicy.rememberInPreferences();
         if (model.isActivePluginsChanged()) {
-            LinkedList<String> l = new LinkedList<String>(model.getSelectedPluginNames());
+            LinkedList<String> l = new LinkedList<>(model.getSelectedPluginNames());
             Collections.sort(l);
             Main.pref.putCollection("plugins", l);
             return true;
@@ -326,30 +357,6 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
         }
 
-        protected void notifyDownloadResults(PluginDownloadTask task) {
-            final Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
-            final Collection<PluginInformation> failed = task.getFailedPlugins();
-            final StringBuilder sb = new StringBuilder();
-            sb.append("<html>");
-            sb.append(buildDownloadSummary(task));
-            if (!downloaded.isEmpty()) {
-                sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
-            }
-            sb.append("</html>");
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    HelpAwareOptionPane.showOptionDialog(
-                            pnlPluginPreferences,
-                            sb.toString(),
-                            tr("Update plugins"),
-                            !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
-                                    HelpUtil.ht("/Preferences/Plugins")
-                            );
-                }
-            });
-        }
-
         protected void alertNothingToUpdate() {
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
@@ -364,9 +371,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                                 );
                     }
                 });
-            } catch (InterruptedException e) {
-                Main.error(e);
-            } catch (InvocationTargetException e) {
+            } catch (InterruptedException | InvocationTargetException e) {
                 Main.error(e);
             }
         }
@@ -390,7 +395,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 public void run() {
                     if (pluginDownloadTask.isCanceled())
                         return;
-                    notifyDownloadResults(pluginDownloadTask);
+                    notifyDownloadResults(pnlPluginPreferences, pluginDownloadTask);
                     model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
                     model.clearPendingPlugins(pluginDownloadTask.getDownloadedPlugins());
                     GuiHelper.runInEDT(new Runnable() {
@@ -483,16 +488,16 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
     private static class PluginConfigurationSitesPanel extends JPanel {
 
-        private DefaultListModel model;
+        private DefaultListModel<String> model;
 
         protected final void build() {
             setLayout(new GridBagLayout());
             add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
-            model = new DefaultListModel();
+            model = new DefaultListModel<>();
             for (String s : Main.pref.getPluginSites()) {
                 model.addElement(s);
             }
-            final JList list = new JList(model);
+            final JList<String> list = new JList<>(model);
             add(new JScrollPane(list), GBC.std().fill());
             JPanel buttons = new JPanel(new GridBagLayout());
             buttons.add(new JButton(new AbstractAction(tr("Add")){
@@ -559,9 +564,9 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         public List<String> getUpdateSites() {
             if (model.getSize() == 0) return Collections.emptyList();
-            List<String> ret = new ArrayList<String>(model.getSize());
+            List<String> ret = new ArrayList<>(model.getSize());
             for (int i=0; i< model.getSize();i++){
-                ret.add((String)model.get(i));
+                ret.add(model.get(i));
             }
             return ret;
         }

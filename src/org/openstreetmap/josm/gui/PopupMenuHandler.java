@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 public class PopupMenuHandler {
 
     // Set of enabled osm primitives actions
-    private final Set<OsmPrimitiveAction> primitiveActions = new HashSet<OsmPrimitiveAction>();
+    private final Set<OsmPrimitiveAction> primitiveActions = new HashSet<>();
     // Managed menu
     private final JPopupMenu menu;
     

@@ -107,7 +107,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
     /**
      * build the user interface
      */
-    protected void build() {
+    protected final void build() {
         GridBagConstraints gc = new GridBagConstraints();
         setLayout(new GridBagLayout());
 
@@ -333,7 +333,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         private final List<Adjustable> synchronizedAdjustables;
 
         public AdjustmentSynchronizer() {
-            synchronizedAdjustables = new ArrayList<Adjustable>();
+            synchronizedAdjustables = new ArrayList<>();
         }
 
         public void synchronizeAdjustment(Adjustable adjustable) {

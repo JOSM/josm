@@ -20,7 +20,7 @@ import javax.swing.event.TableModelListener;
  */
 public class RelationMemberListViewer extends HistoryViewerPanel {
 
-    protected class MemberModelChanged implements TableModelListener {
+    protected static class MemberModelChanged implements TableModelListener {
         private final JTable table;
 
         protected MemberModelChanged(JTable table) {
@@ -34,6 +34,7 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
         }
     }
 
+    @Override
     protected JTable buildReferenceTable() {
         JTable table = new JTable(
                 model.getRelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME),
@@ -46,6 +47,7 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
         return table;
     }
 
+    @Override
     protected JTable buildCurrentTable() {
         JTable table = new JTable(
                 model.getRelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME),

@@ -12,7 +12,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Abstract superclass of {@link AudioFasterAction} and {@link AudioSlowerAction}.
  * @since 563
  */
-abstract public class AudioFastSlowAction extends JosmAction {
+public abstract class AudioFastSlowAction extends JosmAction {
 
     private double multiplier;
 

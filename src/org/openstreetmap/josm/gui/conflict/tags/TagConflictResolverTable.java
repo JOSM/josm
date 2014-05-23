@@ -22,7 +22,7 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
         build();
     }
 
-    protected void build() {
+    protected final void build() {
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -41,7 +41,7 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
 
         ((MultiValueCellEditor)getColumnModel().getColumn(2).getCellEditor()).addNavigationListeners(this);
 
-        setRowHeight((int)new JosmComboBox().getPreferredSize().getHeight());
+        setRowHeight((int)new JosmComboBox<String>().getPreferredSize().getHeight());
     }
 
     /**
@@ -72,8 +72,9 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
                 row++;
             }
             changeSelection(row, col, false, false);
-            editCellAt(getSelectedRow(), getSelectedColumn());
-            getEditorComponent().requestFocusInWindow();
+            if (editCellAt(getSelectedRow(), getSelectedColumn())) {
+                getEditorComponent().requestFocusInWindow();
+            }
         }
     }
 
@@ -103,8 +104,9 @@ public class TagConflictResolverTable extends JTable implements MultiValueCellEd
                 row--;
             }
             changeSelection(row, col, false, false);
-            editCellAt(getSelectedRow(), getSelectedColumn());
-            getEditorComponent().requestFocusInWindow();
+            if (editCellAt(getSelectedRow(), getSelectedColumn())) {
+                getEditorComponent().requestFocusInWindow();
+            }
         }
     }
 

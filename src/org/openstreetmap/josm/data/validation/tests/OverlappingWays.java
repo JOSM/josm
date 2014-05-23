@@ -4,33 +4,35 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.openstreetmap.josm.command.ChangeNodesCommand;
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.validation.FixableTestError;
+import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Tests if there are overlapping ways
+ * Tests if there are overlapping ways.
  *
  * @author frsantos
  */
@@ -48,6 +50,9 @@ public class OverlappingWays extends Test {
     protected static final int OVERLAPPING_AREA = 120;
     protected static final int DUPLICATE_WAY_SEGMENT = 121;
 
+    protected static final CollectionProperty IGNORED_KEYS = new CollectionProperty(
+            "overlapping-ways.ignored-keys", Arrays.asList("barrier", "building", "historic:building"));
+
     /** Constructor */
     public OverlappingWays() {
         super(tr("Overlapping ways"),
@@ -58,7 +63,7 @@ public class OverlappingWays extends Test {
     @Override
     public void startTest(ProgressMonitor monitor)  {
         super.startTest(monitor);
-        nodePairs = new MultiMap<Pair<Node,Node>, WaySegment>(1000);
+        nodePairs = new MultiMap<>(1000);
     }
 
     private boolean parentMultipolygonConcernsArea(OsmPrimitive p) {
@@ -72,14 +77,15 @@ public class OverlappingWays extends Test {
 
     @Override
     public void endTest() {
-        Map<List<Way>, Set<WaySegment>> seenWays = new HashMap<List<Way>, Set<WaySegment>>(500);
+        Map<List<Way>, Set<WaySegment>> seenWays = new HashMap<>(500);
 
+        Collection<TestError> preliminaryErrors = new ArrayList<>();
         for (Set<WaySegment> duplicated : nodePairs.values()) {
             int ways = duplicated.size();
 
             if (ways > 1) {
-                List<OsmPrimitive> prims = new ArrayList<OsmPrimitive>();
-                List<Way> currentWays = new ArrayList<Way>();
+                List<OsmPrimitive> prims = new ArrayList<>();
+                List<Way> currentWays = new ArrayList<>();
                 Collection<WaySegment> highlight;
                 int highway = 0;
                 int railway = 0;
@@ -137,7 +143,7 @@ public class OverlappingWays extends Test {
                         type = OVERLAPPING_WAY;
                     }
 
-                    errors.add(new TestError(this,
+                    preliminaryErrors.add(new TestError(this,
                             type < OVERLAPPING_HIGHWAY_AREA ? Severity.WARNING : Severity.OTHER,
                                     errortype, type, prims, duplicated));
                     seenWays.put(currentWays, duplicated);
@@ -148,32 +154,52 @@ public class OverlappingWays extends Test {
                 }
             }
         }
+
+        // see ticket #9598 - only report if at least 3 segments are shared, except for overlapping ways, i.e warnings (see #9820)
+        for (TestError error : preliminaryErrors) {
+            if (error.getSeverity().equals(Severity.WARNING) || error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
+                boolean ignore = false;
+                for (String ignoredKey : IGNORED_KEYS.get()) {
+                    if (Utils.exists(error.getPrimitives(), Predicates.hasKey(ignoredKey))) {
+                        ignore = true;
+                        break;
+                    }
+                }
+                if (!ignore) {
+                    errors.add(error);
+                }
+            }
+        }
+
         super.endTest();
         nodePairs = null;
     }
 
-    public static Command fixDuplicateWaySegment(Way w) {
+    protected static Set<WaySegment> checkDuplicateWaySegment(Way w) {
         // test for ticket #4959
-        Set<WaySegment> segments = new TreeSet<WaySegment>(new Comparator<WaySegment>() {
+        Set<WaySegment> segments = new TreeSet<>(new Comparator<WaySegment>() {
             @Override
             public int compare(WaySegment o1, WaySegment o2) {
-                return o1.getFirstNode().compareTo(o2.getFirstNode());
+                final List<Node> n1 = Arrays.asList(o1.getFirstNode(), o1.getSecondNode());
+                final List<Node> n2 = Arrays.asList(o2.getFirstNode(), o2.getSecondNode());
+                Collections.sort(n1);
+                Collections.sort(n2);
+                final int first = n1.get(0).compareTo(n2.get(0));
+                final int second = n1.get(1).compareTo(n2.get(1));
+                return first != 0 ? first : second;
             }
         });
-        final Set<Integer> wayNodesToFix = new TreeSet<Integer>(Collections.reverseOrder());
-        
+        final Set<WaySegment> duplicateWaySegments = new HashSet<>();
+
         for (int i = 0; i < w.getNodesCount() - 1; i++) {
-            final boolean wasInSet = !segments.add(new WaySegment(w, i));
+            final WaySegment segment = new WaySegment(w, i);
+            final boolean wasInSet = !segments.add(segment);
             if (wasInSet) {
-                wayNodesToFix.add(i);
+                duplicateWaySegments.add(segment);
             }
         }
-        if (wayNodesToFix.size() > 1) {
-            final List<Node> newNodes = new ArrayList<Node>(w.getNodes());
-            for (final int i : wayNodesToFix) {
-                newNodes.remove(i);
-            }
-            return new ChangeNodesCommand(w, newNodes);
+        if (duplicateWaySegments.size() > 1) {
+            return duplicateWaySegments;
         } else {
             return null;
         }
@@ -182,10 +208,10 @@ public class OverlappingWays extends Test {
     @Override
     public void visit(Way w) {
 
-        final Command duplicateWaySegmentFix = fixDuplicateWaySegment(w);
-        if (duplicateWaySegmentFix != null) {
-            errors.add(new FixableTestError(this, Severity.ERROR, tr("Way contains segment twice"),
-                    DUPLICATE_WAY_SEGMENT, w, duplicateWaySegmentFix));
+        final Set<WaySegment> duplicateWaySegment = checkDuplicateWaySegment(w);
+        if (duplicateWaySegment != null) {
+            errors.add(new TestError(this, Severity.ERROR, tr("Way contains segment twice"),
+                    DUPLICATE_WAY_SEGMENT, Collections.singleton(w), duplicateWaySegment));
             return;
         }
 
@@ -197,7 +223,7 @@ public class OverlappingWays extends Test {
                 lastN = n;
                 continue;
             }
-            nodePairs.put(Pair.sort(new Pair<Node,Node>(lastN, n)),
+            nodePairs.put(Pair.sort(new Pair<>(lastN, n)),
                     new WaySegment(w, i));
             lastN = n;
         }

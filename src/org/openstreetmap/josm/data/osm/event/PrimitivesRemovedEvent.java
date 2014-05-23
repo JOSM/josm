@@ -16,7 +16,7 @@ public class PrimitivesRemovedEvent extends AbstractDatasetChangedEvent {
 
     public PrimitivesRemovedEvent(DataSet dataSet, Collection<? extends OsmPrimitive> primitives, boolean wasComplete) {
         super(dataSet);
-        this.primitives = Collections.unmodifiableList(new ArrayList<OsmPrimitive>(primitives));
+        this.primitives = Collections.unmodifiableList(new ArrayList<>(primitives));
         this.wasComplete = wasComplete;
     }
 

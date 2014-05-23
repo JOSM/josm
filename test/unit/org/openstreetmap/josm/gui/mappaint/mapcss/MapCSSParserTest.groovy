@@ -1,28 +1,24 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss
 
+import java.awt.Color
+
 import org.junit.Before
 import org.junit.Test
+import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.Main
-import org.openstreetmap.josm.data.Preferences
-import org.openstreetmap.josm.data.osm.OsmPrimitive
+import org.openstreetmap.josm.TestUtils
+import org.openstreetmap.josm.data.coor.LatLon
+import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
-import org.openstreetmap.josm.tools.Utils
-
-import java.awt.Color
+import org.openstreetmap.josm.tools.ColorHelper
 
 class MapCSSParserTest {
 
-    protected static OsmPrimitive getPrimitive(String key, String value) {
-        def w = new Way()
-        w.put(key, value)
-        return w
-    }
-
     protected static Environment getEnvironment(String key, String value) {
-        return new Environment().withPrimitive(getPrimitive(key, value))
+        return new Environment().withPrimitive(TestUtils.createPrimitive("way " + key + "=" + value))
     }
 
     protected static MapCSSParser getParser(String stringToParse) {
@@ -31,7 +27,7 @@ class MapCSSParserTest {
 
     @Before
     public void setUp() throws Exception {
-        Main.pref = new Preferences()
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Test
@@ -52,7 +48,7 @@ class MapCSSParserTest {
     @Test
     public void testClassCondition() throws Exception {
         def conditions = ((Selector.GeneralSelector) getParser("way[name=X].highway:closed").selector()).conds
-        assert conditions.get(0) instanceof Condition.KeyValueCondition
+        assert conditions.get(0) instanceof Condition.SimpleKeyValueCondition
         assert conditions.get(0).applies(getEnvironment("name", "X"))
         assert conditions.get(1) instanceof Condition.ClassCondition
         assert conditions.get(2) instanceof Condition.PseudoClassCondition
@@ -60,33 +56,32 @@ class MapCSSParserTest {
 
     @Test
     public void testClassMatching() throws Exception {
-        def css = new MapCSSStyleSource("")
-        getParser("" +
+        def css = new MapCSSStyleSource("" +
                 "way[highway=footway] { set .path; color: #FF6644; width: 2; }\n" +
                 "way[highway=path]    { set path; color: brown; width: 2; }\n" +
                 "way[\"set\"=escape]  {  }\n" +
                 "way.path             { text:auto; text-color: green; text-position: line; text-offset: 5; }\n" +
                 "way!.path            { color: orange; }\n"
-        ).sheet(css)
+        )
+        css.loadStyleSource()
         assert css.getErrors().isEmpty()
         def mc1 = new MultiCascade()
-        css.apply(mc1, getPrimitive("highway", "path"), 1, null, false);
+        css.apply(mc1, TestUtils.createPrimitive("way highway=path"), 1, null, false);
         assert "green".equals(mc1.getCascade("default").get("text-color", null, String.class))
         assert "brown".equals(mc1.getCascade("default").get("color", null, String.class))
         def mc2 = new MultiCascade()
-        css.apply(mc2, getPrimitive("highway", "residential"), 1, null, false);
+        css.apply(mc2, TestUtils.createPrimitive("way highway=residential"), 1, null, false);
         assert "orange".equals(mc2.getCascade("default").get("color", null, String.class))
         assert mc2.getCascade("default").get("text-color", null, String.class) == null
         def mc3 = new MultiCascade()
-        css.apply(mc3, getPrimitive("highway", "footway"), 1, null, false);
-        assert Utils.hexToColor("#FF6644").equals(mc3.getCascade("default").get("color", null, Color.class))
+        css.apply(mc3, TestUtils.createPrimitive("way highway=footway"), 1, null, false);
+        assert ColorHelper.html2color("#FF6644").equals(mc3.getCascade("default").get("color", null, Color.class))
     }
 
     @Test
     public void testEqualCondition() throws Exception {
-        def condition = (Condition.KeyValueCondition) getParser("[surface=paved]").condition(Condition.Context.PRIMITIVE)
-        assert condition instanceof Condition.KeyValueCondition
-        assert Condition.Op.EQ.equals(condition.op)
+        def condition = (Condition.SimpleKeyValueCondition) getParser("[surface=paved]").condition(Condition.Context.PRIMITIVE)
+        assert condition instanceof Condition.SimpleKeyValueCondition
         assert "surface".equals(condition.k)
         assert "paved".equals(condition.v)
         assert condition.applies(getEnvironment("surface", "paved"))
@@ -110,11 +105,42 @@ class MapCSSParserTest {
     }
 
     @Test
+    public void testRegexConditionParenthesis() throws Exception {
+        def condition = (Condition.KeyValueCondition) getParser("[name =~ /^\\(foo\\)/]").condition(Condition.Context.PRIMITIVE)
+        assert condition.applies(getEnvironment("name", "(foo)"))
+        assert !condition.applies(getEnvironment("name", "foo"))
+        assert !condition.applies(getEnvironment("name", "((foo))"))
+    }
+
+    @Test
     public void testNegatedRegexCondition() throws Exception {
         def condition = (Condition.KeyValueCondition) getParser("[surface!~/paved|unpaved/]").condition(Condition.Context.PRIMITIVE)
         assert Condition.Op.NREGEX.equals(condition.op)
         assert !condition.applies(getEnvironment("surface", "unpaved"))
         assert condition.applies(getEnvironment("surface", "grass"))
+    }
+
+    @Test
+    public void testBeginsEndsWithCondition() throws Exception {
+        def condition = (Condition.KeyValueCondition) getParser('[foo ^= bar]').condition(Condition.Context.PRIMITIVE)
+        assert Condition.Op.BEGINS_WITH.equals(condition.op)
+        assert condition.applies(getEnvironment("foo", "bar123"))
+        assert !condition.applies(getEnvironment("foo", "123bar"))
+        assert !condition.applies(getEnvironment("foo", "123bar123"))
+        condition = (Condition.KeyValueCondition) getParser('[foo $= bar]').condition(Condition.Context.PRIMITIVE)
+        assert Condition.Op.ENDS_WITH.equals(condition.op)
+        assert !condition.applies(getEnvironment("foo", "bar123"))
+        assert condition.applies(getEnvironment("foo", "123bar"))
+        assert !condition.applies(getEnvironment("foo", "123bar123"))
+    }
+
+    @Test
+    public void testOneOfCondition() throws Exception {
+        def condition = getParser('[vending~=stamps]').condition(Condition.Context.PRIMITIVE)
+        assert condition.applies(getEnvironment("vending", "stamps"))
+        assert condition.applies(getEnvironment("vending", "bar;stamps;foo"))
+        assert !condition.applies(getEnvironment("vending", "every;thing;else"))
+        assert !condition.applies(getEnvironment("vending", "or_nothing"))
     }
 
     @Test
@@ -163,6 +189,17 @@ class MapCSSParserTest {
     }
 
     @Test
+    public void testNRegexKeyConditionSelector() throws Exception {
+        def s1 = getParser("*[sport][tourism != hotel]").selector()
+        assert s1.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar")))
+        assert !s1.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar tourism=hotel")))
+        def s2 = getParser("*[sport][tourism != hotel][leisure !~ /^(sports_centre|stadium|)\$/]").selector()
+        assert s2.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar")))
+        assert !s2.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar tourism=hotel")))
+        assert !s2.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar leisure=stadium")))
+    }
+
+    @Test
     public void testKeyKeyCondition() throws Exception {
         def c1 = (Condition.KeyValueCondition) getParser("[foo = *bar]").condition(Condition.Context.PRIMITIVE)
         def w1 = new Way()
@@ -179,5 +216,154 @@ class MapCSSParserTest {
         assert c2.applies(new Environment().withPrimitive(w2))
         w2.put("bar", "^[0-9]\$")
         assert !c2.applies(new Environment().withPrimitive(w2))
+    }
+
+    @Test
+    public void testTicket8568() throws Exception {
+        def sheet = new MapCSSStyleSource("" +
+                "way { width: 5; }\n" +
+                "way[keyA], way[keyB] { width: eval(prop(width)+10); }")
+        sheet.loadStyleSource()
+        def mc = new MultiCascade()
+        sheet.apply(mc, TestUtils.createPrimitive("way foo=bar"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 5
+        sheet.apply(mc, TestUtils.createPrimitive("way keyA=true"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
+        sheet.apply(mc, TestUtils.createPrimitive("way keyB=true"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
+        sheet.apply(mc, TestUtils.createPrimitive("way keyA=true keyB=true"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
+    }
+
+    @Test
+    public void testTicket8071() throws Exception {
+        def sheet = new MapCSSStyleSource("" +
+                "*[rcn_ref], *[name] {text: concat(tag(rcn_ref), \" \", tag(name)); }")
+        sheet.loadStyleSource()
+        def mc = new MultiCascade()
+        sheet.apply(mc, TestUtils.createPrimitive("way name=Foo"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == " Foo"
+        sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 "
+        sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15 name=Foo"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 Foo"
+
+        sheet = new MapCSSStyleSource("" +
+                "*[rcn_ref], *[name] {text: join(\" - \", tag(rcn_ref), tag(ref), tag(name)); }")
+        sheet.loadStyleSource()
+        sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15 ref=1.5 name=Foo"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 - 1.5 - Foo"
+    }
+
+    @Test
+    public void testColorNameTicket9191() throws Exception {
+        def e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null)
+        getParser("{color: testcolour1#88DD22}").declaration().instructions.get(0).execute(e)
+        def expected = new Color(0x88DD22)
+        assert e.getCascade(Environment.DEFAULT_LAYER).get("color") == expected
+        assert Main.pref.getDefaultColor("mappaint.mapcss.testcolour1") == expected
+    }
+
+    @Test
+    public void testColorNameTicket9191Alpha() throws Exception {
+        def e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null)
+        getParser("{color: testcolour2#12345678}").declaration().instructions.get(0).execute(e)
+        def expected = new Color(0x12, 0x34, 0x56, 0x78)
+        assert e.getCascade(Environment.DEFAULT_LAYER).get("color") == expected
+        assert Main.pref.getDefaultColor("mappaint.mapcss.testcolour2") == expected
+    }
+
+    @Test
+    public void testColorParsing() throws Exception {
+        assert ColorHelper.html2color("#12345678") == new Color(0x12, 0x34, 0x56, 0x78)
+    }
+
+    @Test
+    public void testChildSelectorGreaterThanSignIsOptional() throws Exception {
+        assert getParser("relation[type=route] way[highway]").child_selector().toString() ==
+                getParser("relation[type=route] > way[highway]").child_selector().toString()
+    }
+
+    @Test
+    public void testSiblingSelector() throws Exception {
+        def s1 = (Selector.ChildOrParentSelector) getParser("*[a?][parent_tag(\"highway\")=\"unclassified\"] + *[b?]").child_selector()
+        def ds = new DataSet()
+        def n1 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1, 2))
+        n1.put("a", "true")
+        def n2 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1.1, 2.2))
+        n2.put("b", "true")
+        def w = new Way()
+        w.put("highway", "unclassified")
+        ds.addPrimitive(n1)
+        ds.addPrimitive(n2)
+        ds.addPrimitive(w)
+        w.addNode(n1)
+        w.addNode(n2)
+
+        def e = new Environment().withPrimitive(n2)
+        assert s1.matches(e)
+        assert e.osm == n2
+        assert e.child == n1
+        assert e.parent == w
+        assert !s1.matches(new Environment().withPrimitive(n1))
+        assert !s1.matches(new Environment().withPrimitive(w))
+    }
+
+    @Test
+    public void testSiblingSelectorInterpolation() throws Exception {
+        def s1 = (Selector.ChildOrParentSelector) getParser(
+                "*[tag(\"addr:housenumber\") > child_tag(\"addr:housenumber\")][regexp_test(\"even|odd\", parent_tag(\"addr:interpolation\"))]" +
+                        " + *[addr:housenumber]").child_selector()
+        def ds = new DataSet()
+        def n1 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1, 2))
+        n1.put("addr:housenumber", "10")
+        def n2 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1.1, 2.2))
+        n2.put("addr:housenumber", "100")
+        def n3 = new org.openstreetmap.josm.data.osm.Node(new LatLon(1.2, 2.3))
+        n3.put("addr:housenumber", "20")
+        def w = new Way()
+        w.put("addr:interpolation", "even")
+        ds.addPrimitive(n1)
+        ds.addPrimitive(n2)
+        ds.addPrimitive(n3)
+        ds.addPrimitive(w)
+        w.addNode(n1)
+        w.addNode(n2)
+        w.addNode(n3)
+
+        assert s1.right.matches(new Environment().withPrimitive(n3))
+        assert s1.left.matches(new Environment().withPrimitive(n2).withChild(n3).withParent(w))
+        assert s1.matches(new Environment().withPrimitive(n3))
+        assert !s1.matches(new Environment().withPrimitive(n1))
+        assert !s1.matches(new Environment().withPrimitive(n2))
+        assert !s1.matches(new Environment().withPrimitive(w))
+    }
+
+    @Test
+    public void testInvalidBaseSelector() throws Exception {
+        def css = new MapCSSStyleSource("invalid_base[key=value] {}")
+        css.loadStyleSource()
+        assert !css.getErrors().isEmpty()
+        assert css.getErrors().iterator().next().toString().contains("Unknown MapCSS base selector invalid_base")
+    }
+
+    @Test
+    public void testMinMaxFunctions() throws Exception {
+        def sheet = new MapCSSStyleSource("* {" +
+                "min_value: min(tag(x), tag(y), tag(z)); " +
+                "max_value: max(tag(x), tag(y), tag(z)); " +
+                "max_split: max(split(\";\", tag(widths))); " +
+                "}")
+        sheet.loadStyleSource()
+        def mc = new MultiCascade()
+
+        sheet.apply(mc, TestUtils.createPrimitive("way x=4 y=6 z=8 u=100"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", Float.NaN, Float.class) == 4.0f
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", Float.NaN, Float.class) == 8.0f
+
+        sheet.apply(mc, TestUtils.createPrimitive("way x=4 y=6 widths=1;2;8;56;3;a"), 20, null, false)
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", -777f, Float.class) == 4
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", -777f, Float.class) == 6
+        assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_split", -777f, Float.class) == 56
     }
 }

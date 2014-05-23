@@ -39,6 +39,22 @@ import java.util.Locale;
  */
 public class AlphanumComparator implements Comparator<String> {
 
+    private static final AlphanumComparator INSTANCE = new AlphanumComparator();
+
+    /**
+     * Replies the unique instance.
+     * @return the unique instance
+     */
+    public static AlphanumComparator getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * Constructs a new Alphanum Comparator.
+     */
+    private AlphanumComparator() {
+    }
+
     /**
      * Length of string is passed in for improved efficiency (only need to
      * calculate it once) *

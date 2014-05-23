@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -42,57 +44,6 @@ import org.xml.sax.helpers.XMLFilterImpl;
  * @author Imi
  */
 public class XmlObjectParser implements Iterable<Object> {
-    public static class PresetParsingException extends SAXException {
-        private int columnNumber;
-        private int lineNumber;
-
-        /**
-         * Constructs a new {@code PresetParsingException}.
-         */
-        public PresetParsingException() {
-            super();
-        }
-
-        public PresetParsingException(Exception e) {
-            super(e);
-        }
-
-        public PresetParsingException(String message, Exception e) {
-            super(message, e);
-        }
-
-        public PresetParsingException(String message) {
-            super(message);
-        }
-
-        public PresetParsingException rememberLocation(Locator locator) {
-            if (locator == null) return this;
-            this.columnNumber = locator.getColumnNumber();
-            this.lineNumber = locator.getLineNumber();
-            return this;
-        }
-
-        @Override
-        public String getMessage() {
-            String msg = super.getMessage();
-            if (lineNumber == 0 && columnNumber == 0)
-                return msg;
-            if (msg == null) {
-                msg = getClass().getName();
-            }
-            msg = msg + " " + tr("(at line {0}, column {1})", lineNumber, columnNumber);
-            return msg;
-        }
-
-        public int getColumnNumber() {
-            return columnNumber;
-        }
-
-        public int getLineNumber() {
-            return lineNumber;
-        }
-    }
-
     public static final String lang = LanguageInfo.getLanguageCodeXML();
 
     private static class AddNamespaceFilter extends XMLFilterImpl {
@@ -116,7 +67,7 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     private class Parser extends DefaultHandler {
-        Stack<Object> current = new Stack<Object>();
+        Stack<Object> current = new Stack<>();
         StringBuilder characters = new StringBuilder(64);
 
         private Locator locator;
@@ -126,11 +77,12 @@ public class XmlObjectParser implements Iterable<Object> {
             this.locator = locator;
         }
 
-        protected void throwException(Exception e) throws PresetParsingException{
-            throw new PresetParsingException(e).rememberLocation(locator);
+        protected void throwException(Exception e) throws XmlParsingException {
+            throw new XmlParsingException(e).rememberLocation(locator);
         }
 
-        @Override public void startElement(String ns, String lname, String qname, Attributes a) throws SAXException {
+        @Override
+        public void startElement(String ns, String lname, String qname, Attributes a) throws SAXException {
             if (mapping.containsKey(qname)) {
                 Class<?> klass = mapping.get(qname).klass;
                 try {
@@ -149,7 +101,9 @@ public class XmlObjectParser implements Iterable<Object> {
                 }
             }
         }
-        @Override public void endElement(String ns, String lname, String qname) throws SAXException {
+
+        @Override
+        public void endElement(String ns, String lname, String qname) throws SAXException {
             if (mapping.containsKey(qname) && !mapping.get(qname).onStart) {
                 report();
             } else if (mapping.containsKey(qname) && characters != null && !current.isEmpty()) {
@@ -157,7 +111,9 @@ public class XmlObjectParser implements Iterable<Object> {
                 characters  = new StringBuilder(64);
             }
         }
-        @Override public void characters(char[] ch, int start, int length) {
+
+        @Override
+        public void characters(char[] ch, int start, int length) {
             characters.append(ch, start, length);
         }
 
@@ -178,7 +134,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
         private void setValue(Entry entry, String fieldName, String value) throws SAXException {
             CheckParameterUtil.ensureParameterNotNull(entry, "entry");
-            if (fieldName.equals("class") || fieldName.equals("default") || fieldName.equals("throw") || fieldName.equals("new") || fieldName.equals("null")) {
+            if ("class".equals(fieldName) || "default".equals(fieldName) || "throw".equals(fieldName) || "new".equals(fieldName) || "null".equals(fieldName)) {
                 fieldName += "_";
             }
             try {
@@ -210,7 +166,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
         private boolean parseBoolean(String s) {
             return s != null
-                    && !s.equals("0")
+                    && !"0".equals(s)
                     && !s.startsWith("off")
                     && !s.startsWith("false")
                     && !s.startsWith("no");
@@ -231,8 +187,8 @@ public class XmlObjectParser implements Iterable<Object> {
         Class<?> klass;
         boolean onStart;
         boolean both;
-        private final Map<String, Field> fields = new HashMap<String, Field>();
-        private final Map<String, Method> methods = new HashMap<String, Method>();
+        private final Map<String, Field> fields = new HashMap<>();
+        private final Map<String, Method> methods = new HashMap<>();
 
         public Entry(Class<?> klass, boolean onStart, boolean both) {
             this.klass = klass;
@@ -271,15 +227,18 @@ public class XmlObjectParser implements Iterable<Object> {
         }
     }
 
-    private Map<String, Entry> mapping = new HashMap<String, Entry>();
+    private Map<String, Entry> mapping = new HashMap<>();
     private DefaultHandler parser;
 
     /**
      * The queue of already parsed items from the parsing thread.
      */
-    private List<Object> queue = new LinkedList<Object>();
+    private List<Object> queue = new LinkedList<>();
     private Iterator<Object> queueIterator = null;
 
+    /**
+     * Constructs a new {@code XmlObjectParser}.
+     */
     public XmlObjectParser() {
         parser = new Parser();
     }
@@ -320,9 +279,9 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     public Iterable<Object> startWithValidation(final Reader in, String namespace, String schemaSource) throws SAXException {
-        try {
-            SchemaFactory factory =  SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            Schema schema = factory.newSchema(new StreamSource(new MirroredInputStream(schemaSource)));
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        try (InputStream mis = new MirroredInputStream(schemaSource)) {
+            Schema schema = factory.newSchema(new StreamSource(mis));
             ValidatorHandler validator = schema.newValidatorHandler();
             validator.setContentHandler(parser);
             validator.setErrorHandler(parser);

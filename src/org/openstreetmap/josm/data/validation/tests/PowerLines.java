@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Geometry;
 
 /**
- * Checks for nodes in power lines/minor_lines that do not have a power=tower/pole tag.<br/>
+ * Checks for nodes in power lines/minor_lines that do not have a power=tower/pole tag.<br>
  * See #7812 for discussions about this test.
  */
 public class PowerLines extends Test {
@@ -42,13 +42,13 @@ public class PowerLines extends Test {
     /** Values for {@code power} key interpreted as power stations */
     public static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "substation", "plant", "generator");
     /** Values for {@code power} key interpreted as allowed power items */
-    public static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator");
+    public static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear");
 
-    private final Map<Way, String> towerPoleTagMap = new HashMap<Way, String>();
+    private final Map<Way, String> towerPoleTagMap = new HashMap<>();
 
-    private final List<PowerLineError> potentialErrors = new ArrayList<PowerLineError>();
+    private final List<PowerLineError> potentialErrors = new ArrayList<>();
 
-    private final List<OsmPrimitive> powerStations = new ArrayList<OsmPrimitive>();
+    private final List<OsmPrimitive> powerStations = new ArrayList<>();
 
     /**
      * Constructs a new {@code PowerLines} test.
@@ -60,15 +60,17 @@ public class PowerLines extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (isPowerLine(w)) {
+            if (isPowerLine(w) && !w.hasTag("location", "underground")) {
                 String fixValue = null;
                 boolean erroneous = false;
                 boolean canFix = false;
                 for (Node n : w.getNodes()) {
                     if (!isPowerTower(n)) {
                         if (!isPowerAllowed(n)) {
-                            potentialErrors.add(new PowerLineError(n, w));
-                            erroneous = true;
+                            if (!w.isFirstLastNode(n) || !isPowerStation(n)) {
+                                potentialErrors.add(new PowerLineError(n, w));
+                                erroneous = true;
+                            }
                         }
                     } else if (fixValue == null) {
                         // First tower/pole tag found, remember it
@@ -117,7 +119,7 @@ public class PowerLines extends Test {
 
     protected final boolean isInPowerStation(Node n) {
         for (OsmPrimitive station : powerStations) {
-            List<List<Node>> nodesLists = new ArrayList<List<Node>>();
+            List<List<Node>> nodesLists = new ArrayList<>();
             if (station instanceof Way) {
                 nodesLists.add(((Way)station).getNodes());
             } else if (station instanceof Relation) {

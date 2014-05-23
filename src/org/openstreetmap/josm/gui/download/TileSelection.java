@@ -14,18 +14,21 @@ import org.openstreetmap.josm.gui.bbox.TileSelectionBBoxChooser;
  *
  * Provides a tile coordinate input field.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  *
  */
 public class TileSelection implements DownloadSelection, PropertyChangeListener {
     private TileSelectionBBoxChooser chooser;
     private DownloadDialog parent;
 
-    protected void build() {
+    protected final void build() {
         chooser = new TileSelectionBBoxChooser();
         chooser.addPropertyChangeListener(this);
     }
 
+    /**
+     * Constructs a new {@code TileSelection}.
+     */
     public TileSelection() {
         build();
     }

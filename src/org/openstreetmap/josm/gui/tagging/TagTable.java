@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.tagging;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.applet.Applet;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -64,7 +63,7 @@ public class TagTable extends JTable  {
     /** a list of components to which focus can be transferred without stopping
      * cell editing this table.
      */
-    private final CopyOnWriteArrayList<Component> doNotStopCellEditingWhenFocused = new CopyOnWriteArrayList<Component>();
+    private final CopyOnWriteArrayList<Component> doNotStopCellEditingWhenFocused = new CopyOnWriteArrayList<>();
     private CellEditorRemover editorRemover;
 
     /**
@@ -267,7 +266,7 @@ public class TagTable extends JTable  {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             if (isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
                 setEnabled(true);
             } else if (!isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
@@ -307,7 +306,7 @@ public class TagTable extends JTable  {
             requestFocusInCell(model.getRowCount()-1, 0);
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(TagTable.this.isEnabled());
         }
 
@@ -345,7 +344,7 @@ public class TagTable extends JTable  {
                  if (tags==null || tags.isEmpty()) {
                     TextTagParser.showBadBufferMessage(ht("/Action/PasteTags"));
                  } else if (TextTagParser.validateTags(tags)) {
-                     List<Tag> newTags = new ArrayList<Tag>();
+                     List<Tag> newTags = new ArrayList<>();
                      for (Map.Entry<String, String> entry: tags.entrySet()) {
                         String k = entry.getKey();
                         String v = entry.getValue();
@@ -356,7 +355,7 @@ public class TagTable extends JTable  {
             }
         }
         
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(TagTable.this.isEnabled());
         }
 
@@ -394,7 +393,7 @@ public class TagTable extends JTable  {
     /**
      * initialize the table
      */
-    protected void init() {
+    protected final void init() {
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         setRowSelectionAllowed(true);
         setColumnSelectionAllowed(true);
@@ -633,8 +632,7 @@ public class TagTable extends JTable  {
                 if (doNotStopCellEditingWhenFocused.contains(c))
                     // focus remains on one of the associated components
                     return;
-                else if ((c instanceof Window) ||
-                        (c instanceof Applet && c.getParent() == null)) {
+                else if (c instanceof Window) {
                     if (c == SwingUtilities.getRoot(TagTable.this)) {
                         if (!getCellEditor().stopCellEditing()) {
                             getCellEditor().cancelCellEditing();

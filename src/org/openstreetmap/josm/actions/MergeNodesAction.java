@@ -103,23 +103,21 @@ public class MergeNodesAction extends JosmAction {
             throw new IllegalArgumentException("empty list");
 
         switch (Main.pref.getInteger("merge-nodes.mode", 0)) {
-        case 0: {
+        case 0:
             Node targetNode = candidates.get(size - 1);
             for (final Node n : candidates) { // pick last one
                 targetNode = n;
             }
             return targetNode;
-        }
-        case 1: {
-            double east = 0, north = 0;
+        case 1:
+            double east1 = 0, north1 = 0;
             for (final Node n : candidates) {
-                east += n.getEastNorth().east();
-                north += n.getEastNorth().north();
+                east1 += n.getEastNorth().east();
+                north1 += n.getEastNorth().north();
             }
 
-            return new Node(new EastNorth(east / size, north / size));
-        }
-        case 2: {
+            return new Node(new EastNorth(east1 / size, north1 / size));
+        case 2:
             final double[] weights = new double[size];
 
             for (int i = 0; i < size; i++) {
@@ -132,17 +130,16 @@ public class MergeNodesAction extends JosmAction {
                 }
             }
 
-            double east = 0, north = 0, weight = 0;
+            double east2 = 0, north2 = 0, weight = 0;
             for (int i = 0; i < size; i++) {
                 final EastNorth en = candidates.get(i).getEastNorth();
                 final double w = weights[i];
-                east += en.east() * w;
-                north += en.north() * w;
+                east2 += en.east() * w;
+                north2 += en.north() * w;
                 weight += w;
             }
 
-            return new Node(new EastNorth(east / weight, north / weight));
-        }
+            return new Node(new EastNorth(east2 / weight, north2 / weight));
         default:
             throw new RuntimeException("unacceptable merge-nodes.mode");
         }
@@ -194,11 +191,11 @@ public class MergeNodesAction extends JosmAction {
      * @return a list of commands; null, if the ways could not be fixed
      */
     protected static List<Command> fixParentWays(Collection<Node> nodesToDelete, Node targetNode) {
-        List<Command> cmds = new ArrayList<Command>();
-        Set<Way> waysToDelete = new HashSet<Way>();
+        List<Command> cmds = new ArrayList<>();
+        Set<Way> waysToDelete = new HashSet<>();
 
         for (Way w: OsmPrimitive.getFilteredList(OsmPrimitive.getReferrer(nodesToDelete), Way.class)) {
-            List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
+            List<Node> newNodes = new ArrayList<>(w.getNodesCount());
             for (Node n: w.getNodes()) {
                 if (! nodesToDelete.contains(n) && n != targetNode) {
                     newNodes.add(n);
@@ -263,7 +260,7 @@ public class MergeNodesAction extends JosmAction {
         if (nodes == null) {
             return;
         }
-        Set<Node> allNodes = new HashSet<Node>(nodes);
+        Set<Node> allNodes = new HashSet<>(nodes);
         allNodes.add(targetLocationNode);
         Node target;
         if (nodes.contains(targetLocationNode) && !targetLocationNode.isNew()) {
@@ -293,7 +290,7 @@ public class MergeNodesAction extends JosmAction {
         if (nodes == null) {
             return null;
         }
-        Set<Node> allNodes = new HashSet<Node>(nodes);
+        Set<Node> allNodes = new HashSet<>(nodes);
         allNodes.add(targetLocationNode);
         return mergeNodes(layer, nodes, selectTargetNode(allNodes), targetLocationNode);
     }
@@ -319,16 +316,16 @@ public class MergeNodesAction extends JosmAction {
         try {
             TagCollection nodeTags = TagCollection.unionOfAllPrimitives(nodes);
             List<Command> resultion = CombinePrimitiveResolverDialog.launchIfNecessary(nodeTags, nodes, Collections.singleton(targetNode));
-            LinkedList<Command> cmds = new LinkedList<Command>();
+            LinkedList<Command> cmds = new LinkedList<>();
 
             // the nodes we will have to delete
             //
-            Collection<Node> nodesToDelete = new HashSet<Node>(nodes);
+            Collection<Node> nodesToDelete = new HashSet<>(nodes);
             nodesToDelete.remove(targetNode);
 
             // fix the ways referring to at least one of the merged nodes
             //
-            Collection<Way> waysToDelete = new HashSet<Way>();
+            Collection<Way> waysToDelete = new HashSet<>();
             List<Command> wayFixCommands = fixParentWays(
                     nodesToDelete,
                     targetNode);
@@ -355,7 +352,7 @@ public class MergeNodesAction extends JosmAction {
                 cmds.add(new DeleteCommand(waysToDelete));
             }
             return new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
-                    trn("Merge {0} nodes", "Merge {0} nodes", nodes.size(), nodes.size()), cmds);
+                    trn("Merge {0} node", "Merge {0} nodes", nodes.size(), nodes.size()), cmds);
         } catch (UserCancelException ex) {
             return null;
         }

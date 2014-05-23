@@ -44,8 +44,8 @@ public class SelectionEventManager implements SelectionChangedListener {
     }
 
     private Collection<? extends OsmPrimitive> selection;
-    private final CopyOnWriteArrayList<ListenerInfo> inEDTListeners = new CopyOnWriteArrayList<ListenerInfo>();
-    private final CopyOnWriteArrayList<ListenerInfo> normalListeners = new CopyOnWriteArrayList<ListenerInfo>();
+    private final CopyOnWriteArrayList<ListenerInfo> inEDTListeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<ListenerInfo> normalListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Constructs a new {@code SelectionEventManager}.

@@ -9,7 +9,7 @@ import javax.swing.table.TableColumn;
 
 public class TagMergeColumnModel extends DefaultTableColumnModel {
 
-    protected void createColumns(TableCellRenderer renderer) {
+    protected final void createColumns(TableCellRenderer renderer) {
 
         TableColumn col = null;
 

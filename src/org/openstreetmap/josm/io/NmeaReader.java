@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.io;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,11 +18,10 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.DateUtils;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Read a nmea file. Based on information from
- * http://www.kowoma.de/gps/zusatzerklaerungen/NMEA.htm
+ * Reads a NMEA file. Based on information from
+ * <a href="http://www.kowoma.de/gps/zusatzerklaerungen/NMEA.htm">http://www.kowoma.de</a>
  *
  * @author cbrill
  */
@@ -132,18 +131,13 @@ public class NmeaReader {
 
     public GpxData data;
 
-    //  private final static SimpleDateFormat GGATIMEFMT =
-    //      new SimpleDateFormat("HHmmss.SSS");
-    private final static SimpleDateFormat RMCTIMEFMT =
-        new SimpleDateFormat("ddMMyyHHmmss.SSS");
-    private final static SimpleDateFormat RMCTIMEFMTSTD =
-        new SimpleDateFormat("ddMMyyHHmmss");
+    private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS");
+    private final SimpleDateFormat rmcTimeFmtStd = new SimpleDateFormat("ddMMyyHHmmss");
 
-    private Date readTime(String p)
-    {
-        Date d = RMCTIMEFMT.parse(p, new ParsePosition(0));
+    private Date readTime(String p) {
+        Date d = rmcTimeFmt.parse(p, new ParsePosition(0));
         if (d == null) {
-            d = RMCTIMEFMTSTD.parse(p, new ParsePosition(0));
+            d = rmcTimeFmtStd.parse(p, new ParsePosition(0));
         }
         if (d == null)
             throw new RuntimeException("Date is malformed"); // malformed
@@ -169,17 +163,14 @@ public class NmeaReader {
         return ps.success;
     }
 
-    public NmeaReader(InputStream source, File relativeMarkerPath) {
+    public NmeaReader(InputStream source) {
 
         // create the data tree
         data = new GpxData();
-        Collection<Collection<WayPoint>> currentTrack = new ArrayList<Collection<WayPoint>>();
+        Collection<Collection<WayPoint>> currentTrack = new ArrayList<>();
 
-        BufferedReader rd = null;
-        try {
-            rd = new BufferedReader(new InputStreamReader(source));
-
-            StringBuffer sb = new StringBuffer(1024);
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(source, StandardCharsets.UTF_8))) {
+            StringBuilder sb = new StringBuilder(1024);
             int loopstart_char = rd.read();
             ps = new NMEAParserState();
             if(loopstart_char == -1)
@@ -210,12 +201,11 @@ public class NmeaReader {
 
         } catch (Exception e) {
             Main.warn(e);
-        } finally {
-            Utils.close(rd);
         }
     }
+
     private static class NMEAParserState {
-        protected Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
+        protected Collection<WayPoint> waypoints = new ArrayList<>();
         protected String p_Time;
         protected String p_Date;
         protected WayPoint p_Wp;
@@ -244,7 +234,7 @@ public class NmeaReader {
             String[] chkstrings = s.split("\\*");
             if(chkstrings.length > 1)
             {
-                byte[] chb = chkstrings[0].getBytes();
+                byte[] chb = chkstrings[0].getBytes(StandardCharsets.UTF_8);
                 int chk=0;
                 for (int i = 1; i < chb.length; i++) {
                     chk ^= chb[i];
@@ -265,7 +255,7 @@ public class NmeaReader {
             String currentDate = ps.p_Date;
 
             // handle the packet content
-            if(e[0].equals("$GPGGA") || e[0].equals("$GNGGA")) {
+            if("$GPGGA".equals(e[0]) || "$GNGGA".equals(e[0])) {
                 // Position
                 LatLon latLon = parseLatLon(
                         e[GPGGA.LATITUDE_NAME.position],
@@ -300,7 +290,7 @@ public class NmeaReader {
                 }
                 // elevation
                 accu=e[GPGGA.HEIGHT_UNTIS.position];
-                if(accu.equals("M")) {
+                if("M".equals(accu)) {
                     // Ignore heights that are not in meters for now
                     accu=e[GPGGA.HEIGHT.position];
                     if(!accu.isEmpty()) {
@@ -346,10 +336,10 @@ public class NmeaReader {
                         break;
                     }
                 }
-            } else if(e[0].equals("$GPVTG") || e[0].equals("$GNVTG")) {
+            } else if("$GPVTG".equals(e[0]) || "$GNVTG".equals(e[0])) {
                 // COURSE
                 accu = e[GPVTG.COURSE_REF.position];
-                if(accu.equals("T")) {
+                if("T".equals(accu)) {
                     // other values than (T)rue are ignored
                     accu = e[GPVTG.COURSE.position];
                     if(!accu.isEmpty()) {
@@ -367,7 +357,7 @@ public class NmeaReader {
                         currentwp.attr.put("speed", Double.toString(speed));
                     }
                 }
-            } else if(e[0].equals("$GPGSA") || e[0].equals("$GNGSA")) {
+            } else if("$GPGSA".equals(e[0]) || "$GNGSA".equals(e[0])) {
                 // vdop
                 accu=e[GPGSA.VDOP.position];
                 if(!accu.isEmpty()) {
@@ -384,7 +374,7 @@ public class NmeaReader {
                     currentwp.attr.put("pdop", Float.parseFloat(accu));
                 }
             }
-            else if(e[0].equals("$GPRMC") || e[0].equals("$GNRMC")) {
+            else if("$GPRMC".equals(e[0]) || "$GNRMC".equals(e[0])) {
                 // coordinates
                 LatLon latLon = parseLatLon(
                         e[GPRMC.WIDTH_NORTH_NAME.position],

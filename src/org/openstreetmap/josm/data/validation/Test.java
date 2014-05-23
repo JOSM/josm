@@ -57,17 +57,17 @@ public class Test extends AbstractVisitor {
     protected boolean isBeforeUpload;
 
     /** The list of errors */
-    protected List<TestError> errors = new ArrayList<TestError>(30);
+    protected List<TestError> errors = new ArrayList<>(30);
 
     /** Whether the test is run on a partial selection data */
     protected boolean partialSelection;
 
     /** the progress monitor to use */
     protected ProgressMonitor progressMonitor;
-    
+
     /** the start time to compute elapsed time when test finishes */
     protected long startTime;
-    
+
     /**
      * Constructor
      * @param name Name of the test
@@ -151,7 +151,7 @@ public class Test extends AbstractVisitor {
         String startMessage = tr("Running test {0}", name);
         this.progressMonitor.beginTask(startMessage);
         Main.debug(startMessage);
-        this.errors = new ArrayList<TestError>(30);
+        this.errors = new ArrayList<>(30);
         this.startTime = System.currentTimeMillis();
     }
 
@@ -306,7 +306,7 @@ public class Test extends AbstractVisitor {
      * @return a Delete command on all primitives that have not yet been deleted, or null otherwise
      */
     protected final Command deletePrimitivesIfNeeded(Collection<? extends OsmPrimitive> primitives) {
-        Collection<OsmPrimitive> primitivesToDelete = new ArrayList<OsmPrimitive>();
+        Collection<OsmPrimitive> primitivesToDelete = new ArrayList<>();
         for (OsmPrimitive p : primitives) {
             if (!p.isDeleted()) {
                 primitivesToDelete.add(p);
@@ -326,6 +326,37 @@ public class Test extends AbstractVisitor {
      */
     protected static final boolean isBuilding(OsmPrimitive p) {
         String v = p.get("building");
-        return v != null && !v.equals("no") && !v.equals("entrance");
+        return v != null && !"no".equals(v) && !"entrance".equals(v);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Test))
+            return false;
+        Test other = (Test) obj;
+        if (description == null) {
+            if (other.description != null)
+                return false;
+        } else if (!description.equals(other.description))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
     }
 }

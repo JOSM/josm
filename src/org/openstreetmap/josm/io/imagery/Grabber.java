@@ -7,7 +7,7 @@ import org.openstreetmap.josm.data.imagery.GeorefImage.State;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 
-abstract public class Grabber implements Runnable {
+public abstract class Grabber implements Runnable {
     protected final MapView mv;
     protected final WMSLayer layer;
     private final boolean localOnly;
@@ -26,6 +26,7 @@ abstract public class Grabber implements Runnable {
     int width(){
         return layer.getBaseImageWidth();
     }
+
     int height(){
         return layer.getBaseImageHeight();
     }
@@ -42,11 +43,13 @@ abstract public class Grabber implements Runnable {
             if (request.isPrecacheOnly()) {
                 if (!layer.cache.hasExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth)) {
                     attempt(request);
+                } else if (Main.isDebugEnabled()) {
+                    Main.debug("Ignoring "+request+" (precache only + exact match)");
                 }
-            } else {
-                if(!loadFromCache(request)){
-                    attempt(request);
-                }
+            } else if (!loadFromCache(request)){
+                attempt(request);
+            } else if (Main.isDebugEnabled()) {
+                Main.debug("Ignoring "+request+" (loaded from cache)");
             }
             layer.finishRequest(request);
         }
@@ -68,7 +71,7 @@ abstract public class Grabber implements Runnable {
                 } catch (InterruptedException e1) {
                     Main.debug("InterruptedException in "+getClass().getSimpleName()+" during WMS request");
                 }
-                if(i == maxTries) {
+                if (i == maxTries) {
                     Main.error(e);
                     request.finish(State.FAILED, null);
                 }
@@ -80,10 +83,9 @@ abstract public class Grabber implements Runnable {
         return (int)(Math.random() * ((max+1)-min) ) + min;
     }
 
-    abstract public boolean loadFromCache(WMSRequest request);
+    public abstract boolean loadFromCache(WMSRequest request);
 
     public void cancel() {
         canceled = true;
     }
-
 }

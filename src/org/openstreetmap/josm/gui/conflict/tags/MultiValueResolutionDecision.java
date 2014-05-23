@@ -60,7 +60,7 @@ public class MultiValueResolutionDecision {
     /**
      * Tries to find the best decision based on the current values.
      */
-    protected void autoDecide() {
+    protected final void autoDecide() {
         this.type = MultiValueDecisionType.UNDECIDED;
         // exactly one empty value ? -> delete the tag
         if (tags.size() == 1 && tags.getValues().contains("")) {
@@ -147,7 +147,7 @@ public class MultiValueResolutionDecision {
      * @return the list of possible, non empty values
      */
     public List<String> getValues() {
-        List<String> ret = new ArrayList<String>(tags.getValues());
+        List<String> ret = new ArrayList<>(tags.getValues());
         ret.remove("");
         ret.remove(null);
         Collections.sort(ret);
@@ -248,9 +248,7 @@ public class MultiValueResolutionDecision {
         if (!isDecided())
             throw new IllegalStateException(tr("Not decided yet."));
         String key = tags.getKeys().iterator().next();
-        String value = getChosenValue();
-        ChangePropertyCommand cmd = new ChangePropertyCommand(primitive, key,value);
-        return cmd;
+        return new ChangePropertyCommand(primitive, key, getChosenValue());
     }
 
     /**
@@ -266,17 +264,13 @@ public class MultiValueResolutionDecision {
         if (!isDecided())
             throw new IllegalStateException(tr("Not decided yet."));
         String key = tags.getKeys().iterator().next();
-        String value = getChosenValue();
-        ChangePropertyCommand cmd = new ChangePropertyCommand(primitives, key,value);
-        return cmd;
+        return new ChangePropertyCommand(primitives, key, getChosenValue());
     }
 
     /**
-     * Replies a tag representing the current resolution. Null, if this resolution is not resolved
-     * yet.
+     * Replies a tag representing the current resolution. Null, if this resolution is not resolved yet.
      *
-     * @return a tag representing the current resolution. Null, if this resolution is not resolved
-     * yet
+     * @return a tag representing the current resolution. Null, if this resolution is not resolved yet
      */
     public Tag getResolution() {
         switch(type) {

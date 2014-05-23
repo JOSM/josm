@@ -90,8 +90,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class OsmDataLayer extends Layer implements Listener, SelectionChangedListener {
-    static public final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
-    static public final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
+    public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
+    public static final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 
     private boolean requiresSaveToFile = false;
     private boolean requiresUploadToServer = false;
@@ -102,7 +102,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
      * List of validation errors in this layer.
      * @since 3669
      */
-    public final List<TestError> validationErrors = new ArrayList<TestError>();
+    public final List<TestError> validationErrors = new ArrayList<>();
 
     protected void setRequiresSaveToFile(boolean newValue) {
         boolean oldValue = requiresSaveToFile;
@@ -121,19 +121,19 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     /** the global counter for created data layers */
-    static private int dataLayerCounter = 0;
+    private static int dataLayerCounter = 0;
 
     /**
      * Replies a new unique name for a data layer
      *
      * @return a new unique name for a data layer
      */
-    static public String createNewName() {
+    public static String createNewName() {
         dataLayerCounter++;
         return tr("Data Layer {0}", dataLayerCounter);
     }
 
-    public final static class DataCountVisitor extends AbstractVisitor {
+    public static final class DataCountVisitor extends AbstractVisitor {
         public int nodes;
         public int ways;
         public int relations;
@@ -182,7 +182,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         void uploadDiscouragedChanged(OsmDataLayer layer, boolean newValue);
     }
 
-    private final CopyOnWriteArrayList<LayerStateChangeListener> layerStateChangeListeners = new CopyOnWriteArrayList<LayerStateChangeListener>();
+    private final CopyOnWriteArrayList<LayerStateChangeListener> layerStateChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Adds a layer state change listener
@@ -326,8 +326,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     @Override public String getToolTipText() {
-        int nodes = new FilteredCollection<Node>(data.getNodes(), OsmPrimitive.nonDeletedPredicate).size();
-        int ways = new FilteredCollection<Way>(data.getWays(), OsmPrimitive.nonDeletedPredicate).size();
+        int nodes = new FilteredCollection<>(data.getNodes(), OsmPrimitive.nonDeletedPredicate).size();
+        int ways = new FilteredCollection<>(data.getWays(), OsmPrimitive.nonDeletedPredicate).size();
 
         String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
         tool += trn("{0} way", "{0} ways", ways, ways);
@@ -394,12 +394,9 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             }
         }
 
-        // copy the merged layer's API version, downgrade if required
+        // copy the merged layer's API version
         if (data.getVersion() == null) {
             data.setVersion(from.getVersion());
-        } else if ("0.5".equals(data.getVersion()) ^ "0.5".equals(from.getVersion())) {
-            Main.warn(tr("Mixing 0.6 and 0.5 data results in version 0.5"));
-            data.setVersion("0.5");
         }
 
         int numNewConflicts = 0;
@@ -492,19 +489,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     @Override public Action[] getMenuEntries() {
-        if (Main.applet)
-            return new Action[]{
-                LayerListDialog.getInstance().createActivateLayerAction(this),
-                LayerListDialog.getInstance().createShowHideLayerAction(),
-                LayerListDialog.getInstance().createDeleteLayerAction(),
-                SeparatorLayerAction.INSTANCE,
-                LayerListDialog.getInstance().createMergeLayerAction(this),
-                SeparatorLayerAction.INSTANCE,
-                new RenameLayerAction(getAssociatedFile(), this),
-                new ConsistencyTestAction(),
-                SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this)};
-        List<Action> actions = new ArrayList<Action>();
+        List<Action> actions = new ArrayList<>();
         actions.addAll(Arrays.asList(new Action[]{
                 LayerListDialog.getInstance().createActivateLayerAction(this),
                 LayerListDialog.getInstance().createShowHideLayerAction(),
@@ -535,13 +520,13 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     public static GpxData toGpxData(DataSet data, File file) {
         GpxData gpxData = new GpxData();
         gpxData.storageFile = file;
-        HashSet<Node> doneNodes = new HashSet<Node>();
+        HashSet<Node> doneNodes = new HashSet<>();
         for (Way w : data.getWays()) {
             if (!w.isUsable()) {
                 continue;
             }
-            Collection<Collection<WayPoint>> trk = new ArrayList<Collection<WayPoint>>();
-            Map<String, Object> trkAttr = new HashMap<String, Object>();
+            Collection<Collection<WayPoint>> trk = new ArrayList<>();
+            Map<String, Object> trkAttr = new HashMap<>();
 
             if (w.get("name") != null) {
                 trkAttr.put("name", w.get("name"));
@@ -554,7 +539,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                     continue;
                 }
                 if (trkseg == null) {
-                    trkseg = new ArrayList<WayPoint>();
+                    trkseg = new ArrayList<>();
                     trk.add(trkseg);
                 }
                 if (!n.isTagged()) {

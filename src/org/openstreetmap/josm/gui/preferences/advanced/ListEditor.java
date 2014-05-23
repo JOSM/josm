@@ -24,6 +24,9 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Editor for List preference entries.
+ */
 public class ListEditor extends ExtendedDialog {
 
     List<String> data;
@@ -31,15 +34,16 @@ public class ListEditor extends ExtendedDialog {
 
     /**
      * Constructs a new {@code ListEditor}.
+     * @param gui The parent component
      */
     public ListEditor(final JComponent gui, PrefEntry entry, ListSetting setting) {
         super(gui, tr("Change list setting"), new String[] {tr("OK"), tr("Cancel")});
         this.entry = entry;
         List<String> orig = setting.getValue();
         if (orig != null) {
-            data = new ArrayList<String>(orig);
+            data = new ArrayList<>(orig);
         } else {
-            data = new ArrayList<String>();
+            data = new ArrayList<>();
         }
         setButtonIcons(new String[] {"ok.png", "cancel.png"});
         setRememberWindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(gui, new Dimension(300, 350)));
@@ -51,7 +55,7 @@ public class ListEditor extends ExtendedDialog {
      * @return The list of values.
      */
     public List<String> getData() {
-        return new ArrayList<String>(Utils.filter(data, new Predicate<String>() {
+        return new ArrayList<>(Utils.filter(data, new Predicate<String>() {
             @Override
             public boolean evaluate(String object) {
                 return object != null && !object.isEmpty();
@@ -59,7 +63,7 @@ public class ListEditor extends ExtendedDialog {
         }));
     }
 
-    protected JPanel build() {
+    protected final JPanel build() {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0,0,5,0));
         ListSettingTableModel listModel = new ListSettingTableModel();

@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+import org.junit.Ignore;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -12,6 +13,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Projections;
 
+@Ignore
 public class PropertiesMergerTest extends JFrame{
 
     private PropertiesMerger merger;
@@ -34,6 +36,9 @@ public class PropertiesMergerTest extends JFrame{
         merger.getModel().populate(new Conflict<OsmPrimitive>(my, their));
     }
 
+    /**
+     * Constructs a new {@code PropertiesMergerTest}.
+     */
     public PropertiesMergerTest() {
         build();
         populate();
@@ -44,5 +49,4 @@ public class PropertiesMergerTest extends JFrame{
         app.setSize(600, 400);
         app.setVisible(true);
     }
-
 }

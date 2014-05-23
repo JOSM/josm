@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.DatasetFactory;
@@ -18,9 +18,12 @@ import org.unitils.reflectionassert.ReflectionAssert;
 
 public class TemplateEngineTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
-    public static void before() {
-        Main.initApplicationPreferences();
+    public static void setUp() {
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Test

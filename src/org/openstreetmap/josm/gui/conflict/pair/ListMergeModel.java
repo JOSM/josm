@@ -49,7 +49,7 @@ import org.openstreetmap.josm.tools.Utils;
  * A ListMergeModel is a factory for three {@link TableModel}s and three {@link ListSelectionModel}s:
  * <ol>
  *   <li>the table model and the list selection for for a  {@link JTable} which shows my entries.
- *    See {@link #getMyTableModel()}</li> and {@link ListMergeModel#getMySelectionModel()}</li>
+ *    See {@link #getMyTableModel()} and {@link ListMergeModel#getMySelectionModel()}</li>
  *   <li>dito for their entries and merged entries</li>
  * </ol>
  *
@@ -182,7 +182,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     }
 
     public ListMergeModel() {
-        entries = new HashMap<ListRole, ArrayList<T>>();
+        entries = new HashMap<>();
         for (ListRole role : ListRole.values()) {
             entries.put(role, new ArrayList<T>());
         }
@@ -195,7 +195,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         theirEntriesSelectionModel = new EntriesSelectionModel(entries.get(THEIR_ENTRIES));
         mergedEntriesSelectionModel =  new EntriesSelectionModel(entries.get(MERGED_ENTRIES));
 
-        listeners = new ArrayList<PropertyChangeListener>();
+        listeners = new ArrayList<>();
         comparePairListModel = new ComparePairListModel();
 
         setFrozen(true);
@@ -226,13 +226,13 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         }
     }
 
-    public void setFrozen(boolean isFrozen) {
+    public final void setFrozen(boolean isFrozen) {
         boolean oldValue = this.isFrozen;
         this.isFrozen = isFrozen;
         fireFrozenChanged(oldValue, this.isFrozen);
     }
 
-    public boolean isFrozen() {
+    public final boolean isFrozen() {
         return isFrozen;
     }
 
@@ -348,14 +348,14 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     }
 
     protected void alertCopyFailedForDeletedPrimitives(List<PrimitiveId> deletedIds) {
-        List<String> items = new ArrayList<String>();
+        List<String> items = new ArrayList<>();
         for (int i=0; i<Math.min(MAX_DELETED_PRIMITIVE_IN_DIALOG, deletedIds.size()); i++) {
             items.add(deletedIds.get(i).toString());
         }
         if (deletedIds.size() > MAX_DELETED_PRIMITIVE_IN_DIALOG) {
             items.add(tr("{0} more...", deletedIds.size() - MAX_DELETED_PRIMITIVE_IN_DIALOG));
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(tr("The following objects could not be copied to the target object<br>because they are deleted in the target dataset:"));
         sb.append(Utils.joinAsHtmlUnorderedList(items));
@@ -372,9 +372,9 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     private void copy(ListRole sourceRole, int[] rows, int position) {
         if (position < 0 || position > getMergedEntriesSize())
             throw new IllegalArgumentException();
-        List<T> newItems = new ArrayList<T>(rows.length);
+        List<T> newItems = new ArrayList<>(rows.length);
         List<T> source = entries.get(sourceRole);
-        List<PrimitiveId> deletedIds = new ArrayList<PrimitiveId>();
+        List<PrimitiveId> deletedIds = new ArrayList<>();
         for (int row: rows) {
             T entry = source.get(row);
             OsmPrimitive primitive = getMyPrimitive(entry);
@@ -409,7 +409,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      * @param source the list of nodes to copy from
      * @param rows the indices
      * @param current the row index before which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     protected void copyBeforeCurrent(ListRole source, int [] rows, int current) {
@@ -423,7 +423,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      * @param rows the indices
      * @param current the row index before which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     public void copyMyBeforeCurrent(int [] rows, int current) {
@@ -436,7 +436,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      * @param rows the indices
      * @param current the row index before which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     public void copyTheirBeforeCurrent(int [] rows, int current) {
@@ -450,7 +450,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      * @param source the list of nodes to copy from
      * @param rows the indices
      * @param current the row index after which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     protected void copyAfterCurrent(ListRole source, int [] rows, int current) {
@@ -465,7 +465,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      * @param rows the indices
      * @param current the row index after which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     public void copyMyAfterCurrent(int [] rows, int current) {
@@ -478,7 +478,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
      *
      * @param rows the indices
      * @param current the row index after which the nodes are inserted
-     * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
+     * @exception IllegalArgumentException thrown, if current &lt; 0 or &gt;= #nodes in list of merged nodes
      *
      */
     public void copyTheirAfterCurrent(int [] rows, int current) {
@@ -632,7 +632,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
          * @return true, if the if the {@link ListRole} of this {@link EntriesTableModel}
          * participates in the current {@link ComparePairType}
          *
-         * @see ComparePairListModel#getSelectedComparePair()
+         * @see ListMergeModel.ComparePairListModel#getSelectedComparePair()
          */
         public boolean isParticipatingInCurrentComparePair() {
             return getComparePairListModel()
@@ -825,13 +825,16 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         return this.comparePairListModel;
     }
 
-    public class ComparePairListModel extends AbstractListModel implements ComboBoxModel {
+    public class ComparePairListModel extends AbstractListModel<ComparePairType> implements ComboBoxModel<ComparePairType> {
 
         private int selectedIdx;
         private final List<ComparePairType> compareModes;
 
+        /**
+         * Constructs a new {@code ComparePairListModel}.
+         */
         public ComparePairListModel() {
-            this.compareModes = new ArrayList<ComparePairType>();
+            this.compareModes = new ArrayList<>();
             compareModes.add(MY_WITH_THEIR);
             compareModes.add(MY_WITH_MERGED);
             compareModes.add(THEIR_WITH_MERGED);
@@ -839,7 +842,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public ComparePairType getElementAt(int index) {
             if (index < compareModes.size())
                 return compareModes.get(index);
             throw new IllegalArgumentException(tr("Unexpected value of parameter ''index''. Got {0}.", index));

@@ -26,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +52,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 
@@ -79,13 +81,13 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * Class that helps PropertiesDialog add and edit tag values
  */
- class TagEditHelper {
+class TagEditHelper {
     private final DefaultTableModel tagData;
     private final Map<String, Map<String, Integer>> valueCount;
 
     // Selection that we are editing by using both dialogs
     Collection<OsmPrimitive> sel;
-    
+
     private String changedKey;
     private String objKey;
 
@@ -125,16 +127,16 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         if (sel == null || sel.isEmpty()) return;
 
         final AddTagsDialog addDialog = new AddTagsDialog();
-        
+
         addDialog.showDialog();
-        
+
         addDialog.destroyActions();
         if (addDialog.getValue() == 1)
             addDialog.performTagAdding();
         else
             addDialog.undoAllTagsAdding();
     }
-    
+
     /**
     * Edit the value in the tags table row
     * @param row The row of the table from which the value is edited.
@@ -148,7 +150,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
         String key = tagData.getValueAt(row, 0).toString();
         objKey=key;
-        
+
         @SuppressWarnings("unchecked")
         final EditTagDialog editDialog = new EditTagDialog(key, row,
                 (Map<String, Integer>) tagData.getValueAt(row, 1), focusOnKey);
@@ -156,15 +158,16 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         if (editDialog.getValue() !=1 ) return;
         editDialog.performTagEdit();
     }
-    
+
     /**
      * If during last editProperty call user changed the key name, this key will be returned
      * Elsewhere, returns null.
+     * @return The modified key, or {@code null}
      */
     public String getChangedKey() {
         return changedKey;
     }
-    
+
     public void resetChangedKey() {
         changedKey = null;
     }
@@ -204,13 +207,33 @@ import org.openstreetmap.josm.tools.WindowGeometry;
      */
     public void saveTagsIfNeeded() {
         if (PROPERTY_REMEMBER_TAGS.get() && !recentTags.isEmpty()) {
-            List<String> c = new ArrayList<String>( recentTags.size()*2 );
+            List<String> c = new ArrayList<>( recentTags.size()*2 );
             for (Tag t: recentTags.keySet()) {
                 c.add(t.getKey());
                 c.add(t.getValue());
             }
             Main.pref.putCollection("properties.recent-tags", c);
         }
+    }
+
+    /**
+     * Warns user about a key being overwritten.
+     * @param action The action done by the user. Must state what key is changed
+     * @param togglePref  The preference to save the checkbox state to
+     * @return {@code true} if the user accepts to overwrite key, {@code false} otherwise
+     */
+    private boolean warnOverwriteKey(String action, String togglePref) {
+        ExtendedDialog ed = new ExtendedDialog(
+                Main.parent,
+                tr("Overwrite key"),
+                new String[]{tr("Replace"), tr("Cancel")});
+        ed.setButtonIcons(new String[]{"purge", "cancel"});
+        ed.setContent(action+"\n"+ tr("The new key is already used, overwrite values?"));
+        ed.setCancelButton(2);
+        ed.toggleEnable(togglePref);
+        ed.showDialog();
+
+        return ed.getValue() == 1;
     }
 
     public final class EditTagDialog extends AbstractTagsDialog {
@@ -231,14 +254,15 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                         return +1;
                 }
             };
-        
-        DefaultListCellRenderer cellRenderer = new DefaultListCellRenderer() {
-                @Override public Component getListCellRendererComponent(JList list,
-                        Object value, int index, boolean isSelected,  boolean cellHasFocus){
-                    Component c = super.getListCellRendererComponent(list, value,
-                            index, isSelected, cellHasFocus);
+
+        ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
+            final DefaultListCellRenderer def = new DefaultListCellRenderer();
+                @Override
+                public Component getListCellRendererComponent(JList<? extends AutoCompletionListItem> list,
+                        AutoCompletionListItem value, int index, boolean isSelected,  boolean cellHasFocus){
+                    Component c = def.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                     if (c instanceof JLabel) {
-                        String str = ((AutoCompletionListItem) value).getValue();
+                        String str = value.getValue();
                         if (valueCount.containsKey(objKey)) {
                             Map<String, Integer> m = valueCount.get(objKey);
                             if (m.containsKey(str)) {
@@ -251,7 +275,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                     return c;
                 }
             };
-        
+
         private EditTagDialog(String key, int row, Map<String, Integer> map, final boolean initialFocusOnKey) {
             super(Main.parent, trn("Change value?", "Change values?", map.size()), new String[] {tr("OK"),tr("Cancel")});
             setButtonIcons(new String[] {"ok","cancel"});
@@ -260,9 +284,9 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             this.key = key;
             this.row = row;
             this.m = map;
-            
+
             JPanel mainPanel = new JPanel(new BorderLayout());
-                    
+
             String msg = "<html>"+trn("This will change {0} object.",
                     "This will change up to {0} objects.", sel.size(), sel.size())
                     +"<br><br>("+tr("An empty value deletes the tag.", key)+")</html>";
@@ -290,7 +314,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             Collections.sort(valueList, usedValuesAwareComparator);
 
             final String selection= m.size()!=1?tr("<different>"):m.entrySet().iterator().next().getKey();
-            
+
             values = new AutoCompletingComboBox(selection);
             values.setRenderer(cellRenderer);
 
@@ -309,9 +333,9 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 }
             });
             addFocusAdapter(autocomplete, usedValuesAwareComparator);
-            
+
             setContent(mainPanel, false);
-            
+
             addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowOpened(WindowEvent e) {
@@ -323,21 +347,20 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 }
             });
         }
-        
+
         /**
          * Edit tags of multiple selected objects according to selected ComboBox values
          * If value == "", tag will be deleted
          * Confirmations may be needed.
          */
         private void performTagEdit() {
-            String value = values.getEditor().getItem().toString().trim();
-            // is not Java 1.5
-            //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
+            String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
+            value = Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
             if (value.isEmpty()) {
                 value = null; // delete the key
             }
-            String newkey = keys.getEditor().getItem().toString().trim();
-            //newkey = java.text.Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
+            String newkey = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
+            newkey = Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
             if (newkey.isEmpty()) {
                 newkey = key;
                 value = null; // delete the key instead
@@ -348,34 +371,24 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
             } else {
                 for (OsmPrimitive osm: sel) {
-                    if(osm.get(newkey) != null) {
-                        ExtendedDialog ed = new ExtendedDialog(
-                                Main.parent,
-                                tr("Overwrite key"),
-                                new String[]{tr("Replace"), tr("Cancel")});
-                        ed.setButtonIcons(new String[]{"purge", "cancel"});
-                        ed.setContent(tr("You changed the key from ''{0}'' to ''{1}''.\n"
-                                + "The new key is already used, overwrite values?", key, newkey));
-                        ed.setCancelButton(2);
-                        ed.toggleEnable("overwriteEditKey");
-                        ed.showDialog();
-
-                        if (ed.getValue() != 1)
+                    if (osm.get(newkey) != null) {
+                        if (!warnOverwriteKey(tr("You changed the key from ''{0}'' to ''{1}''.", key, newkey),
+                                "overwriteEditKey"))
                             return;
                         break;
                     }
                 }
-                Collection<Command> commands = new ArrayList<Command>();
+                Collection<Command> commands = new ArrayList<>();
                 commands.add(new ChangePropertyCommand(sel, key, null));
                 if (value.equals(tr("<different>"))) {
-                    Map<String, List<OsmPrimitive>> map = new HashMap<String, List<OsmPrimitive>>();
+                    Map<String, List<OsmPrimitive>> map = new HashMap<>();
                     for (OsmPrimitive osm: sel) {
                         String val = osm.get(key);
                         if (val != null) {
                             if (map.containsKey(val)) {
                                 map.get(val).add(osm);
                             } else {
-                                List<OsmPrimitive> v = new ArrayList<OsmPrimitive>();
+                                List<OsmPrimitive> v = new ArrayList<>();
                                 v.add(osm);
                                 map.put(val, v);
                             }
@@ -405,7 +418,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         AutoCompletingComboBox keys;
         AutoCompletingComboBox values;
         Component componentUnderMouse;
-        
+
         public AbstractTagsDialog(Component parent, String title, String[] buttonTexts) {
             super(parent, title, buttonTexts);
             addMouseListener(new PopupMenuLauncher(popupMenu));
@@ -413,29 +426,41 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
         @Override
         public void setupDialog() {
-            setResizable(false);
             super.setupDialog();
-            
+            final Dimension size = getSize();
+            // Set resizable only in width
+            setMinimumSize(size);
+            setPreferredSize(size);
+            // setMaximumSize does not work, and never worked, but still it seems not to bother Oracle to fix this 10-year-old bug
+            // https://bugs.openjdk.java.net/browse/JDK-6200438
+            // https://bugs.openjdk.java.net/browse/JDK-6464548
+
             setRememberWindowGeometry(getClass().getName() + ".geometry",
-                WindowGeometry.centerInWindow(Main.parent, getSize()));
+                WindowGeometry.centerInWindow(Main.parent, size));
         }
 
         @Override
         public void setVisible(boolean visible) {
-            // Do not want dialog to be resizable, but its size may increase each time because of the recently added tags
+            // Do not want dialog to be resizable in height, as its size may increase each time because of the recently added tags
             // So need to modify the stored geometry (size part only) in order to use the automatic positioning mechanism
             if (visible) {
                 WindowGeometry geometry = initWindowGeometry();
                 Dimension storedSize = geometry.getSize();
-                if (!storedSize.equals(getSize())) {
-                    storedSize.setSize(getSize());
+                Dimension size = getSize();
+                if (!storedSize.equals(size)) {
+                    if (storedSize.width < size.width) {
+                        storedSize.width = size.width;
+                    }
+                    if (storedSize.height != size.height) {
+                        storedSize.height = size.height;
+                    }
                     rememberWindowGeometry(geometry);
                 }
                 keys.setFixedLocale(PROPERTY_FIX_TAG_LOCALE.get());
             }
             super.setVisible(visible);
         }
-        
+
         private void selectACComboBoxSavingUnixBuffer(AutoCompletingComboBox cb) {
             // select compbobox with saving unix system selection (middle mouse paste)
             Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
@@ -449,15 +474,15 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 cb.getEditor().selectAll();
             }
         }
-        
+
         public void selectKeysComboBox() {
             selectACComboBoxSavingUnixBuffer(keys);
         }
-        
+
         public void selectValuesCombobox()   {
             selectACComboBoxSavingUnixBuffer(values);
         }
-        
+
         /**
         * Create a focus handling adapter and apply in to the editor component of value
         * autocompletion box.
@@ -484,7 +509,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
            editor.addFocusListener(focus);
            return focus;
         }
-        
+
         protected JPopupMenu popupMenu = new JPopupMenu() {
             JCheckBoxMenuItem fixTagLanguageCb = new JCheckBoxMenuItem(
                 new AbstractAction(tr("Use English language for tag by default")){
@@ -502,8 +527,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
     }
 
     class AddTagsDialog extends AbstractTagsDialog {
-        List<JosmAction> recentTagsActions = new ArrayList<JosmAction>();
-        
+        List<JosmAction> recentTagsActions = new ArrayList<>();
+
         // Counter of added commands for possible undo
         private int commandCount;
 
@@ -512,11 +537,11 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             setButtonIcons(new String[] {"ok","cancel"});
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
-            
+
             JPanel mainPanel = new JPanel(new GridBagLayout());
             keys = new AutoCompletingComboBox();
             values = new AutoCompletingComboBox();
-            
+
             mainPanel.add(new JLabel("<html>"+trn("This will change up to {0} object.",
                 "This will change up to {0} objects.", sel.size(),sel.size())
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
@@ -567,7 +592,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             if (recentTagsToShow > MAX_LRU_TAGS_NUMBER) {
                 recentTagsToShow = MAX_LRU_TAGS_NUMBER;
             }
-            
+
             // Add tag on Shift-Enter
             mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                         KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_MASK), "addAndContinue");
@@ -578,13 +603,13 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                         selectKeysComboBox();
                     }
                 });
-                    
+
             suggestRecentlyAddedTags(mainPanel, recentTagsToShow, focus);
-            
+
             setContent(mainPanel, false);
-            
+
             selectKeysComboBox();
-            
+
             popupMenu.add(new AbstractAction(tr("Set number of recently added tags")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -603,7 +628,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             rememberLastTags.setState(PROPERTY_REMEMBER_TAGS.get());
             popupMenu.add(rememberLastTags);
         }
-        
+
         private void selectNumberOfTags() {
             String s = JOptionPane.showInputDialog(this, tr("Please enter the number of recently added tags to display"));
             if (s!=null) try {
@@ -616,20 +641,19 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 Main.warn(ex);
             }
             JOptionPane.showMessageDialog(this, tr("Please enter integer number between 0 and {0}", MAX_LRU_TAGS_NUMBER));
-            
         }
-        
+
         private void suggestRecentlyAddedTags(JPanel mainPanel, int tagsToShow, final FocusAdapter focus) {
             if (!(tagsToShow > 0 && !recentTags.isEmpty()))
                 return;
 
             mainPanel.add(new JLabel(tr("Recently added tags")), GBC.eol());
-            
+
             int count = 1;
             // We store the maximum number (9) of recent tags to allow dynamic change of number of tags shown in the preferences.
             // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum numbern and not the number of tags to show.
             // However, as Set does not allow to iterate in descending order, we need to copy its elements into a List we can access in reverse order.
-            List<Tag> tags = new LinkedList<Tag>(recentTags.keySet());
+            List<Tag> tags = new LinkedList<>(recentTags.keySet());
             for (int i = tags.size()-1; i >= 0 && count <= tagsToShow; i--, count++) {
                 final Tag t = tags.get(i);
                 // Create action for reusing the tag, with keyboard shortcut Ctrl+(1-5)
@@ -663,7 +687,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 ImageIcon icon = MapPaintStyles.getNodeIcon(t, false); // Filters deprecated icon
                 if (icon == null) {
                     // If no icon found in map style look at presets
-                    Map<String, String> map = new HashMap<String, String>();
+                    Map<String, String> map = new HashMap<>();
                     map.put(t.getKey(), t.getValue());
                     for (TaggingPreset tp : TaggingPreset.getMatchingPresets(null, map, false)) {
                         icon = tp.getIcon();
@@ -730,10 +754,19 @@ import org.openstreetmap.josm.tools.WindowGeometry;
         /**
          * Read tags from comboboxes and add it to all selected objects
          */
-        public void performTagAdding() {
-            String key = keys.getEditor().getItem().toString().trim();
-            String value = values.getEditor().getItem().toString().trim();
+        public final void performTagAdding() {
+            String key = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
+            String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
             if (key.isEmpty() || value.isEmpty()) return;
+            for (OsmPrimitive osm: sel) {
+                String val = osm.get(key);
+                if (val != null && !val.equals(value)) {
+                    if (!warnOverwriteKey(tr("You changed the value of ''{0}'' from ''{1}'' to ''{2}''.", key, val, value),
+                            "overwriteAddKey"))
+                        return;
+                    break;
+                }
+            }
             lastAddKey = key;
             lastAddValue = value;
             recentTags.put(new Tag(key, value), null);
@@ -741,12 +774,10 @@ import org.openstreetmap.josm.tools.WindowGeometry;
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
             changedKey = key;
         }
-        
-        
+
         public void undoAllTagsAdding() {
             Main.main.undoRedo.undo(commandCount);
         }
-
 
         private void disableTagIfNeeded(final Tag t, final JosmAction action) {
             // Disable action if its key is already set on the object (the key being absent from the keys list for this reason
@@ -758,6 +789,5 @@ import org.openstreetmap.josm.tools.WindowGeometry;
                 }
             }
         }
-
     }
- }
+}

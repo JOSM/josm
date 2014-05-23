@@ -71,7 +71,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @see MultiSplitPane
  */
 public class MultiSplitLayout implements LayoutManager {
-    private final Map<String, Component> childMap = new HashMap<String, Component>();
+    private final Map<String, Component> childMap = new HashMap<>();
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Node model;
     private int dividerSize;
@@ -162,7 +162,7 @@ public class MultiSplitLayout implements LayoutManager {
      * is the same as for JSplitPane Dividers.
      *
      * @param dividerSize the size of dividers (pixels)
-     * @throws IllegalArgumentException if dividerSize < 0
+     * @throws IllegalArgumentException if dividerSize &lt; 0
      * @see #getDividerSize
      */
     public void setDividerSize(int dividerSize) {
@@ -241,12 +241,6 @@ public class MultiSplitLayout implements LayoutManager {
     private Dimension preferredComponentSize(Node node) {
         Component child = childForNode(node);
         return (child != null) ? child.getPreferredSize() : new Dimension(0, 0);
-
-    }
-
-    private Dimension minimumComponentSize(Node node) {
-        Component child = childForNode(node);
-        return (child != null) ? child.getMinimumSize() : new Dimension(0, 0);
 
     }
 
@@ -808,7 +802,7 @@ public class MultiSplitLayout implements LayoutManager {
 
     private List<Divider> dividersThatOverlap(Node root, Rectangle r) {
         if (nodeOverlapsRectangle(root, r) && (root instanceof Split)) {
-            List<Divider> dividers = new ArrayList<Divider>();
+            List<Divider> dividers = new ArrayList<>();
             for(Node child : ((Split)root).getChildren()) {
                 if (child instanceof Divider) {
                     if (nodeOverlapsRectangle(child, r)) {
@@ -841,7 +835,7 @@ public class MultiSplitLayout implements LayoutManager {
     /**
      * Base class for the nodes that model a MultiSplitLayout.
      */
-    public static abstract class Node {
+    public abstract static class Node {
         private Split parent = null;
         private Rectangle bounds = new Rectangle();
         private double weight = 0.0;
@@ -1006,7 +1000,7 @@ public class MultiSplitLayout implements LayoutManager {
          * @see #setChildren
          */
         public List<Node> getChildren() {
-            return new ArrayList<Node>(children);
+            return new ArrayList<>(children);
         }
 
         /**
@@ -1026,7 +1020,7 @@ public class MultiSplitLayout implements LayoutManager {
             for(Node child : this.children) {
                 child.parent_set(null);
             }
-            this.children = new ArrayList<Node>(children);
+            this.children = new ArrayList<>(children);
             for(Node child : this.children) {
                 child.parent_set(this);
             }
@@ -1034,9 +1028,9 @@ public class MultiSplitLayout implements LayoutManager {
 
         /**
          * Convenience method that returns the last child whose weight
-         * is > 0.0.
+         * is &gt; 0.0.
          *
-         * @return the last child whose weight is > 0.0.
+         * @return the last child whose weight is &gt; 0.0.
          * @see #getChildren
          * @see Node#getWeight
          */
@@ -1112,10 +1106,10 @@ public class MultiSplitLayout implements LayoutManager {
             StringBuffer sb = new StringBuffer("MultiSplitLayout.Leaf");
             sb.append(" \"");
             sb.append(getName());
-            sb.append("\"");
+            sb.append('\"');
             sb.append(" weight=");
             sb.append(getWeight());
-            sb.append(" ");
+            sb.append(' ');
             sb.append(getBounds());
             return sb.toString();
         }
@@ -1161,7 +1155,7 @@ public class MultiSplitLayout implements LayoutManager {
         if ((st.nextToken() != '=')) {
             throwParseException(st, "expected '=' after " + name);
         }
-        if (name.equalsIgnoreCase("WEIGHT")) {
+        if ("WEIGHT".equalsIgnoreCase(name)) {
             if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                 node.setWeight(st.nval);
             }
@@ -1169,7 +1163,7 @@ public class MultiSplitLayout implements LayoutManager {
                 throwParseException(st, "invalid weight");
             }
         }
-        else if (name.equalsIgnoreCase("NAME")) {
+        else if ("NAME".equalsIgnoreCase(name)) {
             if (st.nextToken() == StreamTokenizer.TT_WORD) {
                 if (node instanceof Leaf) {
                     ((Leaf)node).setName(st.sval);
@@ -1188,7 +1182,7 @@ public class MultiSplitLayout implements LayoutManager {
     }
 
     private static void addSplitChild(Split parent, Node child) {
-        List<Node> children = new ArrayList<Node>(parent.getChildren());
+        List<Node> children = new ArrayList<>(parent.getChildren());
         if (children.isEmpty()) {
             children.add(child);
         }
@@ -1223,7 +1217,7 @@ public class MultiSplitLayout implements LayoutManager {
                 break;
             }
             else if (token == StreamTokenizer.TT_WORD) {
-                if (st.sval.equalsIgnoreCase("WEIGHT")) {
+                if ("WEIGHT".equalsIgnoreCase(st.sval)) {
                     parseAttribute(st.sval, st, parent);
                 }
                 else {
@@ -1235,12 +1229,12 @@ public class MultiSplitLayout implements LayoutManager {
                     throwParseException(st, "invalid node type");
                 }
                 String nodeType = st.sval.toUpperCase();
-                if (nodeType.equals("LEAF")) {
+                if ("LEAF".equals(nodeType)) {
                     parseLeaf(st, parent);
                 }
-                else if (nodeType.equals("ROW") || nodeType.equals("COLUMN")) {
+                else if ("ROW".equals(nodeType) || "COLUMN".equals(nodeType)) {
                     Split split = new Split();
-                    split.setRowLayout(nodeType.equals("ROW"));
+                    split.setRowLayout("ROW".equals(nodeType));
                     addSplitChild(parent, split);
                     parseSplit(st, split);
                 }

@@ -86,23 +86,23 @@ public class DuplicateNode extends Test {
         }
     }
 
-    protected final static int DUPLICATE_NODE = 1;
-    protected final static int DUPLICATE_NODE_MIXED = 2;
-    protected final static int DUPLICATE_NODE_OTHER = 3;
-    protected final static int DUPLICATE_NODE_BUILDING = 10;
-    protected final static int DUPLICATE_NODE_BOUNDARY = 11;
-    protected final static int DUPLICATE_NODE_HIGHWAY = 12;
-    protected final static int DUPLICATE_NODE_LANDUSE = 13;
-    protected final static int DUPLICATE_NODE_NATURAL = 14;
-    protected final static int DUPLICATE_NODE_POWER = 15;
-    protected final static int DUPLICATE_NODE_RAILWAY = 16;
-    protected final static int DUPLICATE_NODE_WATERWAY = 17;
+    protected static final int DUPLICATE_NODE = 1;
+    protected static final int DUPLICATE_NODE_MIXED = 2;
+    protected static final int DUPLICATE_NODE_OTHER = 3;
+    protected static final int DUPLICATE_NODE_BUILDING = 10;
+    protected static final int DUPLICATE_NODE_BOUNDARY = 11;
+    protected static final int DUPLICATE_NODE_HIGHWAY = 12;
+    protected static final int DUPLICATE_NODE_LANDUSE = 13;
+    protected static final int DUPLICATE_NODE_NATURAL = 14;
+    protected static final int DUPLICATE_NODE_POWER = 15;
+    protected static final int DUPLICATE_NODE_RAILWAY = 16;
+    protected static final int DUPLICATE_NODE_WATERWAY = 17;
 
     /** The map of potential duplicates.
      *
-     * If there is exactly one node for a given pos, the map includes a pair <pos, Node>.
+     * If there is exactly one node for a given pos, the map includes a pair &lt;pos, Node&gt;.
      * If there are multiple nodes for a given pos, the map includes a pair
-     * <pos, NodesByEqualTagsMap>
+     * &lt;pos, NodesByEqualTagsMap&gt;
      */
     private Storage<Object> potentialDuplicates;
 
@@ -117,7 +117,7 @@ public class DuplicateNode extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        potentialDuplicates = new Storage<Object>(new NodeHash());
+        potentialDuplicates = new Storage<>(new NodeHash());
     }
 
 
@@ -132,7 +132,7 @@ public class DuplicateNode extends Test {
 
             // multiple nodes at the same position -> check if all nodes have a distinct elevation
             List<Node> nodes = (List<Node>) v;
-            Set<String> eles = new HashSet<String>();
+            Set<String> eles = new HashSet<>();
             for (Node n : nodes) {
                 String ele = n.get("ele");
                 if (ele != null) {
@@ -160,14 +160,14 @@ public class DuplicateNode extends Test {
      * @return the list of "duplicate nodes" errors
      */
     public List<TestError> buildTestErrors(Test parentTest, List<Node> nodes) {
-        List<TestError> errors = new ArrayList<TestError>();
+        List<TestError> errors = new ArrayList<>();
 
-        MultiMap<Map<String,String>, OsmPrimitive> mm = new MultiMap<Map<String,String>, OsmPrimitive>();
+        MultiMap<Map<String,String>, OsmPrimitive> mm = new MultiMap<>();
         for (Node n: nodes) {
             mm.put(n.getKeys(), n);
         }
 
-        Map<String,Boolean> typeMap=new HashMap<String,Boolean>();
+        Map<String,Boolean> typeMap=new HashMap<>();
         String[] types = {"none", "highway", "railway", "waterway", "boundary", "power", "natural", "landuse", "building"};
 
 
@@ -333,7 +333,7 @@ public class DuplicateNode extends Test {
         // differing tag sets
         //
         if (!mm.isEmpty()) {
-            List<OsmPrimitive> duplicates = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> duplicates = new ArrayList<>();
             for (Set<OsmPrimitive> l: mm.values()) {
                 duplicates.addAll(l);
             }
@@ -364,7 +364,7 @@ public class DuplicateNode extends Test {
                 // object to keep track of the nodes at this position.
                 //
                 Node n1 = (Node)potentialDuplicates.get(n);
-                List<Node> nodes = new ArrayList<Node>(2);
+                List<Node> nodes = new ArrayList<>(2);
                 nodes.add(n1);
                 nodes.add(n);
                 potentialDuplicates.put(nodes);
@@ -384,8 +384,8 @@ public class DuplicateNode extends Test {
     @Override
     public Command fixError(TestError testError) {
         if (!isFixable(testError)) return null;
-        Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>(testError.getPrimitives());
-        LinkedHashSet<Node> nodes = new LinkedHashSet<Node>(OsmPrimitive.getFilteredList(sel, Node.class));
+        Collection<OsmPrimitive> sel = new LinkedList<>(testError.getPrimitives());
+        LinkedHashSet<Node> nodes = new LinkedHashSet<>(OsmPrimitive.getFilteredList(sel, Node.class));
 
         // Filter nodes that have already been deleted (see #5764 and #5773)
         for (Iterator<Node> it = nodes.iterator(); it.hasNext();) {

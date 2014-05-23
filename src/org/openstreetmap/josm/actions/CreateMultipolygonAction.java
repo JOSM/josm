@@ -64,8 +64,8 @@ public class CreateMultipolygonAction extends JosmAction {
      */
     public CreateMultipolygonAction(final boolean update) {
         super(getName(update), "multipoly_create", getName(update),
-                update  ? null
-                        : Shortcut.registerShortcut("tools:multipoly", tr("Tool: {0}", getName(false)), KeyEvent.VK_A, Shortcut.ALT_CTRL),
+                update  ? Shortcut.registerShortcut("tools:multipoly_update", tr("Tool: {0}", getName(true)), KeyEvent.VK_B, Shortcut.CTRL_SHIFT)
+                        : Shortcut.registerShortcut("tools:multipoly_create", tr("Tool: {0}", getName(false)), KeyEvent.VK_B, Shortcut.CTRL),
                 true, update ? "multipoly_update" : "multipoly_create", true);
         this.update = update;
     }
@@ -73,8 +73,8 @@ public class CreateMultipolygonAction extends JosmAction {
     private static String getName(boolean update) {
         return update ? tr("Update multipolygon") : tr("Create multipolygon");
     }
-    
-    private class CreateUpdateMultipolygonTask implements Runnable {
+
+    private static class CreateUpdateMultipolygonTask implements Runnable {
         private final Collection<Way> selectedWays;
         private final Relation multipolygonRelation;
 
@@ -98,25 +98,25 @@ public class CreateMultipolygonAction extends JosmAction {
                 @Override
                 public void run() {
                     Main.main.undoRedo.add(command);
-                }
-            });
 
-            // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
-            // knows about the new relation before we try to select it.
-            // (Yes, we are already in event dispatch thread. But DatasetEventManager
-            // uses 'SwingUtilities.invokeLater' to fire events so we have to do
-            // the same.)
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    Main.map.relationListDialog.selectRelation(relation);
-                    if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
-                        //Open relation edit window, if set up in preferences
-                        RelationEditor editor = RelationEditor.getEditor(Main.main.getEditLayer(), relation, null);
+                    // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
+                    // knows about the new relation before we try to select it.
+                    // (Yes, we are already in event dispatch thread. But DatasetEventManager
+                    // uses 'SwingUtilities.invokeLater' to fire events so we have to do
+                    // the same.)
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            Main.map.relationListDialog.selectRelation(relation);
+                            if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
+                                //Open relation edit window, if set up in preferences
+                                RelationEditor editor = RelationEditor.getEditor(Main.main.getEditLayer(), relation, null);
 
-                        editor.setModal(true);
-                        editor.setVisible(true);
-                    }
+                                editor.setModal(true);
+                                editor.setVisible(true);
+                            }
+                        }
+                    });
                 }
             });
         }
@@ -173,7 +173,7 @@ public class CreateMultipolygonAction extends JosmAction {
         if (selectedRelations.size() == 1 && "multipolygon".equals(selectedRelations.iterator().next().get("type"))) {
             return selectedRelations.iterator().next();
         } else {
-            final HashSet<Relation> relatedRelations = new HashSet<Relation>();
+            final HashSet<Relation> relatedRelations = new HashSet<>();
             for (final Way w : selectedWays) {
                 relatedRelations.addAll(Utils.filteredCollection(w.getReferrers(), Relation.class));
             }
@@ -187,7 +187,7 @@ public class CreateMultipolygonAction extends JosmAction {
     public static Pair<Relation, Relation> updateMultipolygonRelation(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
         // add ways of existing relation to include them in polygon analysis
-        Set<Way> ways = new HashSet<Way>(selectedWays);
+        Set<Way> ways = new HashSet<>(selectedWays);
         ways.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
 
         final MultipolygonCreate polygon = analyzeWays(ways, true);
@@ -302,7 +302,7 @@ public class CreateMultipolygonAction extends JosmAction {
 
     private static void addMembers(JoinedPolygon polygon, Relation rel, String role) {
         final int count = rel.getMembersCount();
-        final HashSet<Way> ways = new HashSet<Way>(polygon.ways);
+        final HashSet<Way> ways = new HashSet<>(polygon.ways);
         for (int i = 0; i < count; i++) {
             final RelationMember m = rel.getMember(i);
             if (ways.contains(m.getMember()) && !role.equals(m.getRole())) {
@@ -315,7 +315,7 @@ public class CreateMultipolygonAction extends JosmAction {
         }
     }
 
-    public static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList(new String[] {"barrier", "source"});
+    public static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList("barrier", "fence_type", "source");
 
     /**
      * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary
@@ -323,19 +323,13 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param relation the multipolygon style relation to process
      * @return a list of commands to execute
      */
-    private static List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
-        Map<String, String> values = new HashMap<String, String>();
+    public static List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
+        Map<String, String> values = new HashMap<>(relation.getKeys());
 
-        if( relation.hasKeys() ) {
-            for( String key : relation.keySet() ) {
-                values.put(key, relation.get(key));
-            }
-        }
+        List<Way> innerWays = new ArrayList<>();
+        List<Way> outerWays = new ArrayList<>();
 
-        List<Way> innerWays = new ArrayList<Way>();
-        List<Way> outerWays = new ArrayList<Way>();
-
-        Set<String> conflictingKeys = new TreeSet<String>();
+        Set<String> conflictingKeys = new TreeSet<>();
 
         for( RelationMember m : relation.getMembers() ) {
 
@@ -360,7 +354,7 @@ public class CreateMultipolygonAction extends JosmAction {
         // filter out empty key conflicts - we need second iteration
         if( !Main.pref.getBoolean("multipoly.alltags", false) )
             for( RelationMember m : relation.getMembers() )
-                if( m.hasRole() && m.getRole().equals("outer") && m.isWay() )
+                if( m.hasRole() && "outer".equals(m.getRole()) && m.isWay() )
                     for( String key : values.keySet() )
                         if( !m.getWay().hasKey(key) && !relation.hasKey(key) )
                             conflictingKeys.add(key);
@@ -371,21 +365,21 @@ public class CreateMultipolygonAction extends JosmAction {
         for( String linearTag : Main.pref.getCollection("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS) )
             values.remove(linearTag);
 
-        if( values.containsKey("natural") && values.get("natural").equals("coastline") )
+        if ("coastline".equals(values.get("natural")))
             values.remove("natural");
 
         values.put("area", "yes");
 
-        List<Command> commands = new ArrayList<Command>();
+        List<Command> commands = new ArrayList<>();
         boolean moveTags = Main.pref.getBoolean("multipoly.movetags", true);
 
         for (Entry<String, String> entry : values.entrySet()) {
-            List<OsmPrimitive> affectedWays = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> affectedWays = new ArrayList<>();
             String key = entry.getKey();
             String value = entry.getValue();
 
             for (Way way : innerWays) {
-                if (way.hasKey(key) && (value.equals(way.get(key)))) {
+                if (value.equals(way.get(key))) {
                     affectedWays.add(way);
                 }
             }
@@ -412,7 +406,7 @@ public class CreateMultipolygonAction extends JosmAction {
             Relation r2 = new Relation(relation);
             for (Entry<String, String> entry : values.entrySet()) {
                 String key = entry.getKey();
-                if (!r2.hasKey(key) && !key.equals("area") ) {
+                if (!r2.hasKey(key) && !"area".equals(key) ) {
                     if (relation.isNew())
                         relation.put(key, entry.getValue());
                     else

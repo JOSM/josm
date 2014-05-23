@@ -13,10 +13,10 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 
 /**
  * Objects of this class represent a gpx file with tracks, waypoints and routes.
- * It uses GPX v1.1, see {@link <a href="http://www.topografix.com/GPX/1/1/">the spec</a>}
+ * It uses GPX v1.1, see <a href="http://www.topografix.com/GPX/1/1/">the spec</a>
  * for details.
  *
- * @author Raphael Mack <ramack@raphael-mack.de>
+ * @author Raphael Mack &lt;ramack@raphael-mack.de&gt;
  */
 public class GpxData extends WithAttributes {
 
@@ -25,11 +25,10 @@ public class GpxData extends WithAttributes {
 
     public String creator;
 
-    public final Collection<GpxTrack> tracks = new LinkedList<GpxTrack>();
-    public final Collection<GpxRoute> routes = new LinkedList<GpxRoute>();
-    public final Collection<WayPoint> waypoints = new LinkedList<WayPoint>();
+    public final Collection<GpxTrack> tracks = new LinkedList<>();
+    public final Collection<GpxRoute> routes = new LinkedList<>();
+    public final Collection<WayPoint> waypoints = new LinkedList<>();
 
-    @SuppressWarnings("unchecked")
     public void mergeFrom(GpxData other) {
         if (storageFile == null && other.storageFile != null) {
             storageFile = other.storageFile;
@@ -40,8 +39,11 @@ public class GpxData extends WithAttributes {
             // TODO: Detect conflicts.
             String k = ent.getKey();
             if (k.equals(META_LINKS) && attr.containsKey(META_LINKS)) {
-                ((Collection<GpxLink>) attr.get(META_LINKS)).addAll(
-                        (Collection<GpxLink>) ent.getValue());
+                @SuppressWarnings("unchecked")
+                Collection<GpxLink> my = (Collection<GpxLink>) attr.get(META_LINKS);
+                @SuppressWarnings("unchecked")
+                Collection<GpxLink> their = (Collection<GpxLink>) ent.getValue();
+                my.addAll(their);
             } else {
                 attr.put(k, ent.getValue());
             }
@@ -254,7 +256,7 @@ public class GpxData extends WithAttributes {
             }
         };
     }
-    
+
     /**
      * Iterates over all track segments and then over all routes.
      */
@@ -319,5 +321,5 @@ public class GpxData extends WithAttributes {
             throw new UnsupportedOperationException();
         }
     }
-    
+
 }

@@ -99,9 +99,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
         FileFilter ff = fc.getFileFilter();
         if (zipRequired) {
             zip = true;
-        } else if (ff == joz) {
+        } else if (joz.equals(ff)) {
             zip = true;
-        } else if (ff == jos) {
+        } else if (jos.equals(ff)) {
             zip = false;
         } else {
             if (fn.toLowerCase().endsWith(".joz")) {
@@ -116,7 +116,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
                 return;
         }
 
-        List<Layer> layersOut = new ArrayList<Layer>();
+        List<Layer> layersOut = new ArrayList<>();
         for (Layer layer : layers) {
             if (exporters.get(layer) == null || !exporters.get(layer).shallExport()) continue;
             // TODO: resolve dependencies for layers excluded by the user
@@ -165,12 +165,12 @@ public class SessionSaveAsAction extends DiskAccessAction {
         /**
          * Initializes action.
          */
-        public void initialize() {
-            layers = new ArrayList<Layer>(Main.map.mapView.getAllLayersAsList());
-            exporters = new HashMap<Layer, SessionLayerExporter>();
-            dependencies = new MultiMap<Layer, Layer>();
+        public final void initialize() {
+            layers = new ArrayList<>(Main.map.mapView.getAllLayersAsList());
+            exporters = new HashMap<>();
+            dependencies = new MultiMap<>();
 
-            Set<Layer> noExporter = new HashSet<Layer>();
+            Set<Layer> noExporter = new HashSet<>();
 
             for (Layer layer : layers) {
                 SessionLayerExporter exporter = SessionWriter.getSessionLayerExporter(layer);
@@ -204,7 +204,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             }
         }
 
-        protected Component build() {
+        protected final Component build() {
             JPanel p = new JPanel(new GridBagLayout());
             JPanel ip = new JPanel(new GridBagLayout());
             for (Layer layer : layers) {
@@ -230,7 +230,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             return tabs;
         }
 
-        protected Component getDisabledExportPanel(Layer layer) {
+        protected final Component getDisabledExportPanel(Layer layer) {
             JPanel p = new JPanel(new GridBagLayout());
             JCheckBox include = new JCheckBox();
             include.setEnabled(false);

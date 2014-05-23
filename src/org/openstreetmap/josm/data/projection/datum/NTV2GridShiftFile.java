@@ -22,11 +22,10 @@ package org.openstreetmap.josm.data.projection.datum;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Models the NTv2 format Grid Shift File and exposes methods to shift
@@ -103,7 +102,7 @@ public class NTV2GridShiftFile implements Serializable {
         toEllipsoid = "";
         topLevelSubGrid = null;
         in.read(b8);
-        String overviewHeaderCountId = new String(b8);
+        String overviewHeaderCountId = new String(b8, StandardCharsets.UTF_8);
         if (!"NUM_OREC".equals(overviewHeaderCountId))
             throw new IllegalArgumentException("Input file is not an NTv2 grid shift file");
         in.read(b8);
@@ -126,7 +125,7 @@ public class NTV2GridShiftFile implements Serializable {
         NTV2SubGrid[] subGrid = new NTV2SubGrid[subGridCount];
         in.read(b8);
         in.read(b8);
-        shiftType = new String(b8);
+        shiftType = new String(b8, StandardCharsets.UTF_8);
         in.read(b8);
         in.read(b8);
         version = new String(b8);
@@ -154,8 +153,6 @@ public class NTV2GridShiftFile implements Serializable {
         }
         topLevelSubGrid = createSubGridTree(subGrid);
         lastSubGrid = topLevelSubGrid[0];
-
-        Utils.close(in);
     }
 
     /**
@@ -166,9 +163,9 @@ public class NTV2GridShiftFile implements Serializable {
      */
     private NTV2SubGrid[] createSubGridTree(NTV2SubGrid[] subGrid) {
         int topLevelCount = 0;
-        HashMap<String, List<NTV2SubGrid>> subGridMap = new HashMap<String, List<NTV2SubGrid>>();
+        HashMap<String, List<NTV2SubGrid>> subGridMap = new HashMap<>();
         for (int i = 0; i < subGrid.length; i++) {
-            if (subGrid[i].getParentSubGridName().equalsIgnoreCase("NONE")) {
+            if ("NONE".equalsIgnoreCase(subGrid[i].getParentSubGridName())) {
                 topLevelCount++;
             }
             subGridMap.put(subGrid[i].getSubGridName(), new ArrayList<NTV2SubGrid>());
@@ -176,7 +173,7 @@ public class NTV2GridShiftFile implements Serializable {
         NTV2SubGrid[] topLevelSubGrid = new NTV2SubGrid[topLevelCount];
         topLevelCount = 0;
         for (int i = 0; i < subGrid.length; i++) {
-            if (subGrid[i].getParentSubGridName().equalsIgnoreCase("NONE")) {
+            if ("NONE".equalsIgnoreCase(subGrid[i].getParentSubGridName())) {
                 topLevelSubGrid[topLevelCount++] = subGrid[i];
             } else {
                 List<NTV2SubGrid> parent = subGridMap.get(subGrid[i].getParentSubGridName());
@@ -199,7 +196,6 @@ public class NTV2GridShiftFile implements Serializable {
      *
      * @param gs A GridShift object containing the coordinate to shift
      * @return True if the coordinate is within a Sub Grid, false if not
-     * @throws IOException
      */
     public boolean gridShiftForward(NTV2GridShift gs) {
         // Try the last sub grid first, big chance the coord is still within it
@@ -222,7 +218,6 @@ public class NTV2GridShiftFile implements Serializable {
      *
      * @param gs A GridShift object containing the coordinate to shift
      * @return True if the coordinate is within a Sub Grid, false if not
-     * @throws IOException
      */
     public boolean gridShiftReverse(NTV2GridShift gs) {
         // set up the first estimate
@@ -278,7 +273,7 @@ public class NTV2GridShiftFile implements Serializable {
 
     @Override
     public String toString() {
-        StringBuffer buf = new StringBuffer("Headers  : ");
+        StringBuilder buf = new StringBuilder("Headers  : ");
         buf.append(overviewHeaderCount);
         buf.append("\nSub Hdrs : ");
         buf.append(subGridHeaderCount);

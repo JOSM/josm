@@ -222,8 +222,7 @@ public class NodeListViewer extends JPanel {
             if (primitiveId == null) return null;
             OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer == null) return null;
-            OsmPrimitive p = editLayer.data.getPrimitiveById(primitiveId);
-            return p;
+            return editLayer.data.getPrimitiveById(primitiveId);
         }
 
         public void updateEnabledState() {
@@ -276,11 +275,11 @@ public class NodeListViewer extends JPanel {
         }
 
         public void updateEnabledState() {
-            setEnabled(primitiveId != null && primitiveId.getUniqueId() > 0);
+            setEnabled(primitiveId != null && !primitiveId.isNew());
         }
     }
 
-    static private PrimitiveId primitiveIdAtRow(TableModel model, int row) {
+    private static PrimitiveId primitiveIdAtRow(TableModel model, int row) {
         DiffTableModel castedModel = (DiffTableModel) model;
         Long id = (Long)castedModel.getValueAt(row, 0).value;
         if(id == null) return null;
@@ -314,7 +313,7 @@ public class NodeListViewer extends JPanel {
             int row = table.rowAtPoint(e.getPoint());
             if(row <= 0) return;
             PrimitiveId pid = primitiveIdAtRow(table.getModel(), row);
-            if (pid == null)
+            if (pid == null || pid.isNew())
                 return;
             showHistoryAction.setPrimitiveId(pid);
             showHistoryAction.run();

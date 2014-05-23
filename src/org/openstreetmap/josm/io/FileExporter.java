@@ -15,7 +15,12 @@ public abstract class FileExporter implements LayerChangeListener {
     public final ExtensionFileFilter filter;
 
     private boolean enabled;
+    private boolean canceled;
 
+    /**
+     * Constructs a new {@code FileExporter}.
+     * @param filter The extension file filter
+     */
     public FileExporter(ExtensionFileFilter filter) {
         this.filter = filter;
         this.enabled = true;
@@ -30,7 +35,7 @@ public abstract class FileExporter implements LayerChangeListener {
     }
 
     /**
-     * Returns the enabled state of this {@code FileExporter}. When enabled, it is listed and usable in "File->Save" dialogs.
+     * Returns the enabled state of this {@code FileExporter}. When enabled, it is listed and usable in "File-&gt;Save" dialogs.
      * @return true if this {@code FileExporter} is enabled
      * @since 5459
      */
@@ -39,7 +44,7 @@ public abstract class FileExporter implements LayerChangeListener {
     }
 
     /**
-     * Sets the enabled state of the {@code FileExporter}. When enabled, it is listed and usable in "File->Save" dialogs.
+     * Sets the enabled state of the {@code FileExporter}. When enabled, it is listed and usable in "File-&gt;Save" dialogs.
      * @param enabled true to enable this {@code FileExporter}, false to disable it
      * @since 5459
      */
@@ -60,5 +65,23 @@ public abstract class FileExporter implements LayerChangeListener {
     @Override
     public void layerRemoved(Layer oldLayer) {
         // To be overriden by subclasses if needed
+    }
+
+    /**
+     * Determines if this exporter has been canceled during export.
+     * @return true if this {@code FileExporter} has been canceled
+     * @since 6815
+     */
+    public final boolean isCanceled() {
+        return canceled;
+    }
+
+    /**
+     * Marks this exporter as canceled.
+     * @param canceled true to mark this exporter as canceled, {@code false} otherwise
+     * @since 6815
+     */
+    public final void setCanceled(boolean canceled) {
+        this.canceled = canceled;
     }
 }

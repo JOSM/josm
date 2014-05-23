@@ -86,7 +86,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class RelationListDialog extends ToggleDialog implements DataSetListener {
     /** The display list. */
-    private final JList displaylist;
+    private final JList<Relation> displaylist;
     /** the list model used */
     private final RelationListModel model;
 
@@ -122,13 +122,13 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     public RelationListDialog() {
         super(tr("Relations"), "relationlist", tr("Open a list of all relations."),
                 Shortcut.registerShortcut("subwindow:relations", tr("Toggle: {0}", tr("Relations")),
-                KeyEvent.VK_R, Shortcut.ALT_SHIFT), 150);
+                KeyEvent.VK_R, Shortcut.ALT_SHIFT), 150, true);
 
         // create the list of relations
         //
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         model = new RelationListModel(selectionModel);
-        displaylist = new JList(model);
+        displaylist = new JList<>(model);
         displaylist.setSelectionModel(selectionModel);
         displaylist.setCellRenderer(new OsmPrimitivRenderer() {
             /**
@@ -237,10 +237,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      * @return The selected relation in the list
      */
     private Relation getSelected() {
-        if(model.getSize() == 1) {
+        if (model.getSize() == 1) {
             displaylist.setSelectedIndex(0);
         }
-        return (Relation) displaylist.getSelectedValue();
+        return displaylist.getSelectedValue();
     }
 
     /**
@@ -315,7 +315,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         protected void setCurrentRelationAsSelection() {
-            Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
+            Main.main.getCurrentDataSet().setSelected(displaylist.getSelectedValue());
         }
 
         protected void editCurrentRelation() {
@@ -362,7 +362,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         @Override
         public void activeLayerChange(Layer oldLayer, Layer newLayer) {
             updateEnabledState();
-    }
+        }
 
         @Override
         public void layerAdded(Layer newLayer) {
@@ -376,22 +376,17 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     }
 
     /**
-     * The list model for the list of relations displayed in the relation list
-     * dialog.
+     * The list model for the list of relations displayed in the relation list dialog.
      *
      */
-    private class RelationListModel extends AbstractListModel {
-        private final List<Relation> relations = new ArrayList<Relation>();
+    private class RelationListModel extends AbstractListModel<Relation> {
+        private final List<Relation> relations = new ArrayList<>();
         private List<Relation> filteredRelations;
         private DefaultListSelectionModel selectionModel;
         private SearchCompiler.Match filter;
 
         public RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-        }
-
-        public Relation getRelation(int idx) {
-            return relations.get(idx);
         }
 
         public void sort() {
@@ -467,7 +462,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             if (removedPrimitives == null) return;
             // extract the removed relations
             //
-            Set<Relation> removedRelations = new HashSet<Relation>();
+            Set<Relation> removedRelations = new HashSet<>();
             for (OsmPrimitive p: removedPrimitives) {
                 if (! (p instanceof Relation)) {
                     continue;
@@ -491,7 +486,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         private void updateFilteredRelations() {
             if (filter != null) {
-                filteredRelations = new ArrayList<Relation>(Utils.filter(relations, new Predicate<Relation>() {
+                filteredRelations = new ArrayList<>(Utils.filter(relations, new Predicate<Relation>() {
                     @Override
                     public boolean evaluate(Relation r) {
                         return filter.match(r);
@@ -521,7 +516,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public Relation getElementAt(int index) {
             return getVisibleRelation(index);
         }
 
@@ -537,7 +532,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
          * @return the list of selected, non-new relations.
          */
         public List<Relation> getSelectedRelations() {
-            List<Relation> ret = new ArrayList<Relation>();
+            List<Relation> ret = new ArrayList<>();
             for (int i=0; i<getSize();i++) {
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;
@@ -565,19 +560,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                     selectionModel.addSelectionInterval(i,i);
                 }
             }
-        }
-
-        /**
-         * Returns the index of the relation
-         * @param rel The relation to look for
-         *
-         * @return index of relation (null if it cannot be found)
-         */
-        public Integer getRelationIndex(Relation rel) {
-            int i = relations.indexOf(rel);
-            if (i<0)
-                return null;
-            return i;
         }
 
         private Integer getVisibleRelationIndex(Relation rel) {
@@ -635,6 +617,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         return popupMenuHandler;
     }
 
+    /**
+     * Replies the list of selected relations. Empty list, if there are no selected relations.
+     * @return the list of selected, non-new relations.
+     */
     public Collection<Relation> getSelectedRelations() {
         return model.getSelectedRelations();
     }
@@ -674,8 +660,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         OsmPrimitive prim = event.getPrimitive();
         if (!(prim instanceof Relation))
             return;
-        // trigger a sort of the relation list because the display name may
-        // have changed
+        // trigger a sort of the relation list because the display name may have changed
         //
         List<Relation> sel = model.getSelectedRelations();
         model.sort();
@@ -689,5 +674,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     }
 
     @Override
-    public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignore */}
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        /* ignore */
+    }
 }

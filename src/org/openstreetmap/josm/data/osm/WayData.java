@@ -8,7 +8,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 
 public class WayData extends PrimitiveData implements IWay {
 
-    private List<Long> nodes = new ArrayList<Long>();
+    private List<Long> nodes = new ArrayList<>();
 
     public WayData() {
 
@@ -40,7 +40,7 @@ public class WayData extends PrimitiveData implements IWay {
     }
 
     public void setNodes(List<Long> nodes) {
-        this.nodes = new ArrayList<Long>(nodes);
+        this.nodes = new ArrayList<>(nodes);
     }
 
     @Override

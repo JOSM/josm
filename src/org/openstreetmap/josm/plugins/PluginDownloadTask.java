@@ -23,9 +23,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
-
 
 /**
  * Asynchronous task for downloading a collection of plugins.
@@ -35,9 +33,16 @@ import org.xml.sax.SAXException;
  *
  */
 public class PluginDownloadTask extends PleaseWaitRunnable{
-    private final Collection<PluginInformation> toUpdate = new LinkedList<PluginInformation>();
-    private final Collection<PluginInformation> failed = new LinkedList<PluginInformation>();
-    private final Collection<PluginInformation> downloaded = new LinkedList<PluginInformation>();
+
+    /**
+     * The accepted MIME types sent in the HTTP Accept header.
+     * @since 6867
+     */
+    public static final String PLUGIN_MIME_TYPES = "application/java-archive, application/zip; q=0.9, application/octet-stream; q=0.5";
+    
+    private final Collection<PluginInformation> toUpdate = new LinkedList<>();
+    private final Collection<PluginInformation> failed = new LinkedList<>();
+    private final Collection<PluginInformation> downloaded = new LinkedList<>();
     private Exception lastException;
     private boolean canceled;
     private HttpURLConnection downloadConnection;
@@ -82,7 +87,8 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
         this.toUpdate.addAll(toUpdate);
     }
 
-    @Override protected void cancel() {
+    @Override
+    protected void cancel() {
         this.canceled = true;
         synchronized(this) {
             if (downloadConnection != null) {
@@ -91,7 +97,8 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
         }
     }
 
-    @Override protected void finish() {}
+    @Override
+    protected void finish() {}
 
     protected void download(PluginInformation pi, File file) throws PluginDownloadException{
         if (pi.mainversion > Version.getInstance().getVersion()) {
@@ -109,8 +116,6 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             if (answer != 1)
                 throw new PluginDownloadException(tr("Download skipped"));
         }
-        OutputStream out = null;
-        InputStream in = null;
         try {
             if (pi.downloadlink == null) {
                 String msg = tr("Cannot download plugin ''{0}''. Its download link is not known. Skipping download.", pi.name);
@@ -119,13 +124,16 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             }
             URL url = new URL(pi.downloadlink);
             synchronized(this) {
-                downloadConnection = MirroredInputStream.connectFollowingRedirect(url);
+                downloadConnection = MirroredInputStream.connectFollowingRedirect(url, PLUGIN_MIME_TYPES);
             }
-            in = downloadConnection.getInputStream();
-            out = new FileOutputStream(file);
-            byte[] buffer = new byte[8192];
-            for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
-                out.write(buffer, 0, read);
+            try (
+                InputStream in = downloadConnection.getInputStream();
+                OutputStream out = new FileOutputStream(file)
+            ) {
+                byte[] buffer = new byte[8192];
+                for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
+                    out.write(buffer, 0, read);
+                }
             }
         } catch (MalformedURLException e) {
             String msg = tr("Cannot download plugin ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.", pi.name, pi.downloadlink);
@@ -136,22 +144,19 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
                 return;
             throw new PluginDownloadException(e);
         } finally {
-            Utils.close(in);
             synchronized(this) {
                 downloadConnection = null;
             }
-            Utils.close(out);
         }
     }
 
-    @Override protected void realRun() throws SAXException, IOException {
+    @Override
+    protected void realRun() throws SAXException, IOException {
         File pluginDir = Main.pref.getPluginsDirectory();
-        if (!pluginDir.exists()) {
-            if (!pluginDir.mkdirs()) {
-                lastException = new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
-                failed.addAll(toUpdate);
-                return;
-            }
+        if (!pluginDir.exists() && !pluginDir.mkdirs()) {
+            lastException = new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
+            failed.addAll(toUpdate);
+            return;
         }
         getProgressMonitor().setTicksCount(toUpdate.size());
         for (PluginInformation d : toUpdate) {

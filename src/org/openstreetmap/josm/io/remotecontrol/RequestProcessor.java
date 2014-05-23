@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class RequestProcessor extends Thread {
      * Will be initialized with default handlers here. Other plug-ins
      * can extend this list by using @see addRequestHandler
      */
-    private static Map<String, Class<? extends RequestHandler>> handlers = new TreeMap<String, Class<? extends RequestHandler>>();
+    private static Map<String, Class<? extends RequestHandler>> handlers = new TreeMap<>();
 
     /**
      * Constructor
@@ -104,8 +105,7 @@ public class RequestProcessor extends Thread {
      */
     private static void addRequestHandlerClass(String command,
                 Class<? extends RequestHandler> handler, boolean silent) {
-        if(command.charAt(0) == '/')
-        {
+        if(command.charAt(0) == '/') {
             command = command.substring(1);
         }
         String commandWithSlash = "/" + command;
@@ -143,7 +143,7 @@ public class RequestProcessor extends Thread {
         Writer out = null;
         try {
             OutputStream raw = new BufferedOutputStream(request.getOutputStream());
-            out = new OutputStreamWriter(raw);
+            out = new OutputStreamWriter(raw, StandardCharsets.UTF_8);
             BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII"));
 
             String get = in.readLine();
@@ -165,7 +165,7 @@ public class RequestProcessor extends Thread {
             }
             String url = st.nextToken();
 
-            if (!method.equals("GET")) {
+            if (!"GET".equals(method)) {
                 sendNotImplemented(out);
                 return;
             }
@@ -174,7 +174,7 @@ public class RequestProcessor extends Thread {
 
             String command = questionPos < 0 ? url : url.substring(0, questionPos);
 
-            Map <String,String> headers = new HashMap<String, String>();
+            Map <String,String> headers = new HashMap<>();
             int k=0, MAX_HEADERS=20;
             while (k<MAX_HEADERS) {
                 get=in.readLine();
@@ -245,6 +245,7 @@ public class RequestProcessor extends Thread {
             try {
                 sendError(out);
             } catch (IOException e1) {
+                Main.warn(e1);
             }
         } finally {
             try {
@@ -269,7 +270,7 @@ public class RequestProcessor extends Thread {
         out.write("<HEAD><TITLE>Internal Error</TITLE>\r\n");
         out.write("</HEAD>\r\n");
         out.write("<BODY>");
-        out.write("<H1>HTTP Error 500: Internal Server Error</h2>\r\n");
+        out.write("<H1>HTTP Error 500: Internal Server Error</H1>\r\n");
         out.write("</BODY></HTML>\r\n");
         out.flush();
     }
@@ -362,12 +363,12 @@ public class RequestProcessor extends Thread {
         if (endHeaders)
             out.write("\r\n");
     }
-    
+
     public static String getHandlersInfoAsJSON() {
         StringBuilder r = new StringBuilder();
         boolean first = true;
         r.append("[");
-        
+
         for (Entry<String, Class<? extends RequestHandler>> p : handlers.entrySet()) {
             if (first) {
                 first = false;
@@ -382,18 +383,27 @@ public class RequestProcessor extends Thread {
     }
 
     public static String getHandlerInfoAsJSON(String cmd) {
-        StringWriter w = new StringWriter();
-        PrintWriter r = new PrintWriter(w);
-        RequestHandler handler = null;
-        try {
-            Class<?> c = handlers.get(cmd);
-            if (c==null) return null;
-            handler = handlers.get(cmd).newInstance();
-        } catch (Exception ex) {
-            Main.error(ex);
+        try (StringWriter w = new StringWriter()) {
+            PrintWriter r = new PrintWriter(w);
+            RequestHandler handler = null;
+            try {
+                Class<?> c = handlers.get(cmd);
+                if (c==null) return null;
+                handler = handlers.get(cmd).newInstance();
+            } catch (InstantiationException | IllegalAccessException ex) {
+                Main.error(ex);
+                return null;
+            }
+
+            printJsonInfo(cmd, r, handler);
+            return w.toString();
+        } catch (IOException e) {
+            Main.error(e);
             return null;
         }
+    }
 
+    private static void printJsonInfo(String cmd, PrintWriter r, RequestHandler handler) {
         r.printf("{ \"request\" : \"%s\"", cmd);
         if (handler.getUsage() != null) {
             r.printf(", \"usage\" : \"%s\"", handler.getUsage());
@@ -423,7 +433,7 @@ public class RequestProcessor extends Thread {
                 r.append(optional[i]).append('\"');
             }
         }
-        
+
         r.append("], \"examples\" : [");
         String[] examples = handler.getUsageExamples(cmd.substring(1));
         if (examples != null) {
@@ -437,14 +447,6 @@ public class RequestProcessor extends Thread {
             }
         }
         r.append("]}");
-        try {
-            return w.toString();
-        } finally {
-            try {
-                w.close();
-            } catch (IOException ex) {
-            }
-        }
     }
 
     /**

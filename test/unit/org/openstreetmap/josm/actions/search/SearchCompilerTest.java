@@ -3,16 +3,18 @@ package org.openstreetmap.josm.actions.search;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 public class SearchCompilerTest {
 
+    /**
+     * Setup test.
+     */
     @Before
-    public void setUp() throws Exception {
-        Main.initApplicationPreferences();
+    public void setUp() {
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     protected OsmPrimitive newPrimitive(String key, String value) {

@@ -2,9 +2,11 @@
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -24,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -39,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.UIManager;
@@ -46,11 +50,15 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.NavigatableComponent.SoMChangeListener;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
@@ -76,7 +84,37 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-public class MapStatus extends JPanel implements Helpful, Destroyable {
+public class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener {
+
+    private static final DecimalFormat ONE_DECIMAL_PLACE = new DecimalFormat("0.0");
+
+    /**
+     * Property for map status background color.
+     * @since 6789
+     */
+    public static final ColorProperty PROP_BACKGROUND_COLOR = new ColorProperty(
+            marktr("Status bar background"), Color.decode("#b8cfe5"));
+
+    /**
+     * Property for map status background color (active state).
+     * @since 6789
+     */
+    public static final ColorProperty PROP_ACTIVE_BACKGROUND_COLOR = new ColorProperty(
+            marktr("Status bar background: active"), Color.decode("#aaff5e"));
+
+    /**
+     * Property for map status foreground color.
+     * @since 6789
+     */
+    public static final ColorProperty PROP_FOREGROUND_COLOR = new ColorProperty(
+            marktr("Status bar foreground"), Color.black);
+
+    /**
+     * Property for map status foreground color (active state).
+     * @since 6789
+     */
+    public static final ColorProperty PROP_ACTIVE_FOREGROUND_COLOR = new ColorProperty(
+            marktr("Status bar foreground: active"), Color.black);
 
     /**
      * The MapView this status belongs to.
@@ -136,19 +174,23 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
 
     }
 
-    final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
-    final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
+    final ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
+    final ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20, PROP_BACKGROUND_COLOR.get());
     final JosmTextField helpText = new JosmTextField();
-    final ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11);
-    final ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
-    final ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
-    final ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10);
     final JProgressBar progressBar = new JProgressBar();
     public final BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
 
     private final SoMChangeListener somListener;
 
-    private double distValue; // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
+    // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
+    private double distValue;
+
+    // Determines if angle panel is enabled or not
+    private boolean angleEnabled = false;
 
     /**
      * This is the thread that runs in the background and collects the information displayed.
@@ -156,7 +198,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
      */
     private Thread thread;
 
-    private final List<StatusTextHistory> statusText = new ArrayList<StatusTextHistory>();
+    private final List<StatusTextHistory> statusText = new ArrayList<>();
 
     private static class StatusTextHistory {
         final Object id;
@@ -221,8 +263,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                         try {
                             wait(1000);
                         } catch (InterruptedException e) {
-                            // Occurs frequently during JOSM shutdown, log set to debug only
-                            Main.debug("InterruptedException in "+MapStatus.class.getSimpleName());
+                            // Occurs frequently during JOSM shutdown, log set to trace only
+                            Main.trace("InterruptedException in "+MapStatus.class.getSimpleName());
                         }
                         ms.modifiers = mouseState.modifiers;
                         ms.mousePos = mouseState.mousePos;
@@ -282,7 +324,6 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                                         statusBarElementUpdate(ms);
                                     }
 
-
                                     // Popup Information
                                     // display them if the middle mouse button is pressed and
                                     // keep them until the mouse is moved
@@ -313,7 +354,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
 
                                         // These labels may need to be updated from the outside
                                         // so collect them
-                                        List<JLabel> lbls = new ArrayList<JLabel>(osms.size());
+                                        List<JLabel> lbls = new ArrayList<>(osms.size());
                                         for (final OsmPrimitive osm : osms) {
                                             JLabel l = popupBuildPrimitiveLabels(osm);
                                             lbls.add(l);
@@ -328,8 +369,6 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                                     oldMousePos = ms.mousePos;
                                 } catch (ConcurrentModificationException x) {
                                     Main.warn(x);
-                                } catch (NullPointerException x) {
-                                    Main.warn(x);
                                 } finally {
                                     if (ds != null) {
                                         if(isAtOldPosition && middleMouseDown) {
@@ -342,8 +381,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                             }
                         });
                     } catch (InterruptedException e) {
-                        // Occurs frequently during JOSM shutdown, log set to debug only
-                        Main.debug("InterruptedException in "+MapStatus.class.getSimpleName());
+                        // Occurs frequently during JOSM shutdown, log set to trace only
+                        Main.trace("InterruptedException in "+MapStatus.class.getSimpleName());
                     } catch (InvocationTargetException e) {
                         Main.warn(e);
                     }
@@ -679,6 +718,61 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         mv.removeKeyListener(keyAdapter);
     }
 
+    private class MapStatusPopupMenu extends JPopupMenu {
+
+        private final JMenuItem jumpButton = add(Main.main.menu.jumpToAct);
+        
+        private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
+        
+        private final JSeparator separator = new JSeparator();
+
+        private final JMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide status bar")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
+                Main.pref.put("statusbar.always-visible", sel);
+            }
+        });
+
+        public MapStatusPopupMenu() {
+            for (final String key : new TreeSet<>(SystemOfMeasurement.ALL_SYSTEMS.keySet())) {
+                JCheckBoxMenuItem item = new JCheckBoxMenuItem(new AbstractAction(key) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateSystemOfMeasurement(key);
+                    }
+                });
+                somItems.add(item);
+                add(item);
+            }
+
+            add(separator);
+            add(doNotHide);
+
+            addPopupMenuListener(new PopupMenuListener() {
+                @Override
+                public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                    Component invoker = ((JPopupMenu)e.getSource()).getInvoker();
+                    jumpButton.setVisible(latText.equals(invoker) || lonText.equals(invoker));
+                    String currentSOM = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
+                    for (JMenuItem item : somItems) {
+                        item.setSelected(item.getText().equals(currentSOM));
+                        item.setVisible(distText.equals(invoker));
+                    }
+                    separator.setVisible(distText.equals(invoker));
+                    doNotHide.setSelected(Main.pref.getBoolean("statusbar.always-visible", true));
+                }
+                @Override
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                    // Do nothing
+                }
+                @Override
+                public void popupMenuCanceled(PopupMenuEvent e) {
+                    // Do nothing
+                }
+            });
+        }
+    }
 
     /**
      * Construct a new MapStatus and attach it to the map view.
@@ -687,31 +781,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
     public MapStatus(final MapFrame mapFrame) {
         this.mv = mapFrame.mapView;
         this.collector = new Collector(mapFrame);
-
+        
         // Context menu of status bar
-        setComponentPopupMenu(new JPopupMenu() {
-            JCheckBoxMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide status bar")) {
-                @Override public void actionPerformed(ActionEvent e) {
-                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                    Main.pref.put("statusbar.always-visible", sel);
-                }
-            });
-            JMenuItem jumpButton;
-            {
-                jumpButton = add(Main.main.menu.jumpToAct);
-                addPopupMenuListener(new PopupMenuListener() {
-                    @Override
-                    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                        Component invoker = ((JPopupMenu)e.getSource()).getInvoker();
-                        jumpButton.setVisible(invoker == latText || invoker == lonText);
-                        doNotHide.setSelected(Main.pref.getBoolean("statusbar.always-visible", true));
-                    }
-                    @Override public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
-                    @Override public void popupMenuCanceled(PopupMenuEvent e) {}
-                });
-                add(doNotHide);
-            }
-        });
+        setComponentPopupMenu(new MapStatusPopupMenu());
 
         // also show Jump To dialog on mouse click (except context menu)
         MouseListener jumpToOnLeftClick = new MouseAdapter() {
@@ -749,11 +821,8 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         latText.setInheritsPopupMenu(true);
         lonText.setInheritsPopupMenu(true);
         headingText.setInheritsPopupMenu(true);
-        //angleText.setInheritsPopupMenu(true);
         distText.setInheritsPopupMenu(true);
         nameText.setInheritsPopupMenu(true);
-        //helpText.setInheritsPopupMenu(true);
-        //progressBar.setInheritsPopupMenu(true);
 
         add(latText, GBC.std());
         add(lonText, GBC.std().insets(3,0,0,0));
@@ -761,19 +830,24 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         add(angleText, GBC.std().insets(3,0,0,0));
         add(distText, GBC.std().insets(3,0,0,0));
 
-        distText.addMouseListener(new MouseAdapter() {
-            private final List<String> soms = new ArrayList<String>(new TreeSet<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet()));
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                String som = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
-                String newsom = soms.get((soms.indexOf(som)+1)%soms.size());
-                NavigatableComponent.setSystemOfMeasurement(newsom);
-            }
-        });
+        if (Main.pref.getBoolean("statusbar.change-system-of-measurement-on-click", true)) {
+            distText.addMouseListener(new MouseAdapter() {
+                private final List<String> soms = new ArrayList<>(new TreeSet<>(SystemOfMeasurement.ALL_SYSTEMS.keySet()));
+    
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (!e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON1) {
+                        String som = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
+                        String newsom = soms.get((soms.indexOf(som)+1)%soms.size());
+                        updateSystemOfMeasurement(newsom);
+                    }
+                }
+            });
+        }
 
         NavigatableComponent.addSoMChangeListener(somListener = new SoMChangeListener() {
-            @Override public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
+            @Override
+            public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
                 setDist(distValue);
             }
         });
@@ -800,10 +874,26 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
             }
         });
 
+        Main.pref.addPreferenceChangeListener(this);
+
         // The background thread
         thread = new Thread(collector, "Map Status Collector");
         thread.setDaemon(true);
         thread.start();
+    }
+    
+    /**
+     * Updates the system of measurement and displays a notification.
+     * @param newsom The new system of measurement to set
+     * @since 6960
+     */
+    public void updateSystemOfMeasurement(String newsom) {
+        NavigatableComponent.setSystemOfMeasurement(newsom);
+        if (Main.pref.getBoolean("statusbar.notify.change-system-of-measurement", true)) {
+            new Notification(tr("System of measurement changed to {0}", newsom))
+                .setDuration(Notification.TIME_SHORT)
+                .show();
+        }
     }
 
     public JPanel getAnglePanel() {
@@ -825,6 +915,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
     public void setHelpText(String t) {
         setHelpText(null, t);
     }
+
     public void setHelpText(Object id, final String text)  {
 
         StatusTextHistory entry = new StatusTextHistory(id, text);
@@ -840,6 +931,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
             }
         });
     }
+
     public void resetHelpText(Object id) {
         if (statusText.isEmpty())
             return;
@@ -855,20 +947,24 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         }
         statusText.remove(entry);
     }
+
     public void setAngle(double a) {
-        angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + " \u00B0");
+        angleText.setText(a < 0 ? "--" : ONE_DECIMAL_PLACE.format(a) + " \u00B0");
     }
+
     public void setHeading(double h) {
-        headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + " \u00B0");
+        headingText.setText(h < 0 ? "--" : ONE_DECIMAL_PLACE.format(h) + " \u00B0");
     }
+
     /**
      * Sets the distance text to the given value
      * @param dist The distance value to display, in meters
      */
     public void setDist(double dist) {
         distValue = dist;
-        distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist));
+        distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist, ONE_DECIMAL_PLACE, 0.01));
     }
+
     /**
      * Sets the distance text to the total sum of given ways length
      * @param ways The ways to consider for the total distance
@@ -887,13 +983,25 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
         }
         setDist(dist);
     }
+
+    /**
+     * Activates the angle panel.
+     * @param activeFlag {@code true} to activate it, {@code false} to deactivate it
+     */
     public void activateAnglePanel(boolean activeFlag) {
-        angleText.setBackground(activeFlag ? ImageLabel.backColorActive : ImageLabel.backColor);
+        angleEnabled = activeFlag;
+        refreshAnglePanel();
+    }
+
+    private void refreshAnglePanel() {
+        angleText.setBackground(angleEnabled ? PROP_ACTIVE_BACKGROUND_COLOR.get() : PROP_BACKGROUND_COLOR.get());
+        angleText.setForeground(angleEnabled ? PROP_ACTIVE_FOREGROUND_COLOR.get() : PROP_FOREGROUND_COLOR.get());
     }
 
     @Override
     public void destroy() {
         NavigatableComponent.removeSoMChangeListener(somListener);
+        Main.pref.removePreferenceChangeListener(this);
 
         // MapFrame gets destroyed when the last layer is removed, but the status line background
         // thread that collects the information doesn't get destroyed automatically.
@@ -904,5 +1012,33 @@ public class MapStatus extends JPanel implements Helpful, Destroyable {
                 Main.error(e);
             }
         }
+    }
+
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        String key = e.getKey();
+        if (key.startsWith("color.")) {
+            key = key.substring("color.".length());
+            if (PROP_BACKGROUND_COLOR.getKey().equals(key) || PROP_FOREGROUND_COLOR.getKey().equals(key)) {
+                for (ImageLabel il : new ImageLabel[]{latText, lonText, headingText, distText, nameText}) {
+                    il.setBackground(PROP_BACKGROUND_COLOR.get());
+                    il.setForeground(PROP_FOREGROUND_COLOR.get());
+                }
+                refreshAnglePanel();
+            } else if (PROP_ACTIVE_BACKGROUND_COLOR.getKey().equals(key) || PROP_ACTIVE_FOREGROUND_COLOR.getKey().equals(key)) {
+                refreshAnglePanel();
+            }
+        }
+    }
+
+    /**
+     * Loads all colors from preferences.
+     * @since 6789
+     */
+    public static void getColors() {
+        PROP_BACKGROUND_COLOR.get();
+        PROP_FOREGROUND_COLOR.get();
+        PROP_ACTIVE_BACKGROUND_COLOR.get();
+        PROP_ACTIVE_FOREGROUND_COLOR.get();
     }
 }

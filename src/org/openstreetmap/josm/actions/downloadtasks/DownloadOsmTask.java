@@ -36,9 +36,9 @@ import org.xml.sax.SAXException;
  */
 public class DownloadOsmTask extends AbstractDownloadTask {
 
-    protected static final String PATTERN_OSM_API_URL           = "http://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
-    protected static final String PATTERN_OVERPASS_API_URL      = "http://.*/interpreter\\?data=.*";
-    protected static final String PATTERN_OVERPASS_API_XAPI_URL = "http://.*/xapi(\\?.*\\[@meta\\]|_meta\\?).*";
+    protected static final String PATTERN_OSM_API_URL           = "https?://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
+    protected static final String PATTERN_OVERPASS_API_URL      = "https?://.*/interpreter\\?data=.*";
+    protected static final String PATTERN_OVERPASS_API_XAPI_URL = "https?://.*/xapi(\\?.*\\[@meta\\]|_meta\\?).*";
     protected static final String PATTERN_EXTERNAL_OSM_FILE     = "https?://.*/.*\\.osm";
 
     protected Bounds currentBounds;
@@ -95,7 +95,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
      * You can wait for the asynchronous download task to finish by synchronizing on the returned
      * {@link Future}, but make sure not to freeze up JOSM. Example:
      * <pre>
-     *    Future<?> future = task.download(...);
+     *    Future&lt;?&gt; future = task.download(...);
      *    // DON'T run this on the Swing EDT or JOSM will freeze
      *    future.get(); // waits for the dowload task to complete
      * </pre>
@@ -103,7 +103,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
      * The following example uses a pattern which is better suited if a task is launched from
      * the Swing EDT:
      * <pre>
-     *    final Future<?> future = task.download(...);
+     *    final Future&lt;?&gt; future = task.download(...);
      *    Runnable runAfterTask = new Runnable() {
      *       public void run() {
      *           // this is not strictly necessary because of the type of executor service
@@ -308,7 +308,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             String urlString = url.toExternalForm();
             if (urlString.matches(PATTERN_OSM_API_URL)) {
                 // TODO: proper i18n after stabilization
-                Collection<String> items = new ArrayList<String>();
+                Collection<String> items = new ArrayList<>();
                 items.add(tr("OSM Server URL:") + " " + url.getHost());
                 items.add(tr("Command")+": "+url.getPath());
                 if (url.getQuery() != null) {

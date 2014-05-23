@@ -13,12 +13,14 @@ import java.text.DateFormat;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
@@ -27,6 +29,8 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * VersionInfoPanel is an UI component which displays the basic properties of a version
@@ -39,16 +43,43 @@ public class VersionInfoPanel extends JPanel implements Observer{
     private JMultilineLabel lblInfo;
     private UrlLabel lblUser;
     private UrlLabel lblChangeset;
+    private JPanel pnlChangesetSource;
+    private JLabel lblSource;
     private JTextArea lblChangesetComment;
+    private JTextArea lblChangesetSource;
+
+    protected static JTextArea buildTextArea(String tooltip) {
+        JTextArea lbl = new JTextArea();
+        lbl.setLineWrap(true);
+        lbl.setWrapStyleWord(true);
+        lbl.setEditable(false);
+        lbl.setOpaque(false);
+        lbl.setToolTipText(tooltip);
+        return lbl;
+    }
+
+    protected static JLabel buildLabel(String text, String tooltip, JTextArea textArea) {
+        // We need text field to be a JTextArea for line wrapping but cannot put HTML code in here,
+        // so create a separate JLabel with same characteristics (margin, font)
+        JLabel lbl = new JLabel("<html><p style='margin-top:"+textArea.getMargin().top+"'>"+text+"</html>");
+        lbl.setFont(textArea.getFont());
+        lbl.setToolTipText(tooltip);
+        return lbl;
+    }
+
+    protected static JPanel buildTextPanel(JLabel label, JTextArea textArea) {
+        JPanel pnl = new JPanel(new GridBagLayout());
+        pnl.add(label, GBC.std().anchor(GBC.NORTHWEST));
+        pnl.add(textArea, GBC.eol().fill());
+        return pnl;
+    }
 
     protected void build() {
-        JPanel pnl1 = new JPanel();
-        pnl1.setLayout(new BorderLayout());
+        JPanel pnl1 = new JPanel(new BorderLayout());
         lblInfo = new JMultilineLabel("");
         pnl1.add(lblInfo, BorderLayout.CENTER);
 
-        JPanel pnlUserAndChangeset = new JPanel();
-        pnlUserAndChangeset.setLayout(new GridLayout(2,2));
+        JPanel pnlUserAndChangeset = new JPanel(new GridLayout(2,2));
         lblUser = new UrlLabel("", 2);
         pnlUserAndChangeset.add(new JLabel(tr("User:")));
         pnlUserAndChangeset.add(lblUser);
@@ -56,11 +87,11 @@ public class VersionInfoPanel extends JPanel implements Observer{
         lblChangeset = new UrlLabel("", 2);
         pnlUserAndChangeset.add(lblChangeset);
 
-        lblChangesetComment = new JTextArea();
-        lblChangesetComment.setLineWrap(true);
-        lblChangesetComment.setWrapStyleWord(true);
-        lblChangesetComment.setEditable(false);
-        lblChangesetComment.setOpaque(false);
+        lblChangesetComment = buildTextArea(tr("Changeset comment"));
+        lblChangesetSource = buildTextArea(tr("Changeset source"));
+
+        lblSource = buildLabel(tr("<b>Source</b>:"), tr("Changeset source"), lblChangesetSource);
+        pnlChangesetSource = buildTextPanel(lblSource, lblChangesetSource);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
@@ -74,6 +105,8 @@ public class VersionInfoPanel extends JPanel implements Observer{
         add(pnlUserAndChangeset, gc);
         gc.gridy = 2;
         add(lblChangesetComment, gc);
+        gc.gridy = 3;
+        add(pnlChangesetSource, gc);
     }
 
     protected HistoryOsmPrimitive getPrimitive() {
@@ -133,22 +166,31 @@ public class VersionInfoPanel extends JPanel implements Observer{
         build();
     }
 
+    protected static String getUserUrl(String username) throws UnsupportedEncodingException {
+        return AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(username, "UTF-8").replaceAll("\\+", "%20");
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         lblInfo.setText(getInfoText());
 
-        if (!model.isLatest(getPrimitive())) {
-            String url = AbstractInfoAction.getBaseBrowseUrl() + "/changeset/" + getPrimitive().getChangesetId();
-            lblChangeset.setUrl(url);
-            lblChangeset.setDescription(Long.toString(getPrimitive().getChangesetId()));
-            final String comment = getPrimitive().getChangeset() != null ? getPrimitive().getChangeset().get("comment") : null;
-            lblChangesetComment.setText(comment);
-            lblChangesetComment.setToolTipText(tr("Changeset comment"));
+        HistoryOsmPrimitive primitive = getPrimitive();
+        Changeset cs = primitive.getChangeset();
 
+        if (!model.isLatest(primitive)) {
+            User user = primitive.getUser();
+            String url = AbstractInfoAction.getBaseBrowseUrl() + "/changeset/" + primitive.getChangesetId();
+            lblChangeset.setUrl(url);
+            lblChangeset.setDescription(Long.toString(primitive.getChangesetId()));
+
+            String username = "";
+            if (user != null) {
+                username = user.getName();
+            }
+            lblUser.setDescription(username);
             try {
-                if (getPrimitive().getUser() != null && getPrimitive().getUser() != User.getAnonymous()) {
-                    url = AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(getPrimitive().getUser().getName(), "UTF-8").replaceAll("\\+", "%20");
-                    lblUser.setUrl(url);
+                if (user != null && user != User.getAnonymous()) {
+                    lblUser.setUrl(getUserUrl(username));
                 } else {
                     lblUser.setUrl(null);
                 }
@@ -156,28 +198,37 @@ public class VersionInfoPanel extends JPanel implements Observer{
                 Main.error(e);
                 lblUser.setUrl(null);
             }
-            String username = "";
-            if (getPrimitive().getUser() != null) {
-                username = getPrimitive().getUser().getName();
-            }
-            lblUser.setDescription(username);
         } else {
-            String user = JosmUserIdentityManager.getInstance().getUserName();
-            if (user == null) {
+            String username = JosmUserIdentityManager.getInstance().getUserName();
+            if (username == null) {
                 lblUser.setDescription(tr("anonymous"));
                 lblUser.setUrl(null);
             } else {
+                lblUser.setDescription(username);
                 try {
-                    String url = AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(user, "UTF-8").replaceAll("\\+", "%20");
-                    lblUser.setUrl(url);
+                    lblUser.setUrl(getUserUrl(username));
                 } catch(UnsupportedEncodingException e) {
                     Main.error(e);
                     lblUser.setUrl(null);
                 }
-                lblUser.setDescription(user);
             }
             lblChangeset.setDescription(tr("none"));
             lblChangeset.setUrl(null);
         }
+
+        final Changeset oppCs = model.getPointInTime(pointInTimeType.opposite()).getChangeset();
+        updateText(cs, "comment", lblChangesetComment, null, oppCs, lblChangesetComment);
+        updateText(cs, "source", lblChangesetSource, lblSource, oppCs, pnlChangesetSource);
+    }
+    
+    protected static void updateText(Changeset cs, String attr, JTextArea textArea, JLabel label, Changeset oppCs, JComponent container) {
+        final String text = cs != null ? cs.get(attr) : null;
+        // Update text, hide prefixing label if empty
+        if (label != null) {
+            label.setVisible(text != null && !Utils.strip(text).isEmpty());
+        }
+        textArea.setText(text);
+        // Hide container if values of both versions are empty
+        container.setVisible(text != null || (oppCs != null && oppCs.get(attr) != null));
     }
 }

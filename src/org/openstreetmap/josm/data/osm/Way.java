@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * One full way, consisting of a list of way {@link Node nodes}.
@@ -40,7 +42,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 1862
      */
     public List<Node> getNodes() {
-        return new CopyList<Node>(nodes);
+        return new CopyList<>(nodes);
     }
 
     /**
@@ -124,8 +126,8 @@ public final class Way extends OsmPrimitive implements IWay {
      *
      * @param index the position
      * @return  the node at position <code>index</code>
-     * @exception IndexOutOfBoundsException thrown if <code>index</code> < 0
-     * or <code>index</code> >= {@link #getNodesCount()}
+     * @exception IndexOutOfBoundsException thrown if <code>index</code> &lt; 0
+     * or <code>index</code> &gt;= {@link #getNodesCount()}
      * @since 1862
      */
     public Node getNode(int index) {
@@ -165,7 +167,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 4671
      */
     public Set<Node> getNeighbours(Node node) {
-        HashSet<Node> neigh = new HashSet<Node>();
+        HashSet<Node> neigh = new HashSet<>();
 
         if (node == null) return neigh;
 
@@ -189,7 +191,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @since 3348
      */
     public List<Pair<Node,Node>> getNodePairs(boolean sort) {
-        List<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
+        List<Pair<Node,Node>> chunkSet = new ArrayList<>();
         if (isIncomplete()) return chunkSet;
         Node lastN = null;
         Node[] nodes = this.nodes;
@@ -198,7 +200,7 @@ public final class Way extends OsmPrimitive implements IWay {
                 lastN = n;
                 continue;
             }
-            Pair<Node,Node> np = new Pair<Node,Node>(lastN, n);
+            Pair<Node,Node> np = new Pair<>(lastN, n);
             if (sort) {
                 Pair.sort(np);
             }
@@ -252,11 +254,11 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     /**
-     * Contructs a new {@code Way} for the given id. If the id > 0, the way is marked
+     * Contructs a new {@code Way} for the given id. If the id &gt; 0, the way is marked
      * as incomplete. If id == 0 then way is marked as new
      *
-     * @param id the id. >= 0 required
-     * @throws IllegalArgumentException if id < 0
+     * @param id the id. &gt;= 0 required
+     * @throws IllegalArgumentException if id &lt; 0
      * @since 343
      */
     public Way(long id) throws IllegalArgumentException {
@@ -265,9 +267,9 @@ public final class Way extends OsmPrimitive implements IWay {
 
     /**
      * Contructs a new {@code Way} with given id and version.
-     * @param id the id. >= 0 required
+     * @param id the id. &gt;= 0 required
      * @param version the version
-     * @throws IllegalArgumentException if id < 0
+     * @throws IllegalArgumentException if id &lt; 0
      * @since 2620
      */
     public Way(long id, int version) throws IllegalArgumentException {
@@ -282,7 +284,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
             WayData wayData = (WayData) data;
 
-            List<Node> newNodes = new ArrayList<Node>(wayData.getNodes().size());
+            List<Node> newNodes = new ArrayList<>(wayData.getNodes().size());
             for (Long nodeId : wayData.getNodes()) {
                 Node node = (Node)getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
                 if (node != null) {
@@ -384,7 +386,7 @@ public final class Way extends OsmPrimitive implements IWay {
         boolean locked = writeLock();
         try {
             boolean closed = (lastNode() == firstNode() && selection.contains(lastNode()));
-            List<Node> copy = new ArrayList<Node>();
+            List<Node> copy = new ArrayList<>();
 
             for (Node n: nodes) {
                 if (!selection.contains(n)) {
@@ -424,10 +426,7 @@ public final class Way extends OsmPrimitive implements IWay {
                 throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
             clearCachedStyle();
             n.addReferrer(this);
-            Node[] newNodes = new Node[nodes.length + 1];
-            System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
-            newNodes[nodes.length] = n;
-            nodes = newNodes;
+            nodes = Utils.addInArrayCopy(nodes, n);
             n.clearCachedStyle();
             fireNodesChanged();
         } finally {
@@ -735,4 +734,13 @@ public final class Way extends OsmPrimitive implements IWay {
         }
         return false;
     }
+
+    @Override
+    protected void keysChangedImpl(Map<String, String> originalKeys) {
+        super.keysChangedImpl(originalKeys);
+        for (final Node n : nodes) {
+            n.clearCachedStyle();
+        }
+    }
+    
 }

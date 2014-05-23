@@ -5,7 +5,7 @@ way[highway=~/^(unclassified|residential|living_street|service)$/] {
   set minor_road;
 }
 
-way[highway][name =~ /(?i).* (Ave|Blvd|Br|Brg|Cct|Cir|Cl|Cr|Crct|Cres|Crt|Ct|Dr|Drv|Esp|Espl|Hwy|Ln|Mw|Mwy|Pl|Rd|Qy|Qys|Sq|St|Str|Ter|Tce|Tr|Wy)[.]?$/] {
+way[highway][name =~ /(?i).* (Ave|Blvd|Br|Brg|Cct|Cir|Cl|Cr|Crct|Cres|Crt|Ct|Dr|Drv|Esp|Espl|Hwy|Ln|Mw|Mwy|Pky|Pkwy|Pl|Rd|Qy|Qys|Sq|St|Str|Ter|Tce|Tr|Wy)[.]?$/] {
   throwWarning: tr("abbreviated street name");
   assertMatch: "way highway=unclassified name=\"Foo Ave\"";
   assertMatch: "way highway=unclassified name=\"Foo Ave.\"";
@@ -50,16 +50,6 @@ way.major_road[!ref] {
   throwOther: tr("highway without a reference");
   assertMatch: "way highway=primary";
   assertNoMatch: "way highway=primary ref=123";
-}
-
-way.major_road[foot?][!sidewalk] {
-  throwWarning: tr("major road used with {0}", "{0.tag}");
-  suggestAlternative: "sidewalk";
-  suggestAlternative: tr("separate footway");
-  assertMatch: "way highway=primary foot=yes";
-  assertNoMatch: "way highway=primary";
-  assertNoMatch: "way highway=primary foot=yes sidewalk=both";
-  assertNoMatch: "way highway=primary foot=no";
 }
 
 way[highway=road] {

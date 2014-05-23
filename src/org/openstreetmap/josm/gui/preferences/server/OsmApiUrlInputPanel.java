@@ -40,11 +40,11 @@ import org.openstreetmap.josm.tools.Utils;
  * Component allowing input os OSM API URL.
  */
 public class OsmApiUrlInputPanel extends JPanel {
-    
+
     /**
      * OSM API URL property key.
      */
-    static public final String API_URL_PROP = OsmApiUrlInputPanel.class.getName() + ".apiUrl";
+    public static final String API_URL_PROP = OsmApiUrlInputPanel.class.getName() + ".apiUrl";
 
     private JLabel lblValid;
     private JLabel lblApiUrl;
@@ -53,7 +53,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     private SideButton btnTest;
     /** indicates whether to use the default OSM URL or not */
     private JCheckBox cbUseDefaultServerUrl;
-    
+
     private ApiUrlPropagator propagator;
 
     protected JComponent buildDefaultServerUrlPanel() {
@@ -63,7 +63,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         return cbUseDefaultServerUrl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -153,10 +153,10 @@ public class OsmApiUrlInputPanel extends JPanel {
             }
         }
     }
-    
+
     /**
      * Returns the entered API URL, stripped of leading and trailing white characters.
-     * @return the entered API URL, stripped of leading and trailing white characters. 
+     * @return the entered API URL, stripped of leading and trailing white characters.
      *         May be an empty string if nothing has been entered. In this case, it means the user wants to use {@link OsmApi#DEFAULT_API_URL}.
      * @see Utils#strip(String)
      * @since 6602
@@ -188,7 +188,7 @@ public class OsmApiUrlInputPanel extends JPanel {
                         @Override
                         public void run() {
                             if (task.isSuccess()) {
-                                lblValid.setIcon(ImageProvider.get("dialogs/changeset", "valid"));
+                                lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
                                 lblValid.setToolTipText(tr("The API URL is valid."));
                                 lastTestedUrl = url;
                                 updateEnabledState();
@@ -204,7 +204,7 @@ public class OsmApiUrlInputPanel extends JPanel {
             Main.worker.submit(r);
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             String url = getStrippedApiUrl();
             boolean enabled = !url.isEmpty() && !url.equals(lastTestedUrl);
             if (enabled) {
@@ -240,7 +240,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         btnTest.setEnabled(enabled);
     }
 
-    static private class ApiUrlValidator extends AbstractTextComponentValidator {
+    private static class ApiUrlValidator extends AbstractTextComponentValidator {
         public ApiUrlValidator(JTextComponent tc) throws IllegalArgumentException {
             super(tc);
         }

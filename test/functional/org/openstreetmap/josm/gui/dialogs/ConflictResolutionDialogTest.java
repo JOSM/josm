@@ -3,11 +3,13 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import javax.swing.JFrame;
 
+import org.junit.Ignore;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
+@Ignore
 public class ConflictResolutionDialogTest extends JFrame {
 
     private ConflictResolutionDialog dialog;
@@ -16,9 +18,8 @@ public class ConflictResolutionDialogTest extends JFrame {
         setSize(100,100);
         dialog = new ConflictResolutionDialog(this);
         dialog.setSize(600,600);
-
-
     }
+
     protected void populate() {
         Way w1 = new Way(1);
         w1.addNode(new Node(10));
@@ -35,6 +36,9 @@ public class ConflictResolutionDialogTest extends JFrame {
         dialog.setVisible(true);
     }
 
+    /**
+     * Constructs a new {@code ConflictResolutionDialogTest}.
+     */
     public ConflictResolutionDialogTest() {
         build();
     }

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -25,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,9 +32,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,6 +66,9 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -92,38 +98,44 @@ import org.xml.sax.SAXException;
 
 public abstract class SourceEditor extends JPanel {
 
-    final protected boolean isMapPaint;
+    protected final SourceType sourceType;
+    protected final boolean canEnable;
 
     protected final JTable tblActiveSources;
     protected final ActiveSourcesModel activeSourcesModel;
-    protected final JList lstAvailableSources;
+    protected final JList<ExtendedSourceEntry> lstAvailableSources;
     protected final AvailableSourcesListModel availableSourcesModel;
-    protected final JTable tblIconPaths;
-    protected final IconPathTableModel iconPathsModel;
     protected final String availableSourcesUrl;
     protected final List<SourceProvider> sourceProviders;
+
+    protected JTable tblIconPaths;
+    protected IconPathTableModel iconPathsModel;
 
     protected boolean sourcesInitiallyLoaded;
 
     /**
-     * constructor
-     * @param isMapPaint true for MapPaintPreference subclass, false
-     *  for TaggingPresetPreference subclass
+     * Constructs a new {@code SourceEditor}.
+     * @param sourceType the type of source managed by this editor
      * @param availableSourcesUrl the URL to the list of available sources
      * @param sourceProviders the list of additional source providers, from plugins
+     * @param handleIcons {@code true} if icons may be managed, {@code false} otherwise
      */
-    public SourceEditor(final boolean isMapPaint, final String availableSourcesUrl, final List<SourceProvider> sourceProviders) {
+    public SourceEditor(SourceType sourceType, String availableSourcesUrl, List<SourceProvider> sourceProviders, boolean handleIcons) {
 
-        this.isMapPaint = isMapPaint;
+        this.sourceType = sourceType;
+        this.canEnable = sourceType.equals(SourceType.MAP_PAINT_STYLE) || sourceType.equals(SourceType.TAGCHECKER_RULE);
+
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
-        this.lstAvailableSources = new JList(availableSourcesModel = new AvailableSourcesListModel(selectionModel));
+        this.availableSourcesModel = new AvailableSourcesListModel(selectionModel);
+        this.lstAvailableSources = new JList<>(availableSourcesModel);
         this.lstAvailableSources.setSelectionModel(selectionModel);
         this.lstAvailableSources.setCellRenderer(new SourceEntryListCellRenderer());
         this.availableSourcesUrl = availableSourcesUrl;
         this.sourceProviders = sourceProviders;
 
         selectionModel = new DefaultListSelectionModel();
-        tblActiveSources = new JTable(activeSourcesModel = new ActiveSourcesModel(selectionModel)) {
+        activeSourcesModel = new ActiveSourcesModel(selectionModel);
+        tblActiveSources = new JTable(activeSourcesModel) {
             // some kind of hack to prevent the table from scrolling slightly to the
             // right when clicking on the text
             @Override
@@ -139,7 +151,7 @@ public abstract class SourceEditor extends JPanel {
         tblActiveSources.setTableHeader(null);
         tblActiveSources.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         SourceEntryTableCellRenderer sourceEntryRenderer = new SourceEntryTableCellRenderer();
-        if (isMapPaint) {
+        if (canEnable) {
             tblActiveSources.getColumnModel().getColumn(0).setMaxWidth(1);
             tblActiveSources.getColumnModel().getColumn(0).setResizable(false);
             tblActiveSources.getColumnModel().getColumn(1).setCellRenderer(sourceEntryRenderer);
@@ -152,7 +164,7 @@ public abstract class SourceEditor extends JPanel {
             // Yes, this is a little ugly, but should work
             @Override
             public void tableChanged(TableModelEvent e) {
-                TableHelper.adjustColumnWidth(tblActiveSources, isMapPaint ? 1 : 0, 800);
+                TableHelper.adjustColumnWidth(tblActiveSources, canEnable ? 1 : 0, 800);
             }
         });
         activeSourcesModel.setActiveSources(getInitialSourcesList());
@@ -167,7 +179,7 @@ public abstract class SourceEditor extends JPanel {
                     int col = tblActiveSources.columnAtPoint(e.getPoint());
                     if (row < 0 || row >= tblActiveSources.getRowCount())
                         return;
-                    if (isMapPaint  && col != 1)
+                    if (canEnable && col != 1)
                         return;
                     editActiveSourceAction.actionPerformed(null);
                 }
@@ -181,7 +193,7 @@ public abstract class SourceEditor extends JPanel {
 
         MoveUpDownAction moveUp = null;
         MoveUpDownAction moveDown = null;
-        if (isMapPaint) {
+        if (sourceType.equals(SourceType.MAP_PAINT_STYLE)) {
             moveUp = new MoveUpDownAction(false);
             moveDown = new MoveUpDownAction(true);
             tblActiveSources.getSelectionModel().addListSelectionListener(moveUp);
@@ -258,7 +270,7 @@ public abstract class SourceEditor extends JPanel {
         sideButtonTB.add(editActiveSourceAction);
         sideButtonTB.add(removeActiveSourcesAction);
         sideButtonTB.addSeparator(new Dimension(12, 30));
-        if (isMapPaint) {
+        if (sourceType.equals(SourceType.MAP_PAINT_STYLE)) {
             sideButtonTB.add(moveUp);
             sideButtonTB.add(moveDown);
         }
@@ -296,8 +308,15 @@ public abstract class SourceEditor extends JPanel {
          * Icon configuration
          **/
 
-        selectionModel = new DefaultListSelectionModel();
-        tblIconPaths = new JTable(iconPathsModel = new IconPathTableModel(selectionModel));
+        if (handleIcons) {
+            buildIcons(gbc);
+        }
+    }
+
+    private void buildIcons(GridBagConstraints gbc) {
+        DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
+        iconPathsModel = new IconPathTableModel(selectionModel);
+        tblIconPaths = new JTable(iconPathsModel);
         tblIconPaths.setSelectionModel(selectionModel);
         tblIconPaths.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tblIconPaths.setTableHeader(null);
@@ -333,7 +352,8 @@ public abstract class SourceEditor extends JPanel {
         gbc.fill = GBC.BOTH;
         gbc.insets = new Insets(0, 11, 0, 0);
 
-        add(sp = new JScrollPane(tblIconPaths), gbc);
+        JScrollPane sp = new JScrollPane(tblIconPaths);
+        add(sp, gbc);
         sp.setColumnHeaderView(null);
 
         gbc.gridx = 3;
@@ -355,28 +375,28 @@ public abstract class SourceEditor extends JPanel {
     /**
      * Load the list of source entries that the user has configured.
      */
-    abstract public Collection<? extends SourceEntry> getInitialSourcesList();
+    public abstract Collection<? extends SourceEntry> getInitialSourcesList();
 
     /**
      * Load the list of configured icon paths.
      */
-    abstract public Collection<String> getInitialIconPathsList();
+    public abstract Collection<String> getInitialIconPathsList();
 
     /**
      * Get the default list of entries (used when resetting the list).
      */
-    abstract public Collection<ExtendedSourceEntry> getDefault();
+    public abstract Collection<ExtendedSourceEntry> getDefault();
 
     /**
      * Save the settings after user clicked "Ok".
      * @return true if restart is required
      */
-    abstract public boolean finish();
+    public abstract boolean finish();
 
     /**
      * Provide the GUI strings. (There are differences for MapPaint and Preset)
      */
-    abstract protected String getStr(I18nString ident);
+    protected abstract String getStr(I18nString ident);
 
     /**
      * Identifiers for strings that need to be provided.
@@ -396,7 +416,7 @@ public abstract class SourceEditor extends JPanel {
         while (p.hasNext()) {
             SourceEntry pe = p.next();
             SourceEntry ce = c.next();
-            if (!equal(pe.url, ce.url) || !equal(pe.name, ce.name) || pe.active != ce.active)
+            if (!Objects.equals(pe.url, ce.url) || !Objects.equals(pe.name, ce.name) || pe.active != ce.active)
                 return true;
         }
         return false;
@@ -421,12 +441,12 @@ public abstract class SourceEditor extends JPanel {
         sourcesInitiallyLoaded = true;
     }
 
-    protected static class AvailableSourcesListModel extends DefaultListModel {
+    protected static class AvailableSourcesListModel extends DefaultListModel<ExtendedSourceEntry> {
         private List<ExtendedSourceEntry> data;
         private DefaultListSelectionModel selectionModel;
 
         public AvailableSourcesListModel(DefaultListSelectionModel selectionModel) {
-            data = new ArrayList<ExtendedSourceEntry>();
+            data = new ArrayList<>();
             this.selectionModel = selectionModel;
         }
 
@@ -439,7 +459,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public ExtendedSourceEntry getElementAt(int index) {
             return data.get(index);
         }
 
@@ -463,7 +483,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public List<ExtendedSourceEntry> getSelected() {
-            List<ExtendedSourceEntry> ret = new ArrayList<ExtendedSourceEntry>();
+            List<ExtendedSourceEntry> ret = new ArrayList<>();
             for(int i=0; i<data.size();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     ret.add(data.get(i));
@@ -479,12 +499,12 @@ public abstract class SourceEditor extends JPanel {
 
         public ActiveSourcesModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-            this.data = new ArrayList<SourceEntry>();
+            this.data = new ArrayList<>();
         }
 
         @Override
         public int getColumnCount() {
-            return isMapPaint ? 2 : 1;
+            return canEnable ? 2 : 1;
         }
 
         @Override
@@ -494,7 +514,7 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            if (isMapPaint && columnIndex == 0)
+            if (canEnable && columnIndex == 0)
                 return data.get(rowIndex).active;
             else
                 return data.get(rowIndex);
@@ -502,12 +522,12 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return isMapPaint && columnIndex == 0;
+            return canEnable && columnIndex == 0;
         }
 
         @Override
         public Class<?> getColumnClass(int column) {
-            if (isMapPaint && column == 0)
+            if (canEnable && column == 0)
                 return Boolean.class;
             else return SourceEntry.class;
         }
@@ -516,7 +536,7 @@ public abstract class SourceEditor extends JPanel {
         public void setValueAt(Object aValue, int row, int column) {
             if (row < 0 || row >= getRowCount() || aValue == null)
                 return;
-            if (isMapPaint && column == 0) {
+            if (canEnable && column == 0) {
                 data.get(row).active = ! data.get(row).active;
             }
         }
@@ -555,7 +575,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public void removeIdxs(Collection<Integer> idxs) {
-            List<SourceEntry> newData = new ArrayList<SourceEntry>();
+            List<SourceEntry> newData = new ArrayList<>();
             for (int i=0; i<data.size(); ++i) {
                 if (!idxs.contains(i)) {
                     newData.add(data.get(i));
@@ -581,7 +601,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public List<SourceEntry> getSources() {
-            return new ArrayList<SourceEntry>(data);
+            return new ArrayList<>(data);
         }
 
         public boolean canMove(int i) {
@@ -677,6 +697,32 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
+    private static void prepareFileChooser(String url, JFileChooser fc) {
+        if (url == null || url.trim().length() == 0) return;
+        URL sourceUrl = null;
+        try {
+            sourceUrl = new URL(url);
+        } catch(MalformedURLException e) {
+            File f = new File(url);
+            if (f.isFile()) {
+                f = f.getParentFile();
+            }
+            if (f != null) {
+                fc.setCurrentDirectory(f);
+            }
+            return;
+        }
+        if (sourceUrl.getProtocol().startsWith("file")) {
+            File f = new File(sourceUrl.getPath());
+            if (f.isFile()) {
+                f = f.getParentFile();
+            }
+            if (f != null) {
+                fc.setCurrentDirectory(f);
+            }
+        }
+    }
+
     protected class EditSourceEntryDialog extends ExtendedDialog {
 
         private JosmTextField tfTitle;
@@ -684,9 +730,7 @@ public abstract class SourceEditor extends JPanel {
         private JCheckBox cbActive;
 
         public EditSourceEntryDialog(Component parent, String title, SourceEntry e) {
-            super(parent,
-                    title,
-                    new String[] {tr("Ok"), tr("Cancel")});
+            super(parent, title, new String[] {tr("Ok"), tr("Cancel")});
 
             JPanel p = new JPanel(new GridBagLayout());
 
@@ -708,12 +752,38 @@ public abstract class SourceEditor extends JPanel {
                 tfURL.setText(e.url);
             }
 
-            if (isMapPaint) {
+            if (canEnable) {
                 cbActive = new JCheckBox(tr("active"), e != null ? e.active : true);
                 p.add(cbActive, GBC.eol().insets(15, 0, 5, 0));
             }
             setButtonIcons(new String[] {"ok", "cancel"});
             setContent(p);
+
+            // Make OK button enabled only when a file/URL has been set
+            tfURL.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    updateOkButtonState();
+                }
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    updateOkButtonState();
+                }
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    updateOkButtonState();
+                }
+            });
+        }
+
+        private void updateOkButtonState() {
+            buttons.get(0).setEnabled(!Utils.strip(tfURL.getText()).isEmpty());
+        }
+
+        @Override
+        public void setupDialog() {
+            super.setupDialog();
+            updateOkButtonState();
         }
 
         class LaunchFileChooserAction extends AbstractAction {
@@ -722,39 +792,22 @@ public abstract class SourceEditor extends JPanel {
                 putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
             }
 
-            protected void prepareFileChooser(String url, JFileChooser fc) {
-                if (url == null || url.trim().length() == 0) return;
-                URL sourceUrl = null;
-                try {
-                    sourceUrl = new URL(url);
-                } catch(MalformedURLException e) {
-                    File f = new File(url);
-                    if (f.isFile()) {
-                        f = f.getParentFile();
-                    }
-                    if (f != null) {
-                        fc.setCurrentDirectory(f);
-                    }
-                    return;
-                }
-                if (sourceUrl.getProtocol().startsWith("file")) {
-                    File f = new File(sourceUrl.getPath());
-                    if (f.isFile()) {
-                        f = f.getParentFile();
-                    }
-                    if (f != null) {
-                        fc.setCurrentDirectory(f);
-                    }
-                }
-            }
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileFilter ff;
-                if (isMapPaint) {
+                switch (sourceType) {
+                case MAP_PAINT_STYLE:
                     ff = new ExtensionFileFilter("xml,mapcss,css,zip", "xml", tr("Map paint style file (*.xml, *.mapcss, *.zip)"));
-                } else {
+                    break;
+                case TAGGING_PRESET:
                     ff = new ExtensionFileFilter("xml,zip", "xml", tr("Preset definition file (*.xml, *.zip)"));
+                    break;
+                case TAGCHECKER_RULE:
+                    ff = new ExtensionFileFilter("validator.mapcss,zip", "validator.mapcss", tr("Tag checker rule (*.validator.mapcss, *.zip)"));
+                    break;
+                default:
+                    Main.error("Unsupported source type: "+sourceType);
+                    return;
                 }
                 JFileChooserManager fcm = new JFileChooserManager(true)
                         .createFileChooser(true, null, Arrays.asList(ff, FileFilterAllFiles.getInstance()), ff, JFileChooser.FILES_ONLY);
@@ -776,7 +829,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public boolean active() {
-            if (!isMapPaint)
+            if (!canEnable)
                 throw new UnsupportedOperationException();
             return cbActive.isSelected();
         }
@@ -798,7 +851,7 @@ public abstract class SourceEditor extends JPanel {
             editEntryDialog.showDialog();
             if (editEntryDialog.getValue() == 1) {
                 boolean active = true;
-                if (isMapPaint) {
+                if (canEnable) {
                     active = editEntryDialog.active();
                 }
                 activeSourcesModel.addSource(new SourceEntry(
@@ -818,7 +871,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(tblActiveSources.getSelectedRowCount() > 0);
         }
 
@@ -841,7 +894,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(tblActiveSources.getSelectedRowCount() == 1);
         }
 
@@ -862,14 +915,14 @@ public abstract class SourceEditor extends JPanel {
                     SourceEditor.this, tr("Edit source entry:"), e);
             editEntryDialog.showDialog();
             if (editEntryDialog.getValue() == 1) {
-                if (e.title != null || !equal(editEntryDialog.getTitle(), "")) {
+                if (e.title != null || !"".equals(editEntryDialog.getTitle())) {
                     e.title = editEntryDialog.getTitle();
-                    if (equal(e.title, "")) {
+                    if ("".equals(e.title)) {
                         e.title = null;
                     }
                 }
                 e.url = editEntryDialog.getURL();
-                if (isMapPaint) {
+                if (canEnable) {
                     e.active = editEntryDialog.active();
                 }
                 activeSourcesModel.fireTableRowsUpdated(pos, pos);
@@ -889,7 +942,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        public void updateEnabledState() {
+        public final void updateEnabledState() {
             setEnabled(activeSourcesModel.canMove(increment));
         }
 
@@ -916,7 +969,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(lstAvailableSources.getSelectedIndices().length > 0);
         }
 
@@ -930,7 +983,7 @@ public abstract class SourceEditor extends JPanel {
             List<ExtendedSourceEntry> sources = availableSourcesModel.getSelected();
             int josmVersion = Version.getInstance().getVersion();
             if (josmVersion != Version.JOSM_UNKNOWN_VERSION) {
-                Collection<String> messages = new ArrayList<String>();
+                Collection<String> messages = new ArrayList<>();
                 for (ExtendedSourceEntry entry : sources) {
                     if (entry.minJosmVersion != null && entry.minJosmVersion > josmVersion) {
                         messages.add(tr("Entry ''{0}'' requires JOSM Version {1}. (Currently running: {2})",
@@ -1001,7 +1054,7 @@ public abstract class SourceEditor extends JPanel {
 
         public IconPathTableModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-            this.data = new ArrayList<String>();
+            this.data = new ArrayList<>();
         }
 
         @Override
@@ -1092,7 +1145,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public List<String> getIconPaths() {
-            return new ArrayList<String>(data);
+            return new ArrayList<>(data);
         }
     }
 
@@ -1118,7 +1171,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(tblIconPaths.getSelectedRowCount() > 0);
         }
 
@@ -1141,7 +1194,7 @@ public abstract class SourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(tblIconPaths.getSelectedRowCount() == 1);
         }
 
@@ -1157,10 +1210,10 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
-    static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer {
+    static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer<ExtendedSourceEntry> {
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends ExtendedSourceEntry> list, ExtendedSourceEntry value,
+                int index, boolean isSelected, boolean cellHasFocus) {
             String s = value.toString();
             setText(s);
             if (isSelected) {
@@ -1174,7 +1227,7 @@ public abstract class SourceEditor extends JPanel {
             setFont(list.getFont());
             setFont(getFont().deriveFont(Font.PLAIN));
             setOpaque(true);
-            setToolTipText(((ExtendedSourceEntry) value).getTooltip());
+            setToolTipText(value.getTooltip());
             return this;
         }
     }
@@ -1184,7 +1237,7 @@ public abstract class SourceEditor extends JPanel {
         private final List<SourceProvider> sourceProviders;
         private BufferedReader reader;
         private boolean canceled;
-        private final List<ExtendedSourceEntry> sources = new ArrayList<ExtendedSourceEntry>();
+        private final List<ExtendedSourceEntry> sources = new ArrayList<>();
 
         public SourceLoader(String url, List<SourceProvider> sourceProviders) {
             super(tr(getStr(I18nString.LOADING_SOURCES_FROM), url));
@@ -1227,7 +1280,7 @@ public abstract class SourceEditor extends JPanel {
                 }
 
                 MirroredInputStream stream = new MirroredInputStream(url);
-                reader = new BufferedReader(new InputStreamReader(stream, Utils.UTF_8));
+                reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 
                 String line;
                 ExtendedSourceEntry last = null;
@@ -1287,7 +1340,7 @@ public abstract class SourceEditor extends JPanel {
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 if (canceled)
                     // ignore the exception and return
                     return;
@@ -1310,10 +1363,8 @@ public abstract class SourceEditor extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null)
                 return this;
-            SourceEntry se = (SourceEntry) value;
-            JLabel label = (JLabel)super.getTableCellRendererComponent(table,
-                    fromSourceEntry(se), isSelected, hasFocus, row, column);
-            return label;
+            return super.getTableCellRendererComponent(table,
+                    fromSourceEntry((SourceEntry) value), isSelected, hasFocus, row, column);
         }
 
         private String fromSourceEntry(SourceEntry entry) {
@@ -1341,7 +1392,7 @@ public abstract class SourceEditor extends JPanel {
         /**
          * build the GUI
          */
-        protected void build() {
+        protected final void build() {
             setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
             gc.gridx = 0;
@@ -1370,7 +1421,7 @@ public abstract class SourceEditor extends JPanel {
 
         public FileOrUrlCellEditor(boolean isFile) {
             this.isFile = isFile;
-            listeners = new CopyOnWriteArrayList<CellEditorListener>();
+            listeners = new CopyOnWriteArrayList<>();
             build();
         }
 
@@ -1449,32 +1500,6 @@ public abstract class SourceEditor extends JPanel {
                 putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
             }
 
-            protected void prepareFileChooser(String url, JFileChooser fc) {
-                if (url == null || url.trim().length() == 0) return;
-                URL sourceUrl = null;
-                try {
-                    sourceUrl = new URL(url);
-                } catch(MalformedURLException e) {
-                    File f = new File(url);
-                    if (f.isFile()) {
-                        f = f.getParentFile();
-                    }
-                    if (f != null) {
-                        fc.setCurrentDirectory(f);
-                    }
-                    return;
-                }
-                if (sourceUrl.getProtocol().startsWith("file")) {
-                    File f = new File(sourceUrl.getPath());
-                    if (f.isFile()) {
-                        f = f.getParentFile();
-                    }
-                    if (f != null) {
-                        fc.setCurrentDirectory(f);
-                    }
-                }
-            }
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooserManager fcm = new JFileChooserManager(true).createFileChooser();
@@ -1490,29 +1515,41 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
-    abstract public static class SourcePrefHelper {
+    public abstract static class SourcePrefHelper {
 
         private final String pref;
 
+        /**
+         * Constructs a new {@code SourcePrefHelper} for the given preference key.
+         * @param pref The preference key
+         */
         public SourcePrefHelper(String pref) {
             this.pref = pref;
         }
 
-        abstract public Collection<ExtendedSourceEntry> getDefault();
+        /**
+         * Returns the default sources provided by JOSM core.
+         * @return the default sources provided by JOSM core
+         */
+        public abstract Collection<ExtendedSourceEntry> getDefault();
 
-        abstract public Map<String, String> serialize(SourceEntry entry);
+        public abstract Map<String, String> serialize(SourceEntry entry);
 
-        abstract public SourceEntry deserialize(Map<String, String> entryStr);
+        public abstract SourceEntry deserialize(Map<String, String> entryStr);
 
+        /**
+         * Returns the list of sources.
+         * @return The list of sources
+         */
         public List<SourceEntry> get() {
 
             Collection<Map<String, String>> src = Main.pref.getListOfStructs(pref, (Collection<Map<String, String>>) null);
             if (src == null)
                 return new ArrayList<SourceEntry>(getDefault());
 
-            List<SourceEntry> entries = new ArrayList<SourceEntry>();
+            List<SourceEntry> entries = new ArrayList<>();
             for (Map<String, String> sourcePref : src) {
-                SourceEntry e = deserialize(new HashMap<String, String>(sourcePref));
+                SourceEntry e = deserialize(new HashMap<>(sourcePref));
                 if (e != null) {
                     entries.add(e);
                 }
@@ -1521,12 +1558,44 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public boolean put(Collection<? extends SourceEntry> entries) {
-            Collection<Map<String, String>> setting = new ArrayList<Map<String, String>>(entries.size());
+            Collection<Map<String, String>> setting = new ArrayList<>(entries.size());
             for (SourceEntry e : entries) {
                 setting.add(serialize(e));
             }
             return Main.pref.putListOfStructs(pref, setting);
         }
+
+        /**
+         * Returns the set of active source URLs.
+         * @return The set of active source URLs.
+         */
+        public final Set<String> getActiveUrls() {
+            Set<String> urls = new HashSet<>();
+            for (SourceEntry e : get()) {
+                if (e.active) {
+                    urls.add(e.url);
+                }
+            }
+            return urls;
+        }
     }
 
+    /**
+     * Defers loading of sources to the first time the adequate tab is selected.
+     * @param tab The preferences tab
+     * @param component The tab component
+     * @since 6670
+     */
+    public final void deferLoading(final DefaultTabPreferenceSetting tab, final Component component) {
+        tab.getTabPane().addChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        if (tab.getTabPane().getSelectedComponent() == component) {
+                            SourceEditor.this.initiallyLoadAvailableSources();
+                        }
+                    }
+                }
+                );
+    }
 }

@@ -24,7 +24,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
  *
  */
 public class UploadedObjectsSummaryPanel extends JPanel {
-    static public final String NUM_OBJECTS_TO_UPLOAD_PROP = UploadedObjectsSummaryPanel.class.getName() + ".numObjectsToUpload";
+    public static final String NUM_OBJECTS_TO_UPLOAD_PROP = UploadedObjectsSummaryPanel.class.getName() + ".numObjectsToUpload";
 
     /** the list with the added primitives */
     private PrimitiveList lstAdd;
@@ -139,7 +139,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
      * A simple list of OSM primitives.
      *
      */
-    static class PrimitiveList extends JList {
+    static class PrimitiveList extends JList<OsmPrimitive> {
         public PrimitiveList() {
             super(new PrimitiveListModel());
         }
@@ -153,11 +153,11 @@ public class UploadedObjectsSummaryPanel extends JPanel {
      * A list model for a list of OSM primitives.
      *
      */
-    static class PrimitiveListModel extends AbstractListModel{
+    static class PrimitiveListModel extends AbstractListModel<OsmPrimitive> {
         private List<OsmPrimitive> primitives;
 
         public PrimitiveListModel() {
-            primitives = new ArrayList<OsmPrimitive>();
+            primitives = new ArrayList<>();
         }
 
         public PrimitiveListModel(List<OsmPrimitive> primitives) {
@@ -166,7 +166,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
 
         public void setPrimitives(List<OsmPrimitive> primitives) {
             if (primitives == null) {
-                this.primitives = new ArrayList<OsmPrimitive>();
+                this.primitives = new ArrayList<>();
             } else {
                 this.primitives = primitives;
             }
@@ -174,7 +174,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public OsmPrimitive getElementAt(int index) {
             if (primitives == null) return null;
             return primitives.get(index);
         }

@@ -22,7 +22,7 @@ public class RelationMemberConflictResolverTable extends JTable implements Multi
         build();
     }
 
-    protected void build() {
+    protected final void build() {
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -39,7 +39,7 @@ public class RelationMemberConflictResolverTable extends JTable implements Multi
         getActionMap().put("selectNextColumnCell", selectNextColumnCellAction);
         getActionMap().put("selectPreviousColumnCell", selectPreviousColumnCellAction);
 
-        setRowHeight((int)new JosmComboBox().getPreferredSize().getHeight());
+        setRowHeight((int)new JosmComboBox<String>().getPreferredSize().getHeight());
     }
 
     /**

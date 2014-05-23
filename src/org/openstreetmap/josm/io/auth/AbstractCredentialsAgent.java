@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.auth;
 
+import java.awt.GraphicsEnvironment;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 import java.util.HashMap;
@@ -9,15 +10,13 @@ import java.util.Map;
 import org.openstreetmap.josm.gui.io.CredentialDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
-abstract public class AbstractCredentialsAgent implements CredentialsAgent {
+public abstract class AbstractCredentialsAgent implements CredentialsAgent {
 
-    protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<RequestorType, PasswordAuthentication>();
+    protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<>();
 
-    /**
-     * @see CredentialsAgent#getCredentials
-     */
     @Override
-    public CredentialsAgentResponse getCredentials(final RequestorType requestorType, final String host, boolean noSuccessWithLastResponse) throws CredentialsAgentException{
+    public CredentialsAgentResponse getCredentials(final RequestorType requestorType, final String host, boolean noSuccessWithLastResponse)
+            throws CredentialsAgentException {
         if (requestorType == null)
             return null;
         PasswordAuthentication credentials =  lookup(requestorType, host);
@@ -45,24 +44,28 @@ abstract public class AbstractCredentialsAgent implements CredentialsAgent {
          * (noSuccessWithLastResponse == true).
          */
         } else if (noSuccessWithLastResponse || username.isEmpty() || password.isEmpty()) {
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    CredentialDialog dialog = null;
-                    if (requestorType.equals(RequestorType.PROXY))
-                        dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText());
-                    else
-                        dialog = CredentialDialog.getOsmApiCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText());
-                    dialog.setVisible(true);
-                    response.setCanceled(dialog.isCanceled());
-                    if (dialog.isCanceled())
-                        return;
-                    response.setUsername(dialog.getUsername());
-                    response.setPassword(dialog.getPassword());
-                    response.setSaveCredentials(dialog.isSaveCredentials());
-                }
-            });
-            if (response.isCanceled()) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                GuiHelper.runInEDTAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        CredentialDialog dialog = null;
+                        if (requestorType.equals(RequestorType.PROXY))
+                            dialog = CredentialDialog.getHttpProxyCredentialDialog(
+                                    username, password, host, getSaveUsernameAndPasswordCheckboxText());
+                        else
+                            dialog = CredentialDialog.getOsmApiCredentialDialog(
+                                    username, password, host, getSaveUsernameAndPasswordCheckboxText());
+                        dialog.setVisible(true);
+                        response.setCanceled(dialog.isCanceled());
+                        if (dialog.isCanceled())
+                            return;
+                        response.setUsername(dialog.getUsername());
+                        response.setPassword(dialog.getPassword());
+                        response.setSaveCredentials(dialog.isSaveCredentials());
+                    }
+                });
+            }
+            if (response.isCanceled() || response.getUsername() == null || response.getPassword() == null) {
                 return response;
             }
             if (response.isSaveCredentials()) {

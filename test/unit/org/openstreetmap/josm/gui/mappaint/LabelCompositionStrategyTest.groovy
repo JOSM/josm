@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint
 
 import org.junit.*
-import org.openstreetmap.josm.fixtures.JOSMFixture;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy 
 import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.StaticLabelCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.TagLookupCompositionStrategy 

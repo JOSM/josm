@@ -13,6 +13,10 @@ public enum PointInTimeType {
     /** the point in time selected as current point when comparing two version */
     CURRENT_POINT_IN_TIME;
 
+    /**
+     * Returns the opposite point in time.
+     * @return the opposite point in time
+     */
     public PointInTimeType opposite() {
         if (this.equals(REFERENCE_POINT_IN_TIME))
             return CURRENT_POINT_IN_TIME;

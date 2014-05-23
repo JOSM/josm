@@ -44,7 +44,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -427,21 +426,19 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
                 return isReferencePointInTime(row);
             case 2:
                 return isCurrentPointInTime(row);
-            case 3: {
-                HistoryOsmPrimitive p = getPrimitive(row);
-                if (p != null && p.getTimestamp() != null)
-                    return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p.getTimestamp());
+            case 3:
+                HistoryOsmPrimitive p3 = getPrimitive(row);
+                if (p3 != null && p3.getTimestamp() != null)
+                    return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p3.getTimestamp());
                 return null;
-            }
-            case 4: {
-                HistoryOsmPrimitive p = getPrimitive(row);
-                if (p != null) {
-                    User user = p.getUser();
+            case 4:
+                HistoryOsmPrimitive p4 = getPrimitive(row);
+                if (p4 != null) {
+                    User user = p4.getUser();
                     if (user != null)
-                        return "<html>" + XmlWriter.encode(user.getName(), true) + " <font color=gray>(" + user.getId() + ")</font></html>";
+                        return user.getName();
                 }
                 return null;
-            }
             }
             return null;
         }
@@ -525,8 +522,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             if (latest == null) return null;
             OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer == null) return null;
-            OsmPrimitive p = editLayer.data.getPrimitiveById(latest.getId(), latest.getType());
-            return p;
+            return editLayer.data.getPrimitiveById(latest.getId(), latest.getType());
         }
 
         @Override
@@ -546,14 +542,14 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         private PointInTimeType pointInTimeType;
 
         protected void initKeyList() {
-            HashSet<String> keySet = new HashSet<String>();
+            HashSet<String> keySet = new HashSet<>();
             if (current != null) {
                 keySet.addAll(current.getTags().keySet());
             }
             if (reference != null) {
                 keySet.addAll(reference.getTags().keySet());
             }
-            keys = new ArrayList<String>(keySet);
+            keys = new ArrayList<>(keySet);
             Collections.sort(keys);
             fireTableDataChanged();
         }

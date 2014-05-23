@@ -6,11 +6,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.ImageIcon;
@@ -41,10 +44,14 @@ public final class MapPaintStyles {
 
     private static ElemStyles styles = new ElemStyles();
 
+    /**
+     * Returns the {@link ElemStyles} instance.
+     * @return the {@code ElemStyles} instance
+     */
     public static ElemStyles getStyles() {
         return styles;
     }
-    
+
     private MapPaintStyles() {
         // Hide default constructor for utils classes
     }
@@ -140,7 +147,7 @@ public final class MapPaintStyles {
                     if (style instanceof NodeElemStyle) {
                         MapImage mapImage = ((NodeElemStyle) style).mapImage;
                         if (mapImage != null) {
-                            if (includeDeprecatedIcon || mapImage.name == null || !mapImage.name.equals("misc/deprecated.png")) {
+                            if (includeDeprecatedIcon || mapImage.name == null || !"misc/deprecated.png".equals(mapImage.name)) {
                                 return new ImageIcon(mapImage.getDisplayedNodeIcon(false));
                             } else {
                                 return null; // Deprecated icon found but not wanted
@@ -154,7 +161,7 @@ public final class MapPaintStyles {
     }
 
     public static List<String> getIconSourceDirs(StyleSource source) {
-        List<String> dirs = new LinkedList<String>();
+        List<String> dirs = new LinkedList<>();
 
         String sourceDir = source.getLocalSourceDir();
         if (sourceDir != null) {
@@ -198,12 +205,15 @@ public final class MapPaintStyles {
             }
         }
         for (StyleSource source : styles.getStyleSources()) {
+            final long startTime = System.currentTimeMillis();
             source.loadStyleSource();
-            if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true)) {
-                if (source.isLocal()) {
-                    File f = new File(source.url);
-                    source.setLastMTime(f.lastModified());
-                }
+            if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true) && source.isLocal()) {
+                File f = new File(source.url);
+                source.setLastMTime(f.lastModified());
+            }
+            if (Main.isDebugEnabled()) {
+                final long elapsedTime = System.currentTimeMillis() - startTime;
+                Main.debug("Initializing map style " + source.url + " completed in " + Utils.getDurationString(elapsedTime));
             }
         }
         fireMapPaintSylesUpdated();
@@ -212,7 +222,10 @@ public final class MapPaintStyles {
     private static StyleSource fromSourceEntry(SourceEntry entry) {
         MirroredInputStream in = null;
         try {
-            in = new MirroredInputStream(entry.url);
+            Set<String> mimes = new HashSet<>();
+            mimes.addAll(Arrays.asList(XmlStyleSource.XML_STYLE_MIME_TYPES.split(", ")));
+            mimes.addAll(Arrays.asList(MapCSSStyleSource.MAPCSS_STYLE_MIME_TYPES.split(", ")));
+            in = new MirroredInputStream(entry.url, null, Utils.join(", ", mimes));
             String zipEntryPath = in.findZipEntryPath("mapcss", "style");
             if (zipEntryPath != null) {
                 entry.isZip = true;
@@ -227,8 +240,7 @@ public final class MapPaintStyles {
             if (entry.url.toLowerCase().endsWith(".xml"))
                 return new XmlStyleSource(entry);
             else {
-                InputStreamReader reader = new InputStreamReader(in);
-                try {
+                try (InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
                     WHILE: while (true) {
                         int c = reader.read();
                         switch (c) {
@@ -245,8 +257,6 @@ public final class MapPaintStyles {
                                 return new MapCSSStyleSource(entry);
                         }
                     }
-                } finally {
-                    reader.close();
                 }
                 Main.warn("Could not detect style type. Using default (xml).");
                 return new XmlStyleSource(entry);
@@ -266,7 +276,7 @@ public final class MapPaintStyles {
      * @param sel the indices of styles to reload
      */
     public static void reloadStyles(final int... sel) {
-        List<StyleSource> toReload = new ArrayList<StyleSource>();
+        List<StyleSource> toReload = new ArrayList<>();
         List<StyleSource> data = styles.getStyleSources();
         for (int i : sel) {
             toReload.add(data.get(i));
@@ -326,7 +336,7 @@ public final class MapPaintStyles {
             return;
         int[] selSorted = Arrays.copyOf(sel, sel.length);
         Arrays.sort(selSorted);
-        List<StyleSource> data = new ArrayList<StyleSource>(styles.getStyleSources());
+        List<StyleSource> data = new ArrayList<>(styles.getStyleSources());
         for (int row: selSorted) {
             StyleSource t1 = data.get(row);
             StyleSource t2 = data.get(row + delta);
@@ -383,7 +393,7 @@ public final class MapPaintStyles {
     }
 
     /***********************************
-     * MapPaintSylesUpdateListener & related code
+     * MapPaintSylesUpdateListener &amp; related code
      *  (get informed when the list of MapPaint StyleSources changes)
      */
 
@@ -393,7 +403,7 @@ public final class MapPaintStyles {
     }
 
     protected static final CopyOnWriteArrayList<MapPaintSylesUpdateListener> listeners
-            = new CopyOnWriteArrayList<MapPaintSylesUpdateListener>();
+            = new CopyOnWriteArrayList<>();
 
     public static void addMapPaintSylesUpdateListener(MapPaintSylesUpdateListener listener) {
         if (listener != null) {

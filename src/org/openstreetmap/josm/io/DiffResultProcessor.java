@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -31,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class DiffResultProcessor  {
 
-    static private class DiffResultEntry {
+    private static class DiffResultEntry {
         public long new_id;
         public int new_version;
     }
@@ -40,7 +41,7 @@ public class DiffResultProcessor  {
      * mapping from old id to new id and version, the result of parsing the diff result
      * replied by the server
      */
-    private Map<PrimitiveId, DiffResultEntry> diffResults = new HashMap<PrimitiveId, DiffResultEntry>();
+    private Map<PrimitiveId, DiffResultEntry> diffResults = new HashMap<>();
     /**
      * the set of processed primitives *after* the new id, the new version and the new changeset id
      * is set
@@ -62,7 +63,7 @@ public class DiffResultProcessor  {
             primitives = Collections.emptyList();
         }
         this.primitives = primitives;
-        this.processed = new HashSet<IPrimitive>();
+        this.processed = new HashSet<>();
     }
 
     /**
@@ -70,11 +71,11 @@ public class DiffResultProcessor  {
      *
      * @param diffUploadResponse the response. Must not be null.
      * @param progressMonitor a progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
-     * @throws IllegalArgumentException thrown if diffUploadRequest is null
-     * @throws OsmDataParsingException thrown if the diffUploadRequest can't be parsed successfully
+     * @throws IllegalArgumentException if diffUploadRequest is null
+     * @throws XmlParsingException if the diffUploadRequest can't be parsed successfully
      *
      */
-    public  void parse(String diffUploadResponse, ProgressMonitor progressMonitor) throws OsmDataParsingException {
+    public  void parse(String diffUploadResponse, ProgressMonitor progressMonitor) throws XmlParsingException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
@@ -83,14 +84,10 @@ public class DiffResultProcessor  {
             progressMonitor.beginTask(tr("Parsing response from server..."));
             InputSource inputSource = new InputSource(new StringReader(diffUploadResponse));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new Parser());
-        } catch(IOException e) {
-            throw new OsmDataParsingException(e);
-        } catch(ParserConfigurationException e) {
-            throw new OsmDataParsingException(e);
-        } catch(OsmDataParsingException e) {
+        } catch(XmlParsingException e) {
             throw e;
-        } catch(SAXException e) {
-            throw new OsmDataParsingException(e);
+        } catch(IOException | ParserConfigurationException | SAXException e) {
+            throw new XmlParsingException(e);
         } finally {
             progressMonitor.finishTask();
         }
@@ -146,16 +143,20 @@ public class DiffResultProcessor  {
             this.locator = locator;
         }
 
-        protected void throwException(String msg) throws OsmDataParsingException{
-            throw new OsmDataParsingException(msg).rememberLocation(locator);
+        protected void throwException(String msg) throws XmlParsingException {
+            throw new XmlParsingException(msg).rememberLocation(locator);
         }
 
-        @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        @Override
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             try {
-                if (qName.equals("diffResult")) {
+                switch (qName) {
+                case "diffResult":
                     // the root element, ignore
-                } else if (qName.equals("node") || qName.equals("way") || qName.equals("relation")) {
-
+                    break;
+                case "node":
+                case "way":
+                case "relation":
                     PrimitiveId id  = new SimplePrimitiveId(
                             Long.parseLong(atts.getValue("old_id")),
                             OsmPrimitiveType.fromApiTypeName(qName)
@@ -168,11 +169,12 @@ public class DiffResultProcessor  {
                         entry.new_version = Integer.parseInt(atts.getValue("new_version"));
                     }
                     diffResults.put(id, entry);
-                } else {
+                    break;
+                default:
                     throwException(tr("Unexpected XML element with name ''{0}''", qName));
                 }
             } catch (NumberFormatException e) {
-                throw new OsmDataParsingException(e).rememberLocation(locator);
+                throw new XmlParsingException(e).rememberLocation(locator);
             }
         }
     }

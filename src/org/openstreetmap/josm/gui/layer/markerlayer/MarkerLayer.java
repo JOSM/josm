@@ -74,7 +74,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
         super(name);
         this.setAssociatedFile(associatedFile);
-        this.data = new ArrayList<Marker>();
+        this.data = new ArrayList<>();
         this.fromLayer = fromLayer;
         double firstTime = -1.0;
         String lastLinkedFile = "";
@@ -171,24 +171,24 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     /**
      * Return a static icon.
      */
-    @Override public Icon getIcon() {
+    @Override
+    public Icon getIcon() {
         return ImageProvider.get("layer", "marker_small");
     }
 
     @Override
-    public Color getColor(boolean ignoreCustom)
-    {
+    public Color getColor(boolean ignoreCustom) {
         String name = getName();
         return Main.pref.getColor(marktr("gps marker"), name != null ? "layer "+name : null, Color.gray);
     }
 
     /* for preferences */
-    static public Color getGenericColor()
-    {
+    public static Color getGenericColor() {
         return Main.pref.getColor(marktr("gps marker"), Color.gray);
     }
 
-    @Override public void paint(Graphics2D g, MapView mv, Bounds box) {
+    @Override
+    public void paint(Graphics2D g, MapView mv, Bounds box) {
         boolean showTextOrIcon = isTextOrIconShown();
         g.setColor(getColor(true));
 
@@ -238,7 +238,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     @Override public Action[] getMenuEntries() {
-        Collection<Action> components = new ArrayList<Action>();
+        Collection<Action> components = new ArrayList<>();
         components.add(LayerListDialog.getInstance().createShowHideLayerAction());
         components.add(new ShowHideMarkerText(this));
         components.add(LayerListDialog.getInstance().createDeleteLayerAction());
@@ -323,7 +323,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 null, AudioPlayer.url(), this, time, offset);
 
         // insert it at the right place in a copy the collection
-        Collection<Marker> newData = new ArrayList<Marker>();
+        Collection<Marker> newData = new ArrayList<>();
         am = null;
         AudioMarker ret = newAudioMarker; // save to have return value
         for (Marker m : data) {

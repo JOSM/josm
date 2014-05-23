@@ -25,8 +25,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Projection choice that lists all known projects by code.
@@ -42,11 +42,11 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         super(tr("By Code (EPSG)"), "core:code");
     }
 
-    private class CodeSelectionPanel extends JPanel implements ListSelectionListener, DocumentListener {
+    private static class CodeSelectionPanel extends JPanel implements ListSelectionListener, DocumentListener {
 
         public JosmTextField filter;
         private ProjectionCodeListModel model;
-        public JList selectionList;
+        public JList<String> selectionList;
         List<String> data;
         List<String> filteredData;
         static final String DEFAULT_CODE = "EPSG:3857";
@@ -55,9 +55,9 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
 
         public CodeSelectionPanel(String initialCode, ActionListener listener) {
             this.listener = listener;
-            data = new ArrayList<String>(Projections.getAllProjectionCodes());
+            data = new ArrayList<>(Projections.getAllProjectionCodes());
             Collections.sort(data, new CodeComparator());
-            filteredData = new ArrayList<String>(data);
+            filteredData = new ArrayList<>(data);
             build();
             setCode(initialCode != null ? initialCode : DEFAULT_CODE);
             selectionList.addListSelectionListener(this);
@@ -66,7 +66,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         /**
          * Comparator that compares the number part of the code numerically.
          */
-        private class CodeComparator implements Comparator<String> {
+        private static class CodeComparator implements Comparator<String> {
             final Pattern codePattern = Pattern.compile("([a-zA-Z]+):(\\d+)");
             @Override
             public int compare(String c1, String c2) {
@@ -90,14 +90,14 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         /**
          * List model for the filtered view on the list of all codes.
          */
-        private class ProjectionCodeListModel extends AbstractListModel {
+        private class ProjectionCodeListModel extends AbstractListModel<String> {
             @Override
             public int getSize() {
                 return filteredData.size();
             }
 
             @Override
-            public Object getElementAt(int index) {
+            public String getElementAt(int index) {
                 if (index >= 0 && index < filteredData.size())
                     return filteredData.get(index);
                 else
@@ -114,7 +114,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
             filter.setColumns(10);
             filter.getDocument().addDocumentListener(this);
 
-            selectionList = new JList(data.toArray());
+            selectionList = new JList<>(data.toArray(new String[0]));
             selectionList.setModel(model = new ProjectionCodeListModel());
             JScrollPane scroll = new JScrollPane(selectionList);
             scroll.setPreferredSize(new Dimension(200, 214));
@@ -130,7 +130,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
             return filteredData.get(selectionList.getSelectedIndex());
         }
 
-        public void setCode(String code) {
+        public final void setCode(String code) {
             int idx = filteredData.indexOf(code);
             if (idx != -1) {
                 selectionList.setSelectedIndex(idx);

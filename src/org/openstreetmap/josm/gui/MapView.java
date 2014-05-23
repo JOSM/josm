@@ -39,6 +39,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -67,11 +68,11 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a component used in the {@link MapFrame} for browsing the map. It use is to
- * provide the MapMode's enough capabilities to operate.<br/><br/>
+ * provide the MapMode's enough capabilities to operate.<br><br>
  *
  * {@code MapView} holds meta-data about the data set currently displayed, as scale level,
  * center point viewed, what scrolling mode or editing mode is selected or with
- * what projection the map is viewed etc..<br/><br/>
+ * what projection the map is viewed etc..<br><br>
  *
  * {@code MapView} is able to administrate several layers.
  *
@@ -114,8 +115,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * the layer listeners
      */
-    private static final CopyOnWriteArrayList<LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<LayerChangeListener>();
-    private static final CopyOnWriteArrayList<EditLayerChangeListener> editLayerChangeListeners = new CopyOnWriteArrayList<EditLayerChangeListener>();
+    private static final CopyOnWriteArrayList<LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<EditLayerChangeListener> editLayerChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Removes a layer change listener
@@ -150,10 +151,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      */
     public static void addEditLayerChangeListener(EditLayerChangeListener listener, boolean initialFire) {
         addEditLayerChangeListener(listener);
-        if (initialFire) {
-            if (Main.isDisplayingMapView() && Main.map.mapView.getEditLayer() != null) {
-                fireEditLayerChanged(null, Main.map.mapView.getEditLayer());
-            }
+        if (initialFire && Main.isDisplayingMapView() && Main.map.mapView.getEditLayer() != null) {
+            fireEditLayerChanged(null, Main.map.mapView.getEditLayer());
         }
     }
 
@@ -195,7 +194,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * A list of all layers currently loaded.
      */
-    private final List<Layer> layers = new ArrayList<Layer>();
+    private final List<Layer> layers = new ArrayList<>();
     /**
      * The play head marker: there is only one of these so it isn't in any specific layer
      */
@@ -213,12 +212,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      */
     public MouseEvent lastMEvent = new MouseEvent(this, 0, 0, 0, 0, 0, 0, false); // In case somebody reads it before first mouse move
 
-    private final List<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
+    private final List<MapViewPaintable> temporaryLayers = new LinkedList<>();
 
     private BufferedImage nonChangedLayersBuffer;
     private BufferedImage offscreenBuffer;
     // Layers that wasn't changed since last paint
-    private final List<Layer> nonChangedLayers = new ArrayList<Layer>();
+    private final List<Layer> nonChangedLayers = new ArrayList<>();
     private Layer changedLayer;
     private int lastViewID;
     private boolean paintPreferencesChanged = true;
@@ -428,7 +427,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @param layer The layer to remove
      */
     public void removeLayer(Layer layer) {
-        List<Layer> layersList = new ArrayList<Layer>(layers);
+        List<Layer> layersList = new ArrayList<>(layers);
 
         if (!layersList.remove(layer))
             return;
@@ -503,7 +502,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * first, layer with the highest Z-Order last.
      */
     protected List<Layer> getVisibleLayersInZOrder() {
-        List<Layer> ret = new ArrayList<Layer>();
+        List<Layer> ret = new ArrayList<>();
         for (Layer l: layers) {
             if (l.isVisible()) {
                 ret.add(l);
@@ -716,14 +715,14 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @return An unmodifiable collection of all layers
      */
     public Collection<Layer> getAllLayers() {
-        return Collections.unmodifiableCollection(new ArrayList<Layer>(layers));
+        return Collections.unmodifiableCollection(new ArrayList<>(layers));
     }
 
     /**
      * @return An unmodifiable ordered list of all layers
      */
     public List<Layer> getAllLayersAsList() {
-        return Collections.unmodifiableList(new ArrayList<Layer>(layers));
+        return Collections.unmodifiableList(new ArrayList<>(layers));
     }
 
     /**
@@ -731,13 +730,13 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *
      * Example:
      * <pre>
-     *     List<WMSLayer> wmsLayers = getLayersOfType(WMSLayer.class);
+     *     List&lt;WMSLayer&gt; wmsLayers = getLayersOfType(WMSLayer.class);
      * </pre>
      *
      * @return an unmodifiable list of layers of a certain type.
      */
     public <T extends Layer> List<T>  getLayersOfType(Class<T> ofType) {
-        return new ArrayList<T>(Utils.filteredCollection(getAllLayers(), ofType));
+        return new ArrayList<>(Utils.filteredCollection(getAllLayers(), ofType));
     }
 
     /**
@@ -970,7 +969,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * Get a string representation of all layers suitable for the {@code source} changeset tag.
      */
     public String getLayerInformationForSourceTag() {
-        final Collection<String> layerInfo = new ArrayList<String>();
+        final Collection<String> layerInfo = new ArrayList<>();
         if (!getLayersOfType(GpxLayer.class).isEmpty()) {
             // no i18n for international values
             layerInfo.add("survey");

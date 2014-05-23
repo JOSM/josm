@@ -28,7 +28,7 @@ public class PostDownloadHandler implements Runnable {
      */
     public PostDownloadHandler(DownloadTask task, Future<?> future) {
         this.task = task;
-        this.futures = new ArrayList<Future<?>>();
+        this.futures = new ArrayList<>();
         if (future != null) {
             this.futures.add(future);
         }
@@ -41,7 +41,7 @@ public class PostDownloadHandler implements Runnable {
      */
     public PostDownloadHandler(DownloadTask task, Future<?> ... futures) {
         this.task = task;
-        this.futures = new ArrayList<Future<?>>();
+        this.futures = new ArrayList<>();
         if (futures == null) return;
         for (Future<?> future: futures) {
             this.futures.add(future);
@@ -55,7 +55,7 @@ public class PostDownloadHandler implements Runnable {
      */
     public PostDownloadHandler(DownloadTask task, List<Future<?>> futures) {
         this.task = task;
-        this.futures = new ArrayList<Future<?>>();
+        this.futures = new ArrayList<>();
         if (futures == null) return;
         this.futures.addAll(futures);
     }
@@ -76,7 +76,7 @@ public class PostDownloadHandler implements Runnable {
 
         // make sure errors are reported only once
         //
-        LinkedHashSet<Object> errors = new LinkedHashSet<Object>();
+        LinkedHashSet<Object> errors = new LinkedHashSet<>();
         errors.addAll(task.getErrorObjects());
         if (errors.isEmpty())
             return;
@@ -105,7 +105,7 @@ public class PostDownloadHandler implements Runnable {
         // multiple error object? prepare a HTML list
         //
         if (!errors.isEmpty()) {
-            final Collection<String> items = new ArrayList<String>();
+            final Collection<String> items = new ArrayList<>();
             for (Object error:errors) {
                 if (error instanceof String) {
                     items.add((String) error);

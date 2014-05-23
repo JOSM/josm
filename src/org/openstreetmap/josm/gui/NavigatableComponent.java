@@ -1,8 +1,6 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
-
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -10,28 +8,29 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.zip.CRC32;
 
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -53,10 +52,11 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * An component that can be navigated by a mapmover. Used as map view and for the
+ * A component that can be navigated by a {@link MapMover}. Used as map view and for the
  * zoomer in the download dialog.
  *
  * @author imi
+ * @since 41
  */
 public class NavigatableComponent extends JComponent implements Helpful {
 
@@ -64,6 +64,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Interface to notify listeners of the change of the zoom area.
      */
     public interface ZoomChangeListener {
+        /**
+         * Method called when the zoom area has changed.
+         */
         void zoomChanged();
     }
 
@@ -80,35 +83,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         void systemOfMeasurementChanged(String oldSoM, String newSoM);
     }
 
-    /**
-     * Simple data class that keeps map center and scale in one object.
-     */
-    public static class ViewportData {
-        private EastNorth center;
-        private Double scale;
-
-        public ViewportData(EastNorth center, Double scale) {
-            this.center = center;
-            this.scale = scale;
-        }
-
-        /**
-         * Return the projected coordinates of the map center
-         * @return the center
-         */
-        public EastNorth getCenter() {
-            return center;
-        }
-
-        /**
-         * Return the scale factor in east-/north-units per pixel.
-         * @return the scale
-         */
-        public Double getScale() {
-            return scale;
-        }
-    }
-
     public static final IntegerProperty PROP_SNAP_DISTANCE = new IntegerProperty("mappaint.node.snap-distance", 10);
 
     public static final String PROPNAME_CENTER = "center";
@@ -117,7 +91,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * the zoom listeners
      */
-    private static final CopyOnWriteArrayList<ZoomChangeListener> zoomChangeListeners = new CopyOnWriteArrayList<ZoomChangeListener>();
+    private static final CopyOnWriteArrayList<ZoomChangeListener> zoomChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Removes a zoom change listener
@@ -145,10 +119,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    /**
-     * the SoM listeners
-     */
-    private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<SoMChangeListener>();
+    private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Removes a SoM change listener
@@ -184,6 +155,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * northing/easting space of the projection.
      */
     private double scale = Main.getProjection().getDefaultZoomInPPD();
+
     /**
      * Center n/e coordinate of the desired screen center.
      */
@@ -223,6 +195,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
+     * Returns the text describing the given distance in the current system of measurement.
+     * @param dist The distance in metres
+     * @param format A {@link NumberFormat} to format the area value
+     * @param threshold Values lower than this {@code threshold} are displayed as {@code "< [threshold]"}
+     * @return the text describing the given distance in the current system of measurement.
+     * @since 7135
+     */
+    public static String getDistText(final double dist, final NumberFormat format, final double threshold) {
+        return getSystemOfMeasurement().getDistText(dist, format, threshold);
+    }
+
+    /**
      * Returns the text describing the given area in the current system of measurement.
      * @param area The distance in square metres.
      * @return the text describing the given area in the current system of measurement.
@@ -232,13 +216,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return getSystemOfMeasurement().getAreaText(area);
     }
 
-    public String getDist100PixelText()
-    {
+    /**
+     * Returns the text describing the given area in the current system of measurement.
+     * @param area The area in square metres
+     * @param format A {@link NumberFormat} to format the area value
+     * @param threshold Values lower than this {@code threshold} are displayed as {@code "< [threshold]"}
+     * @return the text describing the given area in the current system of measurement.
+     * @since 7135
+     */
+    public static String getAreaText(final double area, final NumberFormat format, final double threshold) {
+        return getSystemOfMeasurement().getAreaText(area, format, threshold);
+    }
+
+    public String getDist100PixelText() {
         return getDistText(getDist100Pixel());
     }
 
-    public double getDist100Pixel()
-    {
+    public double getDist100Pixel() {
         int w = getWidth()/2;
         int h = getHeight()/2;
         LatLon ll1 = getLatLon(w-50,h);
@@ -262,8 +256,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param x X-Pixelposition to get coordinate from
      * @param y Y-Pixelposition to get coordinate from
      *
-     * @return Geographic coordinates from a specific pixel coordination
-     *      on the screen.
+     * @return Geographic coordinates from a specific pixel coordination on the screen.
      */
     public EastNorth getEastNorth(int x, int y) {
         return new EastNorth(
@@ -415,28 +408,22 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
         int width = getWidth()/2;
         int height = getHeight()/2;
-        if (width == 0 || height == 0) {
-            throw new IllegalStateException("Cannot zoom into undimensioned NavigatableComponent");
-        }
         LatLon l1 = new LatLon(b.getMinLat(), lon);
         LatLon l2 = new LatLon(b.getMaxLat(), lon);
         EastNorth e1 = getProjection().latlon2eastNorth(l1);
         EastNorth e2 = getProjection().latlon2eastNorth(l2);
         double d = e2.north() - e1.north();
-        if(d < height*newScale)
-        {
+        if (height > 0 && d < height*newScale) {
             double newScaleH = d/height;
             e1 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMinLon()));
             e2 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMaxLon()));
             d = e2.east() - e1.east();
-            if(d < width*newScale) {
+            if (width > 0 && d < width*newScale) {
                 newScale = Math.max(newScaleH, d/width);
             }
-        }
-        else
-        {
+        } else if (height > 0) {
             d = d/(l1.greatCircleDistance(l2)*height*10);
-            if(newScale < d) {
+            if (newScale < d) {
                 newScale = d;
             }
         }
@@ -554,8 +541,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private class ZoomData {
-        LatLon center;
-        double scale;
+        final LatLon center;
+        final double scale;
 
         public ZoomData(EastNorth center, double scale) {
             this.center = Projections.inverseProject(center);
@@ -571,8 +558,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private Stack<ZoomData> zoomUndoBuffer = new Stack<ZoomData>();
-    private Stack<ZoomData> zoomRedoBuffer = new Stack<ZoomData>();
+    private Stack<ZoomData> zoomUndoBuffer = new Stack<>();
+    private Stack<ZoomData> zoomRedoBuffer = new Stack<>();
     private Date zoomTimestamp = new Date();
 
     private void pushZoomUndo(EastNorth center, double scale) {
@@ -626,7 +613,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     private Map<Double, List<Node>> getNearestNodesImpl(Point p,
             Predicate<OsmPrimitive> predicate) {
-        TreeMap<Double, List<Node>> nearestMap = new TreeMap<Double, List<Node>>();
+        TreeMap<Double, List<Node>> nearestMap = new TreeMap<>();
         DataSet ds = getCurrentDataSet();
 
         if (ds != null) {
@@ -641,7 +628,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     if (nearestMap.containsKey(dist)) {
                         nlist = nearestMap.get(dist);
                     } else {
-                        nlist = new LinkedList<Node>();
+                        nlist = new LinkedList<>();
                         nearestMap.put(dist, nlist);
                     }
                     nlist.add(n);
@@ -685,7 +672,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 if (minDistSq == null) {
                     if (!nlist.isEmpty()) {
                         minDistSq = distSq;
-                        nearestList = new ArrayList<Node>();
+                        nearestList = new ArrayList<>();
                         nearestList.addAll(nlist);
                     }
                 } else {
@@ -736,8 +723,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param predicate this parameter imposes a condition on the returned object, e.g.
      *        give the nearest node that is tagged.
      */
-    public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
-        return getNearestNode(p, predicate, use_selected, null);
+    public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate, boolean useSelected) {
+        return getNearestNode(p, predicate, useSelected, null);
     }
 
     /**
@@ -816,6 +803,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Convenience method to {@link #getNearestNode(Point, Predicate, boolean)}.
+     * @param p the screen point
+     * @param predicate this parameter imposes a condition on the returned object, e.g.
+     *        give the nearest node that is tagged.
      *
      * @return The nearest node to point p.
      */
@@ -833,7 +823,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     private Map<Double, List<WaySegment>> getNearestWaySegmentsImpl(Point p,
             Predicate<OsmPrimitive> predicate) {
-        Map<Double, List<WaySegment>> nearestMap = new TreeMap<Double, List<WaySegment>>();
+        Map<Double, List<WaySegment>> nearestMap = new TreeMap<>();
         DataSet ds = getCurrentDataSet();
 
         if (ds != null) {
@@ -876,7 +866,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                         if (nearestMap.containsKey(perDistSq)) {
                             wslist = nearestMap.get(perDistSq);
                         } else {
-                            wslist = new LinkedList<WaySegment>();
+                            wslist = new LinkedList<>();
                             nearestMap.put(perDistSq, wslist);
                         }
                         wslist.add(new WaySegment(w, i));
@@ -904,8 +894,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<WaySegment> getNearestWaySegments(Point p,
             Collection<WaySegment> ignore, Predicate<OsmPrimitive> predicate) {
-        List<WaySegment> nearestList = new ArrayList<WaySegment>();
-        List<WaySegment> unselected = new LinkedList<WaySegment>();
+        List<WaySegment> nearestList = new ArrayList<>();
+        List<WaySegment> unselected = new LinkedList<>();
 
         for (List<WaySegment> wss : getNearestWaySegmentsImpl(p, predicate).values()) {
             // put selected waysegs within each distance group first
@@ -945,9 +935,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @param p the point for which to search the nearest segment.
      * @param predicate the returned object has to fulfill certain properties.
-     * @param use_selected whether selected way segments should be preferred.
+     * @param useSelected whether selected way segments should be preferred.
      */
-    public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
+    public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate, boolean useSelected) {
         WaySegment wayseg = null, ntsel = null;
 
         for (List<WaySegment> wslist : getNearestWaySegmentsImpl(p, predicate).values()) {
@@ -964,7 +954,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         }
 
-        return (ntsel != null && use_selected) ? ntsel : wayseg;
+        return (ntsel != null && useSelected) ? ntsel : wayseg;
     }
 
      /**
@@ -1022,6 +1012,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Convenience method to {@link #getNearestWaySegment(Point, Predicate, boolean)}.
+     * @param p the point for which to search the nearest segment.
+     * @param predicate the returned object has to fulfill certain properties.
      *
      * @return The nearest way segment to point p.
      */
@@ -1043,8 +1035,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<Way> getNearestWays(Point p,
             Collection<Way> ignore, Predicate<OsmPrimitive> predicate) {
-        List<Way> nearestList = new ArrayList<Way>();
-        Set<Way> wset = new HashSet<Way>();
+        List<Way> nearestList = new ArrayList<>();
+        Set<Way> wset = new HashSet<>();
 
         for (List<WaySegment> wss : getNearestWaySegmentsImpl(p, predicate).values()) {
             for (WaySegment ws : wss) {
@@ -1182,7 +1174,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return A primitive within snap-distance to point p,
      *      that is chosen by the algorithm described.
      * @see #getNearestNode(Point, Predicate)
-     * @see #getNearestNodesImpl(Point, Predicate)
      * @see #getNearestWay(Point, Predicate)
      *
      * @param p The point on screen.
@@ -1226,15 +1217,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         }
         return osm;
-    }
-
-    /**
-     * @return o as collection of o's type.
-     */
-    public static <T> Collection<T> asColl(T o) {
-        if (o == null)
-            return Collections.emptySet();
-        return Collections.singleton(o);
     }
 
     public static double perDist(Point2D pt, Point2D a, Point2D b) {
@@ -1299,8 +1281,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<OsmPrimitive> getAllNearest(Point p,
             Collection<OsmPrimitive> ignore, Predicate<OsmPrimitive> predicate) {
-        List<OsmPrimitive> nearestList = new ArrayList<OsmPrimitive>();
-        Set<Way> wset = new HashSet<Way>();
+        List<OsmPrimitive> nearestList = new ArrayList<>();
+        Set<Way> wset = new HashSet<>();
 
         // add nearby ways
         for (List<WaySegment> wss : getNearestWaySegmentsImpl(p, predicate).values()) {
@@ -1317,7 +1299,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
 
         // add parent relations of nearby nodes and ways
-        Set<OsmPrimitive> parentRelations = new HashSet<OsmPrimitive>();
+        Set<OsmPrimitive> parentRelations = new HashSet<>();
         for (OsmPrimitive o : nearestList) {
             for (OsmPrimitive r : o.getReferrers()) {
                 if (r instanceof Relation && predicate.evaluate(r)) {
@@ -1365,12 +1347,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Return a ID which is unique as long as viewport dimensions are the same
+     * @return A unique ID, as long as viewport dimensions are the same
      */
     public int getViewID() {
         String x = center.east() + "_" + center.north() + "_" + scale + "_" +
                 getWidth() + "_" + getHeight() + "_" + getProjection().toString();
-        java.util.zip.CRC32 id = new java.util.zip.CRC32();
-        id.update(x.getBytes());
+        CRC32 id = new CRC32();
+        id.update(x.getBytes(StandardCharsets.UTF_8));
         return (int)id.getValue();
     }
 
@@ -1380,20 +1363,20 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @since 3490
      */
     public static SystemOfMeasurement getSystemOfMeasurement() {
-        SystemOfMeasurement som = SYSTEMS_OF_MEASUREMENT.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get());
+        SystemOfMeasurement som = SystemOfMeasurement.ALL_SYSTEMS.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get());
         if (som == null)
-            return METRIC_SOM;
+            return SystemOfMeasurement.METRIC;
         return som;
     }
 
     /**
      * Sets the current system of measurement.
-     * @param somKey The system of measurement key. Must be defined in {@link NavigatableComponent#SYSTEMS_OF_MEASUREMENT}.
+     * @param somKey The system of measurement key. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
      * @since 6056
      * @throws IllegalArgumentException if {@code somKey} is not known
      */
     public static void setSystemOfMeasurement(String somKey) {
-        if (!SYSTEMS_OF_MEASUREMENT.containsKey(somKey)) {
+        if (!SystemOfMeasurement.ALL_SYSTEMS.containsKey(somKey)) {
             throw new IllegalArgumentException("Invalid system of measurement: "+somKey);
         }
         String oldKey = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
@@ -1402,182 +1385,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    /**
-     * A system of units used to express length and area measurements.
-     * @since 3406
-     */
-    public static class SystemOfMeasurement {
-
-        /** First value, in meters, used to translate unit according to above formula. */
-        public final double aValue;
-        /** Second value, in meters, used to translate unit according to above formula. */
-        public final double bValue;
-        /** First unit used to format text. */
-        public final String aName;
-        /** Second unit used to format text. */
-        public final String bName;
-        /** Specific optional area value, in squared meters, between {@code aValue*aValue} and {@code bValue*bValue}. Set to {@code -1} if not used.
-         *  @since 5870 */
-        public final double areaCustomValue;
-        /** Specific optional area unit. Set to {@code null} if not used.
-         *  @since 5870 */
-        public final String areaCustomName;
-
-        /**
-         * System of measurement. Currently covers only length (and area) units.
-         *
-         * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
-         * x_a == x_m / aValue
-         *
-         * @param aValue First value, in meters, used to translate unit according to above formula.
-         * @param aName First unit used to format text.
-         * @param bValue Second value, in meters, used to translate unit according to above formula.
-         * @param bName Second unit used to format text.
-         */
-        public SystemOfMeasurement(double aValue, String aName, double bValue, String bName) {
-            this(aValue, aName, bValue, bName, -1, null);
-        }
-
-        /**
-         * System of measurement. Currently covers only length (and area) units.
-         *
-         * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
-         * x_a == x_m / aValue
-         *
-         * @param aValue First value, in meters, used to translate unit according to above formula.
-         * @param aName First unit used to format text.
-         * @param bValue Second value, in meters, used to translate unit according to above formula.
-         * @param bName Second unit used to format text.
-         * @param areaCustomValue Specific optional area value, in squared meters, between {@code aValue*aValue} and {@code bValue*bValue}.
-         *                        Set to {@code -1} if not used.
-         * @param areaCustomName Specific optional area unit. Set to {@code null} if not used.
-         *
-         * @since 5870
-         */
-        public SystemOfMeasurement(double aValue, String aName, double bValue, String bName, double areaCustomValue, String areaCustomName) {
-            this.aValue = aValue;
-            this.aName = aName;
-            this.bValue = bValue;
-            this.bName = bName;
-            this.areaCustomValue = areaCustomValue;
-            this.areaCustomName = areaCustomName;
-        }
-
-        /**
-         * Returns the text describing the given distance in this system of measurement.
-         * @param dist The distance in metres
-         * @return The text describing the given distance in this system of measurement.
-         */
-        public String getDistText(double dist) {
-            return getDistText(dist, null, 0.01);
-        }
-
-        /**
-         * Returns the text describing the given distance in this system of measurement.
-         * @param dist The distance in metres
-         * @param format A {@link NumberFormat} to format the area value
-         * @param threshold Values lower than this {@code threshold} are displayed as {@code "< [threshold]"}
-         * @return The text describing the given distance in this system of measurement.
-         * @since 6422
-         */
-        public String getDistText(final double dist, final NumberFormat format, final double threshold) {
-            double a = dist / aValue;
-            if (!Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false) && a > bValue / aValue)
-                return formatText(dist / bValue, bName, format);
-            else if (a < threshold)
-                return "< " + formatText(threshold, aName, format);
-            else
-                return formatText(a, aName, format);
-        }
-
-        /**
-         * Returns the text describing the given area in this system of measurement.
-         * @param area The area in square metres
-         * @return The text describing the given area in this system of measurement.
-         * @since 5560
-         */
-        public String getAreaText(double area) {
-            return getAreaText(area, null, 0.01);
-        }
-
-        /**
-         * Returns the text describing the given area in this system of measurement.
-         * @param area The area in square metres
-         * @param format A {@link NumberFormat} to format the area value
-         * @param threshold Values lower than this {@code threshold} are displayed as {@code "< [threshold]"}
-         * @return The text describing the given area in this system of measurement.
-         * @since 6422
-         */
-        public String getAreaText(final double area, final NumberFormat format, final double threshold) {
-            double a = area / (aValue*aValue);
-            boolean lowerOnly = Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false);
-            boolean customAreaOnly = Main.pref.getBoolean("system_of_measurement.use_only_custom_area_unit", false);
-            if ((!lowerOnly && areaCustomValue > 0 && a > areaCustomValue / (aValue*aValue) && a < (bValue*bValue) / (aValue*aValue)) || customAreaOnly)
-                return formatText(area / areaCustomValue, areaCustomName, format);
-            else if (!lowerOnly && a >= (bValue*bValue) / (aValue*aValue))
-                return formatText(area / (bValue * bValue), bName + "\u00b2", format);
-            else if (a < threshold)
-                return "< " + formatText(threshold, aName + "\u00b2", format);
-            else
-                return formatText(a, aName + "\u00b2", format);
-        }
-
-        private static String formatText(double v, String unit, NumberFormat format) {
-            if (format != null) {
-                return format.format(v) + " " + unit;
-            }
-            return String.format(Locale.US, "%." + (v<9.999999 ? 2 : 1) + "f %s", v, unit);
-        }
-    }
-
-    /**
-     * Metric system (international standard).
-     * @since 3406
-     */
-    public static final SystemOfMeasurement METRIC_SOM = new SystemOfMeasurement(1, "m", 1000, "km", 10000, "ha");
-
-    /**
-     * Chinese system.
-     * @since 3406
-     */
-    public static final SystemOfMeasurement CHINESE_SOM = new SystemOfMeasurement(1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */);
-
-    /**
-     * Imperial system (British Commonwealth and former British Empire).
-     * @since 3406
-     */
-    public static final SystemOfMeasurement IMPERIAL_SOM = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi", 4046.86, "ac");
-
-    /**
-     * Nautical mile system (navigation, polar exploration).
-     * @since 5549
-     */
-    public static final SystemOfMeasurement NAUTICAL_MILE_SOM = new SystemOfMeasurement(185.2, "kbl", 1852, "NM");
-
-    /**
-     * Known systems of measurement.
-     * @since 3406
-     */
-    public static final Map<String, SystemOfMeasurement> SYSTEMS_OF_MEASUREMENT;
-    static {
-        SYSTEMS_OF_MEASUREMENT = new LinkedHashMap<String, SystemOfMeasurement>();
-        SYSTEMS_OF_MEASUREMENT.put(marktr("Metric"), METRIC_SOM);
-        SYSTEMS_OF_MEASUREMENT.put(marktr("Chinese"), CHINESE_SOM);
-        SYSTEMS_OF_MEASUREMENT.put(marktr("Imperial"), IMPERIAL_SOM);
-        SYSTEMS_OF_MEASUREMENT.put(marktr("Nautical Mile"), NAUTICAL_MILE_SOM);
-    }
-
     private static class CursorInfo {
-        public Cursor cursor;
-        public Object object;
+        final Cursor cursor;
+        final Object object;
         public CursorInfo(Cursor c, Object o) {
             cursor = c;
             object = o;
         }
     }
 
-    private LinkedList<CursorInfo> cursors = new LinkedList<CursorInfo>();
-    
+    private LinkedList<CursorInfo> cursors = new LinkedList<>();
+
     /**
      * Set new cursor.
      */
@@ -1591,11 +1409,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
         cursors.add(new CursorInfo(cursor, reference));
         setCursor(cursor);
     }
-    
+
     public void setNewCursor(int cursor, Object reference) {
         setNewCursor(Cursor.getPredefinedCursor(cursor), reference);
     }
-    
+
     /**
      * Remove the new cursor and reset to previous
      */
@@ -1616,7 +1434,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private void stripCursors(Object reference) {
-        LinkedList<CursorInfo> c = new LinkedList<CursorInfo>();
+        LinkedList<CursorInfo> c = new LinkedList<>();
         for(CursorInfo i : cursors) {
             if(i.object != reference) {
                 c.add(i);

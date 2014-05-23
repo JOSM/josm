@@ -13,19 +13,16 @@ import javax.swing.event.ListSelectionListener;
  */
 public class ListPopupMenu extends JPopupMenu {
 
-    private JList[] lists;
+    private JList<?>[] lists;
 
-    public ListPopupMenu(JList ... lists) {
+    public ListPopupMenu(JList<?> ... lists) {
         this.lists = lists;
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.JPopupMenu#add(javax.swing.Action)
-     */
     @Override
     public JMenuItem add(Action a) {
         if (lists != null && a instanceof ListSelectionListener) {
-            for (JList list : lists) {
+            for (JList<?> list : lists) {
                 list.addListSelectionListener((ListSelectionListener) a);
             }
         }

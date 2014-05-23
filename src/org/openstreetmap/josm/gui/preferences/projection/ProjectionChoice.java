@@ -37,6 +37,7 @@ public interface ProjectionChoice {
 
     /**
      * Get the projection that matches the internal state.
+     * @return the effective projection
      */
     Projection getProjection();
 
@@ -61,11 +62,13 @@ public interface ProjectionChoice {
 
     /**
      * Return all projection codes supported by this projection choice.
+     * @return all supported projection codes 
      */
     String[] allCodes();
 
     /**
      * Get Preferences from projection code.
+     * @param code projection code
      *
      * @return null when code is not part of this projection choice.
      * An empty Collection as return value indicates, that the code is supported,
@@ -79,5 +82,4 @@ public interface ProjectionChoice {
      * @return the name
      */
     String toString();
-
 }

@@ -1,12 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
-import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 
 public class LineTextElemStyle extends ElemStyle {
 
@@ -20,7 +21,7 @@ public class LineTextElemStyle extends ElemStyle {
         Cascade c = env.mc.getCascade(env.layer);
 
         Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
-        if (textPos != null && !Utils.equal(textPos.val, "line"))
+        if (textPos != null && !"line".equals(textPos.val))
             return null;
 
         TextElement text = TextElement.create(c, PaintColors.TEXT.get(), false);
@@ -42,7 +43,7 @@ public class LineTextElemStyle extends ElemStyle {
         if (!super.equals(obj))
             return false;
         final LineTextElemStyle other = (LineTextElemStyle) obj;
-        return Utils.equal(text, other.text);
+        return Objects.equals(text, other.text);
     }
 
     @Override
@@ -54,5 +55,4 @@ public class LineTextElemStyle extends ElemStyle {
     public String toString() {
         return "LineTextElemStyle{" + super.toString() + "text=" + text + "}";
     }
-
 }

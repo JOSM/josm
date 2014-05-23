@@ -86,7 +86,7 @@ public class LatLonDialog extends ExtendedDialog {
                         "<li><i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt> <i>seconds</i><tt>&quot</tt></li>" +
                         "</ul>" +
                         "Symbols <tt>&deg;</tt>, <tt>&#39;</tt>, <tt>&prime;</tt>, <tt>&quot;</tt>, <tt>&Prime;</tt> are optional.<br/><br/>" +
-                        "Some examples:<ul>" +
+                        "Some examples:<ul>{0}</ul>", 
                         "<li>49.29918&deg; 19.24788&deg;</li>" +
                         "<li>N 49.29918 E 19.24788</li>" +
                         "<li>W 49&deg;29.918&#39; S 19&deg;24.788&#39;</li>" +
@@ -101,9 +101,8 @@ public class LatLonDialog extends ExtendedDialog {
                         "<li>49&deg; 29.5 S, 19&deg; 24.6 E</li>" +
                         "<li>N 49 29.918 E 19 15.88</li>" +
                         "<li>49 29.4 19 24.5</li>" +
-                        "<li>-49 29.4 N -19 24.5 W</li></ul>" +
-                        "<li>48 deg 42&#39; 52.13\" N, 21 deg 11&#39; 47.60\" E</li></ul>"
-                        )),
+                        "<li>-49 29.4 N -19 24.5 W</li>" +
+                        "<li>48 deg 42&#39; 52.13\" N, 21 deg 11&#39; 47.60\" E</li>")),
                 GBC.eol().fill().weight(1.0, 1.0));
 
         // parse and verify input on the fly
@@ -343,7 +342,7 @@ public class LatLonDialog extends ExtendedDialog {
         final Matcher m = p.matcher(coord);
 
         final StringBuilder sb = new StringBuilder();
-        final List<Object> list = new ArrayList<Object>();
+        final List<Object> list = new ArrayList<>();
 
         while (m.find()) {
             if (m.group(1) != null) {
@@ -363,7 +362,7 @@ public class LatLonDialog extends ExtendedDialog {
             } else if (m.group(7) != null) {
                 sb.append("x");     // cardinal direction
                 String c = m.group(7).toUpperCase();
-                if (c.equals("N") || c.equals("S") || c.equals("E") || c.equals("W")) {
+                if ("N".equals(c) || "S".equals(c) || "E".equals(c) || "W".equals(c)) {
                     list.add(c);
                 } else {
                     list.add(c.replace(N_TR, 'N').replace(S_TR, 'S')
@@ -461,8 +460,8 @@ public class LatLonDialog extends ExtendedDialog {
         }
 
         double coord = (coordDeg < 0 ? -1 : 1) * (Math.abs(coordDeg) + coordMin / 60 + coordSec / 3600);
-        coord = card.equals("N") || card.equals("E") ? coord : -coord;
-        if (card.equals("N") || card.equals("S")) {
+        coord = "N".equals(card) || "E".equals(card) ? coord : -coord;
+        if ("N".equals(card) || "S".equals(card)) {
             latLon.lat = coord;
         } else {
             latLon.lon = coord;

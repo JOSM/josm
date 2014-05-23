@@ -12,15 +12,18 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
-public class AuthorizationProcedureComboBox extends JosmComboBox {
+public class AuthorizationProcedureComboBox extends JosmComboBox<AuthorizationProcedure> {
 
+    /**
+     * Constructs a new {@code AuthorizationProcedureComboBox}.
+     */
     public AuthorizationProcedureComboBox() {
         super(AuthorizationProcedure.values());
         setRenderer(new AuthorisationProcedureCellRenderer());
         setSelectedItem(AuthorizationProcedure.FULLY_AUTOMATIC);
     }
 
-    static private class AuthorisationProcedureCellRenderer extends JLabel implements ListCellRenderer {
+    private static class AuthorisationProcedureCellRenderer extends JLabel implements ListCellRenderer<AuthorizationProcedure> {
         public AuthorisationProcedureCellRenderer() {
             setOpaque(true);
         }
@@ -76,8 +79,8 @@ public class AuthorizationProcedureComboBox extends JosmComboBox {
         }
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int idx, boolean isSelected, boolean hasFocus) {
-            AuthorizationProcedure procedure = (AuthorizationProcedure)value;
+        public Component getListCellRendererComponent(JList<? extends AuthorizationProcedure> list, AuthorizationProcedure procedure, 
+                int idx, boolean isSelected, boolean hasFocus) {
             renderColors(isSelected);
             renderText(procedure);
             renderToolTipText(procedure);

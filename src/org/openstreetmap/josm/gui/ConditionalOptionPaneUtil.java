@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -34,12 +34,12 @@ import org.openstreetmap.josm.tools.Utils;
 public final class ConditionalOptionPaneUtil {
     public static final int DIALOG_DISABLED_OPTION = Integer.MIN_VALUE;
 
-    /** (preference key => return value) mappings valid for the current operation (no, those two maps cannot be combined) */
-    protected static final Map<String, Integer> sessionChoices = new HashMap<String, Integer>();
-    /** (preference key => return value) mappings valid for the current session */
-    protected static final Map<String, Integer> immediateChoices = new HashMap<String, Integer>();
+    /** (preference key =&gt; return value) mappings valid for the current operation (no, those two maps cannot be combined) */
+    protected static final Map<String, Integer> sessionChoices = new HashMap<>();
+    /** (preference key =&gt; return value) mappings valid for the current session */
+    protected static final Map<String, Integer> immediateChoices = new HashMap<>();
     /** a set indication that (preference key) is or may be stored for the currently active bulk operation */
-    protected static final Set<String> immediateActive = new HashSet<String>();
+    protected static final Set<String> immediateActive = new HashSet<>();
 
     /**
      * this is a static utility class only
@@ -112,7 +112,7 @@ public final class ConditionalOptionPaneUtil {
      *
      * @return the option selected by user. {@link JOptionPane#CLOSED_OPTION} if the dialog was closed.
      */
-    static public int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, Object [] options, Object defaultOption) throws HeadlessException {
+    public static int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, Object [] options, Object defaultOption) throws HeadlessException {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret;
@@ -155,7 +155,7 @@ public final class ConditionalOptionPaneUtil {
      * @see JOptionPane#WARNING_MESSAGE
      * @see JOptionPane#ERROR_MESSAGE
      */
-    static public boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
+    public static boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret == trueOption;
@@ -189,7 +189,7 @@ public final class ConditionalOptionPaneUtil {
      * @see JOptionPane#WARNING_MESSAGE
      * @see JOptionPane#ERROR_MESSAGE
      */
-    static public void showMessageDialog(String preferenceKey, Component parent, Object message, String title,int messageType) {
+    public static void showMessageDialog(String preferenceKey, Component parent, Object message, String title,int messageType) {
         if (getDialogReturnValue(preferenceKey) == Integer.MAX_VALUE)
             return;
         MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));
@@ -270,7 +270,7 @@ public final class ConditionalOptionPaneUtil {
             if (message instanceof Component) {
                 add((Component) message, GBC.eop());
             } else if (message != null) {
-                add(new JLabel(message.toString()), GBC.eop());
+                add(new JMultilineLabel(message.toString()), GBC.eop());
             }
             add(cbShowPermanentDialog, GBC.eol());
             add(cbShowSessionDialog, GBC.eol());

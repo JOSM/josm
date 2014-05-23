@@ -9,6 +9,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -46,7 +47,7 @@ public class BookmarkSelection implements DownloadSelection {
 
     /** displays information about the current download area */
     private JMultilineLabel lblCurrentDownloadArea;
-    final private JosmTextArea bboxDisplay = new JosmTextArea();
+    private final JosmTextArea bboxDisplay = new JosmTextArea();
     /** the add action */
     private AddAction actAdd;
 
@@ -112,7 +113,7 @@ public class BookmarkSelection implements DownloadSelection {
         bookmarks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                Bookmark b = (Bookmark)bookmarks.getSelectedValue();
+                Bookmark b = bookmarks.getSelectedValue();
                 if (b != null) {
                     gui.boundingBoxChanged(b.getArea(),BookmarkSelection.this);
                 }
@@ -200,7 +201,7 @@ public class BookmarkSelection implements DownloadSelection {
             );
             b.setArea(currentArea);
             if (b.getName() != null && !b.getName().isEmpty()) {
-                ((DefaultListModel)bookmarks.getModel()).addElement(b);
+                ((DefaultListModel<BookmarkList.Bookmark>)bookmarks.getModel()).addElement(b);
                 bookmarks.save();
             }
         }
@@ -215,15 +216,16 @@ public class BookmarkSelection implements DownloadSelection {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object[] sels = bookmarks.getSelectedValues();
-            if (sels == null || sels.length == 0)
+            List<Bookmark> sels = bookmarks.getSelectedValuesList();
+            if (sels == null || sels.isEmpty())
                 return;
             for (Object sel: sels) {
-                ((DefaultListModel)bookmarks.getModel()).removeElement(sel);
+                ((DefaultListModel<Bookmark>)bookmarks.getModel()).removeElement(sel);
             }
             bookmarks.save();
         }
-        protected void updateEnabledState() {
+
+        protected final void updateEnabledState() {
             setEnabled(bookmarks.getSelectedIndices().length > 0);
         }
         @Override
@@ -241,10 +243,10 @@ public class BookmarkSelection implements DownloadSelection {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Object[] sels = bookmarks.getSelectedValues();
-            if (sels == null || sels.length != 1)
+            List<Bookmark> sels = bookmarks.getSelectedValuesList();
+            if (sels == null || sels.size() != 1)
                 return;
-            Bookmark b = (Bookmark)sels[0];
+            Bookmark b = sels.get(0);
             Object value =
                 JOptionPane.showInputDialog(
                         Main.parent,tr("Please enter a name for the bookmarked download area."),
@@ -260,9 +262,11 @@ public class BookmarkSelection implements DownloadSelection {
                 bookmarks.repaint();
             }
         }
-        protected void updateEnabledState() {
+
+        protected final void updateEnabledState() {
             setEnabled(bookmarks.getSelectedIndices().length == 1);
         }
+
         @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
@@ -277,7 +281,7 @@ public class BookmarkSelection implements DownloadSelection {
             int idx = bookmarks.locationToIndex(e.getPoint());
             if (idx < 0 || idx >= bookmarks.getModel().getSize())
                 return;
-            Bookmark b = (Bookmark)bookmarks.getModel().getElementAt(idx);
+            Bookmark b = bookmarks.getModel().getElementAt(idx);
             parent.startDownload(b.getArea());
         }
     }

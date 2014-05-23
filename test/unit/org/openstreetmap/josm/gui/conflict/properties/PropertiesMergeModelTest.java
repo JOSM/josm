@@ -11,8 +11,7 @@ import java.util.Observer;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -20,13 +19,12 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMergeModel;
 
 public class PropertiesMergeModelTest {
 
-    static public class ObserverTest implements Observer {
+    public static abstract class TestObserver implements Observer {
         public int numInvocations;
 
         public void update(Observable o, Object arg) {
@@ -34,8 +32,7 @@ public class PropertiesMergeModelTest {
             test();
         }
 
-        public void test() {
-        }
+        public abstract void test();
 
         public void assertNumInvocations(int count) {
             assertEquals(count, numInvocations);
@@ -46,17 +43,19 @@ public class PropertiesMergeModelTest {
 
     @BeforeClass
     public static void init() {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
+    /**
+     * Setup test.
+     */
     @Before
     public void setUp() {
         model = new PropertiesMergeModel();
     }
 
     private void populate(OsmPrimitive my, OsmPrimitive their) {
-        model.populate(new Conflict<OsmPrimitive>(my, their));
+        model.populate(new Conflict<>(my, their));
     }
 
     @Test
@@ -111,9 +110,9 @@ public class PropertiesMergeModelTest {
 
         // decide KEEP_MINE  and ensure notification via Observable
         //
-        ObserverTest observerTest;
+        TestObserver observerTest;
         model.addObserver(
-                observerTest = new ObserverTest() {
+                observerTest = new TestObserver() {
                     @Override
                     public void test() {
                         assertTrue(model.isCoordMergeDecision(MergeDecisionType.KEEP_MINE));
@@ -128,7 +127,7 @@ public class PropertiesMergeModelTest {
         //
         model.deleteObserver(observerTest);
         model.addObserver(
-                observerTest = new ObserverTest() {
+                observerTest = new TestObserver() {
                     @Override
                     public void test() {
                         assertTrue(model.isCoordMergeDecision(MergeDecisionType.KEEP_THEIR));
@@ -140,6 +139,4 @@ public class PropertiesMergeModelTest {
         observerTest.assertNumInvocations(1);
         model.deleteObserver(observerTest);
     }
-
-
 }

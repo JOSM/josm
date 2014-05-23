@@ -60,17 +60,17 @@ public class PrefJPanel extends JPanel {
     // on the physical keyboard. What language pack is installed in JOSM is completely
     // independent from the keyboard's labelling. But the operation system's locale
     // usually matches the keyboard. This even works with my English Windows and my German keyboard.
-    private static String SHIFT = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.SHIFT_DOWN_MASK).getModifiers());
-    private static String CTRL  = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK).getModifiers());
-    private static String ALT   = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.ALT_DOWN_MASK).getModifiers());
-    private static String META  = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK).getModifiers());
+    private static final String SHIFT = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.SHIFT_DOWN_MASK).getModifiers());
+    private static final String CTRL  = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK).getModifiers());
+    private static final String ALT   = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.ALT_DOWN_MASK).getModifiers());
+    private static final String META  = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK).getModifiers());
 
     // A list of keys to present the user. Sadly this really is a list of keys Java knows about,
     // not a list of real physical keys. If someone knows how to get that list?
     private static Map<Integer, String> keyList = setKeyList();
 
     private static Map<Integer, String> setKeyList() {
-        Map<Integer, String> list = new LinkedHashMap<Integer, String>();
+        Map<Integer, String> list = new LinkedHashMap<>();
         String unknown = Toolkit.getProperty("AWT.unknown", "Unknown");
         // Assume all known keys are declared in KeyEvent as "public static int VK_*"
         for (Field field : KeyEvent.class.getFields()) {
@@ -96,7 +96,7 @@ public class PrefJPanel extends JPanel {
     private JCheckBox cbShift = new JCheckBox();
     private JCheckBox cbDefault = new JCheckBox();
     private JCheckBox cbDisable = new JCheckBox();
-    private JosmComboBox tfKey = new JosmComboBox();
+    private JosmComboBox<String> tfKey = new JosmComboBox<>();
 
     JTable shortcutTable = new JTable();
 
@@ -115,7 +115,7 @@ public class PrefJPanel extends JPanel {
     public void filter(String substring) {
         filterField.setText(substring);
     }
-    
+
     private static class ScListModel extends AbstractTableModel {
         private String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
         private List<Shortcut> data;
@@ -217,7 +217,7 @@ public class PrefJPanel extends JPanel {
         cbAlt.setAction(action);
         cbAlt.setText(ALT); // see above for why no tr()
         tfKey.setAction(action);
-        tfKey.setModel(new DefaultComboBoxModel(keyList.values().toArray()));
+        tfKey.setModel(new DefaultComboBoxModel<>(keyList.values().toArray(new String[0])));
         cbMeta.setAction(action);
         cbMeta.setText(META); // see above for why no tr()
 
@@ -321,7 +321,7 @@ public class PrefJPanel extends JPanel {
                     Shortcut sc = (Shortcut)panel.model.getValueAt(row, -1);
                     if (panel.cbDisable.isSelected()) {
                         sc.setAssignedModifier(-1);
-                    } else if (panel.tfKey.getSelectedItem() == null || panel.tfKey.getSelectedItem().equals("")) {
+                    } else if (panel.tfKey.getSelectedItem() == null || "".equals(panel.tfKey.getSelectedItem())) {
                         sc.setAssignedModifier(KeyEvent.VK_CANCEL);
                     } else {
                         sc.setAssignedModifier(
@@ -366,16 +366,16 @@ public class PrefJPanel extends JPanel {
                 } else {
                     expr = expr.replace("+", "\\+");
                     // split search string on whitespace, do case-insensitive AND search
-                    List<RowFilter<Object, Object>> andFilters = new ArrayList<RowFilter<Object, Object>>();
+                    List<RowFilter<Object, Object>> andFilters = new ArrayList<>();
                     for (String word : expr.split("\\s+")) {
                         andFilters.add(RowFilter.regexFilter("(?i)" + word));
                     }
                     sorter.setRowFilter(RowFilter.andFilter(andFilters));
                 }
                 model.fireTableDataChanged();
+            } catch (PatternSyntaxException | ClassCastException ex) {
+                Main.warn(ex);
             }
-            catch (PatternSyntaxException ex) { }
-            catch (ClassCastException ex2) { /* eliminate warning */  }
         }
 
         @Override
@@ -385,5 +385,4 @@ public class PrefJPanel extends JPanel {
         @Override
         public void removeUpdate(DocumentEvent arg0) { filter(); }
     }
-
 }

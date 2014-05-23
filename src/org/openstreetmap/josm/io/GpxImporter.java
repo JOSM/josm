@@ -4,10 +4,8 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
 
 import javax.swing.JOptionPane;
 
@@ -30,7 +28,7 @@ public class GpxImporter extends FileImporter {
      * The GPX file filter (*.gpx and *.gpx.gz files).
      */
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
-            "gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)");
+            "gpx,gpx.gz,gpx.bz2", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz, *.gpx.bz2)");
 
     /**
      * Utility class containing imported GPX and marker layers, and a task to run after they are added to MapView.
@@ -77,22 +75,16 @@ public class GpxImporter extends FileImporter {
 
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
-        InputStream is;
-        if (file.getName().endsWith(".gpx.gz")) {
-            is = new GZIPInputStream(new FileInputStream(file));
-        } else {
-            is = new FileInputStream(file);
-        }
-        String fileName = file.getName();
+        final String fileName = file.getName();
 
-        try {
+        try (InputStream is = Compression.getUncompressedFileInputStream(file)) {
             GpxReader r = new GpxReader(is);
             boolean parsedProperly = r.parse(true);
             r.getGpxData().storageFile = file;
             addLayers(loadLayers(r.getGpxData(), parsedProperly, fileName, tr("Markers from {0}", fileName)));
         } catch (SAXException e) {
             Main.error(e);
-            throw new IOException(tr("Parsing data for layer ''{0}'' failed", fileName));
+            throw new IOException(tr("Parsing data for layer ''{0}'' failed", fileName), e);
         }
     }
 
@@ -167,7 +159,7 @@ public class GpxImporter extends FileImporter {
             return loadLayers(r.getGpxData(), parsedProperly, gpxLayerName, markerLayerName);
         } catch (SAXException e) {
             Main.error(e);
-            throw new IOException(tr("Parsing data for layer ''{0}'' failed", gpxLayerName));
+            throw new IOException(tr("Parsing data for layer ''{0}'' failed", gpxLayerName), e);
         }
     }
 }

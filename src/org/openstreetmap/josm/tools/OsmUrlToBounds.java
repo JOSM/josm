@@ -27,9 +27,7 @@ public final class OsmUrlToBounds {
             if (url.contains("%")) {
                 url = URLDecoder.decode(url, "UTF-8");
             }
-        } catch (UnsupportedEncodingException x) {
-            Main.error(x);
-        } catch (IllegalArgumentException x) {
+        } catch (UnsupportedEncodingException | IllegalArgumentException x) {
             Main.error(x);
         }
         Bounds b = parseShortLink(url);
@@ -45,7 +43,7 @@ public final class OsmUrlToBounds {
             return null;
         }
         String[] args = url.substring(i+1).split("&");
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         for (String arg : args) {
             int eq = arg.indexOf('=');
             if (eq != -1) {
@@ -71,11 +69,7 @@ public final class OsmUrlToBounds {
                         parseDouble(map, "lon"),
                         z == null ? 18 : Integer.parseInt(z));
             }
-        } catch (NumberFormatException x) {
-            Main.error(x);
-        } catch (NullPointerException x) {
-            Main.error(x);
-        } catch (ArrayIndexOutOfBoundsException x) {
+        } catch (NumberFormatException | NullPointerException | ArrayIndexOutOfBoundsException x) {
             Main.error(x);
         }
         return b;
@@ -84,7 +78,7 @@ public final class OsmUrlToBounds {
     /**
      * Openstreetmap.org changed it's URL scheme in August 2013, which breaks the URL parsing.
      * The following function, called by the old parse function if necessary, provides parsing new URLs
-     * the new URLs follow the scheme http://www.openstreetmap.org/#map=18/51.71873/8.76164&layers=CN
+     * the new URLs follow the scheme https://www.openstreetmap.org/#map=18/51.71873/8.76164&amp;layers=CN
      * @param url string for parsing
      * @return Bounds if hashurl, {@code null} otherwise
      */
@@ -151,7 +145,7 @@ public final class OsmUrlToBounds {
             return null;
         final String shortLink = url.substring(SHORTLINK_PREFIX.length());
 
-        final Map<Character, Integer> array = new HashMap<Character, Integer>();
+        final Map<Character, Integer> array = new HashMap<>();
 
         for (int i=0; i<SHORTLINK_CHARS.length; ++i) {
             array.put(SHORTLINK_CHARS[i], i);
@@ -234,7 +228,7 @@ public final class OsmUrlToBounds {
         double x = Math.floor((lon + 180) / 360 * Math.pow(2.0, zoom));
         double y = Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI)
                 / 2 * Math.pow(2.0, zoom));
-        return new Pair<Double, Double>(x, y);
+        return new Pair<>(x, y);
     }
 
     public static LatLon getLatLonOfTile(double x, double y, double zoom) {
@@ -249,7 +243,7 @@ public final class OsmUrlToBounds {
      * @param b bounds of the area
      * @return matching zoom level for area
      */
-    static public int getZoom(Bounds b) {
+    public static int getZoom(Bounds b) {
         // convert to mercator (for calculation of zoom only)
         double latMin = Math.log(Math.tan(Math.PI/4.0+b.getMinLat()/180.0*Math.PI/2.0))*180.0/Math.PI;
         double latMax = Math.log(Math.tan(Math.PI/4.0+b.getMaxLat()/180.0*Math.PI/2.0))*180.0/Math.PI;
@@ -293,7 +287,7 @@ public final class OsmUrlToBounds {
      * @param dlon center longitude of area
      * @param zoom zoom depth of display
      * @return link to display that area in OSM map
-     * 
+     *
      * @since 6453
      */
     public static String getURL(double dlat, double dlon, int zoom) {
@@ -303,6 +297,6 @@ public final class OsmUrlToBounds {
         lat /= decimals;
         double lon = (Math.round(dlon * decimals));
         lon /= decimals;
-        return Main.OSM_WEBSITE + "/#map="+zoom+"/"+lat+"/"+lon;
+        return Main.getOSMWebsite() + "/#map="+zoom+"/"+lat+"/"+lon;
     }
 }

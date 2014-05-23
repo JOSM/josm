@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 /**
  * Marker class with audio playback capability.
  *
- * @author Frederik Ramm <frederik@remote.org>
+ * @author Frederik Ramm
  *
  */
 public class AudioMarker extends ButtonMarker {

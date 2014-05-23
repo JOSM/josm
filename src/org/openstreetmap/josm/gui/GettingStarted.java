@@ -6,10 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +31,6 @@ import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WikiReader;
 
 public final class GettingStarted extends JPanel implements ProxyPreferenceListener {
@@ -56,6 +57,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             setEditable(false);
             setOpaque(false);
             addHyperlinkListener(this);
+            adaptForNimbus(this);
         }
 
         @Override
@@ -74,9 +76,9 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             super("motd.html", CacheCustomContent.INTERVAL_DAILY);
         }
 
-        final private int myVersion = Version.getInstance().getVersion();
-        final private String myJava = System.getProperty("java.version");
-        final private String myLang = LanguageInfo.getWikiLanguagePrefix();
+        private final int myVersion = Version.getInstance().getVersion();
+        private final String myJava = System.getProperty("java.version");
+        private final String myLang = LanguageInfo.getWikiLanguagePrefix();
 
         /**
          * This function gets executed whenever the cached files need updating
@@ -89,7 +91,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             Main.pref.putInteger("cache.motd.html.version", myVersion);
             Main.pref.put("cache.motd.html.java", myJava);
             Main.pref.put("cache.motd.html.lang", myLang);
-            return motd.getBytes(Utils.UTF_8);
+            return motd.getBytes(StandardCharsets.UTF_8);
         }
 
         /**
@@ -124,7 +126,9 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
 
         getMOTD();
 
-        new FileDrop(scroller);
+        if (!GraphicsEnvironment.isHeadless()) {
+            new FileDrop(scroller);
+        }
     }
 
     private void getMOTD() {
@@ -159,7 +163,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
     }
 
     private String fixImageLinks(String s) {
-        Matcher m = Pattern.compile("src=\""+Main.JOSM_WEBSITE+"/browser/trunk(/images/.*?\\.png)\\?format=raw\"").matcher(s);
+        Matcher m = Pattern.compile("src=\""+Main.getJOSMWebsite()+"/browser/trunk(/images/.*?\\.png)\\?format=raw\"").matcher(s);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String im = m.group(1);

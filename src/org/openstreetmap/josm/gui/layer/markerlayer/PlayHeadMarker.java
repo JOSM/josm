@@ -30,19 +30,20 @@ import org.openstreetmap.josm.tools.AudioPlayer;
 /**
  * Singleton marker class to track position of audio.
  *
- * @author David Earl<david@frankieandshadow.com>
+ * @author David Earl &lt;david@frankieandshadow.com&gt;
  * @since 572
  */
 public final class PlayHeadMarker extends Marker {
 
     private Timer timer = null;
     private double animationInterval = 0.0; // seconds
-    static private PlayHeadMarker playHead = null;
+    private static PlayHeadMarker playHead = null;
     private MapMode oldMode = null;
     private LatLon oldCoor;
     private boolean enabled;
     private boolean wasPlaying = false;
     private int dropTolerance; /* pixels */
+    private boolean jumpToMarker = false;
 
     /**
      * Returns the unique instance of {@code PlayHeadMarker}.
@@ -151,16 +152,14 @@ public final class PlayHeadMarker extends Marker {
         /* Find the prior audio marker (there should always be one in the
          * layer, even if it is only one at the start of the track) to
          * offset the audio from */
-        if (cw != null) {
-            if (recent != null && recent.parentLayer != null) {
-                for (Marker m : recent.parentLayer.data) {
-                    if (m instanceof AudioMarker) {
-                        AudioMarker a = (AudioMarker) m;
-                        if (a.time > cw.time) {
-                            break;
-                        }
-                        ca = a;
+        if (cw != null && recent != null && recent.parentLayer != null) {
+            for (Marker m : recent.parentLayer.data) {
+                if (m instanceof AudioMarker) {
+                    AudioMarker a = (AudioMarker) m;
+                    if (a.time > cw.time) {
+                        break;
                     }
+                    ca = a;
                 }
             }
         }
@@ -235,8 +234,7 @@ public final class PlayHeadMarker extends Marker {
         }
 
         /* Actually do the synchronization */
-        if(ca == null)
-        {
+        if(ca == null) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Unable to create new audio marker."),
@@ -281,6 +279,7 @@ public final class PlayHeadMarker extends Marker {
      */
     public void animate() {
         if (! enabled) return;
+        jumpToMarker = true;
         if (timer == null) {
             animationInterval = Main.pref.getDouble("marker.audioanimationinterval", 1.0); //milliseconds
             timer = new Timer((int)(animationInterval * 1000.0), new ActionListener() {
@@ -344,6 +343,10 @@ public final class PlayHeadMarker extends Marker {
                     w1.getEastNorth().interpolate(w2.getEastNorth(),
                             (audioTime - w1.time)/(w2.time - w1.time)));
         time = audioTime;
+        if (jumpToMarker) {
+            jumpToMarker = false;
+            Main.map.mapView.zoomTo(w1.getEastNorth());
+        }
         Main.map.mapView.repaint();
     }
 }

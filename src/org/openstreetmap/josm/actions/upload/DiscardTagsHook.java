@@ -23,7 +23,7 @@ public class DiscardTagsHook implements UploadHook {
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
         List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
-        Collection<String> discardableKeys = new HashSet<String>(OsmPrimitive.getDiscardableKeys());
+        Collection<String> discardableKeys = new HashSet<>(OsmPrimitive.getDiscardableKeys());
 
         boolean needsChange = false;
         OUTER: for (OsmPrimitive osm : objectsToUpload) {
@@ -36,7 +36,7 @@ public class DiscardTagsHook implements UploadHook {
         }
 
         if (needsChange) {
-            AbstractMap<String, String> map = new HashMap<String, String>();
+            AbstractMap<String, String> map = new HashMap<>();
             for (String key : discardableKeys) {
                 map.put(key, null);
             }

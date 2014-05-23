@@ -10,15 +10,14 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-
 /**
  * Creates a new relation with a copy of the current editor state
  * @since 5799
  */
 public class DuplicateRelationAction extends AbstractRelationAction {
-    
+
     /**
-     * Constructs a new {@code DuplicateRelationAction}. 
+     * Constructs a new {@code DuplicateRelationAction}.
      */
     public DuplicateRelationAction() {
         putValue(SHORT_DESCRIPTION, tr("Create a copy of this relation and open it in another editor window"));
@@ -26,6 +25,10 @@ public class DuplicateRelationAction extends AbstractRelationAction {
         putValue(NAME, tr("Duplicate"));
     }
 
+    /**
+     * Duplicates the given relation and launches the relation editor for the created copy.
+     * @param original The relation to duplicate
+     */
     public static void duplicateRelationAndLaunchEditor(Relation original) {
         Relation copy = new Relation(original, true);
         copy.setModified(true);
@@ -49,5 +52,5 @@ public class DuplicateRelationAction extends AbstractRelationAction {
     protected void updateEnabledState() {
         // only one selected relation can be edited
         setEnabled( relations.size()==1 );
-    }        
+    }
 }

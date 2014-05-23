@@ -262,7 +262,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout());
         pnlPropertiesPanel = buildPropertiesPanel();
         pnlActionButtonsPanel = buildActionButtonPanel();
@@ -344,7 +344,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             Main.worker.submit(new FullyAutomaticAuthorisationTask(FullyAutomaticAuthorizationUI.this));
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(valPassword.isValid() && valUserName.isValid());
         }
 
@@ -400,8 +400,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         }
     }
 
-
-    static private class UserNameValidator extends AbstractTextComponentValidator {
+    private static class UserNameValidator extends AbstractTextComponentValidator {
         public UserNameValidator(JTextComponent tc) {
             super(tc);
         }
@@ -421,7 +420,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         }
     }
 
-    static private class PasswordValidator extends AbstractTextComponentValidator {
+    private static class PasswordValidator extends AbstractTextComponentValidator {
 
         public PasswordValidator(JTextComponent tc) {
             super(tc);

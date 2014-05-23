@@ -3,20 +3,25 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * see PlatformHook.java
@@ -40,12 +45,19 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void openUrl(String url) throws IOException {
-        String[] programs = {"gnome-open", "kfmclient openURL", "firefox"};
-        for (String program : programs) {
+        for (String program : Main.pref.getCollection("browser.unix",
+                Arrays.asList("xdg-open", "#DESKTOP#", "$BROWSER", "gnome-open", "kfmclient openURL", "firefox"))) {
             try {
-                Runtime.getRuntime().exec(program+" "+url);
+                if ("#DESKTOP#".equals(program)) {
+                    Desktop.getDesktop().browse(new URI(url));
+                } else if (program.startsWith("$")) {
+                    program = System.getenv().get(program.substring(1));
+                    Runtime.getRuntime().exec(new String[]{program, url});
+                } else {
+                    Runtime.getRuntime().exec(new String[]{program, url});
+                }
                 return;
-            } catch (IOException e) {
+            } catch (IOException | URISyntaxException e) {
                 Main.warn(e);
             }
         }
@@ -59,7 +71,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         Shortcut.registerSystemShortcut("system:reset", tr("reserved"), KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
         Shortcut.registerSystemShortcut("system:resetX", tr("reserved"), KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK).setAutomatic();
     }
-    
+
     /**
      * This should work for all platforms. Yeah, should.
      * See PlatformHook.java for a list of reasons why
@@ -87,13 +99,56 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public boolean canFullscreen() {
-        return GraphicsEnvironment.getLocalGraphicsEnvironment()
+        return !GraphicsEnvironment.isHeadless() &&
+                GraphicsEnvironment.getLocalGraphicsEnvironment()
         .getDefaultScreenDevice().isFullScreenSupported();
     }
 
     @Override
     public boolean rename(File from, File to) {
         return from.renameTo(to);
+    }
+
+    /**
+     * Determines if the distribution is Debian or Ubuntu, or a derivative.
+     * @return {@code true} if the distribution is Debian, Ubuntu or Mint, {@code false} otherwise
+     */
+    public static boolean isDebianOrUbuntu() {
+        try {
+            String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
+            return "Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist) || "Mint".equalsIgnoreCase(dist);
+        } catch (IOException e) {
+            Main.warn(e);
+            return false;
+        }
+    }
+
+    /**
+     * Determines if the JVM is OpenJDK-based.
+     * @return {@code true} if {@code java.home} contains "openjdk", {@code false} otherwise
+     * @since 6951
+     */
+    public static boolean isOpenJDK() {
+        String javaHome = System.getProperty("java.home");
+        return javaHome != null && javaHome.contains("openjdk");
+    }
+
+    /**
+     * Get the package name including detailed version.
+     * @param packageName The package name
+     * @return The package name and package version if it can be identified, null otherwise
+     */
+    public static String getPackageDetails(String packageName) {
+        try {
+            String version = Utils.execOutput(Arrays.asList(
+                    "dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", packageName));
+            if (version != null) {
+                return packageName + ":" + version;
+            }
+        } catch (IOException e) {
+            Main.warn(e);
+        }
+        return null;
     }
 
     /**
@@ -110,24 +165,32 @@ public class PlatformHookUnixoid implements PlatformHook {
      * otherwise
      */
     public String getJavaPackageDetails() {
-        try {
-            String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
-            if ("Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist)) {
-                String javaHome = System.getProperty("java.home");
-                if ("/usr/lib/jvm/java-6-openjdk-amd64/jre".equals(javaHome) ||
-                        "/usr/lib/jvm/java-6-openjdk-i386/jre".equals(javaHome) ||
-                        "/usr/lib/jvm/java-6-openjdk/jre".equals(javaHome)) {
-                    String version = Utils.execOutput(Arrays.asList("dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", "openjdk-6-jre"));
-                    return "openjdk-6-jre:" + version;
-                }
-                if ("/usr/lib/jvm/java-7-openjdk-amd64/jre".equals(javaHome) ||
-                        "/usr/lib/jvm/java-7-openjdk-i386/jre".equals(javaHome)) {
-                    String version = Utils.execOutput(Arrays.asList("dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", "openjdk-7-jre"));
-                    return "openjdk-7-jre:" + version;
-                }
+        if (isDebianOrUbuntu()) {
+            switch(System.getProperty("java.home")) {
+            case "/usr/lib/jvm/java-7-openjdk-amd64/jre":
+            case "/usr/lib/jvm/java-7-openjdk-i386/jre":
+                return getPackageDetails("openjdk-7-jre");
             }
-        } catch (IOException e) {
-            Main.warn(e);
+        }
+        return null;
+    }
+
+    /**
+     * Get the Web Start package name including detailed version.
+     *
+     * Debian and Ubuntu OpenJDK packages are shipped with icedtea-web package,
+     * but its version does not match main java package version.
+     *
+     * Only Debian based distributions are covered at the moment.
+     * This can be extended to other distributions if needed.
+     *
+     * Simply return {@code null} if there's no separate package for Java WebStart.
+     *
+     * @return The package name and package version if it can be identified, null otherwise
+     */
+    public String getWebStartPackageDetails() {
+        if (isDebianOrUbuntu() && isOpenJDK()) {
+            return getPackageDetails("icedtea-netx");
         }
         return null;
     }
@@ -138,16 +201,16 @@ public class PlatformHookUnixoid implements PlatformHook {
             try {
                 // Try lsb_release (only available on LSB-compliant Linux systems, see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
                 Process p = Runtime.getRuntime().exec("lsb_release -ds");
-                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String line = Utils.strip(input.readLine());
-                Utils.close(input);
-                if (line != null && !line.isEmpty()) {
-                    line = line.replaceAll("\"+","");
-                    line = line.replaceAll("NAME=",""); // strange code for some Gentoo's
-                    if(line.startsWith("Linux ")) // e.g. Linux Mint
-                        return line;
-                    else if(!line.isEmpty())
-                        return "Linux " + line;
+                try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
+                    String line = Utils.strip(input.readLine());
+                    if (line != null && !line.isEmpty()) {
+                        line = line.replaceAll("\"+","");
+                        line = line.replaceAll("NAME=",""); // strange code for some Gentoo's
+                        if(line.startsWith("Linux ")) // e.g. Linux Mint
+                            return line;
+                        else if(!line.isEmpty())
+                            return "Linux " + line;
+                    }
                 }
             } catch (IOException e) {
                 // Non LSB-compliant Linux system. List of common fallback release files: http://linuxmafia.com/faq/Admin/release-files.html
@@ -221,9 +284,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             if (path != null) {
                 File file = new File(path);
                 if (file.exists()) {
-                    BufferedReader reader = null;
-                    try {
-                        reader = new BufferedReader(new FileReader(file));
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
                         String id = null;
                         String release = null;
                         String line;
@@ -251,8 +312,6 @@ public class PlatformHookUnixoid implements PlatformHook {
                         }
                     } catch (IOException e) {
                         // Ignore
-                    } finally {
-                        Utils.close(reader);
                     }
                 }
             }
@@ -265,29 +324,43 @@ public class PlatformHookUnixoid implements PlatformHook {
             return result;
         }
     }
-    
+
     protected void askUpdateJava(String version) {
-        try {
-            ExtendedDialog ed = new ExtendedDialog(
-                    Main.parent,
-                    tr("Outdated Java version"),
-                    new String[]{tr("Update Java"), tr("Cancel")});
-            // Check if the dialog has not already been permanently hidden by user
-            if (!ed.toggleEnable("askUpdateJava7").toggleCheckState()) {
-                ed.setButtonIcons(new String[]{"java.png", "cancel.png"}).setCancelButton(2);
-                ed.setMinimumSize(new Dimension(460, 260));
-                ed.setIcon(JOptionPane.WARNING_MESSAGE);
-                ed.setContent(tr("You are running version {0} of Java.", "<b>"+version+"</b>")+"<br><br>"+
-                        "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.", "Oracle", tr("February 2013"))+"</b><br><br>"+
-                        "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "7")+"</b><br><br>"+
-                        tr("Would you like to update now ?"));
-   
-                if (ed.showDialog().getValue() == 1) {
-                    openUrl("http://www.java.com/download");
+        askUpdateJava(version, "https://www.java.com/download");
+    }
+
+    // Method kept because strings have already been translated. To enable for Java 8 migration somewhere in 2016
+    protected void askUpdateJava(final String version, final String url) {
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override
+            public void run() {
+                ExtendedDialog ed = new ExtendedDialog(
+                        Main.parent,
+                        tr("Outdated Java version"),
+                        new String[]{tr("Update Java"), tr("Cancel")});
+                // Check if the dialog has not already been permanently hidden by user
+                if (!ed.toggleEnable("askUpdateJava8").toggleCheckState()) {
+                    ed.setButtonIcons(new String[]{"java.png", "cancel.png"}).setCancelButton(2);
+                    ed.setMinimumSize(new Dimension(480, 300));
+                    ed.setIcon(JOptionPane.WARNING_MESSAGE);
+                    String content = tr("You are running version {0} of Java.", "<b>"+version+"</b>")+"<br><br>";
+                    if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor")) && !isOpenJDK()) {
+                        content += "<b>"+tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
+                                "Oracle", tr("April 2015"))+"</b><br><br>";
+                    }
+                    content += "<b>"+tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "8")+"</b><br><br>"+
+                            tr("Would you like to update now ?");
+                    ed.setContent(content);
+
+                    if (ed.showDialog().getValue() == 1) {
+                        try {
+                            openUrl(url);
+                        } catch (IOException e) {
+                            Main.warn(e);
+                        }
+                    }
                 }
             }
-        } catch (IOException e) {
-            Main.warn(e);
-        }
+        });
     }
 }

@@ -30,7 +30,7 @@ public class WindowGeometry {
      * @param extent  the size
      * @return the geometry object
      */
-    static public WindowGeometry centerOnScreen(Dimension extent) {
+    public static WindowGeometry centerOnScreen(Dimension extent) {
         return centerOnScreen(extent, "gui.geometry");
     }
 
@@ -43,7 +43,7 @@ public class WindowGeometry {
      * for whole virtual screen
      * @return the geometry object
      */
-    static public WindowGeometry centerOnScreen(Dimension extent, String preferenceKey) {
+    public static WindowGeometry centerOnScreen(Dimension extent, String preferenceKey) {
         Rectangle size = preferenceKey != null ? getScreenInfo(preferenceKey)
             : getFullScreenInfo();
         Point topLeft = new Point(
@@ -61,7 +61,7 @@ public class WindowGeometry {
      * @param extent the size
      * @return the geometry object
      */
-    static public WindowGeometry centerInWindow(Component reference, Dimension extent) {
+    public static WindowGeometry centerInWindow(Component reference, Dimension extent) {
         Window parentWindow = null;
         while(reference != null && ! (reference instanceof Window) ) {
             reference = reference.getParent();
@@ -81,7 +81,7 @@ public class WindowGeometry {
     /**
      * Exception thrown by the WindowGeometry class if something goes wrong
      */
-    static public class WindowGeometryException extends Exception {
+    public static class WindowGeometryException extends Exception {
         public WindowGeometryException(String message, Throwable cause) {
             super(message, cause);
         }
@@ -160,7 +160,7 @@ public class WindowGeometry {
         }
     }
 
-    protected void initFromPreferences(String preferenceKey) throws WindowGeometryException {
+    protected final void initFromPreferences(String preferenceKey) throws WindowGeometryException {
         String value = Main.pref.get(preferenceKey);
         if (value == null || value.isEmpty())
             throw new WindowGeometryException(tr("Preference with key ''{0}'' does not exist. Cannot restore window geometry from preferences.", preferenceKey));
@@ -172,12 +172,12 @@ public class WindowGeometry {
         extent.height = parseField(preferenceKey, value, "height");
     }
 
-    protected void initFromWindowGeometry(WindowGeometry other) {
+    protected final void initFromWindowGeometry(WindowGeometry other) {
         this.topLeft = other.topLeft;
         this.extent = other.extent;
     }
 
-    static public WindowGeometry mainWindow(String preferenceKey, String arg, boolean maximize) {
+    public static WindowGeometry mainWindow(String preferenceKey, String arg, boolean maximize) {
         Rectangle screenDimension = getScreenInfo("gui.geometry");
         if (arg != null) {
             final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(arg);
@@ -188,10 +188,10 @@ public class WindowGeometry {
                 if (m.group(3) != null) {
                     x = Integer.valueOf(m.group(5));
                     y = Integer.valueOf(m.group(7));
-                    if (m.group(4).equals("-")) {
+                    if ("-".equals(m.group(4))) {
                         x = screenDimension.x + screenDimension.width - x - w;
                     }
-                    if (m.group(6).equals("-")) {
+                    if ("-".equals(m.group(6))) {
                         y = screenDimension.y + screenDimension.height - y - h;
                     }
                 }
@@ -247,7 +247,7 @@ public class WindowGeometry {
      * @param preferenceKey the preference key
      */
     public void remember(String preferenceKey) {
-        StringBuffer value = new StringBuffer();
+        StringBuilder value = new StringBuilder();
         value.append("x=").append(topLeft.x).append(",")
         .append("y=").append(topLeft.y).append(",")
         .append("width=").append(extent.width).append(",")
@@ -322,18 +322,34 @@ public class WindowGeometry {
 
         Rectangle maxbounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
-        deltax = size.width - maxbounds.width;
-        if (deltax > 0) {
-            size.width -= deltax;
-        }
+        if (!isBugInMaximumWindowBounds(maxbounds)) {
+            deltax = size.width - maxbounds.width;
+            if (deltax > 0) {
+                size.width -= deltax;
+            }
 
-        deltay = size.height - maxbounds.height;
-        if (deltay > 0) {
-            size.height -= deltay;
+            deltay = size.height - maxbounds.height;
+            if (deltay > 0) {
+                size.height -= deltay;
+            }
         }
-
         window.setLocation(p);
         window.setSize(size);
+    }
+
+    /**
+     * Determines if the bug affecting getMaximumWindowBounds() occured.
+     *
+     * @param maxbounds result of getMaximumWindowBounds()
+     * @return {@code true} if the bug happened, {@code false otherwise}
+     *
+     * @see <a href="https://josm.openstreetmap.de/ticket/9699">JOSM-9699</a>
+     * @see <a href="https://bugs.launchpad.net/ubuntu/+source/openjdk-7/+bug/1171563">Ubuntu-1171563</a>
+     * @see <a href="http://icedtea.classpath.org/bugzilla/show_bug.cgi?id=1669">IcedTea-1669</a>
+     * @see <a href="https://bugs.openjdk.java.net/browse/JI-9010334">JI-9010334</a>
+     */
+    protected static boolean isBugInMaximumWindowBounds(Rectangle maxbounds) {
+        return maxbounds.width <= 0 || maxbounds.height <= 0;
     }
 
     /**

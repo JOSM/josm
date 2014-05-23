@@ -43,7 +43,7 @@ public final class Pair<A,B> {
     }
 
     public static <T> ArrayList<T> toArrayList(Pair<T, T> p) {
-        ArrayList<T> l = new ArrayList<T>(2);
+        ArrayList<T> l = new ArrayList<>(2);
         l.add(p.a);
         l.add(p.b);
         return l;
@@ -70,6 +70,6 @@ public final class Pair<A,B> {
      * @return The newly created Pair(u,v)
      */
     public static <U,V> Pair<U,V> create(U u, V v) {
-        return new Pair<U,V>(u,v);
+        return new Pair<>(u,v);
     }
 }

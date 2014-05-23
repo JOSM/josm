@@ -14,6 +14,8 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.SelectByInternalPointAction;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -148,7 +150,11 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
+            SelectByInternalPointAction.performSelection(Main.map.mapView.getEastNorth(e.getX(), e.getY()),
+                    (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) > 0,
+                    (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) > 0);
+        } else if (e.getButton() == MouseEvent.BUTTON1) {
             mousePosStart = mousePos = e.getPoint();
 
             lasso.reset();
@@ -278,7 +284,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("active") && !(Boolean)evt.getNewValue() && mousePosStart != null) {
+        if ("active".equals(evt.getPropertyName()) && !(Boolean)evt.getNewValue() && mousePosStart != null) {
             paintRect();
             mousePosStart = null;
             mousePos = null;
@@ -295,7 +301,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     public Collection<OsmPrimitive> getSelectedObjects(boolean alt) {
 
-        Collection<OsmPrimitive> selection = new LinkedList<OsmPrimitive>();
+        Collection<OsmPrimitive> selection = new LinkedList<>();
 
         // whether user only clicked, not dragged.
         boolean clicked = false;

@@ -37,7 +37,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     private long version;
     private Map<String, String> tags;
 
-    protected void ensurePositiveLong(long value, String name) {
+    protected final void ensurePositiveLong(long value, String name) {
         if (value <= 0) {
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", name, value));
         }
@@ -46,12 +46,12 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     /**
      * Constructs a new {@code HistoryOsmPrimitive}.
      *
-     * @param id the id (> 0 required)
-     * @param version the version (> 0 required)
+     * @param id the id (&gt; 0 required)
+     * @param version the version (&gt; 0 required)
      * @param visible whether the primitive is still visible
-     * @param user the user (! null required)
-     * @param changesetId the changeset id (> 0 required)
-     * @param timestamp the timestamp (! null required)
+     * @param user the user (!= null required)
+     * @param changesetId the changeset id (&gt; 0 required)
+     * @param timestamp the timestamp (!= null required)
      *
      * @throws IllegalArgumentException if preconditions are violated
      */
@@ -63,12 +63,12 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
      * Constructs a new {@code HistoryOsmPrimitive} with a configurable checking of historic parameters.
      * This is needed to build virtual HistoryOsmPrimitives for modified primitives, which do not have a timestamp and a changeset id.
      *
-     * @param id the id (> 0 required)
-     * @param version the version (> 0 required)
+     * @param id the id (&gt; 0 required)
+     * @param version the version (&gt; 0 required)
      * @param visible whether the primitive is still visible
-     * @param user the user (! null required)
-     * @param changesetId the changeset id (> 0 required if {@code checkHistoricParams} is true)
-     * @param timestamp the timestamp (! null required if {@code checkHistoricParams} is true)
+     * @param user the user (!= null required)
+     * @param changesetId the changeset id (&gt; 0 required if {@code checkHistoricParams} is true)
+     * @param timestamp the timestamp (!= null required if {@code checkHistoricParams} is true)
      * @param checkHistoricParams if true, checks values of {@code changesetId} and {@code timestamp}
      *
      * @throws IllegalArgumentException if preconditions are violated
@@ -88,7 +88,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         this.user = user;
         this.changesetId  = changesetId;
         this.timestamp = timestamp;
-        tags = new HashMap<String, String>();
+        tags = new HashMap<>();
     }
 
     /**
@@ -190,9 +190,9 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
      */
     public void setTags(Map<String,String> tags) {
         if (tags == null) {
-            this.tags = new HashMap<String, String>();
+            this.tags = new HashMap<>();
         } else {
-            this.tags = new HashMap<String, String>(tags);
+            this.tags = new HashMap<>(tags);
         }
     }
 

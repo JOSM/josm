@@ -2,11 +2,14 @@
 package org.openstreetmap.josm.actions.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -37,7 +40,7 @@ public class EditRelationAction extends AbstractRelationAction  {
      * @return The set of currently selected relation members for the given relation.
      */
     public static Set<RelationMember> getMembersForCurrentSelection(Relation r) {
-        Set<RelationMember> members = new HashSet<RelationMember>();
+        Set<RelationMember> members = new HashSet<>();
         if (Main.isDisplayingMapView()) {
             OsmDataLayer editLayer = Main.main.getEditLayer();
             if (editLayer != null && editLayer.data != null) {
@@ -64,13 +67,23 @@ public class EditRelationAction extends AbstractRelationAction  {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.size()!=1) return;
-        launchEditor(relations.iterator().next());
+        if (!isEnabled() || relations.isEmpty()) return;
+        if (relations.size() > Main.pref.getInteger("warn.open.maxrelations", 5) &&
+            /* I18N english text for value 1 makes no real sense, never called for values <= maxrel (usually 5) */
+            JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent, 
+                    "<html>"+trn("You are about to open <b>{0}</b> different relation editor simultaneously.<br/>Do you want to continue?",
+                            "You are about to open <b>{0}</b> different relation editors simultaneously.<br/>Do you want to continue?",
+                            relations.size(), relations.size())+"</html>", 
+                    tr("Confirmation"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE)) {
+            return;
+        }
+        for (Relation r : relations) {
+            launchEditor(r);
+        }
     }
 
     @Override
     protected void updateEnabledState() {
-        // only one selected relation can be edited
-        setEnabled( relations.size()==1 );
+        setEnabled( !relations.isEmpty() );
     }
 }

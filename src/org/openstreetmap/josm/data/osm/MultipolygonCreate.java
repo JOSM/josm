@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,11 +26,13 @@ public class MultipolygonCreate {
         public final List<Way> ways;
         public final List<Boolean> reversed;
         public final List<Node> nodes;
+        public final Area area;
 
         public JoinedPolygon(List<Way> ways, List<Boolean> reversed) {
             this.ways = ways;
             this.reversed = reversed;
             this.nodes = this.getNodes();
+            this.area = Geometry.getArea(nodes);
         }
 
         /**
@@ -37,18 +40,15 @@ public class MultipolygonCreate {
          * @param way the way to form the polygon
          */
         public JoinedPolygon(Way way) {
-            this.ways = Collections.singletonList(way);
-            this.reversed = Collections.singletonList(Boolean.FALSE);
-            this.nodes = this.getNodes();
+            this(Collections.singletonList(way), Collections.singletonList(Boolean.FALSE));
         }
-
 
         /**
          * Builds a list of nodes for this polygon. First node is not duplicated as last node.
          * @return list of nodes
          */
-        private List<Node> getNodes() {
-            List<Node> nodes = new ArrayList<Node>();
+        public List<Node> getNodes() {
+            List<Node> nodes = new ArrayList<>();
 
             for(int waypos = 0; waypos < this.ways.size(); waypos ++) {
                 Way way = this.ways.get(waypos);
@@ -84,7 +84,7 @@ public class MultipolygonCreate {
         public PolygonLevel(JoinedPolygon _pol, int _level) {
             this.outerWay = _pol;
             this.level = _level;
-            this.innerWays = new ArrayList<JoinedPolygon>();
+            this.innerWays = new ArrayList<>();
         }
     }
 
@@ -97,8 +97,8 @@ public class MultipolygonCreate {
     }
 
     public MultipolygonCreate(){
-        this.outerWays = new ArrayList<JoinedPolygon>(0);
-        this.innerWays = new ArrayList<JoinedPolygon>(0);
+        this.outerWays = new ArrayList<>(0);
+        this.innerWays = new ArrayList<>(0);
     }
 
     /**
@@ -107,16 +107,41 @@ public class MultipolygonCreate {
      * @param ways ways to analyze
      * @return error description if the ways cannot be split, {@code null} if all fine.
      */
-    public String makeFromWays(Collection<Way> ways){
-        List<JoinedPolygon> joinedWays = new ArrayList<JoinedPolygon>();
+    public String makeFromWays(Collection<Way> ways) {
+        try {
+            List<JoinedPolygon> joinedWays = joinWays(ways);
+            //analyze witch way is inside witch outside.
+            return makeFromPolygons(joinedWays);
+        } catch (JoinedPolygonCreationException ex) {
+            return ex.getMessage();
+        }
+    }
+
+    /**
+     * An exception indicating an error while joining ways to multipolygon rings.
+     */
+    public static class JoinedPolygonCreationException extends RuntimeException {
+        public JoinedPolygonCreationException(String message) {
+            super(message);
+        }
+    }
+
+    /**
+     * Joins the given {@code ways} to multipolygon rings.
+     * @param ways the ways to join.
+     * @return a list of multipolygon rings.
+     * @throws JoinedPolygonCreationException if the creation fails.
+     */
+    public static List<JoinedPolygon> joinWays(Collection<Way> ways) throws JoinedPolygonCreationException {
+        List<JoinedPolygon> joinedWays = new ArrayList<>();
 
         //collect ways connecting to each node.
-        MultiMap<Node, Way> nodesWithConnectedWays = new MultiMap<Node, Way>();
-        Set<Way> usedWays = new HashSet<Way>();
+        MultiMap<Node, Way> nodesWithConnectedWays = new MultiMap<>();
+        Set<Way> usedWays = new HashSet<>();
 
         for(Way w: ways) {
             if (w.getNodesCount() < 2) {
-                return tr("Cannot add a way with only {0} nodes.", w.getNodesCount());
+                throw new JoinedPolygonCreationException(tr("Cannot add a way with only {0} nodes.", w.getNodesCount()));
             }
 
             if (w.isClosed()) {
@@ -138,8 +163,8 @@ public class MultipolygonCreate {
             }
 
             Node startNode = startWay.firstNode();
-            List<Way> collectedWays = new ArrayList<Way>();
-            List<Boolean> collectedWaysReverse = new ArrayList<Boolean>();
+            List<Way> collectedWays = new ArrayList<>();
+            List<Boolean> collectedWaysReverse = new ArrayList<>();
             Way curWay = startWay;
             Node prevNode = startNode;
 
@@ -161,7 +186,7 @@ public class MultipolygonCreate {
                 Collection<Way> adjacentWays = nodesWithConnectedWays.get(nextNode);
 
                 if (adjacentWays.size() != 2) {
-                    return tr("Each node must connect exactly 2 ways");
+                    throw new JoinedPolygonCreationException(tr("Each node must connect exactly 2 ways"));
                 }
 
                 Way nextWay = null;
@@ -180,8 +205,7 @@ public class MultipolygonCreate {
             joinedWays.add(new JoinedPolygon(collectedWays, collectedWaysReverse));
         }
 
-        //analyze witch way is inside witch outside.
-        return makeFromPolygons(joinedWays);
+        return joinedWays;
     }
 
     /**
@@ -196,8 +220,8 @@ public class MultipolygonCreate {
             return tr("There is an intersection between ways.");
         }
 
-        this.outerWays = new ArrayList<JoinedPolygon>(0);
-        this.innerWays = new ArrayList<JoinedPolygon>(0);
+        this.outerWays = new ArrayList<>(0);
+        this.innerWays = new ArrayList<>(0);
 
         //take every other level
         for (PolygonLevel pol : list) {
@@ -220,19 +244,19 @@ public class MultipolygonCreate {
     private List<PolygonLevel> findOuterWaysRecursive(int level, Collection<JoinedPolygon> boundaryWays) {
 
         //TODO: bad performance for deep nesting...
-        List<PolygonLevel> result = new ArrayList<PolygonLevel>();
+        List<PolygonLevel> result = new ArrayList<>();
 
         for (JoinedPolygon outerWay : boundaryWays) {
 
             boolean outerGood = true;
-            List<JoinedPolygon> innerCandidates = new ArrayList<JoinedPolygon>();
+            List<JoinedPolygon> innerCandidates = new ArrayList<>();
 
             for (JoinedPolygon innerWay : boundaryWays) {
                 if (innerWay == outerWay) {
                     continue;
                 }
 
-                PolygonIntersection intersection = Geometry.polygonIntersection(outerWay.nodes, innerWay.nodes);
+                PolygonIntersection intersection = Geometry.polygonIntersection(outerWay.area, innerWay.area);
 
                 if (intersection == PolygonIntersection.FIRST_INSIDE_SECOND) {
                     outerGood = false;  // outer is inside another polygon

@@ -38,12 +38,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Subclasses call applyCorrections() with maps of the requested
  * corrections and a dialog is pesented to the user to
  * confirm these changes.
+ * @param <P> The type of OSM primitive to correct
  */
-
 public abstract class TagCorrector<P extends OsmPrimitive> {
 
-    public abstract Collection<Command> execute(P primitive, P oldprimitive)
-    throws UserCancelException;
+    public abstract Collection<Command> execute(P oldprimitive, P primitive) throws UserCancelException;
 
     private String[] applicationOptions = new String[] {
             tr("Apply selected changes"),
@@ -57,22 +56,20 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             String description) throws UserCancelException {
 
         if (!tagCorrectionsMap.isEmpty() || !roleCorrectionMap.isEmpty()) {
-            Collection<Command> commands = new ArrayList<Command>();
-            Map<OsmPrimitive, TagCorrectionTable> tagTableMap =
-                new HashMap<OsmPrimitive, TagCorrectionTable>();
-            Map<OsmPrimitive, RoleCorrectionTable> roleTableMap =
-                new HashMap<OsmPrimitive, RoleCorrectionTable>();
+            Collection<Command> commands = new ArrayList<>();
+            Map<OsmPrimitive, TagCorrectionTable> tagTableMap = new HashMap<>();
+            Map<OsmPrimitive, RoleCorrectionTable> roleTableMap = new HashMap<>();
 
             final JPanel p = new JPanel(new GridBagLayout());
 
             final JMultilineLabel label1 = new JMultilineLabel(description);
             label1.setMaxWidth(600);
-            p.add(label1, GBC.eop().anchor(GBC.CENTER));
+            p.add(label1, GBC.eop().anchor(GBC.CENTER).fill(GBC.HORIZONTAL));
 
             final JMultilineLabel label2 = new JMultilineLabel(
                     tr("Please select which changes you want to apply."));
             label2.setMaxWidth(600);
-            p.add(label2, GBC.eop().anchor(GBC.CENTER));
+            p.add(label2, GBC.eop().anchor(GBC.CENTER).fill(GBC.HORIZONTAL));
 
             for (Entry<OsmPrimitive, List<TagCorrection>> entry : tagCorrectionsMap.entrySet()) {
                 final OsmPrimitive primitive = entry.getKey();
@@ -108,8 +105,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     continue;
                 }
 
-                final JLabel rolesLabel = new JLabel(
-                        tr("Roles in relations referring to"));
+                final JLabel rolesLabel = new JLabel(tr("Roles in relations referring to"));
                 p.add(rolesLabel, GBC.std());
 
                 final JLabel primitiveLabel = new JLabel(
@@ -119,8 +115,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 );
                 p.add(primitiveLabel, GBC.eol());
 
-                final RoleCorrectionTable table = new RoleCorrectionTable(
-                        roleCorrections);
+                final RoleCorrectionTable table = new RoleCorrectionTable(roleCorrections);
                 final JScrollPane scrollPane = new JScrollPane(table);
                 p.add(scrollPane, GBC.eop().fill(GBC.HORIZONTAL));
 
@@ -156,7 +151,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
                     // use this structure to remember keys that have been set already so that
                     // they're not dropped by a later step
-                    Set<String> keysChanged = new HashSet<String>();
+                    Set<String> keysChanged = new HashSet<>();
 
                     // apply all changes to this clone
                     for (int i = 0; i < tagCorrections.size(); i++) {

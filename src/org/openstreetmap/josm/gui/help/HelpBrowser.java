@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
@@ -51,9 +52,11 @@ import org.openstreetmap.josm.gui.widgets.JosmHTMLEditorKit;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Help browser displaying HTML pages fetched from JOSM wiki.
+ */
 public class HelpBrowser extends JDialog {
     /** the unique instance */
     private static HelpBrowser instance;
@@ -68,7 +71,7 @@ public class HelpBrowser extends JDialog {
      *
      * @return the unique instance of the help browser
      */
-    static public HelpBrowser getInstance() {
+    public static HelpBrowser getInstance() {
         if (instance == null) {
             instance = new HelpBrowser();
         }
@@ -99,7 +102,7 @@ public class HelpBrowser extends JDialog {
      *
      * @param helpTopic the help topic
      */
-    static public void launchBrowser(String helpTopic) {
+    public static void launchBrowser(String helpTopic) {
         HelpBrowser browser = getInstance();
         browser.openHelpTopic(helpTopic);
         browser.setVisible(true);
@@ -131,24 +134,21 @@ public class HelpBrowser extends JDialog {
      */
     protected StyleSheet buildStyleSheet() {
         StyleSheet ss = new StyleSheet();
-        BufferedReader reader = new BufferedReader(
+        StringBuilder css = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
-                        getClass().getResourceAsStream("/data/help-browser.css")
+                        getClass().getResourceAsStream("/data/help-browser.css"), StandardCharsets.UTF_8
                 )
-        );
-        StringBuffer css = new StringBuffer();
-        try {
+        )) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 css.append(line);
                 css.append("\n");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             Main.error(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));
             Main.error(e);
             return ss;
-        } finally {
-            Utils.close(reader);
         }
         ss.addRule(css.toString());
         return ss;
@@ -166,7 +166,7 @@ public class HelpBrowser extends JDialog {
         return tb;
     }
 
-    protected void build() {
+    protected final void build() {
         help = new JosmEditorPane();
         JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
         kit.setStyleSheet(buildStyleSheet());
@@ -213,12 +213,14 @@ public class HelpBrowser extends JDialog {
         } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
-        if(windowMenuItem != null && !visible) {
-            Main.main.menu.windowMenu.remove(windowMenuItem);
-            windowMenuItem = null;
-        }
-        if(windowMenuItem == null && visible) {
-            windowMenuItem = MainMenu.add(Main.main.menu.windowMenu, focusAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+        if (Main.main != null && Main.main.menu != null && Main.main.menu.windowMenu != null) {
+            if(windowMenuItem != null && !visible) {
+                Main.main.menu.windowMenu.remove(windowMenuItem);
+                windowMenuItem = null;
+            }
+            if(windowMenuItem == null && visible) {
+                windowMenuItem = MainMenu.add(Main.main.menu.windowMenu, focusAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+            }
         }
         super.setVisible(visible);
     }
@@ -384,6 +386,7 @@ public class HelpBrowser extends JDialog {
                 history.setCurrentUrl(url);
                 this.url = url;
             } catch(Exception e) {
+                Main.warn(e);
                 HelpAwareOptionPane.showOptionDialog(
                         Main.parent,
                         tr(
@@ -424,7 +427,6 @@ public class HelpBrowser extends JDialog {
 
     class OpenInBrowserAction extends AbstractAction {
         public OpenInBrowserAction() {
-            //putValue(NAME, tr("Open in Browser"));
             putValue(SHORT_DESCRIPTION, tr("Open the current help page in an external browser"));
             putValue(SMALL_ICON, ImageProvider.get("help", "internet"));
         }
@@ -437,7 +439,6 @@ public class HelpBrowser extends JDialog {
 
     class EditAction extends AbstractAction {
         public EditAction() {
-            // putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, tr("Edit the current help page"));
             putValue(SMALL_ICON,ImageProvider.get("dialogs", "edit"));
         }

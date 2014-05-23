@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,25 +21,32 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
  */
 public abstract class TaggingPresetItem {
 
-    protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
+    protected void initAutoCompletionField(AutoCompletingTextField field, String... key) {
+        initAutoCompletionField(field, Arrays.asList(key));
+    }
+
+    protected void initAutoCompletionField(AutoCompletingTextField field, List<String> keys) {
         if (Main.main == null) return;
         OsmDataLayer layer = Main.main.getEditLayer();
         if (layer == null) {
             return;
         }
         AutoCompletionList list = new AutoCompletionList();
-        layer.data.getAutoCompletionManager().populateWithTagValues(list, key);
+        layer.data.getAutoCompletionManager().populateWithTagValues(list, keys);
         field.setAutoCompletionList(list);
     }
 
     /**
      * Called by {@link TaggingPreset#createPanel} during tagging preset panel creation.
      * All components defining this tagging preset item must be added to given panel.
+     *
      * @param p The panel where components must be added
      * @param sel The related selected OSM primitives
+     * @param presetInitiallyMatches Whether this {@link TaggingPreset} already matched before applying,
+     *                               i.e. whether the map feature already existed on the primitive.
      * @return {@code true} if this item adds semantic tagging elements, {@code false} otherwise.
      */
-    abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel);
+    abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches);
 
     /**
      * Adds the new tags to apply to selected OSM primitives when the preset holding this item is applied.

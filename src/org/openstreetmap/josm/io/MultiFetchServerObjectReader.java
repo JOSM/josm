@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * which should be safe according to the
      * <a href="http://www.boutell.com/newfaq/misc/urllength.html">WWW FAQ</a>.
      */
-    static private int MAX_IDS_PER_REQUEST = 200;
+    private static final int MAX_IDS_PER_REQUEST = 200;
 
     private Set<Long> nodes;
     private Set<Long> ways;
@@ -74,11 +75,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * Constructs a {@code MultiFetchServerObjectReader}.
      */
     public MultiFetchServerObjectReader() {
-        nodes = new LinkedHashSet<Long>();
-        ways = new LinkedHashSet<Long>();
-        relations = new LinkedHashSet<Long>();
+        nodes = new LinkedHashSet<>();
+        ways = new LinkedHashSet<>();
+        relations = new LinkedHashSet<>();
         this.outputDataSet = new DataSet();
-        this.missingPrimitives = new LinkedHashSet<PrimitiveId>();
+        this.missingPrimitives = new LinkedHashSet<>();
     }
 
     /**
@@ -103,7 +104,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * an {@link OsmPrimitive} with id=<code>id</code>. The id will
      * later we fetched as part of a Multi Get request.
      *
-     * Ignore the id if it id <= 0.
+     * Ignore the id if it id &lt;= 0.
      *
      * @param ds  the dataset (must not be null)
      * @param id  the primitive id
@@ -237,7 +238,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * @return the subset of ids
      */
     protected Set<Long> extractIdPackage(Set<Long> ids) {
-        HashSet<Long> pkg = new HashSet<Long>();
+        HashSet<Long> pkg = new HashSet<>();
         if (ids.isEmpty())
             return pkg;
         if (ids.size() > MAX_IDS_PER_REQUEST) {
@@ -332,14 +333,14 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         progressMonitor.setTicksCount(ids.size());
         progressMonitor.setTicks(0);
         // The complete set containg all primitives to fetch
-        Set<Long> toFetch = new HashSet<Long>(ids);
+        Set<Long> toFetch = new HashSet<>(ids);
         // Build a list of fetchers that will  download smaller sets containing only MAX_IDS_PER_REQUEST (200) primitives each.
         // we will run up to MAX_DOWNLOAD_THREADS concurrent fetchers.
         int threadsNumber = Main.pref.getInteger("osm.download.threads", OsmApi.MAX_DOWNLOAD_THREADS);
         threadsNumber = Math.min(Math.max(threadsNumber, 1), OsmApi.MAX_DOWNLOAD_THREADS);
         Executor exec = Executors.newFixedThreadPool(threadsNumber);
-        CompletionService<FetchResult> ecs = new ExecutorCompletionService<FetchResult>(exec);
-        List<Future<FetchResult>> jobs = new ArrayList<Future<FetchResult>>();
+        CompletionService<FetchResult> ecs = new ExecutorCompletionService<>(exec);
+        List<Future<FetchResult>> jobs = new ArrayList<>();
         while (!toFetch.isEmpty()) {
             jobs.add(ecs.submit(new Fetcher(type, extractIdPackage(toFetch), progressMonitor)));
         }
@@ -355,9 +356,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                     rememberNodesOfIncompleteWaysToLoad(result.dataSet);
                     merge(result.dataSet);
                 }
-            } catch (InterruptedException e) {
-                Main.error(e);
-            } catch (ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 Main.error(e);
             }
         }
@@ -389,7 +388,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         int n = nodes.size() + ways.size() + relations.size();
         progressMonitor.beginTask(trn("Downloading {0} object from ''{1}''", "Downloading {0} objects from ''{1}''", n, n, OsmApi.getOsmApi().getBaseUrl()));
         try {
-            missingPrimitives = new HashSet<PrimitiveId>();
+            missingPrimitives = new HashSet<>();
             if (isCanceled()) return null;
             fetchPrimitives(ways,OsmPrimitiveType.WAY, progressMonitor);
             if (isCanceled()) return null;
@@ -507,14 +506,19 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
          */
         protected FetchResult multiGetIdPackage(OsmPrimitiveType type, Set<Long> pkg, ProgressMonitor progressMonitor) throws OsmTransferException {
             String request = buildRequestString(type, pkg);
-            final InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE);
-            if (in == null) return null;
-            progressMonitor.subTask(tr("Downloading OSM data..."));
-            try {
-                return new FetchResult(OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(pkg.size(), false)), null);
-            } catch (Exception e) {
-                throw new OsmTransferException(e);
+            FetchResult result = null;
+            try (InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE)) {
+                if (in == null) return null;
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                try {
+                    result = new FetchResult(OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(pkg.size(), false)), null);
+                } catch (Exception e) {
+                    throw new OsmTransferException(e);
+                }
+            } catch (IOException ex) {
+                Main.warn(ex);
             }
+            return result;
         }
 
         /**
@@ -528,14 +532,19 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
          */
         protected DataSet singleGetId(OsmPrimitiveType type, long id, ProgressMonitor progressMonitor) throws OsmTransferException {
             String request = buildRequestString(type, id);
-            final InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE);
-            if (in == null) return null;
-            progressMonitor.subTask(tr("Downloading OSM data..."));
-            try {
-                return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
-            } catch (Exception e) {
-                throw new OsmTransferException(e);
+            DataSet result = null;
+            try (InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE)) {
+                if (in == null) return null;
+                progressMonitor.subTask(tr("Downloading OSM data..."));
+                try {
+                    result = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
+                } catch (Exception e) {
+                    throw new OsmTransferException(e);
+                }
+            } catch (IOException ex) {
+                Main.warn(ex);
             }
+            return result;
         }
 
         /**

@@ -6,13 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.math.BigDecimal;
-import java.math.MathContext;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -31,9 +30,12 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Aligns all selected nodes within a circle. (Useful for roundabouts)
  *
+ * @since 146
+ *
  * @author Matthew Newton
  * @author Petr Dlouhý
  * @author Teemu Koskinen
+ * @author Alain Delplanque
  */
 public final class AlignInCircleAction extends JosmAction {
 
@@ -47,14 +49,14 @@ public final class AlignInCircleAction extends JosmAction {
         putValue("help", ht("/Action/AlignInCircle"));
     }
 
-    public double distance(EastNorth n, EastNorth m) {
+    private static double distance(EastNorth n, EastNorth m) {
         double easd, nord;
         easd = n.east() - m.east();
         nord = n.north() - m.north();
         return Math.sqrt(easd * easd + nord * nord);
     }
 
-    public class PolarCoor {
+    public static class PolarCoor {
         double radius;
         double angle;
         EastNorth origin = new EastNorth(0, 0);
@@ -86,20 +88,55 @@ public final class AlignInCircleAction extends JosmAction {
             return new EastNorth(radius * Math.cos(angle - azimuth) + origin.east(), radius * Math.sin(angle - azimuth)
                     + origin.north());
         }
+
+        /**
+         * Create a MoveCommand to move a node to this PolarCoor.
+         * @param n Node to move
+         * @return new MoveCommand
+         */
+        public MoveCommand createMoveCommand(Node n) {
+            EastNorth en = toEastNorth();
+            return new MoveCommand(n, en.east() - n.getEastNorth().east(), en.north() - n.getEastNorth().north());
+        }
     }
 
+    
+    /**
+     * Perform AlignInCircle action.
+     *
+     * A fixed node is a node for which it is forbidden to change the angle relative to center of the circle.
+     * All other nodes are uniformly distributed.
+     *
+     * Case 1: One unclosed way.
+     * --> allow action, and align selected way nodes
+     * If nodes contained by this way are selected, there are fix.
+     * If nodes outside from the way are selected there are ignored.
+     *
+     * Case 2: One or more ways are selected and can be joined into a polygon
+     * --> allow action, and align selected ways nodes
+     * If 1 node outside of way is selected, it became center
+     * If 1 node outside and 1 node inside are selected there define center and radius
+     * If no outside node and 2 inside nodes are selected those 2 nodes define diameter
+     * In all other cases outside nodes are ignored
+     * In all cases, selected nodes are fix, nodes with more than one referrers are fix
+     * (first referrer is the selected way)
+     *
+     * Case 3: Only nodes are selected
+     * --> Align these nodes, all are fix
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
 
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        List<Node> nodes = new LinkedList<Node>();
-        List<Way> ways = new LinkedList<Way>();
+        List<Node> nodes = new LinkedList<>();
+        // fixNodes: All nodes for which the angle relative to center should not be modified
+        HashSet<Node> fixNodes = new HashSet<>();
+        List<Way> ways = new LinkedList<>();
         EastNorth center = null;
         double radius = 0;
-        boolean regular = false;
-
+        
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Node) {
                 nodes.add((Node) osm);
@@ -108,39 +145,68 @@ public final class AlignInCircleAction extends JosmAction {
             }
         }
 
-        // special case if no single nodes are selected and exactly one way is:
-        // then use the way's nodes
-        if ((nodes.size() <= 2) && (ways.size() == 1)) {
-            Way way = ways.get(0);
-
-            // some more special combinations:
-            // When is selected node that is part of the way, then make a regular polygon, selected
-            // node doesn't move.
-            // I haven't got better idea, how to activate that function.
-            //
-            // When one way and one node is selected, set center to position of that node.
-            // When one more node, part of the way, is selected, set the radius equal to the
-            // distance between two nodes.
-            if (nodes.size() > 0) {
-                if (nodes.size() == 1 && way.containsNode(nodes.get(0)) && allowRegularPolygon(way.getNodes())) {
-                    regular = true;
-                } else if (nodes.size() >= 2) {
-                    center = nodes.get(way.containsNode(nodes.get(0)) ? 1 : 0).getEastNorth();
-                    if (nodes.size() == 2) {
-                        radius = distance(nodes.get(0).getEastNorth(), nodes.get(1).getEastNorth());
+        if (ways.size() == 1 && ways.get(0).firstNode() != ways.get(0).lastNode()) {
+            // Case 1
+            Way w = ways.get(0);
+            fixNodes.add(w.firstNode());
+            fixNodes.add(w.lastNode());
+            fixNodes.addAll(nodes);
+            fixNodes.addAll(collectNodesWithExternReferers(ways));
+            // Temporary closed way used to reorder nodes
+            Way closedWay = new Way(w);
+            closedWay.addNode(w.firstNode());
+            ArrayList<Way> usedWays = new ArrayList<>(1);
+            usedWays.add(closedWay);
+            nodes = collectNodesAnticlockwise(usedWays);
+        } else if (!ways.isEmpty() && checkWaysArePolygon(ways)) {
+            // Case 2
+            ArrayList<Node> inside = new ArrayList<>();
+            ArrayList<Node> outside = new ArrayList<>();
+            
+            for(Node n: nodes) {
+                boolean isInside = false;
+                for(Way w: ways) {
+                    if(w.getNodes().contains(n)) {
+                        isInside = true;
+                        break;
                     }
                 }
-                nodes.clear();
+                if(isInside)
+                    inside.add(n);
+                else
+                    outside.add(n);
             }
-
-            for (Node n : way.getNodes()) {
-                if (!nodes.contains(n)) {
-                    nodes.add(n);
-                }
+            
+            if(outside.size() == 1 && inside.isEmpty()) {
+                center = outside.get(0).getEastNorth();
+            } else if(outside.size() == 1 && inside.size() == 1) {
+                center = outside.get(0).getEastNorth();
+                radius = distance(center, inside.get(0).getEastNorth());
+            } else if(inside.size() == 2 && outside.isEmpty()) {
+                // 2 nodes inside, define diameter
+                EastNorth en0 = inside.get(0).getEastNorth();
+                EastNorth en1 = inside.get(1).getEastNorth();
+                center = new EastNorth((en0.east() + en1.east()) / 2, (en0.north() + en1.north()) / 2);
+                radius = distance(en0, en1) / 2;
             }
-        }
-
-        if (nodes.size() < 4) {
+            
+            fixNodes.addAll(inside);
+            fixNodes.addAll(collectNodesWithExternReferers(ways));
+            nodes = collectNodesAnticlockwise(ways);
+            if (nodes.size() < 4) {
+                new Notification(
+                        tr("Not enough nodes in selected ways."))
+                .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                .setDuration(Notification.TIME_SHORT)
+                .show();
+                return;
+            }
+        } else if (ways.isEmpty() && nodes.size() > 3) {
+            // Case 3
+            fixNodes.addAll(nodes);
+            // No need to reorder nodes since all are fix
+        } else {
+            // Invalid action
             new Notification(
                     tr("Please select at least four nodes."))
                     .setIcon(JOptionPane.INFORMATION_MESSAGE)
@@ -149,52 +215,20 @@ public final class AlignInCircleAction extends JosmAction {
             return;
         }
 
-        // Reorder the nodes if they didn't come from a single way
-        if (ways.size() != 1) {
-            // First calculate the average point
-
-            BigDecimal east = BigDecimal.ZERO;
-            BigDecimal north = BigDecimal.ZERO;
-
-            for (Node n : nodes) {
-                BigDecimal x = new BigDecimal(n.getEastNorth().east());
-                BigDecimal y = new BigDecimal(n.getEastNorth().north());
-                east = east.add(x, MathContext.DECIMAL128);
-                north = north.add(y, MathContext.DECIMAL128);
-            }
-            BigDecimal nodesSize = new BigDecimal(nodes.size());
-            east = east.divide(nodesSize, MathContext.DECIMAL128);
-            north = north.divide(nodesSize, MathContext.DECIMAL128);
-
-            EastNorth average = new EastNorth(east.doubleValue(), north.doubleValue());
-            List<Node> newNodes = new LinkedList<Node>();
-
-            // Then reorder them based on heading from the average point
-            while (!nodes.isEmpty()) {
-                double maxHeading = -1.0;
-                Node maxNode = null;
-                for (Node n : nodes) {
-                    double heading = average.heading(n.getEastNorth());
-                    if (heading > maxHeading) {
-                        maxHeading = heading;
-                        maxNode = n;
-                    }
-                }
-                newNodes.add(maxNode);
-                nodes.remove(maxNode);
-            }
-
-            nodes = newNodes;
-        }
-
         if (center == null) {
-            // Compute the centroid of nodes
-            center = Geometry.getCentroid(nodes);
+            // Compute the center of nodes
+            center = Geometry.getCenter(nodes);
+            if (center == null) {
+                new Notification(tr("Cannot determine center of selected nodes."))
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setDuration(Notification.TIME_SHORT)
+                    .show();
+                return;
+            }
         }
-        // Node "center" now is central to all selected nodes.
-
+    
         // Now calculate the average distance to each node from the
-        // centre. This method is ok as long as distances are short
+        // center. This method is ok as long as distances are short
         // relative to the distance from the N or S poles.
         if (radius == 0) {
             for (Node n : nodes) {
@@ -203,37 +237,129 @@ public final class AlignInCircleAction extends JosmAction {
             radius = radius / nodes.size();
         }
 
-        Collection<Command> cmds = new LinkedList<Command>();
+        if(!actionAllowed(nodes)) return;
 
-        PolarCoor pc;
+        Collection<Command> cmds = new LinkedList<>();
 
-        if (regular) { // Make a regular polygon
-            double angle = Math.PI * 2 / nodes.size();
-            pc = new PolarCoor(nodes.get(0).getEastNorth(), center, 0);
-
-            if (pc.angle > (new PolarCoor(nodes.get(1).getEastNorth(), center, 0).angle)) {
-                angle *= -1;
+        // Move each node to that distance from the center.
+        // Nodes that are not "fix" will be adjust making regular arcs. 
+        int nodeCount = nodes.size();
+        // Search first fixed node
+        int startPosition = 0;
+        for(startPosition = 0; startPosition < nodeCount; startPosition++)
+            if(fixNodes.contains(nodes.get(startPosition % nodeCount))) break;
+        int i = startPosition; // Start position for current arc
+        int j; // End position for current arc
+        while(i < startPosition + nodeCount) {
+            for(j = i + 1; j < startPosition + nodeCount; j++)
+                if(fixNodes.contains(nodes.get(j % nodeCount))) break;
+            Node first = nodes.get(i % nodeCount);
+            PolarCoor pcFirst = new PolarCoor(first.getEastNorth(), center, 0);
+            pcFirst.radius = radius;
+            cmds.add(pcFirst.createMoveCommand(first));
+            if(j > i + 1) {
+                double delta;
+                if(j == i + nodeCount) {
+                    delta = 2 * Math.PI / nodeCount;
+                } else {
+                    PolarCoor pcLast = new PolarCoor(nodes.get(j % nodeCount).getEastNorth(), center, 0);
+                    delta = pcLast.angle - pcFirst.angle;
+                    if(delta < 0) // Assume each PolarCoor.angle is in range ]-pi; pi]
+                        delta +=  2*Math.PI;
+                    delta /= j - i;
+                }
+                for(int k = i+1; k < j; k++) {
+                    PolarCoor p = new PolarCoor(radius, pcFirst.angle + (k-i)*delta, center, 0);
+                    cmds.add(p.createMoveCommand(nodes.get(k % nodeCount)));
+                }
             }
-
-            pc.radius = radius;
-            for (Node n : nodes) {
-                EastNorth no = pc.toEastNorth();
-                cmds.add(new MoveCommand(n, no.east() - n.getEastNorth().east(), no.north() - n.getEastNorth().north()));
-                pc.angle += angle;
-            }
-        } else { // Move each node to that distance from the centre.
-            for (Node n : nodes) {
-                pc = new PolarCoor(n.getEastNorth(), center, 0);
-                pc.radius = radius;
-                EastNorth no = pc.toEastNorth();
-                cmds.add(new MoveCommand(n, no.east() - n.getEastNorth().east(), no.north() - n.getEastNorth().north()));
-            }
+            i = j; // Update start point for next iteration
         }
-
+        
         Main.main.undoRedo.add(new SequenceCommand(tr("Align Nodes in Circle"), cmds));
         Main.map.repaint();
     }
 
+    /**
+     * Collect all nodes with more than one referrer.
+     * @param ways Ways from witch nodes are selected
+     * @return List of nodes with more than one referrer
+     */
+    private List<Node> collectNodesWithExternReferers(List<Way> ways) {
+        ArrayList<Node> withReferrers = new ArrayList<>();
+        for(Way w: ways)
+            for(Node n: w.getNodes())
+                if(n.getReferrers().size() > 1)
+                    withReferrers.add(n);
+        return withReferrers;
+    }
+    
+    /**
+     * Assuming all ways can be joined into polygon, create an ordered list of node.
+     * @param ways List of ways to be joined
+     * @return Nodes anticlockwise ordered
+     */
+    private List<Node> collectNodesAnticlockwise(List<Way> ways) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        Node firstNode = ways.get(0).firstNode();
+        Node lastNode = null;
+        Way lastWay = null;
+        while(firstNode != lastNode) {
+            if(lastNode == null) lastNode = firstNode;
+            for(Way way: ways) {
+                if(way == lastWay) continue;
+                if(way.firstNode() == lastNode) {
+                    List<Node> wayNodes = way.getNodes();
+                    for(int i = 0; i < wayNodes.size() - 1; i++)
+                        nodes.add(wayNodes.get(i));
+                    lastNode = way.lastNode();
+                    lastWay = way;
+                    break;
+                }
+                if(way.lastNode() == lastNode) {
+                    List<Node> wayNodes = way.getNodes();
+                    for(int i = wayNodes.size() - 1; i > 0; i--)
+                        nodes.add(wayNodes.get(i));
+                    lastNode = way.firstNode();
+                    lastWay = way;
+                    break;
+                }
+            }
+        }
+        // Check if nodes are in anticlockwise order
+        int nc = nodes.size();
+        double area = 0;
+        for(int i = 0; i < nc; i++) {
+            EastNorth p1 = nodes.get(i).getEastNorth();
+            EastNorth p2 = nodes.get((i+1) % nc).getEastNorth();
+            area += p1.east()*p2.north() - p2.east()*p1.north();
+        }
+        if(area < 0)
+            Collections.reverse(nodes);
+        return nodes;
+    }
+
+    /**
+     * Check if one or more nodes are outside of download area
+     * @param nodes Nodes to check
+     * @return true if action can be done
+     */
+    private boolean actionAllowed(Collection<Node> nodes) {
+        boolean outside = false;
+        for(Node n: nodes)
+            if(n.isOutsideDownloadArea()) {
+                outside = true;
+                break;
+            }
+        if(outside)
+            new Notification(
+                    tr("One or more nodes involved in this action is outside of the downloaded area."))
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .setDuration(Notification.TIME_SHORT)
+                    .show();
+        return true;
+    }
+    
     @Override
     protected void updateEnabledState() {
         setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
@@ -245,18 +371,51 @@ public final class AlignInCircleAction extends JosmAction {
     }
 
     /**
-     * Determines if a regular polygon is allowed to be created with the given nodes collection.
-     * @param nodes The nodes collection to check.
-     * @return true if all nodes in the given collection are referred by the same object, and no other one (see #8431)
+     * Determines if ways can be joined into a polygon.
+     * @param ways The ways collection to check
+     * @return true if all ways can be joined into a polygon
      */
-    protected boolean allowRegularPolygon(Collection<Node> nodes) {
-        Set<OsmPrimitive> allReferrers = new HashSet<OsmPrimitive>();
-        for (Node n : nodes) {
-            List<OsmPrimitive> referrers = n.getReferrers();
-            if (referrers.size() > 1 || (allReferrers.addAll(referrers) && allReferrers.size() > 1)) {
-                return false;
+    protected static boolean checkWaysArePolygon(Collection<Way> ways) {
+        // For each way, nodes strictly between first and last should't be reference by an other way
+        for(Way way: ways) {
+            for(Node node: way.getNodes()) {
+                if(node == way.firstNode() || node == way.lastNode()) continue;
+                for(Way wayOther: ways) {
+                    if(way == wayOther) continue;
+                    if(node.getReferrers().contains(wayOther)) return false;
+                }
             }
         }
-        return true;
+        // Test if ways can be joined
+        Way currentWay = null;
+        Node startNode = null, endNode = null;
+        int used = 0;
+        while(true) {
+            Way nextWay = null;
+            for(Way w: ways) {
+                if(w.firstNode() == w.lastNode()) return ways.size() == 1;
+                if(w == currentWay) continue;
+                if(currentWay == null) {
+                    nextWay = w;
+                    startNode = w.firstNode();
+                    endNode = w.lastNode();
+                    break;
+                }
+                if(w.firstNode() == endNode) {
+                    nextWay = w;
+                    endNode = w.lastNode();
+                    break;
+                }
+                if(w.lastNode() == endNode) {
+                    nextWay = w;
+                    endNode = w.firstNode();
+                    break;
+                }
+            }
+            if(nextWay == null) return false;
+            used += 1;
+            currentWay = nextWay;
+            if(endNode == startNode) return used == ways.size();
+        }
     }
 }

@@ -33,7 +33,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  */
 public final class ChangesetCache implements PreferenceChangedListener{
     /** the unique instance */
-    static private final ChangesetCache instance = new ChangesetCache();
+    private static final ChangesetCache instance = new ChangesetCache();
 
     /**
      * Replies the unique instance of the cache
@@ -45,21 +45,25 @@ public final class ChangesetCache implements PreferenceChangedListener{
     }
 
     /** the cached changesets */
-    private final Map<Integer, Changeset> cache  = new HashMap<Integer, Changeset>();
+    private final Map<Integer, Changeset> cache = new HashMap<>();
 
     private final CopyOnWriteArrayList<ChangesetCacheListener> listeners =
-        new CopyOnWriteArrayList<ChangesetCacheListener>();
+        new CopyOnWriteArrayList<>();
 
     private ChangesetCache() {
         Main.pref.addPreferenceChangeListener(this);
     }
 
     public void addChangesetCacheListener(ChangesetCacheListener listener) {
-        listeners.addIfAbsent(listener);
+        if (listener != null) {
+            listeners.addIfAbsent(listener);
+        }
     }
 
     public void removeChangesetCacheListener(ChangesetCacheListener listener) {
-        listeners.remove(listener);
+        if (listener != null) {
+            listeners.remove(listener);
+        }
     }
 
     protected void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
@@ -116,7 +120,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
     }
 
     public Set<Changeset> getChangesets() {
-        return new HashSet<Changeset>(cache.values());
+        return new HashSet<>(cache.values());
     }
 
     protected void remove(int id, DefaultChangesetCacheEvent e) {
@@ -174,8 +178,12 @@ public final class ChangesetCache implements PreferenceChangedListener{
         fireChangesetCacheEvent(e);
     }
 
+    /**
+     * Replies the list of open changesets.
+     * @return The list of open changesets
+     */
     public List<Changeset> getOpenChangesets() {
-        List<Changeset> ret = new ArrayList<Changeset>();
+        List<Changeset> ret = new ArrayList<>();
         for (Changeset cs: cache.values()) {
             if (cs.isOpen()) {
                 ret.add(cs);
@@ -189,7 +197,7 @@ public final class ChangesetCache implements PreferenceChangedListener{
     /* ------------------------------------------------------------------------- */
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
-        if (e.getKey() == null || ! e.getKey().equals("osm-server.url"))
+        if (e.getKey() == null || !"osm-server.url".equals(e.getKey()))
             return;
 
         // clear the cache when the API url changes

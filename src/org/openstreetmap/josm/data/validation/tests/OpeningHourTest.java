@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +24,6 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.io.MirroredInputStream;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tests the correct usage of the opening hour syntax of the tags
@@ -50,22 +51,25 @@ public class OpeningHourTest extends Test.TagTest {
     public void initialize() throws Exception {
         super.initialize();
         if (ENGINE != null) {
-            ENGINE.eval(new InputStreamReader(new MirroredInputStream("resource://data/validator/opening_hours.js"), Utils.UTF_8));
-            // fake country/state to not get errors on holidays
-            ENGINE.eval("var nominatimJSON = {address: {state: 'Bayern', country_code: 'de'}};");
-            ENGINE.eval("" +
-                    "var oh = function (value, mode) {" +
-                    " try {" +
-                    "    var r= new opening_hours(value, nominatimJSON, mode);" +
-                    "    r.getErrors = function() {return [];};" +
-                    "    return r;" +
-                    "  } catch(err) {" +
-                    "    return {" +
-                    "      getWarnings: function() {return [];}," +
-                    "      getErrors: function() {return [err.toString()]}" +
-                    "    };" +
-                    "  }" +
-                    "};");
+            try (Reader reader = new InputStreamReader(
+                    new MirroredInputStream("resource://data/validator/opening_hours.js"), StandardCharsets.UTF_8)) {
+                ENGINE.eval(reader);
+                // fake country/state to not get errors on holidays
+                ENGINE.eval("var nominatimJSON = {address: {state: 'Bayern', country_code: 'de'}};");
+                ENGINE.eval(
+                        "var oh = function (value, mode) {" +
+                        " try {" +
+                        "    var r= new opening_hours(value, nominatimJSON, mode);" +
+                        "    r.getErrors = function() {return [];};" +
+                        "    return r;" +
+                        "  } catch(err) {" +
+                        "    return {" +
+                        "      getWarnings: function() {return [];}," +
+                        "      getErrors: function() {return [err.toString()]}" +
+                        "    };" +
+                        "  }" +
+                        "};");
+            }
         } else {
             Main.warn("Unable to initialize OpeningHourTest because no JavaScript engine has been found");
         }
@@ -190,7 +194,7 @@ public class OpeningHourTest extends Test.TagTest {
         if (ENGINE == null || value == null || value.trim().isEmpty()) {
             return Collections.emptyList();
         }
-        final List<OpeningHoursTestError> errors = new ArrayList<OpeningHoursTestError>();
+        final List<OpeningHoursTestError> errors = new ArrayList<>();
         try {
             final Object r = parse(value, mode);
             String prettifiedValue = null;
@@ -200,20 +204,34 @@ public class OpeningHourTest extends Test.TagTest {
                 Main.debug(e.getMessage());
             }
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getErrors"))) {
-                errors.add(new OpeningHoursTestError(key + " - " + i.toString().trim(), Severity.ERROR, prettifiedValue));
+                errors.add(new OpeningHoursTestError(getErrorMessage(key, i), Severity.ERROR, prettifiedValue));
             }
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getWarnings"))) {
-                errors.add(new OpeningHoursTestError(i.toString().trim(), Severity.WARNING, prettifiedValue));
+                errors.add(new OpeningHoursTestError(getErrorMessage(key, i), Severity.WARNING, prettifiedValue));
             }
             if (!ignoreOtherSeverity && errors.isEmpty() && prettifiedValue != null && !value.equals(prettifiedValue)) {
                 errors.add(new OpeningHoursTestError(tr("opening_hours value can be prettified"), Severity.OTHER, prettifiedValue));
             }
-        } catch (ScriptException ex) {
-            Main.error(ex);
-        } catch (NoSuchMethodException ex) {
+        } catch (ScriptException | NoSuchMethodException ex) {
             Main.error(ex);
         }
         return errors;
+    }
+
+    /**
+     * Translates and shortens the error/warning message.
+     */
+    private String getErrorMessage(String key, Object o) {
+        String msg = o.toString().trim()
+        .replace("Unexpected token:", tr("Unexpected token:"))
+        .replace("Unexpected token (school holiday parser):", tr("Unexpected token (school holiday parser):"))
+        .replace("Unexpected token in number range:", tr("Unexpected token in number range:"))
+        .replace("Unexpected token in week range:", tr("Unexpected token in week range:"))
+        .replace("Unexpected token in weekday range:", tr("Unexpected token in weekday range:"))
+        .replace("Unexpected token in month range:", tr("Unexpected token in month range:"))
+        .replace("Unexpected token in year range:", tr("Unexpected token in year range:"))
+        .replace("This means that the syntax is not valid at that point or it is currently not supported.", tr("Invalid/unsupported syntax."));
+        return key + " - " + msg;
     }
 
     /**

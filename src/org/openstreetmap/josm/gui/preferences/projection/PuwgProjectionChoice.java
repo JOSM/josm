@@ -3,19 +3,21 @@ package org.openstreetmap.josm.gui.preferences.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
 public class PuwgProjectionChoice extends ListProjectionChoice {
 
-    public static final String[] CODES = {
+    private static final String[] CODES = {
         "EPSG:2180",
         "EPSG:2176",
         "EPSG:2177",
         "EPSG:2178",
         "EPSG:2179"
     };
-    public static final String[] NAMES = {
+
+    private static final String[] NAMES = {
         tr("PUWG 1992 (Poland)"),
         tr("PUWG 2000 Zone {0} (Poland)", 5),
         tr("PUWG 2000 Zone {0} (Poland)", 6),
@@ -43,9 +45,7 @@ public class PuwgProjectionChoice extends ListProjectionChoice {
 
     @Override
     public String[] allCodes() {
-        String[] zones = new String[CODES.length];
-        System.arraycopy(CODES, 0, zones, 0, CODES.length);
-        return zones;
+        return Arrays.copyOf(CODES, CODES.length);
     }
 
     @Override

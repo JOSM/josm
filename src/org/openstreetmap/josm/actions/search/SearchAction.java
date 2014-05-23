@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,8 @@ import org.openstreetmap.josm.tools.Utils;
 public class SearchAction extends JosmAction implements ParameterizedAction {
 
     public static final int DEFAULT_SEARCH_HISTORY_SIZE = 15;
+    /** Maximum number of characters before the search expression is shortened for display purposes. */
+    public static final int MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY = 100;
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
 
@@ -80,7 +83,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
-    private static final LinkedList<SearchSetting> searchHistory = new LinkedList<SearchSetting>();
+    private static final LinkedList<SearchSetting> searchHistory = new LinkedList<>();
     static {
         for (String s: Main.pref.getCollection("search.history", Collections.<String>emptyList())) {
             SearchSetting ss = SearchSetting.readFromString(s);
@@ -97,12 +100,16 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     public static void saveToHistory(SearchSetting s) {
         if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
             searchHistory.addFirst(new SearchSetting(s));
+        } else if (searchHistory.contains(s)) {
+            // move existing entry to front, fixes #8032 - search history loses entries when re-using queries
+            searchHistory.remove(s);
+            searchHistory.addFirst(new SearchSetting(s));
         }
         int maxsize = Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
         while (searchHistory.size() > maxsize) {
             searchHistory.removeLast();
         }
-        List<String> savedHistory = new ArrayList<String>(searchHistory.size());
+        LinkedHashSet<String> savedHistory = new LinkedHashSet<>(searchHistory.size());
         for (SearchSetting item: searchHistory) {
             savedHistory.add(item.writeToString());
         }
@@ -110,7 +117,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     }
 
     public static List<String> getSearchExpressionHistory() {
-        List<String> ret = new ArrayList<String>(getSearchHistory().size());
+        List<String> ret = new ArrayList<>(getSearchHistory().size());
         for (SearchSetting ss: getSearchHistory()) {
             ret.add(ss.text);
         }
@@ -320,16 +327,13 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             ToolbarPreferences.ActionDefinition aDef =
                     new ToolbarPreferences.ActionDefinition(Main.main.menu.search);
             aDef.getParameters().put(SEARCH_EXPRESSION, initialValues);
-            aDef.setName(initialValues.text); // Display search expression as tooltip instead of generic one
+            aDef.setName(Utils.shortenString(initialValues.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY)); // Display search expression as tooltip instead of generic one
             // parametrized action definition is now composed
             ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
             String res = actionParser.saveAction(aDef);
 
-            Collection<String> t = new LinkedList<String>(ToolbarPreferences.getToolString());
             // add custom search button to toolbar preferences
-            if (!t.contains(res)) t.add(res);
-            Main.pref.putCollection("toolbar", t);
-            Main.toolbar.refreshToolbarControl();
+            Main.toolbar.addCustomButton(res, -1, false);
         }
         return initialValues;
     }
@@ -577,7 +581,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     public static void search(SearchSetting s) {
 
         final DataSet ds = Main.main.getCurrentDataSet();
-        Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>(ds.getAllSelected());
+        Collection<OsmPrimitive> sel = new HashSet<>(ds.getAllSelected());
         int foundMatches = getSelection(s, sel, new Predicate<OsmPrimitive>(){
             @Override
             public boolean evaluate(OsmPrimitive o){
@@ -587,14 +591,15 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         ds.setSelected(sel);
         if (foundMatches == 0) {
             String msg = null;
+            final String text = Utils.shortenString(s.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY);
             if (s.mode == SearchMode.replace) {
-                msg = tr("No match found for ''{0}''", s.text);
+                msg = tr("No match found for ''{0}''", text);
             } else if (s.mode == SearchMode.add) {
-                msg = tr("Nothing added to selection by searching for ''{0}''", s.text);
+                msg = tr("Nothing added to selection by searching for ''{0}''", text);
             } else if (s.mode == SearchMode.remove) {
-                msg = tr("Nothing removed from selection by searching for ''{0}''", s.text);
+                msg = tr("Nothing removed from selection by searching for ''{0}''", text);
             } else if (s.mode == SearchMode.in_selection) {
-                msg = tr("Nothing found in selection by searching for ''{0}''", s.text);
+                msg = tr("Nothing found in selection by searching for ''{0}''", text);
             }
             Main.map.statusLine.setHelpText(msg);
             JOptionPane.showMessageDialog(

@@ -8,7 +8,7 @@ import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
-import org.openstreetmap.josm.command.WayNodesConflictResolverCommand;
+import org.openstreetmap.josm.command.conflict.WayNodesConflictResolverCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -39,7 +39,7 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
             getTheirEntries().add(n);
         }
         if (myAndTheirEntriesEqual()) {
-            entries.put(ListRole.MERGED_ENTRIES, new ArrayList<Node>(getMyEntries()));
+            entries.put(ListRole.MERGED_ENTRIES, new ArrayList<>(getMyEntries()));
             setFrozen(true);
         } else {
             setFrozen(false);

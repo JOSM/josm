@@ -42,14 +42,14 @@ public class ConvertToDataLayerAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         JPanel msg = new JPanel(new GridBagLayout());
         msg.add(new JLabel(tr("<html>Upload of unprocessed GPS data as map data is considered harmful.<br>If you want to upload traces, look here:</html>")), GBC.eol());
-        msg.add(new UrlLabel(Main.OSM_WEBSITE + "/traces", 2), GBC.eop());
+        msg.add(new UrlLabel(Main.getOSMWebsite() + "/traces", 2), GBC.eop());
         if (!ConditionalOptionPaneUtil.showConfirmationDialog("convert_to_data", Main.parent, msg, tr("Warning"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, JOptionPane.OK_OPTION)) {
             return;
         }
         DataSet ds = new DataSet();
         for (GpxTrack trk : layer.data.tracks) {
             for (GpxTrackSegment segment : trk.getSegments()) {
-                List<Node> nodes = new ArrayList<Node>();
+                List<Node> nodes = new ArrayList<>();
                 for (WayPoint p : segment.getWayPoints()) {
                     Node n = new Node(p.getCoor());
                     String timestr = p.getString("time");

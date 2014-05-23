@@ -79,14 +79,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class LayerListDialog extends ToggleDialog {
     /** the unique instance of the dialog */
-    static private LayerListDialog instance;
+    private static LayerListDialog instance;
 
     /**
      * Creates the instance of the dialog. It's connected to the map frame <code>mapFrame</code>
      *
      * @param mapFrame the map frame
      */
-    static public void createInstance(MapFrame mapFrame) {
+    public static void createInstance(MapFrame mapFrame) {
         if (instance != null)
             throw new IllegalStateException("Dialog was already created");
         instance = new LayerListDialog(mapFrame);
@@ -99,7 +99,7 @@ public class LayerListDialog extends ToggleDialog {
      * @throws IllegalStateException thrown, if the dialog is not created yet
      * @see #createInstance(MapFrame)
      */
-    static public LayerListDialog getInstance() throws IllegalStateException {
+    public static LayerListDialog getInstance() throws IllegalStateException {
         if (instance == null)
             throw new IllegalStateException("Dialog not created yet. Invoke createInstance() first");
         return instance;
@@ -107,9 +107,6 @@ public class LayerListDialog extends ToggleDialog {
 
     /** the model for the layer list */
     private LayerListModel model;
-
-    /** the selection model */
-    private DefaultListSelectionModel selectionModel;
 
     /** the list of layers (technically its a JTable, but appears like a list) */
     private LayerList layerList;
@@ -164,7 +161,7 @@ public class LayerListDialog extends ToggleDialog {
 
         // create the models
         //
-        selectionModel = new DefaultListSelectionModel();
+        DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         model = new LayerListModel(selectionModel);
 
@@ -472,7 +469,7 @@ public class LayerListDialog extends ToggleDialog {
             Layer l = LayerListDialog.getLayerForIndex(index);
             if (l != null) {
                 l.toggleVisible();
-                lastLayer = new WeakReference<Layer>(l);
+                lastLayer = new WeakReference<>(l);
             } else if (repeat && lastLayer != null) {
                 l = lastLayer.get();
                 if (LayerListDialog.isLayerValid(l)) {
@@ -762,13 +759,13 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (layer != null) {
-                new MergeLayerAction().merge(layer);
+                Main.main.menu.merge.merge(layer);
             } else {
                 if (getModel().getSelectedLayers().size() == 1) {
                     Layer selectedLayer = getModel().getSelectedLayers().get(0);
-                    new MergeLayerAction().merge(selectedLayer);
+                    Main.main.menu.merge.merge(selectedLayer);
                 } else {
-                    new MergeLayerAction().merge(getModel().getSelectedLayers());
+                    Main.main.menu.merge.merge(getModel().getSelectedLayers());
                 }
             }
         }
@@ -832,7 +829,7 @@ public class LayerListDialog extends ToggleDialog {
             if (!Main.isDisplayingMapView())
                 return;
 
-            List<String> layerNames = new ArrayList<String>();
+            List<String> layerNames = new ArrayList<>();
             for (Layer l: Main.map.mapView.getAllLayers()) {
                 layerNames.add(l.getName());
             }
@@ -1115,7 +1112,7 @@ public class LayerListDialog extends ToggleDialog {
          */
         private LayerListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-            listeners = new CopyOnWriteArrayList<LayerListModelListener>();
+            listeners = new CopyOnWriteArrayList<>();
         }
 
         /**
@@ -1201,7 +1198,7 @@ public class LayerListDialog extends ToggleDialog {
          * be empty.
          */
         public List<Layer> getSelectedLayers() {
-            List<Layer> selected = new ArrayList<Layer>();
+            List<Layer> selected = new ArrayList<>();
             for (int i=0; i<getLayers().size(); i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     selected.add(getLayers().get(i));
@@ -1218,7 +1215,7 @@ public class LayerListDialog extends ToggleDialog {
          * but may be empty.
          */
         public List<Integer> getSelectedRows() {
-            List<Integer> selected = new ArrayList<Integer>();
+            List<Integer> selected = new ArrayList<>();
             for (int i=0; i<getLayers().size();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     selected.add(i);
@@ -1378,7 +1375,7 @@ public class LayerListDialog extends ToggleDialog {
          * for <code>source</code>. Never null, but can be empty.
          */
         public List<Layer> getPossibleMergeTargets(Layer source) {
-            List<Layer> targets = new ArrayList<Layer>();
+            List<Layer> targets = new ArrayList<>();
             if (source == null)
                 return targets;
             for (Layer target : getLayers()) {
@@ -1619,7 +1616,7 @@ public class LayerListDialog extends ToggleDialog {
     // This is not Class<? extends Layer> on purpose, to allow asking for layers implementing some interface
     public static List<MultikeyInfo> getLayerInfoByClass(Class<?> layerClass) {
 
-        List<MultikeyInfo> result = new ArrayList<MultikeyShortcutAction.MultikeyInfo>();
+        List<MultikeyInfo> result = new ArrayList<>();
 
         if (!Main.isDisplayingMapView())
             return result;

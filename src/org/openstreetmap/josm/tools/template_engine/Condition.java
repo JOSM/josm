@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Condition implements TemplateEntry {
 
-    private final List<TemplateEntry> entries = new ArrayList<TemplateEntry>();
+    private final List<TemplateEntry> entries = new ArrayList<>();
 
     public List<TemplateEntry> getEntries() {
         return entries;
@@ -54,5 +54,4 @@ public class Condition implements TemplateEntry {
         }
         return sb.toString();
     }
-
 }

@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.CheckParameterUtil.ensureParameterNot
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,13 +36,12 @@ import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.xml.sax.SAXException;
 
 /**
- * The task for uploading a collection of primitives
+ * The task for uploading a collection of primitives.
  *
  */
-public class UploadPrimitivesTask extends  AbstractUploadTask {
+public class UploadPrimitivesTask extends AbstractUploadTask {
     private boolean uploadCanceled = false;
     private Exception lastException = null;
     private APIDataSet toUpload;
@@ -75,7 +73,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         this.layer = layer;
         this.changeset = changeset;
         this.strategy = strategy;
-        this.processedPrimitives = new HashSet<IPrimitive>();
+        this.processedPrimitives = new HashSet<>();
     }
 
     protected MaxChangesetSizeExceededPolicy askMaxChangesetSizeExceedsPolicy() {
@@ -239,7 +237,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         }
     }
 
-    @Override protected void realRun() throws SAXException, IOException {
+    @Override protected void realRun() {
         try {
             uploadloop:while(true) {
                 try {
@@ -293,12 +291,12 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     }
                 }
             }
-        // if required close the changeset
-        //
-        if (strategy.isCloseChangesetAfterUpload() && changeset != null && !changeset.isNew() && changeset.isOpen()) {
-            OsmApi.getOsmApi().closeChangeset(changeset, progressMonitor.createSubTaskMonitor(0, false));
-        }
-        } catch (Exception e) {
+            // if required close the changeset
+            //
+            if (strategy.isCloseChangesetAfterUpload() && changeset != null && !changeset.isNew() && changeset.isOpen()) {
+                OsmApi.getOsmApi().closeChangeset(changeset, progressMonitor.createSubTaskMonitor(0, false));
+            }
+        } catch (OsmTransferException e) {
             if (uploadCanceled) {
                 Main.info(tr("Ignoring caught exception because upload is canceled. Exception is: {0}", e.toString()));
             } else {

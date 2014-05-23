@@ -9,8 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +39,6 @@ import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -75,33 +76,33 @@ public class OpenFileAction extends DiskAccessAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(! Main.applet);
+        setEnabled(true);
     }
 
     /**
      * Open a list of files. The complete list will be passed to batch importers.
      * @param fileList A list of files
      */
-    static public void openFiles(List<File> fileList) {
+    public static void openFiles(List<File> fileList) {
         openFiles(fileList, false);
     }
 
-    static public void openFiles(List<File> fileList, boolean recordHistory) {
+    public static void openFiles(List<File> fileList, boolean recordHistory) {
         OpenFileTask task = new OpenFileTask(fileList, null);
         task.setRecordHistory(recordHistory);
         Main.worker.submit(task);
     }
 
-    static public class OpenFileTask extends PleaseWaitRunnable {
+    public static class OpenFileTask extends PleaseWaitRunnable {
         private List<File> files;
-        private List<File> successfullyOpenedFiles = new ArrayList<File>();
+        private List<File> successfullyOpenedFiles = new ArrayList<>();
         private FileFilter fileFilter;
         private boolean canceled;
         private boolean recordHistory = false;
 
         public OpenFileTask(List<File> files, FileFilter fileFilter, String title) {
             super(title, false /* don't ignore exception */);
-            this.files = new ArrayList<File>(files);
+            this.files = new ArrayList<>(files);
             this.fileFilter = fileFilter;
         }
 
@@ -132,7 +133,7 @@ public class OpenFileAction extends DiskAccessAction {
         }
 
         protected void alertFilesNotMatchingWithImporter(Collection<File> files, FileImporter importer) {
-            final StringBuffer msg = new StringBuffer();
+            final StringBuilder msg = new StringBuilder();
             msg.append("<html>");
             msg.append(
                     trn(
@@ -159,7 +160,7 @@ public class OpenFileAction extends DiskAccessAction {
         }
 
         protected void alertFilesWithUnknownImporter(Collection<File> files) {
-            final StringBuffer msg = new StringBuffer();
+            final StringBuilder msg = new StringBuilder();
             msg.append("<html>");
             msg.append(
                     trn(
@@ -212,8 +213,8 @@ public class OpenFileAction extends DiskAccessAction {
 
             if (chosenImporter != null) {
                 // The importer was explicitly chosen, so use it.
-                List<File> filesNotMatchingWithImporter = new LinkedList<File>();
-                List<File> filesMatchingWithImporter = new LinkedList<File>();
+                List<File> filesNotMatchingWithImporter = new LinkedList<>();
+                List<File> filesMatchingWithImporter = new LinkedList<>();
                 for (final File f : files) {
                     if (!chosenImporter.acceptFile(f)) {
                         if (f.isDirectory()) {
@@ -245,9 +246,9 @@ public class OpenFileAction extends DiskAccessAction {
                 }
             } else {
                 // find appropriate importer
-                MultiMap<FileImporter, File> importerMap = new MultiMap<FileImporter, File>();
-                List<File> filesWithUnknownImporter = new LinkedList<File>();
-                List<File> urlFiles = new LinkedList<File>();
+                MultiMap<FileImporter, File> importerMap = new MultiMap<>();
+                List<File> filesWithUnknownImporter = new LinkedList<>();
+                List<File> urlFiles = new LinkedList<>();
                 FILES: for (File f : files) {
                     for (FileImporter importer : ExtensionFileFilter.importers) {
                         if (importer.acceptFile(f)) {
@@ -264,18 +265,18 @@ public class OpenFileAction extends DiskAccessAction {
                 if (!filesWithUnknownImporter.isEmpty()) {
                     alertFilesWithUnknownImporter(filesWithUnknownImporter);
                 }
-                List<FileImporter> importers = new ArrayList<FileImporter>(importerMap.keySet());
+                List<FileImporter> importers = new ArrayList<>(importerMap.keySet());
                 Collections.sort(importers);
                 Collections.reverse(importers);
 
-                Set<String> fileHistory = new LinkedHashSet<String>();
-                Set<String> failedAll = new HashSet<String>();
+                Set<String> fileHistory = new LinkedHashSet<>();
+                Set<String> failedAll = new HashSet<>();
 
                 for (FileImporter importer : importers) {
-                    List<File> files = new ArrayList<File>(importerMap.get(importer));
+                    List<File> files = new ArrayList<>(importerMap.get(importer));
                     importData(importer, files);
                     // suppose all files will fail to load
-                    List<File> failedFiles = new ArrayList<File>(files);
+                    List<File> failedFiles = new ArrayList<>(files);
 
                     if (recordHistory && !importer.isBatchImporter()) {
                         // remove the files which didn't fail to load from the failed list
@@ -290,17 +291,15 @@ public class OpenFileAction extends DiskAccessAction {
                 }
 
                 for (File urlFile: urlFiles) {
-                    try {
-                        BufferedReader reader = new BufferedReader(new FileReader(urlFile));
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(urlFile), StandardCharsets.UTF_8))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            Matcher m = Pattern.compile(".*(http://.*)").matcher(line);
+                            Matcher m = Pattern.compile(".*(https?://.*)").matcher(line);
                             if (m.matches()) {
                                 String url = m.group(1);
                                 Main.main.menu.openLocation.openUrl(false, url);
                             }
                         }
-                        Utils.close(reader);
                     } catch (Exception e) {
                         Main.error(e);
                     }

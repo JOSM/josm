@@ -47,8 +47,8 @@ public abstract class RequestHandler {
     protected String myCommand;
 
     /**
-     * who send th request?
-     * the host from refrerer header or IP of request sender
+     * who sent the request?
+     * the host from referer header or IP of request sender
      */
     protected String sender;
 
@@ -59,8 +59,7 @@ public abstract class RequestHandler {
      * @throws RequestHandlerBadRequestException
      * @throws RequestHandlerErrorException
      */
-    public final void handle() throws RequestHandlerForbiddenException, RequestHandlerBadRequestException, RequestHandlerErrorException
-    {
+    public final void handle() throws RequestHandlerForbiddenException, RequestHandlerBadRequestException, RequestHandlerErrorException {
         checkMandatoryParams();
         validateRequest();
         checkPermission();
@@ -93,7 +92,7 @@ public abstract class RequestHandler {
      *
      * @return the message
      */
-    abstract public String getPermissionMessage();
+    public abstract String getPermissionMessage();
 
     /**
      * Get a PermissionPref object containing the name of a special permission
@@ -105,10 +104,10 @@ public abstract class RequestHandler {
      *
      * @return the preference name and error message or null
      */
-    abstract public PermissionPrefWithDefault getPermissionPref();
+    public abstract PermissionPrefWithDefault getPermissionPref();
 
-    abstract public String[] getMandatoryParams();
-    
+    public abstract String[] getMandatoryParams();
+
     public String[] getOptionalParams() {
         return null;
     }
@@ -137,8 +136,7 @@ public abstract class RequestHandler {
      *
      * @throws RequestHandlerForbiddenException
      */
-    final public void checkPermission() throws RequestHandlerForbiddenException
-    {
+    public final void checkPermission() throws RequestHandlerForbiddenException {
         /*
          * If the subclass defines a specific preference and if this is set
          * to false, abort with an error message.
@@ -147,8 +145,7 @@ public abstract class RequestHandler {
          * older versions of WMSPlugin.
          */
         PermissionPrefWithDefault permissionPref = getPermissionPref();
-        if((permissionPref != null) && (permissionPref.pref != null))
-        {
+        if (permissionPref != null && permissionPref.pref != null) {
             if (!Main.pref.getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
                 String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by preferences", myCommand);
                 Main.info(err);
@@ -196,7 +193,7 @@ public abstract class RequestHandler {
     protected void parseArgs() {
         try {
             String req = URLDecoder.decode(this.request, "UTF-8");
-            HashMap<String, String> args = new HashMap<String, String>();
+            HashMap<String, String> args = new HashMap<>();
             if (req.indexOf('?') != -1) {
                 String query = req.substring(req.indexOf('?') + 1);
                 if (query.indexOf('#') != -1) {
@@ -219,7 +216,7 @@ public abstract class RequestHandler {
     void checkMandatoryParams() throws RequestHandlerBadRequestException {
         String[] mandatory = getMandatoryParams();
         String[] optional = getOptionalParams();
-        List<String> missingKeys = new LinkedList<String>();
+        List<String> missingKeys = new LinkedList<>();
         boolean error = false;
         if(mandatory != null) for (String key : mandatory) {
             String value = args.get(key);
@@ -229,7 +226,7 @@ public abstract class RequestHandler {
                 missingKeys.add(key);
             }
         }
-        HashSet<String> knownParams = new HashSet<String>();
+        HashSet<String> knownParams = new HashSet<>();
         if (mandatory != null) Collections.addAll(knownParams, mandatory);
         if (optional != null) Collections.addAll(knownParams, optional);
         for (String par: args.keySet()) {
@@ -242,7 +239,6 @@ public abstract class RequestHandler {
                     "The following keys are mandatory, but have not been provided: "
                     + Utils.join(", ", missingKeys));
         }
-        
     }
 
     /**
@@ -276,7 +272,7 @@ public abstract class RequestHandler {
         try {
             return URLDecoder.decode(param, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
@@ -289,18 +285,29 @@ public abstract class RequestHandler {
         public RequestHandlerException(String message) {
             super(message);
         }
-
+        public RequestHandlerException(String message, Throwable cause) {
+            super(message, cause);
+        }
+        public RequestHandlerException(Throwable cause) {
+            super(cause);
+        }
         public RequestHandlerException() {
         }
     }
 
     public static class RequestHandlerErrorException extends RequestHandlerException {
+        public RequestHandlerErrorException(Throwable cause) {
+            super(cause);
+        }
     }
 
     public static class RequestHandlerBadRequestException extends RequestHandlerException {
 
         public RequestHandlerBadRequestException(String message) {
             super(message);
+        }
+        public RequestHandlerBadRequestException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 

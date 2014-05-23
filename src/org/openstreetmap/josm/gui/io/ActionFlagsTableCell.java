@@ -9,7 +9,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EventObject;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -17,10 +16,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -29,26 +28,25 @@ import org.openstreetmap.josm.tools.GBC;
  * as editor so the checkboxes may be set by the user.
  *
  * Intended usage is like this:
- * ActionFlagsTableCell aftc = new ActionFlagsTableCell();
- * col = new TableColumn(0);
- * col.setCellRenderer(aftc);
- * col.setCellEditor(aftc);
+ * <code>
+ * <br>ActionFlagsTableCell aftc = new ActionFlagsTableCell();
+ * <br>col = new TableColumn(0);
+ * <br>col.setCellRenderer(aftc);
+ * <br>col.setCellEditor(aftc);
+ * </code>
  */
 class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
-    protected final JCheckBox[] checkBoxes = new JCheckBox[2];
-    private CopyOnWriteArrayList<CellEditorListener> listeners;
+    private final JCheckBox[] checkBoxes = new JCheckBox[2];
+    private final CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
 
     private ActionListener al = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            fireEditingStopped();
+            cellEditorSupport.fireEditingStopped();
         }
     };
 
     public ActionFlagsTableCell() {
-        super();
-        listeners = new CopyOnWriteArrayList<CellEditorListener>();
-
         checkBoxes[0] = new JCheckBox(tr("Upload"));
         checkBoxes[1] = new JCheckBox(tr("Save"));
         setLayout(new GridBagLayout());
@@ -62,7 +60,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     b.setSelected(!b.isSelected());
-                    fireEditingStopped();
+                    cellEditorSupport.fireEditingStopped();
                 }
             });
         }
@@ -93,26 +91,12 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
 
     @Override
     public void addCellEditorListener(CellEditorListener l) {
-        if (l != null) {
-            listeners.addIfAbsent(l);
-        }
-    }
-
-    protected void fireEditingCanceled() {
-        for (CellEditorListener l: listeners) {
-            l.editingCanceled(new ChangeEvent(this));
-        }
-    }
-
-    protected void fireEditingStopped() {
-        for (CellEditorListener l: listeners) {
-            l.editingStopped(new ChangeEvent(this));
-        }
+        cellEditorSupport.addCellEditorListener(l);
     }
 
     @Override
     public void cancelCellEditing() {
-        fireEditingCanceled();
+        cellEditorSupport.fireEditingCanceled();
     }
 
     @Override
@@ -130,7 +114,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
 
     @Override
     public void removeCellEditorListener(CellEditorListener l) {
-        listeners.remove(l);
+        cellEditorSupport.removeCellEditorListener(l);
     }
 
     @Override
@@ -140,7 +124,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
 
     @Override
     public boolean stopCellEditing() {
-        fireEditingStopped();
+        cellEditorSupport.fireEditingStopped();
         return true;
     }
 

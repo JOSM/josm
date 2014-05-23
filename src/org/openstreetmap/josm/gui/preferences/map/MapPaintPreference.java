@@ -11,13 +11,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -28,18 +27,27 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceProvider;
+import org.openstreetmap.josm.gui.preferences.SourceType;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Preference settings for map paint styles.
+ */
 public class MapPaintPreference implements SubPreferenceSetting {
     private SourceEditor sources;
     private JCheckBox enableIconDefault;
 
-    private static final List<SourceProvider> styleSourceProviders = new ArrayList<SourceProvider>();
+    private static final List<SourceProvider> styleSourceProviders = new ArrayList<>();
 
+    /**
+     * Registers a new additional style source provider.
+     * @param provider The style source provider
+     * @return {@code true}, if the provider has been added, {@code false} otherwise
+     */
     public static boolean registerSourceProvider(SourceProvider provider) {
         if (provider != null)
             return styleSourceProviders.add(provider);
@@ -57,7 +65,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
     }
 
     @Override
-    public void addGui(final PreferenceTabbedPane gui) {
+    public void addGui(PreferenceTabbedPane gui) {
         enableIconDefault = new JCheckBox(tr("Enable built-in icon defaults"),
                 Main.pref.getBoolean("mappaint.icon.enable-defaults", true));
 
@@ -69,21 +77,9 @@ public class MapPaintPreference implements SubPreferenceSetting {
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         panel.add(enableIconDefault, GBC.eol().insets(11,2,5,0));
 
-        gui.getMapPreference().addSubTab(this, tr("Map Paint Styles"), panel);
-
-        // this defers loading of style sources to the first time the tab
-        // with the map paint preferences is selected by the user
-        //
-        gui.getMapPreference().getTabPane().addChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        if (gui.getMapPreference().getTabPane().getSelectedComponent() == panel) {
-                            sources.initiallyLoadAvailableSources();
-                        }
-                    }
-                }
-                );
+        final MapPreference mapPref = gui.getMapPreference();
+        mapPref.addSubTab(this, tr("Map Paint Styles"), panel);
+        sources.deferLoading(mapPref, panel);
     }
 
     static class MapPaintSourceEditor extends SourceEditor {
@@ -91,7 +87,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         private static final String iconpref = "mappaint.icon.sources";
 
         public MapPaintSourceEditor() {
-            super(true, Main.JOSM_WEBSITE+"/styles", styleSourceProviders);
+            super(SourceType.MAP_PAINT_STYLE, Main.getJOSMWebsite()+"/styles", styleSourceProviders, true);
         }
 
         @Override
@@ -185,12 +181,15 @@ public class MapPaintPreference implements SubPreferenceSetting {
         MapPaintStyles.readFromPreferences();
     }
 
+    /**
+     * Helper class for map paint styles preferences.
+     */
     public static class MapPaintPrefHelper extends SourceEditor.SourcePrefHelper {
 
         /**
          * The unique instance.
          */
-        public final static MapPaintPrefHelper INSTANCE = new MapPaintPrefHelper();
+        public static final MapPaintPrefHelper INSTANCE = new MapPaintPrefHelper();
 
         /**
          * Constructs a new {@code MapPaintPrefHelper}.
@@ -216,7 +215,9 @@ public class MapPaintPreference implements SubPreferenceSetting {
         private boolean insertNewDefaults(List<SourceEntry> list) {
             boolean changed = false;
 
-            Collection<String> knownDefaults = new TreeSet<String>(Main.pref.getCollection("mappaint.style.known-defaults"));
+            boolean addedMapcssStyle = false; // Migration code can be removed ~ Nov. 2014
+
+            Collection<String> knownDefaults = new TreeSet<>(Main.pref.getCollection("mappaint.style.known-defaults"));
 
             Collection<ExtendedSourceEntry> defaults = getDefault();
             int insertionIdx = 0;
@@ -225,13 +226,18 @@ public class MapPaintPreference implements SubPreferenceSetting {
                         new Predicate<SourceEntry>() {
                     @Override
                     public boolean evaluate(SourceEntry se) {
-                        return Utils.equal(def.url, se.url);
+                        return Objects.equals(def.url, se.url);
                     }
                 });
                 if (i == -1 && !knownDefaults.contains(def.url)) {
+                    def.active = false;
                     list.add(insertionIdx, def);
                     insertionIdx++;
                     changed = true;
+                    /* Migration code can be removed ~ Nov. 2014 */
+                    if ("resource://styles/standard/elemstyles.mapcss".equals(def.url)) {
+                        addedMapcssStyle = true;
+                    }
                 } else {
                     if (i >= insertionIdx) {
                         insertionIdx = i + 1;
@@ -244,28 +250,76 @@ public class MapPaintPreference implements SubPreferenceSetting {
             }
             Main.pref.putCollection("mappaint.style.known-defaults", knownDefaults);
 
+            /* Migration code can be removed ~ Nov. 2014 */
+            if (addedMapcssStyle) {
+                // change title of the XML entry
+                // only do this once. If the user changes it afterward, do not touch
+                if (!Main.pref.getBoolean("mappaint.style.migration.changedXmlName", false)) {
+                    SourceEntry josmXml = Utils.find(list, new Predicate<SourceEntry>() {
+                        @Override
+                        public boolean evaluate(SourceEntry se) {
+                            return "resource://styles/standard/elemstyles.xml".equals(se.url);
+                        }
+                    });
+                    if (josmXml != null) {
+                        josmXml.title = tr("JOSM default (XML; old version)");
+                        changed = true;
+                    }
+                    Main.pref.put("mappaint.style.migration.changedXmlName", true);
+                }
+            }
+            
+            /* Migration code can be removed ~ Nov. 2014 */
+            if (!Main.pref.getBoolean("mappaint.style.migration.switchedToMapCSS", false)) {
+                SourceEntry josmXml = Utils.find(list, new Predicate<SourceEntry>() {
+                    @Override
+                    public boolean evaluate(SourceEntry se) {
+                        return "resource://styles/standard/elemstyles.xml".equals(se.url);
+                    }
+                });
+                SourceEntry josmMapCSS = Utils.find(list, new Predicate<SourceEntry>() {
+                    @Override
+                    public boolean evaluate(SourceEntry se) {
+                        return "resource://styles/standard/elemstyles.mapcss".equals(se.url);
+                    }
+                });
+                if (josmXml != null && josmMapCSS != null && josmXml.active) {
+                    josmMapCSS.active = true;
+                    josmXml.active = false;
+                    Main.info("Switched mappaint style from XML format to MapCSS (one time migration).");
+                    changed = true;
+                }
+                // in any case, do this check only once:
+                Main.pref.put("mappaint.style.migration.switchedToMapCSS", true);
+            }
+
             return changed;
         }
 
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
-            ExtendedSourceEntry defJOSM = new ExtendedSourceEntry("elemstyles.xml", "resource://styles/standard/elemstyles.xml");
-            defJOSM.active = true;
-            defJOSM.name = "standard";
-            defJOSM.title = tr("JOSM Internal Style");
-            defJOSM.description = tr("Internal style to be used as base for runtime switchable overlay styles");
+            ExtendedSourceEntry defJosmXml = new ExtendedSourceEntry("elemstyles.xml", "resource://styles/standard/elemstyles.xml");
+            defJosmXml.active = false;
+            defJosmXml.name = "standard";
+            defJosmXml.title = tr("JOSM default (XML; old version)");
+            defJosmXml.description = tr("Internal style to be used as base for runtime switchable overlay styles");
+            ExtendedSourceEntry defJosmMapcss = new ExtendedSourceEntry("elemstyles.mapcss", "resource://styles/standard/elemstyles.mapcss");
+            defJosmMapcss.active = true;
+            defJosmMapcss.name = "standard";
+            defJosmMapcss.title = tr("JOSM default (MapCSS)");
+            defJosmMapcss.description = tr("Internal style to be used as base for runtime switchable overlay styles");
             ExtendedSourceEntry defPL2 = new ExtendedSourceEntry("potlatch2.mapcss", "resource://styles/standard/potlatch2.mapcss");
             defPL2.active = false;
             defPL2.name = "standard";
             defPL2.title = tr("Potlatch 2");
             defPL2.description = tr("the main Potlatch 2 style");
 
-            return Arrays.asList(new ExtendedSourceEntry[] { defJOSM, defPL2 });
+            return Arrays.asList(new ExtendedSourceEntry[] { defJosmXml, defJosmMapcss, defPL2 });
         }
 
         @Override
         public Map<String, String> serialize(SourceEntry entry) {
-            Map<String, String> res = new HashMap<String, String>();
+            Map<String, String> res = new HashMap<>();
             res.put("url", entry.url);
             res.put("title", entry.title == null ? "" : entry.title);
             res.put("active", Boolean.toString(entry.active));

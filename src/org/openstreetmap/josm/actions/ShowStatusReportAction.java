@@ -68,8 +68,7 @@ public final class ShowStatusReportAction extends JosmAction {
      * Replies the report header (software and system info)
      * @return The report header (software and system info)
      */
-    public static String getReportHeader()
-    {
+    public static String getReportHeader() {
         StringBuilder text = new StringBuilder();
         text.append(Version.getInstance().getReleaseAttributes());
         text.append("\n");
@@ -86,20 +85,30 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("Java version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + ", " + System.getProperty("java.vm.name"));
         text.append("\n");
         if (Main.platform.getClass() == PlatformHookUnixoid.class) {
+            // Add Java package details for Debian/Ubuntu
             String packageDetails = ((PlatformHookUnixoid) Main.platform).getJavaPackageDetails();
             if (packageDetails != null) {
                 text.append("Java package: ");
                 text.append(packageDetails);
                 text.append("\n");
             }
+            // Add WebStart package details for Debian/Ubuntu, if run from JNLP
+            if (Package.getPackage("javax.jnlp") != null) {
+                String webStartDetails = ((PlatformHookUnixoid) Main.platform).getWebStartPackageDetails();
+                if (webStartDetails != null) {
+                    text.append("WebStart package: ");
+                    text.append(webStartDetails);
+                    text.append("\n");
+                }
+            }
         }
         try {
-            final String env_java_home = System.getenv("JAVA_HOME");
-            final String env_java_home_alt = Main.platform instanceof PlatformHookWindows ? "%JAVA_HOME%" : "${JAVA_HOME}";
-            final String prop_java_home = System.getProperty("java.home");
-            final String prop_java_home_alt = "<java.home>";
+            final String envJavaHome = System.getenv("JAVA_HOME");
+            final String envJavaHomeAlt = Main.platform instanceof PlatformHookWindows ? "%JAVA_HOME%" : "${JAVA_HOME}";
+            final String propJavaHome = System.getProperty("java.home");
+            final String propJavaHomeAlt = "<java.home>";
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
-            List<String> vmArguments = new ArrayList<String>(ManagementFactory.getRuntimeMXBean().getInputArguments());
+            List<String> vmArguments = new ArrayList<>(ManagementFactory.getRuntimeMXBean().getInputArguments());
             for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext(); ) {
                 String value = it.next();
                 if (value.contains("=")) {
@@ -109,8 +118,8 @@ public final class ShowStatusReportAction extends JosmAction {
                         it.set(param[0]+"=xxx");
                     // Shorten some parameters for readability concerns
                     } else {
-                        shortenParam(it, param, env_java_home, env_java_home_alt);
-                        shortenParam(it, param, prop_java_home, prop_java_home_alt);
+                        shortenParam(it, param, envJavaHome, envJavaHomeAlt);
+                        shortenParam(it, param, propJavaHome, propJavaHomeAlt);
                     }
                 }
             }
@@ -149,18 +158,18 @@ public final class ShowStatusReportAction extends JosmAction {
         String reportHeader = getReportHeader();
         text.append(reportHeader);
         try {
-            Map<String, Setting> settings = Main.pref.getAllSettings();
+            Map<String, Setting<?>> settings = Main.pref.getAllSettings();
             settings.remove("osm-server.username");
             settings.remove("osm-server.password");
             settings.remove("oauth.access-token.key");
             settings.remove("oauth.access-token.secret");
-            Set<String> keys = new HashSet<String>(settings.keySet());
+            Set<String> keys = new HashSet<>(settings.keySet());
             for (String key : keys) {
                 if (key.startsWith("marker.show")) {
                     settings.remove(key);
                 }
             }
-            for (Entry<String, Setting> entry : settings.entrySet()) {
+            for (Entry<String, Setting<?>> entry : settings.entrySet()) {
                 text.append(entry.getKey()).append("=").append(entry.getValue().getValue().toString()).append("\n");
             }
         } catch (Exception x) {

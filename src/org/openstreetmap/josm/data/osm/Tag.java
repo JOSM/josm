@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tag represents an immutable key/value-pair. Both the key and the value may
@@ -16,7 +17,7 @@ public class Tag {
     /**
      * Create an empty tag whose key and value are empty.
      */
-    public Tag(){
+    public Tag() {
         this("", "");
     }
 
@@ -117,5 +118,18 @@ public class Tag {
     @Override
     public String toString() {
         return key + "=" + value;
+    }
+
+    /**
+     * Removes leading, trailing, and multiple inner whitespaces from the given string, to be used as a key or value.
+     * @param s The string
+     * @return The string without leading, trailing or multiple inner whitespaces
+     * @since 6699
+     */
+    public static String removeWhiteSpaces(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return Utils.strip(s).replaceAll("\\s+", " ");
     }
 }

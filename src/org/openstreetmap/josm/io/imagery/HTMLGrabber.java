@@ -11,12 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.imageio.ImageIO;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
 public class HTMLGrabber extends WMSGrabber {
@@ -32,7 +31,7 @@ public class HTMLGrabber extends WMSGrabber {
 
         Main.info("Grabbing HTML " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
-        List<String> cmdParams = new ArrayList<String>();
+        List<String> cmdParams = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(MessageFormat.format(PROP_BROWSER.get(), urlstring));
         while (st.hasMoreTokens()) {
             cmdParams.add(st.nextToken());
@@ -44,13 +43,13 @@ public class HTMLGrabber extends WMSGrabber {
         try {
             browser = builder.start();
         } catch (IOException ioe) {
-            throw new IOException( "Could not start browser. Please check that the executable path is correct.\n" + ioe.getMessage() );
+            throw new IOException("Could not start browser. Please check that the executable path is correct.\n" + ioe.getMessage(), ioe);
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Utils.copyStream(browser.getInputStream(), baos);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        BufferedImage img = layer.normalizeImage(ImageIO.read(bais));
+        BufferedImage img = layer.normalizeImage(ImageProvider.read(bais, true, WMSLayer.PROP_ALPHA_CHANNEL.get()));
         bais.reset();
         layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
 

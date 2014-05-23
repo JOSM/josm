@@ -27,10 +27,13 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * Note: If a ways are selected, their nodes are mirrored
  *
- * @author Teemu Koskinen, based on much copy&Paste from other Actions.
+ * @author Teemu Koskinen
  */
 public final class MirrorAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code MirrorAction}.
+     */
     public MirrorAction() {
         super(tr("Mirror"), "mirror", tr("Mirror selected nodes and ways."),
                 Shortcut.registerShortcut("tools:mirror", tr("Tool: {0}", tr("Mirror")),
@@ -41,7 +44,7 @@ public final class MirrorAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        HashSet<Node> nodes = new HashSet<Node>();
+        HashSet<Node> nodes = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Node) {
@@ -69,7 +72,7 @@ public final class MirrorAction extends JosmAction {
         }
         double middle = (minEast + maxEast) / 2;
 
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
 
         for (Node n : nodes) {
             cmds.add(new MoveCommand(n, 2 * (middle - n.getEastNorth().east()), 0.0));

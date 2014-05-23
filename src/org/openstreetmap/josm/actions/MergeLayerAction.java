@@ -18,8 +18,15 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Action that merges two or more OSM data layers. 
+ * @since 1890
+ */
 public class MergeLayerAction extends AbstractMergeAction {
 
+    /**
+     * Constructs a new {@code MergeLayerAction}.
+     */
     public MergeLayerAction() {
         super(tr("Merge layer"), "dialogs/mergedown",
             tr("Merge the current layer into another layer"),
@@ -37,7 +44,7 @@ public class MergeLayerAction extends AbstractMergeAction {
             @Override
             public void run() {
                 boolean layerMerged = false;
-                for (Layer sourceLayer: sourceLayers) {
+                for (final Layer sourceLayer: sourceLayers) {
                     if (sourceLayer != null && sourceLayer != targetLayer) {
                         if (sourceLayer instanceof OsmDataLayer && targetLayer instanceof OsmDataLayer
                                 && ((OsmDataLayer)sourceLayer).isUploadDiscouraged() != ((OsmDataLayer)targetLayer).isUploadDiscouraged()) {
@@ -46,7 +53,12 @@ public class MergeLayerAction extends AbstractMergeAction {
                             }
                         }
                         targetLayer.mergeFrom(sourceLayer);
-                        Main.main.removeLayer(sourceLayer);
+                        GuiHelper.runInEDTAndWait(new Runnable() {
+                            @Override
+                            public void run() {
+                                Main.main.removeLayer(sourceLayer);
+                            }
+                        });
                         layerMerged = true;
                     }
                 }
@@ -57,10 +69,18 @@ public class MergeLayerAction extends AbstractMergeAction {
         });
     }
 
+    /**
+     * Merges a list of layers together.
+     * @param sourceLayers The layers to merge
+     */
     public void merge(List<Layer> sourceLayers) {
         doMerge(sourceLayers, sourceLayers);
     }
 
+    /**
+     * Merges the given source layer with another one, determined at runtime.
+     * @param sourceLayer The source layer to merge
+     */
     public void merge(Layer sourceLayer) {
         if (sourceLayer == null)
             return;
@@ -95,7 +115,10 @@ public class MergeLayerAction extends AbstractMergeAction {
     }
 
     /**
-     * returns true if the user wants to cancel, false if they want to continue
+     * Warns about a discouraged merge operation, ask for confirmation.
+     * @param sourceLayer The source layer
+     * @param targetLayer The target layer
+     * @return {@code true} if the user wants to cancel, {@code false} if they want to continue
      */
     public static final boolean warnMergingUploadDiscouragedLayers(Layer sourceLayer, Layer targetLayer) {
         return GuiHelper.warnUser(tr("Merging layers with different upload policies"),

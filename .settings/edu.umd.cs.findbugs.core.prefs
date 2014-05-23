@@ -1,5 +1,5 @@
 #FindBugs User Preferences
-#Tue Jan 24 21:25:31 CET 2012
+#Fri Jan 24 10:43:38 CET 2014
 cloud_id=edu.umd.cs.findbugs.cloud.doNothingCloud
 detectorAppendingToAnObjectOutputStream=AppendingToAnObjectOutputStream|true
 detectorAtomicityProblem=AtomicityProblem|true
@@ -12,6 +12,7 @@ detectorBooleanReturnNull=BooleanReturnNull|true
 detectorCallToUnsupportedMethod=CallToUnsupportedMethod|false
 detectorCheckExpectedWarnings=CheckExpectedWarnings|false
 detectorCheckImmutableAnnotation=CheckImmutableAnnotation|true
+detectorCheckRelaxingNullnessAnnotation=CheckRelaxingNullnessAnnotation|true
 detectorCheckTypeQualifiers=CheckTypeQualifiers|true
 detectorCloneIdiom=CloneIdiom|true
 detectorComparatorIdiom=ComparatorIdiom|true
@@ -81,6 +82,7 @@ detectorInfiniteLoop=InfiniteLoop|true
 detectorInfiniteRecursiveLoop=InfiniteRecursiveLoop|true
 detectorInheritanceUnsafeGetResource=InheritanceUnsafeGetResource|true
 detectorInitializationChain=InitializationChain|true
+detectorInitializeNonnullFieldsInConstructor=InitializeNonnullFieldsInConstructor|true
 detectorInstantiateStaticClass=InstantiateStaticClass|true
 detectorIntCast2LongAsInstant=IntCast2LongAsInstant|true
 detectorInvalidJUnitTest=InvalidJUnitTest|true

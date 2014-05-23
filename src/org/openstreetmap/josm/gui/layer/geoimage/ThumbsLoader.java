@@ -25,7 +25,7 @@ public class ThumbsLoader implements Runnable {
 
     public ThumbsLoader(GeoImageLayer layer) {
         this.layer = layer;
-        this.data = new ArrayList<ImageEntry>(layer.data);
+        this.data = new ArrayList<>(layer.data);
         if (!cacheOff) {
             cache = new CacheFiles("geoimage-thumbnails", false);
             cache.setExpire(CacheFiles.EXPIRE_NEVER, false);
@@ -39,8 +39,6 @@ public class ThumbsLoader implements Runnable {
         tracker = new MediaTracker(Main.map.mapView);
         for (int i = 0; i < data.size(); i++) {
             if (stop) return;
-
-            System.err.print("fetching image "+i);
 
             data.get(i).thumbnail = loadThumb(data.get(i));
 

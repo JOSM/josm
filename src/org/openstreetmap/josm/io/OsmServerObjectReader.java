@@ -13,7 +13,6 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * OsmServerObjectReader reads an individual object from the OSM server.
@@ -36,11 +35,11 @@ public class OsmServerObjectReader extends OsmServerReader {
     /**
      * Creates a new server object reader for a given id and a primitive type.
      *
-     * @param id the object id. > 0 required.
+     * @param id the object id. &gt; 0 required.
      * @param type the type. Must not be null.
      * @param full true, if a full download is requested (i.e. a download including
      * immediate children); false, otherwise
-     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if id &lt;= 0
      * @throws IllegalArgumentException thrown if type is null
      */
     public OsmServerObjectReader(long id, OsmPrimitiveType type, boolean full) throws IllegalArgumentException {
@@ -50,10 +49,10 @@ public class OsmServerObjectReader extends OsmServerReader {
     /**
      * Creates a new server object reader for a given id and a primitive type.
      *
-     * @param id the object id. > 0 required.
+     * @param id the object id. &gt; 0 required.
      * @param type the type. Must not be null.
      * @param version the specific version number, if required; -1, otherwise
-     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if id &lt;= 0
      * @throws IllegalArgumentException thrown if type is null
      */
     public OsmServerObjectReader(long id, OsmPrimitiveType type, int version) throws IllegalArgumentException {
@@ -72,11 +71,11 @@ public class OsmServerObjectReader extends OsmServerReader {
     /**
      * Creates a new server object reader for an object with the given <code>id</code>
      *
-     * @param id the object id. Must not be null. Unique id > 0 required.
+     * @param id the object id. Must not be null. Unique id &gt; 0 required.
      * @param full true, if a full download is requested (i.e. a download including
      * immediate children); false, otherwise
      * @throws IllegalArgumentException thrown if id is null
-     * @throws IllegalArgumentException thrown if id.getUniqueId() <= 0
+     * @throws IllegalArgumentException thrown if id.getUniqueId() &lt;= 0
      */
     public OsmServerObjectReader(PrimitiveId id, boolean full) {
         this(id, full, -1);
@@ -85,10 +84,10 @@ public class OsmServerObjectReader extends OsmServerReader {
     /**
      * Creates a new server object reader for an object with the given <code>id</code>
      *
-     * @param id the object id. Must not be null. Unique id > 0 required.
+     * @param id the object id. Must not be null. Unique id &gt; 0 required.
      * @param version the specific version number, if required; -1, otherwise
      * @throws IllegalArgumentException thrown if id is null
-     * @throws IllegalArgumentException thrown if id.getUniqueId() <= 0
+     * @throws IllegalArgumentException thrown if id.getUniqueId() &lt;= 0
      */
     public OsmServerObjectReader(PrimitiveId id, int version) {
         this(id, false, version);
@@ -115,10 +114,9 @@ public class OsmServerObjectReader extends OsmServerReader {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
         progressMonitor.beginTask("", 1);
-        InputStream in = null;
         try {
             progressMonitor.indeterminateSubTask(tr("Downloading OSM data..."));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(id.getType().getAPIName());
             sb.append("/");
             sb.append(id.getUniqueId());
@@ -128,11 +126,11 @@ public class OsmServerObjectReader extends OsmServerReader {
                 sb.append("/").append(version);
             }
 
-            in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            final DataSet data = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-            return data;
+            try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
+                if (in == null)
+                    return null;
+                return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            }
         } catch(OsmTransferException e) {
             if (cancel) return null;
             throw e;
@@ -141,7 +139,6 @@ public class OsmServerObjectReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            Utils.close(in);
             activeConnection = null;
         }
     }

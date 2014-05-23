@@ -111,6 +111,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     private int initialMoveDelay = 200;
     /**
+     * The minimal shift of mouse (in pixels) befire something counts as move
+     */
+    private int initialMoveThreshold = 10;
+
+    /**
      * The initial EastNorths of node1 and node2
      */
     private EastNorth initialN1en;
@@ -135,7 +140,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     /** The cursor for the 'alwaysCreateNodes' submode. */
     private final Cursor cursorCreateNodes;
 
-    private class ReferenceSegment {
+    private static class ReferenceSegment {
         public final EastNorth en;
         public final EastNorth p1;
         public final EastNorth p2;
@@ -208,6 +213,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             Main.warn(ex);
         }
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
+        initialMoveThreshold = Main.pref.getInteger("extrude.initial-move-threshold", 10);
         mainColor = Main.pref.getColor(marktr("Extrude: main line"), null);
         if (mainColor == null) mainColor = PaintColors.SELECTED.get();
         helperColor = Main.pref.getColor(marktr("Extrude: helper line"), Color.ORANGE);
@@ -256,7 +262,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
         if (selectedNode != null) {
             if (ctrl || nodeDragWithoutCtrl) {
-                movingNodeList = new ArrayList<OsmPrimitive>();
+                movingNodeList = new ArrayList<>();
                 movingNodeList.add(selectedNode);
                 calculatePossibleDirectionsByNode();
                 if (possibleMoveDirections.isEmpty()) {
@@ -269,7 +275,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             // Otherwise switch to another mode
             if (ctrl) {
                 mode = Mode.translate;
-                movingNodeList = new ArrayList<OsmPrimitive>();
+                movingNodeList = new ArrayList<>();
                 movingNodeList.add(selectedSegment.getFirstNode());
                 movingNodeList.add(selectedSegment.getSecondNode());
             } else if (alt) {
@@ -361,7 +367,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             // Nothing to be done
         } else {
             if (mode == Mode.create_new) {
-                if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null) {
+                if (e.getPoint().distance(initialMousePos) > initialMoveThreshold && newN1en != null) {
                     createNewRectangle();
                 }
             } else if (mode == Mode.extrude) {
@@ -369,7 +375,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     // double click adds a new node
                     addNewNode(e);
                 }
-                else if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null && selectedSegment != null) {
+                else if (e.getPoint().distance(initialMousePos) > initialMoveThreshold && newN1en != null && selectedSegment != null) {
                     // main extrusion commands
                     performExtrusion();
                 }
@@ -416,7 +422,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     private void createNewRectangle() {
         if (selectedSegment == null) return;
         // crete a new rectangle
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
         Node third = new Node(newN2en);
         Node fourth = new Node(newN1en);
         Way wnew = new Way();
@@ -440,7 +446,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     private void performExtrusion() {
         // create extrusion
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
         Way wnew = new Way(selectedSegment.way);
         boolean wayWasModified = false;
         boolean wayWasSingleSegment = wnew.getNodesCount() == 2;
@@ -592,7 +598,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         initialN2en = selectedSegment.getSecondNode().getEastNorth();
 
         //add direction perpendicular to the selected segment
-        possibleMoveDirections = new ArrayList<ReferenceSegment>();
+        possibleMoveDirections = new ArrayList<>();
         possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
                 initialN1en.getY() - initialN2en.getY(),
                 initialN2en.getX() - initialN1en.getX()
@@ -626,7 +632,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         // remember initial positions for segment nodes.
         initialN1en = selectedNode.getEastNorth();
         initialN2en = initialN1en;
-        possibleMoveDirections = new ArrayList<ReferenceSegment>();
+        possibleMoveDirections = new ArrayList<>();
         for (OsmPrimitive p: selectedNode.getReferrers()) {
             if (p instanceof Way  && p.isUsable()) {
                 for (Node neighbor: ((Way) p).getNeighbours(selectedNode)) {
@@ -822,7 +828,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * @param unitvector A unit vector denoting the direction of the line
      * @param g the Graphics2D object  it will be used on
      */
-    static private Line2D createSemiInfiniteLine(Point2D start, Point2D unitvector, Graphics2D g) {
+    private static Line2D createSemiInfiniteLine(Point2D start, Point2D unitvector, Graphics2D g) {
         Rectangle bounds = g.getDeviceConfiguration().getBounds();
         try {
             AffineTransform invtrans = g.getTransform().createInverse();

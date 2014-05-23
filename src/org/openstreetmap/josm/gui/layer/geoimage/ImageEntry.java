@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 /**
  * Stores info about each image
  */
-final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
+public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     private File file;
     private Integer exifOrientation;
     private LatLon exifCoor;
@@ -190,7 +190,7 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         try {
             c = super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
         return (ImageEntry) c;
     }
@@ -241,12 +241,11 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      */
     @Override
     public String toString() {
-        String result = file.getName()+": "+
+        return file.getName()+": "+
         "pos = "+pos+" | "+
         "exifCoor = "+exifCoor+" | "+
         (tmp == null ? " tmp==null" :
-            " [tmp] pos = "+tmp.pos+"");
-        return result;
+            " [tmp] pos = "+tmp.pos);
     }
 
     /**

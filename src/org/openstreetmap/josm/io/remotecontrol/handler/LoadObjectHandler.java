@@ -7,9 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -26,17 +26,16 @@ public class LoadObjectHandler extends RequestHandler {
      */
     public static final String command = "load_object";
 
-    private final List<PrimitiveId> ps = new LinkedList<PrimitiveId>();
+    private final List<PrimitiveId> ps = new LinkedList<>();
 
     @Override
     public String[] getMandatoryParams() {
         return new String[]{"objects"};
     }
-    
+
     @Override
-    public String[] getOptionalParams()
-    {
-        return new String[] {"new_layer", "addtags"};
+    public String[] getOptionalParams() {
+        return new String[] {"new_layer", "addtags", "relation_members", "referrers"};
     }
 
     @Override
@@ -47,7 +46,8 @@ public class LoadObjectHandler extends RequestHandler {
     @Override
     public String[] getUsageExamples() {
         return new String[] {"/load_object?new_layer=true&objects=w106159509",
-            "/load_object?new_layer=true&objects=r2263653&relation_members=true"
+            "/load_object?new_layer=true&objects=r2263653&relation_members=true",
+            "/load_object?objects=n100000&referrers=false"
         };
     }
 
@@ -59,15 +59,22 @@ public class LoadObjectHandler extends RequestHandler {
         if (!ps.isEmpty()) {
             final boolean newLayer = isLoadInNewLayer();
             final boolean relationMembers = Boolean.parseBoolean(args.get("relation_members"));
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override public void run() {
-                    DownloadPrimitiveAction.processItems(newLayer, ps, true, relationMembers);
-                }
-            });
-            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
+            final boolean referrers = args.containsKey("referrers") ? Boolean.parseBoolean(args.get("referrers")) : true;
+            final DownloadPrimitivesWithReferrersTask task = new DownloadPrimitivesWithReferrersTask(
+                    newLayer, ps, referrers, relationMembers, null);
+            Main.worker.submit(task);
+            Main.worker.submit(new Runnable() {
                 @Override
                 public void run() {
-                    Main.main.getCurrentDataSet().setSelected(ps);
+                    final List<PrimitiveId> downloaded = task.getDownloadedId();
+                    if(downloaded != null) {
+                        GuiHelper.runInEDT(new Runnable() {
+                            @Override
+                            public void run() {
+                                Main.main.getCurrentDataSet().setSelected(downloaded);
+                            }
+                        });
+                    }
                     AddTagsDialog.addTags(args, sender);
                     ps.clear();
                 }

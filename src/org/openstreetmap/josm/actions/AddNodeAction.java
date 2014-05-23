@@ -22,6 +22,9 @@ public final class AddNodeAction extends JosmAction {
     // remember input from last time
     private String textLatLon, textEastNorth;
 
+    /**
+     * Constructs a new {@code AddNodeAction}.
+     */
     public AddNodeAction() {
         super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude / longitude or easting / northing."),
                 Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node...")),

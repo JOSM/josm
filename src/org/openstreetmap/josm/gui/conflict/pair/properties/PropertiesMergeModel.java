@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Observable;
 
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.CoordinateConflictResolveCommand;
-import org.openstreetmap.josm.command.DeletedStateConflictResolveCommand;
+import org.openstreetmap.josm.command.conflict.CoordinateConflictResolveCommand;
+import org.openstreetmap.josm.command.conflict.DeletedStateConflictResolveCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -38,8 +38,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class PropertiesMergeModel extends Observable {
 
-    static public final String RESOLVED_COMPLETELY_PROP = PropertiesMergeModel.class.getName() + ".resolvedCompletely";
-    static public final String DELETE_PRIMITIVE_PROP = PropertiesMergeModel.class.getName() + ".deletePrimitive";
+    public static final String RESOLVED_COMPLETELY_PROP = PropertiesMergeModel.class.getName() + ".resolvedCompletely";
+    public static final String DELETE_PRIMITIVE_PROP = PropertiesMergeModel.class.getName() + ".deletePrimitive";
 
     private OsmPrimitive my;
 
@@ -325,7 +325,7 @@ public class PropertiesMergeModel extends Observable {
      * @return The list of commands
      */
     public List<Command> buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
-        List<Command> cmds = new ArrayList<Command>();
+        List<Command> cmds = new ArrayList<>();
         if (hasCoordConflict() && isDecidedCoord()) {
             cmds.add(new CoordinateConflictResolveCommand(conflict, coordMergeDecision));
         }

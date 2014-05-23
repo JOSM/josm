@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
@@ -24,12 +23,12 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.OsmApiException;
-import org.openstreetmap.josm.io.OsmDataParsingException;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlParsingException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -97,7 +96,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
         return url;
     }
 
-    protected UserInfo getUserDetails() throws OsmOAuthAuthorizationException, OsmDataParsingException,OsmTransferException {
+    protected UserInfo getUserDetails() throws OsmOAuthAuthorizationException, XmlParsingException, OsmTransferException {
         boolean authenticatorEnabled = true;
         try {
             URL url = new URL(normalizeApiUrl(apiUrl) + "/0.6/user/details");
@@ -122,13 +121,9 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 throw new OsmApiException(connection.getResponseCode(),connection.getHeaderField("Error"), null);
             Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connection.getInputStream());
             return OsmServerUserInfoReader.buildFromXML(d);
-        } catch(SAXException e) {
-            throw new OsmDataParsingException(e);
-        } catch(ParserConfigurationException e){
-            throw new OsmDataParsingException(e);
-        } catch(MalformedURLException e) {
-            throw new OsmTransferException(e);
-        } catch(IOException e){
+        } catch(SAXException | ParserConfigurationException e) {
+            throw new XmlParsingException(e);
+        } catch(IOException e) {
             throw new OsmTransferException(e);
         } catch(OAuthException e) {
             throw new OsmOAuthAuthorizationException(e);

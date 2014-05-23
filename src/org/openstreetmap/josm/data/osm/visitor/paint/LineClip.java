@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
+import static java.awt.geom.Rectangle2D.OUT_BOTTOM;
 import static java.awt.geom.Rectangle2D.OUT_LEFT;
 import static java.awt.geom.Rectangle2D.OUT_RIGHT;
 import static java.awt.geom.Rectangle2D.OUT_TOP;
-import static java.awt.geom.Rectangle2D.OUT_BOTTOM;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 
@@ -16,6 +17,12 @@ public class LineClip {
     private Point p1, p2;
     private final Rectangle clipBounds;
 
+    /**
+     * Constructs a new {@code LineClip}.
+     * @param p1 start point of the clipped line
+     * @param p2 end point of the clipped line
+     * @param clipBounds Clip bounds
+     */
     public LineClip(Point p1, Point p2, Rectangle clipBounds) {
         this.p1 = p1;
         this.p2 = p2;
@@ -27,31 +34,32 @@ public class LineClip {
      * @return true if the some parts of the line lies within the clip bounds
      */
     public boolean execute() {
+        if (clipBounds == null) {
+            return false;
+        }
         return cohenSutherland(p1.x, p1.y, p2.x, p2.y, clipBounds.x , clipBounds.y, clipBounds.x + clipBounds.width, clipBounds.y + clipBounds.height);
     }
 
     /**
      * @return start point of the clipped line
      */
-    public Point getP1()
-    {
+    public Point getP1() {
         return p1;
     }
 
     /**
      * @return end point of the clipped line
      */
-    public Point getP2()
-    {
+    public Point getP2() {
         return p2;
     }
 
     /**
-     * see http://en.wikipedia.org/wiki/Cohen-Sutherland
+     * Cohen–Sutherland algorithm.
+     * See <a href="https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm">Wikipedia article</a>
      * @return true, if line is visible in the given clip region
      */
-    private boolean cohenSutherland( long x1, long y1, long x2, long y2, long xmin, long ymin, long xmax, long ymax)
-    {
+    private boolean cohenSutherland( long x1, long y1, long x2, long y2, long xmin, long ymin, long xmax, long ymax) {
         int outcode0, outcode1, outcodeOut;
         boolean accept = false;
         boolean done = false;

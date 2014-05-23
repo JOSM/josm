@@ -10,6 +10,7 @@ import java.util.Collections;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -35,7 +36,7 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
     }
 
     private class LambertCC9CBPanel extends CBPanel {
-        public LambertCC9CBPanel(Object[] entries, int initialIndex, String label, ActionListener listener) {
+        public LambertCC9CBPanel(String[] entries, int initialIndex, String label, ActionListener listener) {
             super(entries, initialIndex, label, listener);
             this.add(new JLabel(ImageProvider.get("data/projection", "LambertCC9Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
             this.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
@@ -75,21 +76,25 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
                 int zoneval = Integer.parseInt(zonestring)-3942;
                 if(zoneval >= 0 && zoneval <= 8)
                     return Collections.singleton(String.valueOf(zoneval+1));
-            } catch(NumberFormatException ex) {}
+            } catch(NumberFormatException ex) {
+                Main.warn(ex);
+            }
         }
         return null;
     }
 
     @Override
-    protected String indexToZone(int index) {
-        return Integer.toString(index + 1);
+    protected String indexToZone(int idx) {
+        return Integer.toString(idx + 1);
     }
 
     @Override
     protected int zoneToIndex(String zone) {
         try {
             return Integer.parseInt(zone) - 1;
-        } catch(NumberFormatException e) {}
+        } catch(NumberFormatException e) {
+            Main.warn(e);
+        }
         return defaultIndex;
     }
 

@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.io.File;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,17 +48,16 @@ public class SourceEntry {
     public String title;
 
     /**
-     * active is a boolean flag that can be used to turn the style on or off
-     * at runtime.
+     * active is a boolean flag that can be used to turn the source on or off at runtime.
      */
     public boolean active;
 
     public SourceEntry(String url, boolean isZip, String zipEntryPath, String name, String title, boolean active) {
         this.url = url;
         this.isZip = isZip;
-        this.zipEntryPath = equal(zipEntryPath, "") ? null : zipEntryPath;
-        this.name = equal(name, "") ? null : name;
-        this.title = equal(title, "") ? null : title;
+        this.zipEntryPath = "".equals(zipEntryPath) ? null : zipEntryPath;
+        this.name = "".equals(name) ? null : name;
+        this.title = "".equals(title) ? null : title;
         this.active = active;
     }
 
@@ -81,11 +79,11 @@ public class SourceEntry {
         if (obj == null || getClass() != obj.getClass())
             return false;
         final SourceEntry other = (SourceEntry) obj;
-        return equal(other.url, url) &&
+        return Objects.equals(other.url, url) &&
                 other.isZip == isZip &&
-                equal(other.zipEntryPath, zipEntryPath) &&
-                equal(other.name, name) &&
-                equal(other.title, title) &&
+                Objects.equals(other.zipEntryPath, zipEntryPath) &&
+                Objects.equals(other.name, name) &&
+                Objects.equals(other.title, title) &&
                 other.active == active;
     }
 
@@ -120,7 +118,7 @@ public class SourceEntry {
 
     /**
      * extract file part from url, e.g.:
-     * http://www.test.com/file.xml?format=text  --> file.xml
+     * http://www.test.com/file.xml?format=text --&gt; file.xml
      */
     public String getFileNamePart() {
         Pattern p = Pattern.compile("([^/\\\\]*?)([?].*)?$");
@@ -143,7 +141,7 @@ public class SourceEntry {
     }
 
     public boolean isLocal() {
-        if (url.startsWith("http://") || url.startsWith("resource://"))
+        if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("resource://"))
             return false;
         return true;
     }

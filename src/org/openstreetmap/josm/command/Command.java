@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.command;
 
 import java.awt.GridBagLayout;
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -26,6 +24,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -36,10 +35,10 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  * @author imi
  */
-abstract public class Command extends PseudoCommand {
+public abstract class Command extends PseudoCommand {
 
     private static final class CloneVisitor extends AbstractVisitor {
-        public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<OsmPrimitive, PrimitiveData>();
+        public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<>();
 
         @Override
         public void visit(Node n) {
@@ -76,7 +75,7 @@ abstract public class Command extends PseudoCommand {
     }
 
     /** the map of OsmPrimitives in the original state to OsmPrimitives in cloned state */
-    private Map<OsmPrimitive, PrimitiveData> cloneMap = new HashMap<OsmPrimitive, PrimitiveData>();
+    private Map<OsmPrimitive, PrimitiveData> cloneMap = new HashMap<>();
 
     /** the layer which this command is applied to */
     private final OsmDataLayer layer;
@@ -106,7 +105,7 @@ abstract public class Command extends PseudoCommand {
      */
     public boolean executeCommand() {
         CloneVisitor visitor = new CloneVisitor();
-        Collection<OsmPrimitive> all = new ArrayList<OsmPrimitive>();
+        Collection<OsmPrimitive> all = new ArrayList<>();
         fillModifiedData(all, all, all);
         for (OsmPrimitive osm : all) {
             osm.accept(visitor);
@@ -159,7 +158,7 @@ abstract public class Command extends PseudoCommand {
      * Replies the layer this command is (or was) applied to.
      *
      */
-    protected  OsmDataLayer getLayer() {
+    protected OsmDataLayer getLayer() {
         return layer;
     }
 
@@ -171,7 +170,7 @@ abstract public class Command extends PseudoCommand {
      * @param deleted The deleted primitives
      * @param added The added primitives
      */
-    abstract public void fillModifiedData(Collection<OsmPrimitive> modified,
+    public abstract void fillModifiedData(Collection<OsmPrimitive> modified,
             Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added);
 
@@ -210,7 +209,7 @@ abstract public class Command extends PseudoCommand {
         }
         if (outside) {
             JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JLabel("<html>" + outsideDialogMessage + "</html>"));
+            msg.add(new JMultilineLabel("<html>" + outsideDialogMessage + "</html>"));
             boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
                     operation + "_outside_nodes",
                     Main.parent,
@@ -224,7 +223,7 @@ abstract public class Command extends PseudoCommand {
         }
         if (incomplete) {
             JPanel msg = new JPanel(new GridBagLayout());
-            msg.add(new JLabel("<html>" + incompleteDialogMessage + "</html>"));
+            msg.add(new JMultilineLabel("<html>" + incompleteDialogMessage + "</html>"));
             boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
                     operation + "_incomplete",
                     Main.parent,

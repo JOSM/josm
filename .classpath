@@ -3,8 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test/unit"/>
 	<classpathentry kind="src" path="test/functional"/>
-	<classpathentry excluding="build/|data_nodist/|dist/|doc/|lib/|macosx/|nb/|src/|test/|test/build/|test/functional/|test/performance/|test/unit/|tools/|utils/" kind="src" path=""/>
 	<classpathentry kind="src" path="test/performance"/>
+	<classpathentry excluding="build/|data_nodist/|dist/|doc/|lib/|macosx/|nb/|src/|test/|test/build/|test/functional/|test/performance/|test/unit/|tools/|utils/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-assert-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-reflect-1.1.jar"/>
@@ -21,5 +21,10 @@
 	<classpathentry kind="lib" path="test/lib/unitils-core/ognl-2.6.9.jar"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/unitils-core-3.3.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jaxb">
+		<attributes>
+			<attribute name="owner.project.facets" value="jpt.jaxb"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

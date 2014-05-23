@@ -16,13 +16,8 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -34,17 +29,17 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceProvider;
+import org.openstreetmap.josm.gui.preferences.SourceType;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
-import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
-import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+/**
+ * Preference settings for tagging presets.
+ */
 public final class TaggingPresetPreference implements SubPreferenceSetting {
 
     /**
@@ -61,11 +56,16 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         super();
     }
 
-    private static final List<SourceProvider> presetSourceProviders = new ArrayList<SourceProvider>();
-    public static Collection<TaggingPreset> taggingPresets;
+    private static final List<SourceProvider> presetSourceProviders = new ArrayList<>();
+
     private SourceEditor sources;
     private JCheckBox sortMenu;
 
+    /**
+     * Registers a new additional preset source provider.
+     * @param provider The preset source provider
+     * @return {@code true}, if the provider has been added, {@code false} otherwise
+     */
     public static final boolean registerSourceProvider(SourceProvider provider) {
         if (provider != null)
             return presetSourceProviders.add(provider);
@@ -76,7 +76,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         @Override
         public boolean validatePreferences() {
             if (sources.hasActiveSourcesChanged()) {
-                List<Integer> sourcesToRemove = new ArrayList<Integer>();
+                List<Integer> sourcesToRemove = new ArrayList<>();
                 int i = -1;
                 SOURCES:
                     for (SourceEntry source: sources.getActiveSources()) {
@@ -160,7 +160,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
     };
 
     @Override
-    public void addGui(final PreferenceTabbedPane gui) {
+    public void addGui(PreferenceTabbedPane gui) {
         sortMenu = new JCheckBox(tr("Sort presets menu"),
                 Main.pref.getBoolean("taggingpreset.sortmenu", false));
 
@@ -169,21 +169,9 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         panel.add(sortMenu, GBC.eol().insets(5,5,5,0));
         sources = new TaggingPresetSourceEditor();
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
-        gui.getMapPreference().addSubTab(this, tr("Tagging Presets"), panel);
-
-        // this defers loading of tagging preset sources to the first time the tab
-        // with the tagging presets is selected by the user
-        //
-        gui.getMapPreference().getTabPane().addChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        if (gui.getMapPreference().getTabPane().getSelectedComponent() == panel) {
-                            sources.initiallyLoadAvailableSources();
-                        }
-                    }
-                }
-                );
+        final MapPreference mapPref = gui.getMapPreference();
+        mapPref.addSubTab(this, tr("Tagging Presets"), panel);
+        sources.deferLoading(mapPref, panel);
         gui.addValidationListener(validationListener);
     }
 
@@ -192,7 +180,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         private static final String iconpref = "taggingpreset.icon.sources";
 
         public TaggingPresetSourceEditor() {
-            super(false, Main.JOSM_WEBSITE+"/presets", presetSourceProviders);
+            super(SourceType.TAGGING_PRESET, Main.getJOSMWebsite()+"/presets", presetSourceProviders, true);
         }
 
         @Override
@@ -273,53 +261,15 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         return restart;
     }
 
-    public static void readFromPreferences() {
-        taggingPresets = TaggingPresetReader.readFromPreferences(false);
-    }
-
-        /**
-         * Initialize the tagging presets (load and may display error)
-         */
-    public static void initialize() {
-        readFromPreferences();
-        for (TaggingPreset tp: taggingPresets) {
-            if (!(tp instanceof TaggingPresetSeparator)) {
-                Main.toolbar.register(tp);
-            }
-        }
-        if (taggingPresets.isEmpty()) {
-            Main.main.menu.presetsMenu.setVisible(false);
-        } else {
-            AutoCompletionManager.cachePresets(taggingPresets);
-            HashMap<TaggingPresetMenu,JMenu> submenus = new HashMap<TaggingPresetMenu,JMenu>();
-            for (final TaggingPreset p : taggingPresets) {
-                JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
-                if (p instanceof TaggingPresetSeparator) {
-                    m.add(new JSeparator());
-                } else if (p instanceof TaggingPresetMenu) {
-                    JMenu submenu = new JMenu(p);
-                    submenu.setText(p.getLocaleName());
-                    ((TaggingPresetMenu)p).menu = submenu;
-                    submenus.put((TaggingPresetMenu)p, submenu);
-                    m.add(submenu);
-                } else {
-                    JMenuItem mi = new JMenuItem(p);
-                    mi.setText(p.getLocaleName());
-                    m.add(mi);
-                }
-            }
-        }
-        if (Main.pref.getBoolean("taggingpreset.sortmenu")) {
-            TaggingPresetMenu.sortMenu(Main.main.menu.presetsMenu);
-        }
-    }
-
+    /**
+     * Helper class for tagging presets preferences.
+     */
     public static class PresetPrefHelper extends SourceEditor.SourcePrefHelper {
 
         /**
          * The unique instance.
          */
-        public final static PresetPrefHelper INSTANCE = new PresetPrefHelper();
+        public static final PresetPrefHelper INSTANCE = new PresetPrefHelper();
 
         /**
          * Constructs a new {@code PresetPrefHelper}.
@@ -338,7 +288,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
         @Override
         public Map<String, String> serialize(SourceEntry entry) {
-            Map<String, String> res = new HashMap<String, String>();
+            Map<String, String> res = new HashMap<>();
             res.put("url", entry.url);
             res.put("title", entry.title == null ? "" : entry.title);
             return res;

@@ -12,6 +12,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Handler for import request
@@ -36,7 +37,7 @@ public class ImportHandler extends RequestHandler {
         } catch (Exception ex) {
             Main.warn("RemoteControl: Error parsing import remote control request:");
             Main.error(ex);
-            throw new RequestHandlerErrorException();
+            throw new RequestHandlerErrorException(ex);
         }
     }
 
@@ -57,7 +58,7 @@ public class ImportHandler extends RequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        return new String[] { "/import?url="+Main.JOSM_WEBSITE+"/browser/josm/trunk/data_nodist/direction-arrows.osm" };
+        return new String[] { "/import?url="+Main.getJOSMWebsite()+"/browser/josm/trunk/data_nodist/direction-arrows.osm" };
     }
     
     @Override
@@ -83,7 +84,7 @@ public class ImportHandler extends RequestHandler {
 
     @Override
     protected void parseArgs() {
-        HashMap<String, String> args = new HashMap<String, String>();
+        HashMap<String, String> args = new HashMap<>();
         if (request.indexOf('?') != -1) {
             String query = request.substring(request.indexOf('?') + 1);
             if (query.indexOf("url=") == 0) {
@@ -112,12 +113,15 @@ public class ImportHandler extends RequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
-        final String urlString = args.get("url");
+        String urlString = args.get("url");
+        if (Main.pref.getBoolean("remotecontrol.importhandler.fix_url_query", true)) {
+            urlString = Utils.fixURLQuery(urlString);
+        }
         try {
             // Ensure the URL is valid
             url = new URL(urlString);
         } catch (MalformedURLException e) {
-            throw new RequestHandlerBadRequestException("MalformedURLException: "+e.getMessage());
+            throw new RequestHandlerBadRequestException("MalformedURLException: "+e.getMessage(), e);
         }
         // Find download tasks for the given URL
         suitableDownloadTasks = Main.main.menu.openLocation.findDownloadTasks(urlString);

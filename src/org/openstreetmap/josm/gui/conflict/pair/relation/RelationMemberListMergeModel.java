@@ -8,7 +8,7 @@ import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
-import org.openstreetmap.josm.command.RelationMemberConflictResolverCommand;
+import org.openstreetmap.josm.command.conflict.RelationMemberConflictResolverCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;

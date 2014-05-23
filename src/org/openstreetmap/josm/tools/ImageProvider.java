@@ -3,11 +3,11 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
@@ -15,20 +15,29 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
+import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,7 +46,12 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -46,6 +60,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -91,6 +108,18 @@ public class ImageProvider {
         OTHER
     }
 
+    /**
+     * Property set on {@code BufferedImage} returned by {@link #makeImageTransparent}.
+     * @since 7132
+     */
+    public static String PROP_TRANSPARENCY_FORCED = "josm.transparency.forced";
+
+    /**
+     * Property set on {@code BufferedImage} returned by {@link #read} if metadata is required.
+     * @since 7132
+     */
+    public static String PROP_TRANSPARENCY_COLOR = "josm.transparency.color";
+
     protected Collection<String> dirs;
     protected String id;
     protected String subdir;
@@ -110,12 +139,12 @@ public class ImageProvider {
     /**
      * The icon cache
      */
-    private static final Map<String, ImageResource> cache = new HashMap<String, ImageResource>();
+    private static final Map<String, ImageResource> cache = new HashMap<>();
 
     /**
      * Caches the image data for rotated versions of the same image.
      */
-    private static final Map<Image, Map<Long, ImageResource>> ROTATE_CACHE = new HashMap<Image, Map<Long, ImageResource>>();
+    private static final Map<Image, Map<Long, ImageResource>> ROTATE_CACHE = new HashMap<>();
 
     private static final ExecutorService IMAGE_FETCHER = Executors.newSingleThreadExecutor();
 
@@ -358,7 +387,9 @@ public class ImageProvider {
     }
 
     /**
-     * @see #get(java.lang.String, java.lang.String)
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
+     * @return the requested image or null if the request failed
+     * @see #get(String, String)
      */
     public static ImageIcon get(String name) {
         return new ImageProvider(name).get();
@@ -367,14 +398,20 @@ public class ImageProvider {
     /**
      * Load an image with a given file name, but do not throw an exception
      * when the image cannot be found.
-     * @see #get(java.lang.String, java.lang.String)
+     *
+     * @param subdir subdirectory the image lies in
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
+     * @return the requested image or null if the request failed
+     * @see #get(String, String)
      */
     public static ImageIcon getIfAvailable(String subdir, String name) {
         return new ImageProvider(subdir, name).setOptional(true).get();
     }
 
     /**
-     * @see #getIfAvailable(java.lang.String, java.lang.String)
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
+     * @return the requested image or null if the request failed
+     * @see #getIfAvailable(String, String)
      */
     public static ImageIcon getIfAvailable(String name) {
         return new ImageProvider(name).setOptional(true).get();
@@ -395,35 +432,20 @@ public class ImageProvider {
             if (name == null)
                 return null;
 
-            try {
-                if (name.startsWith("data:")) {
-                    Matcher m = dataUrlPattern.matcher(name);
-                    if (m.matches()) {
-                        String mediatype = m.group(1);
-                        String base64 = m.group(2);
-                        String data = m.group(3);
-                        byte[] bytes = ";base64".equals(base64)
-                                ? Base64.decodeBase64(data)
-                                        : URLDecoder.decode(data, "utf-8").getBytes();
-                                if (mediatype != null && mediatype.contains("image/svg+xml")) {
-                                    URI uri = getSvgUniverse().loadSVG(new StringReader(new String(bytes)), name);
-                                    return new ImageResource(getSvgUniverse().getDiagram(uri));
-                                } else {
-                                    try {
-                                        return new ImageResource(ImageIO.read(new ByteArrayInputStream(bytes)));
-                                    } catch (IOException e) {
-                                        Main.warn("IOException while reading image: "+e.getMessage());
-                                    }
-                                }
-                    }
+            if (name.startsWith("data:")) {
+                String url = name;
+                ImageResource ir = cache.get(url);
+                if (ir != null) return ir;
+                ir = getIfAvailableDataUrl(url);
+                if (ir != null) {
+                    cache.put(url, ir);
                 }
-            } catch (UnsupportedEncodingException ex) {
-                throw new RuntimeException(ex.getMessage(), ex);
+                return ir;
             }
 
             ImageType type = name.toLowerCase().endsWith(".svg") ? ImageType.SVG : ImageType.OTHER;
 
-            if (name.startsWith("http://")) {
+            if (name.startsWith("http://") || name.startsWith("https://")) {
                 String url = name;
                 ImageResource ir = cache.get(url);
                 if (ir != null) return ir;
@@ -463,25 +485,25 @@ public class ImageProvider {
                         type = ImageType.OTHER;
                     }
 
-                    String full_name = subdir + name + ext;
-                    String cache_name = full_name;
+                    String fullName = subdir + name + ext;
+                    String cacheName = fullName;
                     /* cache separately */
                     if (dirs != null && !dirs.isEmpty()) {
-                        cache_name = "id:" + id + ":" + full_name;
+                        cacheName = "id:" + id + ":" + fullName;
                         if(archive != null) {
-                            cache_name += ":" + archive.getName();
+                            cacheName += ":" + archive.getName();
                         }
                     }
 
-                    ImageResource ir = cache.get(cache_name);
+                    ImageResource ir = cache.get(cacheName);
                     if (ir != null) return ir;
 
                     switch (place) {
                     case ARCHIVE:
                         if (archive != null) {
-                            ir = getIfAvailableZip(full_name, archive, inArchiveDir, type);
+                            ir = getIfAvailableZip(fullName, archive, inArchiveDir, type);
                             if (ir != null) {
-                                cache.put(cache_name, ir);
+                                cache.put(cacheName, ir);
                                 return ir;
                             }
                         }
@@ -492,13 +514,13 @@ public class ImageProvider {
                         // index the cache by the name of the icon we're looking for
                         // and don't bother to create a URL unless we're actually
                         // creating the image.
-                        URL path = getImageUrl(full_name, dirs, additionalClassLoaders);
+                        URL path = getImageUrl(fullName, dirs, additionalClassLoaders);
                         if (path == null) {
                             continue;
                         }
                         ir = getIfAvailableLocalURL(path, type);
                         if (ir != null) {
-                            cache.put(cache_name, ir);
+                            cache.put(cacheName, ir);
                             return ir;
                         }
                         break;
@@ -510,10 +532,8 @@ public class ImageProvider {
     }
 
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
-        MirroredInputStream is = null;
-        try {
-            is = new MirroredInputStream(url,
-                    new File(Main.pref.getCacheDirectory(), "images").getPath());
+        try (MirroredInputStream is = new MirroredInputStream(url,
+                    new File(Main.pref.getCacheDirectory(), "images").getPath())) {
             switch (type) {
             case SVG:
                 URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(is.getFile()).toString());
@@ -522,7 +542,7 @@ public class ImageProvider {
             case OTHER:
                 BufferedImage img = null;
                 try {
-                    img = ImageIO.read(Utils.fileToURL(is.getFile()));
+                    img = read(Utils.fileToURL(is.getFile()), false, false);
                 } catch (IOException e) {
                     Main.warn("IOException while reading HTTP image: "+e.getMessage());
                 }
@@ -532,8 +552,47 @@ public class ImageProvider {
             }
         } catch (IOException e) {
             return null;
-        } finally {
-            Utils.close(is);
+        }
+    }
+
+    private static ImageResource getIfAvailableDataUrl(String url) {
+        try {
+            Matcher m = dataUrlPattern.matcher(url);
+            if (m.matches()) {
+                String mediatype = m.group(1);
+                String base64 = m.group(2);
+                String data = m.group(3);
+                byte[] bytes;
+                if (";base64".equals(base64)) {
+                    bytes = Base64.decodeBase64(data);
+                } else {
+                    try {
+                        bytes = URLDecoder.decode(data, "UTF-8").getBytes(StandardCharsets.UTF_8);
+                    } catch (IllegalArgumentException ex) {
+                        Main.warn("Unable to decode URL data part: "+ex.getMessage() + " (" + data + ")");
+                        return null;
+                    }
+                }
+                if (mediatype != null && mediatype.contains("image/svg+xml")) {
+                    String s = new String(bytes, StandardCharsets.UTF_8);
+                    URI uri = getSvgUniverse().loadSVG(new StringReader(s), URLEncoder.encode(s, "UTF-8"));
+                    SVGDiagram svg = getSvgUniverse().getDiagram(uri);
+                    if (svg == null) {
+                        Main.warn("Unable to process svg: "+s);
+                        return null;
+                    }
+                    return new ImageResource(svg);
+                } else {
+                    try {
+                        return new ImageResource(read(new ByteArrayInputStream(bytes), false, false));
+                    } catch (IOException e) {
+                        Main.warn("IOException while reading image: "+e.getMessage());
+                    }
+                }
+            }
+            return null;
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 
@@ -567,29 +626,23 @@ public class ImageProvider {
         return result;
     }
 
-    private static ImageResource getIfAvailableZip(String full_name, File archive, String inArchiveDir, ImageType type) {
-        ZipFile zipFile = null;
-        try
-        {
-            zipFile = new ZipFile(archive);
-            if (inArchiveDir == null || inArchiveDir.equals(".")) {
+    private static ImageResource getIfAvailableZip(String fullName, File archive, String inArchiveDir, ImageType type) {
+        try (ZipFile zipFile = new ZipFile(archive, StandardCharsets.UTF_8)) {
+            if (inArchiveDir == null || ".".equals(inArchiveDir)) {
                 inArchiveDir = "";
             } else if (!inArchiveDir.isEmpty()) {
                 inArchiveDir += "/";
             }
-            String entry_name = inArchiveDir + full_name;
-            ZipEntry entry = zipFile.getEntry(entry_name);
-            if(entry != null)
-            {
+            String entryName = inArchiveDir + fullName;
+            ZipEntry entry = zipFile.getEntry(entryName);
+            if (entry != null) {
                 int size = (int)entry.getSize();
                 int offs = 0;
                 byte[] buf = new byte[size];
-                InputStream is = null;
-                try {
-                    is = zipFile.getInputStream(entry);
+                try (InputStream is = zipFile.getInputStream(entry)) {
                     switch (type) {
                     case SVG:
-                        URI uri = getSvgUniverse().loadSVG(is, entry_name);
+                        URI uri = getSvgUniverse().loadSVG(is, entryName);
                         SVGDiagram svg = getSvgUniverse().getDiagram(uri);
                         return svg == null ? null : new ImageResource(svg);
                     case OTHER:
@@ -601,22 +654,18 @@ public class ImageProvider {
                         }
                         BufferedImage img = null;
                         try {
-                            img = ImageIO.read(new ByteArrayInputStream(buf));
+                            img = read(new ByteArrayInputStream(buf), false, false);
                         } catch (IOException e) {
                             Main.warn(e);
                         }
                         return img == null ? null : new ImageResource(img);
                     default:
-                        throw new AssertionError();
+                        throw new AssertionError("Unknown ImageType: "+type);
                     }
-                } finally {
-                    Utils.close(is);
                 }
             }
         } catch (Exception e) {
             Main.warn(tr("Failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
-        } finally {
-            Utils.close(zipFile);
         }
         return null;
     }
@@ -630,7 +679,7 @@ public class ImageProvider {
         case OTHER:
             BufferedImage img = null;
             try {
-                img = ImageIO.read(path);
+                img = read(path, false, false);
             } catch (IOException e) {
                 Main.warn(e);
             }
@@ -643,7 +692,7 @@ public class ImageProvider {
     private static URL getImageUrl(String path, String name, Collection<ClassLoader> additionalClassLoaders) {
         if (path != null && path.startsWith("resource://")) {
             String p = path.substring("resource://".length());
-            Collection<ClassLoader> classLoaders = new ArrayList<ClassLoader>(PluginHandler.getResourceClassLoaders());
+            Collection<ClassLoader> classLoaders = new ArrayList<>(PluginHandler.getResourceClassLoaders());
             if (additionalClassLoaders != null) {
                 classLoaders.addAll(additionalClassLoaders);
             }
@@ -713,30 +762,29 @@ public class ImageProvider {
         return null;
     }
 
+    /** Quit parsing, when a certain condition is met */
+    private static class SAXReturnException extends SAXException {
+        private final String result;
+
+        public SAXReturnException(String result) {
+            this.result = result;
+        }
+
+        public String getResult() {
+            return result;
+        }
+    }
+
     /**
      * Reads the wiki page on a certain file in html format in order to find the real image URL.
      */
     private static String getImgUrlFromWikiInfoPage(final String base, final String fn) {
-
-        /** Quit parsing, when a certain condition is met */
-        class SAXReturnException extends SAXException {
-            private String result;
-
-            public SAXReturnException(String result) {
-                this.result = result;
-            }
-
-            public String getResult() {
-                return result;
-            }
-        }
-
         try {
             final XMLReader parser = XMLReaderFactory.createXMLReader();
             parser.setContentHandler(new DefaultHandler() {
                 @Override
                 public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-                    if (localName.equalsIgnoreCase("img")) {
+                    if ("img".equalsIgnoreCase(localName)) {
                         String val = atts.getValue("src");
                         if (val.endsWith(fn))
                             throw new SAXReturnException(val);  // parsing done, quit early
@@ -751,10 +799,12 @@ public class ImageProvider {
                 }
             });
 
-            parser.parse(new InputSource(new MirroredInputStream(
+            try (InputStream is = new MirroredInputStream(
                     base + fn,
-                    new File(Main.pref.getPreferencesDir(), "images").toString()
-                    )));
+                    new File(Main.pref.getPreferencesDir(), "images").toString())
+            ) {
+                parser.parse(new InputSource(is));
+            }
         } catch (SAXReturnException r) {
             return r.getResult();
         } catch (Exception e) {
@@ -770,9 +820,12 @@ public class ImageProvider {
         if (overlay != null) {
             img = overlay(img, ImageProvider.get("cursor/modifier/" + overlay), OverlayPosition.SOUTHEAST);
         }
-        Cursor c = Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
-                name.equals("crosshair") ? new Point(10, 10) : new Point(3, 2), "Cursor");
-        return c;
+        if (GraphicsEnvironment.isHeadless()) {
+            Main.warn("Cursors are not available in headless mode. Returning null for '"+name+"'");
+            return null;
+        }
+        return Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
+                "crosshair".equals(name) ? new Point(10, 10) : new Point(3, 2), "Cursor");
     }
 
     /**
@@ -786,13 +839,11 @@ public class ImageProvider {
      * on the first relative to the given position.
      */
     public static ImageIcon overlay(Icon ground, Icon overlay, OverlayPosition pos) {
-        GraphicsConfiguration conf = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-                .getDefaultConfiguration();
         int w = ground.getIconWidth();
         int h = ground.getIconHeight();
         int wo = overlay.getIconWidth();
         int ho = overlay.getIconHeight();
-        BufferedImage img = conf.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics g = img.createGraphics();
         ground.paintIcon(null, g, 0, 0);
         int x = 0, y = 0;
@@ -819,14 +870,14 @@ public class ImageProvider {
     }
 
     /** 90 degrees in radians units */
-    final static double DEGREE_90 = 90.0 * Math.PI / 180.0;
+    static final double DEGREE_90 = 90.0 * Math.PI / 180.0;
 
     /**
      * Creates a rotated version of the input image.
      *
      * @param img the image to be rotated.
      * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
-     * will mod it with 360 before using it. More over for caching performance, it will be rounded to 
+     * will mod it with 360 before using it. More over for caching performance, it will be rounded to
      * an entire value between 0 and 360.
      *
      * @return the image after rotating.
@@ -835,13 +886,13 @@ public class ImageProvider {
     public static Image createRotatedImage(Image img, double rotatedAngle) {
         return createRotatedImage(img, rotatedAngle, ImageResource.DEFAULT_DIMENSION);
     }
-    
+
     /**
      * Creates a rotated version of the input image, scaled to the given dimension.
      *
      * @param img the image to be rotated.
      * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
-     * will mod it with 360 before using it. More over for caching performance, it will be rounded to 
+     * will mod it with 360 before using it. More over for caching performance, it will be rounded to
      * an entire value between 0 and 360.
      * @param dimension The requested dimensions. Use (-1,-1) for the original size
      * and (width, -1) to set the width, but otherwise scale the image proportionally.
@@ -850,38 +901,38 @@ public class ImageProvider {
      */
     public static Image createRotatedImage(Image img, double rotatedAngle, Dimension dimension) {
         CheckParameterUtil.ensureParameterNotNull(img, "img");
-        
+
         // convert rotatedAngle to an integer value from 0 to 360
         Long originalAngle = Math.round(rotatedAngle % 360);
         if (rotatedAngle != 0 && originalAngle == 0) {
             originalAngle = 360L;
         }
-        
+
         ImageResource imageResource = null;
 
         synchronized (ROTATE_CACHE) {
             Map<Long, ImageResource> cacheByAngle = ROTATE_CACHE.get(img);
             if (cacheByAngle == null) {
-                ROTATE_CACHE.put(img, cacheByAngle = new HashMap<Long, ImageResource>());
+                ROTATE_CACHE.put(img, cacheByAngle = new HashMap<>());
             }
-            
+
             imageResource = cacheByAngle.get(originalAngle);
-            
+
             if (imageResource == null) {
                 // convert originalAngle to a value from 0 to 90
                 double angle = originalAngle % 90;
                 if (originalAngle != 0.0 && angle == 0.0) {
                     angle = 90.0;
                 }
-        
+
                 double radian = Math.toRadians(angle);
-        
+
                 new ImageIcon(img); // load completely
                 int iw = img.getWidth(null);
                 int ih = img.getHeight(null);
                 int w;
                 int h;
-        
+
                 if ((originalAngle >= 0 && originalAngle <= 90) || (originalAngle > 180 && originalAngle <= 270)) {
                     w = (int) (iw * Math.sin(DEGREE_90 - radian) + ih * Math.sin(radian));
                     h = (int) (iw * Math.sin(radian) + ih * Math.sin(DEGREE_90 - radian));
@@ -893,32 +944,32 @@ public class ImageProvider {
                 cacheByAngle.put(originalAngle, imageResource = new ImageResource(image));
                 Graphics g = image.getGraphics();
                 Graphics2D g2d = (Graphics2D) g.create();
-        
+
                 // calculate the center of the icon.
                 int cx = iw / 2;
                 int cy = ih / 2;
-        
+
                 // move the graphics center point to the center of the icon.
                 g2d.translate(w / 2, h / 2);
-        
+
                 // rotate the graphics about the center point of the icon
                 g2d.rotate(Math.toRadians(originalAngle));
-        
+
                 g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
                 g2d.drawImage(img, -cx, -cy, null);
-        
+
                 g2d.dispose();
                 new ImageIcon(image); // load completely
             }
             return imageResource.getImageIcon(dimension).getImage();
         }
     }
-    
+
     /**
      * Creates a scaled down version of the input image to fit maximum dimensions. (Keeps aspect ratio)
      *
      * @param img the image to be scaled down.
-     * @param maxSize the maximum size in pixels (both for width and height) 
+     * @param maxSize the maximum size in pixels (both for width and height)
      *
      * @return the image after scaling.
      * @since 6172
@@ -981,5 +1032,336 @@ public class ImageProvider {
             svgUniverse = new SVGUniverse();
         }
         return svgUniverse;
+    }
+
+    /**
+     * Returns a <code>BufferedImage</code> as the result of decoding
+     * a supplied <code>File</code> with an <code>ImageReader</code>
+     * chosen automatically from among those currently registered.
+     * The <code>File</code> is wrapped in an
+     * <code>ImageInputStream</code>.  If no registered
+     * <code>ImageReader</code> claims to be able to read the
+     * resulting stream, <code>null</code> is returned.
+     *
+     * <p> The current cache settings from <code>getUseCache</code>and
+     * <code>getCacheDirectory</code> will be used to control caching in the
+     * <code>ImageInputStream</code> that is created.
+     *
+     * <p> Note that there is no <code>read</code> method that takes a
+     * filename as a <code>String</code>; use this method instead after
+     * creating a <code>File</code> from the filename.
+     *
+     * <p> This method does not attempt to locate
+     * <code>ImageReader</code>s that can read directly from a
+     * <code>File</code>; that may be accomplished using
+     * <code>IIORegistry</code> and <code>ImageReaderSpi</code>.
+     *
+     * @param input a <code>File</code> to read from.
+     * @param readMetadata if {@code true}, makes sure to read image metadata to detect transparency color, if any.
+     * In that case the color can be retrieved later through {@link #PROP_TRANSPARENCY_COLOR}.
+     * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
+     * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
+     * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     *
+     * @return a <code>BufferedImage</code> containing the decoded
+     * contents of the input, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
+     * @throws IOException if an error occurs during reading.
+     * @since 7132
+     * @see BufferedImage#getProperty
+     */
+    public static BufferedImage read(File input, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(input, "input");
+        if (!input.canRead()) {
+            throw new IIOException("Can't read input file!");
+        }
+
+        ImageInputStream stream = ImageIO.createImageInputStream(input);
+        if (stream == null) {
+            throw new IIOException("Can't create an ImageInputStream!");
+        }
+        BufferedImage bi = read(stream, readMetadata, enforceTransparency);
+        if (bi == null) {
+            stream.close();
+        }
+        return bi;
+    }
+
+    /**
+     * Returns a <code>BufferedImage</code> as the result of decoding
+     * a supplied <code>InputStream</code> with an <code>ImageReader</code>
+     * chosen automatically from among those currently registered.
+     * The <code>InputStream</code> is wrapped in an
+     * <code>ImageInputStream</code>.  If no registered
+     * <code>ImageReader</code> claims to be able to read the
+     * resulting stream, <code>null</code> is returned.
+     *
+     * <p> The current cache settings from <code>getUseCache</code>and
+     * <code>getCacheDirectory</code> will be used to control caching in the
+     * <code>ImageInputStream</code> that is created.
+     *
+     * <p> This method does not attempt to locate
+     * <code>ImageReader</code>s that can read directly from an
+     * <code>InputStream</code>; that may be accomplished using
+     * <code>IIORegistry</code> and <code>ImageReaderSpi</code>.
+     *
+     * <p> This method <em>does not</em> close the provided
+     * <code>InputStream</code> after the read operation has completed;
+     * it is the responsibility of the caller to close the stream, if desired.
+     *
+     * @param input an <code>InputStream</code> to read from.
+     * @param readMetadata if {@code true}, makes sure to read image metadata to detect transparency color for non translucent images, if any.
+     * In that case the color can be retrieved later through {@link #PROP_TRANSPARENCY_COLOR}.
+     * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
+     * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
+     * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     *
+     * @return a <code>BufferedImage</code> containing the decoded
+     * contents of the input, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
+     * @throws IOException if an error occurs during reading.
+     * @since 7132
+     */
+    public static BufferedImage read(InputStream input, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(input, "input");
+
+        ImageInputStream stream = ImageIO.createImageInputStream(input);
+        BufferedImage bi = read(stream, readMetadata, enforceTransparency);
+        if (bi == null) {
+            stream.close();
+        }
+        return bi;
+    }
+
+    /**
+     * Returns a <code>BufferedImage</code> as the result of decoding
+     * a supplied <code>URL</code> with an <code>ImageReader</code>
+     * chosen automatically from among those currently registered.  An
+     * <code>InputStream</code> is obtained from the <code>URL</code>,
+     * which is wrapped in an <code>ImageInputStream</code>.  If no
+     * registered <code>ImageReader</code> claims to be able to read
+     * the resulting stream, <code>null</code> is returned.
+     *
+     * <p> The current cache settings from <code>getUseCache</code>and
+     * <code>getCacheDirectory</code> will be used to control caching in the
+     * <code>ImageInputStream</code> that is created.
+     *
+     * <p> This method does not attempt to locate
+     * <code>ImageReader</code>s that can read directly from a
+     * <code>URL</code>; that may be accomplished using
+     * <code>IIORegistry</code> and <code>ImageReaderSpi</code>.
+     *
+     * @param input a <code>URL</code> to read from.
+     * @param readMetadata if {@code true}, makes sure to read image metadata to detect transparency color for non translucent images, if any.
+     * In that case the color can be retrieved later through {@link #PROP_TRANSPARENCY_COLOR}.
+     * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
+     * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
+     * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     *
+     * @return a <code>BufferedImage</code> containing the decoded
+     * contents of the input, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
+     * @throws IOException if an error occurs during reading.
+     * @since 7132
+     */
+    public static BufferedImage read(URL input, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(input, "input");
+
+        InputStream istream = null;
+        try {
+            istream = input.openStream();
+        } catch (IOException e) {
+            throw new IIOException("Can't get input stream from URL!", e);
+        }
+        ImageInputStream stream = ImageIO.createImageInputStream(istream);
+        BufferedImage bi;
+        try {
+            bi = read(stream, readMetadata, enforceTransparency);
+            if (bi == null) {
+                stream.close();
+            }
+        } finally {
+            istream.close();
+        }
+        return bi;
+    }
+
+    /**
+     * Returns a <code>BufferedImage</code> as the result of decoding
+     * a supplied <code>ImageInputStream</code> with an
+     * <code>ImageReader</code> chosen automatically from among those
+     * currently registered.  If no registered
+     * <code>ImageReader</code> claims to be able to read the stream,
+     * <code>null</code> is returned.
+     *
+     * <p> Unlike most other methods in this class, this method <em>does</em>
+     * close the provided <code>ImageInputStream</code> after the read
+     * operation has completed, unless <code>null</code> is returned,
+     * in which case this method <em>does not</em> close the stream.
+     *
+     * @param stream an <code>ImageInputStream</code> to read from.
+     * @param readMetadata if {@code true}, makes sure to read image metadata to detect transparency color for non translucent images, if any.
+     * In that case the color can be retrieved later through {@link #PROP_TRANSPARENCY_COLOR}.
+     * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
+     * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
+     * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     *
+     * @return a <code>BufferedImage</code> containing the decoded
+     * contents of the input, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException if <code>stream</code> is <code>null</code>.
+     * @throws IOException if an error occurs during reading.
+     * @since 7132
+     */
+    public static BufferedImage read(ImageInputStream stream, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(stream, "stream");
+
+        Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);
+        if (!iter.hasNext()) {
+            return null;
+        }
+
+        ImageReader reader = iter.next();
+        ImageReadParam param = reader.getDefaultReadParam();
+        reader.setInput(stream, true, !readMetadata && !enforceTransparency);
+        BufferedImage bi;
+        try {
+            bi = reader.read(0, param);
+            if (bi.getTransparency() != Transparency.TRANSLUCENT && (readMetadata || enforceTransparency)) {
+                Color color = getTransparentColor(reader);
+                if (color != null) {
+                    Hashtable<String, Object> properties = new Hashtable<>(1);
+                    properties.put(PROP_TRANSPARENCY_COLOR, color);
+                    bi = new BufferedImage(bi.getColorModel(), bi.getRaster(), bi.isAlphaPremultiplied(), properties);
+                    if (enforceTransparency) {
+                        if (Main.isDebugEnabled()) {
+                            Main.debug("Enforcing image transparency of "+stream+" for "+color);
+                        }
+                        bi = makeImageTransparent(bi, color);
+                    }
+                }
+            }
+        } finally {
+            reader.dispose();
+            stream.close();
+        }
+        return bi;
+    }
+
+    /**
+     * Returns the {@code TransparentColor} defined in image reader metadata.
+     * @param reader The image reader
+     * @return the {@code TransparentColor} defined in image reader metadata, or {@code null}
+     * @throws IOException if an error occurs during reading
+     * @since 7132
+     * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html">javax_imageio_1.0 metadata</a>
+     */
+    public static Color getTransparentColor(ImageReader reader) throws IOException {
+        IIOMetadata metadata = reader.getImageMetadata(0);
+        if (metadata != null) {
+            String[] formats = metadata.getMetadataFormatNames();
+            if (formats != null) {
+                for (String f : formats) {
+                    if ("javax_imageio_1.0".equals(f)) {
+                        Node root = metadata.getAsTree(f);
+                        if (root instanceof Element) {
+                            NodeList list = ((Element)root).getElementsByTagName("TransparentColor");
+                            if (list.getLength() > 0) {
+                                Node item = list.item(0);
+                                if (item instanceof Element) {
+                                    String value = ((Element)item).getAttribute("value");
+                                    String[] s = value.split(" ");
+                                    if (s.length == 3) {
+                                        int[] rgb = new int[3];
+                                        try {
+                                            for (int i = 0; i<3; i++) {
+                                                rgb[i] = Integer.parseInt(s[i]);
+                                            }
+                                            return new Color(rgb[0], rgb[1], rgb[2]);
+                                        } catch (IllegalArgumentException e) {
+                                            Main.error(e);
+                                        }
+                                    }
+                            }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a transparent version of the given image, based on the given transparent color.
+     * @param bi The image to convert
+     * @param color The transparent color
+     * @return The same image as {@code bi} where all pixels of the given color are transparent.
+     * This resulting image has also the special property {@link #PROP_TRANSPARENCY_FORCED} set to {@code color}
+     * @since 7132
+     * @see BufferedImage#getProperty
+     * @see #isTransparencyForced
+     */
+    public static BufferedImage makeImageTransparent(BufferedImage bi, Color color) {
+        // the color we are looking for. Alpha bits are set to opaque
+        final int markerRGB = color.getRGB() | 0xFFFFFFFF;
+        ImageFilter filter = new RGBImageFilter() {
+            @Override
+            public int filterRGB(int x, int y, int rgb) {
+                if ((rgb | 0xFF000000) == markerRGB) {
+                   // Mark the alpha bits as zero - transparent
+                   return 0x00FFFFFF & rgb;
+                } else {
+                   return rgb;
+                }
+            }
+        };
+        ImageProducer ip = new FilteredImageSource(bi.getSource(), filter);
+        Image img = Toolkit.getDefaultToolkit().createImage(ip);
+        ColorModel colorModel = ColorModel.getRGBdefault();
+        WritableRaster raster = colorModel.createCompatibleWritableRaster(img.getWidth(null), img.getHeight(null));
+        String[] names = bi.getPropertyNames();
+        Hashtable<String, Object> properties = new Hashtable<>(1 + (names != null ? names.length : 0));
+        if (names != null) {
+            for (String name : names) {
+                properties.put(name, bi.getProperty(name));
+            }
+        }
+        properties.put(PROP_TRANSPARENCY_FORCED, Boolean.TRUE);
+        BufferedImage result = new BufferedImage(colorModel, raster, false, properties);
+        Graphics2D g2 = result.createGraphics();
+        g2.drawImage(img, 0, 0, null);
+        g2.dispose();
+        return result;
+    }
+
+    /**
+     * Determines if the transparency of the given {@code BufferedImage} has been enforced by a previous call to {@link #makeImageTransparent}.
+     * @param bi The {@code BufferedImage} to test
+     * @return {@code true} if the transparency of {@code bi} has been enforced by a previous call to {@code makeImageTransparent}.
+     * @since 7132
+     * @see #makeImageTransparent
+     */
+    public static boolean isTransparencyForced(BufferedImage bi) {
+        return bi != null && !bi.getProperty(PROP_TRANSPARENCY_FORCED).equals(Image.UndefinedProperty);
+    }
+
+    /**
+     * Determines if the given {@code BufferedImage} has a transparent color determiend by a previous call to {@link #read}.
+     * @param bi The {@code BufferedImage} to test
+     * @return {@code true} if {@code bi} has a transparent color determined by a previous call to {@code read}.
+     * @since 7132
+     * @see #read
+     */
+    public static boolean hasTransparentColor(BufferedImage bi) {
+        return bi != null && !bi.getProperty(PROP_TRANSPARENCY_COLOR).equals(Image.UndefinedProperty);
     }
 }

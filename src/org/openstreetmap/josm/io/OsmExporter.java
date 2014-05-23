@@ -5,12 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
@@ -23,6 +23,9 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class OsmExporter extends FileExporter {
 
+    /**
+     * Constructs a new {@code OsmExporter}.
+     */
     public OsmExporter() {
         super(OsmImporter.FILE_FILTER);
     }
@@ -43,7 +46,7 @@ public class OsmExporter extends FileExporter {
         exportData(file, layer, false);
     }
 
-    public void exportData(File file, Layer layer, boolean noBackup) throws IOException {
+    public void exportData(File file, Layer layer, boolean noBackup) throws IllegalArgumentException {
         if (layer instanceof OsmDataLayer) {
             save(file, (OsmDataLayer) layer, noBackup);
         } else
@@ -52,7 +55,7 @@ public class OsmExporter extends FileExporter {
     }
 
     protected OutputStream getOutputStream(File file) throws FileNotFoundException, IOException {
-        return new FileOutputStream(file);
+        return Compression.getCompressedFileOutputStream(file);
     }
 
     private void save(File file, OsmDataLayer layer, boolean noBackup) {
@@ -67,18 +70,18 @@ public class OsmExporter extends FileExporter {
             }
 
             // create outputstream and wrap it with gzip or bzip, if necessary
-            OutputStream out = getOutputStream(file);
-            Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
-
-            OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
-            layer.data.getReadLock().lock();
-            try {
-                w.writeLayer(layer);
-            } finally {
-                Utils.close(w);
-                layer.data.getReadLock().unlock();
+            try (
+                OutputStream out = getOutputStream(file);
+                Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+                OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
+            ) {
+                layer.data.getReadLock().lock();
+                try {
+                    w.writeLayer(layer);
+                } finally {
+                    layer.data.getReadLock().unlock();
+                }
             }
-            // FIXME - how to close?
             if (noBackup || !Main.pref.getBoolean("save.keepbackup", false)) {
                 if (tmpFile != null) {
                     tmpFile.delete();

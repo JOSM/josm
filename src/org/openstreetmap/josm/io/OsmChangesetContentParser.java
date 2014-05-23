@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -17,7 +18,7 @@ import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationTyp
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -37,55 +38,71 @@ public class OsmChangesetContentParser {
         /** the current change modification type */
         private ChangesetDataSet.ChangesetModificationType currentModificationType;
 
-        protected void throwException(String message) throws OsmDataParsingException {
-            throw new OsmDataParsingException(message).rememberLocation(locator);
+        @Override
+        protected void throwException(String message) throws XmlParsingException {
+            throw new XmlParsingException(message).rememberLocation(locator);
         }
 
-        protected void throwException(Exception e) throws OsmDataParsingException {
-            throw new OsmDataParsingException(e).rememberLocation(locator);
+        protected void throwException(Exception e) throws XmlParsingException {
+            throw new XmlParsingException(e).rememberLocation(locator);
         }
 
-        @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        @Override
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             if (super.doStartElement(qName, atts)) {
                 // done
-            } else if (qName.equals("osmChange")) {
+                return;
+            }
+            switch (qName) {
+            case "osmChange":
                 // do nothing
-            } else if (qName.equals("create")) {
+                break;
+            case "create":
                 currentModificationType = ChangesetModificationType.CREATED;
-            } else if (qName.equals("modify")) {
+                break;
+            case "modify":
                 currentModificationType = ChangesetModificationType.UPDATED;
-            } else if (qName.equals("delete")) {
+                break;
+            case "delete":
                 currentModificationType = ChangesetModificationType.DELETED;
-            } else {
-                Main.warn(tr("Unsupported start element ''{0}'' in changeset content at position ({1},{2}). Skipping.", qName, locator.getLineNumber(), locator.getColumnNumber()));
+                break;
+            default:
+                Main.warn(tr("Unsupported start element ''{0}'' in changeset content at position ({1},{2}). Skipping.",
+                        qName, locator.getLineNumber(), locator.getColumnNumber()));
             }
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (qName.equals("node")
-                    || qName.equals("way")
-                    || qName.equals("relation")) {
+            switch (qName) {
+            case "node":
+            case "way":
+            case "relation":
                 if (currentModificationType == null) {
                     throwException(tr("Illegal document structure. Found node, way, or relation outside of ''create'', ''modify'', or ''delete''."));
                 }
                 data.put(currentPrimitive, currentModificationType);
-            } else if (qName.equals("osmChange")) {
+                break;
+            case "osmChange":
                 // do nothing
-            } else if (qName.equals("create")) {
+                break;
+            case "create":
                 currentModificationType = null;
-            } else if (qName.equals("modify")) {
+                break;
+            case "modify":
                 currentModificationType = null;
-            } else if (qName.equals("delete")) {
+                break;
+            case "delete":
                 currentModificationType = null;
-            } else if (qName.equals("tag")) {
+                break;
+            case "tag":
+            case "nd":
+            case "member":
                 // do nothing
-            } else if (qName.equals("nd")) {
-                // do nothing
-            } else if (qName.equals("member")) {
-                // do nothing
-            } else {
-                Main.warn(tr("Unsupported end element ''{0}'' in changeset content at position ({1},{2}). Skipping.", qName, locator.getLineNumber(), locator.getColumnNumber()));
+                break;
+            default:
+                Main.warn(tr("Unsupported end element ''{0}'' in changeset content at position ({1},{2}). Skipping.",
+                        qName, locator.getLineNumber(), locator.getColumnNumber()));
             }
         }
 
@@ -106,9 +123,10 @@ public class OsmChangesetContentParser {
      * @param source the input stream with the changeset content as XML document. Must not be null.
      * @throws IllegalArgumentException if source is {@code null}.
      */
+    @SuppressWarnings("resource")
     public OsmChangesetContentParser(InputStream source) {
         CheckParameterUtil.ensureParameterNotNull(source, "source");
-        this.source = new InputSource(new InputStreamReader(source, Utils.UTF_8));
+        this.source = new InputSource(new InputStreamReader(source, StandardCharsets.UTF_8));
     }
 
     /**
@@ -127,10 +145,10 @@ public class OsmChangesetContentParser {
      *
      * @param progressMonitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the parsed data
-     * @throws OsmDataParsingException thrown if something went wrong. Check for chained
+     * @throws XmlParsingException if something went wrong. Check for chained
      * exceptions.
      */
-    public ChangesetDataSet parse(ProgressMonitor progressMonitor) throws OsmDataParsingException {
+    public ChangesetDataSet parse(ProgressMonitor progressMonitor) throws XmlParsingException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
@@ -138,14 +156,10 @@ public class OsmChangesetContentParser {
             progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing changeset content ..."));
             SAXParserFactory.newInstance().newSAXParser().parse(source, new Parser());
-        } catch(OsmDataParsingException e){
+        } catch(XmlParsingException e) {
             throw e;
-        } catch (ParserConfigurationException e) {
-            throw new OsmDataParsingException(e);
-        } catch(SAXException e) {
-            throw new OsmDataParsingException(e);
-        } catch(IOException e) {
-            throw new OsmDataParsingException(e);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            throw new XmlParsingException(e);
         } finally {
             progressMonitor.finishTask();
         }
@@ -156,10 +170,10 @@ public class OsmChangesetContentParser {
      * Parses the content from the input source
      *
      * @return the parsed data
-     * @throws OsmDataParsingException thrown if something went wrong. Check for chained
+     * @throws XmlParsingException if something went wrong. Check for chained
      * exceptions.
      */
-    public ChangesetDataSet parse() throws OsmDataParsingException {
+    public ChangesetDataSet parse() throws XmlParsingException {
         return parse(null);
     }
 }

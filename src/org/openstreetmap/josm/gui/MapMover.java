@@ -23,7 +23,6 @@ import javax.swing.KeyStroke;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.tools.Destroyable;
-import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -41,23 +40,30 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (action.equals(".") || action.equals(",")) {
+            if (".".equals(action) || ",".equals(action)) {
                 Point mouse = nc.getMousePosition();
                 if (mouse == null)
                     mouse = new Point((int)nc.getBounds().getCenterX(), (int)nc.getBounds().getCenterY());
-                MouseWheelEvent we = new MouseWheelEvent(nc, e.getID(), e.getWhen(), e.getModifiers(), mouse.x, mouse.y, 0, false, MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, action.equals(",") ? -1 : 1);
+                MouseWheelEvent we = new MouseWheelEvent(nc, e.getID(), e.getWhen(), e.getModifiers(), mouse.x, mouse.y, 0, false, 
+                        MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, ",".equals(action) ? -1 : 1);
                 mouseWheelMoved(we);
             } else {
                 EastNorth center = nc.getCenter();
                 EastNorth newcenter = nc.getEastNorth(nc.getWidth()/2+nc.getWidth()/5, nc.getHeight()/2+nc.getHeight()/5);
-                if (action.equals("left"))
+                switch(action) {
+                case "left":
                     nc.zoomTo(new EastNorth(2*center.east()-newcenter.east(), center.north()));
-                else if (action.equals("right"))
+                    break;
+                case "right":
                     nc.zoomTo(new EastNorth(newcenter.east(), center.north()));
-                else if (action.equals("up"))
+                    break;
+                case "up":
                     nc.zoomTo(new EastNorth(center.east(), 2*center.north()-newcenter.north()));
-                else if (action.equals("down"))
+                    break;
+                case "down":
                     nc.zoomTo(new EastNorth(center.east(), newcenter.north()));
+                    break;
+                }
             }
         }
     }
@@ -76,7 +82,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     private boolean movementInPlace = false;
 
     /**
-     * Create a new MapMover
+     * COnstructs a new {@code MapMover}.
      */
     public MapMover(NavigatableComponent navComp, JPanel contentPane) {
         this.nc = navComp;
@@ -124,7 +130,9 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     @Override
     public void mouseDragged(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
-        if ((e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK) {
+        int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
+        if ((e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK ||
+                Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
             if (mousePosMove == null)
                 startMovement(e);
             EastNorth center = nc.getCenter();
@@ -132,19 +140,20 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
             nc.zoomTo(new EastNorth(
                     mousePosMove.east() + center.east() - mouseCenter.east(),
                     mousePosMove.north() + center.north() - mouseCenter.north()));
-        } else
+        } else {
             endMovement();
+        }
     }
 
     /**
      * Start the movement, if it was the 3rd button (right button).
      */
-    @Override public void mousePressed(MouseEvent e) {
+    @Override
+    public void mousePressed(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
         int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
-        if (e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0) {
-            startMovement(e);
-        } else if (isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
+        if (e.getButton() == MouseEvent.BUTTON3 && (e.getModifiersEx() & offMask) == 0 || 
+                Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
             startMovement(e);
         }
     }
@@ -152,10 +161,9 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     /**
      * Change the cursor back to it's pre-move cursor.
      */
-    @Override public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            endMovement();
-        } else if (isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON3 || Main.isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
             endMovement();
         }
     }
@@ -194,7 +202,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     }
 
     /**
-     * Emulates dragging on Mac OSX
+     * Emulates dragging on Mac OSX.
      */
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -202,7 +210,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
             return;
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
         // Is only the selected mouse button pressed?
-        if (isPlatformOsx()) {
+        if (Main.isPlatformOsx()) {
             if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK) {
                 if (mousePosMove == null) {
                     startMovement(e);
@@ -215,15 +223,6 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
                 endMovement();
             }
         }
-    }
-
-    /**
-     * Replies true if we are currently running on OSX
-     *
-     * @return true if we are currently running on OSX
-     */
-    public static boolean isPlatformOsx() {
-        return Main.platform instanceof PlatformHookOsx;
     }
 
     @Override

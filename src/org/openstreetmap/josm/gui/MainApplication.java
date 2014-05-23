@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.ProxySelector;
 import java.net.URL;
@@ -39,6 +40,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.CustomConfigurator;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
@@ -78,7 +80,7 @@ public class MainApplication extends Main {
         mainFrame.setContentPane(contentPanePrivate);
         mainFrame.setJMenuBar(menu);
         geometry.applySafe(mainFrame);
-        LinkedList<Image> l = new LinkedList<Image>();
+        LinkedList<Image> l = new LinkedList<>();
         l.add(ImageProvider.get("logo_16x16x32").getImage());
         l.add(ImageProvider.get("logo_16x16x8").getImage());
         l.add(ImageProvider.get("logo_32x32x32").getImage());
@@ -121,6 +123,7 @@ public class MainApplication extends Main {
                 "\t--set=<key>=<value>                       "+tr("Set preference key to value")+"\n\n"+
                 "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
                 "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
+                "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
                 "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
@@ -140,7 +143,7 @@ public class MainApplication extends Main {
 
     /**
      * JOSM command line options.
-     * @see <a href="http://josm.openstreetmap.de/wiki/Help/CommandLineOptions">Help/CommandLineOptions</a>
+     * @see <a href="https://josm.openstreetmap.de/wiki/Help/CommandLineOptions">Help/CommandLineOptions</a>
      * @since 5279
      */
     public enum Option {
@@ -148,13 +151,17 @@ public class MainApplication extends Main {
         HELP(false),
         /** --version                                 Displays the JOSM version and exits */
         VERSION(false),
-        /** --language=<language>                     Set the language */
+        /** --debug                                   Print debugging messages to console */
+        DEBUG(false),
+        /** --trace                                   Print detailed debugging messages to console */
+        TRACE(false),
+        /** --language=&lt;language&gt;               Set the language */
         LANGUAGE(true),
         /** --reset-preferences                       Reset the preferences to default */
         RESET_PREFERENCES(false),
-        /** --load-preferences=<url-to-xml>           Changes preferences according to the XML file */
+        /** --load-preferences=&lt;url-to-xml&gt;     Changes preferences according to the XML file */
         LOAD_PREFERENCES(true),
-        /** --set=<key>=<value>                       Set preference key to value */
+        /** --set=&lt;key&gt;=&lt;value&gt;           Set preference key to value */
         SET(true),
         /** --geometry=widthxheight(+|-)x(+|-)y       Standard unix geometry argument */
         GEOMETRY(true),
@@ -163,13 +170,13 @@ public class MainApplication extends Main {
         /** --maximize                                Launch in maximized mode */
         MAXIMIZE(false),
         /** --download=minlat,minlon,maxlat,maxlon    Download the bounding box <br>
-         *  --download=<URL>                          Download the location at the URL (with lat=x&lon=y&zoom=z) <br>
-         *  --download=<filename>                     Open a file (any file type that can be opened with File/Open) */
+         *  --download=&lt;URL&gt;                    Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) <br>
+         *  --download=&lt;filename&gt;               Open a file (any file type that can be opened with File/Open) */
         DOWNLOAD(true),
         /** --downloadgps=minlat,minlon,maxlat,maxlon Download the bounding box as raw GPS <br>
-         *  --downloadgps=<URL>                       Download the location at the URL (with lat=x&lon=y&zoom=z) as raw GPS */
+         *  --downloadgps=&lt;URL&gt;                 Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) as raw GPS */
         DOWNLOADGPS(true),
-        /** --selection=<searchstring>                Select with the given search */
+        /** --selection=&lt;searchstring&gt;          Select with the given search */
         SELECTION(true);
 
         private String name;
@@ -197,7 +204,7 @@ public class MainApplication extends Main {
         }
 
         public static Map<Option, Collection<String>> fromStringMap(Map<String, Collection<String>> opts) {
-            Map<Option, Collection<String>> res = new HashMap<Option, Collection<String>>();
+            Map<Option, Collection<String>> res = new HashMap<>();
             for (Map.Entry<String, Collection<String>> e : opts.entrySet()) {
                 Option o = Option.valueOf(e.getKey().toUpperCase().replace("-", "_"));
                 if (o != null) {
@@ -210,14 +217,14 @@ public class MainApplication extends Main {
 
     private static Map<Option, Collection<String>> buildCommandLineArgumentMap(String[] args) {
 
-        List<LongOpt> los = new ArrayList<LongOpt>();
+        List<LongOpt> los = new ArrayList<>();
         for (Option o : Option.values()) {
             los.add(new LongOpt(o.getName(), o.requiresArgument() ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, 0));
         }
 
         Getopt g = new Getopt("JOSM", args, "hv", los.toArray(new LongOpt[los.size()]));
 
-        Map<Option, Collection<String>> argMap = new HashMap<Option, Collection<String>>();
+        Map<Option, Collection<String>> argMap = new HashMap<>();
 
         int c;
         while ((c = g.getopt()) != -1 ) {
@@ -236,7 +243,7 @@ public class MainApplication extends Main {
             if (opt != null) {
                 Collection<String> values = argMap.get(opt);
                 if (values == null) {
-                    values = new ArrayList<String>();
+                    values = new ArrayList<>();
                     argMap.put(opt, values);
                 }
                 values.add(g.getOptarg());
@@ -247,7 +254,7 @@ public class MainApplication extends Main {
         for (int i = g.getOptind(); i < args.length; ++i) {
             Collection<String> values = argMap.get(Option.DOWNLOAD);
             if (values == null) {
-                values = new ArrayList<String>();
+                values = new ArrayList<>();
                 argMap.put(Option.DOWNLOAD, values);
             }
             values.add(args[i]);
@@ -262,7 +269,7 @@ public class MainApplication extends Main {
      */
     public static void main(final String[] argArray) {
         I18n.init();
-        Main.checkJava6();
+        Main.checkJavaVersion();
 
         // construct argument table
         Map<Option, Collection<String>> args = null;
@@ -271,7 +278,7 @@ public class MainApplication extends Main {
         } catch (IllegalArgumentException e) {
             System.exit(1);
         }
-        
+
         final boolean languageGiven = args.containsKey(Option.LANGUAGE);
 
         if (languageGiven) {
@@ -299,9 +306,6 @@ public class MainApplication extends Main {
         });
 
         Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
-        // http://stackoverflow.com/q/75218/2257172
-        // To be replaced with official API when switching to Java 7: https://bugs.openjdk.java.net/browse/JDK-4714232
-        System.setProperty("sun.awt.exception.handler", BugReportExceptionHandler.class.getName());
 
         // initialize the platform hook, and
         Main.determinePlatformHook();
@@ -309,10 +313,24 @@ public class MainApplication extends Main {
         Main.platform.preStartupHook();
 
         Main.commandLineArgs = Utils.copyArray(argArray);
-        
+
         if (args.containsKey(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
             System.exit(0);
+        }
+
+        if (args.containsKey(Option.DEBUG) || args.containsKey(Option.TRACE)) {
+            // Enable JOSM debug level
+            logLevel = 4;
+            // Enable debug in OAuth signpost
+            Preferences.updateSystemProperty("debug", "true");
+            Main.info(tr("Printing debugging messages to console"));
+        }
+
+        if (args.containsKey(Option.TRACE)) {
+            // Enable JOSM debug level
+            logLevel = 5;
+            Main.info(tr("Enabled detailed debug level (trace)"));
         }
 
         Main.pref.init(args.containsKey(Option.RESET_PREFERENCES));
@@ -329,8 +347,8 @@ public class MainApplication extends Main {
             CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 info("Reading preferences from " + i);
-                try {
-                    config.openAndReadXML(Utils.openURL(new URL(i)));
+                try (InputStream is = Utils.openURL(new URL(i))) {
+                    config.openAndReadXML(is);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -368,10 +386,10 @@ public class MainApplication extends Main {
             }
         });
 
-        List<PluginInformation> pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash,monitor.createSubTaskMonitor(1, false));
+        Collection<PluginInformation> pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash,monitor.createSubTaskMonitor(1, false));
         if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate(splash)) {
             monitor.subTask(tr("Updating plugins"));
-            pluginsToLoad = PluginHandler.updatePlugins(splash,pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+            pluginsToLoad = PluginHandler.updatePlugins(splash, null, monitor.createSubTaskMonitor(1, false), false);
         }
 
         monitor.indeterminateSubTask(tr("Installing updated plugins"));
@@ -390,7 +408,8 @@ public class MainApplication extends Main {
         PluginHandler.loadLatePlugins(splash,pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
         toolbar.refreshToolbarControl();
 
-        GuiHelper.runInEDT(new Runnable() {
+        // Wait for splash disappearance (fix #9714)
+        GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
             public void run() {
                 splash.setVisible(false);
@@ -419,7 +438,7 @@ public class MainApplication extends Main {
         if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
             RemoteControl.start();
         }
-        
+
         if (MessageNotifier.PROP_NOTIFIER_ENABLED.get()) {
             MessageNotifier.start();
         }
@@ -478,7 +497,7 @@ public class MainApplication extends Main {
                     if (selection == 1) {
                         autosaveTask.recoverUnsavedLayers();
                     } else if (selection == 3) {
-                        autosaveTask.dicardUnsavedLayers();
+                        autosaveTask.discardUnsavedLayers();
                     }
                 }
                 autosaveTask.schedule();
@@ -515,10 +534,10 @@ public class MainApplication extends Main {
         }
 
         private boolean handleNetworkErrors() {
-            boolean condition = !networkErrors.isEmpty();
+            boolean condition = !NETWORK_ERRORS.isEmpty();
             if (condition) {
-                Set<String> errors = new TreeSet<String>();
-                for (Throwable t : networkErrors.values()) {
+                Set<String> errors = new TreeSet<>();
+                for (Throwable t : NETWORK_ERRORS.values()) {
                     errors.add(t.toString());
                 }
                 return handleNetworkOrProxyErrors(condition, tr("Network errors occurred"),
@@ -528,7 +547,7 @@ public class MainApplication extends Main {
                                 "{1}" +
                                 "It may result of a missing proxy configuration.<br>" +
                                 "Would you like to change your proxy settings now?",
-                                Utils.joinAsHtmlUnorderedList(networkErrors.keySet()),
+                                Utils.joinAsHtmlUnorderedList(NETWORK_ERRORS.keySet()),
                                 Utils.joinAsHtmlUnorderedList(errors)
                         ));
             }

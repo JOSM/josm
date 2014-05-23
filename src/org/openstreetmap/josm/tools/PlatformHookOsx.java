@@ -12,24 +12,25 @@ import java.lang.reflect.Proxy;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 
 /**
  * {@code PlatformHook} implementation for Apple Mac OS X systems.
  * @since 1023
  */
 public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook, InvocationHandler {
-    
+
     private static PlatformHookOsx ivhandler = new PlatformHookOsx();
-    
+
     @Override
     public void preStartupHook() {
         // This will merge our MenuBar into the system menu.
         // MUST be set before Swing is initialized!
         // And will not work when one of the system independent LAFs is used.
         // They just insist on painting themselves...
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        Preferences.updateSystemProperty("apple.laf.useScreenMenuBar", "true");
     }
-    
+
     @Override
     public void startupHook() {
         // Here we register callbacks for the menu entries in the system menu
@@ -37,38 +38,43 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Class<?> Ccom_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
             Object Ocom_apple_eawt_Application = Ccom_apple_eawt_Application.getConstructor((Class[])null).newInstance((Object[])null);
             Class<?> Ccom_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
-            Method MaddApplicationListener = Ccom_apple_eawt_Application.getDeclaredMethod("addApplicationListener", new Class[] { Ccom_apple_eawt_ApplicationListener });
-            Object Oproxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class[] { Ccom_apple_eawt_ApplicationListener }, ivhandler);
+            Method MaddApplicationListener = Ccom_apple_eawt_Application.getDeclaredMethod("addApplicationListener", new Class<?>[] { Ccom_apple_eawt_ApplicationListener });
+            Object Oproxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] { Ccom_apple_eawt_ApplicationListener }, ivhandler);
             MaddApplicationListener.invoke(Ocom_apple_eawt_Application, new Object[] { Oproxy });
-            Method MsetEnabledPreferencesMenu = Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", new Class[] { boolean.class });
+            Method MsetEnabledPreferencesMenu = Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", new Class<?>[] { boolean.class });
             MsetEnabledPreferencesMenu.invoke(Ocom_apple_eawt_Application, new Object[] { Boolean.TRUE });
         } catch (Exception ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Main.warn("Failed to register with OSX: " + ex);
         }
     }
-    
+
     @Override
     public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {
         Boolean handled = Boolean.TRUE;
-        if (method.getName().equals("handleQuit")) {
+        switch (method.getName()) {
+        case "handleQuit":
             handled = Main.exitJosm(false, 0);
-        } else if (method.getName().equals("handleAbout")) {
+            break;
+        case "handleAbout":
             Main.main.menu.about.actionPerformed(null);
-        } else if (method.getName().equals("handlePreferences")) {
+            break;
+        case "handlePreferences":
             Main.main.menu.preferences.actionPerformed(null);
-        } else
+            break;
+        default:
             return null;
+        }
         if (args[0] != null) {
             try {
-                args[0].getClass().getDeclaredMethod("setHandled", new Class[] { boolean.class }).invoke(args[0], new Object[] { handled });
+                args[0].getClass().getDeclaredMethod("setHandled", new Class<?>[] { boolean.class }).invoke(args[0], new Object[] { handled });
             } catch (Exception ex) {
                 Main.warn("Failed to report handled event: " + ex);
             }
         }
         return null;
     }
-    
+
     @Override
     public void openUrl(String url) throws IOException {
         Runtime.getRuntime().exec("open " + url);
@@ -211,7 +217,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         Shortcut.registerSystemShortcut("view:zoomin", tr("reserved"), KeyEvent.VK_ADD, KeyEvent.META_DOWN_MASK); // Zoom in
         Shortcut.registerSystemShortcut("view:zoomout", tr("reserved"), KeyEvent.VK_SUBTRACT, KeyEvent.META_DOWN_MASK); // Zoom out
     }
-    
+
     @Override
     public String makeTooltip(String name, Shortcut sc) {
         String lafid = UIManager.getLookAndFeel().getID();

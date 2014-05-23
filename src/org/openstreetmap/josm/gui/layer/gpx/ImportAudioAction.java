@@ -127,7 +127,7 @@ public class ImportAudioAction extends AbstractAction {
         URL url = Utils.fileToURL(wavFile);
         boolean hasTracks = layer.data.tracks != null && !layer.data.tracks.isEmpty();
         boolean hasWaypoints = layer.data.waypoints != null && !layer.data.waypoints.isEmpty();
-        Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
+        Collection<WayPoint> waypoints = new ArrayList<>();
         boolean timedMarkersOmitted = false;
         boolean untimedMarkersOmitted = false;
         double snapDistance = Main.pref.getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3); 

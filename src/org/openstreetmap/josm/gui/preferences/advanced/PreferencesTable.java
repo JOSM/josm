@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
@@ -26,20 +27,27 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.Preferences.ListListSetting;
+import org.openstreetmap.josm.data.Preferences.ListSetting;
+import org.openstreetmap.josm.data.Preferences.MapListSetting;
+import org.openstreetmap.josm.data.Preferences.Setting;
+import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Component for editing list of preferences as a table
- * @since 6021 : extracted from AdvancedPreference class 
+ * Component for editing list of preferences as a table.
+ * @since 6021
  */
 public class PreferencesTable extends JTable {
     private AllSettingsTableModel model;
     private final List<PrefEntry> displayData;
 
+    /**
+     * Constructs a new {@code PreferencesTable}.
+     * @param displayData The list of preferences entries to display
+     */
     public PreferencesTable(List<PrefEntry> displayData) {
         this.displayData = displayData;
         model = new AllSettingsTableModel();
@@ -47,8 +55,8 @@ public class PreferencesTable extends JTable {
         putClientProperty("terminateEditOnFocusLost", true);
         getColumnModel().getColumn(1).setCellRenderer(new SettingCellRenderer());
         getColumnModel().getColumn(1).setCellEditor(new SettingCellEditor());
-        
-        addMouseListener(new MouseAdapter(){
+
+        addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     editPreference(PreferencesTable.this);
@@ -56,28 +64,27 @@ public class PreferencesTable extends JTable {
             }
         });
     }
-    
+
     /**
      * This method should be called when displayed data was changed form external code
      */
     public void fireDataChanged() {
         model.fireTableDataChanged();
     }
-    
-    
+
     /**
      * The list of currently selected rows
      * @return newly created list of PrefEntry
      */
     public List<PrefEntry> getSelectedItems() {
-        List<PrefEntry> entries = new ArrayList<PrefEntry>();
+        List<PrefEntry> entries = new ArrayList<>();
         for (int row : getSelectedRows()) {
             PrefEntry p = (PrefEntry) model.getValueAt(row, -1);
             entries.add(p);
         }
         return entries;
     }
-    
+
     /**
      * Call this to edit selected row in preferences table
      * @param gui - parent component for messagebox
@@ -94,50 +101,50 @@ public class PreferencesTable extends JTable {
             return false;
         }
         final PrefEntry e = (PrefEntry) model.getValueAt(getSelectedRow(), 1);
-        Preferences.Setting stg = e.getValue();
-        if (stg instanceof Preferences.StringSetting) {
+        Setting<?> stg = e.getValue();
+        if (stg instanceof StringSetting) {
             editCellAt(getSelectedRow(), 1);
             Component editor = getEditorComponent();
             if (editor != null) {
                 editor.requestFocus();
             }
-        } else if (stg instanceof Preferences.ListSetting) {
-            Preferences.ListSetting lSetting = (Preferences.ListSetting) stg;
+        } else if (stg instanceof ListSetting) {
+            ListSetting lSetting = (ListSetting) stg;
             ListEditor lEditor = new ListEditor(gui, e, lSetting);
             lEditor.showDialog();
             if (lEditor.getValue() == 1) {
                 List<String> data = lEditor.getData();
                 if (!lSetting.equalVal(data)) {
-                    e.setValue(new Preferences.ListSetting(data));
+                    e.setValue(new ListSetting(data));
                     return true;
                 }
             }
-        } else if (stg instanceof Preferences.ListListSetting) {
-            Preferences.ListListSetting llSetting = (Preferences.ListListSetting) stg;
+        } else if (stg instanceof ListListSetting) {
+            ListListSetting llSetting = (ListListSetting) stg;
             ListListEditor llEditor = new ListListEditor(gui, e, llSetting);
             llEditor.showDialog();
             if (llEditor.getValue() == 1) {
                 List<List<String>> data = llEditor.getData();
                 if (!llSetting.equalVal(data)) {
-                    e.setValue(new Preferences.ListListSetting(data));
+                    e.setValue(new ListListSetting(data));
                     return true;
                 }
             }
-        } else if (stg instanceof Preferences.MapListSetting) {
-            Preferences.MapListSetting mlSetting = (Preferences.MapListSetting) stg;
+        } else if (stg instanceof MapListSetting) {
+            MapListSetting mlSetting = (MapListSetting) stg;
             MapListEditor mlEditor = new MapListEditor(gui, e, mlSetting);
             mlEditor.showDialog();
             if (mlEditor.getValue() == 1) {
                 List<Map<String, String>> data = mlEditor.getData();
                 if (!mlSetting.equalVal(data)) {
-                    e.setValue(new Preferences.MapListSetting(data));
+                    e.setValue(new MapListSetting(data));
                     return true;
                 }
             }
         }
         return false;
     }
-    
+
     /**
      * Add new preference to the table
      * @param gui - parent component for asking dialogs
@@ -178,58 +185,58 @@ public class PreferencesTable extends JTable {
         boolean ok = false;
         if (dlg.getValue() == 1) {
             if (rbString.isSelected()) {
-                Preferences.StringSetting sSetting = new Preferences.StringSetting(null);
+                StringSetting sSetting = new StringSetting(null);
                 pe = new PrefEntry(tkey.getText(), sSetting, sSetting, false);
                 StringEditor sEditor = new StringEditor(gui, pe, sSetting);
                 sEditor.showDialog();
                 if (sEditor.getValue() == 1) {
                     String data = sEditor.getData();
-                    if (!Utils.equal(sSetting.getValue(), data)) {
-                        pe.setValue(new Preferences.StringSetting(data));
+                    if (!Objects.equals(sSetting.getValue(), data)) {
+                        pe.setValue(new StringSetting(data));
                         ok = true;
                     }
                 }
             } else if (rbList.isSelected()) {
-                Preferences.ListSetting lSetting = new Preferences.ListSetting(null);
+                ListSetting lSetting = new ListSetting(null);
                 pe = new PrefEntry(tkey.getText(), lSetting, lSetting, false);
                 ListEditor lEditor = new ListEditor(gui, pe, lSetting);
                 lEditor.showDialog();
                 if (lEditor.getValue() == 1) {
                     List<String> data = lEditor.getData();
                     if (!lSetting.equalVal(data)) {
-                        pe.setValue(new Preferences.ListSetting(data));
+                        pe.setValue(new ListSetting(data));
                         ok = true;
                     }
                 }
             } else if (rbListList.isSelected()) {
-                Preferences.ListListSetting llSetting = new Preferences.ListListSetting(null);
+                ListListSetting llSetting = new ListListSetting(null);
                 pe = new PrefEntry(tkey.getText(), llSetting, llSetting, false);
                 ListListEditor llEditor = new ListListEditor(gui, pe, llSetting);
                 llEditor.showDialog();
                 if (llEditor.getValue() == 1) {
                     List<List<String>> data = llEditor.getData();
                     if (!llSetting.equalVal(data)) {
-                        pe.setValue(new Preferences.ListListSetting(data));
+                        pe.setValue(new ListListSetting(data));
                         ok = true;
                     }
                 }
             } else if (rbMapList.isSelected()) {
-                Preferences.MapListSetting mlSetting = new Preferences.MapListSetting(null);
+                MapListSetting mlSetting = new MapListSetting(null);
                 pe = new PrefEntry(tkey.getText(), mlSetting, mlSetting, false);
                 MapListEditor mlEditor = new MapListEditor(gui, pe, mlSetting);
                 mlEditor.showDialog();
                 if (mlEditor.getValue() == 1) {
                     List<Map<String, String>> data = mlEditor.getData();
                     if (!mlSetting.equalVal(data)) {
-                        pe.setValue(new Preferences.MapListSetting(data));
+                        pe.setValue(new MapListSetting(data));
                         ok = true;
                     }
                 }
             }
         }
-        if (ok) 
-            return pe; 
-        else 
+        if (ok)
+            return pe;
+        else
             return null;
     }
 
@@ -253,7 +260,7 @@ public class PreferencesTable extends JTable {
         }
         fireDataChanged();
     }
-    
+
     private class AllSettingsTableModel extends DefaultTableModel {
 
         public AllSettingsTableModel() {
@@ -262,7 +269,7 @@ public class PreferencesTable extends JTable {
 
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column == 1 && (displayData.get(row).getValue() instanceof Preferences.StringSetting);
+            return column == 1 && (displayData.get(row).getValue() instanceof StringSetting);
         }
 
         @Override
@@ -283,7 +290,7 @@ public class PreferencesTable extends JTable {
             PrefEntry pe = displayData.get(row);
             String s = (String) o;
             if (!s.equals(pe.getValue().getValue())) {
-                pe.setValue(new Preferences.StringSetting(s));
+                pe.setValue(new StringSetting(s));
                 fireTableCellUpdated(row, column);
             }
         }
@@ -298,16 +305,16 @@ public class PreferencesTable extends JTable {
         private Color nonDefaultColor = Main.pref.getColor(
                             marktr("Advanced Background: NonDefault"),
                             new Color(255,255,200));
-        
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             if (value == null)
                 return this;
             PrefEntry pe = (PrefEntry) value;
-            Preferences.Setting setting = pe.getValue();
+            Setting<?> setting = pe.getValue();
             Object val = setting.getValue();
             String display = val != null ? val.toString() : "<html><i>&lt;"+tr("unset")+"&gt;</i></html>";
-            
+
             JLabel label = (JLabel)super.getTableCellRendererComponent(table,
                     display, isSelected, hasFocus, row, column);
 
@@ -347,7 +354,7 @@ public class PreferencesTable extends JTable {
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             PrefEntry pe = (PrefEntry) value;
-            Preferences.StringSetting stg = (Preferences.StringSetting) pe.getValue();
+            StringSetting stg = (StringSetting) pe.getValue();
             String s = stg.getValue() == null ? "" : stg.getValue();
             return super.getTableCellEditorComponent(table, s, isSelected, row, column);
         }

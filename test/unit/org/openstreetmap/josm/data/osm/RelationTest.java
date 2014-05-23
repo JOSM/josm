@@ -6,17 +6,17 @@ import static org.junit.Assert.assertFalse;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Projections;
 
 public class RelationTest {
 
+    /**
+     * Setup test.
+     */
     @BeforeClass
     public static void setUp() {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @Test(expected=NullPointerException.class)
@@ -103,5 +103,4 @@ public class RelationTest {
         ds.addPrimitive(r1);
         Assert.assertEquals(new BBox(w1), r1.getBBox());
     }
-
 }

@@ -25,8 +25,8 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
-
 
 /**
  * The base class for OSM objects ({@link Node}, {@link Way}, {@link Relation}).
@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
  *
  * @author imi
  */
-abstract public class OsmPrimitive extends AbstractPrimitive implements Comparable<OsmPrimitive>, TemplateEngineDataProvider {
+public abstract class OsmPrimitive extends AbstractPrimitive implements Comparable<OsmPrimitive>, TemplateEngineDataProvider {
     private static final String SPECIAL_VALUE_ID = "id";
     private static final String SPECIAL_VALUE_LOCAL_NAME = "localname";
 
@@ -118,9 +118,9 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param type the type to filter for
      * @return the sub-list of OSM primitives of type <code>type</code>
      */
-    static public <T extends OsmPrimitive>  List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
+    public static <T extends OsmPrimitive>  List<T> getFilteredList(Collection<OsmPrimitive> list, Class<T> type) {
         if (list == null) return Collections.emptyList();
-        List<T> ret = new LinkedList<T>();
+        List<T> ret = new LinkedList<>();
         for(OsmPrimitive p: list) {
             if (type.isInstance(p)) {
                 ret.add(type.cast(p));
@@ -140,8 +140,8 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param type the type to filter for
      * @return the sub-set of OSM primitives of type <code>type</code>
      */
-    static public <T extends OsmPrimitive> Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
-        Set<T> ret = new LinkedHashSet<T>();
+    public static <T extends OsmPrimitive> Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
+        Set<T> ret = new LinkedHashSet<>();
         if (set != null) {
             for(OsmPrimitive p: set) {
                 if (type.isInstance(p)) {
@@ -159,8 +159,8 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @return the collection of referring primitives for the primitives in <code>primitives</code>;
      * empty set if primitives is null or if there are no referring primitives
      */
-    static public Set<OsmPrimitive> getReferrer(Collection<? extends OsmPrimitive> primitives) {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+    public static Set<OsmPrimitive> getReferrer(Collection<? extends OsmPrimitive> primitives) {
+        HashSet<OsmPrimitive> ret = new HashSet<>();
         if (primitives == null || primitives.isEmpty()) return ret;
         for (OsmPrimitive p: primitives) {
             ret.addAll(p.getReferrers());
@@ -240,13 +240,13 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     /**
      * Creates a new primitive for the given id.
      *
-     * If allowNegativeId is set, provided id can be < 0 and will be set to primitive without any processing.
+     * If allowNegativeId is set, provided id can be &lt; 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
      *
      * @param id the id
      * @param allowNegativeId
-     * @throws IllegalArgumentException thrown if id < 0 and allowNegativeId is false
+     * @throws IllegalArgumentException thrown if id &lt; 0 and allowNegativeId is false
      */
     protected OsmPrimitive(long id, boolean allowNegativeId) throws IllegalArgumentException {
         if (allowNegativeId) {
@@ -268,16 +268,16 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     /**
      * Creates a new primitive for the given id and version.
      *
-     * If allowNegativeId is set, provided id can be < 0 and will be set to primitive without any processing.
+     * If allowNegativeId is set, provided id can be &lt; 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
      *
-     * If id is not > 0 version is ignored and set to 0.
+     * If id is not &gt; 0 version is ignored and set to 0.
      *
      * @param id
      * @param version
      * @param allowNegativeId
-     * @throws IllegalArgumentException thrown if id < 0 and allowNegativeId is false
+     * @throws IllegalArgumentException thrown if id &lt; 0 and allowNegativeId is false
      */
     protected OsmPrimitive(long id, int version, boolean allowNegativeId) throws IllegalArgumentException {
         this(id, allowNegativeId);
@@ -355,10 +355,10 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Since we know the id and its version it can't be incomplete anymore. incomplete
      * is set to false.
      *
-     * @param id the id. > 0 required
-     * @param version the version > 0 required
-     * @throws IllegalArgumentException thrown if id <= 0
-     * @throws IllegalArgumentException thrown if version <= 0
+     * @param id the id. &gt; 0 required
+     * @param version the version &gt; 0 required
+     * @throws IllegalArgumentException thrown if id &lt;= 0
+     * @throws IllegalArgumentException thrown if version &lt;= 0
      * @throws DataIntegrityProblemException If id is changed and primitive was already added to the dataset
      */
     @Override
@@ -569,7 +569,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     @Override
-    protected void setIncomplete(boolean incomplete) {
+    protected final void setIncomplete(boolean incomplete) {
         boolean locked = writeLock();
         try {
             if (dataSet != null && incomplete != this.isIncomplete()) {
@@ -631,7 +631,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public static Collection<String> getUninterestingKeys() {
         if (uninteresting == null) {
-            LinkedList<String> l = new LinkedList<String>(Arrays.asList(
+            LinkedList<String> l = new LinkedList<>(Arrays.asList(
                 "source", "source_ref", "source:", "comment",
                 "converted_by", "watch", "watch:",
                 "description", "attribution"));
@@ -730,7 +730,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Returns {@link #getKeys()} for which {@code key} does not fulfill {@link #isUninterestingKey}.
      */
     public Map<String, String> getInterestingTags() {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         String[] keys = this.keys;
         if (keys != null) {
             for (int i = 0; i < keys.length; i += 2) {
@@ -753,7 +753,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     static {
         String reversedDirectionDefault = "oneway=\"-1\"";
 
-        String directionDefault = "oneway? | aerialway=* | "+
+        String directionDefault = "oneway? | (aerialway=* aerialway!=station) | "+
                 "waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | "+
                 "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
                 "junction=roundabout | (highway=motorway_link & -oneway=no)";
@@ -766,7 +766,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
             try {
                 reversedDirectionKeys = SearchCompiler.compile(reversedDirectionDefault, false, false);
             } catch (ParseError e2) {
-                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage());
+                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
             }
         }
         try {
@@ -777,7 +777,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
             try {
                 directionKeys = SearchCompiler.compile(directionDefault, false, false);
             } catch (ParseError e2) {
-                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage());
+                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
             }
         }
     }
@@ -923,10 +923,9 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Add new referrer. If referrer is already included then no action is taken
-     * @param referrer
+     * @param referrer The referrer to add
      */
     protected void addReferrer(OsmPrimitive referrer) {
-        // Based on methods from josm-ng
         if (referrers == null) {
             referrers = referrer;
         } else if (referrers instanceof OsmPrimitive) {
@@ -938,20 +937,15 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
                 if (primitive == referrer)
                     return;
             }
-            OsmPrimitive[] orig = (OsmPrimitive[])referrers;
-            OsmPrimitive[] bigger = new OsmPrimitive[orig.length+1];
-            System.arraycopy(orig, 0, bigger, 0, orig.length);
-            bigger[orig.length] = referrer;
-            referrers = bigger;
+            referrers = Utils.addInArrayCopy((OsmPrimitive[])referrers, referrer);
         }
     }
 
     /**
      * Remove referrer. No action is taken if referrer is not registered
-     * @param referrer
+     * @param referrer The referrer to remove
      */
     protected void removeReferrer(OsmPrimitive referrer) {
-        // Based on methods from josm-ng
         if (referrers instanceof OsmPrimitive) {
             if (referrers == referrer) {
                 referrers = null;
@@ -978,6 +972,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
             }
         }
     }
+
     /**
      * Find primitives that reference this primitive. Returns only primitives that are included in the same
      * dataset as this primitive. <br>
@@ -992,9 +987,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      *
      * @return a collection of all primitives that reference this primitive.
      */
-
     public final List<OsmPrimitive> getReferrers(boolean allowWithoutDataset) {
-        // Method copied from OsmPrimitive in josm-ng
         // Returns only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
 
@@ -1003,7 +996,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
 
         checkDataset();
         Object referrers = this.referrers;
-        List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> result = new ArrayList<>();
         if (referrers != null) {
             if (referrers instanceof OsmPrimitive) {
                 OsmPrimitive ref = (OsmPrimitive)referrers;
@@ -1083,7 +1076,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * visitor function.
      * @param visitor The visitor from which the visit() function must be called.
      */
-    abstract public void accept(Visitor visitor);
+    public abstract void accept(Visitor visitor);
 
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so
@@ -1149,7 +1142,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Replies true if this primitive and other are equal with respect to their
      * semantic attributes.
      * <ol>
-     *   <li>equal id</ol>
+     *   <li>equal id</li>
      *   <li>both are complete or both are incomplete</li>
      *   <li>both have the same tags</li>
      * </ol>
@@ -1171,12 +1164,12 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Replies true if this primitive and other are equal with respect to their
      * technical attributes. The attributes:
      * <ol>
-     *   <li>deleted</ol>
-     *   <li>modified</ol>
-     *   <li>timestamp</ol>
-     *   <li>version</ol>
-     *   <li>visible</ol>
-     *   <li>user</ol>
+     *   <li>deleted</li>
+     *   <li>modified</li>
+     *   <li>timestamp</li>
+     *   <li>version</li>
+     *   <li>visible</li>
+     *   <li>user</li>
      * </ol>
      * have to be equal
      * @param other the other primitive
@@ -1304,7 +1297,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
     @Override
     public Collection<String> getTemplateKeys() {
         Collection<String> keySet = keySet();
-        List<String> result = new ArrayList<String>(keySet.size() + 2);
+        List<String> result = new ArrayList<>(keySet.size() + 2);
         result.add(SPECIAL_VALUE_ID);
         result.add(SPECIAL_VALUE_LOCAL_NAME);
         result.addAll(keySet);
@@ -1337,7 +1330,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @return the set of referring relations
      */
     public static Set<Relation> getParentRelations(Collection<? extends OsmPrimitive> primitives) {
-        HashSet<Relation> ret = new HashSet<Relation>();
+        HashSet<Relation> ret = new HashSet<>();
         for (OsmPrimitive w : primitives) {
             ret.addAll(OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class));
         }

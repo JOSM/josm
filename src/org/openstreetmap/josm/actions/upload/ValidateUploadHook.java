@@ -44,6 +44,7 @@ public class ValidateUploadHook implements UploadHook {
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
 
+        OsmValidator.initializeTests();
         Collection<Test> tests = OsmValidator.getEnabledTests(true);
         if (tests.isEmpty())
             return true;
@@ -52,7 +53,7 @@ public class ValidateUploadHook implements UploadHook {
         v.visit(apiDataSet.getPrimitivesToAdd());
         Collection<OsmPrimitive> selection = v.visit(apiDataSet.getPrimitivesToUpdate());
 
-        List<TestError> errors = new ArrayList<TestError>(30);
+        List<TestError> errors = new ArrayList<>(30);
         for (Test test : tests) {
             test.setBeforeUpload(true);
             test.setPartialSelection(true);
@@ -81,7 +82,7 @@ public class ValidateUploadHook implements UploadHook {
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
             int nume = 0;
             for (TestError error : errors) {
-                List<String> s = new ArrayList<String>();
+                List<String> s = new ArrayList<>();
                 s.add(error.getIgnoreState());
                 s.add(error.getIgnoreGroup());
                 s.add(error.getIgnoreSubGroup());
@@ -131,7 +132,7 @@ public class ValidateUploadHook implements UploadHook {
                 + "</table>"
         );
         pnlMessage.setPreferredSize(new Dimension(500, 150));
-        p.add(pnlMessage, GBC.eol());
+        p.add(pnlMessage, GBC.eol().fill(GBC.HORIZONTAL));
         p.add(new JScrollPane(errorPanel), GBC.eol().fill(GBC.BOTH));
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
@@ -142,6 +143,7 @@ public class ValidateUploadHook implements UploadHook {
         ed.showDialog();
 
         if (ed.getValue() != 1) {
+            OsmValidator.initializeTests();
             OsmValidator.initializeErrorLayer();
             Main.map.validatorDialog.unfurlDialog();
             Main.main.getCurrentDataSet().fireSelectionChanged();

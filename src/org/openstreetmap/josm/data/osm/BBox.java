@@ -106,14 +106,14 @@ public class BBox {
         }
     }
 
-    public void add(LatLon c) {
+    public final void add(LatLon c) {
         add(c.lon(), c.lat());
     }
 
     /**
      * Extends this bbox to include the point (x, y)
      */
-    public void add(double x, double y) {
+    public final void add(double x, double y) {
         xmin = Math.min(xmin, x);
         xmax = Math.max(xmax, x);
         ymin = Math.min(ymin, y);
@@ -121,7 +121,7 @@ public class BBox {
         sanity();
     }
 
-    public void add(BBox box) {
+    public final void add(BBox box) {
         xmin = Math.min(xmin, box.xmin);
         xmax = Math.max(xmax, box.xmax);
         ymin = Math.min(ymin, box.ymin);

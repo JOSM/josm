@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -48,8 +49,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPriority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -68,21 +67,21 @@ import org.xml.sax.SAXException;
  * @since 6068
  */
 public final class TaggingPresetItems {
-    private TaggingPresetItems() {    }
-    
+    private TaggingPresetItems() {
+    }
+
     private static int auto_increment_selected = 0;
     public static final String DIFFERENT = tr("<different>");
 
     private static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
 
     // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
-    private static final Map<String,EnumSet<TaggingPresetType>> typeCache =
-            new LinkedHashMap<String, EnumSet<TaggingPresetType>>(16, 1.1f, true);
-    
+    private static final Map<String,EnumSet<TaggingPresetType>> TYPE_CACHE = new LinkedHashMap<>(16, 1.1f, true);
+
     /**
      * Last value of each key used in presets, used for prefilling corresponding fields
      */
-    private static final Map<String,String> lastValue = new HashMap<String,String>();
+    private static final Map<String,String> LAST_VALUES = new HashMap<>();
 
     public static class PresetListEntry {
         public String value;
@@ -239,7 +238,7 @@ public final class TaggingPresetItems {
     }
 
     /**
-     * Enum denoting how a match (see {@link Item#matches}) is performed.
+     * Enum denoting how a match (see {@link TaggingPresetItem#matches}) is performed.
      */
     public static enum MatchType {
 
@@ -278,7 +277,7 @@ public final class TaggingPresetItems {
             throw new IllegalArgumentException(type + " is not allowed");
         }
     }
-    
+
     public static class Usage {
         TreeSet<String> values;
         boolean hadKeys = false;
@@ -303,18 +302,18 @@ public final class TaggingPresetItems {
      * A tagging preset item displaying a localizable text.
      * @since 6190
      */
-    public static abstract class TaggingPresetTextItem extends TaggingPresetItem {
+    public abstract static class TaggingPresetTextItem extends TaggingPresetItem {
 
         /**
          * The text to display
          */
         public String text;
-        
+
         /**
          * The context used for translating {@link #text}
          */
         public String text_context;
-        
+
         /**
          * The localized version of {@link #text}
          */
@@ -341,7 +340,7 @@ public final class TaggingPresetItems {
                     + (text_context != null ? "text_context=" + text_context + ", " : "")
                     + (locale_text != null ? "locale_text=" + locale_text : "");
         }
-        
+
         @Override
         public String toString() {
             return getClass().getSimpleName() + " [" + fieldsToString() + "]";
@@ -351,10 +350,14 @@ public final class TaggingPresetItems {
     public static class Label extends TaggingPresetTextItem {
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             initializeLocaleText(null);
-            p.add(new JLabel(locale_text), GBC.eol());
+            addLabel(p, locale_text);
             return false;
+        }
+
+        public static void addLabel(JPanel p, String label) {
+            p.add(new JLabel(label), GBC.eol());
         }
     }
 
@@ -364,14 +367,14 @@ public final class TaggingPresetItems {
          * The link to display
          */
         public String href;
-        
+
         /**
          * The localized version of {@link #href}
          */
         public String locale_href;
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             initializeLocaleText(tr("More information about this feature"));
             String url = locale_href;
             if (url == null) {
@@ -396,17 +399,17 @@ public final class TaggingPresetItems {
         public String preset_name = "";
 
         @Override
-        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             final String presetName = preset_name;
-            final TaggingPreset t = Utils.filter(TaggingPresetPreference.taggingPresets, new Predicate<TaggingPreset>() {
+            final TaggingPreset t = Utils.filter(TaggingPresets.getTaggingPresets(), new Predicate<TaggingPreset>() {
                 @Override
                 public boolean evaluate(TaggingPreset object) {
                     return presetName.equals(object.name);
                 }
             }).iterator().next();
             if (t == null) return false;
-            JLabel lbl = PresetListPanel.createLabelForPreset(t);
-            lbl.addMouseListener(new PresetListPanel.PresetLabelML(lbl, t, null) {
+            JLabel lbl = new PresetLabel(t);
+            lbl.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent arg0) {
                     t.actionPerformed(null);
@@ -420,13 +423,13 @@ public final class TaggingPresetItems {
         void addCommands(List<Tag> changedTags) {
         }
     }
-    
+
     public static class Roles extends TaggingPresetItem {
 
-        public final List<Role> roles = new LinkedList<Role>();
+        public final List<Role> roles = new LinkedList<>();
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             p.add(new JLabel(" "), GBC.eol()); // space
             if (!roles.isEmpty()) {
                 JPanel proles = new JPanel(new GridBagLayout());
@@ -451,7 +454,7 @@ public final class TaggingPresetItems {
 
         // TODO: Draw a box around optional stuff
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             initializeLocaleText(tr("Optional Attributes:"));
             p.add(new JLabel(" "), GBC.eol()); // space
             p.add(new JLabel(locale_text), GBC.eol());
@@ -463,7 +466,7 @@ public final class TaggingPresetItems {
     public static class Space extends TaggingPresetItem {
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             p.add(new JLabel(" "), GBC.eol()); // space
             return false;
         }
@@ -485,7 +488,7 @@ public final class TaggingPresetItems {
     public static class ItemSeparator extends TaggingPresetItem {
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             p.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
             return false;
         }
@@ -500,7 +503,7 @@ public final class TaggingPresetItems {
         }
     }
 
-    public static abstract class KeyedItem extends TaggingPresetItem {
+    public abstract static class KeyedItem extends TaggingPresetItem {
 
         public String key;
         public String text;
@@ -525,7 +528,7 @@ public final class TaggingPresetItems {
                 throw new IllegalStateException();
             }
         }
-        
+
         @Override
         public String toString() {
             return "KeyedItem [key=" + key + ", text=" + text
@@ -539,7 +542,7 @@ public final class TaggingPresetItems {
         public String value;
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             return false;
         }
 
@@ -565,7 +568,7 @@ public final class TaggingPresetItems {
                     + "]";
         }
     }
-    
+
     public static class Text extends KeyedItem {
 
         public String locale_text;
@@ -574,30 +577,35 @@ public final class TaggingPresetItems {
         public String use_last_as_default = "false";
         public String auto_increment;
         public String length;
+        public String alternative_autocomplete_keys;
 
         private JComponent value;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
 
             // find out if our key is already used in the selection.
             Usage usage = determineTextUsage(sel, key);
             AutoCompletingTextField textField = new AutoCompletingTextField();
-            initAutoCompletionField(textField, key);
+            if (alternative_autocomplete_keys != null) {
+                initAutoCompletionField(textField, (key + "," + alternative_autocomplete_keys).split(","));
+            } else {
+                initAutoCompletionField(textField, key);
+            }
             if (length != null && !length.isEmpty()) {
                 textField.setMaxChars(Integer.valueOf(length));
             }
             if (usage.unused()){
                 if (auto_increment_selected != 0  && auto_increment != null) {
                     try {
-                        textField.setText(Integer.toString(Integer.parseInt(lastValue.get(key)) + auto_increment_selected));
+                        textField.setText(Integer.toString(Integer.parseInt(LAST_VALUES.get(key)) + auto_increment_selected));
                     } catch (NumberFormatException ex) {
                         // Ignore - cannot auto-increment if last was non-numeric
                     }
                 }
                 else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default values feature is enabled
-                    if (!"false".equals(use_last_as_default) && lastValue.containsKey(key)) {
-                        textField.setText(lastValue.get(key));
+                    if (!"false".equals(use_last_as_default) && LAST_VALUES.containsKey(key) && !presetInitiallyMatches) {
+                        textField.setText(LAST_VALUES.get(key));
                     } else {
                         textField.setText(default_);
                     }
@@ -614,7 +622,7 @@ public final class TaggingPresetItems {
                 originalValue = usage.getFirst();
             } else {
                 // the objects have different values
-                JosmComboBox comboBox = new JosmComboBox(usage.values.toArray());
+                JosmComboBox<String> comboBox = new JosmComboBox<>(usage.values.toArray(new String[0]));
                 comboBox.setEditable(true);
                 comboBox.setEditor(textField);
                 comboBox.getEditor().setItem(DIFFERENT);
@@ -669,8 +677,8 @@ public final class TaggingPresetItems {
                 clearbutton.setVisible(false);
                 clearbutton.setFocusable(false);
                 bg.add(clearbutton);
-                // and its visible counterpart. - this mechanism allows us to 
-                // have *no* button selected after the X is clicked, instead 
+                // and its visible counterpart. - this mechanism allows us to
+                // have *no* button selected after the X is clicked, instead
                 // of the X remaining selected
                 JButton releasebutton = new JButton("X");
                 releasebutton.setToolTipText(tr("Cancel auto-increment for this field"));
@@ -693,7 +701,7 @@ public final class TaggingPresetItems {
 
         private static String getValue(Component comp) {
             if (comp instanceof JosmComboBox) {
-                return ((JosmComboBox) comp).getEditor().getItem().toString();
+                return ((JosmComboBox<?>) comp).getEditor().getItem().toString();
             } else if (comp instanceof JosmTextField) {
                 return ((JosmTextField) comp).getText();
             } else if (comp instanceof JPanel) {
@@ -702,7 +710,7 @@ public final class TaggingPresetItems {
                 return null;
             }
         }
-        
+
         @Override
         public void addCommands(List<Tag> changedTags) {
 
@@ -712,11 +720,11 @@ public final class TaggingPresetItems {
                 Main.error("No 'last value' support for component " + value);
                 return;
             }
-            
-            v = v.trim();
+
+            v = Tag.removeWhiteSpaces(v);
 
             if (!"false".equals(use_last_as_default) || auto_increment != null) {
-                lastValue.put(key, v);
+                LAST_VALUES.put(key, v);
             }
             if (v.equals(originalValue) || (originalValue == null && v.length() == 0))
                 return;
@@ -747,27 +755,27 @@ public final class TaggingPresetItems {
      * @since 6114
      */
     public static class CheckGroup extends TaggingPresetItem {
-        
+
         /**
          * Number of columns (positive integer)
          */
         public String columns;
-        
+
         /**
          * List of checkboxes
          */
-        public final List<Check> checks = new LinkedList<Check>();
+        public final List<Check> checks = new LinkedList<>();
 
         @Override
-        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             Integer cols = Integer.valueOf(columns);
             int rows = (int) Math.ceil(checks.size()/cols.doubleValue());
             JPanel panel = new JPanel(new GridLayout(rows, cols));
-            
+
             for (Check check : checks) {
-                check.addToPanel(panel, sel);
+                check.addToPanel(panel, sel, presetInitiallyMatches);
             }
-            
+
             p.add(panel, GBC.eol());
             return false;
         }
@@ -790,16 +798,18 @@ public final class TaggingPresetItems {
         public String locale_text;
         public String value_on = OsmUtils.trueval;
         public String value_off = OsmUtils.falseval;
+        public boolean disable_off = false;
         public boolean default_ = false; // only used for tagless objects
 
         private QuadStateCheckBox check;
         private QuadStateCheckBox.State initialState;
         private boolean def;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
 
             // find out if our key is already used in the selection.
-            Usage usage = determineBooleanUsage(sel, key);
+            final Usage usage = determineBooleanUsage(sel, key);
+            final String oneValue = usage.values.isEmpty() ? null : usage.values.last();
             def = default_;
 
             if(locale_text == null) {
@@ -810,10 +820,6 @@ public final class TaggingPresetItems {
                 }
             }
 
-            String oneValue = null;
-            for (String s : usage.values) {
-                oneValue = s;
-            }
             if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
                 if (def && !PROP_FILL_DEFAULT.get()) {
                     // default is set and filling default values feature is disabled - check if all primitives are untagged
@@ -825,30 +831,31 @@ public final class TaggingPresetItems {
 
                 // all selected objects share the same value which is either true or false or unset,
                 // we can display a standard check box.
-                initialState = value_on.equals(oneValue) ?
-                        QuadStateCheckBox.State.SELECTED :
-                            value_off.equals(oneValue) ?
-                                    QuadStateCheckBox.State.NOT_SELECTED :
-                                        def ? QuadStateCheckBox.State.SELECTED
-                                                : QuadStateCheckBox.State.UNSET;
-                check = new QuadStateCheckBox(locale_text, initialState,
-                        new QuadStateCheckBox.State[] {
-                        QuadStateCheckBox.State.SELECTED,
-                        QuadStateCheckBox.State.NOT_SELECTED,
-                        QuadStateCheckBox.State.UNSET });
+                initialState = value_on.equals(oneValue)
+                        ? QuadStateCheckBox.State.SELECTED
+                        : value_off.equals(oneValue)
+                        ? QuadStateCheckBox.State.NOT_SELECTED
+                        : def
+                        ? QuadStateCheckBox.State.SELECTED
+                        : QuadStateCheckBox.State.UNSET;
             } else {
                 def = false;
                 // the objects have different values, or one or more objects have something
                 // else than true/false. we display a quad-state check box
                 // in "partial" state.
                 initialState = QuadStateCheckBox.State.PARTIAL;
-                check = new QuadStateCheckBox(locale_text, QuadStateCheckBox.State.PARTIAL,
-                        new QuadStateCheckBox.State[] {
-                        QuadStateCheckBox.State.PARTIAL,
-                        QuadStateCheckBox.State.SELECTED,
-                        QuadStateCheckBox.State.NOT_SELECTED,
-                        QuadStateCheckBox.State.UNSET });
             }
+
+            final List<QuadStateCheckBox.State> allowedStates = new ArrayList<>(4);
+            if (QuadStateCheckBox.State.PARTIAL.equals(initialState))
+                allowedStates.add(QuadStateCheckBox.State.PARTIAL);
+            allowedStates.add(QuadStateCheckBox.State.SELECTED);
+            if (!disable_off || value_off.equals(oneValue))
+                allowedStates.add(QuadStateCheckBox.State.NOT_SELECTED);
+            allowedStates.add(QuadStateCheckBox.State.UNSET);
+            check = new QuadStateCheckBox(locale_text, initialState,
+                    allowedStates.toArray(new QuadStateCheckBox.State[allowedStates.size()]));
+
             p.add(check, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
         }
@@ -872,7 +879,7 @@ public final class TaggingPresetItems {
 
         @Override
         public Collection<String> getValues() {
-            return Arrays.asList(value_on, value_off);
+            return disable_off ? Arrays.asList(value_on) : Arrays.asList(value_on, value_off);
         }
 
         @Override
@@ -888,7 +895,7 @@ public final class TaggingPresetItems {
         }
     }
 
-    public static abstract class ComboMultiSelect extends KeyedItem {
+    public abstract static class ComboMultiSelect extends KeyedItem {
 
         public String locale_text;
         public String values;
@@ -905,13 +912,13 @@ public final class TaggingPresetItems {
         public String values_searchable = "false";
 
         protected JComponent component;
-        protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<String, PresetListEntry>();
+        protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<>();
         private boolean initialized = false;
         protected Usage usage;
         protected Object originalValue;
 
         protected abstract Object getSelectedItem();
-        protected abstract void addToPanelAnchor(JPanel p, String def);
+        protected abstract void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches);
 
         protected char getDelChar() {
             return delimiter.isEmpty() ? ';' : delimiter.charAt(0);
@@ -934,7 +941,7 @@ public final class TaggingPresetItems {
         }
 
         @Override
-        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
 
             initListEntries();
 
@@ -945,7 +952,7 @@ public final class TaggingPresetItems {
             }
 
             p.add(new JLabel(tr("{0}:", locale_text)), GBC.std().insets(0, 0, 10, 0));
-            addToPanelAnchor(p, default_);
+            addToPanelAnchor(p, default_, presetInitiallyMatches);
 
             return true;
 
@@ -989,7 +996,7 @@ public final class TaggingPresetItems {
             char delChar = getDelChar();
 
             String[] value_array = null;
-            
+
             if (values_from != null) {
                 String[] class_method = values_from.split("#");
                 if (class_method != null && class_method.length == 2) {
@@ -997,7 +1004,7 @@ public final class TaggingPresetItems {
                         Method method = Class.forName(class_method[0]).getMethod(class_method[1]);
                         // Check method is public static String[] methodName()
                         int mod = method.getModifiers();
-                        if (Modifier.isPublic(mod) && Modifier.isStatic(mod) 
+                        if (Modifier.isPublic(mod) && Modifier.isStatic(mod)
                                 && method.getReturnType().equals(String[].class) && method.getParameterTypes().length == 0) {
                             value_array = (String[]) method.invoke(null);
                         } else {
@@ -1010,7 +1017,7 @@ public final class TaggingPresetItems {
                     }
                 }
             }
-            
+
             if (value_array == null) {
                 value_array = splitEscaped(delChar, values);
             }
@@ -1075,7 +1082,7 @@ public final class TaggingPresetItems {
             } else {
                 value = "";
             }
-            value = value.trim();
+            value = Tag.removeWhiteSpaces(value);
 
             // no change if same as before
             if (originalValue == null) {
@@ -1085,7 +1092,7 @@ public final class TaggingPresetItems {
                 return;
 
             if (!"false".equals(use_last_as_default)) {
-                lastValue.put(key, value);
+                LAST_VALUES.put(key, value);
             }
             changedTags.add(new Tag(key, value));
         }
@@ -1105,18 +1112,17 @@ public final class TaggingPresetItems {
             return component.requestFocusInWindow();
         }
 
-        private static ListCellRenderer RENDERER = new ListCellRenderer() {
+        private static final ListCellRenderer<PresetListEntry> RENDERER = new ListCellRenderer<PresetListEntry>() {
 
             JLabel lbl = new JLabel();
 
             @Override
             public Component getListCellRendererComponent(
-                    JList list,
-                    Object value,
+                    JList<? extends PresetListEntry> list,
+                    PresetListEntry item,
                     int index,
                     boolean isSelected,
                     boolean cellHasFocus) {
-                PresetListEntry item = (PresetListEntry) value;
 
                 // Only return cached size, item is not shown
                 if (!list.isShowing() && item.prefferedWidth != -1 && item.prefferedHeight != -1) {
@@ -1158,8 +1164,7 @@ public final class TaggingPresetItems {
             }
         };
 
-
-        protected ListCellRenderer getListCellRenderer() {
+        protected ListCellRenderer<PresetListEntry> getListCellRenderer() {
             return RENDERER;
         }
 
@@ -1172,15 +1177,18 @@ public final class TaggingPresetItems {
     public static class Combo extends ComboMultiSelect {
 
         public boolean editable = true;
-        protected JosmComboBox combo;
+        protected JosmComboBox<PresetListEntry> combo;
         public String length;
 
+        /**
+         * Constructs a new {@code Combo}.
+         */
         public Combo() {
             delimiter = ",";
         }
 
         @Override
-        protected void addToPanelAnchor(JPanel p, String def) {
+        protected void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches) {
             if (!usage.unused()) {
                 for (String s : usage.values) {
                     if (!lhm.containsKey(s)) {
@@ -1193,7 +1201,7 @@ public final class TaggingPresetItems {
             }
             lhm.put("", new PresetListEntry(""));
 
-            combo = new JosmComboBox(lhm.values().toArray());
+            combo = new JosmComboBox<>(lhm.values().toArray(new PresetListEntry[0]));
             component = combo;
             combo.setRenderer(getListCellRenderer());
             combo.setEditable(editable);
@@ -1226,8 +1234,8 @@ public final class TaggingPresetItems {
             } else if (usage.unused()) {
                 // all items were unset (and so is default)
                 originalValue = lhm.get("");
-                if ("force".equals(use_last_as_default) && lastValue.containsKey(key)) {
-                    combo.setSelectedItem(lhm.get(lastValue.get(key)));
+                if ("force".equals(use_last_as_default) && LAST_VALUES.containsKey(key) && !presetInitiallyMatches) {
+                    combo.setSelectedItem(lhm.get(LAST_VALUES.get(key)));
                 } else {
                     combo.setSelectedItem(originalValue);
                 }
@@ -1259,10 +1267,10 @@ public final class TaggingPresetItems {
         protected ConcatenatingJList list;
 
         @Override
-        protected void addToPanelAnchor(JPanel p, String def) {
-            list = new ConcatenatingJList(delimiter, lhm.values().toArray());
+        protected void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches) {
+            list = new ConcatenatingJList(delimiter, lhm.values().toArray(new PresetListEntry[0]));
             component = list;
-            ListCellRenderer renderer = getListCellRenderer();
+            ListCellRenderer<PresetListEntry> renderer = getListCellRenderer();
             list.setCellRenderer(renderer);
 
             if (usage.hasUniqueValue() && !usage.unused()) {
@@ -1310,9 +1318,9 @@ public final class TaggingPresetItems {
     * Class that allows list values to be assigned and retrieved as a comma-delimited
     * string (extracted from TaggingPreset)
     */
-    private static class ConcatenatingJList extends JList {
+    private static class ConcatenatingJList extends JList<PresetListEntry> {
         private String delimiter;
-        public ConcatenatingJList(String del, Object[] o) {
+        public ConcatenatingJList(String del, PresetListEntry[] o) {
             super(o);
             delimiter = del;
         }
@@ -1322,12 +1330,12 @@ public final class TaggingPresetItems {
                 clearSelection();
             } else {
                 String s = o.toString();
-                TreeSet<String> parts = new TreeSet<String>(Arrays.asList(s.split(delimiter)));
-                ListModel lm = getModel();
+                TreeSet<String> parts = new TreeSet<>(Arrays.asList(s.split(delimiter)));
+                ListModel<PresetListEntry> lm = getModel();
                 int[] intParts = new int[lm.getSize()];
                 int j = 0;
                 for (int i = 0; i < lm.getSize(); i++) {
-                    if (parts.contains((((PresetListEntry)lm.getElementAt(i)).value))) {
+                    if (parts.contains((lm.getElementAt(i).value))) {
                         intParts[j++]=i;
                     }
                 }
@@ -1340,41 +1348,42 @@ public final class TaggingPresetItems {
         }
 
         public String getSelectedItem() {
-            ListModel lm = getModel();
+            ListModel<PresetListEntry> lm = getModel();
             int[] si = getSelectedIndices();
             StringBuilder builder = new StringBuilder();
             for (int i=0; i<si.length; i++) {
                 if (i>0) {
                     builder.append(delimiter);
                 }
-                builder.append(((PresetListEntry)lm.getElementAt(si[i])).value);
+                builder.append(lm.getElementAt(si[i]).value);
             }
             return builder.toString();
         }
     }
-    static public EnumSet<TaggingPresetType> getType(String types) throws SAXException {
-        if (typeCache.containsKey(types))
-            return typeCache.get(types);
+
+    public static EnumSet<TaggingPresetType> getType(String types) throws SAXException {
+        if (TYPE_CACHE.containsKey(types))
+            return TYPE_CACHE.get(types);
         EnumSet<TaggingPresetType> result = EnumSet.noneOf(TaggingPresetType.class);
         for (String type : Arrays.asList(types.split(","))) {
             try {
                 TaggingPresetType presetType = TaggingPresetType.fromString(type);
                 result.add(presetType);
             } catch (IllegalArgumentException e) {
-                throw new SAXException(tr("Unknown type: {0}", type));
+                throw new SAXException(tr("Unknown type: {0}", type), e);
             }
         }
-        typeCache.put(types, result);
+        TYPE_CACHE.put(types, result);
         return result;
     }
-    
+
     static String fixPresetString(String s) {
         return s == null ? s : s.replaceAll("'","''");
     }
-    
+
     /**
      * allow escaped comma in comma separated list:
-     * "A\, B\, C,one\, two" --> ["A, B, C", "one, two"]
+     * "A\, B\, C,one\, two" --&gt; ["A, B, C", "one, two"]
      * @param delimiter the delimiter, e.g. a comma. separates the entries and
      *      must be escaped within one entry
      * @param s the string
@@ -1382,7 +1391,7 @@ public final class TaggingPresetItems {
     private static String[] splitEscaped(char delimiter, String s) {
         if (s == null)
             return new String[0];
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         boolean backslash = false;
         StringBuilder item = new StringBuilder();
         for (int i=0; i<s.length(); i++) {
@@ -1405,10 +1414,10 @@ public final class TaggingPresetItems {
         return result.toArray(new String[result.size()]);
     }
 
-    
+
     static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
         Usage returnValue = new Usage();
-        returnValue.values = new TreeSet<String>();
+        returnValue.values = new TreeSet<>();
         for (OsmPrimitive s : sel) {
             String v = s.get(key);
             if (v != null) {
@@ -1425,7 +1434,7 @@ public final class TaggingPresetItems {
     static Usage determineBooleanUsage(Collection<OsmPrimitive> sel, String key) {
 
         Usage returnValue = new Usage();
-        returnValue.values = new TreeSet<String>();
+        returnValue.values = new TreeSet<>();
         for (OsmPrimitive s : sel) {
             String booleanValue = OsmUtils.getNamedOsmBoolean(s.get(key));
             if (booleanValue != null) {

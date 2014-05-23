@@ -34,7 +34,7 @@ public class ImageryHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"url"};
     }
-    
+
     @Override
     public String[] getOptionalParams() {
         return new String[] { "title", "type", "cookies", "min_zoom", "max_zoom"};
@@ -72,15 +72,20 @@ public class ImageryHandler extends RequestHandler {
             }
         }
         GuiHelper.runInEDT(new Runnable() {
-            @Override public void run() {
-                Main.main.addLayer(ImageryLayer.create(imgInfo));
+            @Override
+            public void run() {
+                try {
+                    Main.main.addLayer(ImageryLayer.create(imgInfo));
+                } catch (IllegalArgumentException e) {
+                    Main.error(e, false);
+                }
             }
         });
     }
 
     @Override
     protected void parseArgs() {
-        HashMap<String, String> args = new HashMap<String, String>();
+        HashMap<String, String> args = new HashMap<>();
         if (request.indexOf('?') != -1) {
             String query = request.substring(request.indexOf('?') + 1);
             if (query.indexOf("url=") == 0) {
@@ -106,10 +111,16 @@ public class ImageryHandler extends RequestHandler {
         }
         this.args = args;
     }
-    
+
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
-        // Nothing to do
+        String url = args.get("url");
+        String type = args.get("type");
+        try {
+            ImageryLayer.create(new ImageryInfo(null, url, type, null, null));
+        } catch (IllegalArgumentException e) {
+            throw new RequestHandlerBadRequestException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -122,10 +133,10 @@ public class ImageryHandler extends RequestHandler {
         final String types = Utils.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()), new Utils.Function<ImageryInfo.ImageryType, String>() {
             @Override
             public String apply(ImageryInfo.ImageryType x) {
-                return x.getUrlString();
+                return x.getTypeString();
             }
         }));
-        return new String[] { "/imagery?title=osm&type=tms&url=http://tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
+        return new String[] { "/imagery?title=osm&type=tms&url=https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
             "/imagery?title=landsat&type=wms&url=http://irs.gis-lab.info/?layers=landsat&SRS=%7Bproj%7D&WIDTH=%7Bwidth%7D&HEIGHT=%7Bheight%7D&BBOX=%7Bbbox%7D",
             "/imagery?title=...&type={"+types+"}&url=....[&cookies=...][&min_zoom=...][&max_zoom=...]"};
     }

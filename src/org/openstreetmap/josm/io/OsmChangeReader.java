@@ -13,10 +13,16 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
+/**
+ * Reader for <a href="http://wiki.openstreetmap.org/wiki/OsmChange">OsmChange</a> file format.
+ */
 public class OsmChangeReader extends OsmReader {
 
-    public static final String[] ACTIONS = {"create", "modify", "delete"};
-    
+    /**
+     * List of possible actions.
+     */
+    private static final String[] ACTIONS = {"create", "modify", "delete"};
+
     /**
      * constructor (for private and subclasses use only)
      *
@@ -24,13 +30,10 @@ public class OsmChangeReader extends OsmReader {
      */
     protected OsmChangeReader() {
     }
-    
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.io.OsmReader#parseRoot()
-     */
+
     @Override
     protected void parseRoot() throws XMLStreamException {
-        if (parser.getLocalName().equals("osmChange")) {
+        if ("osmChange".equals(parser.getLocalName())) {
             parseOsmChange();
         } else {
             parseUnknown();
@@ -42,7 +45,7 @@ public class OsmChangeReader extends OsmReader {
         if (v == null) {
             throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
         }
-        if (!v.equals("0.6")) {
+        if (!"0.6".equals(v)) {
             throwException(tr("Unsupported version: {0}", v));
         }
         ds.setVersion(v);
@@ -65,19 +68,23 @@ public class OsmChangeReader extends OsmReader {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 OsmPrimitive p = null;
-                if (parser.getLocalName().equals("node")) {
+                switch (parser.getLocalName()) {
+                case "node":
                     p = parseNode();
-                } else if (parser.getLocalName().equals("way")) {
+                    break;
+                case "way":
                     p = parseWay();
-                } else if (parser.getLocalName().equals("relation")) {
+                    break;
+                case "relation":
                     p = parseRelation();
-                } else {
+                    break;
+                default:
                     parseUnknown();
                 }
                 if (p != null && action != null) {
-                    if (action.equals("modify")) {
+                    if ("modify".equals(action)) {
                         p.setModified(true);
-                    } else if (action.equals("delete")) {
+                    } else if ("delete".equals(action)) {
                         p.setDeleted(true);
                     }
                 }
@@ -86,7 +93,7 @@ public class OsmChangeReader extends OsmReader {
             }
         }
     }
-    
+
     /**
      * Parse the given input source and return the dataset.
      *

@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.io.session;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -13,6 +12,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -32,12 +32,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.NavigatableComponent.ViewportData;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -56,7 +56,7 @@ import org.xml.sax.SAXException;
  */
 public class SessionReader {
 
-    private static Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<String, Class<? extends SessionLayerImporter>>();
+    private static Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<>();
     static {
         registerSessionLayerImporter("osm-data", OsmDataSessionImporter.class);
         registerSessionLayerImporter("imagery", ImagerySessionImporter.class);
@@ -76,9 +76,7 @@ public class SessionReader {
         SessionLayerImporter importer = null;
         try {
             importer = importerClass.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         return importer;
@@ -87,9 +85,9 @@ public class SessionReader {
     private URI sessionFileURI;
     private boolean zip; // true, if session file is a .joz file; false if it is a .jos file
     private ZipFile zipFile;
-    private List<Layer> layers = new ArrayList<Layer>();
+    private List<Layer> layers = new ArrayList<>();
     private int active = -1;
-    private List<Runnable> postLoadTasks = new ArrayList<Runnable>();
+    private List<Runnable> postLoadTasks = new ArrayList<>();
     private ViewportData viewport;
 
     /**
@@ -184,8 +182,7 @@ public class SessionReader {
             } else if (inZipPath != null) {
                 ZipEntry entry = zipFile.getEntry(inZipPath);
                 if (entry != null) {
-                    InputStream is = zipFile.getInputStream(entry);
-                    return is;
+                    return zipFile.getInputStream(entry);
                 }
             }
             throw new IOException(tr("Unable to locate file  ''{0}''.", uriStr));
@@ -294,7 +291,7 @@ public class SessionReader {
 
     private void parseJos(Document doc, ProgressMonitor progressMonitor) throws IllegalDataException {
         Element root = doc.getDocumentElement();
-        if (!equal(root.getTagName(), "josm-session")) {
+        if (!"josm-session".equals(root.getTagName())) {
             error(tr("Unexpected root element ''{0}'' in session file", root.getTagName()));
         }
         String version = root.getAttribute("version");
@@ -310,7 +307,9 @@ public class SessionReader {
                 try {
                     LatLon centerLL = new LatLon(Double.parseDouble(centerEl.getAttribute("lat")), Double.parseDouble(centerEl.getAttribute("lon")));
                     center = Projections.project(centerLL);
-                } catch (NumberFormatException ex) {}
+                } catch (NumberFormatException ex) {
+                    Main.warn(ex);
+                }
             }
             if (center != null) {
                 Element scaleEl = getElementByTagName(viewportEl, "scale");
@@ -328,7 +327,9 @@ public class SessionReader {
                         double meterPerEasting = ll1.greatCircleDistance(ll2) / dist / 2;
                         double scale = meterPerPixel / meterPerEasting; // unit: easting per pixel
                         viewport = new ViewportData(center, scale);
-                    } catch (NumberFormatException ex) {}
+                    } catch (NumberFormatException ex) {
+                        Main.warn(ex);
+                    }
                 }
             }
         }
@@ -343,9 +344,9 @@ public class SessionReader {
             Main.warn("Unsupported value for 'active' layer attribute. Ignoring it. Error was: "+e.getMessage());
             active = -1;
         }
-        
-        MultiMap<Integer, Integer> deps = new MultiMap<Integer, Integer>();
-        Map<Integer, Element> elems = new HashMap<Integer, Element>();
+
+        MultiMap<Integer, Integer> deps = new MultiMap<>();
+        Map<Integer, Element> elems = new HashMap<>();
 
         NodeList nodes = layersEl.getChildNodes();
 
@@ -353,15 +354,16 @@ public class SessionReader {
             Node node = nodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element e = (Element) node;
-                if (equal(e.getTagName(), "layer")) {
-
+                if ("layer".equals(e.getTagName())) {
                     if (!e.hasAttribute("index")) {
                         error(tr("missing mandatory attribute ''index'' for element ''layer''"));
                     }
                     Integer idx = null;
                     try {
                         idx = Integer.parseInt(e.getAttribute("index"));
-                    } catch (NumberFormatException ex) {}
+                    } catch (NumberFormatException ex) {
+                        Main.warn(ex);
+                    }
                     if (idx == null) {
                         error(tr("unexpected format of attribute ''index'' for element ''layer''"));
                     }
@@ -372,7 +374,7 @@ public class SessionReader {
 
                     deps.putVoid(idx);
                     String depStr = e.getAttribute("depends");
-                    if (depStr != null) {
+                    if (depStr != null && !depStr.isEmpty()) {
                         for (String sd : depStr.split(",")) {
                             Integer d = null;
                             try {
@@ -390,9 +392,9 @@ public class SessionReader {
         }
 
         List<Integer> sorted = Utils.topologicalSort(deps);
-        final Map<Integer, Layer> layersMap = new TreeMap<Integer, Layer>(Collections.reverseOrder());
-        final Map<Integer, SessionLayerImporter> importers = new HashMap<Integer, SessionLayerImporter>();
-        final Map<Integer, String> names = new HashMap<Integer, String>();
+        final Map<Integer, Layer> layersMap = new TreeMap<>(Collections.reverseOrder());
+        final Map<Integer, SessionLayerImporter> importers = new HashMap<>();
+        final Map<Integer, String> names = new HashMap<>();
 
         progressMonitor.setTicksCount(sorted.size());
         LAYER: for (int idx: sorted) {
@@ -426,7 +428,7 @@ public class SessionReader {
                 }
             } else {
                 importers.put(idx, imp);
-                List<LayerDependency> depsImp = new ArrayList<LayerDependency>();
+                List<LayerDependency> depsImp = new ArrayList<>();
                 for (int d : deps.get(idx)) {
                     SessionLayerImporter dImp = importers.get(d);
                     if (dImp == null) {
@@ -451,9 +453,7 @@ public class SessionReader {
                 Exception exception = null;
                 try {
                     layer = imp.load(e, support, progressMonitor.createSubTaskMonitor(1, false));
-                } catch (IllegalDataException ex) {
-                    exception = ex;
-                } catch (IOException ex) {
+                } catch (IllegalDataException | IOException ex) {
                     exception = ex;
                 }
                 if (exception != null) {
@@ -479,7 +479,7 @@ public class SessionReader {
             progressMonitor.worked(1);
         }
 
-        layers = new ArrayList<Layer>();
+        layers = new ArrayList<>();
         for (int idx : layersMap.keySet()) {
             Layer layer = layersMap.get(idx);
             if (layer == null) {
@@ -536,9 +536,7 @@ public class SessionReader {
                         cancel = dlg.getValue() != 2;
                     }
                 });
-            } catch (InvocationTargetException ex) {
-                throw new RuntimeException(ex);
-            } catch (InterruptedException ex) {
+            } catch (InvocationTargetException | InterruptedException ex) {
                 throw new RuntimeException(ex);
             }
         }
@@ -553,24 +551,26 @@ public class SessionReader {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
 
-        InputStream josIS = null;
+        try (InputStream josIS = createInputStream(sessionFile, zip)) {
+            loadSession(josIS, sessionFile.toURI(), zip, progressMonitor);
+        }
+    }
 
+    private InputStream createInputStream(File sessionFile, boolean zip) throws IOException, IllegalDataException {
         if (zip) {
             try {
-                zipFile = new ZipFile(sessionFile);
-                josIS = getZipInputStream(zipFile);
+                zipFile = new ZipFile(sessionFile, StandardCharsets.UTF_8);
+                return getZipInputStream(zipFile);
             } catch (ZipException ze) {
                 throw new IOException(ze);
             }
         } else {
             try {
-                josIS = new FileInputStream(sessionFile);
+                return new FileInputStream(sessionFile);
             } catch (FileNotFoundException ex) {
                 throw new IOException(ex);
             }
         }
-
-        loadSession(josIS, sessionFile.toURI(), zip, progressMonitor);
     }
 
     private static InputStream getZipInputStream(ZipFile zipFile) throws ZipException, IOException, IllegalDataException {
@@ -590,10 +590,10 @@ public class SessionReader {
     }
 
     private void loadSession(InputStream josIS, URI sessionFileURI, boolean zip, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
-        
+
         this.sessionFileURI = sessionFileURI;
         this.zip = zip;
-        
+
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setValidating(false);

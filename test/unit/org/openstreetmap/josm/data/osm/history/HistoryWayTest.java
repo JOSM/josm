@@ -92,7 +92,7 @@ public class HistoryWayTest {
 
         way.addNode(1);
         way.addNode(2);
-        ArrayList<Long> ids = new ArrayList<Long>();
+        ArrayList<Long> ids = new ArrayList<>();
         for (long id : way.getNodes()) {
             ids.add(id);
         }
@@ -101,5 +101,4 @@ public class HistoryWayTest {
         assertEquals(1, (long) ids.get(0));
         assertEquals(2, (long) ids.get(1));
     }
-
 }

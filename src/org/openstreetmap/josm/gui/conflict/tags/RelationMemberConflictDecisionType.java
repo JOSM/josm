@@ -22,7 +22,7 @@ public enum RelationMemberConflictDecisionType {
      */
     UNDECIDED;
 
-    static public void prepareLabel(RelationMemberConflictDecisionType decision, JLabel label) {
+    public static void prepareLabel(RelationMemberConflictDecisionType decision, JLabel label) {
         switch(decision) {
         case REMOVE:
             label.setText(tr("Remove"));

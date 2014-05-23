@@ -30,7 +30,6 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  *   content of a tag whose name specified in the MapCSS style file, see the preference
  *   options <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.</li>
  * </ul>
- * </p>
  *
  */
 public abstract class LabelCompositionStrategy {
@@ -43,9 +42,9 @@ public abstract class LabelCompositionStrategy {
      * @return the text value to be rendered or null, if primitive is null or
      * if no suitable value could be composed
      */
-    abstract public String compose(OsmPrimitive primitive);
+    public abstract String compose(OsmPrimitive primitive);
 
-    static public class StaticLabelCompositionStrategy extends LabelCompositionStrategy {
+    public static class StaticLabelCompositionStrategy extends LabelCompositionStrategy {
         private String defaultLabel;
 
         public StaticLabelCompositionStrategy(String defaultLabel){
@@ -92,7 +91,7 @@ public abstract class LabelCompositionStrategy {
         }
     }
 
-    static public class TagLookupCompositionStrategy extends LabelCompositionStrategy {
+    public static class TagLookupCompositionStrategy extends LabelCompositionStrategy {
 
         private String defaultLabelTag;
         public TagLookupCompositionStrategy(String defaultLabelTag){
@@ -147,7 +146,7 @@ public abstract class LabelCompositionStrategy {
         }
     }
 
-    static public class DeriveLabelFromNameTagsCompositionStrategy extends LabelCompositionStrategy {
+    public static class DeriveLabelFromNameTagsCompositionStrategy extends LabelCompositionStrategy {
 
         /**
          * The list of default name tags from which a label candidate is derived.
@@ -169,8 +168,8 @@ public abstract class LabelCompositionStrategy {
             "capacity"
         };
 
-        private List<String> nameTags = new ArrayList<String>();
-        private List<String> nameComplementTags = new ArrayList<String>();
+        private List<String> nameTags = new ArrayList<>();
+        private List<String> nameComplementTags = new ArrayList<>();
 
         /**
          * <p>Creates the strategy and initializes its name tags from the preferences.</p>
@@ -188,7 +187,7 @@ public abstract class LabelCompositionStrategy {
             if (nameTags == null) {
                 nameTags = Collections.emptyList();
             }
-            ArrayList<String> result = new ArrayList<String>();
+            ArrayList<String> result = new ArrayList<>();
             for(String tag: nameTags) {
                 if (tag == null) {
                     continue;
@@ -201,7 +200,7 @@ public abstract class LabelCompositionStrategy {
             }
             return result;
         }
-        
+
         /**
          * Sets the name tags to be looked up in order to build up the label.
          *
@@ -220,7 +219,7 @@ public abstract class LabelCompositionStrategy {
         public void setNameComplementTags(List<String> nameComplementTags){
             this.nameComplementTags = buildNameTags(nameComplementTags);
         }
-        
+
         /**
          * Replies an unmodifiable list of the name tags used to compose the label.
          *
@@ -246,15 +245,15 @@ public abstract class LabelCompositionStrategy {
          * and from name tags configured in the preferences using the keys
          * <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.
          */
-        public void initNameTagsFromPreferences() {
+        public final void initNameTagsFromPreferences() {
             if (Main.pref == null){
-                this.nameTags = new ArrayList<String>(Arrays.asList(DEFAULT_NAME_TAGS));
-                this.nameComplementTags = new ArrayList<String>(Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS));
+                this.nameTags = new ArrayList<>(Arrays.asList(DEFAULT_NAME_TAGS));
+                this.nameComplementTags = new ArrayList<>(Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS));
             } else {
-                this.nameTags = new ArrayList<String>(
+                this.nameTags = new ArrayList<>(
                         Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(DEFAULT_NAME_TAGS))
                 );
-                this.nameComplementTags = new ArrayList<String>(
+                this.nameComplementTags = new ArrayList<>(
                         Main.pref.getCollection("mappaint.nameComplementOrder", Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS))
                 );
             }

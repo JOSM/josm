@@ -16,6 +16,7 @@ import java.awt.Stroke;
 import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -70,7 +71,7 @@ public class GpxLayer extends Layer {
     // used by ChooseTrackVisibilityAction to determine which tracks to show/hide
     public boolean[] trackVisibility = new boolean[0];
 
-    private final List<GpxTrack> lastTracks = new ArrayList<GpxTrack>(); // List of tracks at last paint
+    private final List<GpxTrack> lastTracks = new ArrayList<>(); // List of tracks at last paint
     private int lastUpdateCount;
 
     public GpxLayer(GpxData d) {
@@ -220,7 +221,7 @@ public class GpxLayer extends Layer {
                 trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>");
 
         final JScrollPane sp = new JScrollPane(new HtmlPanel(info.toString()));
-        sp.setPreferredSize(new Dimension(sp.getPreferredSize().width, 350));
+        sp.setPreferredSize(new Dimension(sp.getPreferredSize().width+20, 370));
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -228,6 +229,11 @@ public class GpxLayer extends Layer {
             }
         });
         return sp;
+    }
+
+    @Override
+    public boolean isInfoResizable() {
+        return true;
     }
 
     @Override
@@ -248,26 +254,12 @@ public class GpxLayer extends Layer {
     }
 
     /* for preferences */
-    static public Color getGenericColor() {
+    public static Color getGenericColor() {
         return Main.pref.getColor(marktr("gps point"), Color.gray);
     }
 
     @Override
     public Action[] getMenuEntries() {
-        if (Main.applet) {
-            return new Action[] {
-                LayerListDialog.getInstance().createShowHideLayerAction(),
-                LayerListDialog.getInstance().createDeleteLayerAction(),
-                SeparatorLayerAction.INSTANCE,
-                new CustomizeColor(this),
-                new CustomizeDrawingAction(this),
-                new ConvertToDataLayerAction(this),
-                SeparatorLayerAction.INSTANCE,
-                new ChooseTrackVisibilityAction(this),
-                new RenameLayerAction(getAssociatedFile(), this),
-                SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this) };
-        }
         return new Action[] {
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
@@ -356,14 +348,27 @@ public class GpxLayer extends Layer {
         computeCacheInSync = false;
     }
 
-    private final static Color[] colors = new Color[256];
+    private static final Color[] colors = new Color[256];
     static {
         for (int i = 0; i < colors.length; i++) {
             colors[i] = Color.getHSBColor(i / 300.0f, 1, 1);
         }
     }
+    /** Colors (with custom alpha channel, if given) for HDOP painting. */
+    private final Color[] hdopColors;
+    private final int hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
+    {
+        if (hdopAlpha >= 0) {
+            hdopColors = new Color[256];
+            for (int i = 0; i < hdopColors.length; i++) {
+                hdopColors[i] = new Color((colors[i].getRGB() & 0xFFFFFF) | ((hdopAlpha & 0xFF) << 24), true);
+            }
+        } else {
+            hdopColors = colors;
+        }
+    }
 
-    private final static Color[] colors_cyclic = new Color[256];
+    private static final Color[] colors_cyclic = new Color[256];
     static {
         for (int i = 0; i < colors_cyclic.length; i++) {
             //                    red   yellow  green   blue    red
@@ -386,8 +391,8 @@ public class GpxLayer extends Layer {
 
     /**
      * transition function:
-     *  w(0)=1, w(1)=0, 0<=w(x)<=1
-     * @param x number: 0<=x<=1
+     *  w(0)=1, w(1)=0, 0&lt;=w(x)&lt;=1
+     * @param x number: 0&lt;=x&lt;=1
      * @return the weighted value
      */
     private static float w(float x) {
@@ -398,10 +403,10 @@ public class GpxLayer extends Layer {
     }
 
     // lookup array to draw arrows without doing any math
-    private final static int ll0 = 9;
-    private final static int sl4 = 5;
-    private final static int sl9 = 3;
-    private final static int[][] dir = { { +sl4, +ll0, +ll0, +sl4 }, { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 },
+    private static final int ll0 = 9;
+    private static final int sl4 = 5;
+    private static final int sl9 = 3;
+    private static final int[][] dir = { { +sl4, +ll0, +ll0, +sl4 }, { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 },
         { -ll0, -sl9, -ll0, +sl9 }, { -sl4, -ll0, -ll0, -sl4 }, { +sl9, -ll0, -sl9, -ll0 },
         { +ll0, -sl4, +sl4, -ll0 }, { +ll0, +sl9, +ll0, -sl9 }, { +sl4, +ll0, +ll0, +sl4 },
         { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 }, { -ll0, -sl9, -ll0, +sl9 } };
@@ -549,14 +554,20 @@ public class GpxLayer extends Layer {
                         continue;
                     }
                     trkPnt.customColoring = neutralColor;
-                    if(colored == colorModes.dilution && trkPnt.attr.get("hdop") != null) {
-                        float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
-                        int hdoplvl =(int) Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
-                                : (hdop <= 0 ? 0 : hdop * hdopfactor));
-                        // High hdop is bad, but high values in colors are green.
-                        // Therefore inverse the logic
-                        int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
-                        trkPnt.customColoring = colors[hdopcolor];
+                    if (trkPnt.attr.get("hdop") != null) {
+                        if (colored == colorModes.dilution) {
+                            float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
+                            int hdoplvl =(int) Math.round(colorModeDynamic ? ((hdop-minval)*255/(maxval-minval))
+                                    : (hdop <= 0 ? 0 : hdop * hdopfactor));
+                            // High hdop is bad, but high values in colors are green.
+                            // Therefore inverse the logic
+                            int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
+                            trkPnt.customColoring = colors[hdopcolor];
+                            trkPnt.customColoringTransparent = hdopColors[hdopcolor];
+                        } else {
+                            trkPnt.customColoringTransparent = new Color(
+                                    neutralColor.getRed(), neutralColor.getGreen(), neutralColor.getBlue(), hdopAlpha & 0xFF);
+                        }
                     }
                     if (oldWp != null) {
                         double dist = c.greatCircleDistance(oldWp.getCoor());
@@ -568,9 +579,10 @@ public class GpxLayer extends Layer {
                                 float vel = (float) (dist / dtime);
                                 int velColor =(int) Math.round(colorModeDynamic ? ((vel-minval)*255/(maxval-minval))
                                         : (vel <= 0 ? 0 : vel / colorTracksTune * 255));
-                                trkPnt.customColoring = colors[Math.max(0, Math.min(velColor, 255))];
+                                final int vIndex = Math.max(0, Math.min(velColor, 255));
+                                trkPnt.customColoring = vIndex == 255 ? neutralColor : colors[vIndex];
                             } else {
-                                trkPnt.customColoring = colors[255];
+                                trkPnt.customColoring = neutralColor;
                             }
                             break;
                         case direction:
@@ -584,7 +596,7 @@ public class GpxLayer extends Layer {
                             break;
                         case time:
                             double t=trkPnt.time;
-                            if (t>0 && t<=now){ // skip bad timestamps
+                            if (t > 0 && t <= now && maxval - minval > 1000) { // skip bad timestamps and very short tracks
                                 int tColor = (int) Math.round((t-minval)*255/(maxval-minval));
                                 trkPnt.customColoring = colors[tColor];
                             } else {
@@ -608,7 +620,7 @@ public class GpxLayer extends Layer {
             computeCacheInSync = true;
         }
 
-        LinkedList<WayPoint> visibleSegments = new LinkedList<WayPoint>();
+        LinkedList<WayPoint> visibleSegments = new LinkedList<>();
         WayPoint last = null;
         ensureTrackVisibilityLength();
         for (Collection<WayPoint> segment : data.getLinesIterable(trackVisibility)) {
@@ -725,6 +737,7 @@ public class GpxLayer extends Layer {
          ********** STEP 3d - DRAW LARGE POINTS AND HDOP CIRCLE *********
          ****************************************************************/
         if (large || hdopcircle) {
+            final int halfSize = largesize/2;
             g.setColor(neutralColor);
             for (WayPoint trkPnt : visibleSegments) {
                 LatLon c = trkPnt.getCoor();
@@ -732,7 +745,7 @@ public class GpxLayer extends Layer {
                     continue;
                 }
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
-                g.setColor(trkPnt.customColoring);
+                g.setColor(trkPnt.customColoringTransparent);
                 if (hdopcircle && trkPnt.attr.get("hdop") != null) {
                     // hdop value
                     float hdop = ((Float)trkPnt.attr.get("hdop")).floatValue();
@@ -744,7 +757,7 @@ public class GpxLayer extends Layer {
                     g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
                 }
                 if (large) {
-                    g.fillRect(screen.x-1, screen.y-1, largesize, largesize);
+                    g.fillRect(screen.x-halfSize, screen.y-halfSize, largesize, largesize);
                 }
             } // end for trkpnt
         } // end if large || hdopcircle
@@ -806,15 +819,13 @@ public class GpxLayer extends Layer {
     /** ensures the trackVisibility array has the correct length without losing data.
      * additional entries are initialized to true;
      */
-    final private void ensureTrackVisibilityLength() {
+    private final void ensureTrackVisibilityLength() {
         final int l = data.tracks.size();
-        if(l == trackVisibility.length)
+        if (l == trackVisibility.length)
             return;
-        final boolean[] back = trackVisibility.clone();
-        final int m = Math.min(l, back.length);
-        trackVisibility = new boolean[l];
-        System.arraycopy(back, 0, trackVisibility, 0, m);
-        for(int i=m; i < l; i++) {
+        final int m = Math.min(l, trackVisibility.length);
+        trackVisibility = Arrays.copyOf(trackVisibility, l);
+        for (int i = m; i < l; i++) {
             trackVisibility[i] = true;
         }
     }

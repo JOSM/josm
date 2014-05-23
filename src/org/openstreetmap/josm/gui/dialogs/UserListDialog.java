@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -211,7 +212,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 if (url == null) {
                     break;
                 }
-                launchBrowser(url);
+                OpenBrowser.displayUrl(url);
                 num--;
             }
         }
@@ -293,11 +294,11 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         public UserTableModel() {
             setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%"});
-            data = new ArrayList<UserInfo>();
+            data = new ArrayList<>();
         }
 
         protected Map<User, Integer> computeStatistics(Collection<? extends OsmPrimitive> primitives) {
-            HashMap<User, Integer> ret = new HashMap<User, Integer>();
+            HashMap<User, Integer> ret = new HashMap<>();
             if (primitives == null || primitives.isEmpty()) return ret;
             for (OsmPrimitive primitive: primitives) {
                 if (ret.containsKey(primitive.getUser())) {
@@ -349,12 +350,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         public void selectPrimitivesOwnedBy(int [] rows) {
-            Set<User> users= new HashSet<User>();
+            Set<User> users= new HashSet<>();
             for (int index: rows) {
                 users.add(data.get(index).user);
             }
             Collection<OsmPrimitive> selected = Main.main.getCurrentDataSet().getAllSelected();
-            Collection<OsmPrimitive> byUser = new LinkedList<OsmPrimitive>();
+            Collection<OsmPrimitive> byUser = new LinkedList<>();
             for (OsmPrimitive p : selected) {
                 if (users.contains(p.getUser())) {
                     byUser.add(p);
@@ -364,7 +365,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         public List<User> getSelectedUsers(int[] rows) {
-            LinkedList<User> ret = new LinkedList<User>();
+            LinkedList<User> ret = new LinkedList<>();
             if (rows == null || rows.length == 0) return ret;
             for (int row: rows) {
                 if (data.get(row).user == null) {

@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -32,9 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
-import org.openstreetmap.josm.tools.Utils;
-import org.w3c.dom.Element;
-
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -45,6 +43,7 @@ import org.openstreetmap.josm.io.OsmWriterFactory;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.w3c.dom.Element;
 
 public class OsmDataSessionExporter implements SessionLayerExporter {
 
@@ -54,9 +53,6 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
 
     public OsmDataSessionExporter(OsmDataLayer layer) {
         this.layer = layer;
-    }
-
-    public OsmDataSessionExporter() {
     }
 
     @Override
@@ -79,7 +75,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
             updateEnabledState();
         }
 
-        public void updateEnabledState() {
+        public final void updateEnabledState() {
             setEnabled(layer.requiresSaveToFile());
         }
     }
@@ -212,8 +208,8 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         return layerEl;
     }
 
-    protected void addDataFile(OutputStream out) throws IOException {
-        Writer writer = new OutputStreamWriter(out, Utils.UTF_8);
+    protected void addDataFile(OutputStream out) {
+        Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
         layer.data.getReadLock().lock();
         try {
@@ -224,4 +220,3 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         }
     }
 }
-

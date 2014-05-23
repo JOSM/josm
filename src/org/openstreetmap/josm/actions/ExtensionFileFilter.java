@@ -42,11 +42,12 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
     static {
 
-        importers = new ArrayList<FileImporter>();
+        importers = new ArrayList<>();
 
         String[] importerNames = {
                 "org.openstreetmap.josm.io.OsmImporter",
                 "org.openstreetmap.josm.io.OsmGzipImporter",
+                "org.openstreetmap.josm.io.OsmZipImporter",
                 "org.openstreetmap.josm.io.OsmChangeImporter",
                 "org.openstreetmap.josm.io.GpxImporter",
                 "org.openstreetmap.josm.io.NMEAImporter",
@@ -62,12 +63,12 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 FileImporter importer = (FileImporter) Class.forName(classname).newInstance();
                 importers.add(importer);
                 MapView.addLayerChangeListener(importer);
-            } catch (Throwable t) {
-                Main.debug(t.getMessage());
+            } catch (Exception e) {
+                Main.debug(e.getMessage());
             }
         }
 
-        exporters = new ArrayList<FileExporter>();
+        exporters = new ArrayList<>();
 
         String[] exporterNames = {
                 "org.openstreetmap.josm.io.GpxExporter",
@@ -83,8 +84,8 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 FileExporter exporter = (FileExporter)Class.forName(classname).newInstance();
                 exporters.add(exporter);
                 MapView.addLayerChangeListener(exporter);
-            } catch (Throwable t) {
-                Main.debug(t.getMessage());
+            } catch (Exception e) {
+                Main.debug(e.getMessage());
             }
         }
     }
@@ -93,7 +94,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
     private final String description;
     private final String defaultExtension;
 
-    static protected void sort(List<ExtensionFileFilter> filters) {
+    protected static void sort(List<ExtensionFileFilter> filters) {
         Collections.sort(
                 filters,
                 new Comparator<ExtensionFileFilter>() {
@@ -136,7 +137,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
         updateAllFormatsImporter();
-        LinkedList<ExtensionFileFilter> filters = new LinkedList<ExtensionFileFilter>();
+        LinkedList<ExtensionFileFilter> filters = new LinkedList<>();
         for (FileImporter importer : importers) {
             filters.add(importer.filter);
         }
@@ -153,7 +154,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 2029
      */
     public static List<ExtensionFileFilter> getExportExtensionFileFilters() {
-        LinkedList<ExtensionFileFilter> filters = new LinkedList<ExtensionFileFilter>();
+        LinkedList<ExtensionFileFilter> filters = new LinkedList<>();
         for (FileExporter exporter : exporters) {
             if (filters.contains(exporter.filter) || !exporter.isEnabled()) {
                 continue;

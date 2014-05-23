@@ -66,7 +66,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     public InspectPrimitiveDialog(Collection<OsmPrimitive> primitives, OsmDataLayer layer) {
         super(Main.parent, tr("Advanced object info"), new String[] {tr("Close")});
-        this.primitives = new ArrayList<OsmPrimitive>(primitives);
+        this.primitives = new ArrayList<>(primitives);
         this.layer = layer;
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(750, 550)));
@@ -362,7 +362,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
 
         if (sel.size() == 2) {
-            List<OsmPrimitive> selList = new ArrayList<OsmPrimitive>(sel);
+            List<OsmPrimitive> selList = new ArrayList<>(sel);
             StyleCache sc1 = selList.get(0).mappaintStyle;
             StyleCache sc2 = selList.get(1).mappaintStyle;
             if (sc1 == sc2) {

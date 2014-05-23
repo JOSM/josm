@@ -15,11 +15,13 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -28,6 +30,9 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Look-and-feel preferences.
+ */
 public class LafPreference implements SubPreferenceSetting {
 
     /**
@@ -43,8 +48,8 @@ public class LafPreference implements SubPreferenceSetting {
     /**
      * ComboBox with all look and feels.
      */
-    private JosmComboBox lafCombo;
-    public JPanel panel;
+    private JosmComboBox<LookAndFeelInfo> lafCombo;
+    JPanel panel;
     private JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
     private JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
     private JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
@@ -53,33 +58,37 @@ public class LafPreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        lafCombo = new JosmComboBox(UIManager.getInstalledLookAndFeels());
+        lafCombo = new JosmComboBox<>(UIManager.getInstalledLookAndFeels());
 
         // let's try to load additional LookAndFeels and put them into the list
-        try {
-            Class<?> Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-            Object Oquaqua = Cquaqua.getConstructor((Class[])null).newInstance((Object[])null);
-            // no exception? Then Go!
-            lafCombo.addItem(
-                    new UIManager.LookAndFeelInfo(((javax.swing.LookAndFeel)Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
-            );
-        } catch (Exception ex) {
-            // just debug, Quaqua may not even be installed...
-            Main.debug(ex.getMessage());
+        if (Main.isPlatformOsx()) {
+            try {
+                Class<?> Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+                Object Oquaqua = Cquaqua.getConstructor((Class[])null).newInstance((Object[])null);
+                // no exception? Then Go!
+                lafCombo.addItem(
+                        new UIManager.LookAndFeelInfo(((LookAndFeel)Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
+                );
+            } catch (Exception ex) {
+                // just debug, Quaqua may not even be installed...
+                Main.debug(ex.getMessage());
+            }
         }
 
         String laf = Main.pref.get("laf", Main.platform.getDefaultStyle());
         for (int i = 0; i < lafCombo.getItemCount(); ++i) {
-            if (((LookAndFeelInfo)lafCombo.getItemAt(i)).getClassName().equals(laf)) {
+            if (lafCombo.getItemAt(i).getClassName().equals(laf)) {
                 lafCombo.setSelectedIndex(i);
                 break;
             }
         }
 
-        final ListCellRenderer oldRenderer = lafCombo.getRenderer();
-        lafCombo.setRenderer(new DefaultListCellRenderer(){
-            @Override public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                return oldRenderer.getListCellRendererComponent(list, ((LookAndFeelInfo)value).getName(), index, isSelected, cellHasFocus);
+        lafCombo.setRenderer(new ListCellRenderer<LookAndFeelInfo>(){
+            final DefaultListCellRenderer def = new DefaultListCellRenderer();
+            @Override
+            public Component getListCellRendererComponent(JList<? extends LookAndFeelInfo> list, LookAndFeelInfo value, 
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                return def.getListCellRendererComponent(list, value.getName(), index, isSelected, cellHasFocus);
             }
         });
 
@@ -109,7 +118,7 @@ public class LafPreference implements SubPreferenceSetting {
         panel.add(modeless, GBC.eop().insets(20, 0, 0, 0));
 
         dynamicButtons.setToolTipText(tr("Display buttons in right side menus only when mouse is inside the element"));
-        dynamicButtons.setSelected(Main.pref.getBoolean("dialog.dynamic.buttons", true));
+        dynamicButtons.setSelected(ToggleDialog.PROP_DYNAMIC_BUTTONS.get());
         panel.add(dynamicButtons, GBC.eop().insets(20, 0, 0, 0));
 
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
@@ -130,7 +139,7 @@ public class LafPreference implements SubPreferenceSetting {
         Main.pref.put("osm-primitives.showid", showID.isSelected());
         Main.pref.put("osm-primitives.localize-name", showLocalizedName.isSelected());
         Main.pref.put("modeless", modeless.isSelected());
-        Main.pref.put("dialog.dynamic.buttons", dynamicButtons.isSelected());
+        Main.pref.put(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
         mod |= Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
         return mod;
     }

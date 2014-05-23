@@ -19,14 +19,14 @@ import org.openstreetmap.josm.tools.Pair;
  * This static class contains functions used to find target way, node to move or
  * segment to divide.
  *
- * @author Alexander Kachkaev <alexander@kachkaev.ru>, 2011
+ * @author Alexander Kachkaev &lt;alexander@kachkaev.ru&gt;, 2011
  */
 final class ImproveWayAccuracyHelper {
 
     private ImproveWayAccuracyHelper() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * Finds the way to work on. If the mouse is on the node, extracts one of
      * the ways containing it. If the mouse is on the way, simply returns it.

@@ -70,7 +70,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      * @since 1221
      * @see #paintConflicts
      */
-    static public Color getColor() {
+    public static Color getColor() {
         return Main.pref.getColor(marktr("conflict"), Color.gray);
     }
 
@@ -80,7 +80,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     /** the model for the list of conflicts */
     private ConflictListModel model;
     /** the list widget for the list of conflicts */
-    private JList lstConflicts;
+    private JList<OsmPrimitive> lstConflicts;
 
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
@@ -94,7 +94,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     protected void build() {
         model = new ConflictListModel();
 
-        lstConflicts = new JList(model);
+        lstConflicts = new JList<>(model);
         lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
         lstConflicts.addMouseListener(new MouseEventHandler());
@@ -234,7 +234,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         g.setColor(preferencesColor);
         Visitor conflictPainter = new AbstractVisitor() {
             // Manage a stack of visited relations to avoid infinite recursion with cyclic relations (fix #7938)
-            private final Set<Relation> visited = new HashSet<Relation>();
+            private final Set<Relation> visited = new HashSet<>();
             @Override
             public void visit(Node n) {
                 Point p = nc.getPoint(n);
@@ -271,11 +271,11 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                 }
             }
         };
-        for (Object o : lstConflicts.getSelectedValues()) {
-            if (conflicts == null || !conflicts.hasConflictForMy((OsmPrimitive)o)) {
+        for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
+            if (conflicts == null || !conflicts.hasConflictForMy(o)) {
                 continue;
             }
-            conflicts.getConflictForMy((OsmPrimitive)o).getTheir().accept(conflictPainter);
+            conflicts.getConflictForMy(o).getTheir().accept(conflictPainter);
         }
     }
 
@@ -358,12 +358,12 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      * The {@link ListModel} for conflicts
      *
      */
-    class ConflictListModel implements ListModel {
+    class ConflictListModel implements ListModel<OsmPrimitive> {
 
         private CopyOnWriteArrayList<ListDataListener> listeners;
 
         public ConflictListModel() {
-            listeners = new CopyOnWriteArrayList<ListDataListener>();
+            listeners = new CopyOnWriteArrayList<>();
         }
 
         @Override
@@ -391,7 +391,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public OsmPrimitive getElementAt(int index) {
             if (index < 0) return null;
             if (index >= getSize()) return null;
             return conflicts.get(index).getMy();
@@ -450,9 +450,9 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
-            for (Object o : lstConflicts.getSelectedValues()) {
-                sel.add((OsmPrimitive)o);
+            Collection<OsmPrimitive> sel = new LinkedList<>();
+            for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
+                sel.add(o);
             }
             DataSet ds = Main.main.getCurrentDataSet();
             if (ds != null) { // Can't see how it is possible but it happened in #7942
@@ -485,7 +485,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                 numNewConflicts
         );
 
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         sb.append("<html>").append(msg1).append("</html>");
         if (numNewConflicts > 0) {
             final ButtonSpec[] options = new ButtonSpec[] {

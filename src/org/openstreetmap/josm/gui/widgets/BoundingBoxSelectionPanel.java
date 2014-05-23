@@ -43,7 +43,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
         LongitudeValidator.decorate(tfLatLon[3]);
     }
 
-    protected void build() {
+    protected final void build() {
         buildInputFields();
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         setLayout(new GridBagLayout());
@@ -120,7 +120,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
         tfLatLon[3].setText(area.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES));
     }
 
-    static private class LatitudeValidator extends AbstractTextComponentValidator {
+    private static class LatitudeValidator extends AbstractTextComponentValidator {
 
         public static void decorate(JTextComponent tc) {
             new LatitudeValidator(tc);
@@ -160,7 +160,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
         }
     }
 
-    static private class LongitudeValidator extends AbstractTextComponentValidator{
+    private static class LongitudeValidator extends AbstractTextComponentValidator{
 
         public static void decorate(JTextComponent tc) {
             new LongitudeValidator(tc);

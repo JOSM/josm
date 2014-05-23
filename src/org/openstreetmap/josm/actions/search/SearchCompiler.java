@@ -21,6 +21,7 @@ import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -57,9 +58,9 @@ public class SearchCompiler {
     private static String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
     private static String  rxErrorMsgNoPos = marktr("The regex \"{0}\" had a parse error, full error:\n\n{1}");
     private PushbackTokenizer tokenizer;
-    private static Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<String, SimpleMatchFactory>();
-    private static Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<String, UnaryMatchFactory>();
-    private static Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<String, BinaryMatchFactory>();
+    private static Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<>();
+    private static Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<>();
+    private static Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<>();
 
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
@@ -75,7 +76,6 @@ public class SearchCompiler {
         if (unaryMatchFactoryMap.isEmpty()) {
             addMatchFactory(new CoreUnaryMatchFactory());
         }
-
     }
 
     /**
@@ -104,58 +104,65 @@ public class SearchCompiler {
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
-            if ("modified".equals(keyword))
+            switch(keyword) {
+            case "modified":
                 return new Modified();
-            else if ("selected".equals(keyword))
+            case "selected":
                 return new Selected();
-            else if ("incomplete".equals(keyword))
+            case "incomplete":
                 return new Incomplete();
-            else if ("untagged".equals(keyword))
+            case "untagged":
                 return new Untagged();
-            else if ("closed".equals(keyword))
+            case "closed":
                 return new Closed();
-            else if ("new".equals(keyword))
+            case "new":
                 return new New();
-            else if ("indownloadedarea".equals(keyword))
+            case "indownloadedarea":
                 return new InDataSourceArea(false);
-            else if ("allindownloadedarea".equals(keyword))
+            case "allindownloadedarea":
                 return new InDataSourceArea(true);
-            else if ("inview".equals(keyword))
+            case "inview":
                 return new InView(false);
-            else if ("allinview".equals(keyword))
+            case "allinview":
                 return new InView(true);
-            else if (tokenizer != null) {
-                if ("id".equals(keyword))
-                    return new Id(tokenizer);
-                else if ("version".equals(keyword))
-                    return new Version(tokenizer);
-                else if ("changeset".equals(keyword))
-                    return new ChangesetId(tokenizer);
-                else if ("nodes".equals(keyword))
-                    return new NodeCountRange(tokenizer);
-                else if ("tags".equals(keyword))
-                    return new TagCountRange(tokenizer);
-                else if ("areasize".equals(keyword))
-                    return new AreaSize(tokenizer);
-                else if ("nth".equals(keyword))
-                    return new Nth(tokenizer, false);
-                else if ("nth%".equals(keyword))
-                    return new Nth(tokenizer, true);
-                else if ("timestamp".equals(keyword)) {
-                    String rangeS = " " + tokenizer.readTextOrNumber() + " "; // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
-                    String[] rangeA = rangeS.split("/");
-                    if (rangeA.length == 1)
-                        return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
-                    else if (rangeA.length == 2) {
-                        String rangeA1 = rangeA[0].trim();
-                        String rangeA2 = rangeA[1].trim();
-                        long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); // if min timestap is empty: use lowest possible date
-                        long maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime(); // if max timestamp is empty: use "now"
-                        return new TimestampRange(minDate, maxDate);
-                    } else
-                        /*
-                         * I18n: Don't translate timestamp keyword
-                         */ throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
+            default:
+                if (tokenizer != null) {
+                    switch (keyword) {
+                    case "id":
+                        return new Id(tokenizer);
+                    case "version":
+                        return new Version(tokenizer);
+                    case "changeset":
+                        return new ChangesetId(tokenizer);
+                    case "nodes":
+                        return new NodeCountRange(tokenizer);
+                    case "tags":
+                        return new TagCountRange(tokenizer);
+                    case "areasize":
+                        return new AreaSize(tokenizer);
+                    case "nth":
+                        return new Nth(tokenizer, false);
+                    case "nth%":
+                        return new Nth(tokenizer, true);
+                    case "timestamp":
+                        // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
+                        String rangeS = " " + tokenizer.readTextOrNumber() + " ";
+                        String[] rangeA = rangeS.split("/");
+                        if (rangeA.length == 1) {
+                            return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
+                        } else if (rangeA.length == 2) {
+                            String rangeA1 = rangeA[0].trim();
+                            String rangeA2 = rangeA[1].trim();
+                            // if min timestap is empty: use lowest possible date
+                            long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime(); 
+                            // if max timestamp is empty: use "now"
+                            long maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime(); 
+                            return new TimestampRange(minDate, maxDate);
+                        } else {
+                            // I18n: Don't translate timestamp keyword
+                            throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
+                        }
+                    }
                 }
             }
             return null;
@@ -207,9 +214,9 @@ public class SearchCompiler {
     /**
      * Base class for all search operators.
      */
-    abstract public static class Match implements Predicate<OsmPrimitive> {
+    public abstract static class Match implements Predicate<OsmPrimitive> {
 
-        abstract public boolean match(OsmPrimitive osm);
+        public abstract boolean match(OsmPrimitive osm);
 
         /**
          * Tests whether one of the primitives matches.
@@ -242,7 +249,7 @@ public class SearchCompiler {
     /**
      * A unary search operator which may take data parameters.
      */
-    abstract public static class UnaryMatch extends Match {
+    public abstract static class UnaryMatch extends Match {
 
         protected final Match match;
 
@@ -264,7 +271,7 @@ public class SearchCompiler {
     /**
      * A binary search operator which may take data parameters.
      */
-    abstract public static class BinaryMatch extends Match {
+    public abstract static class BinaryMatch extends Match {
 
         protected final Match lhs;
         protected final Match rhs;
@@ -287,7 +294,8 @@ public class SearchCompiler {
      * Matches every OsmPrimitive.
      */
     public static class Always extends Match {
-        public static Always INSTANCE = new Always();
+        /** The unique instance/ */
+        public static final Always INSTANCE = new Always();
         @Override public boolean match(OsmPrimitive osm) {
             return true;
         }
@@ -443,16 +451,16 @@ public class SearchCompiler {
                 try {
                     this.keyPattern = Pattern.compile(key, searchFlags);
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
                 }
                 try {
                     this.valuePattern = Pattern.compile(value, searchFlags);
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
                 }
                 this.key = key;
                 this.value = value;
@@ -500,7 +508,7 @@ public class SearchCompiler {
             } else {
                 String mv = null;
 
-                if (key.equals("timestamp")) {
+                if ("timestamp".equals(key)) {
                     mv = DateUtils.fromDate(osm.getTimestamp());
                 } else {
                     mv = osm.get(key);
@@ -536,12 +544,14 @@ public class SearchCompiler {
         @Override
         public boolean match(OsmPrimitive osm) {
             int compareResult;
+            String currentValue = osm.get(key);
+            if (currentValue == null) return false;
             try {
                 compareResult = Double.compare(
-                        Double.parseDouble(osm.get(key)),
+                        Double.parseDouble(currentValue),
                         Double.parseDouble(referenceValue)
                 );
-            } catch (Exception ignore) {
+            } catch (NumberFormatException ignore) {
                 compareResult = osm.get(key).compareTo(referenceValue);
             }
             return compareMode < 0 ? compareResult < 0 : compareMode > 0 ? compareResult > 0 : compareResult == 0;
@@ -599,7 +609,7 @@ public class SearchCompiler {
                 }
             }
 
-            if (regexp && key.length() > 0 && !key.equals("*")) {
+            if (regexp && key.length() > 0 && !"*".equals(key)) {
                 try {
                     keyPattern = Pattern.compile(key, regexFlags(false));
                 } catch (PatternSyntaxException e) {
@@ -610,7 +620,7 @@ public class SearchCompiler {
             } else {
                 keyPattern = null;
             }
-            if (regexp && this.value.length() > 0 && !this.value.equals("*")) {
+            if (regexp && this.value.length() > 0 && !"*".equals(this.value)) {
                 try {
                     valuePattern = Pattern.compile(this.value, regexFlags(false));
                 } catch (PatternSyntaxException e) {
@@ -694,9 +704,9 @@ public class SearchCompiler {
                 try {
                     this.searchRegex = Pattern.compile(s, regexFlags(caseSensitive));
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, s, e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, s, e.getMessage()), e);
                 }
                 this.search = s;
             } else if (caseSensitive) {
@@ -745,22 +755,16 @@ public class SearchCompiler {
         }
     }
 
-    // TODO: change how we handle this
     private static class ExactType extends Match {
-        private final Class<?> type;
+        private final OsmPrimitiveType type;
         public ExactType(String type) throws ParseError {
-            if ("node".equals(type)) {
-                this.type = Node.class;
-            } else if ("way".equals(type)) {
-                this.type = Way.class;
-            } else if ("relation".equals(type)) {
-                this.type = Relation.class;
-            } else
+            this.type = OsmPrimitiveType.from(type);
+            if (this.type == null)
                 throw new ParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation",
                         type));
         }
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.getClass() == type;
+            return type.equals(osm.getType());
         }
         @Override public String toString() {return "type="+type;}
     }
@@ -771,7 +775,7 @@ public class SearchCompiler {
     private static class UserMatch extends Match {
         private String user;
         public UserMatch(String user) {
-            if (user.equals("anonymous")) {
+            if ("anonymous".equals(user)) {
                 this.user = null;
             } else {
                 this.user = user;
@@ -832,10 +836,13 @@ public class SearchCompiler {
         private final boolean modulo;
 
         public Nth(PushbackTokenizer tokenizer, boolean modulo) throws ParseError {
-            this((int) tokenizer.readNumber(tr("Primitive id expected")), modulo);
+            this((int) tokenizer.readNumber(tr("Positive integer expected")), modulo);
         }
 
-        private Nth(int nth, boolean modulo) {
+        private Nth(int nth, boolean modulo) throws ParseError {
+            if (nth <= 0) {
+                throw new ParseError(tr("Positive integer expected"));
+            }
             this.nth = nth;
             this.modulo = modulo;
         }
@@ -1176,6 +1183,9 @@ public class SearchCompiler {
         public ParseError(String msg) {
             super(msg);
         }
+        public ParseError(String msg, Throwable cause) {
+            super(msg, cause);
+        }
         public ParseError(Token expected, Token found) {
             this(tr("Unexpected token. Expected {0}, found {1}", expected, found));
         }
@@ -1310,14 +1320,16 @@ public class SearchCompiler {
         if (value == null) {
             value = "";
         }
-        if (key.equals("type"))
+        switch(key) {
+        case "type":
             return new ExactType(value);
-        else if (key.equals("user"))
+        case "user":
             return new UserMatch(value);
-        else if (key.equals("role"))
+        case "role":
             return new RoleMatch(value);
-        else
+        default:
             return new KeyValue(key, value, regexSearch, caseSensitive);
+        }
     }
 
     private static int regexFlags(boolean caseSensitive) {

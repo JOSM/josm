@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,15 +17,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.io.MirroredInputStream;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
@@ -34,26 +34,31 @@ import org.xml.sax.SAXException;
  */
 public final class TaggingPresetReader {
 
+    /**
+     * The accepted MIME types sent in the HTTP Accept header.
+     * @since 6867
+     */
+    public static final String PRESET_MIME_TYPES = "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
+
     private TaggingPresetReader() {
         // Hide default constructor for utils classes
     }
-    
+
     private static File zipIcons = null;
-    
-    public static List<String> getPresetSources() {
-        LinkedList<String> sources = new LinkedList<String>();
 
-        for (SourceEntry e : (new TaggingPresetPreference.PresetPrefHelper()).get()) {
-            sources.add(e.url);
-        }
-
-        return sources;
+    /**
+     * Returns the set of preset source URLs.
+     * @return The set of preset source URLs.
+     */
+    public static Set<String> getPresetSources() {
+        return new TaggingPresetPreference.PresetPrefHelper().getActiveUrls();
     }
 
     /**
-     * Holds a reference to a chunk of  items/objects.
+     * Holds a reference to a chunk of items/objects.
      */
     public static class Chunk {
+        /** The chunk id, can be referenced later */
         public String id;
     }
 
@@ -61,9 +66,10 @@ public final class TaggingPresetReader {
      * Holds a reference to an earlier item/object.
      */
     public static class Reference {
+        /** Reference matching a chunk id defined earlier **/
         public String ref;
     }
-    
+
     public static List<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
         XmlObjectParser parser = new XmlObjectParser();
         parser.mapOnStart("item", TaggingPreset.class);
@@ -87,18 +93,18 @@ public final class TaggingPresetReader {
         parser.mapBoth("chunk", Chunk.class);
         parser.map("reference", Reference.class);
 
-        LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
+        LinkedList<TaggingPreset> all = new LinkedList<>();
         TaggingPresetMenu lastmenu = null;
         TaggingPresetItems.Roles lastrole = null;
-        final List<TaggingPresetItems.Check> checks = new LinkedList<TaggingPresetItems.Check>();
-        List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<TaggingPresetItems.PresetListEntry>();
-        final Map<String, List<Object>> byId = new HashMap<String, List<Object>>();
-        final Stack<String> lastIds = new Stack<String>();
+        final List<TaggingPresetItems.Check> checks = new LinkedList<>();
+        List<TaggingPresetItems.PresetListEntry> listEntries = new LinkedList<>();
+        final Map<String, List<Object>> byId = new HashMap<>();
+        final Stack<String> lastIds = new Stack<>();
         /** lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
-        final Stack<Iterator<Object>> lastIdIterators = new Stack<Iterator<Object>>();
+        final Stack<Iterator<Object>> lastIdIterators = new Stack<>();
 
         if (validate) {
-            parser.startWithValidation(in, Main.JOSM_WEBSITE+"/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
+            parser.startWithValidation(in, Main.getXMLBase()+"/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
         } else {
             parser.start(in);
         }
@@ -124,7 +130,7 @@ public final class TaggingPresetReader {
                     // if preset item contains an id, store a mapping for later usage
                     String lastId = ((Chunk) o).id;
                     lastIds.push(lastId);
-                    byId.put(lastId, new ArrayList<Object>());
+                    byId.put(lastId, new ArrayList<>());
                     continue;
                 }
             } else if (!lastIds.isEmpty()) {
@@ -202,7 +208,7 @@ public final class TaggingPresetReader {
                                 ((TaggingPresetItems.Key) o).value = ""; // Fix #8530
                             }
                         }
-                        listEntries = new LinkedList<TaggingPresetItems.PresetListEntry>();
+                        listEntries = new LinkedList<>();
                         lastrole = null;
                     }
                 } else
@@ -215,41 +221,60 @@ public final class TaggingPresetReader {
         }
         return all;
     }
-    
+
     public static Collection<TaggingPreset> readAll(String source, boolean validate) throws SAXException, IOException {
         Collection<TaggingPreset> tp;
-        MirroredInputStream s = new MirroredInputStream(source);
-        try {
-            InputStream zip = s.findZipEntryInputStream("xml","preset");
-            if(zip != null) {
+        try (
+            MirroredInputStream s = new MirroredInputStream(source, null, PRESET_MIME_TYPES);
+            // zip may be null, but Java 7 allows it: https://blogs.oracle.com/darcy/entry/project_coin_null_try_with
+            InputStream zip = s.findZipEntryInputStream("xml", "preset")
+        ) {
+            if (zip != null) {
                 zipIcons = s.getFile();
             }
-            InputStreamReader r = new InputStreamReader(zip == null ? s : zip, Utils.UTF_8);
-            try {
+            try (InputStreamReader r = new InputStreamReader(zip == null ? s : zip, StandardCharsets.UTF_8)) {
                 tp = readAll(new BufferedReader(r), validate);
-            } finally {
-                Utils.close(r);
             }
-        } finally {
-            Utils.close(s);
         }
         return tp;
     }
 
+    /**
+     * Reads all tagging presets from the given sources.
+     * @param sources Collection of tagging presets sources.
+     * @param validate if {@code true}, presets will be validated against XML schema
+     * @return Collection of all presets successfully read
+     */
     public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate) {
-        LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
+        return readAll(sources, validate, true);
+    }
+
+    /**
+     * Reads all tagging presets from the given sources.
+     * @param sources Collection of tagging presets sources.
+     * @param validate if {@code true}, presets will be validated against XML schema
+     * @param displayErrMsg if {@code true}, a blocking error message is displayed in case of I/O exception.
+     * @return Collection of all presets successfully read
+     */
+    public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate, boolean displayErrMsg) {
+        LinkedList<TaggingPreset> allPresets = new LinkedList<>();
         for(String source : sources)  {
             try {
                 allPresets.addAll(readAll(source, validate));
             } catch (IOException e) {
-                Main.error(e);
+                Main.error(e, false);
                 Main.error(source);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Could not read tagging preset source: {0}",source),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                        );
+                if (source.startsWith("http")) {
+                    Main.addNetworkError(source, e);
+                }
+                if (displayErrMsg) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("Could not read tagging preset source: {0}",source),
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
+                            );
+                }
             } catch (SAXException e) {
                 Main.error(e);
                 Main.error(source);
@@ -263,11 +288,17 @@ public final class TaggingPresetReader {
         }
         return allPresets;
     }
-    
-    public static Collection<TaggingPreset> readFromPreferences(boolean validate) {
-        return readAll(getPresetSources(), validate);
+
+    /**
+     * Reads all tagging presets from sources stored in preferences.
+     * @param validate if {@code true}, presets will be validated against XML schema
+     * @param displayErrMsg if {@code true}, a blocking error message is displayed in case of I/O exception.
+     * @return Collection of all presets successfully read
+     */
+    public static Collection<TaggingPreset> readFromPreferences(boolean validate, boolean displayErrMsg) {
+        return readAll(getPresetSources(), validate, displayErrMsg);
     }
-    
+
     public static File getZipIcons() {
         return zipIcons;
     }

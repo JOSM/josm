@@ -23,6 +23,7 @@ import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
@@ -65,8 +66,8 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
     }
 
-    private static List<ProjectionChoice> projectionChoices = new ArrayList<ProjectionChoice>();
-    private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<String, ProjectionChoice>();
+    private static List<ProjectionChoice> projectionChoices = new ArrayList<>();
+    private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<>();
 
     // some ProjectionChoices that are referenced from other parts of the code
     public static final ProjectionChoice wgs84, mercator, lambert, utm_france_dom, lambert_cc9;
@@ -89,9 +90,9 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * coordinate.
          *
          * See also USGS Bulletin 1532
-         * (http://egsc.usgs.gov/isb/pubs/factsheets/fs08799.html)
+         * (http://pubs.usgs.gov/bul/1532/report.pdf)
          * initially EPSG used 3785 but that has been superseded by 3857,
-         * see http://www.epsg-registry.org/
+         * see https://www.epsg-registry.org/
          */
         mercator = registerProjectionChoice(tr("Mercator"), "core:mercator", 3857);
 
@@ -113,6 +114,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * @author Don-vip
          */
         registerProjectionChoice(tr("Belgian Lambert 1972"), "core:belgianLambert1972", 31370);     // BE
+
         /**
          * Belgian Lambert 2008 projection.
          *
@@ -124,7 +126,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         registerProjectionChoice(tr("Belgian Lambert 2008"), "core:belgianLambert2008", 3812);      // BE
 
         /**
-         * SwissGrid CH1903 / L03, see http://de.wikipedia.org/wiki/Swiss_Grid.
+         * SwissGrid CH1903 / L03, see https://en.wikipedia.org/wiki/Swiss_coordinate_system.
          *
          * Actually, what we have here, is CH1903+ (EPSG:2056), but without
          * the additional false easting of 2000km and false northing 1000 km.
@@ -140,7 +142,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * Estonian Coordinate System of 1997.
          *
          * Thanks to Johan Montagnat and its geoconv java converter application
-         * (http://www.i3s.unice.fr/~johan/gps/ , published under GPL license)
+         * (https://www.i3s.unice.fr/~johan/gps/ , published under GPL license)
          * from which some code and constants have been reused here.
          */
         registerProjectionChoice(tr("Lambert Zone (Estonia)"), "core:lambertest", 3301);            // EE
@@ -151,32 +153,35 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * This newer version uses the grid translation NTF<->RGF93 provided by IGN for a submillimetric accuracy.
          * (RGF93 is the French geodetic system similar to WGS84 but not mathematically equal)
          *
-         * Source: http://professionnels.ign.fr/DISPLAY/000/526/700/5267002/transformation.pdf
+         * Source: http://geodesie.ign.fr/contenu/fichiers/Changement_systeme_geodesique.pdf
          * @author Pieren
          */
         registerProjectionChoice(lambert = new LambertProjectionChoice());                          // FR
+
         /**
          * Lambert 93 projection.
          *
          * As specified by the IGN in this document
-         * http://professionnels.ign.fr/DISPLAY/000/526/702/5267026/NTG_87.pdf
+         * http://geodesie.ign.fr/contenu/fichiers/documentation/rgf93/Lambert-93.pdf
          * @author Don-vip
          */
         registerProjectionChoice(tr("Lambert 93 (France)"), "core:lambert93", 2154);                // FR
+
         /**
          * Lambert Conic Conform 9 Zones projection.
          *
          * As specified by the IGN in this document
-         * http://professionnels.ign.fr/DISPLAY/000/526/700/5267002/transformation.pdf
+         * http://geodesie.ign.fr/contenu/fichiers/documentation/rgf93/cc9zones.pdf
          * @author Pieren
          */
-        registerProjectionChoice(lambert_cc9 = new LambertCC9ZonesProjectionChoice());                            // FR
+        registerProjectionChoice(lambert_cc9 = new LambertCC9ZonesProjectionChoice());              // FR
+
         /**
          * French departements in the Caribbean Sea and Indian Ocean.
          *
          * Using the UTM transvers Mercator projection and specific geodesic settings.
          */
-        registerProjectionChoice(utm_france_dom = new UTMFranceDOMProjectionChoice());                            // FR
+        registerProjectionChoice(utm_france_dom = new UTMFranceDOMProjectionChoice());              // FR
 
         /**
          * LKS-92/ Latvia TM projection.
@@ -241,7 +246,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
     private static final CollectionProperty PROP_SUB_PROJECTION = new CollectionProperty("projection.sub", null);
     public static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", "Metric");
-    private static final String[] unitsValues = (new ArrayList<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet())).toArray(new String[0]);
+    private static final String[] unitsValues = (new ArrayList<>(SystemOfMeasurement.ALL_SYSTEMS.keySet())).toArray(new String[0]);
     private static final String[] unitsValuesTr = new String[unitsValues.length];
     static {
         for (int i=0; i<unitsValues.length; ++i) {
@@ -252,14 +257,14 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * Combobox with all projections available
      */
-    private JosmComboBox projectionCombo = new JosmComboBox(projectionChoices.toArray());
+    private final JosmComboBox<ProjectionChoice> projectionCombo = new JosmComboBox<>(projectionChoices.toArray(new ProjectionChoice[0]));
 
     /**
      * Combobox with all coordinate display possibilities
      */
-    private JosmComboBox coordinatesCombo = new JosmComboBox(CoordinateFormat.values());
+    private final JosmComboBox<CoordinateFormat> coordinatesCombo = new JosmComboBox<>(CoordinateFormat.values());
 
-    private JosmComboBox unitsCombo = new JosmComboBox(unitsValuesTr);
+    private final JosmComboBox<String> unitsCombo = new JosmComboBox<>(unitsValuesTr);
 
     /**
      * This variable holds the JPanel with the projection's preferences. If the
@@ -280,21 +285,21 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * This is the panel holding all projection preferences
      */
-    private JPanel projPanel = new JPanel(new GridBagLayout());
+    private final JPanel projPanel = new JPanel(new GridBagLayout());
 
     /**
      * The GridBagConstraints for the Panel containing the ProjectionSubPrefs.
      * This is required twice in the code, creating it here keeps both occurrences
      * in sync
      */
-    static private GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
+    private static final GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
         ProjectionChoice pc = setupProjectionCombo();
 
         for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {
-            if (((CoordinateFormat)coordinatesCombo.getItemAt(i)).name().equals(PROP_COORDINATES.get())) {
+            if (coordinatesCombo.getItemAt(i).name().equals(PROP_COORDINATES.get())) {
                 coordinatesCombo.setSelectedIndex(i);
                 break;
             }
@@ -379,11 +384,11 @@ public class ProjectionPreference implements SubPreferenceSetting {
         return false;
     }
 
-    static public void setProjection() {
+    public static void setProjection() {
         setProjection(PROP_PROJECTION.get(), PROP_SUB_PROJECTION.get());
     }
 
-    static public void setProjection(String id, Collection<String> pref) {
+    public static void setProjection(String id, Collection<String> pref) {
         ProjectionChoice pc = projectionChoicesById.get(id);
 
         if (pc == null) {
@@ -439,7 +444,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private ProjectionChoice setupProjectionCombo() {
         ProjectionChoice pc = null;
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
-            ProjectionChoice pc1 = (ProjectionChoice) projectionCombo.getItemAt(i);
+            ProjectionChoice pc1 = projectionCombo.getItemAt(i);
             pc1.setPreferences(getSubprojectionPreference(pc1));
             if (pc1.getId().equals(PROP_PROJECTION.get())) {
                 projectionCombo.setSelectedIndex(i);

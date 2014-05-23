@@ -48,8 +48,7 @@ public class ChangePropertyCommand extends Command {
      * @param tags the tags to set
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, AbstractMap<String, String> tags) {
-        super();
-        this.objects = new LinkedList<OsmPrimitive>();
+        this.objects = new LinkedList<>();
         this.tags = tags;
         init(objects);
     }
@@ -62,8 +61,8 @@ public class ChangePropertyCommand extends Command {
      * @param value the value of the key to set
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, String key, String value) {
-        this.objects = new LinkedList<OsmPrimitive>();
-        this.tags = new HashMap<String, String>(1);
+        this.objects = new LinkedList<>();
+        this.tags = new HashMap<>(1);
         this.tags.put(key, value);
         init(objects);
     }
@@ -166,11 +165,11 @@ public class ChangePropertyCommand extends Command {
         } else if (objects.size() > 1 && tags.size() == 1) {
             Map.Entry<String, String> entry = tags.entrySet().iterator().next();
             if (entry.getValue() == null) {
-                /* for correct i18n of plural forms - see #9110 */
-                text = trn("Remove \"{0}\" for {1} objects", "Remove \"{0}\" for {1} objects", objects.size(), entry.getKey(), objects.size());
+                /* I18n: plural form for objects, but value < 2 not possible! */
+                text = trn("Remove \"{0}\" for {1} object", "Remove \"{0}\" for {1} objects", objects.size(), entry.getKey(), objects.size());
             } else {
-                /* for correct i18n of plural forms - see #9110 */
-                text = trn("Set {0}={1} for {2} objects", "Set {0}={1} for {2} objects", objects.size(), entry.getKey(), entry.getValue(), objects.size());
+                /* I18n: plural form for objects, but value < 2 not possible! */
+                text = trn("Set {0}={1} for {2} object", "Set {0}={1} for {2} objects", objects.size(), entry.getKey(), entry.getValue(), objects.size());
             }
         }
         else {
@@ -183,11 +182,11 @@ public class ChangePropertyCommand extends Command {
             }
 
             if (allnull) {
-                /* for correct i18n of plural forms - see #9110 */
-                text = trn("Deleted {0} tags for {1} objects", "Deleted {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
+                /* I18n: plural form detected for objects only (but value < 2 not possible!), try to do your best for tags */
+                text = trn("Deleted {0} tags for {1} object", "Deleted {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
             } else {
-                /* for correct i18n of plural forms - see #9110 */
-                text = trn("Set {0} tags for {1} objects", "Set {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
+                /* I18n: plural form detected for objects only (but value < 2 not possible!), try to do your best for tags */
+                text = trn("Set {0} tags for {1} object", "Set {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
             }
         }
         return text;
@@ -201,7 +200,7 @@ public class ChangePropertyCommand extends Command {
     @Override public Collection<PseudoCommand> getChildren() {
         if (objects.size() == 1)
             return null;
-        List<PseudoCommand> children = new ArrayList<PseudoCommand>();
+        List<PseudoCommand> children = new ArrayList<>();
         for (final OsmPrimitive osm : objects) {
             children.add(new PseudoCommand() {
                 @Override public String getDescriptionText() {
@@ -221,6 +220,10 @@ public class ChangePropertyCommand extends Command {
         return children;
     }
 
+    /**
+     * Returns the tags to set (key/value pairs).
+     * @return the tags to set (key/value pairs)
+     */
     public Map<String, String> getTags() {
         return Collections.unmodifiableMap(tags);
     }

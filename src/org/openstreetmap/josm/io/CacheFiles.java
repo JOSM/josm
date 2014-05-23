@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Iterator;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.TreeMap;
 import javax.imageio.ImageIO;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Use this class if you want to cache a lot of files that shouldn't be kept in memory. You can
@@ -28,14 +29,14 @@ public class CacheFiles {
     /**
      * Common expirey dates
      */
-    final static public int EXPIRE_NEVER = -1;
-    final static public int EXPIRE_DAILY = 60 * 60 * 24;
-    final static public int EXPIRE_WEEKLY = EXPIRE_DAILY * 7;
-    final static public int EXPIRE_MONTHLY = EXPIRE_WEEKLY * 4;
+    public static final int EXPIRE_NEVER = -1;
+    public static final int EXPIRE_DAILY = 60 * 60 * 24;
+    public static final int EXPIRE_WEEKLY = EXPIRE_DAILY * 7;
+    public static final int EXPIRE_MONTHLY = EXPIRE_WEEKLY * 4;
 
-    final private File dir;
-    final private String ident;
-    final private boolean enabled;
+    private final File dir;
+    private final String ident;
+    private final boolean enabled;
 
     private long expire;  // in seconds
     private long maxsize; // in megabytes
@@ -113,7 +114,9 @@ public class CacheFiles {
             }
 
             byte[] bytes = new byte[(int) data.length()];
-            new RandomAccessFile(data, "r").readFully(bytes);
+            try (RandomAccessFile raf = new RandomAccessFile(data, "r")) {
+                raf.readFully(bytes);
+            }
             return bytes;
         } catch (Exception e) {
             Main.warn(e);
@@ -134,11 +137,8 @@ public class CacheFiles {
                 f.delete();
             }
             // rws also updates the file meta-data, i.e. last mod time
-            RandomAccessFile raf = new RandomAccessFile(f, "rws");
-            try {
+            try (RandomAccessFile raf = new RandomAccessFile(f, "rws")) {
                 raf.write(data);
-            } finally {
-                Utils.close(raf);
             }
         } catch (Exception e) {
             Main.warn(e);
@@ -168,7 +168,7 @@ public class CacheFiles {
             if(updateModTime) {
                 img.setLastModified(System.currentTimeMillis());
             }
-            return ImageIO.read(img);
+            return ImageProvider.read(img, false, false);
         } catch (Exception e) {
             Main.warn(e);
         }
@@ -244,7 +244,7 @@ public class CacheFiles {
     public void cleanUp() {
         if(!this.enabled || maxsize == -1) return;
 
-        TreeMap<Long, File> modtime = new TreeMap<Long, File>();
+        TreeMap<Long, File> modtime = new TreeMap<>();
         long dirsize = 0;
 
         for(File f : dir.listFiles()) {
@@ -272,9 +272,10 @@ public class CacheFiles {
         writes = 0;
     }
 
-    final static public int CLEAN_ALL = 0;
-    final static public int CLEAN_SMALL_FILES = 1;
-    final static public int CLEAN_BY_DATE = 2;
+    public static final int CLEAN_ALL = 0;
+    public static final int CLEAN_SMALL_FILES = 1;
+    public static final int CLEAN_BY_DATE = 2;
+
     /**
      * Performs a non-default, specified clean up
      * @param type any of the CLEAN_XX constants.
@@ -320,7 +321,7 @@ public class CacheFiles {
     private static String getUniqueFilename(String ident) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            BigInteger number = new BigInteger(1, md.digest(ident.getBytes()));
+            BigInteger number = new BigInteger(1, md.digest(ident.getBytes(StandardCharsets.UTF_8)));
             return number.toString(16);
         } catch(Exception e) {
             // Fall back. Remove unsuitable characters and some random ones to shrink down path length.

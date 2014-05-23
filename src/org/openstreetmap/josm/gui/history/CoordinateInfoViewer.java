@@ -28,7 +28,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class CoordinateInfoViewer extends JPanel {
 
     /** background color used when the coordinates are different */
-    public final static Color BGCOLOR_DIFFERENCE = new Color(255,197,197);
+    public static final Color BGCOLOR_DIFFERENCE = new Color(255,197,197);
 
     /** the model */
     private HistoryBrowserModel model;

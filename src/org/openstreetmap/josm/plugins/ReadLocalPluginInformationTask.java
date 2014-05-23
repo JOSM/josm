@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  *   <li>.jar files, assuming that they represent plugin jars</li>
  *   <li>.jar.new files, assuming that these are downloaded but not yet installed plugins</li>
  *   <li>cached lists of available plugins, downloaded for instance from
- *   <a href="http://josm.openstreetmap.de/plugins">http://josm.openstreetmap.de/plugins</a></li>
+ *   <a href="https://josm.openstreetmap.de/plugin">https://josm.openstreetmap.de/plugin</a></li>
  * </ul>
  *
  */
@@ -39,14 +39,17 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     private Map<String, PluginInformation> availablePlugins;
     private boolean canceled;
 
+    /**
+     * Constructs a new {@code ReadLocalPluginInformationTask}.
+     */
     public ReadLocalPluginInformationTask() {
         super(tr("Reading local plugin information.."), false);
-        availablePlugins = new HashMap<String, PluginInformation>();
+        availablePlugins = new HashMap<>();
     }
 
     public ReadLocalPluginInformationTask(ProgressMonitor monitor) {
         super(tr("Reading local plugin information.."),monitor, false);
-        availablePlugins = new HashMap<String, PluginInformation>();
+        availablePlugins = new HashMap<>();
     }
 
     @Override
@@ -71,15 +74,19 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
-    protected void scanSiteCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
-        File[] siteCacheFiles = pluginsDirectory.listFiles(
+    private File[] listFiles(File pluginsDirectory, final String regex) {
+        return pluginsDirectory.listFiles(
                 new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
-                        return name.matches("^([0-9]+-)?site.*\\.txt$");
+                        return name.matches(regex);
                     }
                 }
         );
+    }
+
+    protected void scanSiteCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
+        File[] siteCacheFiles = listFiles(pluginsDirectory, "^([0-9]+-)?site.*\\.txt$");
         if (siteCacheFiles == null || siteCacheFiles.length == 0)
             return;
         monitor.subTask(tr("Processing plugin site cache files..."));
@@ -96,16 +103,8 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             monitor.worked(1);
         }
     }
-
     protected void scanIconCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
-        File[] siteCacheFiles = pluginsDirectory.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.matches("^([0-9]+-)?site.*plugin-icons\\.zip$");
-                    }
-                }
-        );
+        File[] siteCacheFiles = listFiles(pluginsDirectory, "^([0-9]+-)?site.*plugin-icons\\.zip$");
         if (siteCacheFiles == null || siteCacheFiles.length == 0)
             return;
         monitor.subTask(tr("Processing plugin site cache icon files..."));
@@ -172,9 +171,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     protected void processLocalPluginInformationFile(File file) throws PluginListParseException{
-        FileInputStream fin = null;
-        try {
-            fin = new FileInputStream(file);
+        try (FileInputStream fin = new FileInputStream(file)) {
             List<PluginInformation> pis = new PluginListParser().parse(fin);
             for (PluginInformation pi : pis) {
                 // we always keep plugin information from a plugin site because it
@@ -185,8 +182,6 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             }
         } catch(IOException e) {
             throw new PluginListParseException(e);
-        } finally {
-            Utils.close(fin);
         }
     }
 
@@ -237,7 +232,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
      * @return information about available plugins detected by this task.
      */
     public List<PluginInformation> getAvailablePlugins() {
-        return new ArrayList<PluginInformation>(availablePlugins.values());
+        return new ArrayList<>(availablePlugins.values());
     }
 
     /**

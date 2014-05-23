@@ -3,9 +3,9 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.validation.TestError;
 public class NameMismatch extends Test.TagTest {
     protected static final int NAME_MISSING = 1501;
     protected static final int NAME_TRANSLATION_MISSING = 1502;
+    private static final Pattern NAME_SPLIT_PATTERN = Pattern.compile(" - ");
 
     /**
      * Constructs a new {@code NameMismatch} test.
@@ -58,7 +59,7 @@ public class NameMismatch extends Test.TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
-        HashSet<String> names = new HashSet<String>();
+        HashSet<String> names = new HashSet<>();
 
         for (Entry<String, String> entry : p.getKeys().entrySet()) {
             if (entry.getKey().startsWith("name:")) {
@@ -85,7 +86,7 @@ public class NameMismatch extends Test.TagTest {
         composition of some (not necessarily all) name:* labels.
         Check if this is the case. */
 
-        String[] splitNames = name.split(" - ");
+        String[] splitNames = NAME_SPLIT_PATTERN.split(name);
         if (splitNames.length == 1) {
             /* The name is not composed of multiple parts. Complain. */
             missingTranslation(p);

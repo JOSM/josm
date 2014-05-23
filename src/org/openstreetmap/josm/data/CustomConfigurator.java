@@ -10,6 +10,7 @@ import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -59,11 +60,11 @@ import org.w3c.dom.NodeList;
  * can be used to modify preferences, store/delete files in .josm folders etc
  */
 public final class CustomConfigurator {
-    
+
     private CustomConfigurator() {
         // Hide default constructor for utils classes
     }
-    
+
     private static StringBuilder summary = new StringBuilder();
 
     public static void log(String fmt, Object... vars) {
@@ -200,7 +201,7 @@ public final class CustomConfigurator {
      * @param keys - which preferences keys you need to export ("imagery.entries", for example)
      */
     public static void exportPreferencesKeysToFile(String filename, boolean append, String... keys) {
-        HashSet<String> keySet = new HashSet<String>();
+        HashSet<String> keySet = new HashSet<>();
         Collections.addAll(keySet, keys);
         exportPreferencesKeysToFile(filename, append, keySet);
     }
@@ -214,8 +215,8 @@ public final class CustomConfigurator {
      * @param pattern - Regexp pattern forh preferences keys you need to export (".*imagery.*", for example)
      */
     public static void exportPreferencesKeysByPatternToFile(String fileName, boolean append, String pattern) {
-        List<String> keySet = new ArrayList<String>();
-        Map<String, Setting> allSettings = Main.pref.getAllSettings();
+        List<String> keySet = new ArrayList<>();
+        Map<String, Setting<?>> allSettings = Main.pref.getAllSettings();
         for (String key: allSettings.keySet()) {
             if (key.matches(pattern)) keySet.add(key);
         }
@@ -235,7 +236,7 @@ public final class CustomConfigurator {
 
         try {
             String toXML = Main.pref.toXML(true);
-            InputStream is = new ByteArrayInputStream(toXML.getBytes(Utils.UTF_8));
+            InputStream is = new ByteArrayInputStream(toXML.getBytes(StandardCharsets.UTF_8));
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setValidating(false);
             builderFactory.setNamespaceAware(false);
@@ -316,9 +317,9 @@ public final class CustomConfigurator {
 
 
     public static void pluginOperation(String install, String uninstall, String delete)  {
-        final List<String> installList = new ArrayList<String>();
-        final List<String> removeList = new ArrayList<String>();
-        final List<String> deleteList = new ArrayList<String>();
+        final List<String> installList = new ArrayList<>();
+        final List<String> removeList = new ArrayList<>();
+        final List<String> deleteList = new ArrayList<>();
         Collections.addAll(installList, install.toLowerCase().split(";"));
         Collections.addAll(removeList, uninstall.toLowerCase().split(";"));
         Collections.addAll(deleteList, delete.toLowerCase().split(";"));
@@ -350,9 +351,9 @@ public final class CustomConfigurator {
                     @Override
                     public void run() {
                         List<PluginInformation> availablePlugins = task.getAvailablePlugins();
-                        List<PluginInformation> toInstallPlugins = new ArrayList<PluginInformation>();
-                        List<PluginInformation> toRemovePlugins = new ArrayList<PluginInformation>();
-                        List<PluginInformation> toDeletePlugins = new ArrayList<PluginInformation>();
+                        List<PluginInformation> toInstallPlugins = new ArrayList<>();
+                        List<PluginInformation> toRemovePlugins = new ArrayList<>();
+                        List<PluginInformation> toDeletePlugins = new ArrayList<>();
                         for (PluginInformation pi: availablePlugins) {
                             String name = pi.name.toLowerCase();
                             if (installList.contains(name)) toInstallPlugins.add(pi);
@@ -363,7 +364,7 @@ public final class CustomConfigurator {
                             PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(Main.parent, toInstallPlugins, tr ("Installing plugins"));
                             Main.worker.submit(pluginDownloadTask);
                         }
-                        Collection<String> pls = new ArrayList<String>(Main.pref.getCollection("plugins"));
+                        Collection<String> pls = new ArrayList<>(Main.pref.getCollection("plugins"));
                         for (PluginInformation pi: toInstallPlugins) {
                             if (!pls.contains(pi.name)) {
                                 pls.add(pi.name);
@@ -414,7 +415,7 @@ public final class CustomConfigurator {
     public static class XMLCommandProcessor {
 
         Preferences mainPrefs;
-        Map<String,Element> tasksMap = new HashMap<String,Element>();
+        Map<String,Element> tasksMap = new HashMap<>();
 
         private boolean lastV; // last If condition result
 
@@ -426,7 +427,9 @@ public final class CustomConfigurator {
             try {
                 String fileDir = file.getParentFile().getAbsolutePath();
                 if (fileDir!=null) engine.eval("scriptDir='"+normalizeDirName(fileDir) +"';");
-                openAndReadXML(new BufferedInputStream(new FileInputStream(file)));
+                try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+                    openAndReadXML(is);
+                }
             } catch (Exception ex) {
                 log("Error reading custom preferences: " + ex.getMessage());
             }
@@ -444,8 +447,6 @@ public final class CustomConfigurator {
                 }
             } catch (Exception ex) {
                 log("Error reading custom preferences: "+ex.getMessage());
-            } finally {
-                Utils.close(is);
             }
             log("-- Reading complete --");
         }
@@ -459,7 +460,7 @@ public final class CustomConfigurator {
 
                 engine.eval("homeDir='"+normalizeDirName(Main.pref.getPreferencesDir()) +"';");
                 engine.eval("josmVersion="+Version.getInstance().getVersion()+";");
-                String className =  CustomConfigurator.class.getName();
+                String className = CustomConfigurator.class.getName();
                 engine.eval("API.messageBox="+className+".messageBox");
                 engine.eval("API.askText=function(text) { return String("+className+".askForText(text));}");
                 engine.eval("API.askOption="+className+".askForOption");
@@ -489,45 +490,54 @@ public final class CustomConfigurator {
                 String elementName = item.getNodeName();
                 Element elem = (Element) item;
 
-                if ("var".equals(elementName)) {
+                switch(elementName) {
+                case "var":
                     setVar(elem.getAttribute("name"), evalVars(elem.getAttribute("value")));
-                } else if ("task".equals(elementName)) {
+                    break;
+                case "task":
                     tasksMap.put(elem.getAttribute("name"), elem);
-                } else if ("runtask".equals(elementName)) {
+                    break;
+                case "runtask":
                     if (processRunTaskElement(elem)) return;
-                } else if ("ask".equals(elementName)) {
+                    break;
+                case "ask":
                     processAskElement(elem);
-                } else if ("if".equals(elementName)) {
+                    break;
+                case "if":
                     processIfElement(elem);
-                } else if ("else".equals(elementName)) {
+                    break;
+                case "else":
                     processElseElement(elem);
-                } else if ("break".equals(elementName)) {
+                    break;
+                case "break":
                     return;
-                } else if ("plugin".equals(elementName)) {
+                case "plugin":
                     processPluginInstallElement(elem);
-                } else if ("messagebox".equals(elementName)){
+                    break;
+                case "messagebox":
                     processMsgBoxElement(elem);
-                } else if ("preferences".equals(elementName)) {
+                    break;
+                case "preferences":
                     processPreferencesElement(elem);
-                } else if ("download".equals(elementName)) {
+                    break;
+                case "download":
                     processDownloadElement(elem);
-                } else if ("delete".equals(elementName)) {
+                    break;
+                case "delete":
                     processDeleteElement(elem);
-                } else if ("script".equals(elementName)) {
+                    break;
+                case "script":
                     processScriptElement(elem);
-                } else {
+                    break;
+                default:
                     log("Error: Unknown element " + elementName);
                 }
-
             }
         }
-
-
 
         private void processPreferencesElement(Element item) {
             String oper = evalVars(item.getAttribute("operation"));
             String id = evalVars(item.getAttribute("id"));
-
 
             if ("delete-keys".equals(oper)) {
                 String pattern = evalVars(item.getAttribute("pattern"));
@@ -613,7 +623,6 @@ public final class CustomConfigurator {
             messageBox(type, text);
         }
 
-
         private void processAskElement(Element elem) {
             String text = evalVars(elem.getAttribute("text"));
             String locText = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".text"));
@@ -672,7 +681,6 @@ public final class CustomConfigurator {
             return false;
         }
 
-
         private void processScriptElement(Element elem) {
             String js = elem.getChildNodes().item(0).getTextContent();
             log("Processing script...");
@@ -729,8 +737,6 @@ public final class CustomConfigurator {
             if (s.endsWith("/")) s=s.substring(0,s.length()-1);
             return s;
         }
-
-
     }
 
     /**
@@ -738,16 +744,20 @@ public final class CustomConfigurator {
      * deletion by key and by value
      * Also contains functions that convert preferences object to JavaScript object and back
      */
-    public static class PreferencesUtils {
+    public static final class PreferencesUtils {
+
+        private PreferencesUtils() {
+            // Hide implicit public constructor for utility class
+        }
 
         private static void replacePreferences(Preferences fragment, Preferences mainpref) {
-            for (Entry<String, Setting> entry: fragment.settingsMap.entrySet()) {
+            for (Entry<String, Setting<?>> entry: fragment.settingsMap.entrySet()) {
                 mainpref.putSetting(entry.getKey(), entry.getValue());
             }
         }
 
         private static void appendPreferences(Preferences fragment, Preferences mainpref) {
-            for (Entry<String, Setting> entry: fragment.settingsMap.entrySet()) {
+            for (Entry<String, Setting<?>> entry: fragment.settingsMap.entrySet()) {
                 String key = entry.getKey();
                 if (entry.getValue() instanceof StringSetting) {
                     mainpref.putSetting(key, entry.getValue());
@@ -797,7 +807,7 @@ public final class CustomConfigurator {
         */
         private static void deletePreferenceValues(Preferences fragment, Preferences mainpref) {
 
-            for (Entry<String, Setting> entry : fragment.settingsMap.entrySet()) {
+            for (Entry<String, Setting<?>> entry : fragment.settingsMap.entrySet()) {
                 String key = entry.getKey();
                 if (entry.getValue() instanceof StringSetting) {
                     StringSetting sSetting = (StringSetting) entry.getValue();
@@ -857,8 +867,8 @@ public final class CustomConfigurator {
         }
 
     private static void deletePreferenceKeyByPattern(String pattern, Preferences pref) {
-        Map<String, Setting> allSettings = pref.getAllSettings();
-        for (Entry<String, Setting> entry : allSettings.entrySet()) {
+        Map<String, Setting<?>> allSettings = pref.getAllSettings();
+        for (Entry<String, Setting<?>> entry : allSettings.entrySet()) {
             String key = entry.getKey();
             if (key.matches(pattern)) {
                 log("Deleting preferences: deleting key from preferences: " + key);
@@ -868,7 +878,7 @@ public final class CustomConfigurator {
     }
 
     private static void deletePreferenceKey(String key, Preferences pref) {
-        Map<String, Setting> allSettings = pref.getAllSettings();
+        Map<String, Setting<?>> allSettings = pref.getAllSettings();
         if (allSettings.containsKey(key)) {
             log("Deleting preferences: deleting key from preferences: " + key);
             pref.putSetting(key, null);
@@ -883,9 +893,9 @@ public final class CustomConfigurator {
             return null;
         }
         if (existing != null)
-            return new ArrayList<String>(existing.getValue());
+            return new ArrayList<>(existing.getValue());
         else
-            return defaults.getValue() == null ? null : new ArrayList<String>(defaults.getValue());
+            return defaults.getValue() == null ? null : new ArrayList<>(defaults.getValue());
     }
 
     private static Collection<Collection<String>> getArray(Preferences mainpref, String key, boolean warnUnknownDefault)  {
@@ -912,9 +922,9 @@ public final class CustomConfigurator {
         }
 
         if (existing != null)
-            return new ArrayList<Map<String, String>>(existing.getValue());
+            return new ArrayList<>(existing.getValue());
         else
-            return defaults.getValue() == null ? null : new ArrayList<Map<String, String>>(defaults.getValue());
+            return defaults.getValue() == null ? null : new ArrayList<>(defaults.getValue());
     }
 
     private static void defaultUnknownWarning(String key) {
@@ -998,7 +1008,7 @@ public final class CustomConfigurator {
 
         tmpPref.settingsMap.clear();
 
-        Map<String, Setting> tmp = new HashMap<String, Setting>();
+        Map<String, Setting<?>> tmp = new HashMap<>();
         for (Entry<String, String> e : stringMap.entrySet()) {
             tmp.put(e.getKey(), new StringSetting(e.getValue()));
         }
@@ -1007,13 +1017,14 @@ public final class CustomConfigurator {
         }
 
         for (Entry<String, List<Collection<String>>> e : listlistMap.entrySet()) {
-            @SuppressWarnings("unchecked") List<List<String>> value = (List)e.getValue();
+            @SuppressWarnings("unchecked")
+            List<List<String>> value = (List)e.getValue();
             tmp.put(e.getKey(), new ListListSetting(value));
         }
         for (Entry<String, List<Map<String, String>>> e : listmapMap.entrySet()) {
             tmp.put(e.getKey(), new MapListSetting(e.getValue()));
         }
-        for (Entry<String, Setting> e : tmp.entrySet()) {
+        for (Entry<String, Setting<?>> e : tmp.entrySet()) {
             if (e.getValue().equals(tmpPref.defaultsMap.get(e.getKey()))) continue;
             tmpPref.settingsMap.put(e.getKey(), e.getValue());
         }
@@ -1028,14 +1039,14 @@ public final class CustomConfigurator {
      * @throws ScriptException
      */
     public static void loadPrefsToJS(ScriptEngine engine, Preferences tmpPref, String whereToPutInJS, boolean includeDefaults) throws ScriptException {
-        Map<String, String> stringMap =  new TreeMap<String, String>();
-        Map<String, List<String>> listMap = new TreeMap<String, List<String>>();
-        Map<String, List<List<String>>> listlistMap = new TreeMap<String, List<List<String>>>();
-        Map<String, List<Map<String, String>>> listmapMap = new TreeMap<String, List<Map<String, String>>>();
+        Map<String, String> stringMap =  new TreeMap<>();
+        Map<String, List<String>> listMap = new TreeMap<>();
+        Map<String, List<List<String>>> listlistMap = new TreeMap<>();
+        Map<String, List<Map<String, String>>> listmapMap = new TreeMap<>();
 
         if (includeDefaults) {
-            for (Map.Entry<String, Setting> e: tmpPref.defaultsMap.entrySet()) {
-                Setting setting = e.getValue();
+            for (Map.Entry<String, Setting<?>> e: tmpPref.defaultsMap.entrySet()) {
+                Setting<?> setting = e.getValue();
                 if (setting instanceof StringSetting) {
                     stringMap.put(e.getKey(), ((StringSetting) setting).getValue());
                 } else if (setting instanceof ListSetting) {
@@ -1047,16 +1058,16 @@ public final class CustomConfigurator {
                 }
             }
         }
-        Iterator<Map.Entry<String, Setting>> it = tmpPref.settingsMap.entrySet().iterator();
+        Iterator<Map.Entry<String, Setting<?>>> it = tmpPref.settingsMap.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, Setting> e = it.next();
+            Map.Entry<String, Setting<?>> e = it.next();
             if (e.getValue().getValue() == null) {
                 it.remove();
             }
         }
 
-        for (Map.Entry<String, Setting> e: tmpPref.settingsMap.entrySet()) {
-            Setting setting = e.getValue();
+        for (Map.Entry<String, Setting<?>> e: tmpPref.settingsMap.entrySet()) {
+            Setting<?> setting = e.getValue();
             if (setting instanceof StringSetting) {
                 stringMap.put(e.getKey(), ((StringSetting) setting).getValue());
             } else if (setting instanceof ListSetting) {

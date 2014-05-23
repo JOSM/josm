@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -37,14 +38,13 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class CredentialDialog extends JDialog {
 
-    static public CredentialDialog getOsmApiCredentialDialog(String username, String password, String host, String saveUsernameAndPasswordCheckboxText) {
+    public static CredentialDialog getOsmApiCredentialDialog(String username, String password, String host, String saveUsernameAndPasswordCheckboxText) {
         CredentialDialog dialog = new CredentialDialog(saveUsernameAndPasswordCheckboxText);
-        if (Utils.equal(OsmApi.getOsmApi().getHost(), host)) {
+        if (Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
             dialog.prepareForOsmApiCredentials(username, password);
         } else {
             dialog.prepareForOtherHostCredentials(username, password, host);
@@ -53,7 +53,7 @@ public class CredentialDialog extends JDialog {
         return dialog;
     }
 
-    static public CredentialDialog getHttpProxyCredentialDialog(String username, String password, String host, String saveUsernameAndPasswordCheckboxText) {
+    public static CredentialDialog getHttpProxyCredentialDialog(String username, String password, String host, String saveUsernameAndPasswordCheckboxText) {
         CredentialDialog dialog = new CredentialDialog(saveUsernameAndPasswordCheckboxText);
         dialog.prepareForProxyCredentials(username, password);
         dialog.pack();
@@ -247,6 +247,16 @@ public class CredentialDialog extends JDialog {
         public boolean isSaveCredentials() {
             return cbSaveCredentials.isSelected();
         }
+
+        protected final void updateWarningLabel(String url) {
+            boolean https = url != null && url.startsWith("https");
+            if (https) {
+                lblWarning.setText(null);
+            } else {
+                lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
+            }
+            lblWarning.setVisible(!https);
+        }
     }
 
     private static class OsmApiCredentialsPanel extends CredentialPanel {
@@ -256,10 +266,11 @@ public class CredentialDialog extends JDialog {
             super.build();
             tfUserName.setToolTipText(tr("Please enter the user name of your OSM account"));
             tfPassword.setToolTipText(tr("Please enter the password of your OSM account"));
+            String apiUrl = OsmApi.getOsmApi().getBaseUrl();
             lblHeading.setText(
                     "<html>" + tr("Authenticating at the OSM API ''{0}'' failed. Please enter a valid username and a valid password.",
-                            OsmApi.getOsmApi().getBaseUrl()) + "</html>");
-            lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
+                            apiUrl) + "</html>");
+            updateWarningLabel(apiUrl);
         }
 
         public OsmApiCredentialsPanel(CredentialDialog owner) {
@@ -280,7 +291,7 @@ public class CredentialDialog extends JDialog {
             lblHeading.setText(
                     "<html>" + tr("Authenticating at the host ''{0}'' failed. Please enter a valid username and a valid password.",
                             host) + "</html>");
-            lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
+            updateWarningLabel(host);
         }
 
         public OtherHostCredentialsPanel(CredentialDialog owner, String host) {
@@ -308,7 +319,7 @@ public class CredentialDialog extends JDialog {
         }
     }
 
-    static private class SelectAllOnFocusHandler extends FocusAdapter {
+    private static class SelectAllOnFocusHandler extends FocusAdapter {
         @Override
         public void focusGained(FocusEvent e) {
             if (e.getSource() instanceof JTextField) {
@@ -325,7 +336,7 @@ public class CredentialDialog extends JDialog {
      *   If current text field is not empty, but the next one is (or just contains a sequence of spaces), focuses the next text field.
      *   If both text fields contain characters, submits the form by calling owner's {@link OKAction}.
      */
-    static private class TFKeyListener implements KeyListener{
+    private static class TFKeyListener implements KeyListener{
         protected CredentialDialog owner; // owner Dependency Injection to call OKAction
         protected JTextField currentTF;
         protected JTextField nextTF;

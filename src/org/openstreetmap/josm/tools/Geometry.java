@@ -23,6 +23,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.MultipolygonCreate;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -36,11 +37,11 @@ import org.openstreetmap.josm.data.osm.Way;
  * @author viesturs
  */
 public final class Geometry {
-    
+
     private Geometry() {
         // Hide default constructor for utils classes
     }
-    
+
     public enum PolygonIntersection {FIRST_INSIDE_SECOND, SECOND_INSIDE_FIRST, OUTSIDE, CROSSING}
 
     /**
@@ -65,11 +66,11 @@ public final class Geometry {
         BBox[] wayBounds = new BBox[n];
         boolean[] changedWays = new boolean[n];
 
-        Set<Node> intersectionNodes = new LinkedHashSet<Node>();
+        Set<Node> intersectionNodes = new LinkedHashSet<>();
 
         //copy node arrays for local usage.
         for (int pos = 0; pos < n; pos ++) {
-            newNodes[pos] = new ArrayList<Node>(ways.get(pos).getNodes());
+            newNodes[pos] = new ArrayList<>(ways.get(pos).getNodes());
             wayBounds[pos] = getNodesBounds(newNodes[pos]);
             changedWays[pos] = false;
         }
@@ -440,16 +441,25 @@ public final class Geometry {
         return dy1 * dx2 - dx1 * dy2 > 0;
     }
 
-    private static Area getArea(List<Node> polygon) {
+    /**
+     * Returns the Area of a polygon, from its list of nodes.
+     * @param polygon List of nodes forming polygon
+     * @return Area for the given list of nodes
+     * @since 6841
+     */
+    public static Area getArea(List<Node> polygon) {
         Path2D path = new Path2D.Double();
 
         boolean begin = true;
         for (Node n : polygon) {
-            if (begin) {
-                path.moveTo(n.getEastNorth().getX(), n.getEastNorth().getY());
-                begin = false;
-            } else {
-                path.lineTo(n.getEastNorth().getX(), n.getEastNorth().getY());
+            EastNorth en = n.getEastNorth();
+            if (en != null) {
+                if (begin) {
+                    path.moveTo(en.getX(), en.getY());
+                    begin = false;
+                } else {
+                    path.lineTo(en.getX(), en.getY());
+                }
             }
         }
         if (!begin) {
@@ -461,14 +471,24 @@ public final class Geometry {
 
     /**
      * Tests if two polygons intersect.
-     * @param first
-     * @param second
+     * @param first List of nodes forming first polygon
+     * @param second List of nodes forming second polygon
      * @return intersection kind
      */
     public static PolygonIntersection polygonIntersection(List<Node> first, List<Node> second) {
-
         Area a1 = getArea(first);
         Area a2 = getArea(second);
+        return polygonIntersection(a1, a2);
+    }
+
+    /**
+     * Tests if two polygons intersect.
+     * @param a1 Area of first polygon
+     * @param a2 Area of second polygon
+     * @return intersection kind
+     * @since 6841
+     */
+    public static PolygonIntersection polygonIntersection(Area a1, Area a2) {
 
         Area inter = new Area(a1);
         inter.intersect(a2);
@@ -668,6 +688,7 @@ public final class Geometry {
      * Compute the centroid/barycenter of nodes
      * @param nodes Nodes for which the centroid is wanted
      * @return the centroid of nodes
+     * @see Geometry#getCenter
      */
     public static EastNorth getCentroid(List<Node> nodes) {
 
@@ -675,12 +696,12 @@ public final class Geometry {
         BigDecimal north = BigDecimal.ZERO;
         BigDecimal east = BigDecimal.ZERO;
 
-        // See http://en.wikipedia.org/w/index.php?title=Centroid&oldid=294224857#Centroid_of_polygon for the equation used here
+        // See https://en.wikipedia.org/wiki/Centroid#Centroid_of_polygon for the equation used here
         for (int i = 0; i < nodes.size(); i++) {
             EastNorth n0 = nodes.get(i).getEastNorth();
             EastNorth n1 = nodes.get((i+1) % nodes.size()).getEastNorth();
 
-            if (n0.isValid() && n1.isValid()) {
+            if (n0 != null && n1 != null && n0.isValid() && n1.isValid()) {
                 BigDecimal x0 = new BigDecimal(n0.east());
                 BigDecimal y0 = new BigDecimal(n0.north());
                 BigDecimal x1 = new BigDecimal(n1.east());
@@ -702,6 +723,70 @@ public final class Geometry {
         }
 
         return new EastNorth(east.doubleValue(), north.doubleValue());
+    }
+
+    /**
+     * Compute center of the circle closest to different nodes.
+     *
+     * Ensure exact center computation in case nodes are already aligned in circle.
+     * This is done by least square method.
+     * Let be a_i x + b_i y + c_i = 0 equations of bisectors of each edges.
+     * Center must be intersection of all bisectors.
+     * <pre>
+     *          [ a1  b1  ]         [ -c1 ]
+     * With A = [ ... ... ] and Y = [ ... ]
+     *          [ an  bn  ]         [ -cn ]
+     * </pre>
+     * An approximation of center of circle is (At.A)^-1.At.Y
+     * @param nodes Nodes parts of the circle (at least 3)
+     * @return An approximation of the center, of null if there is no solution.
+     * @see Geometry#getCentroid
+     * @since 6934
+     */
+    public static EastNorth getCenter(List<Node> nodes) {
+        int nc = nodes.size();
+        if(nc < 3) return null;
+        /**
+         * Equation of each bisector ax + by + c = 0
+         */
+        double[] a = new double[nc];
+        double[] b = new double[nc];
+        double[] c = new double[nc];
+        // Compute equation of bisector
+        for(int i = 0; i < nc; i++) {
+            EastNorth pt1 = nodes.get(i).getEastNorth();
+            EastNorth pt2 = nodes.get((i+1) % nc).getEastNorth();
+            a[i] = pt1.east() - pt2.east();
+            b[i] = pt1.north() - pt2.north();
+            double d = Math.sqrt(a[i]*a[i] + b[i]*b[i]);
+            if(d == 0) return null;
+            a[i] /= d;
+            b[i] /= d;
+            double xC = (pt1.east() + pt2.east()) / 2;
+            double yC = (pt1.north() + pt2.north()) / 2;
+            c[i] = -(a[i]*xC + b[i]*yC);
+        }
+        // At.A = [aij]
+        double a11 = 0, a12 = 0, a22 = 0;
+        // At.Y = [bi]
+        double b1 = 0, b2 = 0;
+        for(int i = 0; i < nc; i++) {
+            a11 += a[i]*a[i];
+            a12 += a[i]*b[i];
+            a22 += b[i]*b[i];
+            b1 -= a[i]*c[i];
+            b2 -= b[i]*c[i];
+        }
+        // (At.A)^-1 = [invij]
+        double det = a11*a22 - a12*a12;
+        if(Math.abs(det) < 1e-5) return null;
+        double inv11 = a22/det;
+        double inv12 = -a12/det;
+        double inv22 = a11/det;
+        // center (xC, yC) = (At.A)^-1.At.y
+        double xC = inv11*b1 + inv12*b2;
+        double yC = inv12*b1 + inv22*b2;
+        return new EastNorth(xC, yC);
     }
 
     /**
@@ -743,15 +828,15 @@ public final class Geometry {
     }
 
     public static class MultiPolygonMembers {
-        public final Set<Way> outers = new HashSet<Way>();
-        public final Set<Way> inners = new HashSet<Way>();
+        public final Set<Way> outers = new HashSet<>();
+        public final Set<Way> inners = new HashSet<>();
 
         public MultiPolygonMembers(Relation multiPolygon) {
             for (RelationMember m : multiPolygon.getMembers()) {
                 if (m.getType().equals(OsmPrimitiveType.WAY)) {
-                    if (m.getRole().equals("outer")) {
+                    if ("outer".equals(m.getRole())) {
                         outers.add(m.getWay());
-                    } else if (m.getRole().equals("inner")) {
+                    } else if ("inner".equals(m.getRole())) {
                         inners.add(m.getWay());
                     }
                 }
@@ -770,20 +855,30 @@ public final class Geometry {
     /**
      * Tests if the polygon formed by {@code nodes} is inside the multipolygon {@code multiPolygon}. The nullable argument
      * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
-     * <p/>
+     * <p>
      * If {@code nodes} contains exactly one element, then it is checked whether that one node is inside the multipolygon.
      */
     public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
         // Extract outer/inner members from multipolygon
-        MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
+        final MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
+        // Construct complete rings for the inner/outer members
+        final List<MultipolygonCreate.JoinedPolygon> outerRings;
+        final List<MultipolygonCreate.JoinedPolygon> innerRings;
+        try {
+            outerRings = MultipolygonCreate.joinWays(mpm.outers);
+            innerRings = MultipolygonCreate.joinWays(mpm.inners);
+        } catch (MultipolygonCreate.JoinedPolygonCreationException ex) {
+            Main.debug("Invalid multipolygon " + multiPolygon);
+            return false;
+        }
         // Test if object is inside an outer member
-        for (Way out : mpm.outers) {
+        for (MultipolygonCreate.JoinedPolygon out : outerRings) {
             if (nodes.size() == 1
                     ? nodeInsidePolygon(nodes.get(0), out.getNodes())
                     : EnumSet.of(PolygonIntersection.FIRST_INSIDE_SECOND, PolygonIntersection.CROSSING).contains(polygonIntersection(nodes, out.getNodes()))) {
                 boolean insideInner = false;
                 // If inside an outer, check it is not inside an inner
-                for (Way in : mpm.inners) {
+                for (MultipolygonCreate.JoinedPolygon in : innerRings) {
                     if (polygonIntersection(in.getNodes(), out.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND
                             && (nodes.size() == 1
                             ? nodeInsidePolygon(nodes.get(0), in.getNodes())
@@ -795,7 +890,7 @@ public final class Geometry {
                 // Inside outer but not inside inner -> the polygon appears to be inside a the multipolygon
                 if (!insideInner) {
                     // Final check using predicate
-                    if (isOuterWayAMatch == null || isOuterWayAMatch.evaluate(out)) {
+                    if (isOuterWayAMatch == null || isOuterWayAMatch.evaluate(out.ways.get(0) /* TODO give a better representation of the outer ring to the predicate */)) {
                         return true;
                     }
                 }

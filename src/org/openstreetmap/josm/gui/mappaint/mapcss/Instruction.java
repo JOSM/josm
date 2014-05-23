@@ -10,9 +10,9 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 
-abstract public class Instruction implements StyleKeys {
+public interface Instruction extends StyleKeys {
 
-    public abstract void execute(Environment env);
+    void execute(Environment env);
 
     public static class RelativeFloat {
         public final float val;
@@ -27,7 +27,7 @@ abstract public class Instruction implements StyleKeys {
         }
     }
 
-    public static class AssignmentInstruction extends Instruction {
+    public static class AssignmentInstruction implements Instruction {
         public final String key;
         public final Object val;
         public final boolean isSetInstruction;
@@ -74,7 +74,7 @@ abstract public class Instruction implements StyleKeys {
             } else {
                 value = val;
             }
-            if (key.equals(ICON_IMAGE) || key.equals(FILL_IMAGE) || key.equals("pattern-image") || key.equals(REPEAT_IMAGE)) {
+            if (key.equals(ICON_IMAGE) || key.equals(FILL_IMAGE) || key.equals(REPEAT_IMAGE)) {
                 if (value instanceof String) {
                     value = new IconReference((String) value, env.source);
                 }
@@ -84,7 +84,7 @@ abstract public class Instruction implements StyleKeys {
 
         @Override
         public String toString() {
-            return key + ':' + (val instanceof float[] ? Arrays.toString((float[]) val) : val) + ';';
+            return key + ": " + (val instanceof float[] ? Arrays.toString((float[]) val) : val instanceof String ? "String<"+val+">" : val) + ';';
         }
     }
 }

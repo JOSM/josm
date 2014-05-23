@@ -3,16 +3,12 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 import javax.swing.JOptionPane;
 
-import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -80,7 +76,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
             return false;
         }
     }
-    
+
     private static void displayError(File f, Exception e) {
         Main.error(e);
         HelpAwareOptionPane.showMessageDialogInEDT(
@@ -90,7 +86,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
                 JOptionPane.ERROR_MESSAGE, null
         );
     }
-    
+
     private static void displayCancel(final Throwable t) {
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
@@ -102,7 +98,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
             }
         });
     }
-    
+
     public boolean importDataHandleExceptions(List<File> files, ProgressMonitor progressMonitor) {
         try {
             Main.info("Open "+files.size()+" files");
@@ -134,29 +130,8 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
         return Double.compare(this.getPriority(), other.getPriority());
     }
 
-    public static CBZip2InputStream getBZip2InputStream(InputStream in) throws IOException {
-        if (in == null) {
-            return null;
-        }
-        BufferedInputStream bis = new BufferedInputStream(in);
-        int b = bis.read();
-        if (b != 'B')
-            throw new IOException(tr("Invalid bz2 file."));
-        b = bis.read();
-        if (b != 'Z')
-            throw new IOException(tr("Invalid bz2 file."));
-        return new CBZip2InputStream(bis, /* see #9537 */ true);
-    }
-
-    public static GZIPInputStream getGZipInputStream(InputStream in) throws IOException {
-        if (in == null) {
-            return null;
-        }
-        return new GZIPInputStream(in);
-    }
-
     /**
-     * Returns the enabled state of this {@code FileImporter}. When enabled, it is listed and usable in "File->Open" dialog.
+     * Returns the enabled state of this {@code FileImporter}. When enabled, it is listed and usable in "File-&gt;Open" dialog.
      * @return true if this {@code FileImporter} is enabled
      * @since 5459
      */
@@ -165,7 +140,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
     }
 
     /**
-     * Sets the enabled state of the {@code FileImporter}. When enabled, it is listed and usable in "File->Open" dialog.
+     * Sets the enabled state of the {@code FileImporter}. When enabled, it is listed and usable in "File-&gt;Open" dialog.
      * @param enabled true to enable this {@code FileImporter}, false to disable it
      * @since 5459
      */

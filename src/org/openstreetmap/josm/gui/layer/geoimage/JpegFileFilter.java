@@ -5,15 +5,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 
-class JpegFileFilter extends javax.swing.filechooser.FileFilter
-                                    implements java.io.FileFilter {
+class JpegFileFilter extends javax.swing.filechooser.FileFilter implements java.io.FileFilter {
 
-    static final private JpegFileFilter instance = new JpegFileFilter();
+    private static final JpegFileFilter instance = new JpegFileFilter();
     public static JpegFileFilter getInstance() {
         return instance;
     }
 
-    @Override public boolean accept(File f) {
+    @Override
+    public boolean accept(File f) {
         if (f.isDirectory()) {
             return true;
         } else {
@@ -22,7 +22,8 @@ class JpegFileFilter extends javax.swing.filechooser.FileFilter
         }
     }
 
-    @Override public String getDescription() {
+    @Override
+    public String getDescription() {
         return tr("JPEG images (*.jpg)");
     }
 }

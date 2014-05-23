@@ -66,6 +66,9 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
+/**
+ * Imagery preferences, including imagery providers, settings and offsets.
+ */
 public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
     /**
@@ -128,6 +131,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         p.add(pane,GBC.std().fill(GBC.BOTH));
     }
 
+    /**
+     * Returns the imagery providers panel.
+     * @return The imagery providers panel.
+     */
     public ImageryProvidersPanel getProvidersPanel() {
         return imageryProviders;
     }
@@ -188,19 +195,30 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         return null;
     }
 
+    /**
+     * A panel displaying imagery providers.
+     */
     public static class ImageryProvidersPanel extends JPanel {
         // Public JTables and JMapViewer
+        /** The table of active providers **/
         public final JTable activeTable;
+        /** The table of default providers **/
         public final JTable defaultTable;
+        /** The map displaying imagery bounds of selected default providers **/
         public final JMapViewer defaultMap;
 
         // Public models
+        /** The model of active providers **/
         public final ImageryLayerTableModel activeModel;
+        /** The model of default providers **/
         public final ImageryDefaultLayerTableModel defaultModel;
 
         // Public JToolbars
+        /** The toolbar on the right of active providers **/
         public final JToolBar activeToolbar;
+        /** The toolbar on the middle of the panel **/
         public final JToolBar middleToolbar;
+        /** The toolbar on the right of default providers **/
         public final JToolBar defaultToolbar;
 
         // Private members
@@ -239,6 +257,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             }
         }
 
+        /**
+         * Constructs a new {@code ImageryProvidersPanel}.
+         * @param gui The parent preference tab pane
+         * @param layerInfoArg The list of imagery entries to display
+         */
         public ImageryProvidersPanel(final PreferenceTabbedPane gui, ImageryLayerInfo layerInfoArg) {
             super(new GridBagLayout());
             this.gui = gui;
@@ -352,8 +375,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             private final Map<Integer, List<MapPolygon>> mapPolygons;
 
             private DefListSelectionListener() {
-                this.mapRectangles = new HashMap<Integer, MapRectangle>();
-                this.mapPolygons = new HashMap<Integer, List<MapPolygon>>();
+                this.mapRectangles = new HashMap<>();
+                this.mapPolygons = new HashMap<>();
             }
 
             @Override
@@ -384,7 +407,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     if (shapes != null && !shapes.isEmpty()) {
                         if (defaultTable.getSelectionModel().isSelectedIndex(i)) {
                             if (!mapPolygons.containsKey(i)) {
-                                List<MapPolygon> list = new ArrayList<MapPolygon>();
+                                List<MapPolygon> list = new ArrayList<>();
                                 mapPolygons.put(i, list);
                                 // Add new map polygons
                                 for (Shape shape : shapes) {
@@ -472,7 +495,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 updateEnabledState();
             }
 
-            protected void updateEnabledState() {
+            protected final void updateEnabledState() {
                 setEnabled(activeTable.getSelectedRowCount() > 0);
             }
 
@@ -518,14 +541,13 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     return;
                 }
 
-                Set<String> acceptedEulas = new HashSet<String>();
+                Set<String> acceptedEulas = new HashSet<>();
 
                 outer:
                 for (int line : lines) {
                     ImageryInfo info = defaultModel.getRow(line);
 
-                    // Check if an entry with exactly the same values already
-                    // exists
+                    // Check if an entry with exactly the same values already exists
                     for (int j = 0; j < activeModel.getRowCount(); j++) {
                         if (info.equalsBaseValues(activeModel.getRow(j))) {
                             // Select the already existing row so the user has
@@ -571,14 +593,26 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
          * The table model for imagery layer list
          */
         public class ImageryLayerTableModel extends DefaultTableModel {
+            /**
+             * Constructs a new {@code ImageryLayerTableModel}.
+             */
             public ImageryLayerTableModel() {
                 setColumnIdentifiers(new String[] { tr("Menu Name"), tr("Imagery URL")});
             }
 
+            /**
+             * Returns the imagery info at the given row number.
+             * @param row The row number
+             * @return The imagery info at the given row number
+             */
             public ImageryInfo getRow(int row) {
                 return layerInfo.getLayers().get(row);
             }
 
+            /**
+             * Adds a new imagery info as the last row.
+             * @param i The imagery info to add
+             */
             public void addRow(ImageryInfo i) {
                 layerInfo.add(i);
                 int p = getRowCount() - 1;
@@ -635,10 +669,18 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
          * The table model for the default imagery layer list
          */
         public class ImageryDefaultLayerTableModel extends DefaultTableModel {
+            /**
+             * Constructs a new {@code ImageryDefaultLayerTableModel}.
+             */
             public ImageryDefaultLayerTableModel() {
                 setColumnIdentifiers(new String[]{"", tr("Menu Name (Default)"), tr("Imagery URL (Default)")});
             }
 
+            /**
+             * Returns the imagery info at the given row number.
+             * @param row The row number
+             * @return The imagery info at the given row number
+             */
             public ImageryInfo getRow(int row) {
                 return layerInfo.getDefaultLayers().get(row);
             }
@@ -833,6 +875,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         }
     }
 
+    /**
+     * Initializes imagery preferences.
+     */
     public static void initialize() {
         ImageryLayerInfo.instance.clear();
         ImageryLayerInfo.instance.loadDefaults(false);

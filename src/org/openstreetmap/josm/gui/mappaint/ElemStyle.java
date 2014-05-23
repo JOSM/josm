@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +11,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
-abstract public class ElemStyle implements StyleKeys {
+public abstract class ElemStyle implements StyleKeys {
 
     protected static final String[] ICON_KEYS = {"icon-image", "icon-width", "icon-height", "icon-opacity"};
     protected static final String[] REPEAT_IMAGE_KEYS = {"repeat-image", "repeat-image-width", "repeat-image-height", "repeat-image-opacity"};
@@ -66,9 +64,9 @@ abstract public class ElemStyle implements StyleKeys {
                 return width;
         } else {
             Keyword widthKW = c.get(key, null, Keyword.class, true);
-            if (equal(widthKW, Keyword.THINNEST))
+            if (Keyword.THINNEST.equals(widthKW))
                 return 0f;
-            if (equal(widthKW, Keyword.DEFAULT))
+            if (Keyword.DEFAULT.equals(widthKW))
                 return (float) MapPaintSettings.INSTANCE.getDefaultSegmentWidth();
             if (relativeTo != null) {
                 RelativeFloat width_rel = c.get(key, null, RelativeFloat.class, true);
@@ -85,20 +83,42 @@ abstract public class ElemStyle implements StyleKeys {
     /*
      * Two preference values and the set of created fonts are cached in order to avoid
      * expensive lookups and to avoid too many font objects
-     * (in analogy to flyweight pattern).
      *
      * FIXME: cached preference values are not updated if the user changes them during
      * a JOSM session. Should have a listener listening to preference changes.
      */
-    static private String DEFAULT_FONT_NAME = null;
-    static private Float DEFAULT_FONT_SIZE = null;
-    static private void initDefaultFontParameters() {
-        if (DEFAULT_FONT_NAME != null) return; // already initialized - skip initialization
-        DEFAULT_FONT_NAME = Main.pref.get("mappaint.font", "Helvetica");
-        DEFAULT_FONT_SIZE = (float) Main.pref.getInteger("mappaint.fontsize", 8);
+    private static volatile String DEFAULT_FONT_NAME = null;
+    private static volatile Float DEFAULT_FONT_SIZE = null;
+    private static final Object lock = new Object();
+
+    // thread save access (double-checked locking)
+    private static Float getDefaultFontSize() {
+        Float s = DEFAULT_FONT_SIZE;
+        if (s == null) {
+            synchronized (lock) {
+                s = DEFAULT_FONT_SIZE;
+                if (s == null) {
+                    DEFAULT_FONT_SIZE = s = (float) Main.pref.getInteger("mappaint.fontsize", 8);
+                }
+            }
+        }
+        return s;
     }
 
-    static private class FontDescriptor {
+    private static String getDefaultFontName() {
+        String n = DEFAULT_FONT_NAME;
+        if (n == null) {
+            synchronized (lock) {
+                n = DEFAULT_FONT_NAME;
+                if (n == null) {
+                    DEFAULT_FONT_NAME = n = Main.pref.get("mappaint.font", "Helvetica");
+                }
+            }
+        }
+        return n;
+    }
+
+    private static class FontDescriptor {
         public String name;
         public int style;
         public int size;
@@ -140,8 +160,8 @@ abstract public class ElemStyle implements StyleKeys {
         }
     }
 
-    static private final Map<FontDescriptor, Font> FONT_MAP = new HashMap<FontDescriptor, Font>();
-    static private Font getCachedFont(FontDescriptor fd) {
+    private static final Map<FontDescriptor, Font> FONT_MAP = new HashMap<>();
+    private static Font getCachedFont(FontDescriptor fd) {
         Font f = FONT_MAP.get(fd);
         if (f != null) return f;
         f = new Font(fd.name, fd.style, fd.size);
@@ -149,14 +169,13 @@ abstract public class ElemStyle implements StyleKeys {
         return f;
     }
 
-    static private Font getCachedFont(String name, int style, int size){
+    private static Font getCachedFont(String name, int style, int size){
         return getCachedFont(new FontDescriptor(name, style, size));
     }
 
     protected static Font getFont(Cascade c) {
-        initDefaultFontParameters(); // populated cached preferences, if necessary
-        String name = c.get("font-family", DEFAULT_FONT_NAME, String.class);
-        float size = c.get("font-size", DEFAULT_FONT_SIZE, Float.class);
+        String name = c.get("font-family", getDefaultFontName(), String.class);
+        float size = c.get("font-size", getDefaultFontSize(), Float.class);
         int weight = Font.PLAIN;
         if ("bold".equalsIgnoreCase(c.get("font-weight", null, String.class))) {
             weight = Font.BOLD;

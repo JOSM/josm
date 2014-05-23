@@ -21,10 +21,10 @@ public class JosmTextField extends JTextField {
      *      <code>createDefaultModel</code> method
      * @param text  the initial string to display, or <code>null</code>
      * @param columns  the number of columns to use to calculate
-     *   the preferred width >= 0; if <code>columns</code>
+     *   the preferred width &gt;= 0; if <code>columns</code>
      *   is set to zero, the preferred width will be whatever
      *   naturally results from the component implementation
-     * @exception IllegalArgumentException if <code>columns</code> < 0
+     * @exception IllegalArgumentException if <code>columns</code> &lt; 0
      */
     public JosmTextField(Document doc, String text, int columns) {
         super(doc, text, columns);

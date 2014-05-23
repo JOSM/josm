@@ -17,16 +17,16 @@ import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Split;
 import org.openstreetmap.josm.tools.Destroyable;
 
 public class DialogsPanel extends JPanel implements Destroyable {
-    protected List<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
+    protected List<ToggleDialog> allDialogs = new ArrayList<>();
     protected MultiSplitPane mSpltPane = new MultiSplitPane();
     protected static final int DIVIDER_SIZE = 5;
 
     /**
      * Panels that are added to the multisplitpane.
      */
-    private List<JPanel> panels = new ArrayList<JPanel>();
+    private List<JPanel> panels = new ArrayList<>();
 
-    final private JSplitPane parent;
+    private final JSplitPane parent;
     public DialogsPanel(JSplitPane parent) {
         this.parent = parent;
     }
@@ -37,7 +37,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         if (initialized)
             throw new IllegalStateException();
         initialized = true;
-        allDialogs = new ArrayList<ToggleDialog>();
+        allDialogs = new ArrayList<>();
 
         for (ToggleDialog dialog: pAllDialogs) {
             add(dialog, false);
@@ -249,7 +249,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         /**
          * create Layout
          */
-        final List<Node> ch = new ArrayList<Node>();
+        final List<Node> ch = new ArrayList<>();
 
         for (int i = k; i <= N-1; ++i) {
             if (i != k) {

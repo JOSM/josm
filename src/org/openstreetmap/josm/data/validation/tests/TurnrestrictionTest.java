@@ -53,7 +53,7 @@ public class TurnrestrictionTest extends Test {
 
         Way fromWay = null;
         Way toWay = null;
-        List<OsmPrimitive> via = new ArrayList<OsmPrimitive>();
+        List<OsmPrimitive> via = new ArrayList<>();
 
         boolean morefrom = false;
         boolean moreto = false;
@@ -65,7 +65,7 @@ public class TurnrestrictionTest extends Test {
             if (m.getMember().isIncomplete())
                 return;
 
-            List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
+            List<OsmPrimitive> l = new ArrayList<>();
             l.add(r);
             l.add(m.getMember());
             if (m.isWay()) {
@@ -74,25 +74,29 @@ public class TurnrestrictionTest extends Test {
                     continue;
                 }
 
-                if ("from".equals(m.getRole())) {
+                switch (m.getRole()) {
+                case "from":
                     if (fromWay != null) {
                         morefrom = true;
                     } else {
                         fromWay = w;
                     }
-                } else if ("to".equals(m.getRole())) {
+                    break;
+                case "to":
                     if (toWay != null) {
                         moreto = true;
                     } else {
                         toWay = w;
                     }
-                } else if ("via".equals(m.getRole())) {
+                    break;
+                case "via":
                     if (!via.isEmpty() && via.get(0) instanceof Node) {
                         mixvia = true;
                     } else {
                         via.add(w);
                     }
-                } else {
+                    break;
+                default:
                     errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
                             l, Collections.singletonList(m)));
                 }

@@ -54,12 +54,12 @@ public class OsmReader extends AbstractReader {
     protected boolean cancel;
 
     /** Used by plugins to register themselves as data postprocessors. */
-    public static List<OsmServerReadPostprocessor> postprocessors;
+    private static List<OsmServerReadPostprocessor> postprocessors;
 
     /** register a new postprocessor */
     public static void registerPostprocessor(OsmServerReadPostprocessor pp) {
         if (postprocessors == null) {
-            postprocessors = new ArrayList<OsmServerReadPostprocessor>();
+            postprocessors = new ArrayList<>();
         }
         postprocessors.add(pp);
     }
@@ -108,7 +108,7 @@ public class OsmReader extends AbstractReader {
     }
 
     protected void parseRoot() throws XMLStreamException {
-        if (parser.getLocalName().equals("osm")) {
+        if ("osm".equals(parser.getLocalName())) {
             parseOsm();
         } else {
             parseUnknown();
@@ -120,7 +120,7 @@ public class OsmReader extends AbstractReader {
         if (v == null) {
             throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
         }
-        if (!(v.equals("0.5") || v.equals("0.6"))) {
+        if (!"0.6".equals(v)) {
             throwException(tr("Unsupported version: {0}", v));
         }
         ds.setVersion(v);
@@ -142,17 +142,23 @@ public class OsmReader extends AbstractReader {
             }
 
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("bounds")) {
+                switch (parser.getLocalName()) {
+                case "bounds":
                     parseBounds(generator);
-                } else if (parser.getLocalName().equals("node")) {
+                    break;
+                case "node":
                     parseNode();
-                } else if (parser.getLocalName().equals("way")) {
+                    break;
+                case "way":
                     parseWay();
-                } else if (parser.getLocalName().equals("relation")) {
+                    break;
+                case "relation":
                     parseRelation();
-                } else if (parser.getLocalName().equals("changeset")) {
+                    break;
+                case "changeset":
                     parseChangeset(uploadChangesetId);
-                } else {
+                    break;
+                default:
                     parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT)
@@ -204,7 +210,7 @@ public class OsmReader extends AbstractReader {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("tag")) {
+                if ("tag".equals(parser.getLocalName())) {
                     parseTag(n);
                 } else {
                     parseUnknown();
@@ -222,15 +228,18 @@ public class OsmReader extends AbstractReader {
         w.load(wd);
         externalIdMap.put(wd.getPrimitiveId(), w);
 
-        Collection<Long> nodeIds = new ArrayList<Long>();
+        Collection<Long> nodeIds = new ArrayList<>();
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("nd")) {
+                switch (parser.getLocalName()) {
+                case "nd":
                     nodeIds.add(parseWayNode(w));
-                } else if (parser.getLocalName().equals("tag")) {
+                    break;
+                case "tag":
                     parseTag(w);
-                } else {
+                    break;
+                default:
                     parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
@@ -239,7 +248,7 @@ public class OsmReader extends AbstractReader {
         }
         if (w.isDeleted() && !nodeIds.isEmpty()) {
             Main.info(tr("Deleted way {0} contains nodes", w.getUniqueId()));
-            nodeIds = new ArrayList<Long>();
+            nodeIds = new ArrayList<>();
         }
         ways.put(wd.getUniqueId(), nodeIds);
         return w;
@@ -269,15 +278,18 @@ public class OsmReader extends AbstractReader {
         r.load(rd);
         externalIdMap.put(rd.getPrimitiveId(), r);
 
-        Collection<RelationMemberData> members = new ArrayList<RelationMemberData>();
+        Collection<RelationMemberData> members = new ArrayList<>();
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                if (parser.getLocalName().equals("member")) {
+                switch (parser.getLocalName()) {
+                case "member":
                     members.add(parseRelationMember(r));
-                } else if (parser.getLocalName().equals("tag")) {
+                    break;
+                case "tag":
                     parseTag(r);
-                } else {
+                    break;
+                default:
                     parseUnknown();
                 }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
@@ -286,7 +298,7 @@ public class OsmReader extends AbstractReader {
         }
         if (r.isDeleted() && !members.isEmpty()) {
             Main.info(tr("Deleted relation {0} contains members", r.getUniqueId()));
-            members = new ArrayList<RelationMemberData>();
+            members = new ArrayList<>();
         }
         relations.put(rd.getUniqueId(), members);
         return r;
@@ -336,7 +348,7 @@ public class OsmReader extends AbstractReader {
             while (true) {
                 int event = parser.next();
                 if (event == XMLStreamConstants.START_ELEMENT) {
-                    if (parser.getLocalName().equals("tag")) {
+                    if ("tag".equals(parser.getLocalName())) {
                         parseTag(uploadChangeset);
                     } else {
                         parseUnknown();
@@ -426,13 +438,10 @@ public class OsmReader extends AbstractReader {
             current.setTimestamp(DateUtils.fromString(time));
         }
 
-        // user attribute added in 0.4 API
         String user = parser.getAttributeValue(null, "user");
-        // uid attribute added in 0.6 API
         String uid = parser.getAttributeValue(null, "uid");
         current.setUser(createUser(uid, user));
 
-        // visible attribute added in 0.4 API
         String visible = parser.getAttributeValue(null, "visible");
         if (visible != null) {
             current.setVisible(Boolean.parseBoolean(visible));
@@ -446,38 +455,23 @@ public class OsmReader extends AbstractReader {
             } catch(NumberFormatException e) {
                 throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString), e);
             }
-            if (ds.getVersion().equals("0.6")){
-                if (version <= 0 && current.getUniqueId() > 0) {
+            switch (ds.getVersion()) {
+            case "0.6":
+                if (version <= 0 && !current.isNew()) {
                     throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.getUniqueId()), versionString));
-                } else if (version < 0 && current.getUniqueId() <= 0) {
+                } else if (version < 0 && current.isNew()) {
                     Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 0, "0.6"));
                     version = 0;
                 }
-            } else if (ds.getVersion().equals("0.5")) {
-                if (version <= 0 && current.getUniqueId() > 0) {
-                    Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 1, "0.5"));
-                    version = 1;
-                } else if (version < 0 && current.getUniqueId() <= 0) {
-                    Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 0, "0.5"));
-                    version = 0;
-                }
-            } else {
+                break;
+            default:
                 // should not happen. API version has been checked before
                 throwException(tr("Unknown or unsupported API version. Got {0}.", ds.getVersion()));
             }
         } else {
             // version expected for OSM primitives with an id assigned by the server (id > 0), since API 0.6
-            //
-            if (current.getUniqueId() > 0 && ds.getVersion() != null && ds.getVersion().equals("0.6")) {
+            if (!current.isNew() && ds.getVersion() != null && "0.6".equals(ds.getVersion())) {
                 throwException(tr("Missing attribute ''version'' on OSM primitive with ID {0}.", Long.toString(current.getUniqueId())));
-            } else if (current.getUniqueId() > 0 && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
-                // default version in 0.5 files for existing primitives
-                Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.getUniqueId(), version, 1, "0.5"));
-                version= 1;
-            } else if (current.getUniqueId() <= 0 && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
-                // default version in 0.5 files for new primitives, no warning necessary. This is
-                // (was) legal in API 0.5
-                version= 0;
             }
         }
         current.setVersion(version);
@@ -485,10 +479,10 @@ public class OsmReader extends AbstractReader {
         String action = parser.getAttributeValue(null, "action");
         if (action == null) {
             // do nothing
-        } else if (action.equals("delete")) {
+        } else if ("delete".equals(action)) {
             current.setDeleted(true);
             current.setModified(current.isVisible());
-        } else if (action.equals("modify")) {
+        } else if ("modify".equals(action)) {
             current.setModified(true);
         }
 
@@ -498,8 +492,9 @@ public class OsmReader extends AbstractReader {
         } else {
             try {
                 current.setChangesetId(Integer.parseInt(v));
-            } catch(NumberFormatException e) {
-                if (current.getUniqueId() <= 0) {
+            } catch (IllegalArgumentException e) {
+                Main.debug(e.getMessage());
+                if (current.isNew()) {
                     // for a new primitive we just log a warning
                     Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.getUniqueId()));
                     current.setChangesetId(0);
@@ -507,9 +502,13 @@ public class OsmReader extends AbstractReader {
                     // for an existing primitive this is a problem
                     throwException(tr("Illegal value for attribute ''changeset''. Got {0}.", v), e);
                 }
+            } catch (IllegalStateException e) {
+                // thrown for positive changeset id on new primitives
+                Main.info(e.getMessage());
+                current.setChangesetId(0);
             }
-            if (current.getChangesetId() <=0) {
-                if (current.getUniqueId() <= 0) {
+            if (current.getChangesetId() <= 0) {
+                if (current.isNew()) {
                     // for a new primitive we just log a warning
                     Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.getUniqueId()));
                     current.setChangesetId(0);
@@ -588,10 +587,11 @@ public class OsmReader extends AbstractReader {
             progressMonitor.beginTask(tr("Prepare OSM data...", 2));
             progressMonitor.indeterminateSubTask(tr("Parsing OSM data..."));
 
-            InputStreamReader ir = UTFInputStreamReader.create(source);
-            XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(ir);
-            setParser(parser);
-            parse();
+            try (InputStreamReader ir = UTFInputStreamReader.create(source)) {
+                XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(ir);
+                setParser(parser);
+                parse();
+            }
             progressMonitor.worked(1);
 
             progressMonitor.indeterminateSubTask(tr("Preparing data set..."));

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc.//DTD JNLP 1.5//EN" "http://java.sun.com/dtd/JNLP-1.5.dtd"> 
-<jnlp spec="1.5.0+" codebase="http://josm.openstreetmap.de/download/" href="josm.jnlp">
+<!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
+<jnlp spec="6.0+" codebase="https://josm.openstreetmap.de/download/" href="josm.jnlp">
     <information>
         <title>JOSM</title>
         <vendor>OpenStreetMap</vendor> 
-        <homepage href="http://josm.openstreetmap.de/"/> 
+        <homepage href="https://josm.openstreetmap.de"/> 
         <description>Java OpenStreetMap editor</description>
         <description kind="one-line">JOSM</description>
         <description kind="tooltip">JOSM</description>
-        <icon href="http://josm.openstreetmap.de/svn/trunk/images/logo.png"/> 
+        <icon href="https://josm.openstreetmap.de/svn/trunk/images/logo.png"/> 
         <offline-allowed/>
         <shortcut>
             <desktop/>
@@ -19,7 +19,7 @@
         <all-permissions/>
     </security>
     <resources>
-        <j2se version="1.6+"/>
+        <j2se version="1.7+"/>
         <jar href="josm-tested.jar"/>
         <property name="java.util.Arrays.useLegacyMergeSort" value="true"/>
     </resources>

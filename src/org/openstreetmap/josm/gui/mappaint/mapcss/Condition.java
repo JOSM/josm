@@ -1,13 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
@@ -19,16 +21,18 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
-abstract public class Condition {
+public abstract class Condition {
 
-    abstract public boolean applies(Environment e);
+    public abstract boolean applies(Environment e);
 
     public static Condition createKeyValueCondition(String k, String v, Op op, Context context, boolean considerValAsKey) {
         switch (context) {
         case PRIMITIVE:
-            return KeyValueRegexpCondition.SUPPORTED_OPS.contains(op) && !considerValAsKey
-                    ? new KeyValueRegexpCondition(k, v, op, false)
-                    : new KeyValueCondition(k, v, op, considerValAsKey);
+            if (KeyValueRegexpCondition.SUPPORTED_OPS.contains(op) && !considerValAsKey)
+                return new KeyValueRegexpCondition(k, v, op, false);
+            if (!considerValAsKey && op.equals(Op.EQ))
+                return new SimpleKeyValueCondition(k, v);
+            return new KeyValueCondition(k, v, op, considerValAsKey);
         case LINK:
             if (considerValAsKey)
                 throw new MapCSSException("''considerValAsKey'' not supported in LINK context");
@@ -60,15 +64,15 @@ abstract public class Condition {
         }
     }
 
-    public static Condition createPseudoClassCondition(String id, boolean not, Context context) {
+    public static PseudoClassCondition createPseudoClassCondition(String id, boolean not, Context context) {
         return new PseudoClassCondition(id, not, context);
     }
 
-    public static Condition createClassCondition(String id, boolean not, Context context) {
+    public static ClassCondition createClassCondition(String id, boolean not, Context context) {
         return new ClassCondition(id, not);
     }
 
-    public static Condition createExpressionCondition(Expression e, Context context) {
+    public static ExpressionCondition createExpressionCondition(Expression e, Context context) {
         return new ExpressionCondition(e);
     }
 
@@ -76,25 +80,22 @@ abstract public class Condition {
         EQ, NEQ, GREATER_OR_EQUAL, GREATER, LESS_OR_EQUAL, LESS,
         REGEX, NREGEX, ONE_OF, BEGINS_WITH, ENDS_WITH, CONTAINS;
 
+        private static final Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
+
         public boolean eval(String testString, String prototypeString) {
-            if (testString == null && this != NEQ)
+            if (testString == null && !NEGATED_OPS.contains(this))
                 return false;
             switch (this) {
             case EQ:
-                return equal(testString, prototypeString);
+                return Objects.equals(testString, prototypeString);
             case NEQ:
-                return !equal(testString, prototypeString);
+                return !Objects.equals(testString, prototypeString);
             case REGEX:
             case NREGEX:
                 final boolean contains = Pattern.compile(prototypeString).matcher(testString).find();
                 return REGEX.equals(this) ? contains : !contains;
             case ONE_OF:
-                String[] parts = testString.split(";");
-                for (String part : parts) {
-                    if (equal(prototypeString, part.trim()))
-                        return true;
-                }
-                return false;
+                return Arrays.asList(testString.split("\\s*;\\s*")).contains(prototypeString);
             case BEGINS_WITH:
                 return testString.startsWith(prototypeString);
             case ENDS_WITH:
@@ -127,7 +128,7 @@ abstract public class Condition {
     }
 
     /**
-     * context, where the condition applies
+     * Context, where the condition applies.
      */
     public static enum Context {
         /**
@@ -136,13 +137,43 @@ abstract public class Condition {
         PRIMITIVE,
 
         /**
-         * link between primitives, e.g. relation >[role=outer] way
+         * link between primitives, e.g. relation &gt;[role=outer] way
          */
         LINK
     }
 
-    public final static EnumSet<Op> COMPARISON_OPERATERS =
+    public static final EnumSet<Op> COMPARISON_OPERATERS =
         EnumSet.of(Op.GREATER_OR_EQUAL, Op.GREATER, Op.LESS_OR_EQUAL, Op.LESS);
+
+    /**
+     * Most common case of a KeyValueCondition.
+     *
+     * Extra class for performance reasons.
+     */
+    public static class SimpleKeyValueCondition extends Condition {
+        public final String k;
+        public final String v;
+
+        public SimpleKeyValueCondition(String k, String v) {
+            this.k = k;
+            this.v = v;
+        }
+
+        @Override
+        public boolean applies(Environment e) {
+            return v.equals(e.osm.get(k));
+        }
+
+        public Tag asTag() {
+            return new Tag(k, v);
+        }
+
+        @Override
+        public String toString() {
+            return '[' + k + '=' + v + ']';
+        }
+
+    }
 
     /**
      * <p>Represents a key/value condition which is either applied to a primitive.</p>
@@ -200,9 +231,13 @@ abstract public class Condition {
         @Override
         public boolean applies(Environment env) {
             final String value = env.osm.get(k);
-            return value != null && (op.equals(Op.REGEX)
-                    ? pattern.matcher(value).find()
-                    : !pattern.matcher(value).find());
+            if (Op.REGEX.equals(op)) {
+                return value != null && pattern.matcher(value).find();
+            } else if (Op.NREGEX.equals(op)) {
+                return value == null || !pattern.matcher(value).find();
+            } else {
+                throw new IllegalStateException();
+            }
         }
     }
 
@@ -346,26 +381,29 @@ abstract public class Condition {
         }
 
         public boolean appliesImpl(Environment e) {
-            if (equal(id, "closed")) {
+            switch(id) {
+            case "closed":
                 if (e.osm instanceof Way && ((Way) e.osm).isClosed())
                     return true;
                 if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
                     return true;
-                return false;
-            } else if (equal(id, "modified")) {
+                break;
+            case "modified":
                 return e.osm.isModified() || e.osm.isNewOrUndeleted();
-            } else if (equal(id, "new")) {
+            case "new":
                 return e.osm.isNew();
-            } else if (equal(id, "connection") && (e.osm instanceof Node)) {
-                return ((Node) e.osm).isConnectionNode();
-            } else if (equal(id, "tagged")) {
+            case "connection":
+                return e.osm instanceof Node && ((Node) e.osm).isConnectionNode();
+            case "tagged":
                 return e.osm.isTagged();
-            } else if ("sameTags".equals(id)) {
+            case "sameTags":
                 return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
-            } else if ("areaStyle".equals(id)) {
+            case "areaStyle":
                 return ElemStyles.hasAreaElemStyle(e.osm, false);
+            case "unconnected":
+                return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
             }
-            return true;
+            return false;
         }
 
         @Override
@@ -376,7 +414,7 @@ abstract public class Condition {
 
     public static class ExpressionCondition extends Condition {
 
-        private Expression e;
+        private final Expression e;
 
         public ExpressionCondition(Expression e) {
             this.e = e;

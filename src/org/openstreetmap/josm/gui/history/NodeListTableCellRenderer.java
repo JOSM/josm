@@ -16,10 +16,13 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
 
-    public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
+    public static final Color BGCOLOR_SELECTED = new Color(143,170,255);
 
     private ImageIcon nodeIcon;
 
+    /**
+     * Constructs a new {@code NodeListTableCellRenderer}.
+     */
     public NodeListTableCellRenderer(){
         setOpaque(true);
         nodeIcon = ImageProvider.get("data", "node");

@@ -27,8 +27,13 @@ public final class TigerUtils {
         return true;
     }
 
+    /**
+     * Determines if the given key denotes an integer value.
+     * @param name The key to determine
+     * @return {@code true} if the given key denotes an integer value
+     */
     public static boolean tagIsInt(String name) {
-        if (name.equals("tiger:tlid"))
+        if ("tiger:tlid".equals(name))
             return true;
         return false;
     }
@@ -40,7 +45,7 @@ public final class TigerUtils {
     }
 
     public static String combineTags(String name, Set<String> values) {
-        TreeSet<Object> resultSet = new TreeSet<Object>();
+        TreeSet<Object> resultSet = new TreeSet<>();
         for (String value: values) {
             String[] parts = value.split(":");
             for (String part: parts) {
@@ -62,7 +67,7 @@ public final class TigerUtils {
     }
 
     public static String combineTags(String name, String t1, String t2) {
-        Set<String> set = new TreeSet<String>();
+        Set<String> set = new TreeSet<>();
         set.add(t1);
         set.add(t2);
         return TigerUtils.combineTags(name, set);

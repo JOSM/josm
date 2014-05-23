@@ -33,6 +33,10 @@ public final class ZoomInAction extends JosmAction {
         Main.registerActionShortcut(this,
                 Shortcut.registerShortcut("view:zoominbis", tr("View: {0}", tr("Zoom In")),
                     KeyEvent.VK_EQUALS, Shortcut.SHIFT));
+        // But on some systems (Belgian keyboard under Ubuntu) it seems not to work, so use also EQUALS
+        Main.registerActionShortcut(this,
+                Shortcut.registerShortcut("view:zoominter", tr("View: {0}", tr("Zoom In")),
+                    KeyEvent.VK_EQUALS, Shortcut.DIRECT));
         // make numpad + behave like +
         Main.registerActionShortcut(this,
             Shortcut.registerShortcut("view:zoominkeypad", tr("View: {0}", tr("Zoom In (Keypad)")),

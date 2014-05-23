@@ -13,9 +13,9 @@ public class RelationToChildReference {
      * @param child the child primitive
      * @return  a set of all {@link RelationToChildReference}s for a given child primitive
      */
-    static public Set<RelationToChildReference> getRelationToChildReferences(OsmPrimitive child) {
+    public static Set<RelationToChildReference> getRelationToChildReferences(OsmPrimitive child) {
         Set<Relation> parents = OsmPrimitive.getFilteredSet(child.getReferrers(), Relation.class);
-        Set<RelationToChildReference> references = new HashSet<RelationToChildReference>();
+        Set<RelationToChildReference> references = new HashSet<>();
         for (Relation parent: parents) {
             for (int i=0; i < parent.getMembersCount(); i++) {
                 if (parent.getMember(i).refersTo(child)) {
@@ -33,8 +33,8 @@ public class RelationToChildReference {
      * @return  a set of all {@link RelationToChildReference}s to the children in the collection of child
      * primitives
      */
-    static public Set<RelationToChildReference> getRelationToChildReferences(Collection<? extends OsmPrimitive> children) {
-        Set<RelationToChildReference> references = new HashSet<RelationToChildReference>();
+    public static Set<RelationToChildReference> getRelationToChildReferences(Collection<? extends OsmPrimitive> children) {
+        Set<RelationToChildReference> references = new HashSet<>();
         for (OsmPrimitive child: children) {
             references.addAll(getRelationToChildReferences(child));
         }

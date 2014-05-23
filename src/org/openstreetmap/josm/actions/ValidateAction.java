@@ -33,9 +33,6 @@ import org.xml.sax.SAXException;
  */
 public class ValidateAction extends JosmAction {
 
-    /** Serializable ID */
-    private static final long serialVersionUID = -2304521273582574603L;
-
     /** Last selection used to validate */
     private Collection<OsmPrimitive> lastSelection;
 
@@ -67,6 +64,7 @@ public class ValidateAction extends JosmAction {
         if (Main.map == null || !Main.map.isVisible())
             return;
 
+        OsmValidator.initializeTests();
         OsmValidator.initializeErrorLayer();
 
         Collection<Test> tests = OsmValidator.getEnabledTests(false);
@@ -158,7 +156,7 @@ public class ValidateAction extends JosmAction {
         OsmTransferException {
             if (tests == null || tests.isEmpty())
                 return;
-            errors = new ArrayList<TestError>(200);
+            errors = new ArrayList<>(200);
             getProgressMonitor().setTicksCount(tests.size() * validatedPrimitives.size());
             int testCounter = 0;
             for (Test test : tests) {
@@ -177,7 +175,7 @@ public class ValidateAction extends JosmAction {
                 getProgressMonitor().subTask(tr("Updating ignored errors ..."));
                 for (TestError error : errors) {
                     if (canceled) return;
-                    List<String> s = new ArrayList<String>();
+                    List<String> s = new ArrayList<>();
                     s.add(error.getIgnoreState());
                     s.add(error.getIgnoreGroup());
                     s.add(error.getIgnoreSubGroup());

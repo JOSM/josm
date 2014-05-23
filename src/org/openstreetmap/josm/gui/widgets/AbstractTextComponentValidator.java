@@ -8,6 +8,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
@@ -17,7 +18,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is an abstract class for a validator on a text component.
@@ -32,8 +32,8 @@ import org.openstreetmap.josm.tools.Utils;
  *
  */
 public abstract class AbstractTextComponentValidator implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener{
-    static final private Border ERROR_BORDER = BorderFactory.createLineBorder(Color.RED, 1);
-    static final private Color ERROR_BACKGROUND =  new Color(255,224,224);
+    private static final Border ERROR_BORDER = BorderFactory.createLineBorder(Color.RED, 1);
+    private static final Color ERROR_BACKGROUND =  new Color(255,224,224);
 
     private JTextComponent tc;
     /** remembers whether the content of the text component is currently valid or not; null means,
@@ -44,7 +44,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     private String msg;
 
     protected void feedbackInvalid(String msg) {
-        if (valid == null || valid || !Utils.equal(msg, this.msg)) {
+        if (valid == null || valid || !Objects.equals(msg, this.msg)) {
             // only provide feedback if the validity has changed. This avoids
             // unnecessary UI updates.
             tc.setBorder(ERROR_BORDER);
@@ -60,7 +60,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     }
 
     protected void feedbackValid(String msg) {
-        if (valid == null || !valid || !Utils.equal(msg, this.msg)) {
+        if (valid == null || !valid || !Objects.equals(msg, this.msg)) {
             // only provide feedback if the validity has changed. This avoids
             // unnecessary UI updates.
             tc.setBorder(UIManager.getBorder("TextField.border"));
@@ -172,7 +172,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /* -------------------------------------------------------------------------------- */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("enabled")) {
+        if ("enabled".equals(evt.getPropertyName())) {
             boolean enabled = (Boolean)evt.getNewValue();
             if (enabled) {
                 validate();

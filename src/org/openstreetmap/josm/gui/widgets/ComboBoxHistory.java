@@ -9,31 +9,31 @@ import javax.swing.DefaultComboBoxModel;
 
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 
-public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<AutoCompletionListItem> {
+public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> implements Iterable<AutoCompletionListItem> {
 
     private int maxSize = 10;
 
-    private List<HistoryChangedListener> listeners = new ArrayList<HistoryChangedListener>();
+    private List<HistoryChangedListener> listeners = new ArrayList<>();
 
     public ComboBoxHistory(int size) {
         maxSize = size;
     }
 
+    public void addElement(String s) {
+        addElement(new AutoCompletionListItem(s));
+    }
+    
     /**
      * Adds or moves an element to the top of the history
      */
     @Override
-    public void addElement(Object o) {
-        if (o instanceof String) {
-            o = new AutoCompletionListItem((String) o);
-        }
-
-        String newEntry = ((AutoCompletionListItem)o).getValue();
+    public void addElement(AutoCompletionListItem o) {
+        String newEntry = o.getValue();
 
         // if history contains this object already, delete it,
         // so that it looks like a move to the top
         for (int i = 0; i < getSize(); i++) {
-            String oldEntry = ((AutoCompletionListItem) getElementAt(i)).getValue();
+            String oldEntry = getElementAt(i).getValue();
             if(oldEntry.equals(newEntry)) {
                 removeElementAt(i);
             }
@@ -74,9 +74,8 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<Au
             @Override
             public AutoCompletionListItem next() {
                 position++;
-                return (AutoCompletionListItem)getElementAt(position);
+                return getElementAt(position);
             }
-
         };
     }
 
@@ -88,7 +87,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<Au
     }
 
     public List<String> asStringList() {
-        List<String> list = new ArrayList<String>(maxSize);
+        List<String> list = new ArrayList<>(maxSize);
         for (AutoCompletionListItem item : this) {
             list.add(item.getValue());
         }

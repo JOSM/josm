@@ -7,12 +7,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -21,11 +21,11 @@ import org.xml.sax.SAXException;
 public class ImageryLayerInfo {
 
     public static final ImageryLayerInfo instance = new ImageryLayerInfo();
-    List<ImageryInfo> layers = new ArrayList<ImageryInfo>();
-    static List<ImageryInfo> defaultLayers = new ArrayList<ImageryInfo>();
+    List<ImageryInfo> layers = new ArrayList<>();
+    static List<ImageryInfo> defaultLayers = new ArrayList<>();
 
-    private final static String[] DEFAULT_LAYER_SITES = {
-        Main.JOSM_WEBSITE+"/maps"
+    private static final String[] DEFAULT_LAYER_SITES = {
+        Main.getJOSMWebsite()+"/maps"
     };
 
     private ImageryLayerInfo() {
@@ -73,17 +73,14 @@ public class ImageryLayerInfo {
             if (clearCache) {
                 MirroredInputStream.cleanup(source);
             }
-            MirroredInputStream stream = null;
             try {
                 ImageryReader reader = new ImageryReader(source);
                 Collection<ImageryInfo> result = reader.parse();
                 defaultLayers.addAll(result);
             } catch (IOException ex) {
-                Utils.close(stream);
                 Main.error(ex, false);
                 continue;
             } catch (SAXException ex) {
-                Utils.close(stream);
                 Main.error(ex);
                 continue;
             }
@@ -91,7 +88,7 @@ public class ImageryLayerInfo {
         while (defaultLayers.remove(null));
 
         Collection<String> defaults = Main.pref.getCollection("imagery.layers.default");
-        List<String> defaultsSave = new ArrayList<String>();
+        List<String> defaultsSave = new ArrayList<>();
         for (ImageryInfo def : defaultLayers) {
             if (def.isDefaultEntry()) {
                 defaultsSave.add(def.getUrl());
@@ -124,7 +121,7 @@ public class ImageryLayerInfo {
 
     // some additional checks to respect extended URLs in preferences (legacy workaround)
     private boolean isSimilar(String a, String b) {
-        return Utils.equal(a, b) || (a != null && b != null && !a.isEmpty() && !b.isEmpty() && (a.contains(b) || b.contains(a)));
+        return Objects.equals(a, b) || (a != null && b != null && !a.isEmpty() && !b.isEmpty() && (a.contains(b) || b.contains(a)));
     }
 
     public void add(ImageryInfo info) {
@@ -136,7 +133,7 @@ public class ImageryLayerInfo {
     }
 
     public void save() {
-        List<ImageryPreferenceEntry> entries = new ArrayList<ImageryPreferenceEntry>();
+        List<ImageryPreferenceEntry> entries = new ArrayList<>();
         for (ImageryInfo info : layers) {
             entries.add(new ImageryPreferenceEntry(info));
         }

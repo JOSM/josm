@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -22,8 +23,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -33,14 +32,14 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.ProgressInputStream;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
-
 
 public class WMSGrabber extends Grabber {
 
     protected String baseURL;
     private ImageryInfo info;
-    private Map<String, String> props = new HashMap<String, String>();
+    private Map<String, String> props = new HashMap<>();
 
     public WMSGrabber(MapView mv, WMSLayer layer, boolean localOnly) {
         super(mv, layer, localOnly);
@@ -91,7 +90,7 @@ public class WMSGrabber extends Grabber {
             n = ne.lat();
             e = ne.lon();
         }
-        if (myProj.equals("EPSG:4326") && !info.getServerProjections().contains(myProj) && info.getServerProjections().contains("CRS:84")) {
+        if ("EPSG:4326".equals(myProj) && !info.getServerProjections().contains(myProj) && info.getServerProjections().contains("CRS:84")) {
             myProj = "CRS:84";
         }
 
@@ -109,11 +108,11 @@ public class WMSGrabber extends Grabber {
         //      For CRS x and y are as specified by the EPSG
         //          E.g. [1] lists lat as first coordinate axis and lot as second, so it is switched for EPSG:4326.
         //          For most other EPSG code there seems to be no difference.
-        // [1] http://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::4326&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:4326
+        // [1] https://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::4326&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:4326
         boolean switchLatLon = false;
         if (baseURL.toLowerCase().contains("crs=epsg:4326")) {
             switchLatLon = true;
-        } else if (baseURL.toLowerCase().contains("crs=") && myProj.equals("EPSG:4326")) {
+        } else if (baseURL.toLowerCase().contains("crs=") && "EPSG:4326".equals(myProj)) {
             switchLatLon = true;
         }
         String bbox;
@@ -135,13 +134,15 @@ public class WMSGrabber extends Grabber {
 
     @Override
     public boolean loadFromCache(WMSRequest request) {
-        BufferedImage cached = layer.cache.getExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
+        BufferedImage cached = layer.cache.getExactMatch(
+                Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
 
         if (cached != null) {
             request.finish(State.IMAGE, cached);
             return true;
         } else if (request.isAllowPartialCacheMatch()) {
-            BufferedImage partialMatch = layer.cache.getPartialMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
+            BufferedImage partialMatch = layer.cache.getPartialMatch(
+                    Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
             if (partialMatch != null) {
                 request.finish(State.PARTLY_IN_CACHE, partialMatch);
                 return true;
@@ -172,15 +173,12 @@ public class WMSGrabber extends Grabber {
             throw new IOException(readException(conn));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        InputStream is = new ProgressInputStream(conn, null);
-        try {
+        try (InputStream is = new ProgressInputStream(conn, null)) {
             Utils.copyStream(is, baos);
-        } finally {
-            Utils.close(is);
         }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        BufferedImage img = layer.normalizeImage(ImageIO.read(bais));
+        BufferedImage img = layer.normalizeImage(ImageProvider.read(bais, true, WMSLayer.PROP_ALPHA_CHANNEL.get()));
         bais.reset();
         layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
         return img;
@@ -189,8 +187,7 @@ public class WMSGrabber extends Grabber {
     protected String readException(URLConnection conn) throws IOException {
         StringBuilder exception = new StringBuilder();
         InputStream in = conn.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        try {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
             String line = null;
             while( (line = br.readLine()) != null) {
                 // filter non-ASCII characters and control characters
@@ -198,8 +195,6 @@ public class WMSGrabber extends Grabber {
                 exception.append('\n');
             }
             return exception.toString();
-        } finally {
-            Utils.close(br);
         }
     }
 }

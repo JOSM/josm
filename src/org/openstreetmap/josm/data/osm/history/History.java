@@ -24,7 +24,7 @@ public class History{
     }
 
     private static History filter(History history, FilterPredicate predicate) {
-        List<HistoryOsmPrimitive> out = new ArrayList<HistoryOsmPrimitive>();
+        List<HistoryOsmPrimitive> out = new ArrayList<>();
         for (HistoryOsmPrimitive primitive: history.versions) {
             if (predicate.matches(primitive)) {
                 out.add(primitive);
@@ -42,10 +42,10 @@ public class History{
     /**
      * Creates a new history for an OSM primitive
      *
-     * @param id the id. >0 required.
+     * @param id the id. &gt; 0 required.
      * @param type the primitive type. Must not be null.
      * @param versions a list of versions. Can be null.
-     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException thrown if id &lt;= 0
      * @throws IllegalArgumentException if type is null
      *
      */
@@ -55,14 +55,14 @@ public class History{
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         this.id = id;
         this.type = type;
-        this.versions = new ArrayList<HistoryOsmPrimitive>();
+        this.versions = new ArrayList<>();
         if (versions != null) {
             this.versions.addAll(versions);
         }
     }
 
     public History sortAscending() {
-        List<HistoryOsmPrimitive> copy = new ArrayList<HistoryOsmPrimitive>(versions);
+        List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
         Collections.sort(
                 copy,
                 new Comparator<HistoryOsmPrimitive>() {
@@ -76,7 +76,7 @@ public class History{
     }
 
     public History sortDescending() {
-        List<HistoryOsmPrimitive> copy = new ArrayList<HistoryOsmPrimitive>(versions);
+        List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
         Collections.sort(
                 copy,
                 new Comparator<HistoryOsmPrimitive>() {

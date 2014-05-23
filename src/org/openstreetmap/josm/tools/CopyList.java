@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import java.util.AbstractList;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -114,7 +115,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
      */
     @Override
     public Object clone() {
-        return new CopyList<E>(array, size);
+        return new CopyList<>(array, size);
     }
 
     private void rangeCheck(int index) {
@@ -128,15 +129,11 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void ensureCapacity(int target) {
         modCount++;
         if (target > array.length) {
-            E[] old = array;
-
             int newCapacity = Math.max(target, (array.length * 3)/2 + 1);
-            array = (E[]) new Object[newCapacity];
-            System.arraycopy(old, 0, array, 0, size);
+            array = Arrays.copyOf(array, newCapacity);
             pristine = false;
         }
     }

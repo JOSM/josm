@@ -67,13 +67,14 @@ public class CustomProjection extends AbstractProjection {
         units("units", true),     // ignored
         no_defs("no_defs", false),
         init("init", true),
-        // JOSM extension, not present in PROJ.4
+        // JOSM extensions, not present in PROJ.4
+        wmssrs("wmssrs", true),
         bounds("bounds", true);
 
         public String key;
         public boolean hasValue;
 
-        public final static Map<String, Param> paramsByKey = new HashMap<String, Param>();
+        public static final Map<String, Param> paramsByKey = new HashMap<>();
         static {
             for (Param p : Param.values()) {
                 paramsByKey.put(p.key, p);
@@ -112,12 +113,12 @@ public class CustomProjection extends AbstractProjection {
             try {
                 update(null);
             } catch (ProjectionConfigurationException ex1) {
-                throw new RuntimeException();
+                throw new RuntimeException(ex1);
             }
         }
     }
 
-    public void update(String pref) throws ProjectionConfigurationException {
+    public final void update(String pref) throws ProjectionConfigurationException {
         this.pref = pref;
         if (pref == null) {
             ellps = Ellipsoid.WGS84;
@@ -151,12 +152,16 @@ public class CustomProjection extends AbstractProjection {
             if (s != null) {
                 this.bounds = parseBounds(s);
             }
+            s = parameters.get(Param.wmssrs.key);
+            if (s != null) {
+                this.code = s;
+            }
         }
     }
 
     private Map<String, String> parseParameterList(String pref) throws ProjectionConfigurationException {
-        Map<String, String> parameters = new HashMap<String, String>();
-        String[] parts = pref.trim().split("\\s+");
+        Map<String, String> parameters = new HashMap<>();
+        String[] parts = Utils.WHITE_SPACES_PATTERN.split(pref.trim());
         if (pref.trim().isEmpty()) {
             parts = new String[0];
         }
@@ -167,15 +172,15 @@ public class CustomProjection extends AbstractProjection {
             if (m.matches()) {
                 String key = m.group(1);
                 // alias
-                if (key.equals("k")) {
+                if ("k".equals(key)) {
                     key = Param.k_0.key;
                 }
                 String value = null;
                 if (m.groupCount() >= 3) {
                     value = m.group(3);
-                    // same aliases
+                    // some aliases
                     if (key.equals(Param.proj.key)) {
-                        if (value.equals("longlat") || value.equals("latlon") || value.equals("latlong")) {
+                        if ("longlat".equals(value) || "latlon".equals(value) || "latlong".equals(value)) {
                             value = "lonlat";
                         }
                     }
@@ -200,7 +205,7 @@ public class CustomProjection extends AbstractProjection {
             try {
                 initp = parseParameterList(init);
             } catch (ProjectionConfigurationException ex) {
-                throw new ProjectionConfigurationException(tr(initKey+": "+ex.getMessage()));
+                throw new ProjectionConfigurationException(tr(initKey+": "+ex.getMessage()), ex);
             }
             for (Map.Entry<String, String> e : parameters.entrySet()) {
                 initp.put(e.getKey(), e.getValue());
@@ -258,7 +263,7 @@ public class CustomProjection extends AbstractProjection {
             if (nadgridsId.startsWith("@")) {
                 nadgridsId = nadgridsId.substring(1);
             }
-            if (nadgridsId.equals("null"))
+            if ("null".equals(nadgridsId))
                 return new NullDatum(null, ellps);
             NTV2GridShiftFileWrapper nadgrids = Projections.getNTV2Grid(nadgridsId);
             if (nadgrids == null)
@@ -286,12 +291,12 @@ public class CustomProjection extends AbstractProjection {
 
         if (numStr.length != 3 && numStr.length != 7)
             throw new ProjectionConfigurationException(tr("Unexpected number of arguments for parameter ''towgs84'' (must be 3 or 7)"));
-        List<Double> towgs84Param = new ArrayList<Double>();
+        List<Double> towgs84Param = new ArrayList<>();
         for (String str : numStr) {
             try {
                 towgs84Param.add(Double.parseDouble(str));
             } catch (NumberFormatException e) {
-                throw new ProjectionConfigurationException(tr("Unable to parse value of parameter ''towgs84'' (''{0}'')", str));
+                throw new ProjectionConfigurationException(tr("Unable to parse value of parameter ''towgs84'' (''{0}'')", str), e);
             }
         }
         boolean isCentric = true;
@@ -379,7 +384,7 @@ public class CustomProjection extends AbstractProjection {
             return Double.parseDouble(doubleStr);
         } catch (NumberFormatException e) {
             throw new ProjectionConfigurationException(
-                    tr("Unable to parse value ''{1}'' of parameter ''{0}'' as number.", parameterName, doubleStr));
+                    tr("Unable to parse value ''{1}'' of parameter ''{0}'' as number.", parameterName, doubleStr), e);
         }
     }
 

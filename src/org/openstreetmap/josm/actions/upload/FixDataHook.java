@@ -18,16 +18,18 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Tag;
 
 /**
  * Fixes defective data entries for all modified objects before upload
+ * @since 5621
  */
 public class FixDataHook implements UploadHook {
 
     /**
      * List of checks to run on data
      */
-    private List<FixData> deprecated = new LinkedList<FixData>();
+    private List<FixData> deprecated = new LinkedList<>();
 
     /**
      * Constructor for data initialization
@@ -70,13 +72,13 @@ public class FixDataHook implements UploadHook {
     /**
      * Data fix to remove spaces at begin or end of tags
      */
-    public class FixDataSpace implements FixData {
+    public static class FixDataSpace implements FixData {
         @Override
         public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
-            Map<String, String> newKeys = new HashMap<String, String>(keys);
+            Map<String, String> newKeys = new HashMap<>(keys);
             for (Entry<String, String> e : keys.entrySet()) {
-                String v = e.getValue().trim();
-                String k = e.getKey().trim();
+                String v = Tag.removeWhiteSpaces(e.getValue());
+                String k = Tag.removeWhiteSpaces(e.getKey());
                 if(!e.getKey().equals(k)) {
                     boolean drop = k.isEmpty() || v.isEmpty();
                     if(drop || !keys.containsKey(k)) {
@@ -103,7 +105,7 @@ public class FixDataHook implements UploadHook {
     /**
      * Data fix to cleanup wrong spelled keys
      */
-    public class FixDataKey implements FixData {
+    public static class FixDataKey implements FixData {
         /** key of wrong data */
         String oldKey;
         /** key of correct data */
@@ -134,7 +136,7 @@ public class FixDataHook implements UploadHook {
     /**
      * Data fix to cleanup wrong spelled tags
      */
-    public class FixDataTag implements FixData {
+    public static class FixDataTag implements FixData {
         /** key of wrong data */
         String oldKey;
         /** value of wrong data */
@@ -181,7 +183,7 @@ public class FixDataHook implements UploadHook {
             return true;
 
         List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
-        Collection<Command> cmds = new LinkedList<Command>();
+        Collection<Command> cmds = new LinkedList<>();
 
         for (OsmPrimitive osm : objectsToUpload) {
             Map<String, String> keys = osm.getKeys();
@@ -192,7 +194,7 @@ public class FixDataHook implements UploadHook {
                         modified = true;
                 }
                 if(modified)
-                    cmds.add(new ChangePropertyCommand(Collections.singleton(osm), new HashMap<String, String>(keys)));
+                    cmds.add(new ChangePropertyCommand(Collections.singleton(osm), new HashMap<>(keys)));
             }
         }
 

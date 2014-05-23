@@ -93,7 +93,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     };
 
     protected <T extends OsmPrimitive> Collection<T> sortById(Collection<T> primitives) {
-        List<T> result = new ArrayList<T>(primitives.size());
+        List<T> result = new ArrayList<>(primitives.size());
         result.addAll(primitives);
         Collections.sort(result, byIdComparator);
         return result;
@@ -254,7 +254,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             if (tagOpen) {
                 out.println(">");
             }
-            List<Entry<String, String>> entries = new ArrayList<Entry<String,String>>(osm.getKeys().entrySet());
+            List<Entry<String, String>> entries = new ArrayList<>(osm.getKeys().entrySet());
             Collections.sort(entries, byKeyComparator);
             for (Entry<String, String> e : entries) {
                 out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +

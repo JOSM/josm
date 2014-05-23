@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -18,13 +19,13 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     /**
      * All commands that were made on the dataset. Don't write from outside!
      */
-    public final LinkedList<Command> commands = new LinkedList<Command>();
+    public final LinkedList<Command> commands = new LinkedList<>();
     /**
      * The stack for redoing commands
      */
-    public final LinkedList<Command> redoCommands = new LinkedList<Command>();
+    public final LinkedList<Command> redoCommands = new LinkedList<>();
 
-    private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<CommandQueueListener>();
+    private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<>();
 
     /**
      * Constructs a new {@code UndoRedoHandler}.
@@ -54,14 +55,17 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
         fireCommandsChanged();
 
         // the command may have changed the selection so tell the listeners about the current situation
-        Main.main.getCurrentDataSet().fireSelectionChanged();
+        DataSet ds = Main.main.getCurrentDataSet();
+        if (ds != null) {
+            ds.fireSelectionChanged();
+        }
     }
 
     /**
      * Executes the command and add it to the intern command queue.
      * @param c The command to execute. Must not be {@code null}.
      */
-    synchronized public void add(final Command c) {
+    public synchronized void add(final Command c) {
         addNoRedraw(c);
         afterAdd();
     }
@@ -77,7 +81,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
      * Undoes multiple commands.
      * @param num The number of commands to undo
      */
-    synchronized public void undo(int num) {
+    public synchronized void undo(int num) {
         if (commands.isEmpty())
             return;
         Collection<? extends OsmPrimitive> oldSelection = Main.main.getCurrentDataSet().getSelected();

@@ -160,7 +160,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * builds the UI
      */
-    protected void build() {
+    protected final void build() {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(buildHeaderInfoPanel(), BorderLayout.NORTH);
 
@@ -279,7 +279,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     public void initFromPreferences() {
         // Copy current JOSM preferences to update API url with the one used in this wizard
         Preferences copyPref = CustomConfigurator.clonePreferences(Main.pref);
-        copyPref.put("osm-server-url", apiUrl);
+        copyPref.put("osm-server.url", apiUrl);
         pnlFullyAutomaticAuthorisationUI.initFromPreferences(copyPref);
         pnlSemiAutomaticAuthorisationUI.initFromPreferences(copyPref);
         pnlManualAuthorisationUI.initFromPreferences(copyPref);
@@ -347,7 +347,7 @@ public class OAuthAuthorizationWizard extends JDialog {
             setVisible(false);
         }
 
-        public void updateEnabledState(OAuthToken token) {
+        public final void updateEnabledState(OAuthToken token) {
             setEnabled(token != null);
         }
 

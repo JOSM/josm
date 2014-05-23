@@ -43,7 +43,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * @param changesets the collection of changesets. Assumes an empty collection if null.
      * @return the download task
      */
-    static public ChangesetHeaderDownloadTask buildTaskForChangesets(Collection<Changeset> changesets) {
+    public static ChangesetHeaderDownloadTask buildTaskForChangesets(Collection<Changeset> changesets) {
         return buildTaskForChangesets(Main.parent, changesets);
     }
 
@@ -58,13 +58,13 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * @return the download task
      * @throws IllegalArgumentException thrown if parent is null
      */
-    static public ChangesetHeaderDownloadTask buildTaskForChangesets(Component parent, Collection<Changeset> changesets) {
+    public static ChangesetHeaderDownloadTask buildTaskForChangesets(Component parent, Collection<Changeset> changesets) {
         CheckParameterUtil.ensureParameterNotNull(parent, "parent");
         if (changesets == null) {
             changesets = Collections.emptyList();
         }
 
-        HashSet<Integer> ids = new HashSet<Integer>();
+        HashSet<Integer> ids = new HashSet<>();
         for (Changeset cs: changesets) {
             if (cs == null || cs.isNew()) {
                 continue;
@@ -88,7 +88,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
         if (ids == null) {
             ids = Collections.emptyList();
         }
-        idsToDownload = new HashSet<Integer>();
+        idsToDownload = new HashSet<>();
         if (ids == null ||  ids.isEmpty())
             return;
         for (int id: ids) {
@@ -103,7 +103,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * Creates the download task for a collection of changeset ids. Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
      * whose parent is {@link Main#parent}.
      *
-     * Null ids or or ids <= 0 in the id collection are ignored.
+     * Null ids or or ids &lt;= 0 in the id collection are ignored.
      *
      * @param ids the collection of ids. Empty collection assumed if null.
      */
@@ -117,7 +117,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * Creates the download task for a collection of changeset ids. Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
      * whose parent is the parent window of <code>dialogParent</code>.
      *
-     * Null ids or or ids <= 0 in the id collection are ignored.
+     * Null ids or or ids &lt;= 0 in the id collection are ignored.
      *
      * @param dialogParent the parent reference component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be null.
      * @param ids the collection of ids. Empty collection assumed if null.
@@ -178,7 +178,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
             synchronized (this) {
                 reader = new OsmServerChangesetReader();
             }
-            downloadedChangesets = new HashSet<Changeset>();
+            downloadedChangesets = new HashSet<>();
             downloadedChangesets.addAll(reader.readChangesets(idsToDownload, getProgressMonitor().createSubTaskMonitor(0, false)));
         } catch(OsmTransferException e) {
             if (canceled)

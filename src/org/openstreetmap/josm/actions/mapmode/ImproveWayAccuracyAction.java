@@ -51,7 +51,7 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * @author Alexander Kachkaev <alexander@kachkaev.ru>, 2011
+ * @author Alexander Kachkaev &lt;alexander@kachkaev.ru&gt;, 2011
  */
 public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintable,
         SelectionChangedListener, AWTEventListener {
@@ -73,13 +73,13 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     private Point mousePos = null;
     private boolean dragging = false;
 
-    final private Cursor cursorSelect;
-    final private Cursor cursorSelectHover;
-    final private Cursor cursorImprove;
-    final private Cursor cursorImproveAdd;
-    final private Cursor cursorImproveDelete;
-    final private Cursor cursorImproveAddLock;
-    final private Cursor cursorImproveLock;
+    private final Cursor cursorSelect;
+    private final Cursor cursorSelectHover;
+    private final Cursor cursorImprove;
+    private final Cursor cursorImproveAdd;
+    private final Cursor cursorImproveDelete;
+    private final Cursor cursorImproveAddLock;
+    private final Cursor cursorImproveLock;
 
     private Color guideColor;
     private Stroke selectTargetWayStroke;
@@ -388,7 +388,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                 // Adding a new node to the highlighted segment
                 // Important: If there are other ways containing the same
                 // segment, a node must added to all of that ways.
-                Collection<Command> virtualCmds = new LinkedList<Command>();
+                Collection<Command> virtualCmds = new LinkedList<>();
 
                 // Creating a new node
                 Node virtualNode = new Node(mv.getEastNorth(mousePos.x,
@@ -405,7 +405,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                         candidateSegment.getFirstNode().getReferrers(),
                         Way.class);
 
-                Collection<WaySegment> virtualSegments = new LinkedList<WaySegment>();
+                Collection<WaySegment> virtualSegments = new LinkedList<>();
                 for (Way w : firstNodeWays) {
                     List<Pair<Node, Node>> wpps = w.getNodePairs(true);
                     for (Way w2 : secondNodeWays) {
@@ -455,7 +455,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                             tr("Cannot delete node that has tags"),
                             tr("Error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    List<Node> nodeList = new ArrayList<Node>();
+                    List<Node> nodeList = new ArrayList<>();
                     nodeList.add(candidateNode);
                     Command deleteCmd = DeleteCommand.delete(getEditLayer(), nodeList, true);
                     if (deleteCmd != null) {
@@ -599,8 +599,8 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
      *
      */
     private void updateStateByCurrentSelection() {
-        final List<Node> nodeList = new ArrayList<Node>();
-        final List<Way> wayList = new ArrayList<Way>();
+        final List<Node> nodeList = new ArrayList<>();
+        final List<Way> wayList = new ArrayList<>();
         final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         // Collecting nodes and ways from the selection

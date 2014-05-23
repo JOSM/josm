@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -13,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +27,6 @@ import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthProvider;
-import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthException;
 
 import org.openstreetmap.josm.Main;
@@ -109,13 +110,7 @@ public class OsmOAuthAuthorizationClient {
                 if (con != null) {
                     con.disconnect();
                 }
-            } catch (NoSuchFieldException e) {
-                Main.error(e);
-                Main.warn(tr("Failed to cancel running OAuth operation"));
-            } catch (SecurityException e) {
-                Main.error(e);
-                Main.warn(tr("Failed to cancel running OAuth operation"));
-            } catch (IllegalAccessException e) {
+            } catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
                 Main.error(e);
                 Main.warn(tr("Failed to cancel running OAuth operation"));
             }
@@ -145,13 +140,9 @@ public class OsmOAuthAuthorizationClient {
             monitor.indeterminateSubTask(tr("Retrieving OAuth Request Token from ''{0}''", oauthProviderParameters.getRequestTokenUrl()));
             provider.retrieveRequestToken(consumer, "");
             return OAuthToken.createToken(consumer);
-        } catch(OAuthCommunicationException e){
-            if (canceled)
-                throw new OsmTransferCanceledException();
-            throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException(e);
             throw new OsmOAuthAuthorizationException(e);
         } finally {
             monitor.finishTask();
@@ -179,13 +170,9 @@ public class OsmOAuthAuthorizationClient {
             monitor.indeterminateSubTask(tr("Retrieving OAuth Access Token from ''{0}''", oauthProviderParameters.getAccessTokenUrl()));
             provider.retrieveAccessToken(consumer, null);
             return OAuthToken.createToken(consumer);
-        } catch(OAuthCommunicationException e){
-            if (canceled)
-                throw new OsmTransferCanceledException();
-            throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException(e);
             throw new OsmOAuthAuthorizationException(e);
         } finally {
             monitor.finishTask();
@@ -211,9 +198,10 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected String extractToken(HttpURLConnection connection) {
-        BufferedReader r = null;
-        try {
-            r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        try (
+            InputStream is = connection.getInputStream();
+            BufferedReader r = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
+        ) {
             String c;
             Pattern p = Pattern.compile(".*authenticity_token.*value=\"([^\"]+)\".*");
             while ((c = r.readLine()) != null) {
@@ -225,8 +213,6 @@ public class OsmOAuthAuthorizationClient {
         } catch (IOException e) {
             Main.error(e);
             return null;
-        } finally {
-            Utils.close(r);
         }
         return null;
     }
@@ -248,7 +234,7 @@ public class OsmOAuthAuthorizationClient {
                 if (kv == null || kv.length != 2) {
                     continue;
                 }
-                if (kv[0].equals("_osm_session")) {
+                if ("_osm_session".equals(kv[0])) {
                     // osm session cookie found
                     String token = extractToken(connection);
                     if(token == null)
@@ -378,7 +364,6 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected void authenticateOsmSession(SessionId sessionId, String userName, String password) throws OsmLoginFailedException {
-        DataOutputStream dout = null;
         try {
             URL url = new URL(buildOsmLoginUrl());
             synchronized(this) {
@@ -389,7 +374,7 @@ public class OsmOAuthAuthorizationClient {
             connection.setDoOutput(true);
             connection.setUseCaches(false);
 
-            Map<String,String> parameters = new HashMap<String, String>();
+            Map<String,String> parameters = new HashMap<>();
             parameters.put("username", userName);
             parameters.put("password", password);
             parameters.put("referer", "/");
@@ -406,10 +391,10 @@ public class OsmOAuthAuthorizationClient {
 
             connection.connect();
 
-            dout = new DataOutputStream(connection.getOutputStream());
-            dout.writeBytes(request);
-            dout.flush();
-            Utils.close(dout);
+            try (DataOutputStream dout = new DataOutputStream(connection.getOutputStream())) {
+                dout.writeBytes(request);
+                dout.flush();
+            }
 
             // after a successful login the OSM website sends a redirect to a follow up page. Everything
             // else, including a 200 OK, is a failed login. A 200 OK is replied if the login form with
@@ -423,7 +408,6 @@ public class OsmOAuthAuthorizationClient {
         } catch(IOException e) {
             throw new OsmLoginFailedException(e);
         } finally {
-            Utils.close(dout);
             synchronized(this) {
                 connection = null;
             }
@@ -440,8 +424,6 @@ public class OsmOAuthAuthorizationClient {
             connection.setDoInput(true);
             connection.setDoOutput(false);
             connection.connect();
-        } catch(MalformedURLException e) {
-            throw new OsmOAuthAuthorizationException(e);
         } catch(IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         }  finally {
@@ -452,7 +434,7 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected void sendAuthorisationRequest(SessionId sessionId, OAuthToken requestToken, OsmPrivileges privileges) throws OsmOAuthAuthorizationException {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         fetchOAuthToken(sessionId, requestToken);
         parameters.put("oauth_token", requestToken.getKey());
         parameters.put("oauth_callback", "");
@@ -472,14 +454,13 @@ public class OsmOAuthAuthorizationClient {
         if (privileges.isAllowReadPrefs()) {
             parameters.put("allow_read_prefs", "yes");
         }
-        if(privileges.isAllowModifyNotes()) {
+        if (privileges.isAllowModifyNotes()) {
             parameters.put("allow_write_notes", "yes");
         }
 
         parameters.put("commit", "Save changes");
 
         String request = buildPostRequest(parameters);
-        DataOutputStream dout = null;
         try {
             URL url = new URL(oauthProviderParameters.getAuthoriseUrl());
             synchronized(this) {
@@ -496,19 +477,17 @@ public class OsmOAuthAuthorizationClient {
 
             connection.connect();
 
-            dout = new DataOutputStream(connection.getOutputStream());
-            dout.writeBytes(request);
-            dout.flush();
+            try (DataOutputStream dout = new DataOutputStream(connection.getOutputStream())) {
+                dout.writeBytes(request);
+                dout.flush();
+            }
 
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_OK)
                 throw new OsmOAuthAuthorizationException(tr("Failed to authorize OAuth request  ''{0}''", requestToken.getKey()));
-        } catch(MalformedURLException e) {
-            throw new OsmOAuthAuthorizationException(e);
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
         } finally {
-            Utils.close(dout);
             synchronized(this) {
                 connection = null;
             }
@@ -568,7 +547,7 @@ public class OsmOAuthAuthorizationClient {
             monitor.worked(1);
         } catch(OsmOAuthAuthorizationException e) {
             if (canceled)
-                throw new OsmTransferCanceledException();
+                throw new OsmTransferCanceledException(e);
             throw e;
         } finally {
             monitor.finishTask();

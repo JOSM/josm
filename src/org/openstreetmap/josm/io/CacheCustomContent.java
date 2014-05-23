@@ -7,9 +7,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Use this class if you want to cache and store a single file that gets updated regularly.
@@ -24,12 +24,12 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * Common intervals
      */
-    final static public int INTERVAL_ALWAYS = -1;
-    final static public int INTERVAL_HOURLY = 60*60;
-    final static public int INTERVAL_DAILY = INTERVAL_HOURLY * 24;
-    final static public int INTERVAL_WEEKLY = INTERVAL_DAILY * 7;
-    final static public int INTERVAL_MONTHLY = INTERVAL_WEEKLY * 4;
-    final static public int INTERVAL_NEVER = Integer.MAX_VALUE;
+    public static final int INTERVAL_ALWAYS = -1;
+    public static final int INTERVAL_HOURLY = 60*60;
+    public static final int INTERVAL_DAILY = INTERVAL_HOURLY * 24;
+    public static final int INTERVAL_WEEKLY = INTERVAL_DAILY * 7;
+    public static final int INTERVAL_MONTHLY = INTERVAL_WEEKLY * 4;
+    public static final int INTERVAL_NEVER = Integer.MAX_VALUE;
 
     /**
      * Where the data will be stored
@@ -39,17 +39,17 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /**
      * The ident that identifies the stored file. Includes file-ending.
      */
-    final private String ident;
+    private final String ident;
 
     /**
      * The (file-)path where the data will be stored
      */
-    final private File path;
+    private final File path;
 
     /**
      * How often to update the cached version
      */
-    final private int updateInterval;
+    private final int updateInterval;
 
     /**
      * This function will be executed when an update is required. It has to be implemented by the
@@ -118,7 +118,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      */
     public String updateForceString() throws T {
         updateForce();
-        return new String(data, Utils.UTF_8);
+        return new String(data, StandardCharsets.UTF_8);
     }
 
     /**
@@ -137,26 +137,18 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @return the data as String
      */
     public String getDataString() throws T {
-        return new String(getData(), Utils.UTF_8);
+        return new String(getData(), StandardCharsets.UTF_8);
     }
 
     /**
      * Tries to load the data using the given ident from disk. If this fails, data will be updated
      */
     private void loadFromDisk() throws T {
-        if (Main.applet)
+        try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(path))) {
+            this.data = new byte[input.available()];
+            input.read(this.data);
+        } catch (IOException e) {
             this.data = updateForce();
-        else {
-            BufferedInputStream input = null;
-            try {
-                input = new BufferedInputStream(new FileInputStream(path));
-                this.data = new byte[input.available()];
-                input.read(this.data);
-            } catch (IOException e) {
-                this.data = updateForce();
-            } finally {
-                Utils.close(input);
-            }
         }
     }
 
@@ -164,17 +156,11 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * Stores the data to disk
      */
     private void saveToDisk() {
-        if (Main.applet)
-            return;
-        BufferedOutputStream output = null;
-        try {
-            output = new BufferedOutputStream(new FileOutputStream(path));
+        try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(path))) {
             output.write(this.data);
             output.flush();
-        } catch(Exception e) {
+        } catch (IOException e) {
             Main.error(e);
-        } finally {
-            Utils.close(output);
         }
     }
 

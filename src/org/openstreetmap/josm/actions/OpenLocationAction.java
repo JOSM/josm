@@ -55,7 +55,7 @@ public class OpenLocationAction extends JosmAction {
         super(tr("Open Location..."), "openlocation", tr("Open an URL."),
                 Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")), KeyEvent.VK_L, Shortcut.CTRL), true);
         putValue("help", ht("/Action/OpenLocation"));
-        this.downloadTasks = new ArrayList<Class<? extends DownloadTask>>();
+        this.downloadTasks = new ArrayList<>();
         addDownloadTaskClass(DownloadOsmTask.class);
         addDownloadTaskClass(DownloadGpsTask.class);
         addDownloadTaskClass(DownloadOsmChangeTask.class);
@@ -71,7 +71,7 @@ public class OpenLocationAction extends JosmAction {
      * @param cbHistory
      */
     protected void restoreUploadAddressHistory(HistoryComboBox cbHistory) {
-        List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(getClass().getName() + ".uploadAddressHistory", new LinkedList<String>()));
+        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(getClass().getName() + ".uploadAddressHistory", new LinkedList<String>()));
         // we have to reverse the history, because ComboBoxHistory will reverse it again
         // in addElement()
         //
@@ -133,7 +133,7 @@ public class OpenLocationAction extends JosmAction {
      * @since 5691
      */
     public Collection<DownloadTask> findDownloadTasks(final String url) {
-        List<DownloadTask> result = new ArrayList<DownloadTask>();
+        List<DownloadTask> result = new ArrayList<>();
         for (Class<? extends DownloadTask> taskClass : downloadTasks) {
             if (taskClass != null) {
                 try {
@@ -183,7 +183,8 @@ public class OpenLocationAction extends JosmAction {
         if (!tasks.isEmpty()) {
             // TODO: handle multiple suitable tasks ?
             try {
-                future = tasks.iterator().next().loadUrl(new_layer, url, monitor);
+                task = tasks.iterator().next();
+                future = task.loadUrl(new_layer, url, monitor);
             } catch (IllegalArgumentException e) {
                 Main.error(e);
             }
@@ -203,7 +204,7 @@ public class OpenLocationAction extends JosmAction {
      * @param taskClass The new download task to add
      * @return <tt>true</tt> (as specified by {@link Collection#add})
      */
-    public boolean addDownloadTaskClass(Class<? extends DownloadTask> taskClass) {
+    public final boolean addDownloadTaskClass(Class<? extends DownloadTask> taskClass) {
         return this.downloadTasks.add(taskClass);
     }
 }

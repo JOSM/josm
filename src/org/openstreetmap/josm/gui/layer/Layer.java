@@ -47,7 +47,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-abstract public class Layer implements Destroyable, MapViewPaintable, ProjectionChangeListener {
+public abstract class Layer implements Destroyable, MapViewPaintable, ProjectionChangeListener {
 
     public interface LayerAction {
         boolean supportLayers(List<Layer> layers);
@@ -57,7 +57,6 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     public interface MultiLayerAction {
         Action getMultiLayerAction(List<Layer> layers);
     }
-
 
     /**
      * Special class that can be returned by getMenuEntries when JSeparator needs to be created
@@ -79,11 +78,11 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
         }
     }
 
-    static public final String VISIBLE_PROP = Layer.class.getName() + ".visible";
-    static public final String OPACITY_PROP = Layer.class.getName() + ".opacity";
-    static public final String NAME_PROP = Layer.class.getName() + ".name";
+    public static final String VISIBLE_PROP = Layer.class.getName() + ".visible";
+    public static final String OPACITY_PROP = Layer.class.getName() + ".opacity";
+    public static final String NAME_PROP = Layer.class.getName() + ".name";
 
-    static public final int ICON_SIZE = 16;
+    public static final int ICON_SIZE = 16;
 
     /** keeps track of property change listeners */
     protected PropertyChangeSupport propertyChangeSupport;
@@ -141,12 +140,13 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
      * @param mv The object that can translate GeoPoints to screen coordinates.
      */
     @Override
-    abstract public void paint(Graphics2D g, MapView mv, Bounds box);
+    public abstract void paint(Graphics2D g, MapView mv, Bounds box);
+
     /**
      * Return a representative small image for this layer. The image must not
      * be larger than 64 pixel in any dimension.
      */
-    abstract public Icon getIcon();
+    public abstract Icon getIcon();
 
     /**
      * Return a Color for this layer. Return null when no color specified.
@@ -161,7 +161,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     /**
      * @return A small tooltip hint about some statistics for this layer.
      */
-    abstract public String getToolTipText();
+    public abstract String getToolTipText();
 
     /**
      * Merges the given layer into this layer. Throws if the layer types are
@@ -170,17 +170,26 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
      *      the other layer is not usable anymore and passing to one others
      *      mergeFrom should be one of the last things to do with a layer.
      */
-    abstract public void mergeFrom(Layer from);
+    public abstract void mergeFrom(Layer from);
 
     /**
      * @param other The other layer that is tested to be mergable with this.
      * @return Whether the other layer can be merged into this layer.
      */
-    abstract public boolean isMergable(Layer other);
+    public abstract boolean isMergable(Layer other);
 
-    abstract public void visitBoundingBox(BoundingXYVisitor v);
+    public abstract void visitBoundingBox(BoundingXYVisitor v);
 
-    abstract public Object getInfoComponent();
+    public abstract Object getInfoComponent();
+
+    /**
+     * Determines if info dialog can be resized (false by default).
+     * @return {@code true} if the info dialog can be resized, {@code false} otherwise
+     * @since 6708
+     */
+    public boolean isInfoResizable() {
+        return false;
+    }
 
     /**
      * Returns list of actions. Action can implement LayerAction interface when it needs to be represented by other
@@ -190,7 +199,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
      * Use SeparatorLayerAction.INSTANCE instead of new JSeparator
      *
      */
-    abstract public Action[] getMenuEntries();
+    public abstract Action[] getMenuEntries();
 
     /**
      * Called, when the layer is removed from the mapview and is going to be
@@ -221,7 +230,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
      *@param name the name. If null, the name is set to the empty string.
      *
      */
-    public void setName(String name) {
+    public final void setName(String name) {
         if (name == null) {
             name = "";
         }
@@ -440,7 +449,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     }
 
     /**
-     * Replies the savable state of this layer (i.e if it can be saved through a "File->Save" dialog).
+     * Replies the savable state of this layer (i.e if it can be saved through a "File-&gt;Save" dialog).
      * @return true if this layer can be saved to a file
      * @since 5459
      */
@@ -458,7 +467,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     }
 
     /**
-     * Creates a new "Save" dialog for this layer and makes it visible.<br/>
+     * Creates a new "Save" dialog for this layer and makes it visible.<br>
      * When the user has chosen a file, checks the file extension, and confirms overwrite if needed.
      * @return The output {@code File}
      * @since 5459

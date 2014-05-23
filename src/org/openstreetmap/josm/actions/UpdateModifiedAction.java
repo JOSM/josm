@@ -13,21 +13,20 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This action synchronizes a set of primitives with their state on the server.
- *
+ * @since 2682
  */
 public class UpdateModifiedAction extends UpdateSelectionAction {
 
     /**
-     * constructor
+     * Constructs a new {@code UpdateModifiedAction}.
      */
     public UpdateModifiedAction() {
-        super(tr("Update modified"),
-                "updatemodified",
+        super(tr("Update modified"), "updatedata",
                 tr("Updates the currently modified objects from the server (re-downloads data)"),
                 Shortcut.registerShortcut("file:updatemodified",
                         tr("File: {0}", tr("Update modified")), KeyEvent.VK_M,
                         Shortcut.ALT_CTRL),
-                        true);
+                        true, "updatemodified");
         putValue("help", ht("/Action/UpdateModified"));
     }
 

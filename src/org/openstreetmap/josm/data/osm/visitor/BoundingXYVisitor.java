@@ -162,7 +162,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
 
     /**
      * Specify a degree larger than 0 in order to make the bounding box at least
-     * the specified amount of degrees high and wide. The value is ignored if the
+     * the specified size in width and height. The value is ignored if the
      * bounding box is already larger than the specified amount.
      * 
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
@@ -171,16 +171,15 @@ public class BoundingXYVisitor extends AbstractVisitor {
      * If the bounding box contains objects and is to be enlarged, the objects
      * will be centered within the new bounding box.
      * 
-     * @param minDegrees
+     * @param size minimum width and height in meter
      */
-    public void enlargeToMinDegrees(double minDegrees) {
+    public void enlargeToMinSize(double size) {
         if (bounds == null)
             return;
-
-        EastNorth minEnlarge = Main.getProjection().latlon2eastNorth(new LatLon(0, minDegrees));
-
-        visit(bounds.getMin().add(-minEnlarge.east()/2, -minEnlarge.north()/2));
-        visit(bounds.getMax().add(+minEnlarge.east()/2, +minEnlarge.north()/2));
+        // convert size from meters to east/north units
+        double en_size = size * Main.map.mapView.getScale() / Main.map.mapView.getDist100Pixel() * 100;
+        visit(bounds.getMin().add(-en_size/2, -en_size/2));
+        visit(bounds.getMax().add(+en_size/2, +en_size/2));
     }
 
 

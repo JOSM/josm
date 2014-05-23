@@ -32,10 +32,10 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 public class CustomProjectionChoice extends AbstractProjectionChoice implements SubPrefsOptions {
 
@@ -57,7 +57,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             build(initialText, listener);
         }
 
-        private void build(String initialText, final ActionListener listener) {
+        private final void build(String initialText, final ActionListener listener) {
             input = new JosmTextField(30);
             cbInput = new HistoryComboBox();
             cbInput.setPrototypeDisplayValue(new AutoCompletionListItem("xxxx"));
@@ -70,7 +70,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             Collection<String> samples = Arrays.asList(
                     "+proj=lonlat +ellps=WGS84 +datum=WGS84 +bounds=-180,-90,180,90",
                     "+proj=tmerc +lat_0=0 +lon_0=9 +k_0=1 +x_0=3500000 +y_0=0 +ellps=bessel +nadgrids=BETA2007.gsb");
-            List<String> inputHistory = new LinkedList<String>(Main.pref.getCollection("projection.custom.value.history", samples));
+            List<String> inputHistory = new LinkedList<>(Main.pref.getCollection("projection.custom.value.history", samples));
             Collections.reverse(inputHistory);
             cbInput.setPossibleItems(inputHistory);
             cbInput.setText(initialText == null ? "" : initialText);
@@ -95,7 +95,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
                 }
 
                 @Override
-                public boolean isValid() {
+                public final boolean isValid() {
                     try {
                         CustomProjection test = new CustomProjection();
                         test.update(input.getText());
@@ -187,13 +187,13 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             s.append("&nbsp;&nbsp;&nbsp;&nbsp;"+tr("Built-in:")+" ");
             s.append(listKeys(Projections.nadgrids)+"<br>");
             s.append("<b>+bounds=</b>minlon,minlat,maxlon,maxlat - <i>"+tr("Projection bounds (in degrees)")+"</i><br>");
+            s.append("<b>+wmssrs=</b>EPSG:123456 - <i>"+tr("WMS SRS (EPSG code)")+"</i><br>");
 
-            HtmlPanel info = new HtmlPanel(s.toString());
-            return info;
+            return new HtmlPanel(s.toString());
         }
 
         private String listKeys(Map<String, ?> map) {
-            List<String> keys = new ArrayList<String>(map.keySet());
+            List<String> keys = new ArrayList<>(map.keySet());
             Collections.sort(keys);
             return Utils.join(", ", keys);
         }

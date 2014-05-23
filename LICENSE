@@ -10,8 +10,9 @@ http://www.gnu.org/licenses/gpl.html
 The GPL v2 is accessible here:
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
-When compiled with Bzip2 support code included the whole software is 
-licensed GPL v3 or later.
+The JOSM repository contains files licensed under the Apache License, Version 2.0
+(as stated at the beginning of the file). When compiled with any of this code
+included, the whole software is licensed under GPL v3.
 
 
 

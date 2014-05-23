@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
@@ -27,8 +26,8 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HistoryBrowserDialogManager implements MapView.LayerChangeListener {
-    static private HistoryBrowserDialogManager instance;
-    static public HistoryBrowserDialogManager getInstance() {
+    private static HistoryBrowserDialogManager instance;
+    public static HistoryBrowserDialogManager getInstance() {
         if (instance == null) {
             instance = new HistoryBrowserDialogManager();
         }
@@ -38,7 +37,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
     private Map<Long, HistoryBrowserDialog> dialogs;
 
     protected HistoryBrowserDialogManager() {
-        dialogs = new HashMap<Long, HistoryBrowserDialog>();
+        dialogs = new HashMap<>();
         MapView.addLayerChangeListener(this);
     }
 
@@ -72,12 +71,14 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         return false;
     }
 
+    final String WINDOW_GEOMETRY_PREF = getClass().getName() + ".geometry";
+
     public void placeOnScreen(HistoryBrowserDialog dialog) {
-        WindowGeometry geometry = WindowGeometry.centerOnScreen(new Dimension(800,500));
+        WindowGeometry geometry = new WindowGeometry(WINDOW_GEOMETRY_PREF, WindowGeometry.centerOnScreen(new Dimension(850, 500)));
         geometry.applySafe(dialog);
         Point p = dialog.getLocation();
         while(hasDialogWithCloseUpperLeftCorner(p)) {
-            p.x +=20;
+            p.x += 20;
             p.y += 20;
         }
         dialog.setLocation(p);
@@ -93,6 +94,9 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         }
         if (id > 0) {
             dialogs.remove(id);
+            if (dialogs.isEmpty()) {
+                new WindowGeometry(dialog).remember(WINDOW_GEOMETRY_PREF);
+            }
         }
         dialog.setVisible(false);
         dialog.dispose();
@@ -103,7 +107,7 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
      *
      */
     public void hideAll() {
-        List<HistoryBrowserDialog> dialogs = new ArrayList<HistoryBrowserDialog>();
+        List<HistoryBrowserDialog> dialogs = new ArrayList<>();
         dialogs.addAll(this.dialogs.values());
         for (HistoryBrowserDialog dialog: dialogs) {
             dialog.unlinkAsListener();
@@ -179,7 +183,6 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
                 } catch (final Exception e) {
                     BugReportExceptionHandler.handleException(e);
                 }
-
             }
         };
         Main.worker.submit(r);
@@ -195,11 +198,9 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
             if (h == null)
                 // reload if the history is not in the cache yet
                 return true;
-            else if (!p.isNew() && h.getByVersion(p.getUniqueId()) == null)
-                // reload if the history object of the selected object is not in the cache yet
-                return true;
             else
-                return false;
+                // reload if the history object of the selected object is not in the cache yet
+                return (!p.isNew() && h.getByVersion(p.getUniqueId()) == null);
         }
     };
 
@@ -210,5 +211,4 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
             return !p.isNew();
         }
     };
-
 }

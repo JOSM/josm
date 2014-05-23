@@ -65,7 +65,7 @@ import org.openstreetmap.josm.io.imagery.Grabber;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.io.imagery.WMSGrabber;
 import org.openstreetmap.josm.io.imagery.WMSRequest;
-
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
@@ -138,16 +138,16 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     private volatile int bottomEdge;
 
     // Request queue
-    private final List<WMSRequest> requestQueue = new ArrayList<WMSRequest>();
-    private final List<WMSRequest> finishedRequests = new ArrayList<WMSRequest>();
+    private final List<WMSRequest> requestQueue = new ArrayList<>();
+    private final List<WMSRequest> finishedRequests = new ArrayList<>();
     /**
      * List of request currently being processed by download threads
      */
-    private final List<WMSRequest> processingRequests = new ArrayList<WMSRequest>();
+    private final List<WMSRequest> processingRequests = new ArrayList<>();
     private final Lock requestQueueLock = new ReentrantLock();
     private final Condition queueEmpty = requestQueueLock.newCondition();
-    private final List<Grabber> grabbers = new ArrayList<Grabber>();
-    private final List<Thread> grabberThreads = new ArrayList<Thread>();
+    private final List<Grabber> grabbers = new ArrayList<>();
+    private final List<Thread> grabberThreads = new ArrayList<>();
     private boolean canceled;
 
     /** set to true if this layer uses an invalid base url */
@@ -155,6 +155,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     /** set to true if the user confirmed to use an potentially invalid WMS base url */
     private boolean isInvalidUrlConfirmed = false;
 
+    /**
+     * Constructs a new {@code WMSLayer}.
+     */
     public WMSLayer() {
         this(new ImageryInfo(tr("Blank Layer")));
     }
@@ -234,7 +237,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public void downloadAreaToCache(PrecacheTask precacheTask, List<LatLon> points, double bufferX, double bufferY) {
-        Set<Point> requestedTiles = new HashSet<Point>();
+        Set<Point> requestedTiles = new HashSet<>();
         for (LatLon point: points) {
             EastNorth minEn = Main.getProjection().latlon2eastNorth(new LatLon(point.lat() - bufferY, point.lon() - bufferX));
             EastNorth maxEn = Main.getProjection().latlon2eastNorth(new LatLon(point.lat() + bufferY, point.lon() + bufferX));
@@ -268,7 +271,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    public void initializeImages() {
+    public final void initializeImages() {
         GeorefImage[][] old = images;
         images = new GeorefImage[dax][day];
         if (old != null) {
@@ -337,7 +340,6 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
 
         attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), null, null, 0, this);
-
     }
 
     @Override
@@ -446,18 +448,16 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
 
         gatherFinishedRequests();
-        Set<ProjectionBounds> areaToCache = new HashSet<ProjectionBounds>();
+        Set<ProjectionBounds> areaToCache = new HashSet<>();
 
         for(int x = bminx; x<=bmaxx; ++x) {
             for(int y = bminy; y<=bmaxy; ++y){
                 GeorefImage img = images[modulo(x,dax)][modulo(y,day)];
                 if (!img.paint(g, mv, x, y, leftEdge, bottomEdge)) {
-                    WMSRequest request = new WMSRequest(x, y, info.getPixelPerDegree(), real, true);
-                    addRequest(request);
+                    addRequest(new WMSRequest(x, y, info.getPixelPerDegree(), real, true));
                     areaToCache.add(new ProjectionBounds(getEastNorth(x, y), getEastNorth(x + 1, y + 1)));
                 } else if (img.getState() == State.PARTLY_IN_CACHE && autoDownloadEnabled) {
-                    WMSRequest request = new WMSRequest(x, y, info.getPixelPerDegree(), real, false);
-                    addRequest(request);
+                    addRequest(new WMSRequest(x, y, info.getPixelPerDegree(), real, false));
                     areaToCache.add(new ProjectionBounds(getEastNorth(x, y), getEastNorth(x + 1, y + 1)));
                 }
             }
@@ -513,7 +513,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     /**
      *
      * @param request
-     * @return -1 if request is no longer needed, otherwise priority of request (lower number <=> more important request)
+     * @return -1 if request is no longer needed, otherwise priority of request (lower number &lt;=&gt; more important request)
      */
     private int getRequestPriority(WMSRequest request) {
         if (request.getPixelPerDegree() != info.getPixelPerDegree())
@@ -657,6 +657,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public class DownloadAction extends AbstractAction {
+        /**
+         * Constructs a new {@code DownloadAction}.
+         */
         public DownloadAction() {
             super(tr("Download visible tiles"));
         }
@@ -678,7 +681,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     /**
      * Finds the most suitable resolution for the current zoom level, but prefers
      * higher resolutions. Snaps to values defined in snapLevels.
-     * @return
+     * @return best zoom level
      */
     private static double getBestZoom() {
         // not sure why getDist100Pixel returns values corresponding to
@@ -737,7 +740,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public static class ChangeResolutionAction extends AbstractAction implements LayerAction {
-        
+
         /**
          * Constructs a new {@code ChangeResolutionAction}
          */
@@ -767,14 +770,12 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         public Component createMenuComponent() {
             return new JMenuItem(this);
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof ChangeResolutionAction;
-        }
     }
 
     public class ReloadErrorTilesAction extends AbstractAction {
+        /**
+         * Constructs a new {@code ReloadErrorTilesAction}.
+         */
         public ReloadErrorTilesAction() {
             super(tr("Reload erroneous tiles"));
         }
@@ -796,6 +797,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     public class ToggleAlphaAction extends AbstractAction implements LayerAction {
+        /**
+         * Constructs a new {@code ToggleAlphaAction}.
+         */
         public ToggleAlphaAction() {
             super(tr("Alpha channel"));
         }
@@ -804,30 +808,42 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             JCheckBoxMenuItem checkbox = (JCheckBoxMenuItem) ev.getSource();
             boolean alphaChannel = checkbox.isSelected();
             PROP_ALPHA_CHANNEL.put(alphaChannel);
+            Main.info("WMS Alpha channel changed to "+alphaChannel);
 
             // clear all resized cached instances and repaint the layer
             for (int x = 0; x < dax; ++x) {
                 for (int y = 0; y < day; ++y) {
                     GeorefImage img = images[modulo(x, dax)][modulo(y, day)];
-                    img.flushedResizedCachedInstance();
+                    img.flushResizedCachedInstance();
+                    BufferedImage bi = img.getImage();
+                    // Completely erases images for which transparency has been forced,
+                    // or images that should be forced now, as they need to be recreated
+                    if (ImageProvider.isTransparencyForced(bi) || ImageProvider.hasTransparentColor(bi)) {
+                        img.resetImage();
+                    }
                 }
             }
             Main.map.mapView.repaint();
         }
+
         @Override
         public Component createMenuComponent() {
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
             item.setSelected(PROP_ALPHA_CHANNEL.get());
             return item;
         }
+
         @Override
         public boolean supportLayers(List<Layer> layers) {
             return layers.size() == 1 && layers.get(0) instanceof WMSLayer;
         }
     }
 
-
     public class ToggleAutoResolutionAction extends AbstractAction implements LayerAction {
+
+        /**
+         * Constructs a new {@code ToggleAutoResolutionAction}.
+         */
         public ToggleAutoResolutionAction() {
             super(tr("Automatically change resolution"));
         }
@@ -857,6 +873,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
      * When using the menu entry again, the WMS cache will be used properly.
      */
     public class BookmarkWmsAction extends AbstractAction {
+        /**
+         * Constructs a new {@code BookmarkWmsAction}.
+         */
         public BookmarkWmsAction() {
             super(tr("Set WMS Bookmark"));
         }

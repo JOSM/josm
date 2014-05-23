@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +28,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -44,11 +41,13 @@ import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 public class SessionWriter {
 
-    private static Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters =
-            new HashMap<Class<? extends Layer>, Class<? extends SessionLayerExporter>>();
+    private static Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters = new HashMap<>();
     static {
         registerSessionLayerExporter(OsmDataLayer.class , OsmDataSessionExporter.class);
         registerSessionLayerExporter(TMSLayer.class , ImagerySessionExporter.class);
@@ -80,7 +79,7 @@ public class SessionWriter {
     }
 
     private final List<Layer> layers;
-    private final int active; 
+    private final int active;
     private final Map<Layer, SessionLayerExporter> exporters;
     private final MultiMap<Layer, Layer> dependencies;
     private final boolean zip;
@@ -91,7 +90,7 @@ public class SessionWriter {
      * Constructs a new {@code SessionWriter}.
      * @param layers The ordered list of layers to save
      * @param active The index of active layer in {@code layers} (starts to 0). Ignored if set to -1
-     * @param exporters The exprters to use to save layers
+     * @param exporters The exporters to use to save layers
      * @param zip {@code true} if a joz archive has to be created, {@code false otherwise}
      * @since 6271
      */
@@ -208,8 +207,8 @@ public class SessionWriter {
                 el.setAttribute("opacity", Double.toString(layer.getOpacity()));
             }
             Set<Layer> deps = dependencies.get(layer);
-            if (!deps.isEmpty()) {
-                List<Integer> depsInt = new ArrayList<Integer>();
+            if (deps != null && !deps.isEmpty()) {
+                List<Integer> depsInt = new ArrayList<>();
                 for (Layer depLayer : deps) {
                     int depIndex = layers.indexOf(depLayer);
                     if (depIndex == -1) throw new AssertionError();
@@ -224,7 +223,7 @@ public class SessionWriter {
 
     public void writeJos(Document doc, OutputStream out) throws IOException {
         try {
-            OutputStreamWriter writer = new OutputStreamWriter(out, Utils.UTF_8);
+            OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
             writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
             TransformerFactory transfac = TransformerFactory.newInstance();
             Transformer trans = transfac.newTransformer();
@@ -240,18 +239,16 @@ public class SessionWriter {
     }
 
     public void write(File f) throws IOException {
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(f);
+        try (OutputStream out = new FileOutputStream(f)) {
+            write(out);
         } catch (FileNotFoundException e) {
             throw new IOException(e);
         }
-        write(out);
     }
 
-    public void write (OutputStream out) throws IOException {
+    public void write(OutputStream out) throws IOException {
         if (zip) {
-            zipOut = new ZipOutputStream(new BufferedOutputStream(out));
+            zipOut = new ZipOutputStream(new BufferedOutputStream(out), StandardCharsets.UTF_8);
         }
         Document doc = createJosDocument(); // as side effect, files may be added to zipOut
         if (zip) {
@@ -262,6 +259,5 @@ public class SessionWriter {
         } else {
             writeJos(doc, new BufferedOutputStream(out));
         }
-        Utils.close(out);
     }
 }

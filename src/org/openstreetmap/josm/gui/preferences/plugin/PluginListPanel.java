@@ -11,6 +11,8 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,13 +33,23 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
 
-public class PluginListPanel extends VerticallyScrollablePanel{
+/**
+ * A panel displaying the list of known plugins.
+ */
+public class PluginListPanel extends VerticallyScrollablePanel {
     private PluginPreferencesModel model;
 
+    /**
+     * Constructs a new {@code PluginListPanel} with a default model.
+     */
     public PluginListPanel() {
         this(new PluginPreferencesModel());
     }
 
+    /**
+     * Constructs a new {@code PluginListPanel} with a given model.
+     * @param model The plugin model
+     */
     public PluginListPanel(PluginPreferencesModel model) {
         this.model = model;
         setLayout(new GridBagLayout());
@@ -71,6 +83,9 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             return pi.downloadlink;
     }
 
+    /**
+     * Displays a message when the plugin list is empty.
+     */
     public void displayEmptyPluginListInformation() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -135,7 +150,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             }
             // If the plugin has been unselected, was it required by other plugins still selected ?
             else if (!cb.isSelected()) {
-                Set<String> otherPlugins = new HashSet<String>();
+                Set<String> otherPlugins = new HashSet<>();
                 for (PluginInformation pi : model.getAvailablePlugins()) {
                     if (!pi.equals(cb.pi) && pi.requires != null && model.isSelectedPlugin(pi.getName())) {
                         for (String s : pi.getRequiredPlugins()) {
@@ -180,6 +195,9 @@ public class PluginListPanel extends VerticallyScrollablePanel{
         );
     }
 
+    /**
+     * Refreshes the list.
+     */
     public void refreshView() {
         final Rectangle visibleRect = getVisibleRect();
         List<PluginInformation> displayedPlugins = model.getDisplayedPlugins();
@@ -202,7 +220,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             String remoteversion = formatPluginRemoteVersion(pi);
             String localversion = formatPluginLocalVersion(model.getPluginInformation(pi.getName()));
 
-            JPluginCheckBox cbPlugin = new JPluginCheckBox(pi, selected);
+            final JPluginCheckBox cbPlugin = new JPluginCheckBox(pi, selected);
             String pluginText = tr("{0}: Version {1} (local: {2})", pi.getName(), remoteversion, localversion);
             if (pi.requires != null && !pi.requires.isEmpty()) {
                 pluginText += tr(" (requires: {0})", pi.requires);
@@ -211,6 +229,12 @@ public class PluginListPanel extends VerticallyScrollablePanel{
                     pluginText,
                     pi.getScaledIcon(),
                     SwingConstants.LEFT);
+            lblPlugin.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    cbPlugin.doClick();
+                }
+            });
 
             gbc.gridx = 0;
             gbc.gridy = ++row;

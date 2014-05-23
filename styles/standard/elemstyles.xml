@@ -112,29 +112,44 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
-		<condition k="bridge" b="yes"/>
-		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
-		<icon annotate="true" src="vehicle/viaduct.png"/>
+		<condition k="bridge"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
-		<condition k="bridge" b="no"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000" priority="-50000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
+		<condition k="bridge" b="yes"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
 	</rule>
 	<rule>
 		<condition k="bridge" v="viaduct"/>
 		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
-		<icon annotate="true" src="vehicle/viaduct.png"/>
 	</rule>
 	<rule>
 		<condition k="bridge" v="aqueduct"/>
 		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
-		<icon annotate="true" src="nautical/aqueduct.png"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="movable"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="cantilever"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="covered"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="low_water_crossing"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
+	</rule>
+	<rule>
+		<condition k="bridge" v="trestle"/>
+		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
 	</rule>
 	<rule>
 		<condition k="bridge" v="swing"/>
 		<linemod mode="over" width="+4" colour="bridge#00008080" dashed="false"/>
-		<icon annotate="true" src="vehicle/viaduct.png"/>
 	</rule>
 	<rule>
 		<condition k="tunnel" b="yes"/>
@@ -143,17 +158,14 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="tunnel" b="no"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
 		<condition k="cutting" b="no"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 	<rule>
 		<condition k="embankment" b="no"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
@@ -162,6 +174,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="access" b="no"/>
+		<linemod mode="under" width="+2" colour="no#ff8080" dashed="2"/>
 		<icon src="vehicle/restriction/access.png" priority="-100"/>
 	</rule>
 	<rule>
@@ -330,6 +343,10 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="vehicle/lift_gate.png"/>
 	</rule>
 	<rule>
+		<condition k="barrier" v="swing_gate"/>
+		<icon annotate="true" src="vehicle/swing_gate.png"/>
+    </rule>
+	<rule>
 		<condition k="barrier" v="wall"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<line width="3" colour="barrier#F0F050"/>
@@ -474,7 +491,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="road"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
+		<line width="2" realwidth="5" colour="deprecated#ff0000"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
@@ -587,7 +604,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="steps"/>
-		<line width="1" realwidth="1" dashed="1" colour="foot#00ff00"/>
+		<line width="1" realwidth="1" dashed="2" colour="foot#00ff00"/>
 		<icon annotate="true" src="transport/steps.png"/>
 	</rule>
 
@@ -595,6 +612,11 @@ For external files the <rules> should have following elements:
 		<condition k="highway" v="bus_guideway"/>
 		<line width="1" colour="rail#404040" dashed="true"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="raceway"/>
+		<line width="1" colour="raceway#ff80ff"/>
 	</rule>
 
 	<rule>
@@ -672,7 +694,6 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="ford"/>
-		<line width="2" realwidth="5" colour="ford#ff0000"/>
 		<icon annotate="true" src="vehicle/ford.png"/>
 	</rule>
 
@@ -1181,7 +1202,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="aerialway" v="goods"/>
-		<line width="1" colour="aerialway#663300" dashed="1"/>
+		<line width="1" colour="aerialway#663300" dashed="2"/>
 		<icon annotate="true" src="transport/aerialway/goods.png"/>
 	</rule>
 
@@ -2426,16 +2447,15 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="shop" v="greengrocer"/>
-		<icon annotate="true" src="shop/groceries/greengrocer.png"/>
+		<condition k="shop" v="gift"/>
+		<icon annotate="true" src="presets/present.svg"/>
 		<area colour="shop#00005f"/>
 	</rule>
 
 	<rule>
-		<!-- superseeded by greengrocer -->
-		<condition k="shop" v="groceries"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<area colour="deprecated#ff0000"/>
+		<condition k="shop" v="greengrocer"/>
+		<icon annotate="true" src="shop/groceries/greengrocer.png"/>
+		<area colour="shop#00005f"/>
 	</rule>
 
 	<rule>
@@ -2588,11 +2608,61 @@ For external files the <rules> should have following elements:
 		<area colour="shop#00005f"/>
 	</rule>
 
+	<rule>
+		<condition k="shop" v="bookmaker"/>
+		<icon annotate="true" src="presets/lottery.svg"/>
+		<area colour="shop#00005f"/>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="lottery"/>
+		<icon annotate="true" src="presets/lottery.svg"/>
+		<area colour="shop#00005f"/>
+	</rule>
+
 	<!-- duplicate of shopping_centre? -->
 	<rule>
 		<condition k="shop" v="shopping_centre"/>
 		<icon annotate="true" src="shop/mall.png"/>
 		<area colour="shop#00005f"/>
+	</rule>
+
+<!--craft tags -->
+
+	<rule>
+		<condition k="craft" v="painter"/>
+		<icon annotate="true" src="craft/painter.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="plumber"/>
+		<icon annotate="true" src="craft/plumber.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="pottery"/>
+		<icon annotate="true" src="craft/pottery.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="stonemason"/>
+		<icon annotate="true" src="craft/stonemason.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="tiler"/>
+		<icon annotate="true" src="craft/tiler.png"/>
+		<area colour="craft#999900"/>
+	</rule>
+
+	<rule>
+		<condition k="craft" v="window_construction"/>
+		<icon annotate="true" src="craft/window_construction.png"/>
+		<area colour="craft#999900"/>
 	</rule>
 
 <!--tourism tags -->
@@ -2665,7 +2735,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="tourism" v="attraction"/>
-		<icon annotate="true" src="sightseeing.png"/>
+		<icon annotate="true" src="sightseeing.png" priority="-5"/>
 		<area colour="tourism#e180a2"/>
 	</rule>
 
@@ -2849,6 +2919,12 @@ For external files the <rules> should have following elements:
 		<condition k="landuse" v="greenhouse_horticulture"/>
 		<area colour="green#b1e0c2"/>
 		<icon src="misc/landuse/greenhouse_horticulture.png"/>
+	</rule>
+
+	<rule>
+		<condition k="landuse" v="plant_nursery"/>
+		<area colour="green#b1e0c2"/>
+		<icon src="misc/landmark/plant.png"/>
 	</rule>
 
 	<rule>
@@ -3105,7 +3181,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="cave_entrance"/>
-		<icon src="misc/landmark/cave_entrance.png"/>
+		<icon annotate="true" src="misc/landmark/cave_entrance.png"/>
 		<area colour="natural#002f00"/>
 	</rule>
 
@@ -3238,7 +3314,7 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="boundary" v="civil"/>
+		<condition k="boundary" v="postal_code"/>
 		<line width="1" colour="boundary#FF6600" dashed="true" priority="-10"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
@@ -3595,7 +3671,6 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="mountain_pass" b="yes"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
 		<icon src="misc/landmark/mountain_pass.png"/>
 	</rule>
 
@@ -3834,12 +3909,12 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="addr:interpolation" v="all"/>
-		<line width="1" realwidth="1" dashed="1,1" colour="address#1C86EE"/>
+		<line width="1" realwidth="1" dashed="2,2" colour="address#1C86EE"/>
 	</rule>
 
 	<rule>
 		<condition k="addr:interpolation" v="alphabetic"/>
-		<line width="1" realwidth="1" dashed="1,1" colour="address#1C86EE"/>
+		<line width="1" realwidth="1" dashed="2,2" colour="address#1C86EE"/>
 	</rule>
 
 <!--"work in progress" tags -->

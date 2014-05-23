@@ -27,7 +27,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  */
 public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /** the property name for the number conflicts managed by this model */
-    static public final String NUM_CONFLICTS_PROP = RelationMemberConflictResolverModel.class.getName() + ".numConflicts";
+    public static final String NUM_CONFLICTS_PROP = RelationMemberConflictResolverModel.class.getName() + ".numConflicts";
 
     /** the list of conflict decisions */
     private List<RelationMemberConflictDecision> decisions;
@@ -36,6 +36,16 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /** the number of conflicts */
     private int numConflicts;
     private PropertyChangeSupport support;
+
+    /**
+     * Replies true if each {@link MultiValueResolutionDecision} is decided.
+     *
+     * @return true if each {@link MultiValueResolutionDecision} is decided; false
+     * otherwise
+     */
+    public boolean isResolvedCompletely() {
+        return numConflicts == 0;
+    }
 
     /**
      * Replies the current number of conflicts
@@ -74,7 +84,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     }
 
     public RelationMemberConflictResolverModel() {
-        decisions = new ArrayList<RelationMemberConflictDecision>();
+        decisions = new ArrayList<>();
         support = new PropertyChangeSupport(this);
     }
 
@@ -157,7 +167,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     public void populate(Collection<RelationToChildReference> references) {
         references = references == null ? new LinkedList<RelationToChildReference>() : references;
         decisions.clear();
-        this.relations = new HashSet<Relation>(references.size());
+        this.relations = new HashSet<>(references.size());
         for (RelationToChildReference reference: references) {
             decisions.add(new RelationMemberConflictDecision(reference.getParent(), reference.getPosition()));
             relations.add(reference.getParent());
@@ -219,21 +229,20 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     }
 
     protected Command buildResolveCommand(Relation relation, OsmPrimitive newPrimitive) {
-        Relation modifiedRelation = new Relation(relation);
+        final Relation modifiedRelation = new Relation(relation);
         modifiedRelation.setMembers(null);
         boolean isChanged = false;
         for (int i=0; i < relation.getMembersCount(); i++) {
-            RelationMember rm = relation.getMember(i);
-            RelationMember rmNew;
+            final RelationMember member = relation.getMember(i);
             RelationMemberConflictDecision decision = getDecision(relation, i);
             if (decision == null) {
-                modifiedRelation.addMember(rm);
+                modifiedRelation.addMember(member);
             } else {
                 switch(decision.getDecision()) {
                 case KEEP:
-                    rmNew = new RelationMember(decision.getRole(),newPrimitive);
-                    modifiedRelation.addMember(rmNew);
-                    isChanged |= ! rm.equals(rmNew);
+                    final RelationMember newMember = new RelationMember(decision.getRole(),newPrimitive);
+                    modifiedRelation.addMember(newMember);
+                    isChanged |= ! member.equals(newMember);
                     break;
                 case REMOVE:
                     isChanged = true;
@@ -257,7 +266,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * @return a list of commands
      */
     public List<Command> buildResolutionCommands(OsmPrimitive newPrimitive) {
-        List<Command> command = new LinkedList<Command>();
+        List<Command> command = new LinkedList<>();
         for (Relation relation : relations) {
             Command cmd = buildResolveCommand(relation, newPrimitive);
             if (cmd != null) {
@@ -297,7 +306,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * to the decisions managed by this model
      */
     public Set<Relation> getModifiedRelations(OsmPrimitive newPrimitive) {
-        HashSet<Relation> ret = new HashSet<Relation>();
+        HashSet<Relation> ret = new HashSet<>();
         for (Relation relation: relations) {
             if (isChanged(relation, newPrimitive)) {
                 ret.add(relation);

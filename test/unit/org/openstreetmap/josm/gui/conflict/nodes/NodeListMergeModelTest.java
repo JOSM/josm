@@ -17,8 +17,7 @@ import javax.swing.DefaultListSelectionModel;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DatasetFactory;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
@@ -31,7 +30,7 @@ public class NodeListMergeModelTest {
 
     @BeforeClass
     public static void init() {
-        Main.initApplicationPreferences();
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     @SuppressWarnings("unchecked")
@@ -704,7 +703,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         class MyListener implements PropertyChangeListener {
-            public ArrayList<PropertyChangeEvent> events = new ArrayList<PropertyChangeEvent>();
+            public ArrayList<PropertyChangeEvent> events = new ArrayList<>();
 
             public void propertyChange(PropertyChangeEvent evt) {
                 events.add(evt);

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Deque;
@@ -39,7 +40,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmExporter;
 import org.openstreetmap.josm.io.OsmImporter;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Saves data layers periodically so they can be recovered in case of a crash.
@@ -75,15 +75,15 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         OsmDataLayer layer;
         String layerName;
         String layerFileName;
-        final Deque<File> backupFiles = new LinkedList<File>();
+        final Deque<File> backupFiles = new LinkedList<>();
     }
 
     private final DataSetListenerAdapter datasetAdapter = new DataSetListenerAdapter(this);
-    private final Set<DataSet> changedDatasets = new HashSet<DataSet>();
-    private final List<AutosaveLayerInfo> layersInfo = new ArrayList<AutosaveLayerInfo>();
+    private final Set<DataSet> changedDatasets = new HashSet<>();
+    private final List<AutosaveLayerInfo> layersInfo = new ArrayList<>();
     private Timer timer;
     private final Object layersLock = new Object();
-    private final Deque<File> deletedLayers = new LinkedList<File>();
+    private final Deque<File> deletedLayers = new LinkedList<>();
 
     private final File autosaveDir = new File(Main.pref.getPreferencesDir() + AUTOSAVE_DIR);
     private final File deletedLayersDir = new File(Main.pref.getPreferencesDir() + DELETED_LAYERS_DIR);
@@ -156,11 +156,9 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             File result = new File(autosaveDir, filename+".osm");
             try {
                 if (result.createNewFile()) {
-                    try {
-                        File pidFile = new File(autosaveDir, filename+".pid");
-                        PrintStream ps = new PrintStream(pidFile);
+                    File pidFile = new File(autosaveDir, filename+".pid");
+                    try (PrintStream ps = new PrintStream(pidFile, "UTF-8")) {
                         ps.println(ManagementFactory.getRuntimeMXBean().getName());
-                        Utils.close(ps);
                     } catch (Throwable t) {
                         Main.error(t);
                     }
@@ -178,7 +176,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
-    private void savelayer(AutosaveLayerInfo info) throws IOException {
+    private void savelayer(AutosaveLayerInfo info) {
         if (!info.layer.getName().equals(info.layerName)) {
             setLayerFileName(info);
             info.layerName = info.layer.getName();
@@ -262,19 +260,15 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                     AutosaveLayerInfo info = it.next();
                     if (info.layer == osmLayer) {
 
-                        try {
-                            savelayer(info);
-                            File lastFile = info.backupFiles.pollLast();
-                            if (lastFile != null) {
-                                moveToDeletedLayersFolder(lastFile);
+                        savelayer(info);
+                        File lastFile = info.backupFiles.pollLast();
+                        if (lastFile != null) {
+                            moveToDeletedLayersFolder(lastFile);
+                        }
+                        for (File file: info.backupFiles) {
+                            if (file.delete()) {
+                                getPidFile(file).delete();
                             }
-                            for (File file: info.backupFiles) {
-                                if (file.delete()) {
-                                    getPidFile(file).delete();
-                                }
-                            }
-                        } catch (IOException e) {
-                            Main.error(tr("Error while creating backup of removed layer: {0}", e.getMessage()));
                         }
 
                         it.remove();
@@ -299,7 +293,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
      * @return The list of .osm files still present in autosave dir, that are not currently managed by another instance of JOSM
      */
     public List<File> getUnsavedLayersFiles() {
-        List<File> result = new ArrayList<File>();
+        List<File> result = new ArrayList<>();
         File[] files = autosaveDir.listFiles(OsmImporter.FILE_FILTER);
         if (files == null)
             return result;
@@ -308,18 +302,11 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 boolean skipFile = false;
                 File pidFile = getPidFile(file);
                 if (pidFile.exists()) {
-                    try {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pidFile)));
-                        try {
-                            String jvmId = reader.readLine();
-                            if (jvmId != null) {
-                                String pid = jvmId.split("@")[0];
-                                skipFile = jvmPerfDataFileExists(pid);
-                            }
-                        } catch (Throwable t) {
-                            Main.error(t);
-                        } finally {
-                            Utils.close(reader);
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pidFile), StandardCharsets.UTF_8))) {
+                        String jvmId = reader.readLine();
+                        if (jvmId != null) {
+                            String pid = jvmId.split("@")[0];
+                            skipFile = jvmPerfDataFileExists(pid);
                         }
                     } catch (Throwable t) {
                         Main.error(t);
@@ -402,7 +389,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
-    public void dicardUnsavedLayers() {
+    public void discardUnsavedLayers() {
         for (File f: getUnsavedLayersFiles()) {
             moveToDeletedLayersFolder(f);
         }

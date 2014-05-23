@@ -14,8 +14,10 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,11 +71,10 @@ public class PlaceSelection implements DownloadSelection {
     private NamedResultTableColumnModel columnmodel;
     private JTable tblSearchResults;
     private DownloadDialog parent;
-    private final static Server[] servers = new Server[]{
-        new Server("Nominatim","http://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds")),
-        //new Server("Namefinder","http://gazetteer.openstreetmap.org/namefinder/search.xml?find=",tr("Near"),trc("placeselection", "Zoom"))
+    private static final Server[] SERVERS = new Server[] {
+        new Server("Nominatim","https://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds"))
     };
-    private final JosmComboBox server = new JosmComboBox(servers);
+    private final JosmComboBox<Server> server = new JosmComboBox<>(SERVERS);
 
     private static class Server {
         public String name;
@@ -100,9 +101,9 @@ public class PlaceSelection implements DownloadSelection {
 
         lpanel.add(new JLabel(tr("Choose the server for searching:")));
         lpanel.add(server);
-        String s = Main.pref.get("namefinder.server", servers[0].name);
-        for (int i = 0; i < servers.length; ++i) {
-            if (servers[i].name.equals(s)) {
+        String s = Main.pref.get("namefinder.server", SERVERS[0].name);
+        for (int i = 0; i < SERVERS.length; ++i) {
+            if (SERVERS[i].name.equals(s)) {
                 server.setSelectedIndex(i);
             }
         }
@@ -110,7 +111,7 @@ public class PlaceSelection implements DownloadSelection {
 
         cbSearchExpression = new HistoryComboBox();
         cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
-        List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(cmtHistory);
         cbSearchExpression.setPossibleItems(cmtHistory);
         lpanel.add(cbSearchExpression);
@@ -171,7 +172,7 @@ public class PlaceSelection implements DownloadSelection {
     /**
      * Data storage for search results.
      */
-    static private class SearchResult {
+    private static class SearchResult {
         public String name;
         public String info;
         public String nearestPlace;
@@ -195,7 +196,7 @@ public class PlaceSelection implements DownloadSelection {
         private SearchResult currentResult = null;
         private StringBuffer description = null;
         private int depth = 0;
-        private List<SearchResult> data = new LinkedList<SearchResult>();
+        private List<SearchResult> data = new LinkedList<>();
 
         /**
          * Detect starting elements.
@@ -206,9 +207,9 @@ public class PlaceSelection implements DownloadSelection {
         throws SAXException {
             depth++;
             try {
-                if (qName.equals("searchresults")) {
+                if ("searchresults".equals(qName)) {
                     // do nothing
-                } else if (qName.equals("named") && (depth == 2)) {
+                } else if ("named".equals(qName) && (depth == 2)) {
                     currentResult = new PlaceSelection.SearchResult();
                     currentResult.name = atts.getValue("name");
                     currentResult.info = atts.getValue("info");
@@ -219,15 +220,15 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
                     currentResult.zoom = Integer.parseInt(atts.getValue("zoom"));
                     data.add(currentResult);
-                } else if (qName.equals("description") && (depth == 3)) {
+                } else if ("description".equals(qName) && (depth == 3)) {
                     description = new StringBuffer();
-                } else if (qName.equals("named") && (depth == 4)) {
+                } else if ("named".equals(qName) && (depth == 4)) {
                     // this is a "named" place in the nearest places list.
                     String info = atts.getValue("info");
                     if ("city".equals(info) || "town".equals(info) || "village".equals(info)) {
                         currentResult.nearestPlace = atts.getValue("name");
                     }
-                } else if (qName.equals("place") && atts.getValue("lat") != null) {
+                } else if ("place".equals(qName) && atts.getValue("lat") != null) {
                     currentResult = new PlaceSelection.SearchResult();
                     currentResult.name = atts.getValue("display_name");
                     currentResult.description = currentResult.name;
@@ -258,7 +259,7 @@ public class PlaceSelection implements DownloadSelection {
          */
         @Override
         public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-            if (qName.equals("description") && description != null) {
+            if ("description".equals(qName) && description != null) {
                 currentResult.description = description.toString();
                 description = null;
             }
@@ -299,7 +300,7 @@ public class PlaceSelection implements DownloadSelection {
             Main.worker.submit(task);
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(cbSearchExpression.getText().trim().length() > 0);
         }
 
@@ -368,11 +369,15 @@ public class PlaceSelection implements DownloadSelection {
                     connection = Utils.openHttpConnection(url);
                 }
                 connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
-                InputStream inputStream = connection.getInputStream();
-                InputSource inputSource = new InputSource(new InputStreamReader(inputStream, Utils.UTF_8));
-                NameFinderResultParser parser = new NameFinderResultParser();
-                SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
-                this.data = parser.getResult();
+                try (
+                    InputStream inputStream = connection.getInputStream();
+                    Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                ) {
+                    InputSource inputSource = new InputSource(reader);
+                    NameFinderResultParser parser = new NameFinderResultParser();
+                    SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
+                    this.data = parser.getResult();
+                }
             } catch(Exception e) {
                 if (canceled)
                     // ignore exception
@@ -389,7 +394,7 @@ public class PlaceSelection implements DownloadSelection {
         private ListSelectionModel selectionModel;
 
         public NamedResultTableModel(ListSelectionModel selectionModel) {
-            data = new ArrayList<SearchResult>();
+            data = new ArrayList<>();
             this.selectionModel = selectionModel;
         }
         @Override
@@ -408,7 +413,7 @@ public class PlaceSelection implements DownloadSelection {
             if (data == null) {
                 this.data.clear();
             } else {
-                this.data  =new ArrayList<SearchResult>(data);
+                this.data = new ArrayList<>(data);
             }
             fireTableDataChanged();
         }
@@ -427,7 +432,7 @@ public class PlaceSelection implements DownloadSelection {
     static class NamedResultTableColumnModel extends DefaultTableColumnModel {
         TableColumn col3 = null;
         TableColumn col4 = null;
-        protected void createColumns() {
+        protected final void createColumns() {
             TableColumn col = null;
             NamedResultCellRenderer renderer = new NamedResultCellRenderer();
 
@@ -449,7 +454,7 @@ public class PlaceSelection implements DownloadSelection {
 
             // column 2 - Near
             col3 = new TableColumn(2);
-            col3.setHeaderValue(servers[0].thirdcol);
+            col3.setHeaderValue(SERVERS[0].thirdcol);
             col3.setResizable(true);
             col3.setPreferredWidth(100);
             col3.setCellRenderer(renderer);
@@ -457,7 +462,7 @@ public class PlaceSelection implements DownloadSelection {
 
             // column 3 - Zoom
             col4 = new TableColumn(3);
-            col4.setHeaderValue(servers[0].fourthcol);
+            col4.setHeaderValue(SERVERS[0].fourthcol);
             col4.setResizable(true);
             col4.setPreferredWidth(50);
             col4.setCellRenderer(renderer);
@@ -507,8 +512,8 @@ public class PlaceSelection implements DownloadSelection {
         }
 
         protected String lineWrapDescription(String description) {
-            StringBuffer ret = new StringBuffer();
-            StringBuffer line = new StringBuffer();
+            StringBuilder ret = new StringBuilder();
+            StringBuilder line = new StringBuilder();
             StringTokenizer tok = new StringTokenizer(description, " ");
             while(tok.hasMoreElements()) {
                 String t = tok.nextToken();
@@ -519,7 +524,7 @@ public class PlaceSelection implements DownloadSelection {
                 } else {
                     line.append(" ").append(t).append("<br>");
                     ret.append(line);
-                    line = new StringBuffer();
+                    line = new StringBuilder();
                 }
             }
             ret.insert(0, "<html>");

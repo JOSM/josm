@@ -6,10 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +23,6 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -47,63 +44,14 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         List<TileSource> getTileSources();
     }
 
-    public static class RenamedSourceDecorator implements TileSource {
-
-        private final TileSource source;
-        private final String name;
-
-        public RenamedSourceDecorator(TileSource source, String name) {
-            this.source = source;
-            this.name = name;
-        }
-
-        @Override public String getName() {
-            return name;
-        }
-
-        @Override public int getMaxZoom() { return source.getMaxZoom(); }
-
-        @Override public int getMinZoom() { return source.getMinZoom(); }
-
-        @Override public int getTileSize() { return source.getTileSize(); }
-
-        @Override public String getTileType() { return source.getTileType(); }
-
-        @Override public TileUpdate getTileUpdate() { return source.getTileUpdate(); }
-
-        @Override public String getTileUrl(int zoom, int tilex, int tiley) throws IOException { return source.getTileUrl(zoom, tilex, tiley); }
-
-        @Override public boolean requiresAttribution() { return source.requiresAttribution(); }
-
-        @Override public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) { return source.getAttributionText(zoom, topLeft, botRight); }
-
-        @Override public String getAttributionLinkURL() { return source.getAttributionLinkURL(); }
-
-        @Override public Image getAttributionImage() { return source.getAttributionImage(); }
-
-        @Override public String getAttributionImageURL() { return source.getAttributionImageURL(); }
-
-        @Override public String getTermsOfUseText() { return source.getTermsOfUseText(); }
-
-        @Override public String getTermsOfUseURL() { return source.getTermsOfUseURL(); }
-
-        @Override public double latToTileY(double lat, int zoom) { return source.latToTileY(lat,zoom); }
-
-        @Override public double lonToTileX(double lon, int zoom) { return source.lonToTileX(lon,zoom); }
-
-        @Override public double tileYToLat(int y, int zoom) { return source.tileYToLat(y, zoom); }
-
-        @Override public double tileXToLon(int x, int zoom) { return source.tileXToLon(x, zoom); }
-    }
-
     /**
      * TMS TileSource provider for the slippymap chooser
      */
     public static class TMSTileSourceProvider implements TileSourceProvider {
-        static final Set<String> existingSlippyMapUrls = new HashSet<String>();
+        static final Set<String> existingSlippyMapUrls = new HashSet<>();
         static {
             // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
-            existingSlippyMapUrls.add("http://tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik
+            existingSlippyMapUrls.add("https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik
             existingSlippyMapUrls.add("http://tile.opencyclemap.org/cycle/{zoom}/{x}/{y}.png"); // Cyclemap
             existingSlippyMapUrls.add("http://otile{switch:1,2,3,4}.mqcdn.com/tiles/1.0.0/osm/{zoom}/{x}/{y}.png"); // MapQuest-OSM
             existingSlippyMapUrls.add("http://oatile{switch:1,2,3,4}.mqcdn.com/tiles/1.0.0/sat/{zoom}/{x}/{y}.png"); // MapQuest Open Aerial
@@ -112,7 +60,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         @Override
         public List<TileSource> getTileSources() {
             if (!TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get()) return Collections.<TileSource>emptyList();
-            List<TileSource> sources = new ArrayList<TileSource>();
+            List<TileSource> sources = new ArrayList<>();
             for (ImageryInfo info : ImageryLayerInfo.instance.getLayers()) {
                 if (existingSlippyMapUrls.contains(info.getUrl())) {
                     continue;
@@ -146,18 +94,17 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         providers.addIfAbsent(tileSourceProvider);
     }
 
-    private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<TileSourceProvider>();
+    private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<>();
 
     static {
         addTileSourceProvider(new TileSourceProvider() {
             @Override
             public List<TileSource> getTileSources() {
                 return Arrays.<TileSource>asList(
-                        new RenamedSourceDecorator(new OsmTileSource.Mapnik(), "Mapnik"),
-                        new RenamedSourceDecorator(new OsmTileSource.CycleMap(), "Cyclemap"),
-                        new RenamedSourceDecorator(new MapQuestOsmTileSource(), "MapQuest-OSM"),
-                        new RenamedSourceDecorator(new MapQuestOpenAerialTileSource(), "MapQuest Open Aerial")
-                        );
+                        new OsmTileSource.Mapnik(),
+                        new OsmTileSource.CycleMap(),
+                        new MapQuestOsmTileSource(),
+                        new MapQuestOpenAerialTileSource());
             }
         });
         addTileSourceProvider(new TMSTileSourceProvider());
@@ -181,6 +128,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
      * Constructs a new {@code SlippyMapBBoxChooser}.
      */
     public SlippyMapBBoxChooser() {
+        debug = Main.isDebugEnabled();
         SpringLayout springLayout = new SpringLayout();
         setLayout(springLayout);
         TMSLayer.setMaxWorkers();
@@ -230,7 +178,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     }
 
     private List<TileSource> getAllTileSources() {
-        List<TileSource> tileSources = new ArrayList<TileSource>();
+        List<TileSource> tileSources = new ArrayList<>();
         for (TileSourceProvider provider: providers) {
             tileSources.addAll(provider.getTileSources());
         }
@@ -276,7 +224,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         }
     }
 
-    public void setFileCacheEnabled(boolean enabled) {
+    public final void setFileCacheEnabled(boolean enabled) {
         if (enabled) {
             setTileLoader(cachedLoader);
         } else {
@@ -284,10 +232,9 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         }
     }
 
-    public void setMaxTilesInMemory(int tiles) {
+    public final void setMaxTilesInMemory(int tiles) {
         ((MemoryTileCache) getTileCache()).setCacheSize(tiles);
     }
-
 
     /**
      * Callback for the OsmMapControl. (Re-)Sets the start and end point of the
@@ -378,10 +325,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
             minLon -= 360.0;
         }
 
-        int y1 = OsmMercator.LatToY(bbox.getMinLat(), MAX_ZOOM);
-        int y2 = OsmMercator.LatToY(bbox.getMaxLat(), MAX_ZOOM);
-        int x1 = OsmMercator.LonToX(minLon, MAX_ZOOM);
-        int x2 = OsmMercator.LonToX(maxLon, MAX_ZOOM);
+        int y1 = tileSource.LatToY(bbox.getMinLat(), MAX_ZOOM);
+        int y2 = tileSource.LatToY(bbox.getMaxLat(), MAX_ZOOM);
+        int x1 = tileSource.LonToX(minLon, MAX_ZOOM);
+        int x2 = tileSource.LonToX(maxLon, MAX_ZOOM);
 
         iSelectionRectStart = new Point(Math.min(x1, x2), Math.min(y1, y2));
         iSelectionRectEnd = new Point(Math.max(x1, x2), Math.max(y1, y2));
@@ -390,7 +337,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
         MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
 
-        List<MapMarker> marker = new ArrayList<MapMarker>(2);
+        List<MapMarker> marker = new ArrayList<>(2);
         marker.add(xmin_ymin);
         marker.add(xmax_ymax);
         setMapMarkerList(marker);

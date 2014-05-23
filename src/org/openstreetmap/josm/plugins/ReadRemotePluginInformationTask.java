@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,16 +55,17 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     private boolean canceled;
     private HttpURLConnection connection;
     private List<PluginInformation> availablePlugins;
+    private boolean displayErrMsg;
 
     protected enum CacheType {PLUGIN_LIST, ICON_LIST}
 
-    protected void init(Collection<String> sites){
+    protected final void init(Collection<String> sites, boolean displayErrMsg){
         this.sites = sites;
         if (sites == null) {
             this.sites = Collections.emptySet();
         }
-        availablePlugins = new LinkedList<PluginInformation>();
-
+        this.availablePlugins = new LinkedList<>();
+        this.displayErrMsg = displayErrMsg;
     }
     /**
      * Creates the task
@@ -72,7 +74,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      */
     public ReadRemotePluginInformationTask(Collection<String> sites) {
         super(tr("Download plugin list..."), false /* don't ignore exceptions */);
-        init(sites);
+        init(sites, true);
     }
 
     /**
@@ -80,12 +82,12 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      *
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @param sites the collection of download sites. Defaults to the empty collection if null.
+     * @param displayErrMsg if {@code true}, a blocking error message is displayed in case of I/O exception.
      */
-    public ReadRemotePluginInformationTask(ProgressMonitor monitor, Collection<String> sites) {
+    public ReadRemotePluginInformationTask(ProgressMonitor monitor, Collection<String> sites, boolean displayErrMsg) {
         super(tr("Download plugin list..."), monitor == null ? NullProgressMonitor.INSTANCE: monitor, false /* don't ignore exceptions */);
-        init(sites);
+        init(sites, displayErrMsg);
     }
-
 
     @Override
     protected void cancel() {
@@ -151,18 +153,16 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      * @return the downloaded list
      */
     protected String downloadPluginList(String site, final ProgressMonitor monitor) {
-        BufferedReader in = null;
-        String line;
-        try {
-            /* replace %<x> with empty string or x=plugins (separated with comma) */
-            String pl = Utils.join(",", Main.pref.getCollection("plugins"));
-            String printsite = site.replaceAll("%<(.*)>", "");
-            if(pl != null && pl.length() != 0) {
-                site = site.replaceAll("%<(.*)>", "$1"+pl);
-            } else {
-                site = printsite;
-            }
+        /* replace %<x> with empty string or x=plugins (separated with comma) */
+        String pl = Utils.join(",", Main.pref.getCollection("plugins"));
+        String printsite = site.replaceAll("%<(.*)>", "");
+        if (pl != null && pl.length() != 0) {
+            site = site.replaceAll("%<(.*)>", "$1"+pl);
+        } else {
+            site = printsite;
+        }
 
+        try {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", printsite));
 
@@ -172,19 +172,22 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 connection.setRequestProperty("Cache-Control", "no-cache");
                 connection.setRequestProperty("Accept-Charset", "utf-8");
             }
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream(), Utils.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            while ((line = in.readLine()) != null) {
-                sb.append(line).append("\n");
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = in.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                return sb.toString();
             }
-            return sb.toString();
         } catch (MalformedURLException e) {
             if (canceled) return null;
             Main.error(e);
             return null;
         } catch (IOException e) {
             if (canceled) return null;
-            handleIOException(monitor, e, tr("Plugin list download error"), tr("JOSM failed to download plugin list:"));
+            Main.addNetworkError(site, e);
+            handleIOException(monitor, e, tr("Plugin list download error"), tr("JOSM failed to download plugin list:"), displayErrMsg);
             return null;
         } finally {
             synchronized(this) {
@@ -193,37 +196,45 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 }
                 connection = null;
             }
-            Utils.close(in);
             monitor.finishTask();
         }
     }
-    
-    private void handleIOException(final ProgressMonitor monitor, IOException e, final String title, String firstMessage) {
-        InputStream errStream = connection.getErrorStream();
+
+    private void handleIOException(final ProgressMonitor monitor, IOException e, final String title, final String firstMessage, boolean displayMsg) {
         StringBuilder sb = new StringBuilder();
-        if (errStream != null) {
-            BufferedReader err = null;
-            try {
-                String line;
-                err = new BufferedReader(new InputStreamReader(errStream, Utils.UTF_8));
-                while ((line = err.readLine()) != null) {
-                    sb.append(line).append("\n");
+        try (InputStream errStream = connection.getErrorStream()) {
+            if (errStream != null) {
+                try (BufferedReader err = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = err.readLine()) != null) {
+                        sb.append(line).append("\n");
+                    }
+                } catch (Exception ex) {
+                    Main.error(e);
+                    Main.error(ex);
                 }
-            } catch (Exception ex) {
-                Main.error(e);
-                Main.error(ex);
-            } finally {
-                Utils.close(err);
             }
+        } catch (IOException ex) {
+            Main.warn(ex);
         }
         final String msg = e.getMessage();
         final String details = sb.toString();
-        Main.error(details.isEmpty() ? msg : msg + " - Details:\n" + details);
-        
+        if (details.isEmpty()) {
+            Main.error(e.getClass().getSimpleName()+": " + msg);
+        } else {
+            Main.error(msg + " - Details:\n" + details);
+        }
+
+        if (displayMsg) {
+            displayErrorMessage(monitor, msg, details, title, firstMessage);
+        }
+    }
+
+    private void displayErrorMessage(final ProgressMonitor monitor, final String msg, final String details, final String title, final String firstMessage) {
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override public void run() {
                 JPanel panel = new JPanel(new GridBagLayout());
-                panel.add(new JLabel(tr("JOSM failed to download plugin list:")), GBC.eol().insets(0, 0, 0, 10));
+                panel.add(new JLabel(firstMessage), GBC.eol().insets(0, 0, 0, 10));
                 StringBuilder b = new StringBuilder();
                 for (String part : msg.split("(?<=\\G.{200})")) {
                     b.append(part).append("\n");
@@ -251,8 +262,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      * @param monitor a progress monitor
      */
     protected void downloadPluginIcons(String site, File destFile, ProgressMonitor monitor) {
-        InputStream in = null;
-        OutputStream out = null;
         try {
             site = site.replaceAll("%<(.*)>", "");
 
@@ -264,11 +273,14 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 connection = Utils.openHttpConnection(url);
                 connection.setRequestProperty("Cache-Control", "no-cache");
             }
-            in = connection.getInputStream();
-            out = new FileOutputStream(destFile);
-            byte[] buffer = new byte[8192];
-            for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
-                out.write(buffer, 0, read);
+            try (
+                InputStream in = connection.getInputStream();
+                OutputStream out = new FileOutputStream(destFile)
+            ) {
+                byte[] buffer = new byte[8192];
+                for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
+                    out.write(buffer, 0, read);
+                }
             }
         } catch (MalformedURLException e) {
             if (canceled) return;
@@ -276,17 +288,15 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             return;
         } catch (IOException e) {
             if (canceled) return;
-            handleIOException(monitor, e, tr("Plugin icons download error"), tr("JOSM failed to download plugin icons:"));
+            handleIOException(monitor, e, tr("Plugin icons download error"), tr("JOSM failed to download plugin icons:"), displayErrMsg);
             return;
         } finally {
-            Utils.close(out);
             synchronized(this) {
                 if (connection != null) {
                     connection.disconnect();
                 }
                 connection = null;
             }
-            Utils.close(in);
             monitor.finishTask();
         }
         for (PluginInformation pi : availablePlugins) {
@@ -307,26 +317,18 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      * @param list the downloaded list
      */
     protected void cachePluginList(String site, String list) {
-        PrintWriter writer = null;
-        try {
-            File pluginDir = Main.pref.getPluginsDirectory();
-            if (!pluginDir.exists()) {
-                if (! pluginDir.mkdirs()) {
-                    Main.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
-                }
-            }
-            File cacheFile = createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST);
-            getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
-            writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), Utils.UTF_8));
+        File pluginDir = Main.pref.getPluginsDirectory();
+        if (!pluginDir.exists() && !pluginDir.mkdirs()) {
+            Main.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
+        }
+        File cacheFile = createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST);
+        getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
+        try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), StandardCharsets.UTF_8))) {
             writer.write(list);
+            writer.flush();
         } catch(IOException e) {
             // just failed to write the cache file. No big deal, but log the exception anyway
             Main.error(e);
-        } finally {
-            if (writer != null) {
-                writer.flush();
-                Utils.close(writer);
-            }
         }
     }
 
@@ -338,8 +340,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      * @return the plugin informations, without deprecated plugins
      */
     protected List<PluginInformation> filterDeprecatedPlugins(List<PluginInformation> plugins) {
-        List<PluginInformation> ret = new ArrayList<PluginInformation>(plugins.size());
-        HashSet<String> deprecatedPluginNames = new HashSet<String>();
+        List<PluginInformation> ret = new ArrayList<>(plugins.size());
+        HashSet<String> deprecatedPluginNames = new HashSet<>();
         for (PluginHandler.DeprecatedPlugin p : PluginHandler.DEPRECATED_PLUGINS) {
             deprecatedPluginNames.add(p.name);
         }
@@ -361,7 +363,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     protected void parsePluginListDocument(String site, String doc) {
         try {
             getProgressMonitor().subTask(tr("Parsing plugin list from site ''{0}''", site));
-            InputStream in = new ByteArrayInputStream(doc.getBytes(Utils.UTF_8));
+            InputStream in = new ByteArrayInputStream(doc.getBytes(StandardCharsets.UTF_8));
             List<PluginInformation> pis = new PluginListParser().parse(in);
             availablePlugins.addAll(filterDeprecatedPlugins(pis));
         } catch (PluginListParseException e) {
@@ -377,7 +379,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         File pluginDir = Main.pref.getPluginsDirectory();
 
         // collect old cache files and remove if no longer in use
-        List<File> siteCacheFiles = new LinkedList<File>();
+        List<File> siteCacheFiles = new LinkedList<>();
         for (String location : PluginInformation.getPluginLocations()) {
             File [] f = new File(location).listFiles(
                     new FilenameFilter() {

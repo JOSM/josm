@@ -23,15 +23,15 @@ public abstract class RelationEditor extends ExtendedDialog {
      * @see #setRelation(Relation)
      * @see #getRelation()
      */
-    static public final String RELATION_PROP = RelationEditor.class.getName() + ".relation";
+    public static final String RELATION_PROP = RelationEditor.class.getName() + ".relation";
 
     /** the property name for the current relation snapshot
      * @see #getRelationSnapshot()
      */
-    static public final String RELATION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".relationSnapshot";
+    public static final String RELATION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".relationSnapshot";
 
     /** the list of registered relation editor classes */
-    private static List<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
+    private static List<Class<RelationEditor>> editors = new ArrayList<>();
 
     /**
      * Registers a relation editor class. Depending on the type of relation to be edited
@@ -88,11 +88,10 @@ public abstract class RelationEditor extends ExtendedDialog {
                 Boolean canEdit = (Boolean) m.invoke(null, r);
                 if (canEdit) {
                     Constructor<RelationEditor> con = e.getConstructor(Relation.class, Collection.class);
-                    RelationEditor editor = con.newInstance(layer, r, selectedMembers);
-                    return editor;
+                    return con.newInstance(layer, r, selectedMembers);
                 }
             } catch (Exception ex) {
-                // plod on
+                Main.warn(ex);
             }
         }
         if (RelationDialogManager.getRelationDialogManager().isOpenInEditor(layer, r))
@@ -207,7 +206,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     /* ----------------------------------------------------------------------- */
     /* property change support                                                 */
     /* ----------------------------------------------------------------------- */
-    final private PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {

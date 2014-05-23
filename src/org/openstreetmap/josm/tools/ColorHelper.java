@@ -4,14 +4,14 @@ package org.openstreetmap.josm.tools;
 import java.awt.Color;
 
 /**
- * Helper to convert from color to html string and back
+ * Helper to convert from color to HTML string and back.
  */
 public final class ColorHelper {
 
     private ColorHelper() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * Returns the {@code Color} for the given HTML code.
      * @param html the color code
@@ -20,6 +20,10 @@ public final class ColorHelper {
     public static Color html2color(String html) {
         if (html.length() > 0 && html.charAt(0) == '#')
             html = html.substring(1);
+        if (html.length() == 3) {
+            return html2color(new String(
+                    new char[]{html.charAt(0), html.charAt(0), html.charAt(1), html.charAt(1), html.charAt(2), html.charAt(2)}));
+        }
         if (html.length() != 6 && html.length() != 8)
             return null;
         try {
@@ -50,7 +54,7 @@ public final class ColorHelper {
     /**
      * Returns the HTML color code (6 or 8 digit).
      * @param col The color to convert
-     * @param withAlpha if {@code true} and alpha value < 255, return 8-digit color code, else always 6-digit
+     * @param withAlpha if {@code true} and alpha value &lt; 255, return 8-digit color code, else always 6-digit
      * @return the HTML color code (6 or 8 digit)
      * @since 6655
      */

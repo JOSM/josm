@@ -17,13 +17,11 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * OsmServerBackreferenceReader fetches the primitives from the OSM server which
  * refer to a specific primitive. For a {@link org.openstreetmap.josm.data.osm.Node Node}, ways and relations are retrieved
- * which refer to the node. For a {@link Way} or a {@link Relation}, only relations are
- * read.
+ * which refer to the node. For a {@link Way} or a {@link Relation}, only relations are read.
  *
  * OsmServerBackreferenceReader uses the API calls <code>[node|way|relation]/#id/relations</code>
  * and  <code>node/#id/ways</code> to retrieve the referring primitives. The default behaviour
@@ -32,7 +30,7 @@ import org.openstreetmap.josm.tools.Utils;
  * If you set {@link #setReadFull(boolean)} to true this reader uses a {@link MultiFetchServerObjectReader}
  * to complete incomplete primitives.
  *
- *
+ * @since 1806
  */
 public class OsmServerBackreferenceReader extends OsmServerReader {
 
@@ -46,10 +44,10 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     /**
      * constructor
      *
-     * @param primitive  the primitive to be read. Must not be null. primitive.id > 0 expected
+     * @param primitive  the primitive to be read. Must not be null. primitive.id &gt; 0 expected
      *
      * @exception IllegalArgumentException thrown if primitive is null
-     * @exception IllegalArgumentException thrown if primitive.id <= 0
+     * @exception IllegalArgumentException thrown if primitive.id &lt;= 0
      */
     public OsmServerBackreferenceReader(OsmPrimitive primitive) throws IllegalArgumentException {
         CheckParameterUtil.ensureValidPrimitiveId(primitive, "primitive");
@@ -61,10 +59,10 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     /**
      * constructor
      *
-     * @param id  the id of the primitive. > 0 expected
+     * @param id  the id of the primitive. &gt; 0 expected
      * @param type the type of the primitive. Must not be null.
      *
-     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if id &lt;= 0
      * @exception IllegalArgumentException thrown if type is null
      *
      */
@@ -96,7 +94,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @param type the type of the primitive
      * @param readFull true, if referers should be read fully (i.e. including their immediate children)
      *
-     * @exception IllegalArgumentException thrown if id <= 0
+     * @exception IllegalArgumentException thrown if id &lt;= 0
      * @exception IllegalArgumentException thrown if type is null
      *
      */
@@ -123,26 +121,19 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
         this.readFull = readFull;
     }
 
-    /**
-     * Reads referring ways from the API server and replies them in a {@link DataSet}
-     *
-     * @return the data set
-     * @throws OsmTransferException
-     */
-    protected DataSet getReferringWays(ProgressMonitor progressMonitor) throws OsmTransferException {
-        InputStream in = null;
+    private DataSet getReferringPrimitives(ProgressMonitor progressMonitor, String type, String message) throws OsmTransferException {
         progressMonitor.beginTask(null, 2);
         try {
-            progressMonitor.indeterminateSubTask(tr("Downloading from OSM Server..."));
-            StringBuffer sb = new StringBuffer();
-            sb.append(primitiveType.getAPIName())
-            .append("/").append(id).append("/ways");
+            progressMonitor.subTask(tr("Contacting OSM Server..."));
+            StringBuilder sb = new StringBuilder();
+            sb.append(primitiveType.getAPIName()).append("/").append(id).append(type);
 
-            in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            progressMonitor.subTask(tr("Downloading referring ways ..."));
-            return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, true));
+            try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
+                if (in == null)
+                    return null;
+                progressMonitor.subTask(message);
+                return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, true));
+            }
         } catch(OsmTransferException e) {
             throw e;
         } catch (Exception e) {
@@ -151,9 +142,18 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
-            Utils.close(in);
             activeConnection = null;
         }
+    }
+
+    /**
+     * Reads referring ways from the API server and replies them in a {@link DataSet}
+     *
+     * @return the data set
+     * @throws OsmTransferException
+     */
+    protected DataSet getReferringWays(ProgressMonitor progressMonitor) throws OsmTransferException {
+        return getReferringPrimitives(progressMonitor, "/ways", tr("Downloading referring ways ..."));
     }
 
     /**
@@ -164,30 +164,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @throws OsmTransferException
      */
     protected DataSet getReferringRelations(ProgressMonitor progressMonitor) throws OsmTransferException {
-        InputStream in = null;
-        progressMonitor.beginTask(null, 2);
-        try {
-            progressMonitor.subTask(tr("Contacting OSM Server..."));
-            StringBuffer sb = new StringBuffer();
-            sb.append(primitiveType.getAPIName())
-            .append("/").append(id).append("/relations");
-
-            in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true));
-            if (in == null)
-                return null;
-            progressMonitor.subTask(tr("Downloading referring relations ..."));
-            return OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, true));
-        } catch(OsmTransferException e) {
-            throw e;
-        } catch (Exception e) {
-            if (cancel)
-                return null;
-            throw new OsmTransferException(e);
-        } finally {
-            progressMonitor.finishTask();
-            Utils.close(in);
-            activeConnection = null;
-        }
+        return getReferringPrimitives(progressMonitor, "/relations", tr("Downloading referring relations ..."));
     }
 
     /**
@@ -212,7 +189,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     protected DataSet readIncompletePrimitives(DataSet ds, ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(null, 2);
         try {
-            Collection<Way> waysToCheck = new ArrayList<Way>(ds.getWays());
+            Collection<Way> waysToCheck = new ArrayList<>(ds.getWays());
             if (isReadFull() ||primitiveType.equals(OsmPrimitiveType.NODE)) {
                 for (Way way: waysToCheck) {
                     if (!way.isNew() && way.hasIncompleteNodes()) {
@@ -224,7 +201,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
                 }
             }
             if (isReadFull()) {
-                Collection<Relation> relationsToCheck  = new ArrayList<Relation>(ds.getRelations());
+                Collection<Relation> relationsToCheck  = new ArrayList<>(ds.getRelations());
                 for (Relation relation: relationsToCheck) {
                     if (!relation.isNew() && relation.hasIncompleteMembers()) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true /* read full */);
@@ -266,8 +243,8 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             DataSetMerger visitor = new DataSetMerger(ret,ds);
             visitor.merge();
             ret = visitor.getTargetDataSet();
-            readIncompletePrimitives(ret, progressMonitor.createSubTaskMonitor(1, false));
             if (ret != null) {
+                readIncompletePrimitives(ret, progressMonitor.createSubTaskMonitor(1, false));
                 ret.deleteInvisible();
             }
             return ret;

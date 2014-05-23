@@ -4,38 +4,29 @@ package org.openstreetmap.josm.gui.download;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * List class that read and save its content from the bookmark file.
  * @since 6340
  */
-public class BookmarkList extends JList {
+public class BookmarkList extends JList<BookmarkList.Bookmark> {
 
     /**
      * Class holding one bookmarkentry.
@@ -51,7 +42,7 @@ public class BookmarkList extends JList {
          * @throws IllegalArgumentException If list contain less than 5 elements
          */
         public Bookmark(Collection<String> list) throws NumberFormatException, IllegalArgumentException {
-            List<String> array = new ArrayList<String>(list);
+            List<String> array = new ArrayList<>(list);
             if(array.size() < 5)
                 throw new IllegalArgumentException(tr("Wrong number of arguments for bookmark"));
             name = array.get(0);
@@ -83,7 +74,7 @@ public class BookmarkList extends JList {
         public int compareTo(Bookmark b) {
             return name.toLowerCase().compareTo(b.name.toLowerCase());
         }
-        
+
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -152,7 +143,7 @@ public class BookmarkList extends JList {
      * Creates a bookmark list as well as the Buttons add and remove.
      */
     public BookmarkList() {
-        setModel(new DefaultListModel());
+        setModel(new DefaultListModel<Bookmark>());
         load();
         setVisibleRowCount(7);
         setCellRenderer(new BookmarkCellRenderer());
@@ -162,11 +153,11 @@ public class BookmarkList extends JList {
      * Loads the bookmarks from file.
      */
     public final void load() {
-        DefaultListModel model = (DefaultListModel)getModel();
+        DefaultListModel<Bookmark> model = (DefaultListModel<Bookmark>)getModel();
         model.removeAllElements();
         Collection<Collection<String>> args = Main.pref.getArray("bookmarks", null);
         if(args != null) {
-            LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
+            LinkedList<Bookmark> bookmarks = new LinkedList<>();
             for(Collection<String> entry : args) {
                 try {
                     bookmarks.add(new Bookmark(entry));
@@ -180,69 +171,16 @@ public class BookmarkList extends JList {
                 model.addElement(b);
             }
         }
-        else if(!Main.applet) { /* FIXME: remove else clause after spring 2011, but fix windows installer before */
-            File bookmarkFile = new File(Main.pref.getPreferencesDir(),"bookmarks");
-            try {
-                LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
-                if (bookmarkFile.exists()) {
-                    Main.info("Try loading obsolete bookmarks file");
-                    BufferedReader in = new BufferedReader(new InputStreamReader(
-                            new FileInputStream(bookmarkFile), Utils.UTF_8));
-
-                    for (String line = in.readLine(); line != null; line = in.readLine()) {
-                        Matcher m = Pattern.compile("^(.+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)$").matcher(line);
-                        if (!m.matches() || m.groupCount() != 5) {
-                            Main.error(tr("Unexpected line ''{0}'' in bookmark file ''{1}''",line, bookmarkFile.toString()));
-                            continue;
-                        }
-                        Bookmark b = new Bookmark();
-                        b.setName(m.group(1));
-                        double[] values= new double[4];
-                        for (int i = 0; i < 4; ++i) {
-                            try {
-                                values[i] = Double.parseDouble(m.group(i+2));
-                            } catch (NumberFormatException e) {
-                                Main.error(tr("Illegal double value ''{0}'' on line ''{1}'' in bookmark file ''{2}''",m.group(i+2),line, bookmarkFile.toString()));
-                                continue;
-                            }
-                        }
-                        b.setArea(new Bounds(values));
-                        bookmarks.add(b);
-                    }
-                    Utils.close(in);
-                    Collections.sort(bookmarks);
-                    for (Bookmark b : bookmarks) {
-                        model.addElement(b);
-                    }
-                    save();
-                    Main.info("Removing obsolete bookmarks file");
-                    if (!bookmarkFile.delete()) {
-                        bookmarkFile.deleteOnExit();
-                    }
-                }
-            } catch (IOException e) {
-                Main.error(e);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("<html>Could not read bookmarks from<br>''{0}''<br>Error was: {1}</html>",
-                                bookmarkFile.toString(),
-                                e.getMessage()
-                        ),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
-        }
     }
 
     /**
      * Saves all bookmarks to the preferences file
      */
     public final void save() {
-        LinkedList<Collection<String>> coll = new LinkedList<Collection<String>>();
-        for (Object o : ((DefaultListModel)getModel()).toArray()) {
+        LinkedList<Collection<String>> coll = new LinkedList<>();
+        for (Object o : ((DefaultListModel<Bookmark>)getModel()).toArray()) {
             String[] array = new String[5];
-            Bookmark b = (Bookmark)o;
+            Bookmark b = (Bookmark) o;
             array[0] = b.getName();
             Bounds area = b.getArea();
             array[1] = String.valueOf(area.getMinLat());
@@ -254,7 +192,7 @@ public class BookmarkList extends JList {
         Main.pref.putArray("bookmarks", coll);
     }
 
-    static class BookmarkCellRenderer extends JLabel implements ListCellRenderer {
+    static class BookmarkCellRenderer extends JLabel implements ListCellRenderer<BookmarkList.Bookmark> {
 
         private ImageIcon icon;
 
@@ -276,7 +214,7 @@ public class BookmarkList extends JList {
 
         protected String buildToolTipText(Bookmark b) {
             Bounds area = b.getArea();
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("<html>min[latitude,longitude]=<strong>[")
             .append(area.getMinLat()).append(",").append(area.getMinLon()).append("]</strong>")
             .append("<br>")
@@ -286,14 +224,12 @@ public class BookmarkList extends JList {
             return sb.toString();
 
         }
-        @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
 
-            Bookmark b = (Bookmark) value;
+        @Override
+        public Component getListCellRendererComponent(JList<? extends Bookmark> list, Bookmark value, int index, boolean isSelected, boolean cellHasFocus) {
             renderColor(isSelected);
-            setText(b.getName());
-            setToolTipText(buildToolTipText(b));
+            setText(value.getName());
+            setToolTipText(buildToolTipText(value));
             return this;
         }
     }

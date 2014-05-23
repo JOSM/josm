@@ -29,6 +29,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.swing.AbstractButton;
 import javax.swing.FocusManager;
@@ -37,6 +42,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -45,6 +51,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
@@ -62,6 +69,7 @@ import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.RepeatImageElemStyle.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
+import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -70,6 +78,16 @@ import org.openstreetmap.josm.tools.Utils;
  *
  */
 public class StyledMapRenderer extends AbstractMapRenderer {
+
+    final public static int noThreads;
+    final public static ExecutorService styleCreatorPool;
+
+    static {
+        noThreads = Main.pref.getInteger(
+                "mappaint.StyledMapRenderer.style_creation.numberOfThreads",
+                Runtime.getRuntime().availableProcessors());
+        styleCreatorPool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads);
+    }
 
     /**
      * Iterates over a list of Way Nodes and returns screen coordinates that
@@ -111,7 +129,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             if (idx == nodes.size() - 1) {
                 ++idx;
-                return new Point(x_prev0 + current.x - prev.x, y_prev0 + current.y - prev.y);
+                if (prev != null) {
+                    return new Point(x_prev0 + current.x - prev.x, y_prev0 + current.y - prev.y);
+                } else {
+                    return current;
+                }
             }
 
             Point next = nc.getPoint(nodes.get(idx+1));
@@ -164,62 +186,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
-        }
-    }
-
-    private class StyleCollector {
-        private final boolean drawArea;
-        private final boolean drawMultipolygon;
-        private final boolean drawRestriction;
-
-        private final List<StyleRecord> styleElems;
-
-        public StyleCollector(boolean drawArea, boolean drawMultipolygon, boolean drawRestriction) {
-            this.drawArea = drawArea;
-            this.drawMultipolygon = drawMultipolygon;
-            this.drawRestriction = drawRestriction;
-            styleElems = new ArrayList<StyleRecord>();
-        }
-
-        public void add(Node osm, int flags) {
-            StyleList sl = styles.get(osm, circum, nc);
-            for (ElemStyle s : sl) {
-                styleElems.add(new StyleRecord(s, osm, flags));
-            }
-        }
-
-        public void add(Relation osm, int flags) {
-            StyleList sl = styles.get(osm, circum, nc);
-            for (ElemStyle s : sl) {
-                if (drawMultipolygon && drawArea && s instanceof AreaElemStyle && (flags & FLAG_DISABLED) == 0) {
-                    styleElems.add(new StyleRecord(s, osm, flags));
-                } else if (drawRestriction && s instanceof NodeElemStyle) {
-                    styleElems.add(new StyleRecord(s, osm, flags));
-                }
-            }
-        }
-
-        public void add(Way osm, int flags) {
-            StyleList sl = styles.get(osm, circum, nc);
-            for (ElemStyle s : sl) {
-                if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElemStyle) {
-                    continue;
-                }
-                styleElems.add(new StyleRecord(s, osm, flags));
-            }
-        }
-
-        public void drawAll() {
-            Collections.sort(styleElems);
-            for (StyleRecord r : styleElems) {
-                r.style.paintPrimitive(
-                        r.osm,
-                        paintSettings,
-                        StyledMapRenderer.this,
-                        (r.flags & FLAG_SELECTED) != 0,
-                        (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
-                );
-            }
         }
     }
 
@@ -280,8 +246,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      *
      * With this bug, <code>gv.setGlyphTransform(i, trfm)</code> has a different
      * effect than on most other systems, namely the translation components
-     * ("m02" & "m12", {@link AffineTransform}) appear to be twice as large, as
-     * they actually are. The rotation is unaffected (scale & shear not tested
+     * ("m02" &amp; "m12", {@link AffineTransform}) appear to be twice as large, as
+     * they actually are. The rotation is unaffected (scale &amp; shear not tested
      * so far).
      *
      * This bug has only been observed on Mac OS X, see #7841.
@@ -303,7 +269,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
     }
 
-    private ElemStyles styles;
     private double circum;
 
     private MapPaintSettings paintSettings;
@@ -340,6 +305,16 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     private boolean leftHandTraffic;
 
+    /**
+     * Constructs a new {@code StyledMapRenderer}.
+     *
+     * @param g the graphics context. Must not be null.
+     * @param nc the map viewport. Must not be null.
+     * @param isInactiveMode if true, the paint visitor shall render OSM objects such that they
+     * look inactive. Example: rendering of data in an inactive layer using light gray as color only.
+     * @throws IllegalArgumentException thrown if {@code g} is null
+     * @throws IllegalArgumentException thrown if {@code nc} is null
+     */
     public StyledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         super(g, nc, isInactiveMode);
 
@@ -362,52 +337,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             polygon.addPoint(x, y);
         }
         return polygon;
-    }
-
-    private void collectNodeStyles(DataSet data, StyleCollector sc, BBox bbox) {
-        for (final Node n: data.searchNodes(bbox)) {
-            if (n.isDrawable()) {
-                if (n.isDisabled()) {
-                    sc.add(n, FLAG_DISABLED);
-                } else if (data.isSelected(n)) {
-                    sc.add(n, FLAG_SELECTED);
-                } else if (n.isMemberOfSelected()) {
-                    sc.add(n, FLAG_MEMBER_OF_SELECTED);
-                } else {
-                    sc.add(n, FLAG_NORMAL);
-                }
-            }
-        }
-    }
-
-    private void collectWayStyles(DataSet data, StyleCollector sc, BBox bbox) {
-        for (final Way w : data.searchWays(bbox)) {
-            if (w.isDrawable()) {
-                if (w.isDisabled()) {
-                    sc.add(w, FLAG_DISABLED);
-                } else if (data.isSelected(w)) {
-                    sc.add(w, FLAG_SELECTED);
-                } else if (w.isMemberOfSelected()) {
-                    sc.add(w, FLAG_MEMBER_OF_SELECTED);
-                } else {
-                    sc.add(w, FLAG_NORMAL);
-                }
-            }
-        }
-    }
-
-    private void collectRelationStyles(DataSet data, StyleCollector sc, BBox bbox) {
-        for (Relation r: data.searchRelations(bbox)) {
-            if (r.isDrawable()) {
-                if (r.isDisabled()) {
-                    sc.add(r, FLAG_DISABLED);
-                } else if (data.isSelected(r)) {
-                    sc.add(r, FLAG_SELECTED);
-                } else {
-                    sc.add(r, FLAG_NORMAL);
-                }
-            }
-        }
     }
 
     private void displaySegments(GeneralPath path, GeneralPath orientationArrows, GeneralPath onewayArrows, GeneralPath onewayArrowsCasing,
@@ -444,7 +373,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     /**
      * Displays text at specified position including its halo, if applicable.
-     * 
+     *
      * @param gv Text's glyphs to display. If {@code null}, use text from {@code s} instead.
      * @param s text to display if {@code gv} is {@code null}
      * @param x X position
@@ -483,7 +412,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
         }
     }
-    
+
     protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color, MapImage fillImage, TextElement text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
@@ -616,11 +545,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
         displayText(null, s, x, y, n.isDisabled(), text);
         g.setFont(defaultFont);
-    }
-
-    @Deprecated
-    public void drawLinePattern(Way way, Image pattern) {
-        drawRepeatImage(way, pattern, 0f, 0f, 0f, LineImageAlignment.TOP);
     }
 
     /**
@@ -911,35 +835,33 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         OsmPrimitive via = null;
 
         /* find the "from", "via" and "to" elements */
-        for (RelationMember m : r.getMembers())
-        {
+        for (RelationMember m : r.getMembers()) {
             if(m.getMember().isIncomplete())
                 return;
-            else
-            {
-                if(m.isWay())
-                {
+            else {
+                if(m.isWay()) {
                     Way w = m.getWay();
                     if(w.getNodesCount() < 2) {
                         continue;
                     }
 
-                    if("from".equals(m.getRole())) {
+                    switch(m.getRole()) {
+                    case "from":
                         if(fromWay == null) {
                             fromWay = w;
                         }
-                    } else if("to".equals(m.getRole())) {
+                        break;
+                    case "to":
                         if(toWay == null) {
                             toWay = w;
                         }
-                    } else if("via".equals(m.getRole())) {
+                        break;
+                    case "via":
                         if(via == null) {
                             via = w;
                         }
                     }
-                }
-                else if(m.isNode())
-                {
+                } else if(m.isNode()) {
                     Node n = m.getNode();
                     if("via".equals(m.getRole()) && via == null) {
                         via = n;
@@ -1177,7 +1099,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         GeneralPath onewayArrows = showOneway ? new GeneralPath() : null;
         GeneralPath onewayArrowsCasing = showOneway ? new GeneralPath() : null;
         Rectangle bounds = g.getClipBounds();
-        bounds.grow(100, 100);                  // avoid arrow heads at the border
+        if (bounds != null) {
+            // avoid arrow heads at the border
+            bounds.grow(100, 100);
+        }
 
         double wayLength = 0;
         Point lastPoint = null;
@@ -1390,26 +1315,216 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return null;
     }
 
+    private class ComputeStyleListWorker implements Callable<List<StyleRecord>>, Visitor {
+        private final List<? extends OsmPrimitive> input;
+        private final int from;
+        private final int to;
+        private final List<StyleRecord> output;
+        private final DataSet data;
+
+        private final ElemStyles styles = MapPaintStyles.getStyles();
+
+        private final boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);
+        private final boolean drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
+        private final boolean drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
+
+        /**
+         * Constructs a new {@code ComputeStyleListWorker}.
+         * @param input the primitives to process
+         * @param from first index of <code>input</code> to use
+         * @param to last index + 1
+         * @param output the list of styles to which styles will be added
+         * @param data the data set
+         */
+        public ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output, DataSet data) {
+            this.input = input;
+            this.from = from;
+            this.to = to;
+            this.output = output;
+            this.data = data;
+            this.styles.setDrawMultipolygon(drawMultipolygon);
+        }
+
+        @Override
+        public List<StyleRecord> call() throws Exception {
+            for (int i = from; i<to; i++) {
+                OsmPrimitive osm = input.get(i);
+                if (osm.isDrawable()) {
+                    osm.accept(this);
+                }
+            }
+            return output;
+        }
+
+        @Override
+        public void visit(Node n) {
+            if (n.isDisabled()) {
+                add(n, FLAG_DISABLED);
+            } else if (data.isSelected(n)) {
+                add(n, FLAG_SELECTED);
+            } else if (n.isMemberOfSelected()) {
+                add(n, FLAG_MEMBER_OF_SELECTED);
+            } else {
+                add(n, FLAG_NORMAL);
+            }
+        }
+
+        @Override
+        public void visit(Way w) {
+            if (w.isDisabled()) {
+                add(w, FLAG_DISABLED);
+            } else if (data.isSelected(w)) {
+                add(w, FLAG_SELECTED);
+            } else if (w.isMemberOfSelected()) {
+                add(w, FLAG_MEMBER_OF_SELECTED);
+            } else {
+                add(w, FLAG_NORMAL);
+            }
+        }
+
+        @Override
+        public void visit(Relation r) {
+            if (r.isDisabled()) {
+                add(r, FLAG_DISABLED);
+            } else if (data.isSelected(r)) {
+                add(r, FLAG_SELECTED);
+            } else {
+                add(r, FLAG_NORMAL);
+            }
+        }
+
+        @Override
+        public void visit(Changeset cs) {
+            throw new UnsupportedOperationException();
+        }
+
+        public void add(Node osm, int flags) {
+            StyleList sl = styles.get(osm, circum, nc);
+            for (ElemStyle s : sl) {
+                output.add(new StyleRecord(s, osm, flags));
+            }
+        }
+
+        public void add(Relation osm, int flags) {
+            StyleList sl = styles.get(osm, circum, nc);
+            for (ElemStyle s : sl) {
+                if (drawMultipolygon && drawArea && s instanceof AreaElemStyle && (flags & FLAG_DISABLED) == 0) {
+                    output.add(new StyleRecord(s, osm, flags));
+                } else if (drawRestriction && s instanceof NodeElemStyle) {
+                    output.add(new StyleRecord(s, osm, flags));
+                }
+            }
+        }
+
+        public void add(Way osm, int flags) {
+            StyleList sl = styles.get(osm, circum, nc);
+            for (ElemStyle s : sl) {
+                if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElemStyle) {
+                    continue;
+                }
+                output.add(new StyleRecord(s, osm, flags));
+            }
+        }
+    }
+
+    private class ConcurrentTasksHelper {
+
+        private final List<StyleRecord> allStyleElems;
+        private final DataSet data;
+
+        public ConcurrentTasksHelper(List<StyleRecord> allStyleElems, DataSet data) {
+            this.allStyleElems = allStyleElems;
+            this.data = data;
+        }
+
+        void process(List<? extends OsmPrimitive> prims) {
+            final List<ComputeStyleListWorker> tasks = new ArrayList<>();
+            final int bucketsize = Math.max(100, prims.size()/noThreads/3);
+            final int noBuckets = (prims.size() + bucketsize - 1) / bucketsize;
+            final boolean singleThread = noThreads == 1 || noBuckets == 1;
+            for (int i=0; i<noBuckets; i++) {
+                int from = i*bucketsize;
+                int to = Math.min((i+1)*bucketsize, prims.size());
+                List<StyleRecord> target = singleThread ? allStyleElems : new ArrayList<StyleRecord>(to - from);
+                tasks.add(new ComputeStyleListWorker(prims, from, to, target, data));
+            }
+            if (singleThread) {
+                try {
+                    for (ComputeStyleListWorker task : tasks) {
+                        task.call();
+                    }
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else if (tasks.size() > 1) {
+                try {
+                    for (Future<List<StyleRecord>> future : styleCreatorPool.invokeAll(tasks)) {
+                            allStyleElems.addAll(future.get());
+                    }
+                } catch (InterruptedException | ExecutionException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+    }
+
     @Override
     public void render(final DataSet data, boolean renderVirtualNodes, Bounds bounds) {
         BBox bbox = bounds.toBBox();
         getSettings(renderVirtualNodes);
 
-        boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);
-        boolean drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
-        boolean drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
+        data.getReadLock().lock();
+        try {
+            highlightWaySegments = data.getHighlightedWaySegments();
 
-        styles = MapPaintStyles.getStyles();
-        styles.setDrawMultipolygon(drawMultipolygon);
+            long timeStart=0, timePhase1=0, timeFinished;
+            if (Main.isTraceEnabled()) {
+                timeStart = System.currentTimeMillis();
+                System.err.print("BENCHMARK: rendering ");
+                Main.debug(null);
+            }
 
-        highlightWaySegments = data.getHighlightedWaySegments();
+            List<Node> nodes = data.searchNodes(bbox);
+            List<Way> ways = data.searchWays(bbox);
+            List<Relation> relations = data.searchRelations(bbox);
+    
+            final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
+    
+            ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems, data);
 
-        StyleCollector sc = new StyleCollector(drawArea, drawMultipolygon, drawRestriction);
-        collectNodeStyles(data, sc, bbox);
-        collectWayStyles(data, sc, bbox);
-        collectRelationStyles(data, sc, bbox);
-        sc.drawAll();
-        sc = null;
-        drawVirtualNodes(data, bbox);
+            // Need to process all relations first.
+            // Reason: Make sure, ElemStyles.getStyleCacheWithRange is
+            // not called for the same primitive in parallel threads.
+            // (Could be synchronized, but try to avoid this for
+            // performance reasons.)
+            helper.process(relations);
+            helper.process(new CompositeList<>(nodes, ways));
+
+            if (Main.isTraceEnabled()) {
+                timePhase1 = System.currentTimeMillis();
+                System.err.print("phase 1 (calculate styles): " + (timePhase1 - timeStart) + " ms");
+            }
+
+            Collections.sort(allStyleElems);
+
+            for (StyleRecord r : allStyleElems) {
+                r.style.paintPrimitive(
+                        r.osm,
+                        paintSettings,
+                        StyledMapRenderer.this,
+                        (r.flags & FLAG_SELECTED) != 0,
+                        (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
+                );
+            }
+    
+            if (Main.isTraceEnabled()) {
+                timeFinished = System.currentTimeMillis();
+                System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms");
+            }
+    
+            drawVirtualNodes(data, bbox);
+        } finally {
+            data.getReadLock().unlock();
+        }
     }
 }

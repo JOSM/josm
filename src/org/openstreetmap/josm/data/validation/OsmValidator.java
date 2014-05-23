@@ -5,16 +5,21 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
@@ -60,7 +65,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * A OSM data validator.
  *
- * @author Francisco R. Santos <frsantos@gmail.com>
+ * @author Francisco R. Santos &lt;frsantos@gmail.com&gt;
  */
 public class OsmValidator implements LayerChangeListener {
 
@@ -72,7 +77,7 @@ public class OsmValidator implements LayerChangeListener {
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
     public static double griddetail;
 
-    public static final Collection<String> ignoredErrors = new TreeSet<String>();
+    public static final Collection<String> ignoredErrors = new TreeSet<>();
 
     /**
      * All available tests
@@ -116,13 +121,13 @@ public class OsmValidator implements LayerChangeListener {
         Lanes.class, // 3100 .. 3199
         ConditionalKeys.class, // 3200 .. 3299
     };
-    
+
     private static Map<String, Test> allTestsMap;
     static {
-        allTestsMap = new HashMap<String, Test>();
+        allTestsMap = new HashMap<>();
         for (Class<Test> testClass : allAvailableTests) {
             try {
-                allTestsMap.put(testClass.getSimpleName(), testClass.newInstance());
+                allTestsMap.put(testClass.getName(), testClass.newInstance());
             } catch (Exception e) {
                 Main.error(e);
             }
@@ -135,7 +140,6 @@ public class OsmValidator implements LayerChangeListener {
     public OsmValidator() {
         checkValidatorDir();
         initializeGridDetail();
-        initializeTests(getTests());
         loadIgnoredErrors(); //FIXME: load only when needed
     }
 
@@ -165,18 +169,17 @@ public class OsmValidator implements LayerChangeListener {
     private void loadIgnoredErrors() {
         ignoredErrors.clear();
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
-            BufferedReader in = null;
-            try {
-                in = new BufferedReader(new FileReader(getValidatorDir() + "ignorederrors"));
-                for (String line = in.readLine(); line != null; line = in.readLine()) {
-                    ignoredErrors.add(line);
+            File file = new File(getValidatorDir() + "ignorederrors");
+            if (file.exists()) {
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+                    for (String line = in.readLine(); line != null; line = in.readLine()) {
+                        ignoredErrors.add(line);
+                    }
+                } catch (final FileNotFoundException e) {
+                    Main.debug(Main.getErrorMessage(e));
+                } catch (final IOException e) {
+                    Main.error(e);
                 }
-            } catch (final FileNotFoundException e) {
-                Main.debug(Main.getErrorMessage(e));
-            } catch (final IOException e) {
-                Main.error(e);
-            } finally {
-                Utils.close(in);
             }
         }
     }
@@ -190,16 +193,13 @@ public class OsmValidator implements LayerChangeListener {
     }
 
     public static void saveIgnoredErrors() {
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(new FileWriter(getValidatorDir() + "ignorederrors"), false);
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
+                new FileOutputStream(getValidatorDir() + "ignorederrors"), StandardCharsets.UTF_8), false)) {
             for (String e : ignoredErrors) {
                 out.println(e);
             }
         } catch (IOException e) {
             Main.error(e);
-        } finally {
-            Utils.close(out);
         }
     }
 
@@ -214,12 +214,26 @@ public class OsmValidator implements LayerChangeListener {
 
     /**
      * Gets a map from simple names to all tests.
-     * @return A map of all tests, indexed by the simple name of their Java class
+     * @return A map of all tests, indexed and sorted by the name of their Java class
      */
-    public static Map<String, Test> getAllTestsMap() {
+    public static SortedMap<String, Test> getAllTestsMap() {
         applyPrefs(allTestsMap, false);
         applyPrefs(allTestsMap, true);
-        return new HashMap<String, Test>(allTestsMap);
+        return new TreeMap<>(allTestsMap);
+    }
+
+    /**
+     * Returns the instance of the given test class.
+     * @param testClass The class of test to retrieve
+     * @return the instance of the given test class, if any, or {@code null}
+     * @since 6670
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Test> T getTest(Class<T> testClass) {
+        if (testClass == null) {
+            return null;
+        }
+        return (T) allTestsMap.get(testClass.getName());
     }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
@@ -242,7 +256,7 @@ public class OsmValidator implements LayerChangeListener {
 
     public static Collection<Test> getEnabledTests(boolean beforeUpload) {
         Collection<Test> enabledTests = getTests();
-        for (Test t : new ArrayList<Test>(enabledTests)) {
+        for (Test t : new ArrayList<>(enabledTests)) {
             if (beforeUpload ? t.testBeforeUpload : t.enabled) {
                 continue;
             }
@@ -262,10 +276,10 @@ public class OsmValidator implements LayerChangeListener {
 
     /**
      * Initialize grid details based on current projection system. Values based on
-     * the original value fixed for EPSG:4326 (10000) using heuristics (that is, test&error
+     * the original value fixed for EPSG:4326 (10000) using heuristics (that is, test&amp;error
      * until most bugs were discovered while keeping the processing time reasonable)
      */
-    public void initializeGridDetail() {
+    public final void initializeGridDetail() {
         String code = Main.getProjection().toCode();
         if (Arrays.asList(ProjectionPreference.wgs84.allCodes()).contains(code)) {
             OsmValidator.griddetail = 10000;
@@ -278,11 +292,29 @@ public class OsmValidator implements LayerChangeListener {
         }
     }
 
+    private static boolean testsInitialized = false;
+
+    /**
+     * Initializes all tests if this operations hasn't been performed already.
+     */
+    public static synchronized void initializeTests() {
+        if (!testsInitialized) {
+            Main.debug("Initializing validator tests");
+            final long startTime = System.currentTimeMillis();
+            initializeTests(getTests());
+            testsInitialized = true;
+            if (Main.isDebugEnabled()) {
+                final long elapsedTime = System.currentTimeMillis() - startTime;
+                Main.debug("Initializing validator tests completed in " + Utils.getDurationString(elapsedTime));
+            }
+        }
+    }
+
     /**
      * Initializes all tests
      * @param allTests The tests to initialize
      */
-    public static void initializeTests(Collection<Test> allTests) {
+    public static void initializeTests(Collection<? extends Test> allTests) {
         for (Test test : allTests) {
             try {
                 if (test.enabled) {

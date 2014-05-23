@@ -103,7 +103,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     /**
      * builds the UI
      */
-    protected void build() {
+    protected final void build() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         GridBagConstraints gc = new GridBagConstraints();
@@ -170,7 +170,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     public void saveToPreferences() {
         OAuthAccessTokenHolder.getInstance().setSaveToPreferences(cbSaveToPreferences.isSelected());
         OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
-        pnlAdvancedProperties.getAdvancedParameters().saveToPreferences(Main.pref);
+        pnlAdvancedProperties.rememberPreferences(Main.pref);
     }
 
     /**
@@ -188,7 +188,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.insets = new Insets(0,0,3,0);
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
-            JLabel lbl;
+            JMultilineLabel lbl;
             add(lbl = new JMultilineLabel(tr("You do not have an Access Token yet to access the OSM server using OAuth. Please authorize first.")), gc);
             lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
 
@@ -227,7 +227,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.gridwidth = 2;
-            JLabel lbl;
+            JMultilineLabel lbl;
             add(lbl = new JMultilineLabel(tr("You already have an Access Token to access the OSM server using OAuth.")), gc);
             lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
 
@@ -289,7 +289,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         }
 
-        public void refreshView() {
+        public final void refreshView() {
             String v = OAuthAccessTokenHolder.getInstance().getAccessTokenKey();
             tfAccessTokenKey.setText(v == null? "" : v);
             v = OAuthAccessTokenHolder.getInstance().getAccessTokenSecret();

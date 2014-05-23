@@ -20,11 +20,14 @@ import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
-public class PluginPreferencesModel extends Observable{
-    private final List<PluginInformation> availablePlugins = new ArrayList<PluginInformation>();
-    private final List<PluginInformation> displayedPlugins = new ArrayList<PluginInformation>();
-    private final Map<PluginInformation, Boolean> selectedPluginsMap = new HashMap<PluginInformation, Boolean>();
-    private Set<String> pendingDownloads = new HashSet<String>();
+/**
+ * The plugin model behind a {@code PluginListPanel}.
+ */
+public class PluginPreferencesModel extends Observable {
+    private final List<PluginInformation> availablePlugins = new ArrayList<>();
+    private final List<PluginInformation> displayedPlugins = new ArrayList<>();
+    private final Map<PluginInformation, Boolean> selectedPluginsMap = new HashMap<>();
+    private Set<String> pendingDownloads = new HashSet<>();
     private String filterExpression;
     private Set<String> currentActivePlugins;
 
@@ -32,10 +35,14 @@ public class PluginPreferencesModel extends Observable{
      * Constructs a new {@code PluginPreferencesModel}.
      */
     public PluginPreferencesModel() {
-        currentActivePlugins = new HashSet<String>();
+        currentActivePlugins = new HashSet<>();
         currentActivePlugins.addAll(Main.pref.getCollection("plugins", currentActivePlugins));
     }
 
+    /**
+     * Filters the list of displayed plugins.
+     * @param filter The filter used against plugin name, description or version
+     */
     public void filterDisplayedPlugins(String filter) {
         if (filter == null) {
             displayedPlugins.clear();
@@ -54,14 +61,22 @@ public class PluginPreferencesModel extends Observable{
         notifyObservers();
     }
 
+    /**
+     * Sets the list of available plugins.
+     * @param available The available plugins
+     */
     public void setAvailablePlugins(Collection<PluginInformation> available) {
         availablePlugins.clear();
         if (available != null) {
             availablePlugins.addAll(available);
         }
+        availablePluginsModified();
+    }
+
+    protected final void availablePluginsModified() {
         sort();
         filterDisplayedPlugins(filterExpression);
-        Set<String> activePlugins = new HashSet<String>();
+        Set<String> activePlugins = new HashSet<>();
         activePlugins.addAll(Main.pref.getCollection("plugins", activePlugins));
         for (PluginInformation pi: availablePlugins) {
             if (selectedPluginsMap.get(pi) == null) {
@@ -74,7 +89,7 @@ public class PluginPreferencesModel extends Observable{
         notifyObservers();
     }
 
-    protected  void updateAvailablePlugin(PluginInformation other) {
+    protected void updateAvailablePlugin(PluginInformation other) {
         if (other == null) return;
         PluginInformation pi = getPluginInformation(other.name);
         if (pi == null) {
@@ -94,19 +109,7 @@ public class PluginPreferencesModel extends Observable{
         for (PluginInformation other: fromPluginSite) {
             updateAvailablePlugin(other);
         }
-        sort();
-        filterDisplayedPlugins(filterExpression);
-        Set<String> activePlugins = new HashSet<String>();
-        activePlugins.addAll(Main.pref.getCollection("plugins", activePlugins));
-        for (PluginInformation pi: availablePlugins) {
-            if (selectedPluginsMap.get(pi) == null) {
-                if (activePlugins.contains(pi.name)) {
-                    selectedPluginsMap.put(pi, true);
-                }
-            }
-        }
-        clearChanged();
-        notifyObservers();
+        availablePluginsModified();
     }
 
     /**
@@ -115,7 +118,7 @@ public class PluginPreferencesModel extends Observable{
      * @return the list of selected plugin information objects
      */
     public List<PluginInformation> getSelectedPlugins() {
-        List<PluginInformation> ret = new LinkedList<PluginInformation>();
+        List<PluginInformation> ret = new LinkedList<>();
         for (PluginInformation pi: availablePlugins) {
             if (selectedPluginsMap.get(pi) == null) {
                 continue;
@@ -133,7 +136,7 @@ public class PluginPreferencesModel extends Observable{
      * @return the list of selected plugin information objects
      */
     public Set<String> getSelectedPluginNames() {
-        Set<String> ret = new HashSet<String>();
+        Set<String> ret = new HashSet<>();
         for (PluginInformation pi: getSelectedPlugins()) {
             ret.add(pi.name);
         }
@@ -173,7 +176,7 @@ public class PluginPreferencesModel extends Observable{
      * @return the list of plugins waiting for update or download
      */
     public List<PluginInformation> getPluginsScheduledForUpdateOrDownload() {
-        List<PluginInformation> ret = new ArrayList<PluginInformation>();
+        List<PluginInformation> ret = new ArrayList<>();
         for (String plugin: pendingDownloads) {
             PluginInformation pi = getPluginInformation(plugin);
             if (pi == null) {
@@ -270,7 +273,7 @@ public class PluginPreferencesModel extends Observable{
      * @return the set of newly deactivated plugins
      */
     public List<PluginInformation> getNewlyActivatedPlugins() {
-        List<PluginInformation> ret = new LinkedList<PluginInformation>();
+        List<PluginInformation> ret = new LinkedList<>();
         for (Entry<PluginInformation, Boolean> entry: selectedPluginsMap.entrySet()) {
             PluginInformation pi = entry.getKey();
             boolean selected = entry.getValue();
@@ -288,7 +291,7 @@ public class PluginPreferencesModel extends Observable{
      * @return the set of newly deactivated plugins
      */
     public List<PluginInformation> getNewlyDeactivatedPlugins() {
-        List<PluginInformation> ret = new LinkedList<PluginInformation>();
+        List<PluginInformation> ret = new LinkedList<>();
         for (PluginInformation pi: availablePlugins) {
             if (!currentActivePlugins.contains(pi.name)) {
                 continue;
@@ -306,7 +309,7 @@ public class PluginPreferencesModel extends Observable{
      * @return the set of all available plugins
      */
     public List<PluginInformation> getAvailablePlugins() {
-        return new LinkedList<PluginInformation>(availablePlugins);
+        return new LinkedList<>(availablePlugins);
     }
 
     /**
@@ -316,7 +319,7 @@ public class PluginPreferencesModel extends Observable{
      * @return the set of newly activated plugin names
      */
     public Set<String> getNewlyActivatedPluginNames() {
-        Set<String> ret = new HashSet<String>();
+        Set<String> ret = new HashSet<>();
         List<PluginInformation> plugins = getNewlyActivatedPlugins();
         for (PluginInformation pi: plugins) {
             ret.add(pi.name);

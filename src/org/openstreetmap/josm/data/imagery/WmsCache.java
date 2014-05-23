@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -34,6 +33,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.types.EntryType;
@@ -41,16 +41,15 @@ import org.openstreetmap.josm.data.imagery.types.ProjectionType;
 import org.openstreetmap.josm.data.imagery.types.WmsCacheType;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
-
-
 
 public class WmsCache {
     //TODO Property for maximum cache size
     //TODO Property for maximum age of tile, automatically remove old tiles
     //TODO Measure time for partially loading from cache, compare with time to download tile. If slower, disable partial cache
-    //TODO Do loading from partial cache and downloading at the same time, don't wait for partical cache to load
+    //TODO Do loading from partial cache and downloading at the same time, don't wait for partial cache to load
 
     private static final StringProperty PROP_CACHE_PATH = new StringProperty("imagery.wms-cache.path", "wms");
     private static final String INDEX_FILENAME = "index.xml";
@@ -73,12 +72,19 @@ public class WmsCache {
             this.bounds = new ProjectionBounds(east, north, east + tileSize / pixelPerDegree, north + tileSize / pixelPerDegree);
             this.filename = filename;
         }
+
+        @Override
+        public String toString() {
+            return "CacheEntry [pixelPerDegree=" + pixelPerDegree + ", east=" + east + ", north=" + north + ", bounds="
+                    + bounds + ", filename=" + filename + ", lastUsed=" + lastUsed + ", lastModified=" + lastModified
+                    + "]";
+        }
     }
 
     private static class ProjectionEntries {
         final String projection;
         final String cacheDirectory;
-        final List<CacheEntry> entries = new ArrayList<WmsCache.CacheEntry>();
+        final List<CacheEntry> entries = new ArrayList<>();
 
         ProjectionEntries(String projection, String cacheDirectory) {
             this.projection = projection;
@@ -86,13 +92,13 @@ public class WmsCache {
         }
     }
 
-    private final Map<String, ProjectionEntries> entries = new HashMap<String, ProjectionEntries>();
+    private final Map<String, ProjectionEntries> entries = new HashMap<>();
     private final File cacheDir;
     private final int tileSize; // Should be always 500
     private int totalFileSize;
     private boolean totalFileSizeDirty; // Some file was missing - size needs to be recalculated
     // No need for hashCode/equals on CacheEntry, object identity is enough. Comparing by values can lead to error - CacheEntry for wrong projection could be found
-    private Map<CacheEntry, SoftReference<BufferedImage>> memoryCache = new HashMap<WmsCache.CacheEntry, SoftReference<BufferedImage>>();
+    private Map<CacheEntry, SoftReference<BufferedImage>> memoryCache = new HashMap<>();
     private Set<ProjectionBounds> areaToCache;
 
     protected String cacheDirPath() {
@@ -113,50 +119,41 @@ public class WmsCache {
 
     private String getCacheDirectory(String url) {
         String cacheDirName = null;
-        InputStream fis = null;
-        OutputStream fos = null;
-        try {
-            Properties layersIndex = new Properties();
-            File layerIndexFile = new File(cacheDirPath(), LAYERS_INDEX_FILENAME);
-            try {
-                fis = new FileInputStream(layerIndexFile);
-                layersIndex.load(fis);
-            } catch (FileNotFoundException e) {
-                Main.error("Unable to load layers index for wms cache (file " + layerIndexFile + " not found)");
-            } catch (IOException e) {
-                Main.error("Unable to load layers index for wms cache");
-                Main.error(e);
-            }
+        Properties layersIndex = new Properties();
+        File layerIndexFile = new File(cacheDirPath(), LAYERS_INDEX_FILENAME);
+        try (InputStream fis = new FileInputStream(layerIndexFile)) {
+            layersIndex.load(fis);
+        } catch (FileNotFoundException e) {
+            Main.error("Unable to load layers index for wms cache (file " + layerIndexFile + " not found)");
+        } catch (IOException e) {
+            Main.error("Unable to load layers index for wms cache");
+            Main.error(e);
+        }
 
-            for (Object propKey: layersIndex.keySet()) {
-                String s = (String)propKey;
-                if (url.equals(layersIndex.getProperty(s))) {
-                    cacheDirName = s;
+        for (Object propKey: layersIndex.keySet()) {
+            String s = (String)propKey;
+            if (url.equals(layersIndex.getProperty(s))) {
+                cacheDirName = s;
+                break;
+            }
+        }
+
+        if (cacheDirName == null) {
+            int counter = 0;
+            while (true) {
+                counter++;
+                if (!layersIndex.keySet().contains(String.valueOf(counter))) {
                     break;
                 }
             }
-
-            if (cacheDirName == null) {
-                int counter = 0;
-                while (true) {
-                    counter++;
-                    if (!layersIndex.keySet().contains(String.valueOf(counter))) {
-                        break;
-                    }
-                }
-                cacheDirName = String.valueOf(counter);
-                layersIndex.setProperty(cacheDirName, url);
-                try {
-                    fos = new FileOutputStream(layerIndexFile);
-                    layersIndex.store(fos, "");
-                } catch (IOException e) {
-                    Main.error("Unable to save layer index for wms cache");
-                    Main.error(e);
-                }
+            cacheDirName = String.valueOf(counter);
+            layersIndex.setProperty(cacheDirName, url);
+            try (OutputStream fos = new FileOutputStream(layerIndexFile)) {
+                layersIndex.store(fos, "");
+            } catch (IOException e) {
+                Main.error("Unable to save layer index for wms cache");
+                Main.error(e);
             }
-        } finally {
-            Utils.close(fos);
-            Utils.close(fis);
         }
 
         return cacheDirName;
@@ -183,7 +180,10 @@ public class WmsCache {
                     WmsCacheType.class.getPackage().getName(),
                     WmsCacheType.class.getClassLoader());
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            WmsCacheType cacheEntries = (WmsCacheType)unmarshaller.unmarshal(new FileInputStream(indexFile));
+            WmsCacheType cacheEntries;
+            try (InputStream is = new FileInputStream(indexFile)) {
+                cacheEntries = (WmsCacheType)unmarshaller.unmarshal(is);
+            }
             totalFileSize = cacheEntries.getTotalFileSize();
             if (cacheEntries.getTileSize() != tileSize) {
                 Main.info("Cache created with different tileSize, cache will be discarded");
@@ -212,7 +212,7 @@ public class WmsCache {
 
     private void removeNonReferencedFiles() {
 
-        Set<String> usedProjections = new HashSet<String>();
+        Set<String> usedProjections = new HashSet<>();
 
         for (ProjectionEntries projectionEntries: entries.values()) {
 
@@ -220,7 +220,7 @@ public class WmsCache {
 
             File projectionDir = new File(cacheDir, projectionEntries.cacheDirectory);
             if (projectionDir.exists()) {
-                Set<String> referencedFiles = new HashSet<String>();
+                Set<String> referencedFiles = new HashSet<>();
 
                 for (CacheEntry ce: projectionEntries.entries) {
                     referencedFiles.add(ce.filename);
@@ -294,7 +294,9 @@ public class WmsCache {
                     WmsCacheType.class.getPackage().getName(),
                     WmsCacheType.class.getClassLoader());
             Marshaller marshaller = context.createMarshaller();
-            marshaller.marshal(index, new FileOutputStream(new File(cacheDir, INDEX_FILENAME)));
+            try (OutputStream fos = new FileOutputStream(new File(cacheDir, INDEX_FILENAME))) {
+                marshaller.marshal(index, fos);
+            }
         } catch (Exception e) {
             Main.error("Failed to save wms-cache file");
             Main.error(e);
@@ -305,23 +307,26 @@ public class WmsCache {
         return new File(cacheDir, projection.cacheDirectory + "/" + entry.filename);
     }
 
-
-    private BufferedImage loadImage(ProjectionEntries projectionEntries, CacheEntry entry) throws IOException {
-
+    private BufferedImage loadImage(ProjectionEntries projectionEntries, CacheEntry entry, boolean enforceTransparency) throws IOException {
         synchronized (this) {
             entry.lastUsed = System.currentTimeMillis();
 
             SoftReference<BufferedImage> memCache = memoryCache.get(entry);
             if (memCache != null) {
                 BufferedImage result = memCache.get();
-                if (result != null)
-                    return result;
+                if (result != null) {
+                    if (enforceTransparency == ImageProvider.isTransparencyForced(result)) {
+                        return result;
+                    } else if (Main.isDebugEnabled()) {
+                        Main.debug("Skipping "+entry+" from memory cache (transparency enforcement)");
+                    }
+                }
             }
         }
 
         try {
             // Reading can't be in synchronized section, it's too slow
-            BufferedImage result = ImageIO.read(getImageFile(projectionEntries, entry));
+            BufferedImage result = ImageProvider.read(getImageFile(projectionEntries, entry), true, enforceTransparency);
             synchronized (this) {
                 if (result == null) {
                     projectionEntries.entries.remove(entry);
@@ -361,7 +366,7 @@ public class WmsCache {
         }
         if (entry != null) {
             try {
-                return loadImage(projectionEntries, entry);
+                return loadImage(projectionEntries, entry, WMSLayer.PROP_ALPHA_CHANNEL.get());
             } catch (IOException e) {
                 Main.error("Unable to load file from wms cache");
                 Main.error(e);
@@ -371,11 +376,11 @@ public class WmsCache {
         return null;
     }
 
-    public  BufferedImage getPartialMatch(Projection projection, double pixelPerDegree, double east, double north) {
+    public BufferedImage getPartialMatch(Projection projection, double pixelPerDegree, double east, double north) {
         ProjectionEntries projectionEntries;
         List<CacheEntry> matches;
         synchronized (this) {
-            matches = new ArrayList<WmsCache.CacheEntry>();
+            matches = new ArrayList<>();
 
             double minPPD = pixelPerDegree / 5;
             double maxPPD = pixelPerDegree * 5;
@@ -397,7 +402,6 @@ public class WmsCache {
             if (matches.isEmpty())
                 return null;
 
-
             Collections.sort(matches, new Comparator<CacheEntry>() {
                 @Override
                 public int compare(CacheEntry o1, CacheEntry o2) {
@@ -406,18 +410,20 @@ public class WmsCache {
             });
         }
 
-        //TODO Use alpha layer only when enabled on wms layer
-        BufferedImage result = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_4BYTE_ABGR);
+        // Use alpha layer only when enabled on wms layer
+        boolean alpha = WMSLayer.PROP_ALPHA_CHANNEL.get();
+        BufferedImage result = new BufferedImage(tileSize, tileSize,
+                alpha ? BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D g = result.createGraphics();
 
-
         boolean drawAtLeastOnce = false;
-        Map<CacheEntry, SoftReference<BufferedImage>> localCache = new HashMap<WmsCache.CacheEntry, SoftReference<BufferedImage>>();
+        Map<CacheEntry, SoftReference<BufferedImage>> localCache = new HashMap<>();
         for (CacheEntry ce: matches) {
             BufferedImage img;
             try {
-                img = loadImage(projectionEntries, ce);
-                localCache.put(ce, new SoftReference<BufferedImage>(img));
+                // Enforce transparency only when alpha enabled on wms layer too
+                img = loadImage(projectionEntries, ce, alpha);
+                localCache.put(ce, new SoftReference<>(img));
             } catch (IOException e) {
                 continue;
             }
@@ -453,16 +459,23 @@ public class WmsCache {
         int precisionLat = Math.max(0, -(int)Math.ceil(Math.log10(deltaLat)) + 1);
         int precisionLon = Math.max(0, -(int)Math.ceil(Math.log10(deltaLon)) + 1);
 
-        String zoom = NavigatableComponent.METRIC_SOM.getDistText(ll1.greatCircleDistance(ll2));
-        String extension;
-        if ("image/jpeg".equals(mimeType) || "image/jpg".equals(mimeType)) {
-            extension = "jpg";
-        } else if ("image/png".equals(mimeType)) {
-            extension = "png";
-        } else if ("image/gif".equals(mimeType)) {
-            extension = "gif";
-        } else {
-            extension = "dat";
+        String zoom = SystemOfMeasurement.METRIC.getDistText(ll1.greatCircleDistance(ll2));
+        String extension = "dat";
+        if (mimeType != null) {
+            switch(mimeType) {
+            case "image/jpeg":
+            case "image/jpg":
+                extension = "jpg";
+                break;
+            case "image/png":
+                extension = "png";
+                break;
+            case "image/gif":
+                extension = "gif";
+                break;
+            default:
+                Main.warn("Unrecognized MIME type: "+mimeType);
+            }
         }
 
         int counter = 0;
@@ -519,11 +532,8 @@ public class WmsCache {
             ImageIO.write(copy, "png", imageFile);
             totalFileSize += imageFile.length();
         } else {
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(imageFile));
-            try {
+            try (OutputStream os = new BufferedOutputStream(new FileOutputStream(imageFile))) {
                 totalFileSize += Utils.copyStream(imageData, os);
-            } finally {
-                Utils.close(os);
             }
         }
     }

@@ -36,6 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
 import javax.swing.WindowConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -47,19 +48,15 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class SaveLayersDialog extends JDialog implements TableModelListener {
-    static public enum UserAction {
-        /**
-         * save/upload layers was successful, proceed with operation
-         */
+    public static enum UserAction {
+        /** save/upload layers was successful, proceed with operation */
         PROCEED,
-        /**
-         * save/upload of layers was not successful or user canceled
-         * operation
-         */
+        /** save/upload of layers was not successful or user canceled operation */
         CANCEL
     }
 
@@ -164,7 +161,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
     private static class  LayerListWarningMessagePanel extends JPanel {
         private JLabel lblMessage;
-        private JList lstLayers;
+        private JList<SaveLayerInfo> lstLayers;
 
         protected void build() {
             setLayout(new GridBagLayout());
@@ -176,16 +173,16 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             gc.weighty = 0.0;
             add(lblMessage = new JLabel(), gc);
             lblMessage.setHorizontalAlignment(JLabel.LEFT);
-            lstLayers = new JList();
+            lstLayers = new JList<>();
             lstLayers.setCellRenderer(
-                    new DefaultListCellRenderer() {
+                    new ListCellRenderer<SaveLayerInfo>() {
+                        final DefaultListCellRenderer def = new DefaultListCellRenderer();
                         @Override
-                        public Component getListCellRendererComponent(JList list, Object value, int index,
+                        public Component getListCellRendererComponent(JList<? extends SaveLayerInfo> list, SaveLayerInfo info, int index,
                                 boolean isSelected, boolean cellHasFocus) {
-                            SaveLayerInfo info = (SaveLayerInfo)value;
-                            setIcon(info.getLayer().getIcon());
-                            setText(info.getName());
-                            return this;
+                            def.setIcon(info.getLayer().getIcon());
+                            def.setText(info.getName());
+                            return def;
                         }
                     }
             );
@@ -200,7 +197,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         public LayerListWarningMessagePanel(String msg, List<SaveLayerInfo> infos) {
             build();
             lblMessage.setText(msg);
-            lstLayers.setListData(infos.toArray());
+            lstLayers.setListData(infos.toArray(new SaveLayerInfo[0]));
         }
     }
 
@@ -286,6 +283,9 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         this.action = action;
     }
 
+    /**
+     * Closes this dialog and frees all native screen resources.
+     */
     public void closeDialog() {
         setVisible(false);
         dispose();
@@ -556,27 +556,32 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         @Override
         public void run() {
-            model.setMode(SaveLayersModel.Mode.UPLOADING_AND_SAVING);
-            List<SaveLayerInfo> toUpload = model.getLayersToUpload();
-            if (!toUpload.isEmpty()) {
-                uploadLayers(toUpload);
-            }
-            List<SaveLayerInfo> toSave = model.getLayersToSave();
-            if (!toSave.isEmpty()) {
-                saveLayers(toSave);
-            }
-            model.setMode(SaveLayersModel.Mode.EDITING_DATA);
-            if (model.hasUnsavedData()) {
-                warnBecauseOfUnsavedData();
-                model.setMode(Mode.EDITING_DATA);
-                if (canceled) {
-                    setUserAction(UserAction.CANCEL);
-                    closeDialog();
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    model.setMode(SaveLayersModel.Mode.UPLOADING_AND_SAVING);
+                    List<SaveLayerInfo> toUpload = model.getLayersToUpload();
+                    if (!toUpload.isEmpty()) {
+                        uploadLayers(toUpload);
+                    }
+                    List<SaveLayerInfo> toSave = model.getLayersToSave();
+                    if (!toSave.isEmpty()) {
+                        saveLayers(toSave);
+                    }
+                    model.setMode(SaveLayersModel.Mode.EDITING_DATA);
+                    if (model.hasUnsavedData()) {
+                        warnBecauseOfUnsavedData();
+                        model.setMode(Mode.EDITING_DATA);
+                        if (canceled) {
+                            setUserAction(UserAction.CANCEL);
+                            closeDialog();
+                        }
+                    } else {
+                        setUserAction(UserAction.PROCEED);
+                        closeDialog();
+                    }
                 }
-            } else {
-                setUserAction(UserAction.PROCEED);
-                closeDialog();
-            }
+            });
         }
 
         public void cancel() {

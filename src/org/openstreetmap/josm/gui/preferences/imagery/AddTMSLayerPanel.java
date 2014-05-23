@@ -3,13 +3,11 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
 import javax.swing.JLabel;
-import javax.swing.text.View;
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -17,6 +15,9 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * An imagery panel used to add TMS imagery sources
+ */
 public class AddTMSLayerPanel extends AddImageryPanel {
 
     private final JosmTextField tmsZoom = new JosmTextField();
@@ -77,16 +78,6 @@ public class AddTMSLayerPanel extends AddImageryPanel {
     @Override
     public ImageryInfo getImageryInfo() {
         return new ImageryInfo(getImageryName(), getTmsUrl());
-    }
-
-    public static Dimension getPreferredSize(JLabel label, boolean width, int prefSize) {
-
-        View view = (View) label.getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey);
-        view.setSize(width ? prefSize : 0, width ? 0 : prefSize);
-
-        return new java.awt.Dimension(
-                (int) Math.ceil(view.getPreferredSpan(View.X_AXIS)),
-                (int) Math.ceil(view.getPreferredSpan(View.Y_AXIS)));
     }
 
     protected final String getTmsUrl() {

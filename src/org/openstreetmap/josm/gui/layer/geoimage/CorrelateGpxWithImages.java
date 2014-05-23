@@ -20,6 +20,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -83,12 +84,16 @@ import org.xml.sax.SAXException;
  */
 public class CorrelateGpxWithImages extends AbstractAction {
 
-    private static List<GpxData> loadedGpxData = new ArrayList<GpxData>();
+    private static List<GpxData> loadedGpxData = new ArrayList<>();
 
     GeoImageLayer yLayer = null;
     double timezone;
     long delta;
 
+    /**
+     * Constructs a new {@code CorrelateGpxWithImages} action.
+     * @param layer The image layer
+     */
     public CorrelateGpxWithImages(GeoImageLayer layer) {
         super(tr("Correlate to GPX"), ImageProvider.get("dialogs/geoimage/gpx2img"));
         this.yLayer = layer;
@@ -112,9 +117,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     ExtendedDialog syncDialog;
-    List<GpxDataWrapper> gpxLst = new ArrayList<GpxDataWrapper>();
+    List<GpxDataWrapper> gpxLst = new ArrayList<>();
     JPanel outerPanel;
-    JosmComboBox cbGpx;
+    JosmComboBox<GpxDataWrapper> cbGpx;
     JosmTextField tfTimezone;
     JosmTextField tfOffset;
     JCheckBox cbExifImg;
@@ -166,13 +171,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     }
                 }
                 GpxData data = null;
-                try {
-                    InputStream iStream;
-                    if (sel.getName().toLowerCase().endsWith(".gpx.gz")) {
-                        iStream = new GZIPInputStream(new FileInputStream(sel));
-                    } else {
-                        iStream = new FileInputStream(sel);
-                    }
+                try (InputStream iStream = createInputStream(sel)) {
                     GpxReader reader = new GpxReader(iStream);
                     reader.parse(false);
                     data = reader.getGpxData();
@@ -208,6 +207,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 outerPanel.setCursor(Cursor.getDefaultCursor());
             }
         }
+
+        private InputStream createInputStream(File sel) throws IOException, FileNotFoundException {
+            if (sel.getName().toLowerCase().endsWith(".gpx.gz")) {
+                return new GZIPInputStream(new FileInputStream(sel));
+            } else {
+                return new FileInputStream(sel);
+            }
+        }
     }
 
     /**
@@ -222,9 +229,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
         JPanel panel;
         JLabel lbExifTime;
         JosmTextField tfGpsTime;
-        JosmComboBox cbTimezones;
+        JosmComboBox<String> cbTimezones;
         ImageDisplay imgDisp;
-        JList imgList;
+        JList<String> imgList;
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
@@ -288,12 +295,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
             panelTf.add(new JLabel(tr("I am in the timezone of: ")), gc);
 
             String[] tmp = TimeZone.getAvailableIDs();
-            List<String> vtTimezones = new ArrayList<String>(tmp.length);
+            List<String> vtTimezones = new ArrayList<>(tmp.length);
 
             for (String tzStr : tmp) {
                 TimeZone tz = TimeZone.getTimeZone(tzStr);
 
-                String tzDesc = new StringBuffer(tzStr).append(" (")
+                String tzDesc = new StringBuilder(tzStr).append(" (")
                 .append(formatTimezone(tz.getRawOffset() / 3600000.0))
                 .append(')').toString();
                 vtTimezones.add(tzDesc);
@@ -301,7 +308,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             Collections.sort(vtTimezones);
 
-            cbTimezones = new JosmComboBox(vtTimezones.toArray());
+            cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[0]));
 
             String tzId = Main.pref.get("geoimage.timezoneid", "");
             TimeZone defaultTz;
@@ -311,7 +318,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 defaultTz = TimeZone.getTimeZone(tzId);
             }
 
-            cbTimezones.setSelectedItem(new StringBuffer(defaultTz.getID()).append(" (")
+            cbTimezones.setSelectedItem(new StringBuilder(defaultTz.getID()).append(" (")
                     .append(formatTimezone(defaultTz.getRawOffset() / 3600000.0))
                     .append(')').toString());
 
@@ -326,9 +333,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
             JPanel panelLst = new JPanel();
             panelLst.setLayout(new BorderLayout());
 
-            imgList = new JList(new AbstractListModel() {
+            imgList = new JList<>(new AbstractListModel<String>() {
                 @Override
-                public Object getElementAt(int i) {
+                public String getElementAt(int i) {
                     return yLayer.data.get(i).getFile().getName();
                 }
 
@@ -371,7 +378,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             openButton.addActionListener(new ActionListener() {
 
                 @Override
-                public void actionPerformed(ActionEvent arg0) {
+                public void actionPerformed(ActionEvent ae) {
                     JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(), JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
                     if (fc == null)
                         return;
@@ -475,7 +482,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         panelCb.add(new JLabel(tr("GPX track: ")));
 
-        cbGpx = new JosmComboBox(gpxLst.toArray());
+        cbGpx = new JosmComboBox<>(gpxLst.toArray(new GpxDataWrapper[0]));
         if (defaultItem != null) {
             cbGpx.setSelectedItem(defaultItem);
         }
@@ -652,10 +659,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
         syncDialog.setContentPane(outerPanel);
         syncDialog.pack();
         syncDialog.addWindowListener(new WindowAdapter() {
-            final static int CANCEL = -1;
-            final static int DONE = 0;
-            final static int AGAIN = 1;
-            final static int NOTHING = 2;
+            static final int CANCEL = -1;
+            static final int DONE = 0;
+            static final int AGAIN = 1;
+            static final int NOTHING = 2;
             private int checkAndSave() {
                 if (syncDialog.isVisible())
                     // nothing happened: JOSM was minimized or similar
@@ -681,16 +688,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     return AGAIN;
                 }
 
-                if (lastNumMatched == 0) {
-                    if (new ExtendedDialog(
+                if (lastNumMatched == 0 && new ExtendedDialog(
                             Main.parent,
                             tr("Correlate images with GPX track"),
                             new String[] { tr("OK"), tr("Try Again") }).
                             setContent(tr("No images could be matched!")).
                             setButtonIcons(new String[] { "ok.png", "dialogs/refresh.png"}).
                             showDialog().getValue() == 2)
-                        return AGAIN;
-                }
+                    return AGAIN;
                 return DONE;
             }
 
@@ -701,7 +706,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 case NOTHING:
                     break;
                 case CANCEL:
-                {
                     if (yLayer != null) {
                         for (ImageEntry ie : yLayer.data) {
                             ie.tmp = null;
@@ -709,12 +713,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         yLayer.updateBufferAndRepaint();
                     }
                     break;
-                }
                 case AGAIN:
                     actionPerformed(null);
                     break;
                 case DONE:
-                {
                     Main.pref.put("geoimage.timezone", formatTimezone(timezone));
                     Main.pref.put("geoimage.delta", Long.toString(delta * 1000));
                     Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
@@ -748,7 +750,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     yLayer.updateBufferAndRepaint();
 
                     break;
-                }
                 default:
                     throw new IllegalStateException();
                 }
@@ -873,7 +874,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             final JLabel lblTimezone = new JLabel();
             final JSlider sldTimezone = new JSlider(-24, 24, 0);
             sldTimezone.setPaintLabels(true);
-            Dictionary<Integer,JLabel> labelTable = new Hashtable<Integer, JLabel>();
+            Dictionary<Integer,JLabel> labelTable = new Hashtable<>();
             labelTable.put(-24, new JLabel("-12:00"));
             labelTable.put(-12, new JLabel( "-6:00"));
             labelTable.put(  0, new JLabel(  "0:00"));
@@ -914,7 +915,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     try {
                         timezone = parseTimezone(zone);
                     } catch (ParseException pe) {
-                        throw new RuntimeException();
+                        throw new RuntimeException(pe);
                     }
                     delta = sldMinutes.getValue()*60 + sldSeconds.getValue();
 
@@ -1014,7 +1015,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         try {
                             firstGPXDate = dateParser.parse(curDateWpStr).getTime()/1000;
                             break outer;
-                        } catch(Exception e) {}
+                        } catch(Exception e) {
+                            Main.warn(e);
+                        }
                     }
                 }
             }
@@ -1071,22 +1074,18 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @return matching images
      */
     private List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
-        List<ImageEntry> dateImgLst = new ArrayList<ImageEntry>(yLayer.data.size());
+        List<ImageEntry> dateImgLst = new ArrayList<>(yLayer.data.size());
         for (ImageEntry e : yLayer.data) {
             if (!e.hasExifTime()) {
                 continue;
             }
 
-            if (e.getExifCoor() != null) {
-                if (!exif) {
-                    continue;
-                }
+            if (e.getExifCoor() != null && !exif) {
+                continue;
             }
 
-            if (e.isTagged() && e.getExifCoor() == null) {
-                if (!tagged) {
-                    continue;
-                }
+            if (e.isTagged() && e.getExifCoor() == null && !tagged) {
+                continue;
             }
 
             dateImgLst.add(e);
@@ -1169,12 +1168,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
         return null;
     }
-    
+
     private int matchPoints(List<ImageEntry> images, WayPoint prevWp, long prevWpTime,
             WayPoint curWp, long curWpTime, long offset) {
         // Time between the track point and the previous one, 5 sec if first point, i.e. photos take
         // 5 sec before the first track point can be assumed to be take at the starting position
-        long interval = prevWpTime > 0 ? ((long)Math.abs(curWpTime - prevWpTime)) : 5*1000;
+        long interval = prevWpTime > 0 ? (Math.abs(curWpTime - prevWpTime)) : 5*1000;
         int ret = 0;
 
         // i is the index of the timewise last photo that has the same or earlier EXIF time
@@ -1235,7 +1234,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 break;
             }
 
-            if (curImg.tmp.getPos() == null) {
+            if (curImg.tmp.getPos() == null && prevWp != null) {
                 // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless variable
                 double timeDiff = (double)(imgTime - prevWpTime) / interval;
                 curImg.tmp.setPos(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));
@@ -1288,7 +1287,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private String formatTimezone(double timezone) {
-        StringBuffer ret = new StringBuffer();
+        StringBuilder ret = new StringBuilder();
 
         if (timezone < 0) {
             ret.append('-');
@@ -1314,8 +1313,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
             return 0;
 
         char sgnTimezone = '+';
-        StringBuffer hTimezone = new StringBuffer();
-        StringBuffer mTimezone = new StringBuffer();
+        StringBuilder hTimezone = new StringBuilder();
+        StringBuilder mTimezone = new StringBuilder();
         int state = 1; // 1=start/sign, 2=hours, 3=minutes.
         for (int i = 0; i < timezone.length(); i++) {
             char c = timezone.charAt(i);

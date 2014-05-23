@@ -24,13 +24,13 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class User {
 
-    static private AtomicLong uidCounter = new AtomicLong();
+    private static AtomicLong uidCounter = new AtomicLong();
 
     /**
      * the map of known users
      */
-    private static Map<Long,User> userMap = new HashMap<Long,User>();
-    private final static User anonymous = createLocalUser(tr("<anonymous>"));
+    private static Map<Long,User> userMap = new HashMap<>();
+    private static final User anonymous = createLocalUser(tr("<anonymous>"));
 
     private static long getNextLocalUid() {
         return uidCounter.decrementAndGet();
@@ -101,7 +101,7 @@ public final class User {
         if (name == null) {
             name = "";
         }
-        List<User> ret = new ArrayList<User>();
+        List<User> ret = new ArrayList<>();
         for (User user: userMap.values()) {
             if (user.hasName(name)) {
                 ret.add(user);
@@ -119,7 +119,7 @@ public final class User {
     }
 
     /** the user name */
-    private final Set<String> names = new HashSet<String>();
+    private final Set<String> names = new HashSet<>();
     /** the user id */
     private final long uid;
 
@@ -138,7 +138,7 @@ public final class User {
      * @return list of names
      */
     public List<String> getNames() {
-        return new ArrayList<String>(names);
+        return new ArrayList<>(names);
     }
 
     /**
@@ -219,7 +219,7 @@ public final class User {
 
     @Override
     public String toString() {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append("id:").append(uid);
         if (names.size() == 1) {
             s.append(" name:").append(getName());

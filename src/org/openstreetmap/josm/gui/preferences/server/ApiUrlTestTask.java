@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import javax.swing.JOptionPane;
 
@@ -28,8 +29,8 @@ import org.xml.sax.SAXException;
  * {@link #isSuccess()} replies true, otherwise false.
  *
  * Note: it fetches a list of changesets instead of the much smaller capabilities because - strangely enough -
- * an OSM server "http://x.y.y/api/0.6" not only responds to  "http://x.y.y/api/0.6/capabilities" but also
- * to "http://x.y.y/api/0/capabilities" or "http://x.y.y/a/capabilities" with valid capabilities. If we get
+ * an OSM server "https://x.y.y/api/0.6" not only responds to  "https://x.y.y/api/0.6/capabilities" but also
+ * to "https://x.y.y/api/0/capabilities" or "https://x.y.y/a/capabilities" with valid capabilities. If we get
  * valid capabilities with an URL we therefore can't be sure that the base URL is valid API URL.
  *
  */
@@ -164,7 +165,6 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
 
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
-        BufferedReader bin = null;
         try {
             try {
                 new URL(getNormalizedApiUrl());
@@ -194,10 +194,11 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
                 return;
             }
             StringBuilder changesets = new StringBuilder();
-            bin = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            while ((line = bin.readLine()) != null) {
-                changesets.append(line).append("\n");
+            try (BufferedReader bin = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = bin.readLine()) != null) {
+                    changesets.append(line).append("\n");
+                }
             }
             if (! (changesets.toString().contains("<osm") && changesets.toString().contains("</osm>"))) {
                 // heuristic: if there isn't an opening and closing "<osm>" tag in the returned content,
@@ -214,8 +215,6 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
             Main.error(e);
             alertConnectionFailed();
             return;
-        } finally {
-            Utils.close(bin);
         }
     }
 

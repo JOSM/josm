@@ -101,7 +101,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         private boolean canceled = false;
         private GeoImageLayer layer;
         private Collection<File> selection;
-        private Set<String> loadedDirectories = new HashSet<String>();
+        private Set<String> loadedDirectories = new HashSet<>();
         private Set<String> errorMessages;
         private GpxLayer gpxLayer;
 
@@ -113,13 +113,13 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             super(tr("Extracting GPS locations from EXIF"));
             this.selection = selection;
             this.gpxLayer = gpxLayer;
-            errorMessages = new LinkedHashSet<String>();
+            errorMessages = new LinkedHashSet<>();
         }
 
         @Override protected void realRun() throws IOException {
 
             progressMonitor.subTask(tr("Starting directory scan"));
-            Collection<File> files = new ArrayList<File>();
+            Collection<File> files = new ArrayList<>();
             try {
                 addRecursiveFiles(files, selection);
             } catch (IllegalStateException e) {
@@ -135,7 +135,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             progressMonitor.setTicksCount(files.size());
 
             // read the image files
-            List<ImageEntry> data = new ArrayList<ImageEntry>(files.size());
+            List<ImageEntry> data = new ArrayList<>(files.size());
 
             for (File f : files) {
 
@@ -195,12 +195,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     File[] children = f.listFiles(JpegFileFilter.getInstance());
                     if (children != null) {
                         progressMonitor.subTask(tr("Scanning directory {0}", f.getPath()));
-                        try {
-                            addRecursiveFiles(files, Arrays.asList(children));
-                        } catch(NullPointerException npe) {
-                            Main.error(npe);
-                            rememberError(tr("Found null file in directory {0}\n", f.getPath()));
-                        }
+                        addRecursiveFiles(files, Arrays.asList(children));
                     } else {
                         rememberError(tr("Error while getting files from directory {0}\n", f.getPath()));
                     }
@@ -315,7 +310,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         return ImageProvider.get("dialogs/geoimage");
     }
 
-    private static List<Action> menuAdditions = new LinkedList<Action>();
+    private static List<Action> menuAdditions = new LinkedList<>();
     public static void registerMenuAddition(Action addition) {
         menuAdditions.add(addition);
     }
@@ -323,7 +318,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     @Override
     public Action[] getMenuEntries() {
 
-        List<Action> entries = new ArrayList<Action>();
+        List<Action> entries = new ArrayList<>();
         entries.add(LayerListDialog.getInstance().createShowHideLayerAction());
         entries.add(LayerListDialog.getInstance().createDeleteLayerAction());
         entries.add(new RenameLayerAction(null, this));
@@ -556,11 +551,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             metadata = JpegMetadataReader.readMetadata(e.getFile());
             dirExif = metadata.getDirectory(ExifIFD0Directory.class);
             dirGps = metadata.getDirectory(GpsDirectory.class);
-        } catch (CompoundException p) {
-            e.setExifCoor(null);
-            e.setPos(null);
-            return;
-        } catch (IOException p) {
+        } catch (CompoundException | IOException p) {
             e.setExifCoor(null);
             e.setPos(null);
             return;
@@ -572,6 +563,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 e.setExifOrientation(orientation);
             }
         } catch (MetadataException ex) {
+            Main.debug(ex.getMessage());
         }
 
         if (dirGps == null) {
@@ -588,6 +580,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             }
             e.setElevation(ele);
         } catch (MetadataException ex) {
+            Main.debug(ex.getMessage());
         }
 
         try {
@@ -607,7 +600,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 e.setExifImgDir(direction.doubleValue());
             }
         } catch (Exception ex) { // (CompoundException and other exceptions, e.g. #5271)
-            // Do nothing
+            Main.debug(ex.getMessage());
         }
 
         // Time and date. We can have these cases:
@@ -837,7 +830,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
      */
     public static void registerSupportedMapMode(MapMode mapMode) {
         if (supportedMapModes == null) {
-            supportedMapModes = new ArrayList<MapMode>();
+            supportedMapModes = new ArrayList<>();
         }
         supportedMapModes.add(mapMode);
     }
@@ -987,7 +980,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public List<ImageEntry> getImages() {
-        List<ImageEntry> copy = new ArrayList<ImageEntry>(data.size());
+        List<ImageEntry> copy = new ArrayList<>(data.size());
         for (ImageEntry ie : data) {
             copy.add(ie.clone());
         }

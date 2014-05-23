@@ -17,9 +17,11 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -48,6 +50,8 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.Utils.Function;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -86,7 +90,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class CombinePrimitiveResolverDialog extends JDialog {
 
     /** the unique instance of the dialog */
-    static private CombinePrimitiveResolverDialog instance;
+    private static CombinePrimitiveResolverDialog instance;
 
     /**
      * Replies the unique instance of the dialog
@@ -165,7 +169,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
     }
 
-    protected void build() {
+    protected final void build() {
         getContentPane().setLayout(new BorderLayout());
         updateTitle();
         spTagConflictTypes = new AutoAdjustingSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -233,8 +237,18 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         return pnlRelationMemberConflictResolver.getModel();
     }
 
+    /**
+     * Replies true if all tag and relation member conflicts have been decided.
+     *
+     * @return true if all tag and relation member conflicts have been decided; false otherwise
+     */
+    public boolean isResolvedCompletely() {
+        return getTagConflictResolverModel().isResolvedCompletely()
+                && getRelationMemberConflictResolverModel().isResolvedCompletely();
+    }
+
     protected List<Command> buildTagChangeCommand(OsmPrimitive primitive, TagCollection tc) {
-        LinkedList<Command> cmds = new LinkedList<Command>();
+        LinkedList<Command> cmds = new LinkedList<>();
         for (String key : tc.getKeys()) {
             if (tc.hasUniqueEmptyValue(key)) {
                 if (primitive.get(key) != null) {
@@ -255,7 +269,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * @return The list of {@link Command commands} needed to apply resolution choices.
      */
     public List<Command> buildResolutionCommands() {
-        List<Command> cmds = new LinkedList<Command>();
+        List<Command> cmds = new LinkedList<>();
 
         TagCollection allResolutions = getTagConflictResolverModel().getAllResolutions();
         if (!allResolutions.isEmpty()) {
@@ -281,29 +295,36 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
     protected void prepareDefaultTagDecisions() {
         TagConflictResolverModel model = getTagConflictResolverModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            MultiValueResolutionDecision decision = model.getDecision(i);
-            List<String> values = decision.getValues();
-            values.remove("");
-            if (values.size() == 1) {
-                decision.keepOne(values.get(0));
-            } else {
-                decision.keepAll();
-            }
-        }
+        model.prepareDefaultTagDecisions();
         model.rebuild();
     }
 
     protected void prepareDefaultRelationDecisions() {
-        RelationMemberConflictResolverModel model = getRelationMemberConflictResolverModel();
-        Set<Relation> relations = new HashSet<Relation>();
+        final RelationMemberConflictResolverModel model = getRelationMemberConflictResolverModel();
+        final Map<Relation, Integer> numberOfKeepResolutions = new HashMap<>();
+        final MultiMap<OsmPrimitive, Relation> resolvedRelationsPerPrimitive = new MultiMap<>();
+
         for (int i = 0; i < model.getNumDecisions(); i++) {
-            RelationMemberConflictDecision decision = model.getDecision(i);
-            if (!relations.contains(decision.getRelation())) {
+            final RelationMemberConflictDecision decision = model.getDecision(i);
+            final Relation r = decision.getRelation();
+            final OsmPrimitive p = decision.getOriginalPrimitive();
+            if (!numberOfKeepResolutions.containsKey(r)) {
                 decision.decide(RelationMemberConflictDecisionType.KEEP);
-                relations.add(decision.getRelation());
+                numberOfKeepResolutions.put(r, 1);
+                resolvedRelationsPerPrimitive.put(p, r);
+                continue;
+            }
+
+            final Integer keepResolutions = numberOfKeepResolutions.get(r);
+            final Collection<Relation> resolvedRelations = Utils.firstNonNull(resolvedRelationsPerPrimitive.get(p), Collections.<Relation>emptyList());
+            if (keepResolutions <= Utils.filter(resolvedRelations, Predicates.equalTo(r)).size()) {
+                // old relation contains one primitive more often than the current resolution => keep the current member
+                decision.decide(RelationMemberConflictDecisionType.KEEP);
+                numberOfKeepResolutions.put(r, keepResolutions + 1);
+                resolvedRelationsPerPrimitive.put(p, r);
             } else {
                 decision.decide(RelationMemberConflictDecisionType.REMOVE);
+                resolvedRelationsPerPrimitive.put(p, r);
             }
         }
         model.refresh();
@@ -410,7 +431,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             pnlTagConflictResolver.rememberPreferences();
         }
 
-        protected void updateEnabledState() {
+        protected final void updateEnabledState() {
             setEnabled(pnlTagConflictResolver.getModel().getNumConflicts() == 0
                     && pnlRelationMemberConflictResolver.getModel().getNumConflicts() == 0);
         }
@@ -525,13 +546,13 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
 
         // Resolve tag conflicts if necessary
-        if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
+        if (!dialog.isResolvedCompletely()) {
             dialog.setVisible(true);
             if (dialog.isCanceled()) {
                 throw new UserCancelException();
             }
         }
-        List<Command> cmds = new LinkedList<Command>();
+        List<Command> cmds = new LinkedList<>();
         for (OsmPrimitive i : targetPrimitives) {
             dialog.setTargetPrimitive(i);
             cmds.addAll(dialog.buildResolutionCommands());
@@ -548,8 +569,9 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     protected static void informAboutRelationMembershipConflicts(
             final Collection<? extends OsmPrimitive> primitives,
             final Set<Relation> parentRelations) throws UserCancelException {
-        String msg = trn("You are about to combine {1} objects, "
-                + "which are part of {0} relation:<br/>{2}"
+        /* I18n: object count < 2 is not possible */
+        String msg = trn("You are about to combine {1} object, "
+                + "which is part of {0} relation:<br/>{2}"
                 + "Combining these objects may break this relation. If you are unsure, please cancel this operation.<br/>"
                 + "If you want to continue, you are shown a dialog to decide how to adapt the relation.<br/><br/>"
                 + "Do you want to continue?",

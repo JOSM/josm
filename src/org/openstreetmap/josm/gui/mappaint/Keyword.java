@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import org.openstreetmap.josm.tools.Utils;
+import java.util.Objects;
 
 public class Keyword {
     public final String val;
@@ -19,7 +19,7 @@ public class Keyword {
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass())
             return false;
-        return Utils.equal(val, ((Keyword) obj).val);
+        return Objects.equals(val, ((Keyword) obj).val);
     }
 
     @Override
@@ -27,10 +27,10 @@ public class Keyword {
         return val.hashCode();
     }
 
-    public final static Keyword AUTO = new Keyword("auto");
-    public final static Keyword BOTTOM = new Keyword("bottom");
-    public final static Keyword CENTER = new Keyword("center");
-    public final static Keyword DEFAULT = new Keyword("default");
-    public final static Keyword RIGHT = new Keyword("right");
-    public final static Keyword THINNEST = new Keyword("thinnest");
+    public static final Keyword AUTO = new Keyword("auto");
+    public static final Keyword BOTTOM = new Keyword("bottom");
+    public static final Keyword CENTER = new Keyword("center");
+    public static final Keyword DEFAULT = new Keyword("default");
+    public static final Keyword RIGHT = new Keyword("right");
+    public static final Keyword THINNEST = new Keyword("thinnest");
 }

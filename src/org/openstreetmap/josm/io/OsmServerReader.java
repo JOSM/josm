@@ -10,6 +10,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -33,11 +36,18 @@ public abstract class OsmServerReader extends OsmConnection {
     private OsmApi api = OsmApi.getOsmApi();
     private boolean doAuthenticate = false;
     protected boolean gpxParsedProperly;
-    
-    protected enum Compression {
-        NONE,
-        BZIP2,
-        GZIP
+
+    /**
+     * Open a connection to the given url and return a reader on the input stream
+     * from that connection. In case of user cancel, return <code>null</code>.
+     * Relative URL's are directed to API base URL.
+     * @param urlStr The url to connect to.
+     * @param progressMonitor progress monitoring and abort handler
+     * @return A reader reading the input stream (servers answer) or <code>null</code>.
+     * @throws OsmTransferException thrown if data transfer errors occur
+     */
+    protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
+        return getInputStream(urlStr, progressMonitor, null);
     }
 
     /**
@@ -46,21 +56,22 @@ public abstract class OsmServerReader extends OsmConnection {
      * Relative URL's are directed to API base URL.
      * @param urlStr The url to connect to.
      * @param progressMonitor progress monitoring and abort handler
-     * @return An reader reading the input stream (servers answer) or <code>null</code>.
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @return A reader reading the input stream (servers answer) or <code>null</code>.
      * @throws OsmTransferException thrown if data transfer errors occur
      */
-    protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
+    protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor, String reason) throws OsmTransferException  {
         try {
             api.initialize(progressMonitor);
-            urlStr = urlStr.startsWith("http") ? urlStr : (getBaseUrl() + urlStr);
-            return getInputStreamRaw(urlStr, progressMonitor);
+            String url = urlStr.startsWith("http") ? urlStr : (getBaseUrl() + urlStr);
+            return getInputStreamRaw(url, progressMonitor, reason);
         } finally {
             progressMonitor.invalidate();
         }
     }
 
     /**
-     * Retrun the base URL for relative URL requests
+     * Return the base URL for relative URL requests
      * @return base url of API
      */
     protected String getBaseUrl() {
@@ -76,6 +87,35 @@ public abstract class OsmServerReader extends OsmConnection {
      * @throws OsmTransferException thrown if data transfer errors occur
      */
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException {
+        return getInputStreamRaw(urlStr, progressMonitor, null);
+    }
+
+    /**
+     * Open a connection to the given url and return a reader on the input stream
+     * from that connection. In case of user cancel, return <code>null</code>.
+     * @param urlStr The exact url to connect to.
+     * @param progressMonitor progress monitoring and abort handler
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @return An reader reading the input stream (servers answer) or <code>null</code>.
+     * @throws OsmTransferException thrown if data transfer errors occur
+     */
+    protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason) throws OsmTransferException {
+        return getInputStreamRaw(urlStr, progressMonitor, reason, false);
+    }
+
+    /**
+     * Open a connection to the given url and return a reader on the input stream
+     * from that connection. In case of user cancel, return <code>null</code>.
+     * @param urlStr The exact url to connect to.
+     * @param progressMonitor progress monitoring and abort handler
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @param uncompressAccordingToContentDisposition Whether to inspect the HTTP header {@code Content-Disposition}
+     *                                                for {@code filename} and uncompress a gzip/bzip2 stream.
+     * @return An reader reading the input stream (servers answer) or <code>null</code>.
+     * @throws OsmTransferException thrown if data transfer errors occur
+     */
+    @SuppressWarnings("resource")
+    protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason, boolean uncompressAccordingToContentDisposition) throws OsmTransferException {
         try {
             URL url = null;
             try {
@@ -106,7 +146,11 @@ public abstract class OsmServerReader extends OsmConnection {
             activeConnection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
             try {
-                Main.info("GET " + url);
+                if (reason != null && !reason.isEmpty()) {
+                    Main.info("GET " + url + " (" + reason + ")");
+                } else {
+                    Main.info("GET " + url);
+                }
                 activeConnection.connect();
             } catch (Exception e) {
                 Main.error(e);
@@ -115,6 +159,9 @@ public abstract class OsmServerReader extends OsmConnection {
                 throw ote;
             }
             try {
+                if (Main.isDebugEnabled()) {
+                    Main.debug("RESPONSE: "+activeConnection.getHeaderFields());
+                }
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
                     throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,null,null);
 
@@ -125,11 +172,10 @@ public abstract class OsmServerReader extends OsmConnection {
                 if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     String errorHeader = activeConnection.getHeaderField("Error");
                     StringBuilder errorBody = new StringBuilder();
-                    try
-                    {
-                        InputStream i = FixEncoding(activeConnection.getErrorStream(), encoding);
+                    try {
+                        InputStream i = fixEncoding(activeConnection.getErrorStream(), encoding);
                         if (i != null) {
-                            BufferedReader in = new BufferedReader(new InputStreamReader(i));
+                            BufferedReader in = new BufferedReader(new InputStreamReader(i, StandardCharsets.UTF_8));
                             String s;
                             while((s = in.readLine()) != null) {
                                 errorBody.append(s);
@@ -144,7 +190,11 @@ public abstract class OsmServerReader extends OsmConnection {
                     throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString(), url.toString());
                 }
 
-                return FixEncoding(new ProgressInputStream(activeConnection, progressMonitor), encoding);
+                InputStream in = new ProgressInputStream(activeConnection, progressMonitor);
+                if (uncompressAccordingToContentDisposition) {
+                    in = uncompressAccordingToContentDisposition(in, activeConnection.getHeaderFields());
+                }
+                return fixEncoding(in, encoding);
             } catch (OsmTransferException e) {
                 throw e;
             } catch (Exception e) {
@@ -155,15 +205,23 @@ public abstract class OsmServerReader extends OsmConnection {
         }
     }
 
-    private InputStream FixEncoding(InputStream stream, String encoding) throws IOException
-    {
+    private InputStream fixEncoding(InputStream stream, String encoding) throws IOException {
         if ("gzip".equalsIgnoreCase(encoding)) {
             stream = new GZIPInputStream(stream);
-        }
-        else if ("deflate".equalsIgnoreCase(encoding)) {
+        } else if ("deflate".equalsIgnoreCase(encoding)) {
             stream = new InflaterInputStream(stream, new Inflater(true));
         }
         return stream;
+    }
+
+    private InputStream uncompressAccordingToContentDisposition(InputStream stream, Map<String, List<String>> headerFields) throws IOException {
+        if (headerFields.get("Content-Disposition").toString().contains(".gz\"")) {
+            return Compression.GZIP.getUncompressedInputStream(stream);
+        } else if (headerFields.get("Content-Disposition").toString().contains(".bz2\"")) {
+            return Compression.BZIP2.getUncompressedInputStream(stream);
+        } else {
+            return stream;
+        }
     }
 
     /**
@@ -242,6 +300,17 @@ public abstract class OsmServerReader extends OsmConnection {
      * @throws OsmTransferException if any error occurs
      */
     public DataSet parseOsmGzip(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+
+    /**
+     * Download Zip-compressed OSM files from somewhere
+     * @param progressMonitor The progress monitor
+     * @return The corresponding dataset
+     * @throws OsmTransferException if any error occurs
+     * @since 6882
+     */
+    public DataSet parseOsmZip(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
     }
 

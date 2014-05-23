@@ -23,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,7 +95,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     protected JCheckBox cbWireframe;
 
     public static final JosmAction PREFERENCE_ACTION = PreferencesAction.forPreferenceSubTab(
-            tr("Map paint preferences"), null, MapPaintPreference.class);
+            tr("Map paint preferences"), null, MapPaintPreference.class, "dialogs/mappaintpreference");
 
     /**
      * Constructs a new {@code MapPaintDialog}.
@@ -101,7 +103,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     public MapPaintDialog() {
         super(tr("Map Paint Styles"), "mapstyle", tr("configure the map painting style"),
                 Shortcut.registerShortcut("subwindow:mappaint", tr("Toggle: {0}", tr("MapPaint")),
-                        KeyEvent.VK_M, Shortcut.ALT_SHIFT), 150);
+                        KeyEvent.VK_M, Shortcut.ALT_SHIFT), 150, false, MapPaintPreference.class);
         build();
     }
 
@@ -196,7 +198,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     public void fromOtherApplication() {
         // Reload local styles when they have been changed in an external editor.
         // Checks file modification time.
-        List<StyleSource> toReload = new ArrayList<StyleSource>();
+        List<StyleSource> toReload = new ArrayList<>();
         for (StyleSource s : MapPaintStyles.getStyles().getStyleSources()) {
             if (s.isLocal()) {
                 File f = new File(s.url);
@@ -233,10 +235,10 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
 
     protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
 
-        List<StyleSource> data = new ArrayList<StyleSource>();
+        List<StyleSource> data = new ArrayList<>();
 
         public StylesModel() {
-            data = new ArrayList<StyleSource>(MapPaintStyles.getStyles().getStyleSources());
+            data = new ArrayList<>(MapPaintStyles.getStyles().getStyleSources());
         }
 
         private StyleSource getRow(int i) {
@@ -300,14 +302,14 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
 
         @Override
         public void mapPaintStylesUpdated() {
-            data = new ArrayList<StyleSource>(MapPaintStyles.getStyles().getStyleSources());
+            data = new ArrayList<>(MapPaintStyles.getStyles().getStyleSources());
             fireTableDataChanged();
             tblStyles.repaint();
         }
 
         @Override
         public void mapPaintStyleEntryUpdated(int idx) {
-            data = new ArrayList<StyleSource>(MapPaintStyles.getStyles().getStyleSources());
+            data = new ArrayList<>(MapPaintStyles.getStyles().getStyleSources());
             fireTableRowsUpdated(idx, idx);
             tblStyles.repaint();
         }
@@ -515,13 +517,12 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             protected void realRun() {
                 getProgressMonitor().indeterminateSubTask(
                         tr("Save style ''{0}'' as ''{1}''", s.getDisplayString(), file.getPath()));
-                BufferedInputStream bis = null;
-                BufferedOutputStream bos = null;
                 try {
                     InputStream in = s.getSourceInputStream();
-                    try {
-                        bis = new BufferedInputStream(in);
-                        bos = new BufferedOutputStream(new FileOutputStream(file));
+                    try (
+                        InputStream bis = new BufferedInputStream(in);
+                        OutputStream bos = new BufferedOutputStream(new FileOutputStream(file))
+                    ) {
                         byte[] buffer = new byte[4096];
                         int length;
                         while ((length = bis.read(buffer)) > -1 && !canceled) {
@@ -532,9 +533,6 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
                     }
                 } catch (IOException e) {
                     error = true;
-                } finally {
-                    Utils.close(bis);
-                    Utils.close(bos);
                 }
             }
 
@@ -626,7 +624,7 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             JPanel p = new JPanel(new GridBagLayout());
             StringBuilder text = new StringBuilder("<table cellpadding=3>");
             text.append(tableRow(tr("Title:"), s.getDisplayString()));
-            if (s.url.startsWith("http://")) {
+            if (s.url.startsWith("http://") || s.url.startsWith("https://")) {
                 text.append(tableRow(tr("URL:"), s.url));
             } else if (s.url.startsWith("resource://")) {
                 text.append(tableRow(tr("Built-in Style, internal path:"), s.url));
@@ -657,15 +655,10 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
 
             try {
                 InputStream is = s.getSourceInputStream();
-                try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    try {
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            txtSource.append(line + "\n");
-                        }
-                    } finally {
-                        reader.close();
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        txtSource.append(line + "\n");
                     }
                 } finally {
                     s.closeSourceInputStream(is);

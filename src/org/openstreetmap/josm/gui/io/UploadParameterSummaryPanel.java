@@ -15,7 +15,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class UploadParameterSummaryPanel extends JPanel implements HyperlinkListener, PropertyChangeListener{
     private UploadStrategySpecification spec = new UploadStrategySpecification();
     private int numObjects;
-    private JosmEditorPane jepMessage;
+    private JMultilineLabel jepMessage;
     private JLabel lblWarning;
 
     private Changeset selectedChangeset;
@@ -31,7 +31,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     private ConfigurationParameterRequestHandler configHandler;
 
     protected String buildChangesetSummary() {
-        StringBuffer msg = new StringBuffer();
+        StringBuilder msg = new StringBuilder();
         if (selectedChangeset == null || selectedChangeset.isNew()) {
             msg.append(tr("Objects are uploaded to a <strong>new changeset</strong>."));
         } else {
@@ -98,7 +98,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     }
 
     protected void build() {
-        jepMessage = JosmEditorPane.createJLabelLikePane();
+        jepMessage = new JMultilineLabel("");
         jepMessage.addHyperlinkListener(this);
 
         setLayout(new BorderLayout());
@@ -140,7 +140,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     }
 
     protected void updateSummary() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(buildStrategySummary());
         sb.append("<br><br>");
@@ -155,11 +155,12 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-            if (e.getDescription() == null || configHandler == null)
+            String desc = e.getDescription();
+            if (desc == null || configHandler == null)
                 return;
-            if (e.getDescription().equals("urn:changeset-configuration")) {
+            if ("urn:changeset-configuration".equals(desc)) {
                 configHandler.handleChangesetConfigurationRequest();
-            } else if (e.getDescription().equals("urn:advanced-configuration")) {
+            } else if ("urn:advanced-configuration".equals(desc)) {
                 configHandler.handleUploadStrategyConfigurationRequest();
             }
         }

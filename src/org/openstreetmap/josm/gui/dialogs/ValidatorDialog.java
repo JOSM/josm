@@ -28,6 +28,7 @@ import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -91,13 +92,14 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                         KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150, false, ValidatorPreference.class);
 
         popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("problem"));
+        popupMenuHandler.addAction(new EditRelationAction());
 
         tree = new ValidatorTreePanel();
         tree.addMouseListener(new MouseEventHandler());
         addTreeSelectionListener(new SelectionWatch());
         InputMapUtils.unassignCtrlShiftUpDown(tree, JComponent.WHEN_FOCUSED);
 
-        List<SideButton> buttons = new LinkedList<SideButton>();
+        List<SideButton> buttons = new LinkedList<>();
 
         selectButton = new SideButton(new AbstractAction() {
             {
@@ -189,9 +191,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (selectionPaths == null)
             return;
 
-        Set<DefaultMutableTreeNode> processedNodes = new HashSet<DefaultMutableTreeNode>();
+        Set<DefaultMutableTreeNode> processedNodes = new HashSet<>();
 
-        LinkedList<TestError> errorsToFix = new LinkedList<TestError>();
+        LinkedList<TestError> errorsToFix = new LinkedList<>();
         for (TreePath path : selectionPaths) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
             if (node == null) {
@@ -230,7 +232,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (selectionPaths == null)
             return;
 
-        Set<DefaultMutableTreeNode> processedNodes = new HashSet<DefaultMutableTreeNode>();
+        Set<DefaultMutableTreeNode> processedNodes = new HashSet<>();
         for (TreePath path : selectionPaths) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
             if (node == null) {
@@ -239,7 +241,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
             Object mainNodeInfo = node.getUserObject();
             if (!(mainNodeInfo instanceof TestError)) {
-                Set<String> state = new HashSet<String>();
+                Set<String> state = new HashSet<>();
                 // ask if the whole set should be ignored
                 if (asked == JOptionPane.DEFAULT_OPTION) {
                     String[] a = new String[] { tr("Whole group"), tr("Single elements"), tr("Nothing") };
@@ -308,7 +310,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (tree == null)
             return;
 
-        Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>(40);
+        Collection<OsmPrimitive> sel = new HashSet<>(40);
 
         TreePath[] selectedPaths = tree.getSelectionPaths();
         if (selectedPaths == null)
@@ -502,8 +504,10 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             }
             selectButton.setEnabled(false);
 
-            boolean hasFixes = setSelection(null, false);
+            Collection<OsmPrimitive> sel = new HashSet<>();
+            boolean hasFixes = setSelection(sel, true);
             fixButton.setEnabled(hasFixes);
+            popupMenuHandler.setPrimitives(sel);
             if (Main.map != null) {
                 Main.map.repaint();
             }
@@ -547,7 +551,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (newSelection.isEmpty()) {
             tree.setFilter(null);
         }
-        HashSet<OsmPrimitive> filter = new HashSet<OsmPrimitive>(newSelection);
+        HashSet<OsmPrimitive> filter = new HashSet<>(newSelection);
         tree.setFilter(filter);
     }
 
@@ -637,11 +641,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                         Main.main.getCurrentDataSet().fireSelectionChanged();
                     }
                 });
-            } catch(InterruptedException e) {
+            } catch(InterruptedException | InvocationTargetException e) {
                 // FIXME: signature of realRun should have a generic checked exception we
                 // could throw here
-                throw new RuntimeException(e);
-            } catch(InvocationTargetException e) {
                 throw new RuntimeException(e);
             } finally {
                 monitor.finishTask();

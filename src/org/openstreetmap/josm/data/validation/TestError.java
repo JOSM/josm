@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 
 /**
  * Validation error
@@ -131,7 +132,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @return the list of selectable primitives affected by this error
      */
     public Collection<? extends OsmPrimitive> getSelectablePrimitives() {
-        List<OsmPrimitive> selectablePrimitives = new ArrayList<OsmPrimitive>(primitives.size());
+        List<OsmPrimitive> selectablePrimitives = new ArrayList<>(primitives.size());
         for (OsmPrimitive o : primitives) {
             if (o.isSelectable()) {
                 selectablePrimitives.add(o);
@@ -168,7 +169,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * Sets the ignore state for this error
      */
     public String getIgnoreState() {
-        Collection<String> strings = new TreeSet<String>();
+        Collection<String> strings = new TreeSet<>();
         StringBuilder ignorestring = new StringBuilder(getIgnoreSubGroup());
         for (OsmPrimitive o : primitives) {
             // ignore data not yet uploaded
@@ -299,7 +300,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
 
         v1.visit(getPrimitives());
         v2.visit(o.getPrimitives());
-        return v1.toString().compareToIgnoreCase(v2.toString());
+        return AlphanumComparator.getInstance().compare(v1.toString(), v2.toString());
     }
 
     @Override public void primitivesRemoved(PrimitivesRemovedEvent event) {

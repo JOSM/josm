@@ -28,7 +28,7 @@ import javax.swing.event.HyperlinkListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
-import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -55,12 +55,11 @@ public class BasicUploadSettingsPanel extends JPanel {
     protected JPanel buildUploadCommentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
 
-        final JEditorPane commentLabel = JosmEditorPane.createJLabelLikePane();
-        commentLabel.setText("<html><b>" + tr("Provide a brief comment for the changes you are uploading:"));
+        final JEditorPane commentLabel = new JMultilineLabel("<html><b>" + tr("Provide a brief comment for the changes you are uploading:"));
         pnl.add(commentLabel, GBC.eol().insets(0, 5, 10, 3).fill(GBC.HORIZONTAL));
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
         hcbUploadComment.setMaxTextLength(Changeset.MAX_COMMENT_LENGTH);
-        List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(cmtHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadComment.setPossibleItems(cmtHistory);
         final CommentModelListener commentModelListener = new CommentModelListener(hcbUploadComment, changesetCommentModel);
@@ -68,21 +67,22 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.getEditor().getEditorComponent().addFocusListener(commentModelListener);
         pnl.add(hcbUploadComment, GBC.eol().fill(GBC.HORIZONTAL));
 
-        final JEditorPane sourceLabel = JosmEditorPane.createJLabelLikePane();
-        sourceLabel.setText("<html><b>" + tr("Specify the data source for the changes")
+        final JEditorPane sourceLabel = new JMultilineLabel("<html><b>" + tr("Specify the data source for the changes")
                 + "</b> (<a href=\"urn:changeset-source\">" + tr("obtain from current layers") + "</a>)<b>:</b>");
         sourceLabel.addHyperlinkListener(new HyperlinkListener() {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
                     hcbUploadSource.setText(Main.map.mapView.getLayerInformationForSourceTag());
+                    // Fix #9965
+                    changesetSourceModel.setComment(hcbUploadSource.getText());
                 }
             }
         });
         pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 3).fill(GBC.HORIZONTAL));
 
         hcbUploadSource.setToolTipText(tr("Enter a source"));
-        List<String> sourceHistory = new LinkedList<String>(Main.pref.getCollection(SOURCE_HISTORY_KEY, Arrays.asList("knowledge", "survey", "Bing")));
+        List<String> sourceHistory = new LinkedList<>(Main.pref.getCollection(SOURCE_HISTORY_KEY, Arrays.asList("knowledge", "survey", "Bing")));
         Collections.reverse(sourceHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadSource.setPossibleItems(sourceHistory);
         final CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);

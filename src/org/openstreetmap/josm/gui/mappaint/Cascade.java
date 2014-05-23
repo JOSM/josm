@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.openstreetmap.josm.tools.Utils.equal;
-
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -21,9 +20,9 @@ public final class Cascade implements Cloneable {
 
     public static final Cascade EMPTY_CASCADE = new Cascade();
 
-    protected Map<String, Object> prop = new HashMap<String, Object>();
+    protected Map<String, Object> prop = new HashMap<>();
 
-    private final static Pattern HEX_COLOR_PATTERN = Pattern.compile("#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})");
+    private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})");
 
     public <T> T get(String key, T def, Class<T> klass) {
         return get(key, def, klass, false);
@@ -131,9 +130,9 @@ public final class Cascade implements Cloneable {
             return (Boolean) o;
         if (o instanceof Keyword) {
             String s = ((Keyword) o).val;
-            if (equal(s, "true") || equal(s, "yes"))
+            if ("true".equals(s) || "yes".equals(s))
                 return true;
-            if (equal(s, "false") || equal(s, "no"))
+            if ("false".equals(s) || "no".equals(s))
                 return false;
         }
         return null;
@@ -170,7 +169,7 @@ public final class Cascade implements Cloneable {
             if (c != null)
                 return c;
             if (HEX_COLOR_PATTERN.matcher((String) o).matches()) {
-                return Utils.hexToColor((String) o);
+                return ColorHelper.html2color((String) o);
             }
         }
         return null;
@@ -179,7 +178,7 @@ public final class Cascade implements Cloneable {
     @Override
     public Cascade clone() {
         @SuppressWarnings("unchecked")
-        HashMap<String, Object> clonedProp = (HashMap) ((HashMap) this.prop).clone();
+        HashMap<String, Object> clonedProp = (HashMap<String, Object>) ((HashMap) this.prop).clone();
         Cascade c = new Cascade();
         c.prop = clonedProp;
         return c;
@@ -195,8 +194,8 @@ public final class Cascade implements Cloneable {
                 res.append(Arrays.toString((float[]) val));
             } else if (val instanceof Color) {
                 res.append(Utils.toString((Color)val));
-            } else {
-                res.append(val+"");
+            } else if (val != null) {
+                res.append(val.toString());
             }
             res.append("; ");
         }

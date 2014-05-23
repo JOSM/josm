@@ -150,7 +150,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         return pnl;
     }
 
-    protected void build() {
+    protected final void build() {
         setLayout(new BorderLayout());
         JScrollPane spQueryPanel = GuiHelper.embedInVerticalScrollPane(buildQueryPanel());
         add(spQueryPanel, BorderLayout.CENTER);
@@ -279,7 +279,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * This is the panel for selecting whether the changeset query should be restricted to
      * open or closed changesets
      */
-    static private class OpenAndCloseStateRestrictionPanel extends JPanel {
+    private static class OpenAndCloseStateRestrictionPanel extends JPanel {
 
         private JRadioButton rbOpenOnly;
         private JRadioButton rbClosedOnly;
@@ -361,9 +361,9 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         public void restoreFromSettings() {
             String prefRoot = "changeset-query.advanced.open-restrictions";
             String v = Main.pref.get(prefRoot + ".query-type", "open");
-            rbBoth.setSelected(v.equals("both"));
-            rbOpenOnly.setSelected(v.equals("open"));
-            rbClosedOnly.setSelected(v.equals("closed"));
+            rbBoth.setSelected("both".equals(v));
+            rbOpenOnly.setSelected("open".equals(v));
+            rbClosedOnly.setSelected("closed".equals(v));
         }
     }
 
@@ -372,7 +372,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * user
      *
      */
-    static private class UserRestrictionPanel extends JPanel {
+    private static class UserRestrictionPanel extends JPanel {
         private ButtonGroup bgUserRestrictions;
         private JRadioButton rbRestrictToMyself;
         private JRadioButton rbRestrictToUid;
@@ -598,16 +598,16 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         public void restoreFromSettings() {
             String prefRoot = "changeset-query.advanced.user-restrictions";
             String v = Main.pref.get(prefRoot + ".query-type", "mine");
-            if (v.equals("mine")) {
+            if ("mine".equals(v)) {
                 JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
                 if (im.isAnonymous()) {
                     rbRestrictToUid.setSelected(true);
                 } else {
                     rbRestrictToMyself.setSelected(true);
                 }
-            } else if (v.equals("uid")) {
+            } else if ("uid".equals(v)) {
                 rbRestrictToUid.setSelected(true);
-            } else if (v.equals("username")) {
+            } else if ("username".equals(v)) {
                 rbRestrictToUserName.setSelected(true);
             }
             tfUid.setText(Main.pref.get(prefRoot + ".uid", ""));
@@ -634,7 +634,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     /**
      * This is the panel to apply a time restriction to the changeset query
      */
-    static private class TimeRestrictionPanel extends JPanel {
+    private static class TimeRestrictionPanel extends JPanel {
 
         private JRadioButton rbClosedAfter;
         private JRadioButton rbClosedAfterAndCreatedBefore;
@@ -895,8 +895,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         public void restoreFromSettings() {
             String prefRoot = "changeset-query.advanced.open-restrictions";
             String v = Main.pref.get(prefRoot + ".query-type", "closed-after");
-            rbClosedAfter.setSelected(v.equals("closed-after"));
-            rbClosedAfterAndCreatedBefore.setSelected(v.equals("closed-after-created-before"));
+            rbClosedAfter.setSelected("closed-after".equals(v));
+            rbClosedAfterAndCreatedBefore.setSelected("closed-after-created-before".equals(v));
             if (!rbClosedAfter.isSelected() && !rbClosedAfterAndCreatedBefore.isSelected()) {
                 rbClosedAfter.setSelected(true);
             }
@@ -927,7 +927,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
     }
 
-    static private class BBoxRestrictionPanel extends BoundingBoxSelectionPanel {
+    private static class BBoxRestrictionPanel extends BoundingBoxSelectionPanel {
         public BBoxRestrictionPanel() {
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createEmptyBorder(3,3,3,3),
@@ -967,8 +967,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * Validator for user ids entered in in a {@link JTextComponent}.
      *
      */
-    static private class UidInputFieldValidator extends AbstractTextComponentValidator {
-        static public UidInputFieldValidator decorate(JTextComponent tc) {
+    private static class UidInputFieldValidator extends AbstractTextComponentValidator {
+        public static UidInputFieldValidator decorate(JTextComponent tc) {
             return new UidInputFieldValidator(tc);
         }
 
@@ -1014,8 +1014,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
     }
 
-    static private class UserNameInputValidator extends AbstractTextComponentValidator {
-        static public UserNameInputValidator decorate(JTextComponent tc) {
+    private static class UserNameInputValidator extends AbstractTextComponentValidator {
+        public static UserNameInputValidator decorate(JTextComponent tc) {
             return new UserNameInputValidator(tc);
         }
 
@@ -1045,8 +1045,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      *
      * Dates can be entered in one of four standard formats defined for the current locale.
      */
-    static private class DateValidator extends AbstractTextComponentValidator {
-        static public DateValidator decorate(JTextComponent tc) {
+    private static class DateValidator extends AbstractTextComponentValidator {
+        public static DateValidator decorate(JTextComponent tc) {
             return new DateValidator(tc);
         }
 
@@ -1108,8 +1108,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      *
      * Time values can be entered in one of four standard formats defined for the current locale.
      */
-    static private class TimeValidator extends AbstractTextComponentValidator {
-        static public TimeValidator decorate(JTextComponent tc) {
+    private static class TimeValidator extends AbstractTextComponentValidator {
+        public static TimeValidator decorate(JTextComponent tc) {
             return new TimeValidator(tc);
         }
 

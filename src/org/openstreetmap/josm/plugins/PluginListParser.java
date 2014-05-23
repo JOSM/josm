@@ -8,16 +8,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A parser for the plugin list provided by a JOSM Plugin Download Site.
  *
- * See <a href="http://josm.openstreetmap.de/plugin">http://josm.openstreetmap.de/plugin</a>
+ * See <a href="https://josm.openstreetmap.de/plugin">https://josm.openstreetmap.de/plugin</a>
  * for a sample of the document. The format is a custom format, kind of mix of CSV and RFC822 style
  * name/value-pairs.
  *
@@ -36,7 +36,7 @@ public class PluginListParser {
     protected static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException{
         try {
             return new PluginInformation(
-                    new ByteArrayInputStream(manifest.getBytes(Utils.UTF_8)),
+                    new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8)),
                     name.substring(0, name.length() - 4),
                     url
                     );
@@ -48,7 +48,7 @@ public class PluginListParser {
     /**
      * Parses a plugin information document and replies a list of plugin information objects.
      *
-     * See <a href="http://josm.openstreetmap.de/plugin">http://josm.openstreetmap.de/plugin</a>
+     * See <a href="https://josm.openstreetmap.de/plugin">https://josm.openstreetmap.de/plugin</a>
      * for a sample of the document. The format is a custom format, kind of mix of CSV and RFC822 style
      * name/value-pairs.
      *
@@ -57,10 +57,10 @@ public class PluginListParser {
      * @throws PluginListParseException thrown if something goes wrong while parsing
      */
     public List<PluginInformation> parse(InputStream in) throws PluginListParseException{
-        List<PluginInformation> ret = new LinkedList<PluginInformation>();
+        List<PluginInformation> ret = new LinkedList<>();
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new InputStreamReader(in, Utils.UTF_8));
+            r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String name = null;
             String url = null;
             StringBuilder manifest = new StringBuilder();

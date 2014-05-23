@@ -26,7 +26,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     private final ChangesetCommentModel changesetCommentModel;
     private final ChangesetCommentModel changesetSourceModel;
     /** tags that applied to uploaded changesets by default*/
-    private final Map<String, String> defaultTags = new HashMap<String, String>();
+    private final Map<String, String> defaultTags = new HashMap<>();
 
     protected void build() {
         setLayout(new BorderLayout());
@@ -110,7 +110,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     }
 
     public Map<String,String> getDefaultTags() {
-        Map<String,String> tags = new HashMap<String, String>();
+        Map<String,String> tags = new HashMap<>();
         tags.putAll(defaultTags);
         return tags;
     }

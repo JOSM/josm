@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -34,9 +35,9 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetNameTemplateList;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.I18n;
-import org.openstreetmap.josm.tools.TaggingPresetNameTemplateList;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.Utils.Function;
 
@@ -46,16 +47,16 @@ import org.openstreetmap.josm.tools.Utils.Function;
  */
 public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter {
 
-    static private DefaultNameFormatter instance;
+    private static DefaultNameFormatter instance;
 
-    private static final List<NameFormatterHook> formatHooks = new LinkedList<NameFormatterHook>();
+    private static final List<NameFormatterHook> formatHooks = new LinkedList<>();
 
     /**
      * Replies the unique instance of this formatter
      *
      * @return the unique instance of this formatter
      */
-    static public DefaultNameFormatter getInstance() {
+    public static DefaultNameFormatter getInstance() {
         if (instance == null) {
             instance = new DefaultNameFormatter();
         }
@@ -90,11 +91,11 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     /** The default list of tags which are used as naming tags in relations.
      * A ? prefix indicates a boolean value, for which the key (instead of the value) is used.
      */
-    static public final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
+    public static final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
         "public_transport", ":LocationCode", "note", "?building"};
 
     /** the current list of tags used as naming tags in relations */
-    static private List<String> namingTagsForRelations =  null;
+    private static List<String> namingTagsForRelations =  null;
 
     /**
      * Replies the list of naming tags used in relations. The list is given (in this order) by:
@@ -105,9 +106,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      *
      * @return the list of naming tags used in relations
      */
-    static public List<String> getNamingtagsForRelations() {
+    public static List<String> getNamingtagsForRelations() {
         if (namingTagsForRelations == null) {
-            namingTagsForRelations = new ArrayList<String>(
+            namingTagsForRelations = new ArrayList<>(
                     Main.pref.getCollection("relation.nameOrder", Arrays.asList(DEFAULT_NAMING_TAGS_FOR_RELATIONS))
                     );
         }
@@ -173,7 +174,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 }
 
                 if (n == null) {
-                    n = node.isNew() ? tr("node") : ""+ node.getId();
+                    n = node.isNew() ? tr("node") : Long.toString(node.getId());
                 }
                 name.append(n);
             } else {
@@ -355,7 +356,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     private final Comparator<Relation> relationComparator = new Comparator<Relation>() {
-        private final AlphanumComparator ALPHANUM_COMPARATOR = new AlphanumComparator();
         @Override
         public int compare(Relation r1, Relation r2) {
             //TODO This doesn't work correctly with formatHooks
@@ -369,7 +369,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 StringBuilder name2 = new StringBuilder();
                 formatRelationNameAndType(r2, name2, preset2);
 
-                int comp = name1.toString().compareTo(name2.toString());
+                int comp = AlphanumComparator.getInstance().compare(name1.toString(), name2.toString());
                 if (comp != 0)
                     return comp;
             } else {
@@ -377,14 +377,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 String type1 = getRelationTypeName(r1);
                 String type2 = getRelationTypeName(r2);
 
-                int comp = ALPHANUM_COMPARATOR.compare(type1, type2);
+                int comp = AlphanumComparator.getInstance().compare(type1, type2);
                 if (comp != 0)
                     return comp;
 
                 String name1 = getRelationName(r1);
                 String name2 = getRelationName(r2);
 
-                comp = ALPHANUM_COMPARATOR.compare(name1, name2);
+                comp = AlphanumComparator.getInstance().compare(name1, name2);
                 if (comp != 0)
                     return comp;
             }
@@ -445,12 +445,12 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     private String getNameTagValue(IRelation relation, String nameTag) {
-        if (nameTag.equals("name")) {
+        if ("name".equals(nameTag)) {
             if (Main.pref.getBoolean("osm-primitives.localize-name", true))
                 return relation.getLocalName();
             else
                 return relation.getName();
-        } else if (nameTag.equals(":LocationCode")) {
+        } else if (":LocationCode".equals(nameTag)) {
             for (String m : relation.keySet()) {
                 if (m.endsWith(nameTag))
                     return relation.get(m);
@@ -460,6 +460,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             return tr(nameTag.substring(1));
         } else if (nameTag.startsWith("?") && OsmUtils.isFalse(relation.get(nameTag.substring(1)))) {
             return null;
+        } else if (nameTag.startsWith("?")) {
+            return trc_lazy(nameTag, I18n.escape(relation.get(nameTag.substring(1))));
         } else {
             return trc_lazy(nameTag, I18n.escape(relation.get(nameTag)));
         }
@@ -493,12 +495,16 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @return the tooltip text
      */
     public String buildDefaultToolTip(IPrimitive primitive) {
+        return buildDefaultToolTip(primitive.getId(), primitive.getKeys());
+    }
+
+    private String buildDefaultToolTip(long id, Map<String, String> tags) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append("<strong>id</strong>=")
-        .append(primitive.getId())
+        .append(id)
         .append("<br>");
-        List<String> keyList = new ArrayList<String>(primitive.keySet());
+        List<String> keyList = new ArrayList<>(tags.keySet());
         Collections.sort(keyList);
         for (int i = 0; i < keyList.size(); i++) {
             if (i > 0) {
@@ -509,7 +515,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             .append(key)
             .append("</strong>")
             .append("=");
-            String value = primitive.get(key);
+            String value = tags.get(key);
             while(value.length() != 0) {
                 sb.append(value.substring(0,Math.min(50, value.length())));
                 if (value.length() > 50) {
@@ -629,7 +635,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         sb.append(" (");
         String nameTag = null;
-        Set<String> namingTags = new HashSet<String>(getNamingtagsForRelations());
+        Set<String> namingTags = new HashSet<>(getNamingtagsForRelations());
         for (String n : relation.getTags().keySet()) {
             // #3328: "note " and " note" are name tags too
             if (namingTags.contains(n.trim())) {
@@ -666,35 +672,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @return the tooltip text
      */
     public String buildDefaultToolTip(HistoryOsmPrimitive primitive) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<strong>id</strong>=")
-        .append(primitive.getId())
-        .append("<br>");
-        List<String> keyList = new ArrayList<String>(primitive.getTags().keySet());
-        Collections.sort(keyList);
-        for (int i = 0; i < keyList.size(); i++) {
-            if (i > 0) {
-                sb.append("<br>");
-            }
-            String key = keyList.get(i);
-            sb.append("<strong>")
-            .append(key)
-            .append("</strong>")
-            .append("=");
-            String value = primitive.get(key);
-            while(value.length() != 0) {
-                sb.append(value.substring(0,Math.min(50, value.length())));
-                if (value.length() > 50) {
-                    sb.append("<br>");
-                    value = value.substring(50);
-                } else {
-                    value = "";
-                }
-            }
-        }
-        sb.append("</html>");
-        return sb.toString();
+        return buildDefaultToolTip(primitive.getId(), primitive.getTags());
     }
 
     public String formatAsHtmlUnorderedList(Collection<? extends OsmPrimitive> primitives) {

@@ -2,27 +2,30 @@
 package org.openstreetmap.josm.io;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
+import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -37,6 +40,10 @@ import org.openstreetmap.josm.gui.io.UploadStrategy;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
+/**
+ * Reads primitives referring to a particular primitive (ways including a node, relations referring to a relation)
+ * @since 1806
+ */
 public class OsmServerBackreferenceReaderTest {
     static private final Logger logger = Logger.getLogger(OsmServerBackreferenceReader.class.getName());
 
@@ -44,14 +51,15 @@ public class OsmServerBackreferenceReaderTest {
         for (Node n : ds.getNodes()) {
             if (("node-" + i).equals(n.get("name"))) return n;
         }
+        fail("Cannot find node "+i);
         return null;
     }
-
 
     protected static Way lookupWay(DataSet ds, int i) {
         for (Way w : ds.getWays()) {
             if (("way-" + i).equals(w.get("name"))) return w;
         }
+        fail("Cannot find way "+i);
         return null;
     }
 
@@ -59,6 +67,7 @@ public class OsmServerBackreferenceReaderTest {
         for (Relation r : ds.getRelations()) {
             if (("relation-" + i).equals(r.get("name"))) return r;
         }
+        fail("Cannot find relation "+i);
         return null;
     }
 
@@ -105,7 +114,6 @@ public class OsmServerBackreferenceReaderTest {
         }
     }
 
-
     protected static DataSet buildTestDataSet() {
         DataSet ds = new DataSet();
         ds.setVersion("0.6");
@@ -122,86 +130,34 @@ public class OsmServerBackreferenceReaderTest {
      * @param ds the data set
      * @throws OsmTransferException
      */
-    static public void createDataSetOnServer(DataSet ds) throws OsmTransferException {
+    static public void createDataSetOnServer(APIDataSet ds) throws OsmTransferException, CyclicUploadDependencyException {
         logger.info("creating data set on the server ...");
-        ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
-        primitives.addAll(ds.getNodes());
-        primitives.addAll(ds.getWays());
-        primitives.addAll(ds.getRelations());
+        ds.adjustRelationUploadOrder();
         OsmServerWriter writer = new OsmServerWriter();
         Changeset cs  = new Changeset();
-        writer.uploadOsm(new UploadStrategySpecification().setStrategy(UploadStrategy.SINGLE_REQUEST_STRATEGY), primitives, cs, NullProgressMonitor.INSTANCE);
+        writer.uploadOsm(
+                new UploadStrategySpecification().setStrategy(UploadStrategy.SINGLE_REQUEST_STRATEGY),
+                ds.getPrimitives(), cs, NullProgressMonitor.INSTANCE);
         OsmApi.getOsmApi().closeChangeset(cs, NullProgressMonitor.INSTANCE);
     }
 
-    static Properties testProperties;
     static DataSet testDataSet;
 
     @BeforeClass
-    public static void  init() throws OsmTransferException {
+    public static void init() throws OsmTransferException, CyclicUploadDependencyException {
         logger.info("initializing ...");
-        testProperties = new Properties();
 
-        // load properties
-        //
-        try {
-            InputStream is = MultiFetchServerObjectReaderTest.class.getResourceAsStream("/test-functional-env.properties");
-            try {
-                testProperties.load(is);
-            } finally {
-                is.close();
-            }
-        } catch(Exception e){
-            logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
-            fail(MessageFormat.format("failed to load property file ''{0}''", "test-functional-env.properties"));
-        }
+        JOSMFixture.createFunctionalTestFixture().init();
 
-        // check josm.home
-        //
-        String josmHome = testProperties.getProperty("josm.home");
-        if (josmHome == null) {
-            fail(MessageFormat.format("property ''{0}'' not set in test environment", "josm.home"));
-        } else {
-            File f = new File(josmHome);
-            if (! f.exists() || ! f.canRead()) {
-                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing or not readable", "josm.home", josmHome));
-            }
-        }
-
-        // check temp output dir
-        //
-        String tempOutputDir = testProperties.getProperty("test.functional.tempdir");
-        if (tempOutputDir == null) {
-            fail(MessageFormat.format("property ''{0}'' not set in test environment", "test.functional.tempdir"));
-        } else {
-            File f = new File(tempOutputDir);
-            if (! f.exists() || ! f.isDirectory() || ! f.canWrite()) {
-                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing, not a directory, or not writeable", "test.functional.tempdir", tempOutputDir));
-            }
-        }
-
-
-        // init preferences
-        //
-        System.setProperty("josm.home", josmHome);
-        Main.pref.init(false);
         // don't use atomic upload, the test API server can't cope with large diff uploads
         //
         Main.pref.put("osm-server.atomic-upload", false);
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
+        Main.logLevel = 4;
 
-        File dataSetCacheOutputFile = new File(tempOutputDir, MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
+        File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
 
-        // make sure we don't upload to production
-        //
-        String url = OsmApi.getOsmApi().getBaseUrl().toLowerCase().trim();
-        if (url.startsWith("http://www.openstreetmap.org")
-                || url.startsWith("http://api.openstreetmap.org")) {
-            fail(MessageFormat.format("configured url ''{0}'' seems to be a productive url, aborting.", url));
-        }
-
-
-        String p = System.getProperties().getProperty("useCachedDataset");
+        String p = System.getProperty("useCachedDataset");
         if (p != null && Boolean.parseBoolean(p.trim().toLowerCase())) {
             logger.info(MessageFormat.format("property ''{0}'' set, using cached dataset", "useCachedDataset"));
             return;
@@ -214,20 +170,19 @@ public class OsmServerBackreferenceReaderTest {
         logger.info("creating test data set ....");
         testDataSet = buildTestDataSet();
         logger.info("uploading test data set ...");
-        createDataSetOnServer(testDataSet);
+        createDataSetOnServer(new APIDataSet(testDataSet));
 
-        try {
+        try (
             PrintWriter pw = new PrintWriter(
-                    new FileWriter(dataSetCacheOutputFile)
-            );
+                    new OutputStreamWriter(new FileOutputStream(dataSetCacheOutputFile), StandardCharsets.UTF_8)
+        )) {
             logger.info(MessageFormat.format("caching test data set in ''{0}'' ...", dataSetCacheOutputFile.toString()));
-            OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion());
-            w.header();
-            w.writeDataSources(testDataSet);
-            w.writeContent(testDataSet);
-            w.footer();
-            w.close();
-            pw.close();
+            try (OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion())) {
+                w.header();
+                w.writeDataSources(testDataSet);
+                w.writeContent(testDataSet);
+                w.footer();
+            }
         } catch(IOException e) {
             fail(MessageFormat.format("failed to open file ''{0}'' for writing", dataSetCacheOutputFile.toString()));
         }
@@ -235,18 +190,21 @@ public class OsmServerBackreferenceReaderTest {
 
     private DataSet ds;
 
+    /**
+     * Setup test.
+     */
     @Before
     public void setUp() throws IOException, IllegalDataException {
-        File f = new File(testProperties.getProperty("test.functional.tempdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
+        File f = new File(System.getProperty("java.io.tmpdir"), MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
         logger.info(MessageFormat.format("reading cached dataset ''{0}''", f.toString()));
         ds = new DataSet();
-        FileInputStream fis = new FileInputStream(f);
-        ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
-        fis.close();
+        try (FileInputStream fis = new FileInputStream(f)) {
+            ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+        }
     }
 
     @Test
-    public void testBackrefrenceForNode() throws OsmTransferException {
+    public void testBackreferenceForNode() throws OsmTransferException {
         Node n = lookupNode(ds, 0);
         assertNotNull(n);
         Way w = lookupWay(ds, 0);
@@ -255,37 +213,95 @@ public class OsmServerBackreferenceReaderTest {
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(n);
         reader.setReadFull(false);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
-        assertEquals(10, referers.getNodes().size());
-        assertEquals(1, referers.getWays().size());
-        assertEquals(0, referers.getRelations().size());
+        printNumberOfPrimitives(referers);
+
+        Set<Long> expectedNodeIds = new HashSet<>();
+        Set<Long> expectedWayIds = new HashSet<>();
+        Set<Long> expectedRelationIds = new HashSet<>();
+
+        for (OsmPrimitive ref : n.getReferrers()) {
+            if (ref instanceof Way) {
+                expectedWayIds.add(ref.getId());
+                expectedNodeIds.addAll(getNodeIdsInWay((Way) ref));
+            } else if (ref instanceof Relation) {
+                expectedRelationIds.add(ref.getId());
+                expectedWayIds.addAll(getWayIdsInRelation((Relation) ref, false));
+                expectedNodeIds.addAll(getNodeIdsInRelation((Relation) ref, false));
+            }
+        }
+
+        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
+        assertEquals(expectedWayIds.size(), referers.getWays().size());
+        assertEquals(expectedRelationIds.size(), referers.getRelations().size());
+
+        for (Node node : referers.getNodes()) {
+            assertTrue(expectedNodeIds.contains(node.getId()));
+            assertFalse(node.isIncomplete());
+        }
+
         for (Way way : referers.getWays()) {
-            assertEquals(w.getId(), way.getId());
-            assertEquals(false, way.isIncomplete());
+            assertTrue(expectedWayIds.contains(way.getId()));
+            assertEquals(n.getReferrers().contains(way), !way.isIncomplete());
+        }
+
+        for (Relation relation : referers.getRelations()) {
+            assertTrue(expectedRelationIds.contains(relation.getId()));
+            assertFalse(relation.isIncomplete());
         }
     }
 
+    private void printNumberOfPrimitives(DataSet referers) {
+        System.out.println("#nodes=" + referers.getNodes().size() +
+                " #ways=" + referers.getWays().size() +
+                " #relations=" + referers.getRelations().size());
+    }
+
     @Test
-    public void testBackrefrenceForNode_Full() throws OsmTransferException {
+    public void testBackreferenceForNode_Full() throws OsmTransferException {
         Node n = lookupNode(ds, 0);
         assertNotNull(n);
-        Way w = lookupWay(ds, 0);
-        assertNotNull(w);
 
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(n);
         reader.setReadFull(true);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
-        assertEquals(10, referers.getNodes().size());
-        assertEquals(1, referers.getWays().size());
-        assertEquals(0, referers.getRelations().size());
+        printNumberOfPrimitives(referers);
+
+        Set<Long> expectedNodeIds = new HashSet<>();
+        Set<Long> expectedWayIds = new HashSet<>();
+        Set<Long> expectedRelationIds = new HashSet<>();
+        for (OsmPrimitive ref : n.getReferrers()) {
+            if (ref instanceof Way) {
+                expectedWayIds.add(ref.getId());
+                expectedNodeIds.addAll(getNodeIdsInWay((Way) ref));
+            } else if (ref instanceof Relation) {
+                expectedRelationIds.add(ref.getId());
+                expectedWayIds.addAll(getWayIdsInRelation((Relation) ref, true));
+                expectedNodeIds.addAll(getNodeIdsInRelation((Relation) ref, true));
+            }
+        }
+
+        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
+        assertEquals(expectedWayIds.size(), referers.getWays().size());
+        assertEquals(expectedRelationIds.size(), referers.getRelations().size());
+
+        for (Node node : referers.getNodes()) {
+            assertTrue(expectedNodeIds.contains(node.getId()));
+            assertFalse(node.isIncomplete());
+        }
+
         for (Way way : referers.getWays()) {
-            assertEquals(w.getId(), way.getId());
-            assertEquals(false, way.isIncomplete());
-            assertEquals(10, w.getNodesCount());
+            assertTrue(expectedWayIds.contains(way.getId()));
+            assertFalse(way.isIncomplete());
+        }
+
+        for (Relation relation : referers.getRelations()) {
+            assertTrue(expectedRelationIds.contains(relation.getId()));
+            assertFalse(relation.isIncomplete());
         }
     }
 
     @Test
-    public void testBackrefrenceForWay() throws OsmTransferException {
+    public void testBackreferenceForWay() throws OsmTransferException {
         Way w = lookupWay(ds, 1);
         assertNotNull(w);
         // way with name "way-1" is referred to by two relations
@@ -294,22 +310,38 @@ public class OsmServerBackreferenceReaderTest {
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(w);
         reader.setReadFull(false);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
-        assertEquals(0, referers.getNodes().size()); // no nodes loaded
-        assertEquals(6, referers.getWays().size());  // 6 ways referred by two relations
+        printNumberOfPrimitives(referers);
+
+        Set<Long> expectedNodeIds = new HashSet<>();
+        Set<Long> expectedWayIds = new HashSet<>();
+        Set<Long> expectedRelationIds = new HashSet<>();
+
+        for (OsmPrimitive ref : w.getReferrers()) {
+            if (ref instanceof Relation) {
+                expectedRelationIds.add(ref.getId());
+                expectedWayIds.addAll(getWayIdsInRelation((Relation) ref, false));
+                expectedNodeIds.addAll(getNodeIdsInRelation((Relation) ref, false));
+            }
+        }
+
+        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
+        assertEquals(expectedWayIds.size(), referers.getWays().size());
+        assertEquals(expectedRelationIds.size(), referers.getRelations().size());
+
         for (Way w1 : referers.getWays()) {
-            assertEquals(true, w1.isIncomplete());
+            assertTrue(w1.isIncomplete());
         }
         assertEquals(2, referers.getRelations().size());  // two relations referring to w
 
         Relation r = lookupRelation(referers, 0);
         assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
+        assertFalse(r.isIncomplete());
         r = lookupRelation(referers, 1);
-        assertEquals(false, r.isIncomplete());
+        assertFalse(r.isIncomplete());
     }
 
     @Test
-    public void testBackrefrenceForWay_Full() throws OsmTransferException {
+    public void testBackreferenceForWay_Full() throws OsmTransferException {
         Way w = lookupWay(ds, 1);
         assertNotNull(w);
         // way with name "way-1" is referred to by two relations
@@ -320,10 +352,10 @@ public class OsmServerBackreferenceReaderTest {
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(6, referers.getWays().size());  // 6 ways referred by two relations
         for (Way w1 : referers.getWays()) {
-            assertEquals(false, w1.isIncomplete());
+            assertFalse(w1.isIncomplete());
         }
         assertEquals(2, referers.getRelations().size());  // two relations referring to
-        Set<Long> expectedNodeIds = new HashSet<Long>();
+        Set<Long> expectedNodeIds = new HashSet<>();
         for (Way way : referers.getWays()) {
             Way orig = (Way) ds.getPrimitiveById(way);
             for (Node n : orig.getNodes()) {
@@ -332,18 +364,18 @@ public class OsmServerBackreferenceReaderTest {
         }
         assertEquals(expectedNodeIds.size(), referers.getNodes().size());
         for (Node n : referers.getNodes()) {
-            assertEquals(true, expectedNodeIds.contains(n.getId()));
+            assertTrue(expectedNodeIds.contains(n.getId()));
         }
 
         Relation r = lookupRelation(referers, 0);
         assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
+        assertFalse(r.isIncomplete());
         r = lookupRelation(referers, 1);
-        assertEquals(false, r.isIncomplete());
+        assertFalse(r.isIncomplete());
     }
 
     @Test
-    public void testBackrefrenceForRelation() throws OsmTransferException {
+    public void testBackreferenceForRelation() throws OsmTransferException {
         Relation r = lookupRelation(ds, 1);
         assertNotNull(r);
         // way with name "relation-1" is referred to by four relations:
@@ -353,35 +385,36 @@ public class OsmServerBackreferenceReaderTest {
         OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(r);
         reader.setReadFull(false);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
+        printNumberOfPrimitives(referers);
 
-        Set<Long> referringRelationsIds = new HashSet<Long>();
-        r = lookupRelation(referers, 6);
-        assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
-        referringRelationsIds.add(r.getId());
-        r = lookupRelation(referers, 7);
-        assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
-        referringRelationsIds.add(r.getId());
-        r = lookupRelation(referers, 8);
-        assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
-        referringRelationsIds.add(r.getId());
-        r = lookupRelation(referers, 9);
-        assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
-        referringRelationsIds.add(r.getId());
+        Set<Long> referringRelationsIds = new HashSet<>();
+        Relation r6 = lookupRelation(referers, 6);
+        assertNotNull(r6);
+        assertFalse(r6.isIncomplete());
+        referringRelationsIds.add(r6.getId());
+        Relation r7 = lookupRelation(referers, 7);
+        assertNotNull(r7);
+        assertFalse(r7.isIncomplete());
+        referringRelationsIds.add(r7.getId());
+        Relation r8 = lookupRelation(referers, 8);
+        assertNotNull(r8);
+        assertFalse(r8.isIncomplete());
+        referringRelationsIds.add(r8.getId());
+        Relation r9 = lookupRelation(referers, 9);
+        assertNotNull(r9);
+        assertFalse(r9.isIncomplete());
+        referringRelationsIds.add(r9.getId());
 
         for (Relation r1 : referers.getRelations()) {
             if (!referringRelationsIds.contains(r1.getId())) {
-                assertEquals(true, r1.isIncomplete());
+                assertTrue(r1.isIncomplete());
             }
         }
 
         // make sure we read all ways referred to by parent relations. These
         // ways are incomplete after reading.
         //
-        Set<Long> expectedWayIds = new HashSet<Long>();
+        Set<Long> expectedWayIds = new HashSet<>();
         for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
             if (m.isWay()) {
                 expectedWayIds.add(m.getMember().getId());
@@ -405,17 +438,22 @@ public class OsmServerBackreferenceReaderTest {
 
         assertEquals(expectedWayIds.size(), referers.getWays().size());
         for (Way w1 : referers.getWays()) {
-            assertEquals(true, expectedWayIds.contains(w1.getId()));
-            assertEquals(true, w1.isIncomplete());
+            assertTrue(expectedWayIds.contains(w1.getId()));
+            assertTrue(w1.isIncomplete());
         }
 
-        // make sure we didn't read any nodes
-        //
-        assertEquals(0, referers.getNodes().size());
+        // make sure we read all nodes referred to by parent relations.
+        Set<Long> expectedNodeIds = new HashSet<>();
+        for (OsmPrimitive ref : r.getReferrers()) {
+            if (ref instanceof Relation) {
+                expectedNodeIds.addAll(getNodeIdsInRelation((Relation) ref, false));
+            }
+        }
+        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
     }
 
-    protected Set<Long> getNodeIdsInWay(Way way) {
-        HashSet<Long> ret = new HashSet<Long>();
+    protected static Set<Long> getNodeIdsInWay(Way way) {
+        HashSet<Long> ret = new HashSet<>();
         if (way == null)return ret;
         for (Node n: way.getNodes()) {
             ret.add(n.getId());
@@ -423,23 +461,36 @@ public class OsmServerBackreferenceReaderTest {
         return ret;
     }
 
-    protected Set<Long> getNodeIdsInRelation(Relation r) {
-        HashSet<Long> ret = new HashSet<Long>();
+    protected static Set<Long> getNodeIdsInRelation(Relation r, boolean children) {
+        HashSet<Long> ret = new HashSet<>();
         if (r == null) return ret;
         for (RelationMember m: r.getMembers()) {
             if (m.isNode()) {
                 ret.add(m.getMember().getId());
-            } else if (m.isWay()) {
+            } else if (m.isWay() && children) {
                 ret.addAll(getNodeIdsInWay(m.getWay()));
-            } else if (m.isRelation()) {
-                ret.addAll(getNodeIdsInRelation(m.getRelation()));
+            } else if (m.isRelation() && children) {
+                ret.addAll(getNodeIdsInRelation(m.getRelation(), true));
+            }
+        }
+        return ret;
+    }
+
+    protected static Set<Long> getWayIdsInRelation(Relation r, boolean children) {
+        HashSet<Long> ret = new HashSet<>();
+        if (r == null) return ret;
+        for (RelationMember m: r.getMembers()) {
+            if (m.isWay()) {
+                ret.add(m.getMember().getId());
+            } else if (m.isRelation() && children) {
+                ret.addAll(getWayIdsInRelation(m.getRelation(), true));
             }
         }
         return ret;
     }
 
     @Test
-    public void testBackrefrenceForRelation_Full() throws OsmTransferException {
+    public void testBackreferenceForRelation_Full() throws OsmTransferException {
         Relation r = lookupRelation(ds, 1);
         assertNotNull(r);
         // way with name "relation-1" is referred to by four relations:
@@ -450,34 +501,34 @@ public class OsmServerBackreferenceReaderTest {
         reader.setReadFull(true);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
 
-        Set<Long> referringRelationsIds = new HashSet<Long>();
+        Set<Long> referringRelationsIds = new HashSet<>();
         r = lookupRelation(referers, 6);
         assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
+        assertFalse(r.isIncomplete());
         referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 7);
         assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
+        assertFalse(r.isIncomplete());
         referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 8);
         assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
+        assertFalse(r.isIncomplete());
         referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 9);
         assertNotNull(r);
-        assertEquals(false, r.isIncomplete());
+        assertFalse(r.isIncomplete());
         referringRelationsIds.add(r.getId());
 
         // all relations are fully loaded
         //
         for (Relation r1 : referers.getRelations()) {
-            assertEquals(false, r1.isIncomplete());
+            assertFalse(r1.isIncomplete());
         }
 
         // make sure we read all ways referred to by parent relations. These
         // ways are completely read after reading the relations
         //
-        Set<Long> expectedWayIds = new HashSet<Long>();
+        Set<Long> expectedWayIds = new HashSet<>();
         for (RelationMember m : lookupRelation(ds, 6).getMembers()) {
             if (m.isWay()) {
                 expectedWayIds.add(m.getMember().getId());
@@ -501,18 +552,18 @@ public class OsmServerBackreferenceReaderTest {
         for (long id : expectedWayIds) {
             Way w = (Way) referers.getPrimitiveById(id, OsmPrimitiveType.WAY);
             assertNotNull(w);
-            assertEquals(false, w.isIncomplete());
+            assertFalse(w.isIncomplete());
         }
 
-        Set<Long> expectedNodeIds = new HashSet<Long>();
+        Set<Long> expectedNodeIds = new HashSet<>();
         for (int i = 6; i < 10; i++) {
             Relation r1 = lookupRelation(ds, i);
-            expectedNodeIds.addAll(getNodeIdsInRelation(r1));
+            expectedNodeIds.addAll(getNodeIdsInRelation(r1, true));
         }
 
         assertEquals(expectedNodeIds.size(), referers.getNodes().size());
         for (Node n : referers.getNodes()) {
-            assertEquals(true, expectedNodeIds.contains(n.getId()));
+            assertTrue(expectedNodeIds.contains(n.getId()));
         }
     }
 }

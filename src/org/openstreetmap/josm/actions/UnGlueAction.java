@@ -10,9 +10,11 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -21,6 +23,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
@@ -70,6 +73,7 @@ public class UnGlueAction extends JosmAction {
         int errorTime = Notification.TIME_DEFAULT;
         if (checkSelection(selection)) {
             if (!checkAndConfirmOutlyingUnglue()) {
+                // FIXME: Leaving action without clearing selectedNode, selectedWay, selectedNodes
                 return;
             }
             int count = 0;
@@ -80,23 +84,30 @@ public class UnGlueAction extends JosmAction {
                 count++;
             }
             if (count < 2) {
+                boolean selfCrossing = false;
+                if (count == 1) {
+                    // First try unglue self-crossing way
+                    selfCrossing = unglueSelfCrossingWay();
+                }
                 // If there aren't enough ways, maybe the user wanted to unglue the nodes
                 // (= copy tags to a new node)
-                if (checkForUnglueNode(selection)) {
-                    unglueNode(e);
-                } else {
-                    errorTime = Notification.TIME_SHORT;
-                    errMsg = tr("This node is not glued to anything else.");
-                }
+                if (!selfCrossing)
+                    if (checkForUnglueNode(selection)) {
+                        unglueNode(e);
+                    } else {
+                        errorTime = Notification.TIME_SHORT;
+                        errMsg = tr("This node is not glued to anything else.");
+                    }
             } else {
                 // and then do the work.
                 unglueWays();
             }
         } else if (checkSelection2(selection)) {
             if (!checkAndConfirmOutlyingUnglue()) {
+                // FIXME: Leaving action without clearing selectedNode, selectedWay, selectedNodes
                 return;
             }
-            Set<Node> tmpNodes = new HashSet<Node>();
+            Set<Node> tmpNodes = new HashSet<>();
             for (Node n : selectedNodes) {
                 int count = 0;
                 for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
@@ -155,7 +166,7 @@ public class UnGlueAction extends JosmAction {
      * (i.e. copy node and remove all tags from the old one. Relations will not be removed)
      */
     private void unglueNode(ActionEvent e) {
-        LinkedList<Command> cmds = new LinkedList<Command>();
+        LinkedList<Command> cmds = new LinkedList<>();
 
         Node c = new Node(selectedNode);
         c.removeAll();
@@ -264,7 +275,7 @@ public class UnGlueAction extends JosmAction {
         if (selectedWay == null)
             return false;
 
-        selectedNodes = new HashSet<Node>();
+        selectedNodes = new HashSet<>();
         for (OsmPrimitive p : selection) {
             if (p instanceof Node) {
                 Node n = (Node) p;
@@ -285,10 +296,11 @@ public class UnGlueAction extends JosmAction {
      * dupe the given node of the given way
      *
      * assume that OrginalNode is in the way
-     *
-     * -> the new node will be put into the parameter newNodes.
-     * -> the add-node command will be put into the parameter cmds.
-     * -> the changed way will be returned and must be put into cmds by the caller!
+     * <ul>
+     * <li>the new node will be put into the parameter newNodes.</li>
+     * <li>the add-node command will be put into the parameter cmds.</li>
+     * <li>the changed way will be returned and must be put into cmds by the caller!</li>
+     * </ul>
      */
     private Way modifyWay(Node originalNode, Way w, List<Command> cmds, List<Node> newNodes) {
         // clone the node for the way
@@ -296,7 +308,7 @@ public class UnGlueAction extends JosmAction {
         newNodes.add(newNode);
         cmds.add(new AddCommand(newNode));
 
-        List<Node> nn = new ArrayList<Node>();
+        List<Node> nn = new ArrayList<>();
         for (Node pushNode : w.getNodes()) {
             if (originalNode == pushNode) {
                 pushNode = newNode;
@@ -314,29 +326,27 @@ public class UnGlueAction extends JosmAction {
      */
     private void fixRelations(Node originalNode, List<Command> cmds, List<Node> newNodes) {
         // modify all relations containing the node
-        Relation newRel = null;
-        HashSet<String> rolesToReAdd = null;
         for (Relation r : OsmPrimitive.getFilteredList(originalNode.getReferrers(), Relation.class)) {
             if (r.isDeleted()) {
                 continue;
             }
-            newRel = null;
-            rolesToReAdd = null;
+            Relation newRel = null;
+            HashMap<String, Integer> rolesToReAdd = null; // <role name, index>
+            int i = 0;
             for (RelationMember rm : r.getMembers()) {
-                if (rm.isNode()) {
-                    if (rm.getMember() == originalNode) {
-                        if (newRel == null) {
-                            newRel = new Relation(r);
-                            rolesToReAdd = new HashSet<String>();
-                        }
-                        rolesToReAdd.add(rm.getRole());
+                if (rm.isNode() && rm.getMember() == originalNode) {
+                    if (newRel == null) {
+                        newRel = new Relation(r);
+                        rolesToReAdd = new HashMap<>();
                     }
+                    rolesToReAdd.put(rm.getRole(), i);
                 }
+                i++;
             }
             if (newRel != null) {
                 for (Node n : newNodes) {
-                    for (String role : rolesToReAdd) {
-                        newRel.addMember(new RelationMember(role, n));
+                    for (Map.Entry<String, Integer> role : rolesToReAdd.entrySet()) {
+                        newRel.addMember(role.getValue() + 1, new RelationMember(role.getKey(), n));
                     }
                 }
                 cmds.add(new ChangeCommand(r, newRel));
@@ -350,12 +360,12 @@ public class UnGlueAction extends JosmAction {
      * dupe a single node once, and put the copy on the selected way
      */
     private void unglueWays() {
-        LinkedList<Command> cmds = new LinkedList<Command>();
-        LinkedList<Node> newNodes = new LinkedList<Node>();
+        LinkedList<Command> cmds = new LinkedList<>();
+        LinkedList<Node> newNodes = new LinkedList<>();
 
         if (selectedWay == null) {
             Way wayWithSelectedNode = null;
-            LinkedList<Way> parentWays = new LinkedList<Way>();
+            LinkedList<Way> parentWays = new LinkedList<>();
             for (OsmPrimitive osm : selectedNode.getReferrers()) {
                 if (osm.isUsable() && osm instanceof Way) {
                     Way w = (Way) osm;
@@ -377,24 +387,75 @@ public class UnGlueAction extends JosmAction {
         }
 
         fixRelations(selectedNode, cmds, newNodes);
-
-        Main.main.undoRedo.add(new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
-                trn("Dupe into {0} nodes", "Dupe into {0} nodes", newNodes.size() + 1, newNodes.size() + 1), cmds));
-        // select one of the new nodes
-        getCurrentDataSet().setSelected(newNodes.getFirst());
+        execCommands(cmds, newNodes);
     }
+
+    /**
+     * Add commands to undo-redo system.
+     * @param cmds Commands to execute
+     * @param newNodes New created nodes by this set of command
+     */
+    private void execCommands(List<Command> cmds, List<Node> newNodes) {
+        Main.main.undoRedo.add(new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
+                trn("Dupe into {0} node", "Dupe into {0} nodes", newNodes.size() + 1, newNodes.size() + 1), cmds));
+        // select one of the new nodes
+        getCurrentDataSet().setSelected(newNodes.get(0));
+    }
+
+    /**
+     * Duplicates a node used several times by the same way. See #9896.
+     * @return true if action is OK false if there is nothing to do
+     */
+    private boolean unglueSelfCrossingWay() {
+        // According to previous check, only one valid way through that node
+        LinkedList<Command> cmds = new LinkedList<>();
+        Way way = null;
+        for (Way w: OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class))
+            if (w.isUsable() && w.getNodesCount() >= 1) {
+                way = w;
+            }
+        List<Node> oldNodes = way.getNodes();
+        ArrayList<Node> newNodes = new ArrayList<>(oldNodes.size());
+        ArrayList<Node> addNodes = new ArrayList<>();
+        boolean seen = false;
+        for (Node n: oldNodes) {
+            if (n == selectedNode) {
+                if (seen) {
+                    Node newNode = new Node(n, true /* clear OSM ID */);
+                    newNodes.add(newNode);
+                    cmds.add(new AddCommand(newNode));
+                    newNodes.add(newNode);
+                    addNodes.add(newNode);
+                } else {
+                    newNodes.add(n);
+                    seen = true;
+                }
+            } else {
+                newNodes.add(n);
+            }
+        }
+        if (addNodes.isEmpty()) {
+            // selectedNode doesn't need unglue
+            return false;
+        }
+        cmds.add(new ChangeNodesCommand(way, newNodes));
+        // Update relation
+        fixRelations(selectedNode, cmds, addNodes);
+        execCommands(cmds, addNodes);
+        return true;
+     }
 
     /**
      * dupe all nodes that are selected, and put the copies on the selected way
      *
      */
     private void unglueWays2() {
-        LinkedList<Command> cmds = new LinkedList<Command>();
-        List<Node> allNewNodes = new LinkedList<Node>();
+        LinkedList<Command> cmds = new LinkedList<>();
+        List<Node> allNewNodes = new LinkedList<>();
         Way tmpWay = selectedWay;
 
         for (Node n : selectedNodes) {
-            List<Node> newNodes = new LinkedList<Node>();
+            List<Node> newNodes = new LinkedList<>();
             tmpWay = modifyWay(n, tmpWay, cmds, newNodes);
             fixRelations(n, cmds, newNodes);
             allNewNodes.addAll(newNodes);
@@ -421,7 +482,7 @@ public class UnGlueAction extends JosmAction {
     }
 
     protected boolean checkAndConfirmOutlyingUnglue() {
-        List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>(2 + (selectedNodes == null ? 0 : selectedNodes.size()));
+        List<OsmPrimitive> primitives = new ArrayList<>(2 + (selectedNodes == null ? 0 : selectedNodes.size()));
         if (selectedNodes != null)
             primitives.addAll(selectedNodes);
         if (selectedNode != null)

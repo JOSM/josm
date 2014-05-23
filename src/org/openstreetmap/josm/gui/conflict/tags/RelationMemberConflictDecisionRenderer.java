@@ -13,9 +13,9 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
-public class RelationMemberConflictDecisionRenderer extends JLabel implements TableCellRenderer, ListCellRenderer {
+public class RelationMemberConflictDecisionRenderer extends JLabel implements TableCellRenderer, ListCellRenderer<RelationMemberConflictDecisionType> {
 
-    private JosmComboBox cbDecisionTypes;
+    private JosmComboBox<RelationMemberConflictDecisionType> cbDecisionTypes;
 
     protected void resetTableRenderer() {
         setOpaque(true);
@@ -35,7 +35,7 @@ public class RelationMemberConflictDecisionRenderer extends JLabel implements Ta
      * Constructs a new {@code RelationMemberConflictDecisionRenderer}.
      */
     public RelationMemberConflictDecisionRenderer() {
-        cbDecisionTypes = new JosmComboBox(RelationMemberConflictDecisionType.values());
+        cbDecisionTypes = new JosmComboBox<>(RelationMemberConflictDecisionType.values());
         cbDecisionTypes.setRenderer(this);
     }
 
@@ -62,14 +62,15 @@ public class RelationMemberConflictDecisionRenderer extends JLabel implements Ta
     /* ListCellRenderer                                                                  */
     /* --------------------------------------------------------------------------------- */
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+    public Component getListCellRendererComponent(
+            JList<? extends RelationMemberConflictDecisionType> list, 
+            RelationMemberConflictDecisionType decision, int index, boolean isSelected,
             boolean cellHasFocus) {
         resetListRenderer();
         if (isSelected) {
             setBackground(UIManager.getColor("ComboBox.selectionBackground"));
             setForeground(UIManager.getColor("ComboBox.selectionForeground"));
         }
-        RelationMemberConflictDecisionType decision = (RelationMemberConflictDecisionType)value;
         RelationMemberConflictDecisionType.prepareLabel(decision, this);
         if (RelationMemberConflictDecisionType.UNDECIDED.equals(decision)) {
             setFont(getFont().deriveFont(Font.ITALIC));

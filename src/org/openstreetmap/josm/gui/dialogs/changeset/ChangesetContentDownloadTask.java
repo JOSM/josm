@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
 public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements ChangesetDownloadTask{
 
     /** the list of changeset ids to download */
-    private final List<Integer> toDownload = new ArrayList<Integer>();
+    private final List<Integer> toDownload = new ArrayList<>();
     /** true if the task was canceled */
     private boolean canceled;
     /** keeps the last exception thrown in the task, if any */
@@ -56,14 +56,14 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
             }
             toDownload.add(id);
         }
-        downloadedChangesets = new HashSet<Changeset>();
+        downloadedChangesets = new HashSet<>();
     }
 
     /**
      * Creates a download task for a single changeset
      *
-     * @param changesetId the changeset id. >0 required.
-     * @throws IllegalArgumentException thrown if changesetId <= 0
+     * @param changesetId the changeset id. &gt; 0 required.
+     * @throws IllegalArgumentException thrown if changesetId &lt;= 0
      */
     public ChangesetContentDownloadTask(int changesetId) throws IllegalArgumentException{
         super(tr("Downloading changeset content"), false /* don't ignore exceptions */);
@@ -73,7 +73,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     }
 
     /**
-     * Creates a download task for a collection of changesets. null values and id <=0 in
+     * Creates a download task for a collection of changesets. null values and id &lt;=0 in
      * the collection are sillently discarded.
      *
      * @param changesetIds the changeset ids. Empty collection assumed, if null.
@@ -99,7 +99,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     }
 
     /**
-     * Creates a download task for a collection of changesets. null values and id <=0 in
+     * Creates a download task for a collection of changesets. null values and id &lt;=0 in
      * the collection are sillently discarded.
      *
      * @param parent the parent component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be {@code null}.
@@ -195,8 +195,6 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
             if (canceled)
                 return;
             lastException = e;
-        } catch(RuntimeException e) {
-            throw e;
         }
     }
 

@@ -10,9 +10,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
@@ -23,7 +25,6 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.ValUtil;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tests if there are segments that crosses in the same layer
@@ -32,7 +33,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class CrossingWays extends Test {
     protected static final int CROSSING_WAYS = 601;
-    
+
     private static final String HIGHWAY = "highway";
     private static final String RAILWAY = "railway";
     private static final String WATERWAY = "waterway";
@@ -44,7 +45,17 @@ public abstract class CrossingWays extends Test {
     /** The already detected ways in error */
     private Map<List<Way>, List<WaySegment>> seenWays;
 
+    /**
+     * General crossing ways test.
+     */
     public static class Ways extends CrossingWays {
+
+        /**
+         * Constructs a new crossing {@code Ways} test.
+         */
+        public Ways() {
+            super(tr("Crossing ways"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive w) {
@@ -59,10 +70,10 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            if (!Utils.equal(getLayer(w1), getLayer(w2))) {
+            if (!Objects.equals(getLayer(w1), getLayer(w2))) {
                 return true;
             }
-            if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Utils.equal(w1.get("level"), w2.get("level"))) {
+            if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Objects.equals(w1.get("level"), w2.get("level"))) {
                 return true;
             }
             if (isSubwayOrTram(w2)) {
@@ -97,7 +108,17 @@ public abstract class CrossingWays extends Test {
 
     }
 
+    /**
+     * Crossing boundaries ways test.
+     */
     public static class Boundaries extends CrossingWays {
+
+        /**
+         * Constructs a new crossing {@code Boundaries} test.
+         */
+        public Boundaries() {
+            super(tr("Crossing boundaries"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
@@ -107,7 +128,7 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            return !Utils.equal(w1.get("boundary"), w2.get("boundary"));
+            return !Objects.equals(w1.get("boundary"), w2.get("boundary"));
         }
 
         @Override
@@ -123,7 +144,17 @@ public abstract class CrossingWays extends Test {
         }
     }
 
+    /**
+     * Crossing barriers ways test.
+     */
     public static class Barrier extends CrossingWays {
+
+        /**
+         * Constructs a new crossing {@code Barrier} test.
+         */
+        public Barrier() {
+            super(tr("Crossing barriers"));
+        }
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
@@ -141,17 +172,21 @@ public abstract class CrossingWays extends Test {
         }
     }
 
-    public CrossingWays() {
-        super(tr("Crossing ways"),
-                tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
+    /**
+     * Constructs a new {@code CrossingWays} test.
+     * @param title The test title
+     * @since 6691
+     */
+    public CrossingWays(String title) {
+        super(title, tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, but are not connected by a node."));
     }
 
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        cellSegments = new HashMap<Point2D,List<WaySegment>>(1000);
-        errorSegments = new HashSet<WaySegment>();
-        seenWays = new HashMap<List<Way>, List<WaySegment>>(50);
+        cellSegments = new HashMap<>(1000);
+        errorSegments = new HashSet<>();
+        seenWays = new HashMap<>(50);
     }
 
     @Override
@@ -192,7 +227,13 @@ public abstract class CrossingWays extends Test {
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
             final WaySegment es1 = new WaySegment(w, i);
-            for (List<WaySegment> segments : getSegments(es1.getFirstNode(), es1.getSecondNode())) {
+            final EastNorth en1 = es1.getFirstNode().getEastNorth();
+            final EastNorth en2 = es1.getSecondNode().getEastNorth();
+            if (en1 == null || en2 == null) {
+                Main.warn("Crossing ways test skipped "+es1);
+                continue;
+            }
+            for (List<WaySegment> segments : getSegments(en1, en2)) {
                 for (WaySegment es2 : segments) {
                     List<Way> prims;
                     List<WaySegment> highlight;
@@ -205,7 +246,7 @@ public abstract class CrossingWays extends Test {
 
                     prims = Arrays.asList(es1.way, es2.way);
                     if ((highlight = seenWays.get(prims)) == null) {
-                        highlight = new ArrayList<WaySegment>();
+                        highlight = new ArrayList<>();
                         highlight.add(es1);
                         highlight.add(es2);
 
@@ -230,22 +271,21 @@ public abstract class CrossingWays extends Test {
      * Returns all the cells this segment crosses.  Each cell contains the list
      * of segments already processed
      *
-     * @param n1 The first node
-     * @param n2 The second node
+     * @param n1 The first EastNorth
+     * @param n2 The second EastNorth
      * @return A list with all the cells the segment crosses
      */
-    public List<List<WaySegment>> getSegments(Node n1, Node n2) {
+    public List<List<WaySegment>> getSegments(EastNorth n1, EastNorth n2) {
 
-        List<List<WaySegment>> cells = new ArrayList<List<WaySegment>>();
+        List<List<WaySegment>> cells = new ArrayList<>();
         for (Point2D cell : ValUtil.getSegmentCells(n1, n2, OsmValidator.griddetail)) {
             List<WaySegment> segments = cellSegments.get(cell);
             if (segments == null) {
-                segments = new ArrayList<WaySegment>();
+                segments = new ArrayList<>();
                 cellSegments.put(cell, segments);
             }
             cells.add(segments);
         }
         return cells;
     }
-
 }

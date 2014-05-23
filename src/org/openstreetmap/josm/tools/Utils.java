@@ -16,18 +16,20 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -40,36 +42,50 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
-import org.openstreetmap.josm.io.FileImporter;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
  */
 public final class Utils {
 
+    public static final Pattern WHITE_SPACES_PATTERN = Pattern.compile("\\s+");
+
     private Utils() {
         // Hide default constructor for utils classes
     }
 
-    /**
-     * UTF-8 (UCS Transformation Format—8-bit).
-     *
-     * <p>Every implementation of the Java platform is required to support UTF-8 (see {@link Charset}).</p>
-     */
-    public static final Charset UTF_8 = Charset.forName("UTF-8");
+    private static final int MILLIS_OF_SECOND = 1000;
+    private static final int MILLIS_OF_MINUTE = 60000;
+    private static final int MILLIS_OF_HOUR = 3600000;
+    private static final int MILLIS_OF_DAY = 86400000;
 
+    public static final String URL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
+
+    /**
+     * Tests whether {@code predicate} applies to at least one elements from {@code collection}.
+     */
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
             if (predicate.evaluate(item))
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Tests whether {@code predicate} applies to all elements from {@code collection}.
+     */
+    public static <T> boolean forAll(Iterable<? extends T> collection, Predicate<? super T> predicate) {
+        return !exists(collection, Predicates.not(predicate));
     }
 
     public static <T> boolean exists(Iterable<T> collection, Class<? extends T> klass) {
@@ -98,12 +114,15 @@ public final class Utils {
     }
 
     public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
-        return new FilteredCollection<T>(collection, predicate);
+        return new FilteredCollection<>(collection, predicate);
     }
 
     /**
      * Returns the first element from {@code items} which is non-null, or null if all elements are null.
+     * @param items the items to look for
+     * @return first non-null item if there is one
      */
+    @SafeVarargs
     public static <T> T firstNonNull(T... items) {
         for (T i : items) {
             if (i != null) {
@@ -118,7 +137,7 @@ public final class Utils {
      * This is an efficient read-only implementation.
      */
     public static <S, T extends S> SubclassFilteredCollection<S, T> filteredCollection(Collection<S> collection, final Class<T> klass) {
-        return new SubclassFilteredCollection<S, T>(collection, new Predicate<S>() {
+        return new SubclassFilteredCollection<>(collection, new Predicate<S>() {
             @Override
             public boolean evaluate(S o) {
                 return klass.isInstance(o);
@@ -153,15 +172,6 @@ public final class Utils {
 
     public static int max(int a, int b, int c, int d) {
         return Math.max(Math.max(a, b), Math.max(c, d));
-    }
-
-    /**
-     * for convenience: test whether 2 objects are either both null or a.equals(b)
-     */
-    public static <T> boolean equal(T a, T b) {
-        if (a == b)
-            return true;
-        return (a != null && a.equals(b));
     }
 
     public static void ensure(boolean condition, String message, Object...data) {
@@ -242,7 +252,7 @@ public final class Utils {
     }
 
     /**
-     * convert float range 0 <= x <= 1 to integer range 0..255
+     * convert float range 0 &lt;= x &lt;= 1 to integer range 0..255
      * when dealing with colors and color alpha value
      * @return null if val is null, the corresponding int if val is in the
      *         range 0...1. If val is outside that range, return 255
@@ -256,7 +266,8 @@ public final class Utils {
     }
 
     /**
-     * convert back
+     * convert integer range 0..255 to float range 0 &lt;= x &lt;= 1
+     * when dealing with colors and color alpha value
      */
     public static Float color_int2float(Integer val) {
         if (val == null)
@@ -282,7 +293,7 @@ public final class Utils {
         }
         return null;
     }
-    
+
     /**
      * Copies the given array. Unlike {@link Arrays#copyOf}, this method is null-safe.
      * @param array The array to copy
@@ -295,31 +306,20 @@ public final class Utils {
         }
         return null;
     }
-    
+
     /**
-     * Simple file copy function that will overwrite the target file.<br/>
-     * Taken from <a href="http://www.rgagnon.com/javadetails/java-0064.html">this article</a> (CC-NC-BY-SA)
+     * Simple file copy function that will overwrite the target file.<br>
      * @param in The source file
      * @param out The destination file
-     * @throws IOException If any I/O error occurs
+     * @return the path to the target file
+     * @throws java.io.IOException If any I/O error occurs
+     * @throws IllegalArgumentException If {@code in} or {@code out} is {@code null}
+     * @since 7003
      */
-    public static void copyFile(File in, File out) throws IOException  {
-        // TODO: remove this function when we move to Java 7 (use Files.copy instead)
-        FileInputStream inStream = null;
-        FileOutputStream outStream = null;
-        try {
-            inStream = new FileInputStream(in);
-            outStream = new FileOutputStream(out);
-            FileChannel inChannel = inStream.getChannel();
-            inChannel.transferTo(0, inChannel.size(), outStream.getChannel());
-        }
-        catch (IOException e) {
-            throw e;
-        }
-        finally {
-            close(outStream);
-            close(inStream);
-        }
+    public static Path copyFile(File in, File out) throws IOException, IllegalArgumentException  {
+        CheckParameterUtil.ensureParameterNotNull(in, "in");
+        CheckParameterUtil.ensureParameterNotNull(out, "out");
+        return Files.copy(in.toPath(), out.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static int copyStream(InputStream source, OutputStream destination) throws IOException {
@@ -348,7 +348,7 @@ public final class Utils {
     }
 
     /**
-     * <p>Utility method for closing a {@link Closeable} object.</p>
+     * <p>Utility method for closing a {@link java.io.Closeable} object.</p>
      *
      * @param c the closeable object. May be null.
      */
@@ -362,7 +362,7 @@ public final class Utils {
     }
 
     /**
-     * <p>Utility method for closing a {@link ZipFile}.</p>
+     * <p>Utility method for closing a {@link java.util.zip.ZipFile}.</p>
      *
      * @param zip the zip file. May be null.
      */
@@ -374,7 +374,7 @@ public final class Utils {
             Main.warn(e);
         }
     }
-    
+
     /**
      * Converts the given file to its URL.
      * @param f The file to get URL from
@@ -392,7 +392,7 @@ public final class Utils {
         return null;
     }
 
-    private final static double EPSILON = 1e-11;
+    private static final double EPSILON = 1e-11;
 
     /**
      * Determines if the two given double values are equal (their delta being smaller than a fixed epsilon)
@@ -445,13 +445,9 @@ public final class Utils {
         }
         try {
             if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                String text = (String) t.getTransferData(DataFlavor.stringFlavor);
-                return text;
+                return (String) t.getTransferData(DataFlavor.stringFlavor);
             }
-        } catch (UnsupportedFlavorException ex) {
-            Main.error(ex);
-            return null;
-        } catch (IOException ex) {
+        } catch (UnsupportedFlavorException | IOException ex) {
             Main.error(ex);
             return null;
         }
@@ -464,12 +460,12 @@ public final class Utils {
      * @return MD5 hash of data, string of length 32 with characters in range [0-9a-f]
      */
     public static String md5Hex(String data) {
-        byte[] byteData = data.getBytes(UTF_8);
+        byte[] byteData = data.getBytes(StandardCharsets.UTF_8);
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
         byte[] byteDigest = md.digest(byteData);
         return toHexString(byteDigest);
@@ -507,13 +503,13 @@ public final class Utils {
     /**
      * Topological sort.
      *
-     * @param dependencies contains mappings (key -> value). In the final list of sorted objects, the key will come
+     * @param dependencies contains mappings (key -&gt; value). In the final list of sorted objects, the key will come
      * after the value. (In other words, the key depends on the value(s).)
      * There must not be cyclic dependencies.
      * @return the list of sorted objects
      */
     public static <T> List<T> topologicalSort(final MultiMap<T,T> dependencies) {
-        MultiMap<T,T> deps = new MultiMap<T,T>();
+        MultiMap<T,T> deps = new MultiMap<>();
         for (T key : dependencies.keySet()) {
             deps.putVoid(key);
             for (T val : dependencies.get(key)) {
@@ -523,7 +519,7 @@ public final class Utils {
         }
 
         int size = deps.size();
-        List<T> sorted = new ArrayList<T>();
+        List<T> sorted = new ArrayList<>();
         for (int i=0; i<size; ++i) {
             T parentless = null;
             for (T key : deps.keySet()) {
@@ -561,7 +557,7 @@ public final class Utils {
 
     /**
      * Transforms the collection {@code c} into an unmodifiable collection and
-     * applies the {@link Function} {@code f} on each element upon access.
+     * applies the {@link org.openstreetmap.josm.tools.Utils.Function} {@code f} on each element upon access.
      * @param <A> class of input collection
      * @param <B> class of transformed collection
      * @param c a collection
@@ -603,7 +599,7 @@ public final class Utils {
 
     /**
      * Transforms the list {@code l} into an unmodifiable list and
-     * applies the {@link Function} {@code f} on each element upon access.
+     * applies the {@link org.openstreetmap.josm.tools.Utils.Function} {@code f} on each element upon access.
      * @param <A> class of input collection
      * @param <B> class of transformed collection
      * @param l a collection
@@ -628,33 +624,17 @@ public final class Utils {
         };
     }
 
-    /**
-     * Convert Hex String to Color.
-     * @param s Must be of the form "#34a300" or "#3f2", otherwise throws Exception.
-     * Upper/lower case does not matter.
-     * @return The corresponding color.
-     */
-    static public Color hexToColor(String s) {
-        String clr = s.substring(1);
-        if (clr.length() == 3) {
-            clr = new String(new char[] {
-                clr.charAt(0), clr.charAt(0), clr.charAt(1), clr.charAt(1), clr.charAt(2), clr.charAt(2)
-            });
-        }
-        if (clr.length() != 6)
-            throw new IllegalArgumentException();
-        return new Color(Integer.parseInt(clr, 16));
-    }
+    private static final Pattern HTTP_PREFFIX_PATTERN = Pattern.compile("https?");
 
     /**
      * Opens a HTTP connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param httpURL The HTTP url to open (must use http:// or https://)
      * @return An open HTTP connection to the given URL
-     * @throws IOException if an I/O exception occurs.
+     * @throws java.io.IOException if an I/O exception occurs.
      * @since 5587
      */
     public static HttpURLConnection openHttpConnection(URL httpURL) throws IOException {
-        if (httpURL == null || !httpURL.getProtocol().matches("https?")) {
+        if (httpURL == null || !HTTP_PREFFIX_PATTERN.matcher(httpURL.getProtocol()).matches()) {
             throw new IllegalArgumentException("Invalid HTTP url");
         }
         HttpURLConnection connection = (HttpURLConnection) httpURL.openConnection();
@@ -667,7 +647,7 @@ public final class Utils {
      * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param url The url to open
      * @return An stream for the given URL
-     * @throws IOException if an I/O exception occurs.
+     * @throws java.io.IOException if an I/O exception occurs.
      * @since 5867
      */
     public static InputStream openURL(URL url) throws IOException {
@@ -685,13 +665,73 @@ public final class Utils {
      */
     public static InputStream openURLAndDecompress(final URL url, final boolean decompress) throws IOException {
         final URLConnection connection = setupURLConnection(url.openConnection());
-        if (decompress && "application/x-gzip".equals(connection.getHeaderField("Content-Type"))) {
-            return new GZIPInputStream(connection.getInputStream());
-        } else if (decompress && "application/x-bzip2".equals(connection.getHeaderField("Content-Type"))) {
-            return FileImporter.getBZip2InputStream(new BufferedInputStream(connection.getInputStream()));
-        } else {
-            return connection.getInputStream();
+        final InputStream in = connection.getInputStream();
+        if (decompress) {
+            switch (connection.getHeaderField("Content-Type")) {
+            case "application/zip":
+                return getZipInputStream(in);
+            case "application/x-gzip":
+                return getGZipInputStream(in);
+            case "application/x-bzip2":
+                return getBZip2InputStream(in);
+            }
         }
+        return in;
+    }
+
+    /**
+     * Returns a Bzip2 input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a Bzip2 input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if the given input stream does not contain valid BZ2 header
+     * @since 7119
+     */
+    public static CBZip2InputStream getBZip2InputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        BufferedInputStream bis = new BufferedInputStream(in);
+        int b = bis.read();
+        if (b != 'B')
+            throw new IOException(tr("Invalid bz2 file."));
+        b = bis.read();
+        if (b != 'Z')
+            throw new IOException(tr("Invalid bz2 file."));
+        return new CBZip2InputStream(bis, /* see #9537 */ true);
+    }
+
+    /**
+     * Returns a Gzip input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a Gzip input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if an I/O error has occurred
+     * @since 7119
+     */
+    public static GZIPInputStream getGZipInputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        return new GZIPInputStream(in);
+    }
+
+    /**
+     * Returns a Zip input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a Zip input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if an I/O error has occurred
+     * @since 7119
+     */
+    public static ZipInputStream getZipInputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        ZipInputStream zis = new ZipInputStream(in, StandardCharsets.UTF_8);
+        // Positions the stream at the beginning of first entry
+        ZipEntry ze = zis.getNextEntry();
+        if (ze != null && Main.isDebugEnabled()) {
+            Main.debug("Zip entry: "+ze.getName());
+        }
+        return zis;
     }
 
     /***
@@ -713,7 +753,7 @@ public final class Utils {
      * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
      * @param url The url to open
      * @return An buffered stream reader for the given URL (using UTF-8)
-     * @throws IOException if an I/O exception occurs.
+     * @throws java.io.IOException if an I/O exception occurs.
      * @since 5868
      */
     public static BufferedReader openURLReader(URL url) throws IOException {
@@ -730,7 +770,7 @@ public final class Utils {
      * @since 6421
      */
     public static BufferedReader openURLReaderAndDecompress(final URL url, final boolean decompress) throws IOException {
-        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), UTF_8));
+        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), StandardCharsets.UTF_8));
     }
 
     /**
@@ -738,13 +778,20 @@ public final class Utils {
      * @param httpURL The HTTP url to open (must use http:// or https://)
      * @param keepAlive whether not to set header {@code Connection=close}
      * @return An open HTTP connection to the given URL
-     * @throws IOException if an I/O exception occurs.
+     * @throws java.io.IOException if an I/O exception occurs.
      * @since 5587
      */
     public static HttpURLConnection openHttpConnection(URL httpURL, boolean keepAlive) throws IOException {
         HttpURLConnection connection = openHttpConnection(httpURL);
         if (!keepAlive) {
             connection.setRequestProperty("Connection", "close");
+        }
+        if (Main.isDebugEnabled()) {
+            try {
+                Main.debug("REQUEST: "+ connection.getRequestProperties());
+            } catch (IllegalStateException e) {
+                Main.warn(e);
+            }
         }
         return connection;
     }
@@ -786,28 +833,31 @@ public final class Utils {
 
     /**
      * Runs an external command and returns the standard output.
-     * 
+     *
      * The program is expected to execute fast.
-     * 
+     *
      * @param command the command with arguments
      * @return the output
      * @throws IOException when there was an error, e.g. command does not exist
      */
     public static String execOutput(List<String> command) throws IOException {
-        Process p = new ProcessBuilder(command).start();
-        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        StringBuilder all = null;
-        String line;
-        while ((line = input.readLine()) != null) {
-            if (all == null) {
-                all = new StringBuilder(line);
-            } else {
-                all.append("\n");
-                all.append(line);
-            }
+        if (Main.isDebugEnabled()) {
+            Main.debug(join(" ", command));
         }
-        Utils.close(input);
-        return all.toString();
+        Process p = new ProcessBuilder(command).start();
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
+            StringBuilder all = null;
+            String line;
+            while ((line = input.readLine()) != null) {
+                if (all == null) {
+                    all = new StringBuilder(line);
+                } else {
+                    all.append("\n");
+                    all.append(line);
+                }
+            }
+            return all != null ? all.toString() : null;
+        }
     }
 
     /**
@@ -821,10 +871,8 @@ public final class Utils {
             return null;
         }
         File josmTmpDir = new File(tmpDir, "JOSM");
-        if (!josmTmpDir.exists()) {
-            if (!josmTmpDir.mkdirs()) {
-                Main.warn("Unable to create temp directory "+josmTmpDir);
-            }
+        if (!josmTmpDir.exists() && !josmTmpDir.mkdirs()) {
+            Main.warn("Unable to create temp directory "+josmTmpDir);
         }
         return josmTmpDir;
     }
@@ -833,14 +881,10 @@ public final class Utils {
      * Returns a simple human readable (hours, minutes, seconds) string for a given duration in milliseconds.
      * @param elapsedTime The duration in milliseconds
      * @return A human readable string for the given duration
-     * @throws IllegalArgumentException if elapsedTime is < 0
+     * @throws IllegalArgumentException if elapsedTime is &lt; 0
      * @since 6354
      */
     public static String getDurationString(long elapsedTime) throws IllegalArgumentException {
-        final int MILLIS_OF_SECOND = 1000;
-        final int MILLIS_OF_MINUTE = 60000;
-        final int MILLIS_OF_HOUR = 3600000;
-        final int MILLIS_OF_DAY = 86400000;
         if (elapsedTime < 0) {
             throw new IllegalArgumentException("elapsedTime must be > 0");
         }
@@ -868,7 +912,7 @@ public final class Utils {
 
     /**
      * Returns a human readable representation of a list of positions.
-     * <p/>
+     * <p>
      * For instance, {@code [1,5,2,6,7} yields "1-2,5-7
      * @param positionList a list of positions
      * @return a human readable representation
@@ -908,7 +952,7 @@ public final class Utils {
      */
     public static List<String> getMatches(final Matcher m) {
         if (m.matches()) {
-            List<String> result = new ArrayList<String>(m.groupCount() + 1);
+            List<String> result = new ArrayList<>(m.groupCount() + 1);
             for (int i = 0; i <= m.groupCount(); i++) {
                 result.add(m.group(i));
             }
@@ -951,4 +995,61 @@ public final class Utils {
         }
         return result;
     }
+
+    /**
+     * Adds the given item at the end of a new copy of given array.
+     * @param array The source array
+     * @param item The item to add
+     * @return An extended copy of {@code array} containing {@code item} as additional last element
+     * @since 6717
+     */
+    public static <T> T[] addInArrayCopy(T[] array, T item) {
+        T[] biggerCopy = Arrays.copyOf(array, array.length + 1);
+        biggerCopy[array.length] = item;
+        return biggerCopy;
+    }
+
+    /**
+     * If the string {@code s} is longer than {@code maxLength}, the string is cut and "..." is appended.
+     */
+    public static String shortenString(String s, int maxLength) {
+        if (s != null && s.length() > maxLength) {
+            return s.substring(0, maxLength - 3) + "...";
+        } else {
+            return s;
+        }
+    }
+
+    /**
+     * Fixes URL with illegal characters in the query (and fragment) part by
+     * percent encoding those characters.
+     *
+     * special characters like &amp; and # are not encoded
+     *
+     * @param url the URL that should be fixed
+     * @return the repaired URL
+     */
+    public static String fixURLQuery(String url) {
+        if (url.indexOf('?') == -1)
+            return url;
+
+        String query = url.substring(url.indexOf('?') + 1);
+
+        StringBuilder sb = new StringBuilder(url.substring(0, url.indexOf('?') + 1));
+
+        for (int i=0; i<query.length(); i++) {
+            String c = query.substring(i, i+1);
+            if (URL_CHARS.contains(c)) {
+                sb.append(c);
+            } else {
+                try {
+                    sb.append(URLEncoder.encode(c, "UTF-8"));
+                } catch (UnsupportedEncodingException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
 }

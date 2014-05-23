@@ -34,6 +34,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.gui.MapScaler;
+import org.openstreetmap.josm.gui.MapStatus;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -48,6 +49,9 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Color preferences.
+ */
 public class ColorPreference implements SubPreferenceSetting {
 
     /**
@@ -62,11 +66,11 @@ public class ColorPreference implements SubPreferenceSetting {
 
     private DefaultTableModel tableModel;
     private JTable colors;
-    private List<String> del = new ArrayList<String>();
+    private List<String> del = new ArrayList<>();
 
-    JButton colorEdit;
-    JButton defaultSet;
-    JButton remove;
+    private JButton colorEdit;
+    private JButton defaultSet;
+    private JButton remove;
 
     /**
      * Set the colors to be shown in the preference table. This method creates a table model if
@@ -87,9 +91,9 @@ public class ColorPreference implements SubPreferenceSetting {
             tableModel.removeRow(0);
         }
         // fill model with colors:
-        Map<String, String> colorKeyList = new TreeMap<String, String>();
-        Map<String, String> colorKeyList_mappaint = new TreeMap<String, String>();
-        Map<String, String> colorKeyList_layer = new TreeMap<String, String>();
+        Map<String, String> colorKeyList = new TreeMap<>();
+        Map<String, String> colorKeyList_mappaint = new TreeMap<>();
+        Map<String, String> colorKeyList_layer = new TreeMap<>();
         for (String key : colorMap.keySet()) {
             if (key.startsWith("layer ")) {
                 colorKeyList_layer.put(getName(key), key);
@@ -107,10 +111,10 @@ public class ColorPreference implements SubPreferenceSetting {
             this.colors.repaint();
         }
     }
-    
+
     private void addColorRows(Map<String, String> colorMap, Map<String, String> keyMap) {
         for (String value : keyMap.values()) {
-            Vector<Object> row = new Vector<Object>(2);
+            Vector<Object> row = new Vector<>(2);
             String html = colorMap.get(value);
             Color color = ColorHelper.html2color(html);
             if (color == null) {
@@ -129,7 +133,7 @@ public class ColorPreference implements SubPreferenceSetting {
     public Map<String, String> getColorModel() {
         String key;
         String value;
-        Map<String, String> colorMap = new HashMap<String, String>();
+        Map<String, String> colorMap = new HashMap<>();
         for(int row = 0; row < tableModel.getRowCount(); ++row) {
             key = (String)tableModel.getValueAt(row, 0);
             value = ColorHelper.color2html((Color)tableModel.getValueAt(row, 1));
@@ -138,8 +142,7 @@ public class ColorPreference implements SubPreferenceSetting {
         return colorMap;
     }
 
-    private String getName(String o)
-    {
+    private String getName(String o) {
         return Main.pref.getColorName(o);
     }
 
@@ -250,8 +253,7 @@ public class ColorPreference implements SubPreferenceSetting {
         gui.getDisplayPreference().addSubTab(this, tr("Colors"), panel);
     }
 
-    Boolean isRemoveColor(int row)
-    {
+    Boolean isRemoveColor(int row) {
         return ((String)colors.getValueAt(row, 0)).startsWith("layer ");
     }
 
@@ -267,6 +269,7 @@ public class ColorPreference implements SubPreferenceSetting {
         OsmDataLayer.getOutsideColor();
         ImageryLayer.getFadeColor();
         MapScaler.getColor();
+        MapStatus.getColors();
         ConflictDialog.getColor();
     }
 

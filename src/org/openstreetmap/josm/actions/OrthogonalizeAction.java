@@ -40,14 +40,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  * See USAGE String below.
  */
 public final class OrthogonalizeAction extends JosmAction {
-    private String USAGE = tr(
+    private static final String USAGE = tr(
             "<h3>When one or more ways are selected, the shape is adjusted such, that all angles are 90 or 180 degrees.</h3>"+
             "You can add two nodes to the selection. Then, the direction is fixed by these two reference nodes. "+
             "(Afterwards, you can undo the movement for certain nodes:<br>"+
             "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)");
 
     /**
-     * Constructor
+     * Constructs a new {@code OrthogonalizeAction}.
      */
     public OrthogonalizeAction() {
         super(tr("Orthogonalize Shape"),
@@ -71,7 +71,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Remember movements, so the user can later undo it for certain nodes
      */
-    private static final Map<Node, EastNorth> rememberMovements = new HashMap<Node, EastNorth>();
+    private static final Map<Node, EastNorth> rememberMovements = new HashMap<>();
 
     /**
      * Undo the previous orthogonalization for certain nodes.
@@ -97,7 +97,7 @@ public final class OrthogonalizeAction extends JosmAction {
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
-            final Collection<Command> commands = new LinkedList<Command>();
+            final Collection<Command> commands = new LinkedList<>();
             final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
             try {
                 for (OsmPrimitive p : sel) {
@@ -144,8 +144,8 @@ public final class OrthogonalizeAction extends JosmAction {
                 return;
         }
 
-        final List<Node> nodeList = new ArrayList<Node>();
-        final List<WayData> wayDataList = new ArrayList<WayData>();
+        final List<Node> nodeList = new ArrayList<>();
+        final List<WayData> wayDataList = new ArrayList<>();
         final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         try {
@@ -164,7 +164,7 @@ public final class OrthogonalizeAction extends JosmAction {
             else  {
                 if (nodeList.size() == 2 || nodeList.isEmpty()) {
                     OrthogonalizeAction.rememberMovements.clear();
-                    final Collection<Command> commands = new LinkedList<Command>();
+                    final Collection<Command> commands = new LinkedList<>();
 
                     if (nodeList.size() == 2) {  // fixed direction
                         commands.addAll(orthogonalize(wayDataList, nodeList));
@@ -185,7 +185,7 @@ public final class OrthogonalizeAction extends JosmAction {
             }
         } catch (InvalidUserInputException ex) {
             String msg;
-            if (ex.getMessage().equals("usage")) {
+            if ("usage".equals(ex.getMessage())) {
                 msg = "<h2>" + tr("Usage") + "</h2>" + USAGE;
             } else {
                 msg = ex.getMessage() + "<br><hr><h2>" + tr("Usage") + "</h2>" + USAGE;
@@ -201,15 +201,15 @@ public final class OrthogonalizeAction extends JosmAction {
      * Collect groups of ways with common nodes in order to orthogonalize each group separately.
      */
     private static List<List<WayData>> buildGroups(List<WayData> wayDataList) {
-        List<List<WayData>> groups = new ArrayList<List<WayData>>();
-        Set<WayData> remaining = new HashSet<WayData>(wayDataList);
+        List<List<WayData>> groups = new ArrayList<>();
+        Set<WayData> remaining = new HashSet<>(wayDataList);
         while (!remaining.isEmpty()) {
-            List<WayData> group = new ArrayList<WayData>();
+            List<WayData> group = new ArrayList<>();
             groups.add(group);
             Iterator<WayData> it = remaining.iterator();
             WayData next = it.next();
             it.remove();
-            extendGroupRec(group, next, new ArrayList<WayData>(remaining));
+            extendGroupRec(group, next, new ArrayList<>(remaining));
             remaining.removeAll(group);
         }
         return groups;
@@ -278,11 +278,11 @@ public final class OrthogonalizeAction extends JosmAction {
         } catch (RejectedAngleException ex) {
             throw new InvalidUserInputException(
                     tr("<html>Please make sure all selected ways head in a similar direction<br>"+
-                    "or orthogonalize them one by one.</html>"));
+                    "or orthogonalize them one by one.</html>"), ex);
         }
 
         // put the nodes of all ways in a set
-        final HashSet<Node> allNodes = new HashSet<Node>();
+        final HashSet<Node> allNodes = new HashSet<>();
         for (WayData w : wayDataList) {
             for (Node n : w.way.getNodes()) {
                 allNodes.add(n);
@@ -290,8 +290,8 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         // the new x and y value for each node
-        final HashMap<Node, Double> nX = new HashMap<Node, Double>();
-        final HashMap<Node, Double> nY = new HashMap<Node, Double>();
+        final HashMap<Node, Double> nX = new HashMap<>();
+        final HashMap<Node, Double> nY = new HashMap<>();
 
         // calculate the centroid of all nodes
         // it is used as rotation center
@@ -313,7 +313,7 @@ public final class OrthogonalizeAction extends JosmAction {
         final Direction[] VERTICAL = {Direction.UP, Direction.DOWN};
         final Direction[][] ORIENTATIONS = {HORIZONTAL, VERTICAL};
         for (Direction[] orientation : ORIENTATIONS){
-            final HashSet<Node> s = new HashSet<Node>(allNodes);
+            final HashSet<Node> s = new HashSet<>(allNodes);
             int s_size = s.size();
             for (int dummy = 0; dummy < s_size; ++dummy) {
                 if (s.isEmpty()) {
@@ -321,7 +321,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 }
                 final Node dummy_n = s.iterator().next();     // pick arbitrary element of s
 
-                final HashSet<Node> cs = new HashSet<Node>(); // will contain each node that can be reached from dummy_n
+                final HashSet<Node> cs = new HashSet<>(); // will contain each node that can be reached from dummy_n
                 cs.add(dummy_n);                              // walking only on horizontal / vertical segments
 
                 boolean somethingHappened = true;
@@ -380,7 +380,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         // rotate back and log the change
-        final Collection<Command> commands = new LinkedList<Command>();
+        final Collection<Command> commands = new LinkedList<>();
         for (Node n: allNodes) {
             EastNorth tmp = new EastNorth(nX.get(n), nY.get(n));
             tmp = EN.rotate_cc(pivot, tmp, headingAll);
@@ -404,13 +404,13 @@ public final class OrthogonalizeAction extends JosmAction {
      * Class contains everything we need to know about a singe way.
      */
     private static class WayData {
-        final public Way way;             // The assigned way
-        final public int nSeg;            // Number of Segments of the Way
-        final public int nNode;           // Number of Nodes of the Way
+        public final Way way;             // The assigned way
+        public final int nSeg;            // Number of Segments of the Way
+        public final int nNode;           // Number of Nodes of the Way
         public Direction[] segDirections; // Direction of the segments
         // segment i goes from node i to node (i+1)
         public EastNorth segSum;          // (Vector-)sum of all horizontal segments plus the sum of all vertical
-        //     segments turned by 90 degrees
+        // segments turned by 90 degrees
         public double heading;            // heading of segSum == approximate heading of the way
         public WayData(Way pWay) {
             way = pWay;
@@ -438,7 +438,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 try {
                     direction = direction.changeBy(angleToDirectionChange(h2 - h1, TOLERANCE1));
                 } catch (RejectedAngleException ex) {
-                    throw new InvalidUserInputException(tr("Please select ways with angles of approximately 90 or 180 degrees."));
+                    throw new InvalidUserInputException(tr("Please select ways with angles of approximately 90 or 180 degrees."), ex);
                 }
                 segDirections[i+1] = direction;
             }
@@ -517,7 +517,10 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Class contains some auxiliary functions
      */
-    private static class EN {
+    private static final class EN {
+        private EN() {
+            // Hide implicit public constructor for utility class
+        }
         // rotate counter-clock-wise
         public static EastNorth rotate_cc(EastNorth pivot, EastNorth en, double angle) {
             double cosPhi = Math.cos(angle);
@@ -572,6 +575,9 @@ public final class OrthogonalizeAction extends JosmAction {
     private static class InvalidUserInputException extends Exception {
         InvalidUserInputException(String message) {
             super(message);
+        }
+        InvalidUserInputException(String message, Throwable cause) {
+            super(message, cause);
         }
         InvalidUserInputException() {
             super();

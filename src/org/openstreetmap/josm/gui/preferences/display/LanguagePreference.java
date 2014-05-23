@@ -27,6 +27,9 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 
+/**
+ * Language preferences.
+ */
 public class LanguagePreference implements SubPreferenceSetting {
 
     /**
@@ -40,18 +43,16 @@ public class LanguagePreference implements SubPreferenceSetting {
     }
 
     /** the combo box with the available locales */
-    private JosmComboBox langCombo;
-    /** the model for the combo box */
-    private LanguageComboBoxModel model;
+    private JosmComboBox<Locale> langCombo;
 
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
-        model = new LanguageComboBoxModel();
+        LanguageComboBoxModel model = new LanguageComboBoxModel();
         // Selecting the language BEFORE the JComboBox listens to model changes speed up initialization by ~35ms (see #7386)
-        // See http://stackoverflow.com/questions/3194958/fast-replacement-for-jcombobox-basiccomboboxui
+        // See https://stackoverflow.com/questions/3194958/fast-replacement-for-jcombobox-basiccomboboxui
         model.selectLanguage(Main.pref.get("language"));
-        langCombo = new JosmComboBox(model);
-        langCombo.setRenderer(new LanguageCellRenderer(langCombo.getRenderer()));
+        langCombo = new JosmComboBox<>(model);
+        langCombo.setRenderer(new LanguageCellRenderer());
 
         LafPreference lafPreference = gui.getSetting(LafPreference.class);
         final JPanel panel = lafPreference.panel;
@@ -73,8 +74,8 @@ public class LanguagePreference implements SubPreferenceSetting {
                     ((Locale)langCombo.getSelectedItem()).toString());
     }
 
-    private static class LanguageComboBoxModel extends DefaultComboBoxModel {
-        private final List<Locale> data = new ArrayList<Locale>();
+    private static class LanguageComboBoxModel extends DefaultComboBoxModel<Locale> {
+        private final List<Locale> data = new ArrayList<>();
 
         public LanguageComboBoxModel(){
             data.add(0,null);
@@ -97,7 +98,7 @@ public class LanguagePreference implements SubPreferenceSetting {
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public Locale getElementAt(int index) {
             return data.get(index);
         }
 
@@ -107,15 +108,14 @@ public class LanguagePreference implements SubPreferenceSetting {
         }
     }
 
-    static private class LanguageCellRenderer extends DefaultListCellRenderer {
-        private ListCellRenderer dispatch;
-        public LanguageCellRenderer(ListCellRenderer dispatch) {
-            this.dispatch = dispatch;
+    private static class LanguageCellRenderer implements ListCellRenderer<Locale> {
+        private final DefaultListCellRenderer dispatch;
+        public LanguageCellRenderer() {
+            this.dispatch = new DefaultListCellRenderer();
         }
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                boolean cellHasFocus) {
-            Locale l = (Locale) value;
+        public Component getListCellRendererComponent(JList<? extends Locale> list, Locale l, 
+                int index, boolean isSelected, boolean cellHasFocus) {
             return dispatch.getListCellRendererComponent(list,
                     l == null ? tr("Default (Auto determined)") : l.getDisplayName(l),
                             index, isSelected, cellHasFocus);
