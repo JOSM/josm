@@ -11,10 +11,10 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -135,7 +135,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         if (Main.isDisplayingMapView()) {
             MapView mv = Main.map.mapView;
             LatLon pos = mv.getProjection().eastNorth2latlon(mv.getCenter());
-            final Set<ImageryInfo> inViewLayers = new HashSet<>();
+            final Set<ImageryInfo> inViewLayers = new TreeSet<>();
 
             for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
                 if (i.getBounds() != null && i.getBounds().contains(pos)) {
