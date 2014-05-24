@@ -27,14 +27,14 @@ public class JpgImporter extends FileImporter {
      * The default file filter (only *.jpg files).
      */
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
-            "jpg", "jpg", tr("Image Files") + " (*.jpg)");
+            "jpg,jpeg", "jpg", tr("Image Files") + " (*.jpg)");
 
     /**
      * An alternate file filter that also includes folders.
      * @since 5438
      */
     public static final ExtensionFileFilter FILE_FILTER_WITH_FOLDERS = new ExtensionFileFilter(
-            "jpg", "jpg", tr("Image Files") + " (*.jpg, "+ tr("folder")+")");
+            "jpg,jpeg", "jpg", tr("Image Files") + " (*.jpg, "+ tr("folder")+")");
 
     /**
      * Constructs a new {@code JpgImporter}.
