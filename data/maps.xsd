@@ -15,6 +15,13 @@
 			<xs:maxInclusive value="+180" />
 		</xs:restriction>
 	</xs:simpleType>
+	
+	<xs:simpleType name="id">
+        <!-- exclude white space characters and characters that are not valid for file names in Windows -->
+		<xs:restriction base="xs:string">
+			<xs:pattern value='[^\s/\\:*?"&lt;>|]+' />
+		</xs:restriction>
+	</xs:simpleType>
 
 	<xs:simpleType name="type">
 		<xs:restriction base="xs:string">
@@ -591,6 +598,8 @@
 					<xs:all>
 						<!-- The name of the imagery source -->
 						<xs:element name="name" minOccurs="1" maxOccurs="1" type="xs:string" />
+						<!-- A unique id for the imagery source -->
+						<xs:element name="id" minOccurs="0" maxOccurs="1" type="tns:id" />
 						<!-- The type. Can be tms, wms and html. In addition, there are the special types bing and scanex 
 							with hardcoded behaviour. -->
 						<xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
