@@ -103,7 +103,8 @@ public class WMSImagery {
 
     public String buildGetMapUrl(Collection<LayerDetails> selectedLayers, String format) {
         return buildRootUrl()
-                + "FORMAT=" + format + "&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS="
+                + "FORMAT=" + format + (imageFormatHasTransparency(format) ? "&TRANSPARENT=TRUE" : "")
+                + "&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS="
                 + Utils.join(",", Utils.transform(selectedLayers, new Utils.Function<LayerDetails, String>() {
             @Override
             public String apply(LayerDetails x) {
@@ -152,6 +153,8 @@ public class WMSImagery {
             }
         }
         String incomingData = ba.toString();
+        Main.debug("Server response to Capabilities request:");
+        Main.debug(incomingData);
 
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
@@ -219,6 +222,11 @@ public class WMSImagery {
                 || format.startsWith("image/png") && ImageIO.getImageReadersBySuffix("png").hasNext()
                 || format.startsWith("image/svg") && ImageIO.getImageReadersBySuffix("svg").hasNext()
                 || format.startsWith("image/bmp") && ImageIO.getImageReadersBySuffix("bmp").hasNext();
+    }
+    
+    static boolean imageFormatHasTransparency(final String format) {
+        return format.startsWith("image/png") || format.startsWith("image/gif") 
+                || format.startsWith("image/svg") || format.startsWith("image/tiff");
     }
 
     public ImageryInfo toImageryInfo(String name, Collection<LayerDetails> selectedLayers) {
