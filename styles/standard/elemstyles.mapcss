@@ -19,14 +19,13 @@ meta {
 
 node[fixme]::core_fixme,
 node[FIXME]::core_fixme {
-    z-index: 2;
-    icon-image: "misc/fixme.png";
-    text: auto;
+    object-z-index: 20;
+    icon-image: "misc/fixme-annotation.png";
 /*    priority="10000"*/
 }
-node[note] {
-    icon-image: "misc/note.png";
-    text: auto;
+node[note]::core_note {
+    object-z-index: 10;
+    icon-image: "misc/note-annotation.png";
 /*    priority="-100000"*/
 }
 
@@ -600,6 +599,24 @@ way[highway=path][bicycle=official][foot=official] {
     dashes: 14,14;
     dashes-background-color: foot#00ff00;
 /*    priority="200"*/
+}
+way[highway=cycleway][foot=yes],
+way[highway=path][bicycle=designated][foot=yes],
+way[highway=path][bicycle=official][foot=yes] {
+    width: 1;
+    realwidth: 2;
+    color: bicycle#b100ff;
+    dashes: 21,7;
+    dashes-background-color: foot#00ff00;
+}
+way[highway=footway][bicycle=yes],
+way[highway=path][bicycle=yes][foot=designated],
+way[highway=path][bicycle=yes][foot=official] {
+    width: 1;
+    realwidth: 2;
+    color: foot#00ff00;
+    dashes: 21,7;
+    dashes-background-color: bicycle#b100ff;
 }
 way[highway=pedestrian][area?], relation[type=multipolygon][highway=pedestrian] {
     width: 3;
