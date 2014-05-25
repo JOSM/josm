@@ -113,7 +113,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     /**
      * The minimal shift of mouse (in pixels) befire something counts as move
      */
-    private int initialMoveThreshold = 10;
+    private int initialMoveThreshold = 1;
 
     /**
      * The initial EastNorths of node1 and node2
@@ -213,7 +213,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             Main.warn(ex);
         }
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
-        initialMoveThreshold = Main.pref.getInteger("extrude.initial-move-threshold", 10);
+        initialMoveThreshold = Main.pref.getInteger("extrude.initial-move-threshold", 1);
         mainColor = Main.pref.getColor(marktr("Extrude: main line"), null);
         if (mainColor == null) mainColor = PaintColors.SELECTED.get();
         helperColor = Main.pref.getColor(marktr("Extrude: helper line"), Color.ORANGE);
