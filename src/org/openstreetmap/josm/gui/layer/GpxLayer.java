@@ -463,6 +463,8 @@ public class GpxLayer extends Layer {
         boolean colorModeDynamic = Main.pref.getBoolean("draw.rawgps.colors.dynamic", spec, false);
         int hdopfactor = Main.pref.getInteger("hdop.factor", 25);
 
+        int largePointAlpha = Main.pref.getInteger("draw.rawgps.large.alpha", -1) & 0xFF;
+
         Stroke storedStroke = g.getStroke();
         if(lineWidth != 0)
         {
@@ -745,6 +747,11 @@ public class GpxLayer extends Layer {
                     continue;
                 }
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
+                if (!hdopcircle) {
+                    // color the large GPS points like the gps lines
+                    trkPnt.customColoringTransparent = new Color(
+                        trkPnt.customColoring.getRed(), trkPnt.customColoring.getGreen(), trkPnt.customColoring.getBlue(), largePointAlpha);
+                }
                 g.setColor(trkPnt.customColoringTransparent);
                 if (hdopcircle && trkPnt.attr.get("hdop") != null) {
                     // hdop value
