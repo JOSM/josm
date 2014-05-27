@@ -5,7 +5,7 @@
 **    ant clean
 **    ant dist
 ** This will create 'josm-custom.jar' in directory 'dist'. See also
-**   https://josm.openstreetmap.de/wiki/CreateBuild
+**   https://josm.openstreetmap.de/wiki/DevelopersGuide/CreateBuild
 **
 -->
 <project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
