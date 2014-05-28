@@ -186,7 +186,7 @@ public class CustomProjection extends AbstractProjection {
                     }
                 }
                 if (!Param.paramsByKey.containsKey(key))
-                    throw new ProjectionConfigurationException(tr("Unkown parameter: ''{0}''.", key));
+                    throw new ProjectionConfigurationException(tr("Unknown parameter: ''{0}''.", key));
                 if (Param.paramsByKey.get(key).hasValue && value == null)
                     throw new ProjectionConfigurationException(tr("Value expected for parameter ''{0}''.", key));
                 if (!Param.paramsByKey.get(key).hasValue && value != null)
@@ -278,7 +278,7 @@ public class CustomProjection extends AbstractProjection {
         String datumId = parameters.get(Param.datum.key);
         if (datumId != null) {
             Datum datum = Projections.getDatum(datumId);
-            if (datum == null) throw new ProjectionConfigurationException(tr("Unkown datum identifier: ''{0}''", datumId));
+            if (datum == null) throw new ProjectionConfigurationException(tr("Unknown datum identifier: ''{0}''", datumId));
             return datum;
         }
         if (parameters.containsKey(Param.no_defs.key))
@@ -336,7 +336,7 @@ public class CustomProjection extends AbstractProjection {
         if (id == null) throw new ProjectionConfigurationException(tr("Projection required (+proj=*)"));
 
         Proj proj =  Projections.getBaseProjection(id);
-        if (proj == null) throw new ProjectionConfigurationException(tr("Unkown projection identifier: ''{0}''", id));
+        if (proj == null) throw new ProjectionConfigurationException(tr("Unknown projection identifier: ''{0}''", id));
 
         ProjParameters projParams = new ProjParameters();
 

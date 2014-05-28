@@ -61,7 +61,7 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
         String code = getCurrentCode();
         String pref = Projections.getInit(code);
         if (pref == null)
-            throw new AssertionError("Error: Unkown projection code");
+            throw new AssertionError("Error: Unknown projection code");
         return new CustomProjection(getProjectionName(), code, pref, getCacheDir());
     }
 }
