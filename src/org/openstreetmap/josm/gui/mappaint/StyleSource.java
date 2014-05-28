@@ -33,7 +33,6 @@ public abstract class StyleSource extends SourceEntry {
     public File zipIcons;
 
     private ImageIcon imageIcon;
-    private long lastMTime = 0L;
 
     /******
      * The following fields is additional information found in the header
@@ -80,7 +79,7 @@ public abstract class StyleSource extends SourceEntry {
      * @see #closeSourceInputStream(InputStream)
      */
     public abstract InputStream getSourceInputStream() throws IOException;
-    
+
     /**
      * Returns a new {@code MirroredInputStream} to the local file containing style source (can be a text file or an archive).
      * @return A new {@code MirroredInputStream} to the local file containing style source
@@ -154,13 +153,5 @@ public abstract class StyleSource extends SourceEntry {
 
     public Color getBackgroundColorOverride() {
         return null;
-    }
-
-    public long getLastMTime() {
-        return lastMTime;
-    }
-
-    public void setLastMTime(long lastMTime) {
-        this.lastMTime = lastMTime;
     }
 }
