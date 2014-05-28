@@ -87,6 +87,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
@@ -197,6 +198,11 @@ public abstract class Main {
      * The data validation handler.
      */
     public OsmValidator validator;
+
+    /**
+     * The file watcher service.
+     */
+    public static final FileWatcher fileWatcher = new FileWatcher();
 
     /**
      * The MOTD Layer.

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -205,18 +204,25 @@ public final class MapPaintStyles {
             }
         }
         for (StyleSource source : styles.getStyleSources()) {
-            final long startTime = System.currentTimeMillis();
-            source.loadStyleSource();
-            if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true) && source.isLocal()) {
-                File f = new File(source.url);
-                source.setLastMTime(f.lastModified());
-            }
-            if (Main.isDebugEnabled()) {
-                final long elapsedTime = System.currentTimeMillis() - startTime;
-                Main.debug("Initializing map style " + source.url + " completed in " + Utils.getDurationString(elapsedTime));
-            }
+            loadStyleForFirstTime(source);
         }
         fireMapPaintSylesUpdated();
+    }
+
+    private static void loadStyleForFirstTime(StyleSource source) {
+        final long startTime = System.currentTimeMillis();
+        source.loadStyleSource();
+        if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true) && source.isLocal()) {
+            try {
+                Main.fileWatcher.registerStyleSource(source);
+            } catch (IOException e) {
+                Main.error(e);
+            }
+        }
+        if (Main.isDebugEnabled()) {
+            final long elapsedTime = System.currentTimeMillis() - startTime;
+            Main.debug("Initializing map style " + source.url + " completed in " + Utils.getDurationString(elapsedTime));
+        }
     }
 
     private static StyleSource fromSourceEntry(SourceEntry entry) {
@@ -286,9 +292,9 @@ public final class MapPaintStyles {
 
     public static class MapPaintStyleLoader extends PleaseWaitRunnable {
         private boolean canceled;
-        private List<StyleSource> sources;
+        private Collection<StyleSource> sources;
 
-        public MapPaintStyleLoader(List<StyleSource> sources) {
+        public MapPaintStyleLoader(Collection<StyleSource> sources) {
             super(tr("Reloading style sources"));
             this.sources = sources;
         }
@@ -384,7 +390,7 @@ public final class MapPaintStyles {
         StyleSource source = fromSourceEntry(entry);
         if (source != null) {
             styles.add(source);
-            source.loadStyleSource();
+            loadStyleForFirstTime(source);
             MapPaintPrefHelper.INSTANCE.put(styles.getStyleSources());
             fireMapPaintSylesUpdated();
             styles.clearCached();
