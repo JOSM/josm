@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -65,7 +64,6 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -82,7 +80,7 @@ import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
-public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchListener {
+public class MapPaintDialog extends ToggleDialog {
 
     protected StylesTable tblStyles;
     protected StylesModel model;
@@ -190,47 +188,15 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
     }
 
     @Override
-    public void toOtherApplication() {
-        // nothing
-    }
-
-    @Override
-    public void fromOtherApplication() {
-        // Reload local styles when they have been changed in an external editor.
-        // Checks file modification time.
-        List<StyleSource> toReload = new ArrayList<>();
-        for (StyleSource s : MapPaintStyles.getStyles().getStyleSources()) {
-            if (s.isLocal()) {
-                File f = new File(s.url);
-                long mtime = f.lastModified();
-                if (mtime > s.getLastMTime()) {
-                    toReload.add(s);
-                    s.setLastMTime(mtime);
-                }
-            }
-        }
-        if (!toReload.isEmpty()) {
-            Main.info(trn("Reloading {0} map style.", "Reloading {0} map styles.", toReload.size(), toReload.size()));
-            Main.worker.submit(new MapPaintStyleLoader(toReload));
-        }
-    }
-
-    @Override
     public void showNotify() {
         MapPaintStyles.addMapPaintSylesUpdateListener(model);
         Main.main.menu.wireFrameToggleAction.addButtonModel(cbWireframe.getModel());
-        if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true)) {
-            Main.addWindowSwitchListener(this);
-        }
     }
 
     @Override
     public void hideNotify() {
         Main.main.menu.wireFrameToggleAction.removeButtonModel(cbWireframe.getModel());
         MapPaintStyles.removeMapPaintSylesUpdateListener(model);
-        if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true)) {
-            Main.removeWindowSwitchListener(this);
-        }
     }
 
     protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
@@ -295,10 +261,6 @@ public class MapPaintDialog extends ToggleDialog implements Main.WindowSwitchLis
             tblStyles.scrollToVisible(index, 0);
             tblStyles.repaint();
         }
-
-        /**
-         * MapPaintSylesUpdateListener interface
-         */
 
         @Override
         public void mapPaintStylesUpdated() {
