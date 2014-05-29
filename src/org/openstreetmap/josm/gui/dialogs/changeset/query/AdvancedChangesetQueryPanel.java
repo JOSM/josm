@@ -964,7 +964,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     }
 
     /**
-     * Validator for user ids entered in in a {@link JTextComponent}.
+     * Validator for user ids entered in a {@link JTextComponent}.
      *
      */
     private static class UidInputFieldValidator extends AbstractTextComponentValidator {
@@ -1040,7 +1040,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     }
 
     /**
-     * Validates dates entered as text in in a {@link JTextComponent}. Validates the input
+     * Validates dates entered as text in a {@link JTextComponent}. Validates the input
      * on the fly and gives feedback about whether the date is valid or not.
      *
      * Dates can be entered in one of four standard formats defined for the current locale.
@@ -1103,7 +1103,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     }
 
     /**
-     * Validates time values entered as text in in a {@link JTextComponent}. Validates the input
+     * Validates time values entered as text in a {@link JTextComponent}. Validates the input
      * on the fly and gives feedback about whether the time value is valid or not.
      *
      * Time values can be entered in one of four standard formats defined for the current locale.

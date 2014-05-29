@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.Proxy
 public class DefaultProxySelector extends ProxySelector {
 
     private static final List<Proxy> NO_PROXY_LIST = Collections.singletonList(Proxy.NO_PROXY);
-    
+
     private static final String IPV4_LOOPBACK = "127.0.0.1";
     private static final String IPV6_LOOPBACK = "::1";
 
@@ -92,7 +92,7 @@ public class DefaultProxySelector extends ProxySelector {
         try {
             port = Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            Main.error(tr("Unexpected format for port number in in preference ''{0}''. Got ''{1}''.", property, value));
+            Main.error(tr("Unexpected format for port number in preference ''{0}''. Got ''{1}''.", property, value));
             Main.error(tr("The proxy will not be used."));
             return 0;
         }

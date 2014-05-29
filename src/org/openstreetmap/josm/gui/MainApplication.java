@@ -545,7 +545,7 @@ public class MainApplication extends Main {
                                 "{0}" +
                                 "but <b>failed</b> to do so, because of the following network errors:<br>" +
                                 "{1}" +
-                                "It may result of a missing proxy configuration.<br>" +
+                                "It may be due to a missing proxy configuration.<br>" +
                                 "Would you like to change your proxy settings now?",
                                 Utils.joinAsHtmlUnorderedList(NETWORK_ERRORS.keySet()),
                                 Utils.joinAsHtmlUnorderedList(errors)
