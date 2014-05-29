@@ -111,6 +111,7 @@ public class ImageryReader {
             case ENTRY:
                 if (Arrays.asList(new String[] {
                         "name",
+                        "id",
                         "type",
                         "default",
                         "url",
@@ -202,6 +203,9 @@ public class ImageryReader {
                 switch(qName) {
                 case "name":
                     entry.setTranslatedName(accumulator.toString());
+                    break;
+                case "id":
+                    entry.setId(accumulator.toString());
                     break;
                 case "type":
                     boolean found = false;
