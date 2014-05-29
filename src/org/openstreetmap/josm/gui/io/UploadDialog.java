@@ -431,8 +431,8 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
             return warnUploadTag(
                     tr("Please specify a changeset source"),
                     tr("You did not specify a source for your changes.<br />" +
-                            "This is technically allowed, but it assists other users <br />" +
-                            "to understand the origins of the data.<br /><br />" +
+                            "It is technically allowed, but this information helps<br />" +
+                            "other users to understand the origins of the data.<br /><br />" +
                             "If you spend a minute now to explain your change, you will make life<br />" +
                             "easier for many other mappers."),
                     "upload_source_is_empty"
