@@ -119,6 +119,8 @@ public class FileWatcher {
                         Main.info("Map style "+style.getDisplayString()+" has been modified. Reloading style...");
                         //style.loadStyleSource();
                         Main.worker.submit(new MapPaintStyleLoader(Collections.singleton(style)));
+                    } else if (Main.isDebugEnabled()) {
+                        Main.debug("Received ENTRY_MODIFY event for unregistered file: "+fullPath);
                     }
                 }
             }
