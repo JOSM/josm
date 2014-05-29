@@ -485,7 +485,7 @@ public final class ExceptionUtil {
 
     /**
      * Explains a {@link IllegalDataException} which has caused an {@link OsmTransferException}.
-     * This is most likely happening when JOSM tries to load data in in an unsupported format.
+     * This is most likely happening when JOSM tries to load data in an unsupported format.
      *
      * @param e the exception
      */
