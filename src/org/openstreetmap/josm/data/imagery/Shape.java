@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -83,4 +84,28 @@ public class Shape {
 
         coords.add(new Coordinate(LatLon.roundToOsmPrecision(lat), LatLon.roundToOsmPrecision(lon)));
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + Objects.hashCode(this.coords);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Shape other = (Shape) obj;
+        if (!Objects.equals(this.coords, other.coords)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

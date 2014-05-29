@@ -879,8 +879,6 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
      * Initializes imagery preferences.
      */
     public static void initialize() {
-        ImageryLayerInfo.instance.clear();
-        ImageryLayerInfo.instance.loadDefaults(false);
         ImageryLayerInfo.instance.load();
         OffsetBookmark.loadBookmarks();
         Main.main.menu.imageryMenu.refreshImageryMenu();

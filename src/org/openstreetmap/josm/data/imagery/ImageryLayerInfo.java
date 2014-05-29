@@ -6,9 +6,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-
+import java.util.Set;
+import java.util.TreeSet;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.io.MirroredInputStream;
@@ -21,8 +25,10 @@ import org.xml.sax.SAXException;
 public class ImageryLayerInfo {
 
     public static final ImageryLayerInfo instance = new ImageryLayerInfo();
-    List<ImageryInfo> layers = new ArrayList<>();
-    static List<ImageryInfo> defaultLayers = new ArrayList<>();
+    private final List<ImageryInfo> layers = new ArrayList<>();
+    private final Map<String, ImageryInfo> layerIds = new HashMap<>();
+    private final static List<ImageryInfo> defaultLayers = new ArrayList<>();
+    private final static Map<String, ImageryInfo> defaultLayerIds = new HashMap<>();
 
     private static final String[] DEFAULT_LAYER_SITES = {
         Main.getJOSMWebsite()+"/maps"
@@ -37,10 +43,11 @@ public class ImageryLayerInfo {
 
     public void clear() {
         layers.clear();
+        layerIds.clear();
     }
 
     public void load() {
-        boolean addedDefault = !layers.isEmpty();
+        clear();
         List<ImageryPreferenceEntry> entries = Main.pref.getListOfStructs("imagery.entries", null, ImageryPreferenceEntry.class);
         if (entries != null) {
             for (ImageryPreferenceEntry prefEntry : entries) {
@@ -53,9 +60,7 @@ public class ImageryLayerInfo {
             }
             Collections.sort(layers);
         }
-        if (addedDefault) {
-            save();
-        }
+        loadDefaults(false);
     }
 
     /**
@@ -69,6 +74,7 @@ public class ImageryLayerInfo {
      */
     public void loadDefaults(boolean clearCache) {
         defaultLayers.clear();
+        defaultLayerIds.clear();
         for (String source : Main.pref.getCollection("imagery.layers.sites", Arrays.asList(DEFAULT_LAYER_SITES))) {
             if (clearCache) {
                 MirroredInputStream.cleanup(source);
@@ -79,22 +85,53 @@ public class ImageryLayerInfo {
                 defaultLayers.addAll(result);
             } catch (IOException ex) {
                 Main.error(ex, false);
-                continue;
             } catch (SAXException ex) {
                 Main.error(ex);
-                continue;
             }
         }
         while (defaultLayers.remove(null));
-
-        Collection<String> defaults = Main.pref.getCollection("imagery.layers.default");
-        List<String> defaultsSave = new ArrayList<>();
+        Collections.sort(defaultLayers);
+        buildIdMap(defaultLayers, defaultLayerIds);
+        updateEntriesFromDefaults();
+        buildIdMap(layers, layerIds);
+    }
+    
+    /**
+     * Build the mapping of unique ids to {@link ImageryInfo}s.
+     * @param lst input list
+     * @param idMap output map
+     */
+    private static void buildIdMap(List<ImageryInfo> lst, Map<String, ImageryInfo> idMap) {
+        idMap.clear();
+        Set<String> notUnique = new HashSet<>();
+        for (ImageryInfo i : lst) {
+            if (i.getId() != null) {
+                if (idMap.containsKey(i.getId())) {
+                    notUnique.add(i.getId());
+                    Main.error("Id ''{0}'' is not unique - used by ''{1}'' and ''{2}''!",
+                            i.getId(), i.getName(), idMap.get(i.getId()).getName());
+                    continue;
+                }
+                idMap.put(i.getId(), i);
+            }
+        }
+        for (String i : notUnique) {
+            idMap.remove(i);
+        }
+    }
+    
+    /**
+     * Update user entries according to the list of default entries.
+     */
+    public void updateEntriesFromDefaults() {
+        // add new default entries to the user selection
+        boolean changed = false;
+        Collection<String> knownDefaults = Main.pref.getCollection("imagery.layers.default");
+        Collection<String> newKnownDefaults = new TreeSet<>(knownDefaults);
         for (ImageryInfo def : defaultLayers) {
             if (def.isDefaultEntry()) {
-                defaultsSave.add(def.getUrl());
-
                 boolean isKnownDefault = false;
-                for (String url : defaults) {
+                for (String url : knownDefaults) {
                     if (isSimilar(url, def.getUrl())) {
                         isKnownDefault = true;
                         break;
@@ -102,8 +139,9 @@ public class ImageryLayerInfo {
                 }
                 boolean isInUserList = false;
                 if (!isKnownDefault) {
+                    newKnownDefaults.add(def.getUrl());
                     for (ImageryInfo i : layers) {
-                        if (isSimilar(def.getUrl(), i.getUrl())) {
+                        if (isSimilar(def, i)) {
                             isInUserList = true;
                             break;
                         }
@@ -111,19 +149,64 @@ public class ImageryLayerInfo {
                 }
                 if (!isKnownDefault && !isInUserList) {
                     add(new ImageryInfo(def));
+                    changed = true;
                 }
             }
         }
+        Main.pref.putCollection("imagery.layers.default", newKnownDefaults);
 
-        Collections.sort(defaultLayers);
-        Main.pref.putCollection("imagery.layers.default", defaultsSave.isEmpty() ? defaults : defaultsSave);
+        // Add ids to user entries without id.
+        // Only do this the first time for each id, so the user can have
+        // custom entries that don't get updated automatically
+        Collection<String> addedIds = Main.pref.getCollection("imagery.layers.addedIds");
+        Collection<String> newAddedIds = new TreeSet<>(addedIds);
+        for (ImageryInfo info : layers) {
+            for (ImageryInfo def : defaultLayers) {
+                if (isSimilar(def, info)) {
+                    if (def.getId() != null && !addedIds.contains(def.getId())) {
+                        if (!defaultLayerIds.containsKey(def.getId())) {
+                            // ignore ids used more than once (have been purged from the map)
+                            continue;
+                        }
+                        newAddedIds.add(def.getId());
+                        if (info.getId() == null) {
+                            info.setId(def.getId());
+                            changed = true;
+                        }
+                    }
+                }
+            }
+        }
+        Main.pref.putCollection("imagery.layers.migration.addedIds", newAddedIds);
+        
+        // automatically update user entries with same id as a default entry
+        for (int i=0; i<layers.size(); i++) {
+            ImageryInfo info = layers.get(i);
+            if (info.getId() == null) {
+                continue;
+            }
+            ImageryInfo matchingDefault = defaultLayerIds.get(info.getId());
+            if (matchingDefault != null && !matchingDefault.equalsPref(info)) {
+                layers.set(i, matchingDefault);
+                changed = true;
+            }
+        }
+        
+        if (changed) {
+            save();
+        }
     }
 
+    private boolean isSimilar(ImageryInfo iiA, ImageryInfo iiB) {
+        if (iiA.getId() != null && iiB.getId() != null) return iiA.getId().equals(iiB.getId());
+        return isSimilar(iiA.getUrl(), iiB.getUrl());
+    }
+    
     // some additional checks to respect extended URLs in preferences (legacy workaround)
     private boolean isSimilar(String a, String b) {
         return Objects.equals(a, b) || (a != null && b != null && !a.isEmpty() && !b.isEmpty() && (a.contains(b) || b.contains(a)));
     }
-
+    
     public void add(ImageryInfo info) {
         layers.add(info);
     }
@@ -159,5 +242,20 @@ public class ImageryLayerInfo {
         }
         instance.save();
         Collections.sort(instance.layers);
+    }
+    
+    /**
+     * Get unique id for ImageryInfo.
+     * 
+     * This takes care, that no id is used twice (due to a user error)
+     * @param info the ImageryInfo to look up
+     * @return null, if there is no id or the id is used twice,
+     * the corresponding id otherwise
+     */
+    public String getUniqueId(ImageryInfo info) {
+        if (info.getId() != null && layerIds.get(info.getId()) == info) {
+            return info.getId();
+        }
+        return null;
     }
 }

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -145,11 +146,13 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             return true;
         }
     }
-
+    
     /** name of the imagery entry (gets translated by josm usually) */
     private String name;
     /** original name of the imagery entry in case of translation call */
     private String origName;
+    /** id for this imagery entry, optional at the moment */
+    private String id;
     private String url = null;
     private boolean defaultEntry = false;
     private String cookies = null;
@@ -175,6 +178,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      */
     public static class ImageryPreferenceEntry {
         @pref String name;
+        @pref String id;
         @pref String type;
         @pref String url;
         @pref double pixel_per_eastnorth;
@@ -206,6 +210,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
          */
         public ImageryPreferenceEntry(ImageryInfo i) {
             name = i.name;
+            id = i.id;
             type = i.imageryType.getTypeString();
             url = i.url;
             pixel_per_eastnorth = i.pixelPerDegree;
@@ -248,7 +253,12 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
         @Override
         public String toString() {
-            return "ImageryPreferenceEntry [name=" + name + "]";
+            String s = "ImageryPreferenceEntry [name=" + name;
+            if (id != null) {
+                s += " id=" + id;
+            }
+            s += "]";
+            return s;
         }
     }
 
@@ -307,6 +317,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         CheckParameterUtil.ensureParameterNotNull(e.name, "name");
         CheckParameterUtil.ensureParameterNotNull(e.url, "url");
         name = e.name;
+        id = e.id;
         url = e.url;
         cookies = e.cookies;
         eulaAcceptanceRequired = e.eula;
@@ -346,6 +357,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      */
     public ImageryInfo(ImageryInfo i) {
         this.name = i.name;
+        this.id = i.id;
         this.url = i.url;
         this.defaultEntry = i.defaultEntry;
         this.cookies = i.cookies;
@@ -379,7 +391,78 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
         return true;
     }
+    
+    /**
+     * Check if this object equals another ImageryInfo with respect to the properties
+     * that get written to the preference file.
+     * 
+     * The field {@link #pixelPerDegree} is ignored.
+     * 
+     * @param other the ImageryInfo object to compare to
+     * @return true if they are equal
+     */
+    public boolean equalsPref(ImageryInfo other) {
+        if (other == null) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.url, other.url)) {
+            return false;
+        }
+        if (!Objects.equals(this.cookies, other.cookies)) {
+            return false;
+        }
+        if (!Objects.equals(this.eulaAcceptanceRequired, other.eulaAcceptanceRequired)) {
+            return false;
+        }
+        if (this.imageryType != other.imageryType) {
+            return false;
+        }
+        if (this.defaultMaxZoom != other.defaultMaxZoom) {
+            return false;
+        }
+        if (this.defaultMinZoom != other.defaultMinZoom) {
+            return false;
+        }
+        if (!Objects.equals(this.bounds, other.bounds)) {
+            return false;
+        }
+        if (!Objects.equals(this.serverProjections, other.serverProjections)) {
+            return false;
+        }
+        if (!Objects.equals(this.attributionText, other.attributionText)) {
+            return false;
+        }
+        if (!Objects.equals(this.attributionLinkURL, other.attributionLinkURL)) {
+            return false;
+        }
+        if (!Objects.equals(this.attributionImage, other.attributionImage)) {
+            return false;
+        }
+        if (!Objects.equals(this.attributionImageURL, other.attributionImageURL)) {
+            return false;
+        }
+        if (!Objects.equals(this.termsOfUseText, other.termsOfUseText)) {
+            return false;
+        }
+        if (!Objects.equals(this.termsOfUseURL, other.termsOfUseURL)) {
+            return false;
+        }
+        if (!Objects.equals(this.countryCode, other.countryCode)) {
+            return false;
+        }
+        if (!Objects.equals(this.icon, other.icon)) {
+            return false;
+        }
+        return true;
+    }
 
+    
     @Override
     public int hashCode() {
         int result = url != null ? url.hashCode() : 0;
@@ -590,6 +673,26 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     public void setTranslatedName(String name) {
         this.name = tr(name);
         this.origName = name;
+    }
+
+    /**
+     * Gets the entry id.
+     * 
+     * Id can be null. This gets the configured id as is. Due to a user error,
+     * this may not be unique. Use {@link ImageryLayerInfo#getUniqueId} to ensure
+     * a unique value.
+     * @return the id
+     */
+    public String getId() {
+        return this.id;
+    }
+
+    /**
+     * Sets the entry id.
+     * @param id the entry id
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**

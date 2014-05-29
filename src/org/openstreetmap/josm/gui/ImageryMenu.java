@@ -79,9 +79,9 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
         }
     };
 
-    private JMenuItem singleOffset = new JMenuItem(offsetAction);
+    private final JMenuItem singleOffset = new JMenuItem(offsetAction);
     private JMenuItem offsetMenuItem = singleOffset;
-    private MapRectifierWMSmenuAction rectaction = new MapRectifierWMSmenuAction();
+    private final MapRectifierWMSmenuAction rectaction = new MapRectifierWMSmenuAction();
 
     public ImageryMenu(JMenu subMenu) {
         super(tr("Imagery"));
