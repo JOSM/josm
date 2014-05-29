@@ -73,6 +73,7 @@ public class FileWatcher {
                 // Register directory. Can be called several times for a same directory without problem
                 // (it returns the same key so it should not send events several times)
                 dir.toPath().register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
+                dir.toPath().register(watcher, StandardWatchEventKinds.ENTRY_CREATE);
                 styleMap.put(file.toPath(), style);
             }
         }
@@ -120,7 +121,7 @@ public class FileWatcher {
                         //style.loadStyleSource();
                         Main.worker.submit(new MapPaintStyleLoader(Collections.singleton(style)));
                     } else if (Main.isDebugEnabled()) {
-                        Main.debug("Received ENTRY_MODIFY event for unregistered file: "+fullPath);
+                        Main.debug("Received "+kind.name()+" event for unregistered file: "+fullPath);
                     }
                 }
             }
