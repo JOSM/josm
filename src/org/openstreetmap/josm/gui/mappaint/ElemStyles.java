@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -36,8 +37,18 @@ public class ElemStyles {
         styleSources = new ArrayList<>();
     }
 
+    /**
+     * Clear the style cache for all primitives of all DataSets.
+     */
     public void clearCached() {
-        cacheIdx++;
+        // run in EDT to make sure this isn't called during rendering run 
+        // {@link org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer#render}
+        GuiHelper.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                cacheIdx++;
+            }
+        });
     }
 
     public List<StyleSource> getStyleSources() {

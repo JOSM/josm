@@ -323,7 +323,7 @@ public class MapCSSStyleSource extends StyleSource {
         if (backgroundColorOverride == null) {
             backgroundColorOverride = c.get("background-color", null, Color.class);
             if (backgroundColorOverride != null) {
-                Main.warn(tr("Detected deprecated {0} in {1} which will be removed shortly.", "canvas{background-color}", url));
+                Main.warn(tr("Detected deprecated ''{0}'' in ''{1}'' which will be removed shortly. Use ''{2}'' instead.", "canvas{background-color}", url, "fill-color"));
             }
         }
     }
