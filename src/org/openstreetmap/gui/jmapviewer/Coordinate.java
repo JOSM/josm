@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 
@@ -53,4 +54,28 @@ public class Coordinate implements Serializable, ICoordinate {
     public String toString() {
         return "Coordinate[" + data.y + ", " + data.x + "]";
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 61 * hash + Objects.hashCode(this.data);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Coordinate other = (Coordinate) obj;
+        if (!Objects.equals(this.data, other.data)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }
