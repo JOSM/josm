@@ -443,7 +443,7 @@ public final class Geometry {
 
     /**
      * Returns the Area of a polygon, from its list of nodes.
-     * @param polygon List of nodes forming polygon
+     * @param polygon List of nodes forming polygon (EastNorth coordinates)
      * @return Area for the given list of nodes
      * @since 6841
      */
@@ -460,6 +460,31 @@ public final class Geometry {
                 } else {
                     path.lineTo(en.getX(), en.getY());
                 }
+            }
+        }
+        if (!begin) {
+            path.closePath();
+        }
+
+        return new Area(path);
+    }
+    
+    /**
+     * Returns the Area of a polygon, from its list of nodes.
+     * @param polygon List of nodes forming polygon (LatLon coordinates)
+     * @return Area for the given list of nodes
+     * @since 6841
+     */
+    public static Area getAreaLatLon(List<Node> polygon) {
+        Path2D path = new Path2D.Double();
+
+        boolean begin = true;
+        for (Node n : polygon) {
+            if (begin) {
+                path.moveTo(n.getCoor().lon(), n.getCoor().lat());
+                begin = false;
+            } else {
+                path.lineTo(n.getCoor().lon(), n.getCoor().lat());
             }
         }
         if (!begin) {
@@ -489,13 +514,24 @@ public final class Geometry {
      * @since 6841
      */
     public static PolygonIntersection polygonIntersection(Area a1, Area a2) {
+        return polygonIntersection(a1, a2, 1.0);
+    }
+
+    /**
+     * Tests if two polygons intersect.
+     * @param a1 Area of first polygon
+     * @param a2 Area of second polygon
+     * @param eps an area threshold, everything below is considered an empty intersection
+     * @return intersection kind
+     */
+    public static PolygonIntersection polygonIntersection(Area a1, Area a2, double eps) {
 
         Area inter = new Area(a1);
         inter.intersect(a2);
 
         Rectangle bounds = inter.getBounds();
 
-        if (inter.isEmpty() || bounds.getHeight()*bounds.getWidth() <= 1.0) {
+        if (inter.isEmpty() || bounds.getHeight()*bounds.getWidth() <= eps) {
             return PolygonIntersection.OUTSIDE;
         } else if (inter.equals(a1)) {
             return PolygonIntersection.FIRST_INSIDE_SECOND;

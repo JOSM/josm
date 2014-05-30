@@ -402,6 +402,8 @@ public abstract class Condition {
                 return ElemStyles.hasAreaElemStyle(e.osm, false);
             case "unconnected":
                 return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
+            case "righthandtraffic":
+                return ExpressionFactory.Functions.is_right_hand_traffic(e);
             }
             return false;
         }
