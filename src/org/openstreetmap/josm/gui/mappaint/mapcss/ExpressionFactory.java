@@ -25,12 +25,14 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -619,6 +621,12 @@ public final class ExpressionFactory {
             CRC32 cs = new CRC32();
             cs.update(s.getBytes(StandardCharsets.UTF_8));
             return cs.getValue();
+        }
+        
+        public static boolean is_right_hand_traffic(Environment env) {
+            if (env.osm instanceof Node)
+                return RightAndLefthandTraffic.isRightHandTraffic(((Node) env.osm).getCoor());
+            return RightAndLefthandTraffic.isRightHandTraffic(env.osm.getBBox().getCenter());
         }
     }
 
