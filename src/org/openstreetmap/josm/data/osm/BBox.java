@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -257,6 +258,10 @@ public class BBox {
         else if (idx1 != idx4) return -1;
 
         return idx1;
+    }
+    
+    public Rectangle2D toRectangle() {
+        return new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin);
     }
 
     @Override
