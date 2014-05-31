@@ -40,7 +40,7 @@ for my $arg (@ARGV ? @ARGV : @default)
         ++$icons{$1};
       }
 
-      if($l =~ /icon-image:\s*\"?(.*?)\"?\s*;/)
+      if($l =~ /(?:icon-image|repeat-image)\s*:\s*\"?(.*?)\"?\s*;/)
       {
         my $img = "styles/standard/$1";
         $img = "styles/$1" if((!-f "images/$img") && -f "images/styles/$1");
