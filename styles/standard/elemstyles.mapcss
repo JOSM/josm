@@ -654,9 +654,11 @@ node[direction=clockwise] {
 /*    priority="10000"*/
 }
 node[highway=mini_roundabout] {
-    icon-image: "vehicle/restriction/roundabout_right.png";
-/*    icon-image: "vehicle/restriction/roundabout_left.png";*/
+    icon-image: "vehicle/restriction/roundabout_left.png";
     text: auto;
+}
+node:righthandtraffic[highway=mini_roundabout] {
+    icon-image: "vehicle/restriction/roundabout_right.png";
 }
 node[highway=stop] {
     icon-image: "vehicle/restriction/stop.png";
@@ -800,8 +802,11 @@ node[traffic_calming=cushion] {
 /****************/
 
 node[junction=roundabout] {
-    icon-image: "vehicle/restriction/roundabout_right.png";
+    icon-image: "vehicle/restriction/roundabout_left.png";
     text: auto;
+}
+node:righthandtraffic[junction=roundabout] {
+    icon-image: "vehicle/restriction/roundabout_right.png";
 }
 
 /*****************/
