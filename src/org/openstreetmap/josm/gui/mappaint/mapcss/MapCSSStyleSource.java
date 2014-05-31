@@ -384,6 +384,7 @@ public class MapCSSStyleSource extends StyleSource {
 
         for (MapCSSRule r : matchingRuleIndex.getRuleCandidates(osm)) {
             env.clearSelectorMatchingInformation();
+            env.layer = r.selector.getSubpart();
             if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                 Selector s = r.selector;
                 if (s.getRange().contains(scale)) {
