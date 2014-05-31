@@ -19,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -138,7 +139,7 @@ public final class MapPaintStyles {
 
     public static ImageIcon getNodeIcon(Tag tag, boolean includeDeprecatedIcon) {
         if (tag != null) {
-            Node virtualNode = new Node();
+            Node virtualNode = new Node(LatLon.ZERO);
             virtualNode.put(tag.getKey(), tag.getValue());
             StyleList styleList = getStyles().generateStyles(virtualNode, 0.5, null, false).a;
             if (styleList != null) {
