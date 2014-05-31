@@ -55,8 +55,8 @@ public class JoinNodeWayAction extends JosmAction {
      */
     public static JoinNodeWayAction createMoveNodeOntoWayAction() {
         JoinNodeWayAction action = new JoinNodeWayAction(true,
-                tr("Move Node onto Way"), "movewayontonode", tr("Move the node onto the nearest way segments and include it"),
-                null, true);
+                tr("Move Node onto Way"), "movenodeontoway", tr("Move the node onto the nearest way segments and include it"),
+                Shortcut.registerShortcut("tools:movenodeontoway", tr("Tool: {0}", tr("Move Node onto Way")), KeyEvent.VK_J, Shortcut.NONE), true);
         return action;
     }
 
