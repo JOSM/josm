@@ -813,20 +813,97 @@ node:righthandtraffic[junction=roundabout] {
 /* cycleway tags */
 /*****************/
 
-way[cycleway=lane]::core_cycleway,
-way[cycleway=opposite_lane]::core_cycleway {
-    object-z-index: 1;
-    width: +0;
-    color: bicycle#b100ff;
-    dashes: 8,14;
+way[oneway?][cycleway=lane]:righthandtraffic::core_cycleway,
+way[oneway=-1][cycleway=opposite_lane]:righthandtraffic::core_cycleway {
+    set lR;
+    set righthandtr;
 }
-way[cycleway=track]::core_cycleway,
-way[cycleway=opposite_track]::core_cycleway {
-    object-z-index: 1;
-    width: +0;
-    color: bicycle#b100ff;
-    dashes: 14,14;
+way[oneway?][cycleway=opposite_lane]:righthandtraffic::core_cycleway,
+way[oneway=-1][cycleway=lane]:righthandtraffic::core_cycleway {
+    set lL;
+    set righthandtr;
 }
+way[oneway?][cycleway=lane]!.righthandtr::core_cycleway,
+way[oneway=-1][cycleway=opposite_lane]!.righthandtr::core_cycleway {
+    set lL;
+}
+way[oneway?][cycleway=opposite_lane]!.righthandtr::core_cycleway,
+way[oneway=-1][cycleway=lane]!.righthandtr::core_cycleway {
+    set lR;
+}
+way[cycleway:left=lane]::core_cycleway {
+    set lL;
+}
+way[cycleway:right=lane]::core_cycleway {
+    set lR;
+}
+way[!oneway][cycleway=lane]::core_cycleway {
+    set lL;
+    set lR;
+}
+
+way[oneway?][cycleway=track]:righthandtraffic::core_cycleway,
+way[oneway=-1][cycleway=opposite_track]:righthandtraffic::core_cycleway {
+    set tR;
+    set righthandtr;
+}
+way[oneway?][cycleway=opposite_track]:righthandtraffic::core_cycleway,
+way[oneway=-1][cycleway=track]:righthandtraffic::core_cycleway {
+    set tL;
+    set righthandtr;
+}
+way[oneway?][cycleway=track]!.righthandtr::core_cycleway,
+way[oneway=-1][cycleway=opposite_track]!.righthandtr::core_cycleway {
+    set tL;
+}
+way[oneway?][cycleway=opposite_track]!.righthandtr::core_cycleway,
+way[oneway=-1][cycleway=track]!.righthandtr::core_cycleway {
+    set tR;
+}
+way[cycleway:left=track]::core_cycleway {
+    set tL;
+}
+way[cycleway:right=track]::core_cycleway {
+    set tR;
+}
+way[!oneway][cycleway=track]::core_cycleway {
+    set tL;
+    set tR;
+}
+
+way.lR::core_cycleway {
+    width: 2;
+    color: bicycle#b100ff;
+    dashes: 6, 10;
+    offset: 0 - (prop("width", "default") / 2) - 2;
+    major-z-index: 2.1;
+    modifier: true;
+}
+way[prop("lL","core_cycleway")]::core_cycleway2 {
+    width: 2;
+    color: bicycle#b100ff;
+    dashes: 6, 10;
+    offset: (prop("width", "default") / 2) + 2;
+    major-z-index: 2.1;
+    modifier: true;
+}
+way.tR::core_cycleway {
+    width: 2;
+    color: bicycle#b100ff;
+    dashes: 25, 6;
+    offset: 0 - (prop("width", "default") / 2) - 2;
+    major-z-index: 2.1;
+    modifier: true;
+}
+way[prop("tL","core_cycleway")]::core_cycleway2 {
+    width: 2;
+    color: bicycle#b100ff;
+    dashes: 25, 6;
+    offset: (prop("width", "default") / 2) + 2;
+    major-z-index: 2.1;
+    modifier: true;
+}
+
 way[cycleway=opposite]::core_cycleway {
     object-z-index: 1;
     width: +0;
