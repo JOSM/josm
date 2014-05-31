@@ -183,7 +183,7 @@ public class Test extends AbstractVisitor {
         progressMonitor = null;
         if (startTime > 0) {
             long elapsedTime = System.currentTimeMillis() - startTime;
-            Main.info(tr("Test ''{0}'' completed in {1}", getName(), Utils.getDurationString(elapsedTime)));
+            Main.debug(tr("Test ''{0}'' completed in {1}", getName(), Utils.getDurationString(elapsedTime)));
         }
     }
 
