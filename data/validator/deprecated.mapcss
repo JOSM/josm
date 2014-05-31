@@ -209,3 +209,10 @@
   throwWarning: tr("''{0}'' does not specify the official mode of transportation, use ''{1}'' for example", "access=official", "bicycle=official");
   assertMatch: "way access=official";
 }
+
+/* see #10085 - give warning for fixme=yes */
+*[fixme=yes], *[FIXME=yes] {
+  throwWarning: tr("{0}={1} is unspecific. Instead of ''{1}'' please give more information about what exactly should be fixed.", "{0.key}", "{0.value}");
+  assertMatch: "way fixme=yes";
+}
+
