@@ -3389,12 +3389,7 @@ area[sport=multi],
 area[sport=pelota],
 area[sport=racquet],
 area[sport=skating],
-area[sport=skateboard],
-area[sport=swimming],
-area[sport=skiing],
-area[sport=table_tennis],
-area[sport=tennis],
-area[sport=paintball] {
+area[sport=skateboard] {
     fill-color: sport#bde3cb;
 }
 node[sport=multi] {
@@ -3417,9 +3412,18 @@ node[sport=skateboard] {
     icon-image: "sport/skateboard.png";
     text: auto;
 }
+area[sport=swimming] {
+    fill-color: swimming_pool#51c4ef;
+}
 node[sport=swimming] {
     icon-image: "sport/pool.png";
     text: auto;
+}
+area[sport=skiing],
+area[sport=table_tennis],
+area[sport=tennis],
+area[sport=paintball] {
+    fill-color: sport#bde3cb;
 }
 node[sport=skiing] {
     icon-image: "sport/skiing.png";
