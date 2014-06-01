@@ -11,11 +11,14 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.security.Key;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.security.PrivateKey;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -31,7 +34,7 @@ import org.openstreetmap.josm.Main;
 
 /**
  * Simple HTTPS server that spawns a {@link RequestProcessor} for every secure connection.
- * 
+ *
  * @since 6941
  */
 public class RemoteControlHttpsServer extends Thread {
@@ -41,7 +44,7 @@ public class RemoteControlHttpsServer extends Thread {
 
     private static RemoteControlHttpsServer instance;
     private boolean initOK = false;
-    private SSLContext sslContext; 
+    private SSLContext sslContext;
 
     private static final String KEYSTORE_PATH = "/data/josm.keystore";
     private static final String KEYSTORE_PASSWORD = "josm_ssl";
@@ -52,39 +55,49 @@ public class RemoteControlHttpsServer extends Thread {
                 // Create new keystore
                 KeyStore ks = KeyStore.getInstance("JKS");
                 char[] password = KEYSTORE_PASSWORD.toCharArray();
-                
-                // Load keystore
+
+                // Load keystore generated with Java 7 keytool as follows:
+                // keytool -genkeypair -storepass josm_ssl -keypass josm_ssl -alias josm_localhost -dname "CN=localhost, OU=JOSM, O=OpenStreetMap"
+                // -ext san=ip:127.0.0.1 -keyalg RSA -validity 1825
                 try (InputStream in = RemoteControlHttpsServer.class.getResourceAsStream(KEYSTORE_PATH)) {
                     if (in == null) {
                         Main.error(tr("Unable to find JOSM keystore at {0}. Remote control will not be available on HTTPS.", KEYSTORE_PATH));
                     } else {
                         ks.load(in, password);
-                        
+
                         if (Main.isDebugEnabled()) {
                             for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {
                                 Main.debug("Alias in keystore: "+aliases.nextElement());
                             }
                         }
-    
+
                         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
                         kmf.init(ks, password);
-                        
+
                         TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
                         tmf.init(ks);
-                        
+
                         sslContext = SSLContext.getInstance("TLS");
                         sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-                        
+
                         if (Main.isDebugEnabled()) {
                             Main.debug("SSL Context protocol: " + sslContext.getProtocol());
                             Main.debug("SSL Context provider: " + sslContext.getProvider());
                         }
-                        
+
+                        Enumeration<String> aliases = ks.aliases();
+                        if (aliases.hasMoreElements()) {
+                            String aliasKey = aliases.nextElement();
+                            Key key = ks.getKey(aliasKey, password);
+                            Certificate[] chain = ks.getCertificateChain(aliasKey);
+                            Main.platform.setupHttpsCertificate(new KeyStore.PrivateKeyEntry((PrivateKey) key, chain));
+                        }
+
                         initOK = true;
                     }
                 }
-            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | 
-                    IOException | UnrecoverableKeyException | KeyManagementException e) {
+            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException |
+                    IOException | KeyManagementException | UnrecoverableEntryException e) {
                 Main.error(e);
             }
         }
@@ -135,22 +148,22 @@ public class RemoteControlHttpsServer extends Thread {
     public RemoteControlHttpsServer(int port) throws IOException, NoSuchAlgorithmException {
         super("RemoteControl HTTPS Server");
         this.setDaemon(true);
-        
+
         initialize();
-        
+
         // Create SSL Server factory
         SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
         if (Main.isDebugEnabled()) {
             Main.debug("SSL factory - Supported Cipher suites: "+Arrays.toString(factory.getSupportedCipherSuites()));
         }
-        
+
         // Start the server socket with only 1 connection.
         // Also make sure we only listen
         // on the local interface so nobody from the outside can connect!
         // NOTE: On a dual stack machine with old Windows OS this may not listen on both interfaces!
         this.server = factory.createServerSocket(port, 1,
             InetAddress.getByName(Main.pref.get("remote.control.host", "localhost")));
-        
+
         if (Main.isDebugEnabled() && server instanceof SSLServerSocket) {
             SSLServerSocket sslServer = (SSLServerSocket) server;
             Main.debug("SSL server - Enabled Cipher suites: "+Arrays.toString(sslServer.getEnabledCipherSuites()));
