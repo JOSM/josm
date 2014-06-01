@@ -15,6 +15,10 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
@@ -24,9 +28,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
- * see PlatformHook.java
- *
- * BTW: THIS IS A STUB. See comments below for details.
+ * {@code PlatformHook} base implementation.
  *
  * Don't write (Main.platform instanceof PlatformHookUnixoid) because other platform
  * hooks are subclasses of this class.
@@ -362,5 +364,11 @@ public class PlatformHookUnixoid implements PlatformHook {
                 }
             }
         });
+    }
+
+    @Override
+    public void setupHttpsCertificate(KeyStore.PrivateKeyEntry privateKeyEntry)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        // TODO setup HTTPS certificate on Unix systems
     }
 }
