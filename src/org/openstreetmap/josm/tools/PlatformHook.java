@@ -3,6 +3,10 @@ package org.openstreetmap.josm.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 /**
  * This interface allows platform (operating system) dependent code
@@ -101,4 +105,16 @@ public interface PlatformHook {
      * @since 5850
      */
     public String getOSDescription();
+
+    /**
+     * Setup system keystore to add JOSM HTTPS certificate (for remote control).
+     * @param privateKeyEntry the JOSM certificate for localhost and associated private key
+     * @throws KeyStoreException in case of error
+     * @throws IOException in case of error
+     * @throws CertificateException in case of error
+     * @throws NoSuchAlgorithmException in case of error
+     * @since 7206
+     */
+    public void setupHttpsCertificate(KeyStore.PrivateKeyEntry privateKeyEntry)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 }

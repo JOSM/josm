@@ -29,6 +29,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.util.Enumeration;
+
+import org.openstreetmap.josm.Main;
 
 /**
   * {@code PlatformHook} implementation for Microsoft Windows systems.
@@ -127,5 +135,24 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     public String getOSDescription() {
         return Utils.strip(System.getProperty("os.name")) + " " +
                 ((System.getenv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
+    }
+
+    @Override
+    public void setupHttpsCertificate(KeyStore.PrivateKeyEntry privateKeyEntry)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        KeyStore ks = KeyStore.getInstance("Windows-ROOT");
+        ks.load(null, null);
+        Enumeration<String> en = ks.aliases();
+        while (en.hasMoreElements()) {
+            String alias = en.nextElement();
+            Certificate c = ks.getCertificate(alias);
+            if (ks.isKeyEntry(alias) && c.equals(privateKeyEntry.getCertificate())) {
+                // JOSM certificate found, return
+                return;
+            }
+        }
+        // JOSM certificate not found, install it
+        Main.info("Adding JOSM localhost certificate to Windows-ROOT keystore");
+        ks.setEntry("josm_localhost", privateKeyEntry, new KeyStore.PasswordProtection("josm_ssl".toCharArray()));
     }
 }
