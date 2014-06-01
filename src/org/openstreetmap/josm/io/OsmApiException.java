@@ -35,9 +35,7 @@ public class OsmApiException extends OsmTransferException {
      * @param errorBody The error body, as transmitted in the HTTP response body
      */
     public OsmApiException(int responseCode, String errorHeader, String errorBody) {
-        this.responseCode = responseCode;
-        this.errorHeader = errorHeader;
-        this.errorBody = errorBody;
+        this(responseCode, errorHeader, errorBody, null);
     }
 
     /**
