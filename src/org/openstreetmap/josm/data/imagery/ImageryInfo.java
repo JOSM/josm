@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -484,7 +485,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     public int compareTo(ImageryInfo in) {
         int i = countryCode.compareTo(in.countryCode);
         if (i == 0) {
-            i = name.compareTo(in.name);
+            i = name.toLowerCase().compareTo(in.name.toLowerCase());
         }
         if (i == 0) {
             i = url.compareTo(in.url);
@@ -693,6 +694,15 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      */
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public void clearId() {
+        if (this.id != null) {
+            Collection<String> newAddedIds = new TreeSet<>(Main.pref.getCollection("imagery.layers.addedIds"));
+            newAddedIds.add(this.id);
+            Main.pref.putCollection("imagery.layers.addedIds", newAddedIds);
+        }
+        this.id = null;
     }
 
     /**
