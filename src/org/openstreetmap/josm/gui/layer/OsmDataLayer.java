@@ -1,5 +1,4 @@
 // License: GPL. See LICENSE file for details.
-
 package org.openstreetmap.josm.gui.layer;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
@@ -27,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -77,6 +77,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.FilteredCollection;
@@ -749,29 +750,41 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     @Override
     public boolean checkSaveConditions() {
         if (isDataSetEmpty()) {
-            ExtendedDialog dialog = new ExtendedDialog(
-                    Main.parent,
-                    tr("Empty document"),
-                    new String[] {tr("Save anyway"), tr("Cancel")}
-            );
-            dialog.setContent(tr("The document contains no data."));
-            dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
-            dialog.showDialog();
-            if (dialog.getValue() != 1) return false;
+            if (1 != GuiHelper.runInEDTAndWaitAndReturn(new Callable<Integer>() {
+                @Override
+                public Integer call() {
+                    ExtendedDialog dialog = new ExtendedDialog(
+                            Main.parent,
+                            tr("Empty document"),
+                            new String[] {tr("Save anyway"), tr("Cancel")}
+                    );
+                    dialog.setContent(tr("The document contains no data."));
+                    dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+                    return dialog.showDialog().getValue();
+                }
+            })) {
+                return false;
+            }
         }
 
         ConflictCollection conflicts = getConflicts();
         if (conflicts != null && !conflicts.isEmpty()) {
-            ExtendedDialog dialog = new ExtendedDialog(
-                    Main.parent,
-                    /* I18N: Display title of the window showing conflicts */
-                    tr("Conflicts"),
-                    new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
-            );
-            dialog.setContent(tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
-            dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
-            dialog.showDialog();
-            if (dialog.getValue() != 1) return false;
+            if (1 != GuiHelper.runInEDTAndWaitAndReturn(new Callable<Integer>() {
+                @Override
+                public Integer call() {
+                    ExtendedDialog dialog = new ExtendedDialog(
+                            Main.parent,
+                            /* I18N: Display title of the window showing conflicts */
+                            tr("Conflicts"),
+                            new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
+                    );
+                    dialog.setContent(tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
+                    dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+                    return dialog.showDialog().getValue();
+                }
+            })) {
+                return false;
+            }
         }
         return true;
     }
