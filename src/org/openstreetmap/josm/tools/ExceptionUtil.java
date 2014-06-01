@@ -46,6 +46,7 @@ public final class ExceptionUtil {
      * handles an exception caught during OSM API initialization
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainOsmApiInitializationException(OsmApiInitializationException e) {
         Main.error(e);
@@ -56,11 +57,6 @@ public final class ExceptionUtil {
     }
 
 
-    /**
-     *  Creates the error message
-     *
-     * @param e the exception
-     */
     public static String explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
         Main.error(e);
         return tr(
@@ -124,6 +120,7 @@ public final class ExceptionUtil {
      * Explains an upload error due to a violated precondition, i.e. a HTTP return code 412
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainPreconditionFailed(OsmApiException e) {
         Main.error(e);
@@ -311,7 +308,7 @@ public final class ExceptionUtil {
      * Explains an OSM API exception because of a client timeout (HTTP 408).
      *
      * @param e the exception
-     * @return the message
+     * @return The HTML formatted error message to display
      */
     public static String explainClientTimeout(OsmApiException e) {
         Main.error(e);
@@ -326,7 +323,7 @@ public final class ExceptionUtil {
      * Replies a generic error message for an OSM API exception
      *
      * @param e the exception
-     * @return the message
+     * @return The HTML formatted error message to display
      */
     public static String explainGenericOsmApiException(OsmApiException e) {
         Main.error(e);
@@ -353,6 +350,7 @@ public final class ExceptionUtil {
      * Explains an error due to a 409 conflict
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainConflict(OsmApiException e) {
         Main.error(e);
@@ -406,6 +404,7 @@ public final class ExceptionUtil {
      * uploaded to is already closed.
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainChangesetClosedException(ChangesetClosedException e) {
         SimpleDateFormat dateFormat = new SimpleDateFormat();
@@ -422,6 +421,7 @@ public final class ExceptionUtil {
      * Explains an exception with a generic message dialog
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainGeneric(Exception e) {
         String msg = e.getMessage();
@@ -438,8 +438,8 @@ public final class ExceptionUtil {
      * applet which wasn't loaded from the API server.
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
-
     public static String explainSecurityException(OsmTransferException e) {
         String apiUrl = e.getUrl();
         String host = tr("unknown");
@@ -460,6 +460,7 @@ public final class ExceptionUtil {
      * the remote server is not reachable.
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainNestedSocketException(OsmTransferException e) {
         Main.error(e);
@@ -473,6 +474,7 @@ public final class ExceptionUtil {
      * interrupted for any reason.
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainNestedIOException(OsmTransferException e) {
         IOException ioe = getNestedException(e, IOException.class);
@@ -488,6 +490,7 @@ public final class ExceptionUtil {
      * This is most likely happening when JOSM tries to load data in an unsupported format.
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainNestedIllegalDataException(OsmTransferException e) {
         IllegalDataException ide = getNestedException(e, IllegalDataException.class);
@@ -502,6 +505,7 @@ public final class ExceptionUtil {
      * error in the OSM API server..
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainInternalServerError(OsmTransferException e) {
         Main.error(e);
@@ -510,22 +514,34 @@ public final class ExceptionUtil {
     }
 
     /**
-     * Explains a {@link OsmApiException} which was thrown because of a bad
-     * request
+     * Explains a {@link OsmApiException} which was thrown because of a bad request.
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainBadRequest(OsmApiException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
-        String message = tr("The OSM server ''{0}'' reported a bad request.<br>", apiUrl);
-        if (e.getErrorHeader() != null &&
-                (e.getErrorHeader().startsWith("The maximum bbox") ||
-                        e.getErrorHeader().startsWith("You requested too many nodes"))) {
+        String url = null;
+        if (e.getAccessedUrl() != null) {
+            try {
+                url = new URL(e.getAccessedUrl()).getHost();
+            } catch (MalformedURLException e1) {
+                Main.warn(e1);
+            }
+        }
+        if (url == null && e.getUrl() != null) {
+            url = e.getUrl();
+        } else if (url == null) {
+            url = OsmApi.getOsmApi().getBaseUrl();
+        }
+        String message = tr("The OSM server ''{0}'' reported a bad request.<br>", url);
+        String errorHeader = e.getErrorHeader();
+        if (errorHeader != null && (errorHeader.startsWith("The maximum bbox") ||
+                        errorHeader.startsWith("You requested too many nodes"))) {
             message += "<br>"
                 + tr("The area you tried to download is too big or your request was too large."
                         + "<br>Either request a smaller area or use an export file provided by the OSM community.");
-        } else if (e.getErrorHeader() != null) {
-            message += tr("<br>Error message(untranslated): {0}", e.getErrorHeader());
+        } else if (errorHeader != null) {
+            message += tr("<br>Error message(untranslated): {0}", errorHeader);
         }
         Main.error(e);
         return "<html>" + message + "</html>";
@@ -536,6 +552,7 @@ public final class ExceptionUtil {
      * bandwidth limit exceeded (HTTP error 509)
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainBandwidthLimitExceeded(OsmApiException e) {
         Main.error(e);
@@ -547,6 +564,7 @@ public final class ExceptionUtil {
      * Explains a {@link OsmApiException} which was thrown because a resource wasn't found.
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainNotFound(OsmApiException e) {
         String apiUrl = OsmApi.getOsmApi().getBaseUrl();
@@ -565,8 +583,8 @@ public final class ExceptionUtil {
      * local DNS services are not working.
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
-
     public static String explainNestedUnknownHostException(OsmTransferException e) {
         String apiUrl = e.getUrl();
         String host = tr("unknown");
@@ -608,6 +626,7 @@ public final class ExceptionUtil {
      * Explains an {@link OsmTransferException} to the user.
      *
      * @param e the {@link OsmTransferException}
+     * @return The HTML formatted error message to display
      */
     public static String explainOsmTransferException(OsmTransferException e) {
         if (getNestedException(e, SecurityException.class) != null)
@@ -646,6 +665,7 @@ public final class ExceptionUtil {
      * {@link OsmPrimitive} is causing the error.
      *
      * @param e the exception
+     * @return The HTML formatted error message to display
      */
     public static String explainGoneForUnknownPrimitive(OsmApiException e) {
         return tr(
@@ -661,6 +681,7 @@ public final class ExceptionUtil {
      * Explains an {@link Exception} to the user.
      *
      * @param e the {@link Exception}
+     * @return The HTML formatted error message to display
      */
     public static String explainException(Exception e) {
         Main.error(e);
