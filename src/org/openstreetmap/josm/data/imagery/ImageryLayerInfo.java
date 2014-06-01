@@ -177,7 +177,7 @@ public class ImageryLayerInfo {
                 }
             }
         }
-        Main.pref.putCollection("imagery.layers.migration.addedIds", newAddedIds);
+        Main.pref.putCollection("imagery.layers.addedIds", newAddedIds);
         
         // automatically update user entries with same id as a default entry
         for (int i=0; i<layers.size(); i++) {

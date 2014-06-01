@@ -650,9 +650,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 switch (column) {
                 case 0:
                     info.setName((String) o);
+                    info.clearId();
                     break;
                 case 1:
                     info.setExtendedUrl((String)o);
+                    info.clearId();
                     break;
                 default:
                     throw new ArrayIndexOutOfBoundsException();
