@@ -505,7 +505,14 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                     continue;
                 }
-                currentTask= new SaveLayerTask(layerInfo, monitor);
+                // Check save preconditions earlier to avoid a blocking reentring call to EDT (see #10086)
+                if (layerInfo.isDoCheckSaveConditions()) {
+                    if (!layerInfo.getLayer().checkSaveConditions()) {
+                        continue;
+                    }
+                    layerInfo.setDoCheckSaveConditions(false);
+                }
+                currentTask = new SaveLayerTask(layerInfo, monitor);
                 currentFuture = worker.submit(currentTask);
 
                 try {

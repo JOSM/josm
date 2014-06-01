@@ -21,6 +21,9 @@ import java.awt.image.FilteredImageSource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 import javax.swing.GrayFilter;
 import javax.swing.Icon;
@@ -67,6 +70,12 @@ public final class GuiHelper {
         });
     }
 
+    /**
+     * Executes asynchronously a runnable in
+     * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
+     * @param task The runnable to execute
+     * @see SwingUtilities#invokeLater
+     */
     public static void runInEDT(Runnable task) {
         if (SwingUtilities.isEventDispatchThread()) {
             task.run();
@@ -75,6 +84,12 @@ public final class GuiHelper {
         }
     }
 
+    /**
+     * Executes synchronously a runnable in
+     * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
+     * @param task The runnable to execute
+     * @see SwingUtilities#invokeAndWait
+     */
     public static void runInEDTAndWait(Runnable task) {
         if (SwingUtilities.isEventDispatchThread()) {
             task.run();
@@ -83,6 +98,34 @@ public final class GuiHelper {
                 SwingUtilities.invokeAndWait(task);
             } catch (InterruptedException | InvocationTargetException e) {
                 Main.error(e);
+            }
+        }
+    }
+
+    /**
+     * Executes synchronously a callable in
+     * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>
+     * and return a value.
+     * @param callable The callable to execute
+     * @return The computed result
+     * @since 7204
+     */
+    public static <V> V runInEDTAndWaitAndReturn(Callable<V> callable) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            try {
+                return callable.call();
+            } catch (Exception e) {
+                Main.error(e);
+                return null;
+            }
+        } else {
+            FutureTask<V> task = new FutureTask<V>(callable);
+            SwingUtilities.invokeLater(task);
+            try {
+                return task.get();
+            } catch (InterruptedException | ExecutionException e) {
+                Main.error(e);
+                return null;
             }
         }
     }
