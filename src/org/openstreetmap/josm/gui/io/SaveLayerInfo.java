@@ -15,6 +15,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /** the osm data layer */
     private OsmDataLayer layer;
+    private boolean doCheckSaveConditions;
     private boolean doSaveToFile;
     private boolean doUploadToServer;
     private File file;
@@ -22,13 +23,14 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
     private UploadOrSaveState saveState;
 
     /**
-     *
+     * Constructs a new {@code SaveLayerInfo}.
      * @param layer the layer. Must not be null.
      * @throws IllegalArgumentException thrown if layer is null
      */
     public SaveLayerInfo(OsmDataLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
+        this.doCheckSaveConditions = true;
         this.doSaveToFile = layer.requiresSaveToFile();
         this.doUploadToServer = layer.requiresUploadToServer() && !layer.isUploadDiscouraged();
         this.file = layer.getAssociatedFile();
@@ -41,6 +43,26 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      */
     public OsmDataLayer getLayer() {
         return layer;
+    }
+
+    /**
+     * Replies true if preconditions should be checked before saving; false, otherwise
+     *
+     * @return true if preconditions should be checked before saving; false, otherwise
+     * @since 7204
+     */
+    public boolean isDoCheckSaveConditions() {
+        return doCheckSaveConditions;
+    }
+
+    /**
+     * Sets whether preconditions should be checked before saving
+     *
+     * @param doCheckSaveConditions true to check save preconditions; false, to skip checking
+     * @since 7204
+     */
+    public void setDoCheckSaveConditions(boolean doCheckSaveConditions) {
+        this.doCheckSaveConditions = doCheckSaveConditions;
     }
 
     /**

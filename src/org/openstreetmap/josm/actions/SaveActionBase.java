@@ -55,8 +55,18 @@ public abstract class SaveActionBase extends DiskAccessAction {
         return doInternalSave(layer, file);
     }
 
-    public static boolean doSave(Layer layer, File file) {
-        if(!layer.checkSaveConditions())
+    /**
+     * Saves a layer to a given file.
+     * @param layer The layer to save
+     * @param file The destination file
+     * @param checkSaveConditions if {@code true}, checks preconditions before saving. Set it to {@code false} to skip it
+     * if preconditions have already been checked (as this check can prompt UI dialog in EDT it may be best in some cases
+     * to do it earlier).
+     * @return {@code true} if the layer has been successfully saved, {@code false} otherwise
+     * @since 7204
+     */
+    public static boolean doSave(Layer layer, File file, boolean checkSaveConditions) {
+        if (checkSaveConditions && !layer.checkSaveConditions())
             return false;
         return doInternalSave(layer, file);
     }
