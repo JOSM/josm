@@ -340,17 +340,21 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             TaggingPreset preset = presetClassification.preset;
             presetClassification.classification = 0;
 
-            if (onlyApplicable && !preset.typeMatches(getTypesInSelection())) {
-                final Predicate<Role> memberExpressionMatchesOnePrimitive = new Predicate<Role>() {
-                    @Override
-                    public boolean evaluate(Role object) {
-                        return object.memberExpression != null && Utils.exists(Main.main.getCurrentDataSet().getSelected(), object.memberExpression);
-                    }
-                };
-                if (preset.types.contains(TaggingPresetType.RELATION) && preset.roles != null
-                        && Utils.exists(preset.roles.roles, memberExpressionMatchesOnePrimitive)) {
-                    // keep to allow the creation of new relations
-                } else {
+            if (onlyApplicable) {
+                boolean suitable = preset.typeMatches(getTypesInSelection());
+
+                if (!suitable && preset.types.contains(TaggingPresetType.RELATION) && preset.roles != null) {
+                    final Predicate<Role> memberExpressionMatchesOnePrimitive = new Predicate<Role>() {
+                        final Collection<OsmPrimitive> selected = Main.main.getCurrentDataSet().getSelected();
+                        @Override public boolean evaluate(Role object) {
+                            return object.memberExpression != null
+                                    && Utils.exists(selected, object.memberExpression);
+                        }
+                    };
+                    suitable = Utils.exists(preset.roles.roles, memberExpressionMatchesOnePrimitive);
+                    // keep the preset to allow the creation of new relations
+                }
+                if (!suitable) {
                     continue;
                 }
             }
@@ -399,9 +403,11 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
                     if (primitive instanceof Node) {
                         typesInSelection.add(TaggingPresetType.NODE);
                     } else if (primitive instanceof Way) {
-                        typesInSelection.add(TaggingPresetType.WAY);
                         if (((Way) primitive).isClosed()) {
                             typesInSelection.add(TaggingPresetType.CLOSEDWAY);
+                        } else {
+                            // closedway is not a way for preset checking, the types are mutually exclusive
+                            typesInSelection.add(TaggingPresetType.WAY);
                         }
                     } else if (primitive instanceof Relation) {
                         typesInSelection.add(TaggingPresetType.RELATION);
