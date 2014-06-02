@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -41,10 +42,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Key;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.KeyedItem;
@@ -75,7 +73,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     private JCheckBox ckSearchInTags;
     private final EnumSet<TaggingPresetType> typesInSelection = EnumSet.noneOf(TaggingPresetType.class);
     private boolean typesInSelectionDirty = true;
-    private final List<PresetClassification> classifications = new ArrayList<>();
+    private final PresetClassifications classifications = new PresetClassifications();
     private ResultListModel lsResultModel = new ResultListModel();
 
     private ActionListener dblClickListener;
@@ -116,7 +114,10 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         }
     }
 
-    private static class PresetClassification implements Comparable<PresetClassification> {
+    /**
+     * Computes the match ration of a {@link TaggingPreset} wrt. a searchString.
+     */
+    static class PresetClassification implements Comparable<PresetClassification> {
         public final TaggingPreset preset;
         public int classification;
         public int favoriteIndex;
@@ -208,7 +209,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
      */
     public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags) {
         super(new BorderLayout());
-        loadPresets(TaggingPresets.getTaggingPresets());
+        classifications.loadPresets(TaggingPresets.getTaggingPresets());
 
         edSearchText = new JosmTextField();
         edSearchText.getDocument().addDocumentListener(new DocumentListener() {
@@ -320,77 +321,116 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     private void filterPresets() {
         //TODO Save favorites to file
         String text = edSearchText.getText().toLowerCase();
-
-        String[] groupWords;
-        String[] nameWords;
-
-        if (text.contains("/")) {
-            groupWords = text.substring(0, text.lastIndexOf('/')).split("[\\s/]");
-            nameWords = text.substring(text.indexOf('/') + 1).split("\\s");
-        } else {
-            groupWords = null;
-            nameWords = text.split("\\s");
-        }
-
         boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
-        final List<PresetClassification> result = new ArrayList<>();
-        for (PresetClassification presetClassification : classifications) {
-            TaggingPreset preset = presetClassification.preset;
-            presetClassification.classification = 0;
+        final List<PresetClassification> result = classifications.getMatchingPresets(
+                text, onlyApplicable, inTags, getTypesInSelection(), Main.main.getCurrentDataSet().getSelected());
 
-            if (onlyApplicable) {
-                boolean suitable = preset.typeMatches(getTypesInSelection());
+        lsResultModel.setPresets(result);
 
-                if (!suitable && preset.types.contains(TaggingPresetType.RELATION) && preset.roles != null) {
-                    final Predicate<Role> memberExpressionMatchesOnePrimitive = new Predicate<Role>() {
-                        final Collection<OsmPrimitive> selected = Main.main.getCurrentDataSet().getSelected();
-                        @Override public boolean evaluate(Role object) {
-                            return object.memberExpression != null
-                                    && Utils.exists(selected, object.memberExpression);
-                        }
-                    };
-                    suitable = Utils.exists(preset.roles.roles, memberExpressionMatchesOnePrimitive);
-                    // keep the preset to allow the creation of new relations
+    }
+
+    /**
+     * A collection of {@link PresetClassification}s with the functionality of filtering wrt. searchString.
+     */
+    static class PresetClassifications implements Iterable<PresetClassification> {
+
+        private final List<PresetClassification> classifications = new ArrayList<>();
+
+        public List<PresetClassification> getMatchingPresets(String searchText, boolean onlyApplicable, boolean inTags, EnumSet<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
+            final String[] groupWords;
+            final String[] nameWords;
+
+            if (searchText.contains("/")) {
+                groupWords = searchText.substring(0, searchText.lastIndexOf('/')).split("[\\s/]");
+                nameWords = searchText.substring(searchText.indexOf('/') + 1).split("\\s");
+            } else {
+                groupWords = null;
+                nameWords = searchText.split("\\s");
+            }
+
+            return getMatchingPresets(groupWords, nameWords, onlyApplicable, inTags, presetTypes, selectedPrimitives);
+        }
+
+        public List<PresetClassification> getMatchingPresets(String[] groupWords, String[] nameWords, boolean onlyApplicable, boolean inTags, EnumSet<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
+
+            final List<PresetClassification> result = new ArrayList<>();
+            for (PresetClassification presetClassification : classifications) {
+                TaggingPreset preset = presetClassification.preset;
+                presetClassification.classification = 0;
+
+                if (onlyApplicable) {
+                    boolean suitable = preset.typeMatches(presetTypes);
+
+                    if (!suitable && preset.types.contains(TaggingPresetType.RELATION) && preset.roles != null && !preset.roles.roles.isEmpty()) {
+                        final Predicate<Role> memberExpressionMatchesOnePrimitive = new Predicate<Role>() {
+
+                            @Override
+                            public boolean evaluate(Role object) {
+                                return object.memberExpression != null
+                                        && Utils.exists(selectedPrimitives, object.memberExpression);
+                            }
+                        };
+                        suitable = Utils.exists(preset.roles.roles, memberExpressionMatchesOnePrimitive);
+                        // keep the preset to allow the creation of new relations
+                    }
+                    if (!suitable) {
+                        continue;
+                    }
                 }
-                if (!suitable) {
+
+                if (groupWords != null && presetClassification.isMatchingGroup(groupWords) == 0) {
                     continue;
                 }
-            }
 
-            if (groupWords != null && presetClassification.isMatchingGroup(groupWords) == 0) {
-                continue;
-            }
+                int matchName = presetClassification.isMatchingName(nameWords);
 
-            int matchName = presetClassification.isMatchingName(nameWords);
-
-            if (matchName == 0) {
-                if (groupWords == null) {
-                    int groupMatch = presetClassification.isMatchingGroup(nameWords);
-                    if (groupMatch > 0) {
-                        presetClassification.classification = CLASSIFICATION_GROUP_MATCH + groupMatch;
+                if (matchName == 0) {
+                    if (groupWords == null) {
+                        int groupMatch = presetClassification.isMatchingGroup(nameWords);
+                        if (groupMatch > 0) {
+                            presetClassification.classification = CLASSIFICATION_GROUP_MATCH + groupMatch;
+                        }
                     }
-                }
-                if (presetClassification.classification == 0 && inTags) {
-                    int tagsMatch = presetClassification.isMatchingTags(nameWords);
-                    if (tagsMatch > 0) {
-                        presetClassification.classification = CLASSIFICATION_TAGS_MATCH + tagsMatch;
+                    if (presetClassification.classification == 0 && inTags) {
+                        int tagsMatch = presetClassification.isMatchingTags(nameWords);
+                        if (tagsMatch > 0) {
+                            presetClassification.classification = CLASSIFICATION_TAGS_MATCH + tagsMatch;
+                        }
                     }
+                } else {
+                    presetClassification.classification = CLASSIFICATION_NAME_MATCH + matchName;
                 }
-            } else {
-                presetClassification.classification = CLASSIFICATION_NAME_MATCH + matchName;
+
+                if (presetClassification.classification > 0) {
+                    presetClassification.classification += presetClassification.favoriteIndex;
+                    result.add(presetClassification);
+                }
             }
 
-            if (presetClassification.classification > 0) {
-                presetClassification.classification += presetClassification.favoriteIndex;
-                result.add(presetClassification);
+            Collections.sort(result);
+            return result;
+
+        }
+
+        public void clear() {
+            classifications.clear();
+        }
+
+        public void loadPresets(Collection<TaggingPreset> presets) {
+            for (TaggingPreset preset : presets) {
+                if (preset instanceof TaggingPresetSeparator || preset instanceof TaggingPresetMenu) {
+                    continue;
+                }
+                classifications.add(new PresetClassification(preset));
             }
         }
 
-        Collections.sort(result);
-        lsResultModel.setPresets(result);
-
+        @Override
+        public Iterator<PresetClassification> iterator() {
+            return classifications.iterator();
+        }
     }
 
     private EnumSet<TaggingPresetType> getTypesInSelection() {
@@ -400,18 +440,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
                 typesInSelection.clear();
                 if (Main.main==null || Main.main.getCurrentDataSet() == null) return typesInSelection;
                 for (OsmPrimitive primitive : Main.main.getCurrentDataSet().getSelected()) {
-                    if (primitive instanceof Node) {
-                        typesInSelection.add(TaggingPresetType.NODE);
-                    } else if (primitive instanceof Way) {
-                        if (((Way) primitive).isClosed()) {
-                            typesInSelection.add(TaggingPresetType.CLOSEDWAY);
-                        } else {
-                            // closedway is not a way for preset checking, the types are mutually exclusive
-                            typesInSelection.add(TaggingPresetType.WAY);
-                        }
-                    } else if (primitive instanceof Relation) {
-                        typesInSelection.add(TaggingPresetType.RELATION);
-                    }
+                    typesInSelection.add(TaggingPresetType.forPrimitive(primitive));
                 }
             }
         }
@@ -434,7 +463,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
     public void init(Collection<TaggingPreset> presets) {
         classifications.clear();
-        loadPresets(presets);
+        classifications.loadPresets(presets);
         init();
     }
 
@@ -474,15 +503,6 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
             }
         }
         return preset;
-    }
-
-    private void loadPresets(Collection<TaggingPreset> presets) {
-        for (TaggingPreset preset: presets) {
-            if (preset instanceof TaggingPresetSeparator || preset instanceof TaggingPresetMenu) {
-                continue;
-            }
-            classifications.add(new PresetClassification(preset));
-        }
     }
 
     public void setSelectedPreset(TaggingPreset p) {
