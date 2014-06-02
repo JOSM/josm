@@ -21,6 +21,10 @@
     <condition property="clevel" value="${clevel}" else="9">
         <isset property="clevel"/>
     </condition>
+    <!-- For Windows-specific stuff -->
+    <condition property="isWindows">
+        <os family="Windows"/>
+    </condition>
     <!-- Java classpath addition (all jar files to compile tests with this) -->
     <path id="classpath">
         <fileset dir="lib">
@@ -94,7 +98,7 @@ Build-Date: ${build.tstamp}
     <!--
       ** Check internal XML files against their XSD
     -->
-    <target name="check-schemas">
+    <target name="check-schemas" unless="check-schemas.notRequired">
         <schemavalidate file="data/defaultpresets.xml" >
             <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="data/tagging-preset.xsd" />
         </schemavalidate>
@@ -198,16 +202,20 @@ Build-Date: ${build.tstamp}
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </exec>
     </target>
-    <target name="jaxb" depends="init" unless="jaxb.notRequired">
-        <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
-            <classpath>
-                <fileset dir="tools/jaxb" includes="*.jar"/>
-            </classpath>
-        </taskdef>
-        <xjc schema="data_nodist/wms-cache.xsd" destdir="${src.dir}" encoding="UTF-8">
-            <depends dir="${src.dir}/org/openstreetmap/josm/data/imagery" includes="WmsCache.java"/>
-            <produces dir="${imagerytypes.dir}" includes="*.java"/>
-        </xjc>
+    <target name="-jaxb_win" if="isWindows">
+        <property name="xjc" value="${java.home}\..\bin\xjc.exe" />
+    </target>
+    <target name="-jaxb_nix" unless="isWindows">
+        <property name="xjc" value="${java.home}/../bin/xjc" />
+    </target>
+    <target name="jaxb" depends="init, -jaxb_win, -jaxb_nix" unless="jaxb.notRequired">
+        <exec executable="${xjc}" failonerror="true">
+            <arg value="-d"/>
+            <arg value="${src.dir}"/>
+            <arg value="-encoding"/>
+            <arg value="UTF-8"/>
+            <arg value="data_nodist/wms-cache.xsd"/>
+        </exec>
     </target>
     <target name="compile" depends="init,javacc,jaxb">
         <!-- COTS -->
