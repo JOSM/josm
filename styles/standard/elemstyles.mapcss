@@ -518,8 +518,10 @@ way[highway=unclassified] {
 }
 way[highway=road] {
     width: 2;
+    casing-width: 0.5;
+    casing-color: #ff9696;
     realwidth: 5;
-    color: deprecated#ff0000;
+    color: #770000;
 }
 way[highway=unsurfaced] {
     width: 1;
