@@ -161,6 +161,21 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
         }
 
+        static final String POSSIBLE_THROWS = possibleThrows();
+
+        static final String possibleThrows() {
+            StringBuffer sb = new StringBuffer();
+            for (Severity s : Severity.values()) {
+                if (sb.length() > 0) {
+                    sb.append('/');
+                }
+                sb.append("throw")
+                .append(s.name().charAt(0))
+                .append(s.name().substring(1).toLowerCase());
+            }
+            return sb.toString();
+        }
+
         static TagCheck ofMapCSSRule(final GroupedMapCSSRule rule) {
             final TagCheck check = new TagCheck(rule);
             boolean containsSetClassExpression = false;
@@ -177,8 +192,12 @@ public class MapCSSTagChecker extends Test.TagTest {
                             ? (String) ai.val
                             : null;
                     if (ai.key.startsWith("throw")) {
-                        final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase());
-                        check.errors.put(ai, severity);
+                        try {
+                            final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase());
+                            check.errors.put(ai, severity);
+                        } catch (IllegalArgumentException e) {
+                            Main.warn("Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS);
+                        }
                     } else if ("fixAdd".equals(ai.key)) {
                         final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, false);
                         check.change.add(toTag);
@@ -202,9 +221,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
             }
             if (check.errors.isEmpty() && !containsSetClassExpression) {
-                throw new RuntimeException("No throwError/throwWarning/throwOther given! You should specify a validation error message for " + rule.selectors);
+                throw new RuntimeException("No "+POSSIBLE_THROWS+" given! You should specify a validation error message for " + rule.selectors);
             } else if (check.errors.size() > 1) {
-                throw new RuntimeException("More than one throwError/throwWarning/throwOther given! You should specify a single validation error message for " + rule.selectors);
+                throw new RuntimeException("More than one "+POSSIBLE_THROWS+" given! You should specify a single validation error message for " + rule.selectors);
             }
             return check;
         }
