@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 public class GeoJSONExporter extends FileExporter {
 
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
-            "json,geojson", "json", tr("GeoJSON Files") + " (*.json *.geojson)");
+            "geojson,json", "geojson", tr("GeoJSON Files") + " (*.geojson *.json)");
 
     /**
      * Constructs a new {@code GeoJSONExporter}.
