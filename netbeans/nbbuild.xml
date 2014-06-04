@@ -13,6 +13,10 @@
     <property name="javacc.home" location="../tools"/>
     <property name="mapcss.dir" location="../src/org/openstreetmap/josm/gui/mappaint/mapcss"/>
     <property name="imagerytypes.dir" location="${src.dir}/org/openstreetmap/josm/data/imagery/types"/>
+    <!-- For Windows-specific stuff -->
+    <condition property="isWindows">
+        <os family="Windows"/>
+    </condition>
 
     <import file="nbproject/build-impl.xml"/>
     <!--
@@ -104,6 +108,9 @@ Build-Date: ${build.tstamp}
         <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
             <srcfiles dir="${mapcss.dir}" includes="MapCSSParser.jj"/>
         </uptodate>
+        <uptodate property="jaxb.notRequired" targetfile="${src.dir}/org/openstreetmap/josm/data/imagery/types/package-info.java" >
+            <srcfiles dir="../data_nodist" includes="wms-cache.xsd"/>
+        </uptodate>
     </target>	
     <target name="javacc" depends="check-javacc" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
@@ -119,18 +126,21 @@ Build-Date: ${build.tstamp}
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </exec>
     </target>
-    <target name="jaxb" depends="init" unless="jaxb.notRequired">
-        <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
-            <classpath>
-                <fileset dir="${src.dir}/../tools/jaxb" includes="*.jar"/>
-            </classpath>
-        </taskdef>
-        <xjc schema="../data_nodist/wms-cache.xsd" destdir="${src.dir}" encoding="UTF-8">
-            <depends dir="${src.dir}/org/openstreetmap/josm/data/imagery" includes="WmsCache.java"/>
-            <produces dir="${imagerytypes.dir}" includes="*.java"/>
-        </xjc>
+    <target name="-jaxb_win" if="isWindows">
+        <property name="xjc" value="${java.home}\..\bin\xjc.exe" />
     </target>
-
+    <target name="-jaxb_nix" unless="isWindows">
+        <property name="xjc" value="${java.home}/../bin/xjc" />
+    </target>
+    <target name="jaxb" depends="init, -jaxb_win, -jaxb_nix" unless="jaxb.notRequired">
+        <exec executable="${xjc}" failonerror="true">
+            <arg value="-d"/>
+            <arg value="${src.dir}"/>
+            <arg value="-encoding"/>
+            <arg value="UTF-8"/>
+            <arg value="../data_nodist/wms-cache.xsd"/>
+        </exec>
+    </target>
     <target name="-pre-compile" depends="javacc,jaxb">
 <!--        <javacc target="${mapcss.dir}/MapCSSParser.jj" javacchome="${javacc.home}" outputdirectory="${mapcss.dir}/parsergen"/>-->
     </target>    
