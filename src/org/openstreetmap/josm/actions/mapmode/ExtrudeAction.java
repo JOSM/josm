@@ -8,14 +8,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
+import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -28,8 +31,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -42,6 +53,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -62,7 +74,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     private Mode mode = Mode.select;
 
     /**
-     * If true, when extruding create new node even if segments parallel.
+     * If {@code true}, when extruding create new node(s) even if segments are parallel.
      */
     private boolean alwaysCreateNodes = false;
     private boolean nodeDragWithoutCtrl;
@@ -94,7 +106,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     /**
      * Collection of nodes that is moved
      */
-    private Collection<OsmPrimitive> movingNodeList;
+    private ArrayList<OsmPrimitive> movingNodeList;
 
     /**
      * The direction that is currently active.
@@ -130,6 +142,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * the command that performed last move.
      */
     private MoveCommand moveCommand;
+    /**
+     *  The command used for dual alignment movement.
+     *  Needs to be separate, due to two nodes moving in different directions.
+     */
+    private MoveCommand moveCommand2;
 
     /** The cursor for the 'create_new' mode. */
     private final Cursor cursorCreateNew;
@@ -152,28 +169,41 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             this.p2 = p2;
             this.perpendicular = perpendicular;
         }
+
+        @Override
+        public String toString() {
+            return "ReferenceSegment[en=" + en + ", p1=" + p1 + ", p2=" + p2 + ", perp=" + perpendicular + "]";
+        }
+    }
+
+    // Dual alignment mode stuff
+    /** {@code true}, if dual alignment mode is enabled. User wants following extrude to be dual aligned. */
+    private boolean dualAlignEnabled;
+    /** {@code true}, if dual alignment is active. User is dragging the mouse, required conditions are met. Treat {@link #mode} (extrude/translate/create_new) as dual aligned. */
+    private boolean dualAlignActive;
+    /** Dual alignment reference segments */
+    private ReferenceSegment dualAlignSegment1, dualAlignSegment2;
+    // Dual alignment UI stuff
+    private final DualAlignChangeAction dualAlignChangeAction;
+    private final JCheckBoxMenuItem dualAlignCheckboxMenuItem;
+    private final Shortcut dualAlignShortcut;
+    private boolean useRepeatedShortcut;
+
+    private class DualAlignChangeAction extends JosmAction {
+        public DualAlignChangeAction() {
+            super(tr("Dual alignment"), "mapmode/extrude/dualalign",
+                    tr("Switch dual alignment mode while extruding"), null, false);
+            putValue("help", ht("/Action/Extrude#DualAlign"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            toggleDualAlign();
+        }
     }
 
     /**
-     * This listener is used to indicate the 'create_new' mode, if the Alt modifier is pressed.
-     */
-    private final AWTEventListener altKeyListener = new AWTEventListener() {
-        @Override
-        public void eventDispatched(AWTEvent e) {
-            if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable())
-                return;
-            InputEvent ie = (InputEvent) e;
-            boolean alt = (ie.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
-            boolean ctrl = (ie.getModifiers() & (ActionEvent.CTRL_MASK)) != 0;
-            boolean shift = (ie.getModifiers() & (ActionEvent.SHIFT_MASK)) != 0;
-            if (mode == Mode.select) {
-                Main.map.mapView.setNewCursor(ctrl ? cursorTranslate : alt ? cursorCreateNew : shift ? cursorCreateNodes : cursor, this);
-            }
-        }
-    };
-
-    /**
-     * Create a new SelectAction
+     * Creates a new ExtrudeAction
      * @param mapFrame The MapFrame this action belongs to.
      */
     public ExtrudeAction(MapFrame mapFrame) {
@@ -185,25 +215,81 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         cursorCreateNew = ImageProvider.getCursor("normal", "rectangle_plus");
         cursorTranslate = ImageProvider.getCursor("normal", "rectangle_move");
         cursorCreateNodes = ImageProvider.getCursor("normal", "rectangle_plussmall");
+
+        dualAlignEnabled = false;
+        dualAlignChangeAction = new DualAlignChangeAction();
+        dualAlignCheckboxMenuItem = addDualAlignMenuItem();
+        dualAlignCheckboxMenuItem.getAction().setEnabled(false);
+        dualAlignCheckboxMenuItem.setState(dualAlignEnabled);
+        dualAlignShortcut = Shortcut.registerShortcut("mapmode:extrudedualalign",
+                tr("Mode: {0}", tr("Extrude Dual alignment")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
+        useRepeatedShortcut = Main.pref.getBoolean("extrude.dualalign.toggleOnRepeatedX", true);
+        timer = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                timer.stop();
+                if (set.remove(releaseEvent.getKeyCode())) {
+                    doKeyReleaseEvent(releaseEvent);
+                }
+            }
+        });
     }
 
-    @Override public String getModeHelpText() {
-        if (mode == Mode.translate)
-            return tr("Move a segment along its normal, then release the mouse button.");
-        else if (mode == Mode.extrude)
-            return tr("Draw a rectangle of the desired size, then release the mouse button.");
-        else if (mode == Mode.create_new)
-            return tr("Draw a rectangle of the desired size, then release the mouse button.");
-        else
-            return tr("Drag a way segment to make a rectangle. Ctrl-drag to move a segment along its normal, " +
-            "Alt-drag to create a new rectangle, double click to add a new node.");
+    @Override
+    public void destroy() {
+        super.destroy();
+        dualAlignChangeAction.destroy();
     }
 
-    @Override public boolean layerIsSupported(Layer l) {
+    private JCheckBoxMenuItem addDualAlignMenuItem() {
+        int n = Main.main.menu.editMenu.getItemCount();
+        for (int i = n-1; i>0; i--) {
+            JMenuItem item = Main.main.menu.editMenu.getItem(i);
+            if (item != null && item.getAction() != null && item.getAction() instanceof DualAlignChangeAction) {
+                Main.main.menu.editMenu.remove(i);
+            }
+        }
+        return MainMenu.addWithCheckbox(Main.main.menu.editMenu, dualAlignChangeAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+    }
+
+    // -------------------------------------------------------------------------
+    // Mode methods
+    // -------------------------------------------------------------------------
+
+    @Override
+    public String getModeHelpText() {
+        StringBuilder rv;
+        if (mode == Mode.select) {
+            rv = new StringBuilder(tr("Drag a way segment to make a rectangle. Ctrl-drag to move a segment along its normal, " +
+                "Alt-drag to create a new rectangle, double click to add a new node."));
+            if (dualAlignEnabled)
+                rv.append(" ").append(tr("Dual alignment active."));
+        } else {
+            if (mode == Mode.translate)
+                rv = new StringBuilder(tr("Move a segment along its normal, then release the mouse button."));
+            else if (mode == Mode.translate_node)
+                rv = new StringBuilder(tr("Move the node along one of the segments, then release the mouse button."));
+            else if (mode == Mode.extrude)
+                rv = new StringBuilder(tr("Draw a rectangle of the desired size, then release the mouse button."));
+            else if (mode == Mode.create_new)
+                rv = new StringBuilder(tr("Draw a rectangle of the desired size, then release the mouse button."));
+            else {
+                Main.warn("Extrude: unknown mode " + mode);
+                rv = new StringBuilder();
+            }
+            if (dualAlignActive)
+                rv.append(" ").append(tr("Dual alignment active."));
+        }
+        return rv.toString();
+    }
+
+    @Override
+    public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
     }
 
-    @Override public void enterMode() {
+    @Override
+    public void enterMode() {
         super.enterMode();
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
@@ -225,12 +311,15 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         mainStroke = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.stroke.main", "3"));
 
         ignoreSharedNodes = Main.pref.getBoolean("extrude.ignore-shared-nodes", true);
+        dualAlignCheckboxMenuItem.getAction().setEnabled(true);
     }
 
-    @Override public void exitMode() {
+    @Override
+    public void exitMode() {
         Main.map.mapView.removeMouseListener(this);
         Main.map.mapView.removeMouseMotionListener(this);
         Main.map.mapView.removeTemporaryLayer(this);
+        dualAlignCheckboxMenuItem.getAction().setEnabled(false);
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(altKeyListener);
         } catch (SecurityException ex) {
@@ -239,11 +328,90 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         super.exitMode();
     }
 
+    // -------------------------------------------------------------------------
+    // Event handlers
+    // -------------------------------------------------------------------------
+
     /**
-     * If the left mouse button is pressed over a segment, switch
-     * to either extrude, translate or create_new mode depending on whether Ctrl or Alt is held.
+     * This listener is used to indicate different modes via cursor when the Alt/Ctrl/Shift modifier is pressed,
+     * and for listening to dual alignment shortcuts.
      */
-    @Override public void mousePressed(MouseEvent e) {
+    private final AWTEventListener altKeyListener = new AWTEventListener() {
+        @Override
+        public void eventDispatched(AWTEvent e) {
+            if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable())
+                return;
+            InputEvent ie = (InputEvent) e;
+            boolean alt = (ie.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
+            boolean ctrl = (ie.getModifiers() & (ActionEvent.CTRL_MASK)) != 0;
+            boolean shift = (ie.getModifiers() & (ActionEvent.SHIFT_MASK)) != 0;
+            if (mode == Mode.select) {
+                Main.map.mapView.setNewCursor(ctrl ? cursorTranslate : alt ? cursorCreateNew : shift ? cursorCreateNodes : cursor, this);
+            }
+            if (e instanceof KeyEvent) {
+                KeyEvent ke = (KeyEvent) e;
+                if (dualAlignShortcut.isEvent(ke) || (useRepeatedShortcut && getShortcut().isEvent(ke))) {
+                    Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+                    if (SwingUtilities.getWindowAncestor(focused) instanceof JFrame) {
+                        processKeyEvent(ke);
+                    }
+                }
+            }
+        }
+    };
+
+    // events for crossplatform key holding processing
+    // thanks to http://www.arco.in-berlin.de/keyevent.html
+    private final Set<Integer> set = new TreeSet<Integer>();
+    private KeyEvent releaseEvent;
+    private Timer timer;
+    private void processKeyEvent(KeyEvent e) {
+        if (!dualAlignShortcut.isEvent(e) && !(useRepeatedShortcut && getShortcut().isEvent(e)))
+            return;
+
+        if (e.getID() == KeyEvent.KEY_PRESSED) {
+            if (timer.isRunning()) {
+                timer.stop();
+            } else if (set.add((e.getKeyCode()))) {
+                doKeyPressEvent(e);
+            }
+        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
+            if (timer.isRunning()) {
+                timer.stop();
+                if (set.remove(e.getKeyCode())) {
+                    doKeyReleaseEvent(e);
+                }
+            } else {
+                releaseEvent = e;
+                timer.restart();
+            }
+        }
+    }
+
+    private void doKeyPressEvent(KeyEvent e) {
+    }
+
+    private void doKeyReleaseEvent(KeyEvent e) {
+        toggleDualAlign();
+    }
+
+    /**
+     * Toggles dual alignment mode.
+     */
+    private void toggleDualAlign() {
+        dualAlignEnabled = !dualAlignEnabled;
+        dualAlignCheckboxMenuItem.setState(dualAlignEnabled);
+        updateStatusLine();
+    }
+
+    /**
+     * If the left mouse button is pressed over a segment or a node, switches
+     * to appropriate {@link #mode}, depending on Ctrl/Alt/Shift modifiers and
+     * {@link #dualAlignEnabled}.
+     * @param e
+     */
+    @Override
+    public void mousePressed(MouseEvent e) {
         if(!Main.map.mapView.isActiveLayerVisible())
             return;
         if (!(Boolean)this.getValue("active"))
@@ -270,9 +438,17 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     return;
                 }
                 mode = Mode.translate_node;
+                dualAlignActive = false;
             }
         } else {
             // Otherwise switch to another mode
+            if (dualAlignEnabled && checkDualAlignConditions()) {
+                dualAlignActive = true;
+                calculatePossibleDirectionsForDualAlign();
+            } else {
+                dualAlignActive = false;
+                calculatePossibleDirectionsBySegment();
+            }
             if (ctrl) {
                 mode = Mode.translate;
                 movingNodeList = new ArrayList<>();
@@ -288,13 +464,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 getCurrentDataSet().setSelected(selectedSegment.way);
                 alwaysCreateNodes = shift;
             }
-            calculatePossibleDirectionsBySegment();
         }
 
         // Signifies that nothing has happened yet
         newN1en = null;
         newN2en = null;
         moveCommand = null;
+        moveCommand2 = null;
 
         Main.map.mapView.addTemporaryLayer(this);
 
@@ -309,9 +485,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
    }
 
     /**
-     * Perform action depending on what mode we're in.
+     * Performs action depending on what {@link #mode} we're in.
+     * @param e
      */
-    @Override public void mouseDragged(MouseEvent e) {
+    @Override
+    public void mouseDragged(MouseEvent e) {
         if(!Main.map.mapView.isActiveLayerVisible())
             return;
 
@@ -326,28 +504,52 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
             EastNorth mouseEn = Main.map.mapView.getEastNorth(e.getPoint().x, e.getPoint().y);
             EastNorth bestMovement = calculateBestMovement(mouseEn);
-
-            newN1en = new EastNorth(initialN1en.getX() + bestMovement.getX(), initialN1en.getY() + bestMovement.getY());
-            newN2en = new EastNorth(initialN2en.getX() + bestMovement.getX(), initialN2en.getY() + bestMovement.getY());
+            EastNorth n1movedEn = new EastNorth(initialN1en.getX() + bestMovement.getX(), initialN1en.getY() + bestMovement.getY());
 
             // find out the movement distance, in metres
-            double distance = Main.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(Main.getProjection().eastNorth2latlon(newN1en));
+            double distance = Main.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(Main.getProjection().eastNorth2latlon(n1movedEn));
             Main.map.statusLine.setDist(distance);
             updateStatusLine();
 
             Main.map.mapView.setNewCursor(Cursor.MOVE_CURSOR, this);
 
-            if (mode == Mode.extrude || mode == Mode.create_new) {
-                //nothing here
-            } else if (mode == Mode.translate_node || mode == Mode.translate) {
-                //move nodes to new position
-                if (moveCommand == null) {
-                    //make a new move command
-                    moveCommand = new MoveCommand(movingNodeList, bestMovement.getX(), bestMovement.getY());
-                    Main.main.undoRedo.add(moveCommand);
-                } else {
-                    //reuse existing move command
-                    moveCommand.moveAgainTo(bestMovement.getX(), bestMovement.getY());
+            if (dualAlignActive) {
+                calculateDualAlignNodesPositions(bestMovement);
+
+                if (mode == Mode.extrude || mode == Mode.create_new) {
+                    // nothing here
+                } else if (mode == Mode.translate) {
+                    EastNorth movement1 = initialN1en.sub(newN1en);
+                    EastNorth movement2 = initialN2en.sub(newN2en);
+                    // move nodes to new position
+                    if (moveCommand == null || moveCommand2 == null) {
+                        // make a new move commands
+                        moveCommand = new MoveCommand(movingNodeList.get(0), movement1.getX(), movement1.getY());
+                        moveCommand2 = new MoveCommand(movingNodeList.get(1), movement2.getX(), movement2.getY());
+                        Command c = new SequenceCommand(tr("Extrude Way"), moveCommand, moveCommand2);
+                        Main.main.undoRedo.add(c);
+                    } else {
+                        // reuse existing move commands
+                        moveCommand.moveAgainTo(movement1.getX(), movement1.getY());
+                        moveCommand2.moveAgainTo(movement2.getX(), movement2.getY());
+                    }
+                }
+            } else {
+                newN1en = n1movedEn;
+                newN2en = new EastNorth(initialN2en.getX() + bestMovement.getX(), initialN2en.getY() + bestMovement.getY());
+
+                if (mode == Mode.extrude || mode == Mode.create_new) {
+                    //nothing here
+                } else if (mode == Mode.translate_node || mode == Mode.translate) {
+                    //move nodes to new position
+                    if (moveCommand == null) {
+                        //make a new move command
+                        moveCommand = new MoveCommand(movingNodeList, bestMovement.getX(), bestMovement.getY());
+                        Main.main.undoRedo.add(moveCommand);
+                    } else {
+                        //reuse existing move command
+                        moveCommand.moveAgainTo(bestMovement.getX(), bestMovement.getY());
+                    }
                 }
             }
 
@@ -356,9 +558,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     }
 
     /**
-     * Do anything that needs to be done, then switch back to select mode
+     * Does anything that needs to be done, then switches back to select mode.
+     * @param e
      */
-    @Override public void mouseReleased(MouseEvent e) {
+    @Override
+    public void mouseReleased(MouseEvent e) {
 
         if(!Main.map.mapView.isActiveLayerVisible())
             return;
@@ -384,9 +588,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 //the move command is already committed in mouseDragged
             }
 
-            boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
-            boolean ctrl = (e.getModifiers() & (ActionEvent.CTRL_MASK)) != 0;
-            boolean shift = (e.getModifiers() & (ActionEvent.SHIFT_MASK)) != 0;
+            updateKeyModifiers(e);
             // Switch back into select mode
             Main.map.mapView.setNewCursor(ctrl ? cursorTranslate : alt ? cursorCreateNew : shift ? cursorCreateNodes : cursor, this);
             Main.map.mapView.removeTemporaryLayer(this);
@@ -399,9 +601,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Custom methods
+    // -------------------------------------------------------------------------
+
     /**
-     * Insert node into nearby segment
-     * @param e - current mouse point
+     * Inserts node into nearby segment.
+     * @param e current mouse point
      */
     private void addNewNode(MouseEvent e) {
         // Should maybe do the same as in DrawAction and fetch all nearby segments?
@@ -419,6 +625,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         }
     }
 
+    /**
+     * Creates a new way that shares segment with selected way.
+     */
     private void createNewRectangle() {
         if (selectedSegment == null) return;
         // crete a new rectangle
@@ -442,7 +651,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     }
 
     /**
-     * Do actual extrusion of @field selectedSegment
+     * Does actual extrusion of {@link #selectedSegment}.
      */
     private void performExtrusion() {
         // create extrusion
@@ -457,7 +666,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         boolean nodeOverlapsSegment = prevNode != null && Geometry.segmentsParallel(initialN1en, prevNode.getEastNorth(), initialN1en, newN1en);
         // segmentAngleZero marks subset of nodeOverlapsSegment. nodeOverlapsSegment is true if angle between segments is 0 or PI, segmentAngleZero only if angle is 0
         boolean segmentAngleZero = prevNode != null && Math.abs(Geometry.getCornerAngle(prevNode.getEastNorth(), initialN1en, newN1en)) < 1e-5;
-        boolean hasOtherWays = this.hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
+        boolean hasOtherWays = hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
 
         if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
             //move existing node
@@ -521,12 +730,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     }
 
     /**
-     * This method tests if a node has other ways apart from the given one.
+     * This method tests if {@code node} has other ways apart from the given one.
      * @param node
      * @param myWay
-     * @return true of node belongs only to myWay, false if there are more ways.
+     * @return {@code true} if {@code node} belongs only to {@code myWay}, false if there are more ways.
      */
-    private boolean hasNodeOtherWays(Node node, Way myWay) {
+    private static boolean hasNodeOtherWays(Node node, Way myWay) {
         for (OsmPrimitive p : node.getReferrers()) {
             if (p instanceof Way && p.isUsable() && p != myWay)
                 return true;
@@ -535,8 +744,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     }
 
     /**
-     * Determine best movenemnt from initialMousePos  to current position @param mouseEn,
-     * choosing one of the directions @field possibleMoveDirections
+     * Determines best movement from {@link #initialMousePos} to current mouse position,
+     * choosing one of the directions from {@link #possibleMoveDirections}.
+     * @param mouseEn current mouse position
      * @return movement vector
      */
     private EastNorth calculateBestMovement(EastNorth mouseEn) {
@@ -564,13 +774,17 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             }
         }
         return bestMovement;
+
+
     }
 
     /***
-     * This method calculates offset amount by witch to move the given segment perpendicularly for it to be in line with mouse position.
-     * @param segmentP1
-     * @param segmentP2
-     * @param targetPos
+     * This method calculates offset amount by which to move the given segment
+     * perpendicularly for it to be in line with mouse position.
+     * @param segmentP1 segment's first point
+     * @param segmentP2 segment's second point
+     * @param moveDirection direction of movement
+     * @param targetPos mouse position
      * @return offset amount of P1 and P2.
      */
     private static EastNorth calculateSegmentOffset(EastNorth segmentP1, EastNorth segmentP2, EastNorth moveDirection,
@@ -590,7 +804,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     }
 
     /**
-     * Gather possible move directions - perpendicular to the selected segment and parallel to neighbor segments
+     * Gathers possible move directions - perpendicular to the selected segment
+     * and parallel to neighboring segments.
      */
     private void calculatePossibleDirectionsBySegment() {
         // remember initial positions for segment nodes.
@@ -626,7 +841,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     }
 
     /**
-     * Gather possible move directions - along all adjacent segments
+     * Gathers possible move directions - along all adjacent segments.
      */
     private void calculatePossibleDirectionsByNode() {
         // remember initial positions for segment nodes.
@@ -647,9 +862,79 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     }
 
     /**
-     * Gets a node from selected way before given index.
+     * Checks dual alignment conditions:
+     *  1. selected segment has both neighboring segments,
+     *  2. selected segment is not parallel with neighboring segments.
+     * @return {@code true} if dual alignment conditions are satisfied
+     */
+    private boolean checkDualAlignConditions() {
+        Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
+        Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
+        if (prevNode == null || nextNode == null) {
+            return false;
+        }
+
+        EastNorth n1en = selectedSegment.getFirstNode().getEastNorth();
+        EastNorth n2en = selectedSegment.getSecondNode().getEastNorth();
+        boolean prevSegmentParallel = Geometry.segmentsParallel(n1en, prevNode.getEastNorth(), n1en, n2en);
+        boolean nextSegmentParallel = Geometry.segmentsParallel(n2en, nextNode.getEastNorth(), n1en, n2en);
+        if (prevSegmentParallel || nextSegmentParallel) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Gathers possible move directions - perpendicular to the selected segment only.
+     * Neighboring segments go to {@link #dualAlignSegment1} and {@link #dualAlignSegment2}.
+     */
+    private void calculatePossibleDirectionsForDualAlign() {
+        // remember initial positions for segment nodes.
+        initialN1en = selectedSegment.getFirstNode().getEastNorth();
+        initialN2en = selectedSegment.getSecondNode().getEastNorth();
+
+        // add direction perpendicular to the selected segment
+        possibleMoveDirections = new ArrayList<ReferenceSegment>();
+        possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
+                initialN1en.getY() - initialN2en.getY(),
+                initialN2en.getX() - initialN1en.getX()
+                ), initialN1en, initialN2en, true));
+
+        // set neighboring segments
+        Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
+        EastNorth prevNodeEn = prevNode.getEastNorth();
+        dualAlignSegment1 = new ReferenceSegment(new EastNorth(
+            initialN1en.getX() - prevNodeEn.getX(),
+            initialN1en.getY() - prevNodeEn.getY()
+            ), initialN1en, prevNodeEn, false);
+
+        Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
+        EastNorth nextNodeEn = nextNode.getEastNorth();
+        dualAlignSegment2 = new ReferenceSegment(new EastNorth(
+            initialN2en.getX() - nextNodeEn.getX(),
+            initialN2en.getY() - nextNodeEn.getY()
+            ), initialN2en,  nextNodeEn, false);
+    }
+
+    /**
+     * Calculates positions of new nodes, aligning them to neighboring segments.
+     * @param movement movement to be used
+     */
+    private void calculateDualAlignNodesPositions(EastNorth movement) {
+        // new positions of selected segment's nodes, without applying dual alignment
+        EastNorth n1movedEn = new EastNorth(initialN1en.getX() + movement.getX(), initialN1en.getY() + movement.getY());
+        EastNorth n2movedEn = new EastNorth(initialN2en.getX() + movement.getX(), initialN2en.getY() + movement.getY());
+
+        // calculate intersections
+        newN1en = Geometry.getLineLineIntersection(n1movedEn, n2movedEn, dualAlignSegment1.p1, dualAlignSegment1.p2);
+        newN2en = Geometry.getLineLineIntersection(n1movedEn, n2movedEn, dualAlignSegment2.p1, dualAlignSegment2.p2);
+    }
+
+    /**
+     * Gets a node index from selected way before given index.
      * @param index  index of current node
-     * @return index of previous node or -1 if there are no nodes there.
+     * @return index of previous node or <code>-1</code> if there are no nodes there.
      */
     private int getPreviousNodeIndex(int index) {
         if (index > 0)
@@ -663,7 +948,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     /**
      * Gets a node from selected way before given index.
      * @param index  index of current node
-     * @return previous node or null if there are no nodes there.
+     * @return previous node or <code>null</code> if there are no nodes there.
      */
     private Node getPreviousNode(int index) {
         int indexPrev = getPreviousNodeIndex(index);
@@ -675,9 +960,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
 
     /**
-     * Gets a node from selected way after given index.
+     * Gets a node index from selected way after given index.
      * @param index index of current node
-     * @return index of next node or -1 if there are no nodes there.
+     * @return index of next node or <code>-1</code> if there are no nodes there.
      */
     private int getNextNodeIndex(int index) {
         int count = selectedSegment.way.getNodesCount();
@@ -692,7 +977,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     /**
      * Gets a node from selected way after given index.
      * @param index index of current node
-     * @return next node or null if there are no nodes there.
+     * @return next node or <code>null</code> if there are no nodes there.
      */
     private Node getNextNode(int index) {
         int indexNext = getNextNodeIndex(index);
@@ -701,6 +986,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         else
             return null;
     }
+
+    // -------------------------------------------------------------------------
+    // paint methods
+    // -------------------------------------------------------------------------
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds box) {
@@ -727,16 +1016,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     b.lineTo(p1.x, p1.y);
                     g2.draw(b);
 
-                    if (activeMoveDirection != null) {
+                    if (dualAlignActive) {
+                        // Draw reference ways
+                        drawReferenceSegment(g2, mv, dualAlignSegment1.p1, dualAlignSegment1.p2);
+                        drawReferenceSegment(g2, mv, dualAlignSegment2.p1, dualAlignSegment2.p2);
+                    } else if (activeMoveDirection != null) {
                         // Draw reference way
-                        Point pr1 = mv.getPoint(activeMoveDirection.p1);
-                        Point pr2 = mv.getPoint(activeMoveDirection.p2);
-                        b = new GeneralPath();
-                        b.moveTo(pr1.x, pr1.y);
-                        b.lineTo(pr2.x, pr2.y);
-                        g2.setColor(helperColor);
-                        g2.setStroke(helperStrokeDash);
-                        g2.draw(b);
+                        drawReferenceSegment(g2, mv, activeMoveDirection.p1, activeMoveDirection.p2);
 
                         // Draw right angle marker on first node position, only when moving at right angle
                         if (activeMoveDirection.perpendicular) {
@@ -746,6 +1032,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                             double headingDiff = headingRefWS - headingMoveDir;
                             if (headingDiff < 0) headingDiff += 2 * Math.PI;
                             boolean mirrorRA = Math.abs(headingDiff - Math.PI) > 1e-5;
+                            Point pr1 = mv.getPoint(activeMoveDirection.p1);
                             drawAngleSymbol(g2, pr1, normalUnitVector, mirrorRA);
                         }
                     }
@@ -761,7 +1048,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                         g2.draw(oldline);
                     }
 
-                    if (activeMoveDirection != null) {
+                    if (dualAlignActive) {
+                        // Draw reference ways
+                        drawReferenceSegment(g2, mv, dualAlignSegment1.p1, dualAlignSegment1.p2);
+                        drawReferenceSegment(g2, mv, dualAlignSegment2.p1, dualAlignSegment2.p2);
+                    } else if (activeMoveDirection != null) {
 
                         g2.setColor(helperColor);
                         g2.setStroke(helperStrokeDash);
@@ -802,6 +1093,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         return normalUnitVector;
     }
 
+    /**
+     * Draws right angle symbol at specified position.
+     * @param g2 the Graphics2D object used to draw on
+     * @param center center point of angle
+     * @param normal vector of normal
+     * @param mirror {@code true} if symbol should be mirrored by the normal
+     */
     private void drawAngleSymbol(Graphics2D g2, Point2D center, Point2D normal, boolean mirror) {
         // EastNorth units per pixel
         double factor = 1.0/g2.getTransform().getScaleX();
@@ -823,10 +1121,30 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     }
 
     /**
-     * Create a new Line that extends off the edge of the viewport in one direction
+     * Draws given reference segment.
+     * @param g2 the Graphics2D object used to draw on
+     * @param mv
+     * @param p1en segment's first point
+     * @param p2en segment's second point
+     */
+    private void drawReferenceSegment(Graphics2D g2, MapView mv, EastNorth p1en, EastNorth p2en)
+    {
+        Point p1 = mv.getPoint(p1en);
+        Point p2 = mv.getPoint(p2en);
+        GeneralPath b = new GeneralPath();
+        b.moveTo(p1.x, p1.y);
+        b.lineTo(p2.x, p2.y);
+        g2.setColor(helperColor);
+        g2.setStroke(helperStrokeDash);
+        g2.draw(b);
+    }
+
+    /**
+     * Creates a new Line that extends off the edge of the viewport in one direction
      * @param start The start point of the line
      * @param unitvector A unit vector denoting the direction of the line
      * @param g the Graphics2D object  it will be used on
+     * @return created line
      */
     private static Line2D createSemiInfiniteLine(Point2D start, Point2D unitvector, Graphics2D g) {
         Rectangle bounds = g.getDeviceConfiguration().getBounds();
