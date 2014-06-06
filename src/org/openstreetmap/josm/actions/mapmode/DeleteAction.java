@@ -3,10 +3,7 @@ package org.openstreetmap.josm.actions.mapmode;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.AWTEvent;
 import java.awt.Cursor;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -28,6 +25,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
+import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -47,7 +45,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class DeleteAction extends MapMode implements AWTEventListener {
+public class DeleteAction extends MapMode implements ModifierListener {
     // Cache previous mouse event (needed when only the modifier keys are
     // pressed but the mouse isn't moved)
     private MouseEvent oldEvent = null;
@@ -112,11 +110,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
         // This is required to update the cursors when ctrl/shift/alt is pressed
-        try {
-            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.addModifierListener(this);
     }
 
     @Override
@@ -124,11 +118,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         super.exitMode();
         Main.map.mapView.removeMouseListener(this);
         Main.map.mapView.removeMouseMotionListener(this);
-        try {
-            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.removeModifierListener(this);
         removeHighlighting();
     }
 
@@ -399,11 +389,11 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * This is required to update the cursors when ctrl/shift/alt is pressed
      */
     @Override
-    public void eventDispatched(AWTEvent e) {
+    public void modifiersChanged(int modifiers) {
         if(oldEvent == null)
             return;
         // We don't have a mouse event, so we pass the old mouse event but the
         // new modifiers.
-        giveUserFeedback(oldEvent, ((InputEvent) e).getModifiers());
+        giveUserFeedback(oldEvent, modifiers);
     }
 }

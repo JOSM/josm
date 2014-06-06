@@ -5,21 +5,14 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
-import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -31,13 +24,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -59,7 +47,9 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -67,7 +57,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Makes a rectangle from a line, or modifies a rectangle.
  */
-public class ExtrudeAction extends MapMode implements MapViewPaintable {
+public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPressReleaseListener, ModifierListener {
 
     enum Mode { extrude, translate, select, create_new, translate_node }
 
@@ -157,6 +147,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     /** The cursor for the 'alwaysCreateNodes' submode. */
     private final Cursor cursorCreateNodes;
 
+    private boolean ignoreNextKeyRelease;
+
     private static class ReferenceSegment {
         public final EastNorth en;
         public final EastNorth p1;
@@ -224,15 +216,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         dualAlignShortcut = Shortcut.registerShortcut("mapmode:extrudedualalign",
                 tr("Mode: {0}", tr("Extrude Dual alignment")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
         useRepeatedShortcut = Main.pref.getBoolean("extrude.dualalign.toggleOnRepeatedX", true);
-        timer = new Timer(0, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                timer.stop();
-                if (set.remove(releaseEvent.getKeyCode())) {
-                    doKeyReleaseEvent(releaseEvent);
-                }
-            }
-        });
     }
 
     @Override
@@ -293,11 +276,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         super.enterMode();
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
-        try {
-            Toolkit.getDefaultToolkit().addAWTEventListener(altKeyListener, AWTEvent.KEY_EVENT_MASK);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
         initialMoveThreshold = Main.pref.getInteger("extrude.initial-move-threshold", 1);
         mainColor = Main.pref.getColor(marktr("Extrude: main line"), null);
@@ -312,6 +290,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
         ignoreSharedNodes = Main.pref.getBoolean("extrude.ignore-shared-nodes", true);
         dualAlignCheckboxMenuItem.getAction().setEnabled(true);
+        ignoreNextKeyRelease = true;
+        Main.map.keyDetector.addKeyListener(this);
+        Main.map.keyDetector.addModifierListener(this);
     }
 
     @Override
@@ -320,11 +301,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         Main.map.mapView.removeMouseMotionListener(this);
         Main.map.mapView.removeTemporaryLayer(this);
         dualAlignCheckboxMenuItem.getAction().setEnabled(false);
-        try {
-            Toolkit.getDefaultToolkit().removeAWTEventListener(altKeyListener);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.removeKeyListener(this);
+        Main.map.keyDetector.removeModifierListener(this);
         super.exitMode();
     }
 
@@ -333,68 +311,32 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     // -------------------------------------------------------------------------
 
     /**
-     * This listener is used to indicate different modes via cursor when the Alt/Ctrl/Shift modifier is pressed,
-     * and for listening to dual alignment shortcuts.
+     * This method is called to indicate different modes via cursor when the Alt/Ctrl/Shift modifier is pressed,
      */
-    private final AWTEventListener altKeyListener = new AWTEventListener() {
-        @Override
-        public void eventDispatched(AWTEvent e) {
-            if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable())
-                return;
-            InputEvent ie = (InputEvent) e;
-            boolean alt = (ie.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
-            boolean ctrl = (ie.getModifiers() & (ActionEvent.CTRL_MASK)) != 0;
-            boolean shift = (ie.getModifiers() & (ActionEvent.SHIFT_MASK)) != 0;
-            if (mode == Mode.select) {
-                Main.map.mapView.setNewCursor(ctrl ? cursorTranslate : alt ? cursorCreateNew : shift ? cursorCreateNodes : cursor, this);
-            }
-            if (e instanceof KeyEvent) {
-                KeyEvent ke = (KeyEvent) e;
-                if (dualAlignShortcut.isEvent(ke) || (useRepeatedShortcut && getShortcut().isEvent(ke))) {
-                    Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-                    if (SwingUtilities.getWindowAncestor(focused) instanceof JFrame) {
-                        processKeyEvent(ke);
-                    }
-                }
-            }
+    @Override
+    public void modifiersChanged(int modifiers) {
+        if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable())
+            return;
+        updateKeyModifiers(modifiers);
+        if (mode == Mode.select) {
+            Main.map.mapView.setNewCursor(ctrl ? cursorTranslate : alt ? cursorCreateNew : shift ? cursorCreateNodes : cursor, this);
         }
     };
 
-    // events for crossplatform key holding processing
-    // thanks to http://www.arco.in-berlin.de/keyevent.html
-    private final Set<Integer> set = new TreeSet<Integer>();
-    private KeyEvent releaseEvent;
-    private Timer timer;
-    private void processKeyEvent(KeyEvent e) {
-        if (!dualAlignShortcut.isEvent(e) && !(useRepeatedShortcut && getShortcut().isEvent(e)))
-            return;
+    @Override
+    public void doKeyPressed(KeyEvent e) {
+    }
 
-        if (e.getID() == KeyEvent.KEY_PRESSED) {
-            if (timer.isRunning()) {
-                timer.stop();
-            } else if (set.add((e.getKeyCode()))) {
-                doKeyPressEvent(e);
-            }
-        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-            if (timer.isRunning()) {
-                timer.stop();
-                if (set.remove(e.getKeyCode())) {
-                    doKeyReleaseEvent(e);
-                }
-            } else {
-                releaseEvent = e;
-                timer.restart();
-            }
+    @Override
+    public void doKeyReleased(KeyEvent e) {
+        if (!dualAlignShortcut.isEvent(e) && !(useRepeatedShortcut && getShortcut().isEvent(e)))
+             return;
+        if (ignoreNextKeyRelease) {
+            ignoreNextKeyRelease = false;
+        } else {
+            toggleDualAlign();
         }
     }
-
-    private void doKeyPressEvent(KeyEvent e) {
-    }
-
-    private void doKeyReleaseEvent(KeyEvent e) {
-        toggleDualAlign();
-    }
-
     /**
      * Toggles dual alignment mode.
      */
