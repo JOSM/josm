@@ -6,20 +6,13 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
-import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Stroke;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -35,16 +28,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -70,6 +59,8 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
+import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -80,7 +71,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Mapmode to add nodes, create and extend ways.
  */
-public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
+public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, KeyPressReleaseListener, ModifierListener {
     private final Cursor cursorJoinNode;
     private final Cursor cursorJoinWay;
 
@@ -111,9 +102,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private final SnapHelper snapHelper = new SnapHelper();
 
-    private Shortcut backspaceShortcut;
-    private BackSpaceAction backspaceAction;
+    private final Shortcut backspaceShortcut;
+    private final BackSpaceAction backspaceAction;
     private final Shortcut snappingShortcut;
+    private boolean ignoreNextKeyRelease;
 
     private final SnapChangeAction snapChangeAction;
     private final JCheckBoxMenuItem snapCheckboxMenuItem;
@@ -226,16 +218,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         snapHelper.init();
         snapCheckboxMenuItem.getAction().setEnabled(true);
 
-        timer = new Timer(0, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                timer.stop();
-                if (set.remove(releaseEvent.getKeyCode())) {
-                    doKeyReleaseEvent(releaseEvent);
-                }
-            }
-
-        });
         Main.map.statusLine.getAnglePanel().addMouseListener(snapHelper.anglePopupListener);
         Main.registerActionShortcut(backspaceAction, backspaceShortcut);
 
@@ -244,11 +226,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.mapView.addTemporaryLayer(this);
         DataSet.addSelectionListener(this);
 
-        try {
-            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.addKeyListener(this);
+        Main.map.keyDetector.addModifierListener(this);
+        ignoreNextKeyRelease = true;
         // would like to but haven't got mouse position yet:
         // computeHelperLine(false, false, false);
     }
@@ -268,11 +248,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.activateAnglePanel(false);
 
         removeHighlighting();
-        try {
-            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.removeKeyListener(this);
+        Main.map.keyDetector.removeModifierListener(this);
 
         // when exiting we let everybody know about the currently selected
         // primitives
@@ -287,56 +264,31 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * redraw to (possibly) get rid of helper line if selection changes.
      */
     @Override
-    public void eventDispatched(AWTEvent event) {
+    public void modifiersChanged(int modifiers) {
         if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable())
             return;
-        if (event instanceof KeyEvent) {
-            KeyEvent e = (KeyEvent) event;
-            if (snappingShortcut.isEvent(e) || (useRepeatedShortcut && getShortcut().isEvent(e))) {
-                Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-                if (SwingUtilities.getWindowAncestor(focused) instanceof JFrame) {
-                    processKeyEvent(e);
-                }
-            }
-        } //  toggle angle snapping
-        updateKeyModifiers((InputEvent) event);
+        updateKeyModifiers(modifiers);
         computeHelperLine();
         addHighlighting();
     }
 
-    // events for crossplatform key holding processing
-    private final Set<Integer> set = new TreeSet<>();
-    private KeyEvent releaseEvent;
-    private Timer timer;
-    void processKeyEvent(KeyEvent e) {
+    @Override
+    public void doKeyPressed(KeyEvent e) {
         if (!snappingShortcut.isEvent(e) && !(useRepeatedShortcut && getShortcut().isEvent(e)))
             return;
-
-        if (e.getID() == KeyEvent.KEY_PRESSED) {
-            if (timer.isRunning()) {
-                timer.stop();
-            } else if (set.add((e.getKeyCode()))) {
-                doKeyPressEvent(e);
-            }
-        } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-            if (timer.isRunning()) {
-                timer.stop();
-                if (set.remove(e.getKeyCode())) {
-                    doKeyReleaseEvent(e);
-                }
-            } else {
-                releaseEvent = e;
-                timer.restart();
-            }
-        }
-    }
-
-    private void doKeyPressEvent(KeyEvent e) {
         snapHelper.setFixedMode();
         computeHelperLine();
         redrawIfRequired();
     }
-    private void doKeyReleaseEvent(KeyEvent e) {
+
+    @Override
+    public void doKeyReleased(KeyEvent e) {
+        if (!snappingShortcut.isEvent(e) && !(useRepeatedShortcut && getShortcut().isEvent(e)))
+            return;
+        if (ignoreNextKeyRelease) {
+            ignoreNextKeyRelease = false;
+            return;
+        }
         snapHelper.unFixOrTurnOff();
         computeHelperLine();
         redrawIfRequired();
@@ -392,7 +344,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      *
      * If in nodeway mode, insert the node into the way.
      */
-    @Override public void mouseReleased(MouseEvent e) {
+    @Override
+    public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
             Point curMousePos = e.getPoint();
             if (curMousePos.equals(rightClickPressPos)) {
@@ -418,7 +371,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         oldMousePos = mousePos;
 
         // we copy ctrl/alt/shift from the event just in case our global
-        // AWTEvent didn't make it through the security manager. Unclear
+        // keyDetector didn't make it through the security manager. Unclear
         // if that can ever happen but better be safe.
         updateKeyModifiers(e);
         mousePos = e.getPoint();
@@ -774,7 +727,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
 
         // we copy ctrl/alt/shift from the event just in case our global
-        // AWTEvent didn't make it through the security manager. Unclear
+        // keyDetector didn't make it through the security manager. Unclear
         // if that can ever happen but better be safe.
         updateKeyModifiers(e);
         mousePos = e.getPoint();
@@ -940,7 +893,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     /**
      * Repaint on mouse exit so that the helper line goes away.
      */
-    @Override public void mouseExited(MouseEvent e) {
+    @Override
+    public void mouseExited(MouseEvent e) {
         if(!Main.map.mapView.isActiveLayerDrawable())
             return;
         mousePos = e.getPoint();

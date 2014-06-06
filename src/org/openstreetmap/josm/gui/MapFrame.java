@@ -72,6 +72,7 @@ import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.util.AdvancedKeyPressDetector;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -94,6 +95,11 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * The view control displayed.
      */
     public final MapView mapView;
+
+    /**
+     * This object allows to detect key press and release events
+     */
+    public final AdvancedKeyPressDetector keyDetector = new AdvancedKeyPressDetector();
 
     /**
      * The toolbar with the action icons. To add new toggle dialog buttons,
@@ -244,6 +250,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             for (JComponent c: allDialogButtons) c.setFocusTraversalKeysEnabled(false);
             for (JComponent c: allMapModeButtons) c.setFocusTraversalKeysEnabled(false);
         }
+
+        keyDetector.register();
     }
 
     public boolean selectSelectTool(boolean onlyIfModeless) {
@@ -289,6 +297,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         statusLine.destroy();
         mapView.destroy();
+        keyDetector.unregister();
     }
 
     public Action getDefaultButtonAction() {
