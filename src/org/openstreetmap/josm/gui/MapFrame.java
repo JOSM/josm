@@ -134,6 +134,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     // Map modes
     public final SelectAction mapModeSelect;
+    public LassoModeAction mapModeSelectLasso;
+
     private final Map<Layer, MapMode> lastMapMode = new HashMap<>();
     private final MapMode mapModeDraw;
     private final MapMode mapModeZoom;
@@ -215,7 +217,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         // toolBarActions, map mode buttons
         addMapMode(new IconToggleButton(mapModeSelect = new SelectAction(this)));
-        addMapMode(new IconToggleButton(new LassoModeAction(), true));
+        addMapMode(new IconToggleButton(mapModeSelectLasso = new LassoModeAction(), true));
         addMapMode(new IconToggleButton(mapModeDraw = new DrawAction(this)));
         addMapMode(new IconToggleButton(mapModeZoom = new ZoomAction(this)));
         addMapMode(new IconToggleButton(new DeleteAction(this), true));

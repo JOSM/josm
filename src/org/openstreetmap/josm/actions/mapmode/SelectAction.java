@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
@@ -64,7 +65,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * On Mac OS X, Ctrl + mouse button 1 simulates right click (map move), so the
  * feature "selection remove" is disabled on this platform.
  */
-public class SelectAction extends MapMode implements ModifierListener, SelectionEnded {
+public class SelectAction extends MapMode implements ModifierListener, KeyPressReleaseListener, SelectionEnded {
     // "select" means the selection rectangle and "move" means either dragging
     // or select if no mouse movement occurs (i.e. just clicking)
     enum Mode { move, rotate, scale, select }
@@ -101,6 +102,7 @@ public class SelectAction extends MapMode implements ModifierListener, Selection
     }
 
     private boolean lassoMode = false;
+    public boolean repeatedKeySwitchLassoOption;
 
     // Cache previous mouse event (needed when only the modifier keys are
     // pressed but the mouse isn't moved)
@@ -181,10 +183,12 @@ public class SelectAction extends MapMode implements ModifierListener, Selection
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
         initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold", 5);
+        repeatedKeySwitchLassoOption = Main.pref.getBoolean("mappaint.select.toggle-lasso-on-repeated-S", true);
         cycleManager.init();
         virtualManager.init();
         // This is required to update the cursors when ctrl/shift/alt is pressed
         Main.map.keyDetector.addModifierListener(this);
+        Main.map.keyDetector.addKeyListener(this);
     }
 
     @Override
@@ -195,6 +199,7 @@ public class SelectAction extends MapMode implements ModifierListener, Selection
         mv.removeMouseMotionListener(this);
         mv.setVirtualNodesEnabled(false);
         Main.map.keyDetector.removeModifierListener(this);
+        Main.map.keyDetector.removeKeyListener(this);
         removeHighlighting();
     }
 
@@ -626,6 +631,22 @@ public class SelectAction extends MapMode implements ModifierListener, Selection
     public void selectionEnded(Rectangle r, MouseEvent e) {
         updateKeyModifiers(e);
         selectPrims(selectionManager.getSelectedObjects(alt), true, true);
+    }
+
+    @Override
+    public void doKeyPressed(KeyEvent e) {
+        if (!Main.isDisplayingMapView() ||
+                !repeatedKeySwitchLassoOption || !getShortcut().isEvent(e)) return;
+        e.consume();
+        if (!lassoMode) {
+            Main.map.selectMapMode(Main.map.mapModeSelectLasso);
+        } else {
+            Main.map.selectMapMode(Main.map.mapModeSelect);
+        }
+    }
+
+    @Override
+    public void doKeyReleased(KeyEvent e) {
     }
 
     /**
