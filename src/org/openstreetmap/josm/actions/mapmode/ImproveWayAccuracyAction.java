@@ -5,15 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
@@ -46,6 +42,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -54,7 +51,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author Alexander Kachkaev &lt;alexander@kachkaev.ru&gt;, 2011
  */
 public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintable,
-        SelectionChangedListener, AWTEventListener {
+        SelectionChangedListener, ModifierListener {
 
     enum State {
         selecting, improving
@@ -144,12 +141,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         Main.map.mapView.addTemporaryLayer(this);
         DataSet.addSelectionListener(this);
 
-        try {
-            Toolkit.getDefaultToolkit().addAWTEventListener(this,
-                    AWTEvent.KEY_EVENT_MASK);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.addModifierListener(this);
     }
 
     @Override
@@ -161,12 +153,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         Main.map.mapView.removeTemporaryLayer(this);
         DataSet.removeSelectionListener(this);
 
-        try {
-            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
-
+        Main.map.keyDetector.addModifierListener(this);
         Main.map.mapView.repaint();
     }
 
@@ -320,11 +307,11 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     // Event handlers
     // -------------------------------------------------------------------------
     @Override
-    public void eventDispatched(AWTEvent event) {
+    public void modifiersChanged(int modifiers) {
         if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable()) {
             return;
         }
-        updateKeyModifiers((InputEvent) event);
+        updateKeyModifiers(modifiers);
         updateCursorDependentObjectsIfNeeded();
         updateCursor();
         updateStatusLine();

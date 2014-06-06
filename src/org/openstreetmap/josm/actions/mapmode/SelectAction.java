@@ -5,15 +5,11 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.AWTEvent;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -52,6 +48,7 @@ import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -67,7 +64,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * On Mac OS X, Ctrl + mouse button 1 simulates right click (map move), so the
  * feature "selection remove" is disabled on this platform.
  */
-public class SelectAction extends MapMode implements AWTEventListener, SelectionEnded {
+public class SelectAction extends MapMode implements ModifierListener, SelectionEnded {
     // "select" means the selection rectangle and "move" means either dragging
     // or select if no mouse movement occurs (i.e. just clicking)
     enum Mode { move, rotate, scale, select }
@@ -187,11 +184,7 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         cycleManager.init();
         virtualManager.init();
         // This is required to update the cursors when ctrl/shift/alt is pressed
-        try {
-            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.addModifierListener(this);
     }
 
     @Override
@@ -201,30 +194,16 @@ public class SelectAction extends MapMode implements AWTEventListener, Selection
         mv.removeMouseListener(this);
         mv.removeMouseMotionListener(this);
         mv.setVirtualNodesEnabled(false);
-        try {
-            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.removeModifierListener(this);
         removeHighlighting();
     }
 
     int previousModifiers;
 
-     /**
-     * This is called whenever the keyboard modifier status changes
-     */
     @Override
-    public void eventDispatched(AWTEvent e) {
-        if(oldEvent == null)
-            return;
-        // We don't have a mouse event, so we pass the old mouse event but the
-        // new modifiers.
-        int modif = ((InputEvent) e).getModifiers();
-        if (previousModifiers == modif)
-            return;
-        previousModifiers = modif;
-        if(giveUserFeedback(oldEvent, ((InputEvent) e).getModifiers())) {
+    public void modifiersChanged(int modifiers) {
+        if (!Main.isDisplayingMapView() || oldEvent==null) return;
+        if(giveUserFeedback(oldEvent, modifiers)) {
             mv.repaint();
         }
     }

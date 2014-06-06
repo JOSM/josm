@@ -5,15 +5,11 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -40,6 +36,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -83,7 +80,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Ole Jørgen Brønner (olejorgenb)
  */
-public class ParallelWayAction extends MapMode implements AWTEventListener, MapViewPaintable, PreferenceChangedListener {
+public class ParallelWayAction extends MapMode implements ModifierListener, MapViewPaintable, PreferenceChangedListener {
 
     private enum Mode {
         dragging, normal
@@ -160,11 +157,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         if (mainColor == null) mainColor = PaintColors.SELECTED.get();
 
         //// Needed to update the mouse cursor if modifiers are changed when the mouse is motionless
-        try {
-            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.addModifierListener(this);
         sourceWays = new LinkedHashSet<>(getCurrentDataSet().getSelectedWays());
         for (Way w : sourceWays) {
             w.setHighlighted(true);
@@ -180,11 +173,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         mv.removeTemporaryLayer(this);
         Main.map.statusLine.setDist(-1);
         Main.map.statusLine.repaint();
-        try {
-            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-        } catch (SecurityException ex) {
-            Main.warn(ex);
-        }
+        Main.map.keyDetector.removeModifierListener(this);
         removeWayHighlighting(sourceWays);
         pWays = null;
         sourceWays = null;
@@ -237,20 +226,20 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     }
 
     @Override
-    public void eventDispatched(AWTEvent e) {
+    public void modifiersChanged(int modifiers) {
         if (Main.map == null || mv == null || !mv.isActiveLayerDrawable())
             return;
 
         // Should only get InputEvents due to the mask in enterMode
-        if (updateModifiersState((InputEvent) e)) {
+        if (updateModifiersState(modifiers)) {
             updateStatusLine();
             updateCursor();
         }
     }
 
-    private boolean updateModifiersState(InputEvent e) {
+    private boolean updateModifiersState(int modifiers) {
         boolean oldAlt = alt, oldShift = shift, oldCtrl = ctrl;
-        updateKeyModifiers(e);
+        updateKeyModifiers(modifiers);
         return (oldAlt != alt || oldShift != shift || oldCtrl != ctrl);
     }
 
@@ -301,7 +290,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
     @Override
     public void mousePressed(MouseEvent e) {
         requestFocusInMapView();
-        updateModifiersState(e);
+        updateModifiersState(e.getModifiers());
         // Other buttons are off limit, but we still get events.
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
@@ -326,7 +315,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        updateModifiersState(e);
+        updateModifiersState(e.getModifiers());
         // Other buttons are off limit, but we still get events.
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
@@ -381,7 +370,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         if (!mouseIsDown)
             return;
 
-        boolean modifiersChanged = updateModifiersState(e);
+        boolean modifiersChanged = updateModifiersState(e.getModifiers());
         updateFlagsChangeableAlways();
 
         if (modifiersChanged) {
