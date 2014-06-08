@@ -141,7 +141,7 @@ public class WMSImagery {
         Main.info("GET " + getCapabilitiesUrl.toString());
         URLConnection openConnection = Utils.openHttpConnection(getCapabilitiesUrl);
         StringBuilder ba = new StringBuilder();
-        
+
         try (
             InputStream inputStream = openConnection.getInputStream();
             BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream))
@@ -223,10 +223,10 @@ public class WMSImagery {
                 || format.startsWith("image/svg") && ImageIO.getImageReadersBySuffix("svg").hasNext()
                 || format.startsWith("image/bmp") && ImageIO.getImageReadersBySuffix("bmp").hasNext();
     }
-    
+
     static boolean imageFormatHasTransparency(final String format) {
-        return format.startsWith("image/png") || format.startsWith("image/gif") 
-                || format.startsWith("image/svg") || format.startsWith("image/tiff");
+        return format != null && (format.startsWith("image/png") || format.startsWith("image/gif")
+                || format.startsWith("image/svg") || format.startsWith("image/tiff"));
     }
 
     public ImageryInfo toImageryInfo(String name, Collection<LayerDetails> selectedLayers) {
