@@ -354,6 +354,10 @@ Note that for a match, at least one positive and no negative is required.
         <text key="symbol" text="Symbol description"/>
         <text key="description" text="Description"/>
     </chunk>
+    <chunk id="leaf">
+        <combo key="leaf_type" text="Type" values="broadleaved,needleleaved,mixed,leafless" />
+        <combo key="leaf_cycle" text="Cycle" values="deciduous,evergreen,semi_deciduous,semi_evergreen,mixed" />
+    </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact">
     <preset_link preset_name="Contact (common schema)" />
@@ -6282,6 +6286,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="genus" text="Genus" />
                 <text key="species" text="Species" />
                 <text key="taxon" text="Taxon" />
+                <reference ref="leaf" />
             </optional>
         </item>
         <item name="Tree Row" icon="presets/tree.png" type="way" preset_name_label="true">
@@ -6293,6 +6298,9 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=tree_row"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=tree_row" />
             <key key="natural" value="tree_row" />
+            <optional>
+                <reference ref="leaf" />
+            </optional>
         </item>
         <item name="Wood" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
@@ -6304,7 +6312,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="natural" value="wood" />
             <text key="name" text="Name" />
-            <combo key="wood" text="Type" values="coniferous,deciduous,mixed" />
+            <reference ref="leaf" />
         </item>
         <item name="Forest" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=forest"
@@ -6317,7 +6325,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="landuse" value="forest" />
             <text key="name" text="Name" />
-            <combo key="wood" text="Type" values="coniferous,deciduous,mixed" />
+            <reference ref="leaf" />
         </item>
         <item name="Grassland" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=grassland"

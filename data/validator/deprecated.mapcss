@@ -216,3 +216,37 @@
   assertMatch: "way fixme=yes";
 }
 
+/* see #10107, #10108 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
+*[wood=deciduous],
+*[type=broad_leaved],
+*[type=broad_leafed] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixRemove: "{0.key}";
+  fixAdd: "leaf_type=broadleaved";
+}
+
+*[wood=coniferous] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixRemove: "wood";
+  fixAdd: "leaf_type=needleleaved";
+}
+
+*[wood=mixed] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixRemove: "wood";
+  fixAdd: "leaf_type=mixed";
+}
+
+*[wood=evergreen],
+*[type=evergreen] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixRemove: "{0.key}";
+  fixAdd: "leaf_cycle=evergreen";
+}
+
+*[type=deciduous],
+*[type=deciduos] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixRemove: "type";
+  fixAdd: "leaf_cycle=deciduous";
+}
