@@ -146,7 +146,7 @@ way[highway][barrier],
 }
 
 /* see ticket #9593 */
-*[sport][tourism != hotel][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool)$/][natural !~ /^(beach|bare_rock)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste)$/] {
+*[sport][tourism != hotel][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool)$/][natural !~ /^(beach|bare_rock)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm)$/] {
     throwWarning: tr("sport without physical feature");
     assertMatch: "node sport=tennis";
     assertNoMatch: "node sport=tennis leisure=pitch";
