@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public class LassoModeAction extends MapMode {
 
@@ -13,7 +14,7 @@ public class LassoModeAction extends MapMode {
                 "rope",
                 tr("Lasso selection mode: select objects within a hand-drawn region"),
                 null,
-                null);
+                ImageProvider.getCursor("normal", "rope"));
     }
 
     @Override
