@@ -29,6 +29,7 @@ import javax.swing.JMenuItem;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -78,6 +79,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /** settings value whether shared nodes should be ignored or not */
     private boolean ignoreSharedNodes;
 
+    private final boolean keepSegmentDirection;
+    
     /**
      * drawing settings for helper lines
      */
@@ -216,6 +219,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         dualAlignShortcut = Shortcut.registerShortcut("mapmode:extrudedualalign",
                 tr("Mode: {0}", tr("Extrude Dual alignment")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
         useRepeatedShortcut = Main.pref.getBoolean("extrude.dualalign.toggleOnRepeatedX", true);
+        keepSegmentDirection = Main.pref.getBoolean("extrude.dualalign.keep-segment-direction", true);
     }
 
     @Override
@@ -445,19 +449,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             //move, create new and extrude mode - move the selected segment
 
             EastNorth mouseEn = Main.map.mapView.getEastNorth(e.getPoint().x, e.getPoint().y);
-            EastNorth bestMovement = calculateBestMovement(mouseEn);
-            EastNorth n1movedEn = new EastNorth(initialN1en.getX() + bestMovement.getX(), initialN1en.getY() + bestMovement.getY());
-
-            // find out the movement distance, in metres
-            double distance = Main.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(Main.getProjection().eastNorth2latlon(n1movedEn));
-            Main.map.statusLine.setDist(distance);
-            updateStatusLine();
-
+            EastNorth bestMovement = calculateBestMovementAndNewNodes(mouseEn);
+            
             Main.map.mapView.setNewCursor(Cursor.MOVE_CURSOR, this);
 
             if (dualAlignActive) {
-                calculateDualAlignNodesPositions(bestMovement);
-
                 if (mode == Mode.extrude || mode == Mode.create_new) {
                     // nothing here
                 } else if (mode == Mode.translate) {
@@ -477,9 +473,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                     }
                 }
             } else {
-                newN1en = n1movedEn;
-                newN2en = new EastNorth(initialN2en.getX() + bestMovement.getX(), initialN2en.getY() + bestMovement.getY());
-
                 if (mode == Mode.extrude || mode == Mode.create_new) {
                     //nothing here
                 } else if (mode == Mode.translate_node || mode == Mode.translate) {
@@ -594,6 +587,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     /**
      * Does actual extrusion of {@link #selectedSegment}.
+     * Uses {@link #initialN1en}, {@link #initialN2en} saved in calculatePossibleDirections* call
+     * Uses {@link #newN1en}, {@link #newN2en} calculated by {@link #calculateBestMovementAndNewNodes} 
      */
     private void performExtrusion() {
         // create extrusion
@@ -609,11 +604,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         // segmentAngleZero marks subset of nodeOverlapsSegment. nodeOverlapsSegment is true if angle between segments is 0 or PI, segmentAngleZero only if angle is 0
         boolean segmentAngleZero = prevNode != null && Math.abs(Geometry.getCornerAngle(prevNode.getEastNorth(), initialN1en, newN1en)) < 1e-5;
         boolean hasOtherWays = hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
-
+        ArrayList<Node> changedNodes = new ArrayList<>();
         if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
             //move existing node
             Node n1Old = selectedSegment.getFirstNode();
             cmds.add(new MoveCommand(n1Old, Main.getProjection().eastNorth2latlon(newN1en)));
+            changedNodes.add(n1Old);
         } else if (ignoreSharedNodes && segmentAngleZero && !alwaysCreateNodes && hasOtherWays) {
             // replace shared node with new one
             Node n1Old = selectedSegment.getFirstNode();
@@ -622,6 +618,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             wnew.removeNode(n1Old);
             wayWasModified = true;
             cmds.add(new AddCommand(n1New));
+            changedNodes.add(n1New);
         } else {
             //introduce new node
             Node n1New = new Node(Main.getProjection().eastNorth2latlon(newN1en));
@@ -629,6 +626,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             wayWasModified = true;
             insertionPoint ++;
             cmds.add(new AddCommand(n1New));
+            changedNodes.add(n1New);
         }
 
         //find if the new points overlap existing segments (in case of 90 degree angles)
@@ -641,6 +639,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             //move existing node
             Node n2Old = selectedSegment.getSecondNode();
             cmds.add(new MoveCommand(n2Old, Main.getProjection().eastNorth2latlon(newN2en)));
+            changedNodes.add(n2Old);
         } else if (ignoreSharedNodes && segmentAngleZero && !alwaysCreateNodes && hasOtherWays) {
             // replace shared node with new one
             Node n2Old = selectedSegment.getSecondNode();
@@ -649,6 +648,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             wnew.removeNode(n2Old);
             wayWasModified = true;
             cmds.add(new AddCommand(n2New));
+            changedNodes.add(n2New);
         } else {
             //introduce new node
             Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
@@ -656,6 +656,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             wayWasModified = true;
             insertionPoint ++;
             cmds.add(new AddCommand(n2New));
+            changedNodes.add(n2New);
         }
 
         //the way was a single segment, close the way
@@ -669,6 +670,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         }
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
         Main.main.undoRedo.add(c);
+        if (newN1en.distance(newN2en) < 1e-6) {
+            // If the dual alignment created moved two nodes  to the same point, merge them
+            Node targetNode = MergeNodesAction.selectTargetNode(changedNodes);
+            Command mergeCmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), changedNodes, targetNode, changedNodes.get(0));
+            Main.main.undoRedo.add(mergeCmd);
+        }
     }
 
     /**
@@ -858,19 +865,41 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             initialN2en.getY() - nextNodeEn.getY()
             ), initialN2en,  nextNodeEn, false);
     }
-
+    
     /**
-     * Calculates positions of new nodes, aligning them to neighboring segments.
-     * @param movement movement to be used
+     * Calculate newN1en, newN2en best suitable for given mouse coordinates
+     * For dual align, calculates positions of new nodes, aligning them to neighboring segments.
+     * Elsewhere, just adds the vetor returned by calculateBestMovement to {@link #initialN1en},  {@link #initialN2en}.
+     * @return best movement vector
      */
-    private void calculateDualAlignNodesPositions(EastNorth movement) {
-        // new positions of selected segment's nodes, without applying dual alignment
-        EastNorth n1movedEn = new EastNorth(initialN1en.getX() + movement.getX(), initialN1en.getY() + movement.getY());
-        EastNorth n2movedEn = new EastNorth(initialN2en.getX() + movement.getX(), initialN2en.getY() + movement.getY());
+    private EastNorth calculateBestMovementAndNewNodes(EastNorth mouseEn) {
+        EastNorth bestMovement = calculateBestMovement(mouseEn);
+        EastNorth n1movedEn = initialN1en.add(bestMovement), n2movedEn;
 
-        // calculate intersections
-        newN1en = Geometry.getLineLineIntersection(n1movedEn, n2movedEn, dualAlignSegment1.p1, dualAlignSegment1.p2);
-        newN2en = Geometry.getLineLineIntersection(n1movedEn, n2movedEn, dualAlignSegment2.p1, dualAlignSegment2.p2);
+        // find out the movement distance, in metres
+        double distance = Main.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(Main.getProjection().eastNorth2latlon(n1movedEn));
+        Main.map.statusLine.setDist(distance);
+        updateStatusLine();
+        
+        if (dualAlignActive) {
+            // new positions of selected segment's nodes, without applying dual alignment
+            n1movedEn = initialN1en.add(bestMovement);
+            n2movedEn = initialN2en.add(bestMovement);
+
+            // calculate intersections of parallel shifted segment and the adjacent lines
+            newN1en = Geometry.getLineLineIntersection(n1movedEn, n2movedEn, dualAlignSegment1.p1, dualAlignSegment1.p2);
+            newN2en = Geometry.getLineLineIntersection(n1movedEn, n2movedEn, dualAlignSegment2.p1, dualAlignSegment2.p2);
+            if (newN1en == null || newN2en == null) return bestMovement;
+            if (keepSegmentDirection && isOppositeDirection(newN1en, newN2en, initialN1en, initialN2en)) {
+                EastNorth collapsedSegmentPosition = Geometry.getLineLineIntersection(dualAlignSegment1.p1, dualAlignSegment1.p2, dualAlignSegment2.p1, dualAlignSegment2.p2);
+                newN1en = collapsedSegmentPosition;
+                newN2en = collapsedSegmentPosition;
+            }
+        } else {
+            newN1en = n1movedEn;
+            newN2en = initialN2en.add(bestMovement);
+        }
+        return bestMovement;
     }
 
     /**
@@ -960,11 +989,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
                     if (dualAlignActive) {
                         // Draw reference ways
-                        drawReferenceSegment(g2, mv, dualAlignSegment1.p1, dualAlignSegment1.p2);
-                        drawReferenceSegment(g2, mv, dualAlignSegment2.p1, dualAlignSegment2.p2);
+                        drawReferenceSegment(g2, mv, dualAlignSegment1);
+                        drawReferenceSegment(g2, mv, dualAlignSegment2);
                     } else if (activeMoveDirection != null) {
                         // Draw reference way
-                        drawReferenceSegment(g2, mv, activeMoveDirection.p1, activeMoveDirection.p2);
+                        drawReferenceSegment(g2, mv, activeMoveDirection);
 
                         // Draw right angle marker on first node position, only when moving at right angle
                         if (activeMoveDirection.perpendicular) {
@@ -992,8 +1021,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
                     if (dualAlignActive) {
                         // Draw reference ways
-                        drawReferenceSegment(g2, mv, dualAlignSegment1.p1, dualAlignSegment1.p2);
-                        drawReferenceSegment(g2, mv, dualAlignSegment2.p1, dualAlignSegment2.p2);
+                        drawReferenceSegment(g2, mv, dualAlignSegment1);
+                        drawReferenceSegment(g2, mv, dualAlignSegment2);
                     } else if (activeMoveDirection != null) {
 
                         g2.setColor(helperColor);
@@ -1034,6 +1063,14 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         normalUnitVector.setLocation(normalUnitVector.getX(), -normalUnitVector.getY());
         return normalUnitVector;
     }
+    
+    /**
+     * Returns true if from1-to1 and from2-to2 vertors directions are opposite
+     */
+    private boolean isOppositeDirection(EastNorth from1, EastNorth to1, EastNorth from2, EastNorth to2) {
+        return (from1.getX()-to1.getX())*(from2.getX()-to2.getX())
+              +(from1.getY()-to1.getY())*(from2.getY()-to2.getY()) < 0;
+    }
 
     /**
      * Draws right angle symbol at specified position.
@@ -1069,10 +1106,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * @param p1en segment's first point
      * @param p2en segment's second point
      */
-    private void drawReferenceSegment(Graphics2D g2, MapView mv, EastNorth p1en, EastNorth p2en)
+    private void drawReferenceSegment(Graphics2D g2, MapView mv, ReferenceSegment seg)
     {
-        Point p1 = mv.getPoint(p1en);
-        Point p2 = mv.getPoint(p2en);
+        Point p1 = mv.getPoint(seg.p1);
+        Point p2 = mv.getPoint(seg.p2);
         GeneralPath b = new GeneralPath();
         b.moveTo(p1.x, p1.y);
         b.lineTo(p2.x, p2.y);
