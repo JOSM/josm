@@ -104,7 +104,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         cursorImproveAddLock = ImageProvider.getCursor("crosshair",
                 "add_node_lock");
         cursorImproveLock = ImageProvider.getCursor("crosshair", "lock");
-
+        readPreferences();
     }
 
     // -------------------------------------------------------------------------
@@ -116,15 +116,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
             return;
         }
         super.enterMode();
-
-        guideColor = Main.pref.getColor(marktr("improve way accuracy helper line"), null);
-        if (guideColor == null) guideColor = PaintColors.HIGHLIGHT.get();
-
-        selectTargetWayStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.select-target", "2"));
-        moveNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.move-node", "1 6"));
-        addNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.add-node", "1"));
-        deleteNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.delete-node", "1"));
-        dotSize = Main.pref.getInteger("improvewayaccuracy.dot-size",6);
+        readPreferences();
 
         mv = Main.map.mapView;
         mousePos = null;
@@ -142,6 +134,17 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         DataSet.addSelectionListener(this);
 
         Main.map.keyDetector.addModifierListener(this);
+    }
+
+    private void readPreferences() {
+        guideColor = Main.pref.getColor(marktr("improve way accuracy helper line"), null);
+        if (guideColor == null) guideColor = PaintColors.HIGHLIGHT.get();
+
+        selectTargetWayStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.select-target", "2"));
+        moveNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.move-node", "1 6"));
+        addNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.add-node", "1"));
+        deleteNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.delete-node", "1"));
+        dotSize = Main.pref.getInteger("improvewayaccuracy.dot-size",6);
     }
 
     @Override
