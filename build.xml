@@ -152,6 +152,8 @@ Build-Date: ${build.tstamp}
             <arch name="x86_64"/>
             <arch name="i386"/>
 
+            <bundledocument extensions="osm" icon="macosx/JOSM.app/Contents/Resources/JOSM.icns" name="OSM files" role="editor"/>
+
             <classpath file="${bundle.jar}"/>
 
             <option value="-Xmx512m"/>
