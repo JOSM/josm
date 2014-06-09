@@ -54,6 +54,7 @@ import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Makes a rectangle from a line, or modifies a rectangle.
@@ -79,8 +80,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /** settings value whether shared nodes should be ignored or not */
     private boolean ignoreSharedNodes;
 
-    private final boolean keepSegmentDirection;
-    
+    private boolean keepSegmentDirection;
+
     /**
      * drawing settings for helper lines
      */
@@ -99,7 +100,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /**
      * Collection of nodes that is moved
      */
-    private ArrayList<OsmPrimitive> movingNodeList;
+    private ArrayList<Node> movingNodeList;
 
     /**
      * The direction that is currently active.
@@ -150,8 +151,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /** The cursor for the 'alwaysCreateNodes' submode. */
     private final Cursor cursorCreateNodes;
 
-    private boolean ignoreNextKeyRelease;
-
     private static class ReferenceSegment {
         public final EastNorth en;
         public final EastNorth p1;
@@ -178,11 +177,14 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     private boolean dualAlignActive;
     /** Dual alignment reference segments */
     private ReferenceSegment dualAlignSegment1, dualAlignSegment2;
+    /** {@code true}, if new segment was collapsed */
+    private boolean dualAlignSegmentCollapsed;
     // Dual alignment UI stuff
     private final DualAlignChangeAction dualAlignChangeAction;
     private final JCheckBoxMenuItem dualAlignCheckboxMenuItem;
     private final Shortcut dualAlignShortcut;
     private boolean useRepeatedShortcut;
+    private boolean ignoreNextKeyRelease;
 
     private class DualAlignChangeAction extends JosmAction {
         public DualAlignChangeAction() {
@@ -218,8 +220,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         dualAlignCheckboxMenuItem.setState(dualAlignEnabled);
         dualAlignShortcut = Shortcut.registerShortcut("mapmode:extrudedualalign",
                 tr("Mode: {0}", tr("Extrude Dual alignment")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
-        useRepeatedShortcut = Main.pref.getBoolean("extrude.dualalign.toggleOnRepeatedX", true);
-        keepSegmentDirection = Main.pref.getBoolean("extrude.dualalign.keep-segment-direction", true);
+        readPreferences(); // to show prefernces in table before entering the mode
     }
 
     @Override
@@ -249,8 +250,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         if (mode == Mode.select) {
             rv = new StringBuilder(tr("Drag a way segment to make a rectangle. Ctrl-drag to move a segment along its normal, " +
                 "Alt-drag to create a new rectangle, double click to add a new node."));
-            if (dualAlignEnabled)
+            if (dualAlignEnabled) {
                 rv.append(" ").append(tr("Dual alignment active."));
+                if (dualAlignSegmentCollapsed) {
+                    rv.append(" ").append(tr("Segment collapsed due to its direction reversing."));
+ 	        }
+            }
         } else {
             if (mode == Mode.translate)
                 rv = new StringBuilder(tr("Move a segment along its normal, then release the mouse button."));
@@ -280,6 +285,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         super.enterMode();
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
+        readPreferences();
+        ignoreNextKeyRelease = true;
+        Main.map.keyDetector.addKeyListener(this);
+        Main.map.keyDetector.addModifierListener(this);
+    }
+
+    private void readPreferences() {
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
         initialMoveThreshold = Main.pref.getInteger("extrude.initial-move-threshold", 1);
         mainColor = Main.pref.getColor(marktr("Extrude: main line"), null);
@@ -294,9 +306,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
         ignoreSharedNodes = Main.pref.getBoolean("extrude.ignore-shared-nodes", true);
         dualAlignCheckboxMenuItem.getAction().setEnabled(true);
-        ignoreNextKeyRelease = true;
-        Main.map.keyDetector.addKeyListener(this);
-        Main.map.keyDetector.addModifierListener(this);
+        useRepeatedShortcut = Main.pref.getBoolean("extrude.dualalign.toggleOnRepeatedX", true);
+        keepSegmentDirection = Main.pref.getBoolean("extrude.dualalign.keep-segment-direction", true);
     }
 
     @Override
@@ -391,6 +402,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             if (dualAlignEnabled && checkDualAlignConditions()) {
                 dualAlignActive = true;
                 calculatePossibleDirectionsForDualAlign();
+                dualAlignSegmentCollapsed = false;
             } else {
                 dualAlignActive = false;
                 calculatePossibleDirectionsBySegment();
@@ -450,7 +462,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
             EastNorth mouseEn = Main.map.mapView.getEastNorth(e.getPoint().x, e.getPoint().y);
             EastNorth bestMovement = calculateBestMovementAndNewNodes(mouseEn);
-            
+
             Main.map.mapView.setNewCursor(Cursor.MOVE_CURSOR, this);
 
             if (dualAlignActive) {
@@ -479,7 +491,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                     //move nodes to new position
                     if (moveCommand == null) {
                         //make a new move command
-                        moveCommand = new MoveCommand(movingNodeList, bestMovement.getX(), bestMovement.getY());
+                        moveCommand = new MoveCommand(new ArrayList<OsmPrimitive>(movingNodeList), bestMovement);
                         Main.main.undoRedo.add(moveCommand);
                     } else {
                         //reuse existing move command
@@ -521,6 +533,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             } else if (mode == Mode.translate || mode == Mode.translate_node) {
                 //Commit translate
                 //the move command is already committed in mouseDragged
+                joinNodesIfCollapsed(movingNodeList);
             }
 
             updateKeyModifiers(e);
@@ -530,7 +543,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             selectedSegment = null;
             moveCommand = null;
             mode = Mode.select;
-
             updateStatusLine();
             Main.map.mapView.repaint();
         }
@@ -588,7 +600,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /**
      * Does actual extrusion of {@link #selectedSegment}.
      * Uses {@link #initialN1en}, {@link #initialN2en} saved in calculatePossibleDirections* call
-     * Uses {@link #newN1en}, {@link #newN2en} calculated by {@link #calculateBestMovementAndNewNodes} 
+     * Uses {@link #newN1en}, {@link #newN2en} calculated by {@link #calculateBestMovementAndNewNodes}
      */
     private void performExtrusion() {
         // create extrusion
@@ -670,11 +682,21 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         }
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
         Main.main.undoRedo.add(c);
+        joinNodesIfCollapsed(changedNodes);
+    }
+
+    private void joinNodesIfCollapsed(List<Node> changedNodes) {
         if (newN1en.distance(newN2en) < 1e-6) {
             // If the dual alignment created moved two nodes  to the same point, merge them
             Node targetNode = MergeNodesAction.selectTargetNode(changedNodes);
-            Command mergeCmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), changedNodes, targetNode, changedNodes.get(0));
-            Main.main.undoRedo.add(mergeCmd);
+            Node locNode = MergeNodesAction.selectTargetLocationNode(changedNodes);
+            Command mergeCmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), changedNodes, targetNode, locNode);
+            if (mergeCmd!=null) {
+                Main.main.undoRedo.add(mergeCmd);
+            } else {
+                // undo extruding command itself
+                Main.main.undoRedo.undo();
+            }
         }
     }
 
@@ -865,7 +887,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             initialN2en.getY() - nextNodeEn.getY()
             ), initialN2en,  nextNodeEn, false);
     }
-    
+
     /**
      * Calculate newN1en, newN2en best suitable for given mouse coordinates
      * For dual align, calculates positions of new nodes, aligning them to neighboring segments.
@@ -880,7 +902,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         double distance = Main.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(Main.getProjection().eastNorth2latlon(n1movedEn));
         Main.map.statusLine.setDist(distance);
         updateStatusLine();
-        
+
         if (dualAlignActive) {
             // new positions of selected segment's nodes, without applying dual alignment
             n1movedEn = initialN1en.add(bestMovement);
@@ -894,6 +916,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 EastNorth collapsedSegmentPosition = Geometry.getLineLineIntersection(dualAlignSegment1.p1, dualAlignSegment1.p2, dualAlignSegment2.p1, dualAlignSegment2.p2);
                 newN1en = collapsedSegmentPosition;
                 newN2en = collapsedSegmentPosition;
+                dualAlignSegmentCollapsed = true;
+            } else {
+                dualAlignSegmentCollapsed = false;
             }
         } else {
             newN1en = n1movedEn;
@@ -1063,7 +1088,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         normalUnitVector.setLocation(normalUnitVector.getX(), -normalUnitVector.getY());
         return normalUnitVector;
     }
-    
+
     /**
      * Returns true if from1-to1 and from2-to2 vertors directions are opposite
      */
