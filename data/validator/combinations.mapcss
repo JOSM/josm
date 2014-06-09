@@ -2,7 +2,7 @@
  * Taginfo query: select keypairs.key1, keypairs.key2, keypairs.count_all, keys.count_all, cast(keypairs.count_all as real)/keys.count_all as from_fraction_all from keys, keypairs where key1='waterway' and keys.key=keypairs.key2 and (key1<>'highway' or keypairs.count_all>12000) and (key1<>'railway' or keypairs.count_all>3000) and (key1<>'waterway' or keypairs.count_all>800) and key2 not like '%:%' and from_fraction_all>0.97 and 1 union select keypairs.key2, keypairs.key1, keypairs.count_all, keys.count_all, cast(keypairs.count_all as real)/keys.count_all as from_fraction_all from keys, keypairs where key2='waterway' and keys.key=keypairs.key1 and (key2<>'highway' or keypairs.count_all>12000) and (key2<>'railway' or keypairs.count_all>3000) and (key2<>'waterway' or keypairs.count_all>800) and key1 not like '%:%' and from_fraction_all>0.97 and 1 order by keypairs.count_all desc limit 1000;
  */
 
-/* {0.key} without {1.key} */
+/* {0.key} without {1.key} (warning level) */
 way[junction                   ][!highway],
 *[lanes                        ][!highway],
 *[lcn                          ][!highway],
@@ -80,6 +80,12 @@ way[junction                   ][!highway],
   assertMatch: "node source:addr:postcode=postman";
   assertMatch: "node source:addr=postman";
   assertNoMatch: "node source:addr=postman addr:housenumber=42";
+}
+
+/* {0.key} without {1.key} (info level) */
+*[leaf_type ][!leaf_cycle],
+*[leaf_cycle][!leaf_type] {
+  throwOther: tr("{0} without {1}", "{0.key}", "{1.key}");
 }
 
 /* {0.key} without {1.tag} */
