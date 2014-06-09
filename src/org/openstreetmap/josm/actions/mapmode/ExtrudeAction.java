@@ -21,6 +21,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -252,9 +253,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 "Alt-drag to create a new rectangle, double click to add a new node."));
             if (dualAlignEnabled) {
                 rv.append(" ").append(tr("Dual alignment active."));
-                if (dualAlignSegmentCollapsed) {
+                if (dualAlignSegmentCollapsed)
                     rv.append(" ").append(tr("Segment collapsed due to its direction reversing."));
- 	        }
             }
         } else {
             if (mode == Mode.translate)
@@ -269,8 +269,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 Main.warn("Extrude: unknown mode " + mode);
                 rv = new StringBuilder();
             }
-            if (dualAlignActive)
+            if (dualAlignActive) {
                 rv.append(" ").append(tr("Dual alignment active."));
+                if (dualAlignSegmentCollapsed) {
+                    rv.append(" ").append(tr("Segment collapsed due to its direction reversing."));
+                }
+            }
         }
         return rv.toString();
     }
@@ -585,7 +589,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         wnew.addNode(selectedSegment.getFirstNode());
         wnew.addNode(selectedSegment.getSecondNode());
         wnew.addNode(third);
-        wnew.addNode(fourth);
+        if (newN1en.distance(newN2en)>1e-6) {
+            wnew.addNode(fourth); // rectangle can degrade to triangle for dual alignment
+        }
         // ... and close the way
         wnew.addNode(selectedSegment.getFirstNode());
         // undo support
@@ -686,17 +692,17 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     }
 
     private void joinNodesIfCollapsed(List<Node> changedNodes) {
-        if (newN1en.distance(newN2en) < 1e-6) {
-            // If the dual alignment created moved two nodes  to the same point, merge them
-            Node targetNode = MergeNodesAction.selectTargetNode(changedNodes);
-            Node locNode = MergeNodesAction.selectTargetLocationNode(changedNodes);
-            Command mergeCmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), changedNodes, targetNode, locNode);
-            if (mergeCmd!=null) {
-                Main.main.undoRedo.add(mergeCmd);
-            } else {
-                // undo extruding command itself
-                Main.main.undoRedo.undo();
-            }
+        if (!dualAlignActive || newN1en == null || newN2en == null) return;
+        if (newN1en.distance(newN2en) > 1e-6) return;
+        // If the dual alignment moved two nodes to the same point, merge them
+        Node targetNode = MergeNodesAction.selectTargetNode(changedNodes);
+        Node locNode = MergeNodesAction.selectTargetLocationNode(changedNodes);
+        Command mergeCmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), changedNodes, targetNode, locNode);
+        if (mergeCmd!=null) {
+            Main.main.undoRedo.add(mergeCmd);
+        } else {
+            // undo extruding command itself
+            Main.main.undoRedo.undo();
         }
     }
 
@@ -847,6 +853,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
         EastNorth n1en = selectedSegment.getFirstNode().getEastNorth();
         EastNorth n2en = selectedSegment.getSecondNode().getEastNorth();
+        if (n1en.distance(prevNode.getEastNorth())<1e-4 ||
+            n2en.distance(nextNode.getEastNorth())<1e-4 ) {
+            return false;
+        }
+
         boolean prevSegmentParallel = Geometry.segmentsParallel(n1en, prevNode.getEastNorth(), n1en, n2en);
         boolean nextSegmentParallel = Geometry.segmentsParallel(n2en, nextNode.getEastNorth(), n1en, n2en);
         if (prevSegmentParallel || nextSegmentParallel) {
