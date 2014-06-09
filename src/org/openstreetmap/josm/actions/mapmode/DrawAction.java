@@ -113,6 +113,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private Stroke rubberLineStroke;
     private static final BasicStroke BASIC_STROKE = new BasicStroke(1);
 
+    private static int snapToIntersectionThreshold;
+
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
                 Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.DIRECT),
@@ -128,6 +130,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         backspaceAction = new BackSpaceAction();
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
         cursorJoinWay = ImageProvider.getCursor("crosshair", "joinway");
+
+        readPreferences();
+        snapHelper.init();
     }
 
     private JCheckBoxMenuItem addMenuItem() {
@@ -200,13 +205,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (!isEnabled())
             return;
         super.enterMode();
-
-        rubberLineColor = Main.pref.getColor(marktr("helper line"), null);
-        if (rubberLineColor == null) rubberLineColor = PaintColors.SELECTED.get();
-
-        rubberLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.stroke.helper-line","3"));
-        drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
-        drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
+        readPreferences();
 
         // determine if selection is suitable to continue drawing. If it
         // isn't, set wayIsFinished to true to avoid superfluous repaints.
@@ -231,6 +230,16 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         ignoreNextKeyRelease = true;
         // would like to but haven't got mouse position yet:
         // computeHelperLine(false, false, false);
+    }
+
+    private void readPreferences() {
+        rubberLineColor = Main.pref.getColor(marktr("helper line"), null);
+        if (rubberLineColor == null) rubberLineColor = PaintColors.SELECTED.get();
+
+        rubberLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.stroke.helper-line","3"));
+        drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
+        drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
+        snapToIntersectionThreshold = Main.pref.getInteger("edit.snap-intersection-threshold",10);
     }
 
     @Override
@@ -993,8 +1002,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     B.east() + q * (A.east() - B.east()),
                     B.north() + q * (A.north() - B.north()));
 
-            int snapToIntersectionThreshold
-            = Main.pref.getInteger("edit.snap-intersection-threshold",10);
 
             // only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
             // fall through to default action.
