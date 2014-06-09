@@ -336,7 +336,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final String argument = determineArgument((Selector.GeneralSelector) matchingSelector, Integer.parseInt(m.group(1)), m.group(2));
                 try {
                     m.appendReplacement(sb, String.valueOf(argument));
-                } catch (IndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
                     Main.error(tr("Unable to replace argument {0} in {1}: {2}", argument, sb, e.getMessage()));
                 }
             }
