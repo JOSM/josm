@@ -162,10 +162,13 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     public void writeDataSources(DataSet ds) {
         for (DataSource s : ds.dataSources) {
             out.println("  <bounds minlat='"
-                    + s.bounds.getMinLat()+"' minlon='"
-                    + s.bounds.getMinLon()+"' maxlat='"
-                    + s.bounds.getMaxLat()+"' maxlon='"
-                    + s.bounds.getMaxLon()
+                    + s.bounds.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES)
+                    +"' minlon='"
+                    + s.bounds.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES)
+                    +"' maxlat='"
+                    + s.bounds.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES)
+                    +"' maxlon='"
+                    + s.bounds.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES)
                     +"' origin='"+XmlWriter.encode(s.origin)+"' />");
         }
     }
@@ -178,7 +181,8 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.println("/>");
         } else {
             if (n.getCoor() != null) {
-                out.print(" lat='"+n.getCoor().lat()+"' lon='"+n.getCoor().lon()+"'");
+                out.print(" lat='" +n.getCoor().latToString(CoordinateFormat.DECIMAL_DEGREES)+
+                          "' lon='"+n.getCoor().lonToString(CoordinateFormat.DECIMAL_DEGREES)+"'");
             }
             addTags(n, "node", true);
         }
