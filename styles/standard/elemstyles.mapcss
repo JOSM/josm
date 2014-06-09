@@ -3089,12 +3089,14 @@ node[natural=tree] {
     icon-image: "misc/landmark/trees.png";
     text: auto;
 }
-node[natural=tree][type=conifer] {
+node[natural=tree][type=conifer],
+node[natural=tree][leaf_type=needleleaved] {
     icon-image: "misc/landmark/trees_conifer.png";
     text: auto;
 /*    priority="10"*/
 }
-node[natural=tree][type=broad_leaved] {
+node[natural=tree][type=broad_leaved],
+node[natural=tree][leaf_type=broadleaved] {
     icon-image: "misc/landmark/trees_broad_leaved.png";
     text: auto;
 /*    priority="10"*/

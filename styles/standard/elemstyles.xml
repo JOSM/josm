@@ -345,7 +345,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="barrier" v="swing_gate"/>
 		<icon annotate="true" src="vehicle/swing_gate.png"/>
-    </rule>
+	</rule>
 	<rule>
 		<condition k="barrier" v="wall"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
@@ -3198,7 +3198,19 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="tree"/>
+		<condition k="leaf_type" v="needleleaved"/>
+		<icon src="misc/landmark/trees_conifer.png" priority="10"/>
+	</rule>
+
+	<rule>
+		<condition k="natural" v="tree"/>
 		<condition k="type" v="broad_leaved"/>
+		<icon src="misc/landmark/trees_broad_leaved.png" priority="10"/>
+	</rule>
+
+	<rule>
+		<condition k="natural" v="tree"/>
+		<condition k="leaf_type" v="broadleaved"/>
 		<icon src="misc/landmark/trees_broad_leaved.png" priority="10"/>
 	</rule>
 
