@@ -55,11 +55,14 @@ public class LatLon extends Coordinate {
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
     private static DecimalFormat cDmMinuteFormatter = new DecimalFormat("00.000");
     public static final DecimalFormat cDdFormatter;
+    public static final DecimalFormat cDdHighPecisionFormatter;
     static {
         // Don't use the localized decimal separator. This way we can present
         // a comma separated list of coordinates.
         cDdFormatter = (DecimalFormat) NumberFormat.getInstance(Locale.UK);
         cDdFormatter.applyPattern("###0.0######");
+        cDdHighPecisionFormatter = (DecimalFormat) NumberFormat.getInstance(Locale.UK);
+        cDdHighPecisionFormatter.applyPattern("###0.0##########");
     }
 
     private static final String cDms60 = cDmsSecondFormatter.format(60.0);

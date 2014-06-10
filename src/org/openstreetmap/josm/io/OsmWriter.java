@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -181,8 +182,8 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.println("/>");
         } else {
             if (n.getCoor() != null) {
-                out.print(" lat='" +n.getCoor().latToString(CoordinateFormat.DECIMAL_DEGREES)+
-                          "' lon='"+n.getCoor().lonToString(CoordinateFormat.DECIMAL_DEGREES)+"'");
+                out.print(" lat='"+LatLon.cDdHighPecisionFormatter.format(n.getCoor().lat())+
+                          "' lon='"+LatLon.cDdHighPecisionFormatter.format(n.getCoor().lon())+"'");
             }
             addTags(n, "node", true);
         }
