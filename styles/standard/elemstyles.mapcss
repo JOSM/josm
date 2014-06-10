@@ -528,6 +528,9 @@ way[highway=unsurfaced] {
     realwidth: 3;
     color: street#c0c0c0;
 }
+way[highway=track][area?], relation[type=multipolygon][highway=track] {
+    fill-color: highway_track#006600;
+}
 way[highway=track] {
     width: 1;
     realwidth: 3;
