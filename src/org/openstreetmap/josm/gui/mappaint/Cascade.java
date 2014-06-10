@@ -22,7 +22,7 @@ public final class Cascade implements Cloneable {
 
     protected Map<String, Object> prop = new HashMap<>();
 
-    private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})");
+    private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
 
     public <T> T get(String key, T def, Class<T> klass) {
         return get(key, def, klass, false);
@@ -105,6 +105,14 @@ public final class Cascade implements Cloneable {
         if (klass == String.class) {
             if (o instanceof Keyword)
                 return (T) ((Keyword) o).val;
+            if (o instanceof Color) {
+                Color c = (Color) o;
+                int alpha = c.getAlpha();
+                if (alpha != 255)
+                    return (T) String.format("#%06x%02x", ((Color) o).getRGB() & 0x00ffffff, alpha);
+                return (T) String.format("#%06x", ((Color) o).getRGB() & 0x00ffffff);
+                
+            }
 
             return (T) o.toString();
         }
@@ -128,13 +136,21 @@ public final class Cascade implements Cloneable {
     private static Boolean toBool(Object o) {
         if (o instanceof Boolean)
             return (Boolean) o;
+        String s = null;
         if (o instanceof Keyword) {
-            String s = ((Keyword) o).val;
-            if ("true".equals(s) || "yes".equals(s))
-                return true;
-            if ("false".equals(s) || "no".equals(s))
-                return false;
+            s = ((Keyword) o).val;
+        } else if (o instanceof String) {
+            s = (String) o;
         }
+        if (s != null)
+            return !(s.isEmpty() || "false".equals(s) || "no".equals(s) || "0".equals(s) || "0.0".equals(s));
+        if (o instanceof Number)
+            return ((Number) o).floatValue() == 0.0f;
+        if (o instanceof List)
+            return !((List) o).isEmpty();
+        if (o instanceof float[])
+            return ((float[]) o).length != 0;
+        
         return null;
     }
 
