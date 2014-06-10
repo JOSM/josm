@@ -208,7 +208,12 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             }
 
             // Severity node
-            DefaultMutableTreeNode severityNode = new DefaultMutableTreeNode(s);
+            DefaultMutableTreeNode severityNode = new DefaultMutableTreeNode(s) {
+                @Override
+                public String toString() {
+                    return super.toString() + " (" + getLeafCount() + ")";
+                }
+            };
             rootNode.add(severityNode);
 
             if (oldSelectedRows.contains(s)) {
