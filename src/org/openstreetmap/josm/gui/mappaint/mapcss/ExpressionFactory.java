@@ -466,16 +466,6 @@ public final class ExpressionFactory {
         }
 
         /**
-         * Obtains the JOSM'key {@link org.openstreetmap.josm.data.Preferences} color for key {@code key},
-         * and defaults to {@code def} if that is null.
-         * @see org.openstreetmap.josm.data.Preferences#getColor(String, java.awt.Color)
-         */
-        public static Color JOSM_pref_color(String key, Color def) {
-            Color res = Main.pref.getColor(key, null);
-            return res != null ? res : def;
-        }
-
-        /**
          * Tests if string {@code target} matches pattern {@code pattern}
          * @see Pattern#matches(String, CharSequence)
          * @since 5699
@@ -641,6 +631,7 @@ public final class ExpressionFactory {
          * @param o the object
          * @return the same object, unchanged
          */
+        @NullableArguments
         public static Object print(Object o) {
             System.out.print(o == null ? "none" : o.toString());
             return o;
@@ -652,6 +643,7 @@ public final class ExpressionFactory {
          * @param o the object
          * @return the same object, unchanged
          */
+        @NullableArguments
         public static Object println(Object o) {
             System.out.println(o == null ? "none" : o.toString());
             return o;
