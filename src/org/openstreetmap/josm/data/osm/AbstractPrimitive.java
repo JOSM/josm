@@ -631,6 +631,10 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return null;
     }
 
+    public final int getNumKeys() {
+        return keys == null ? 0 : keys.length / 2;
+    }
+    
     @Override
     public final Collection<String> keySet() {
         String[] keys = this.keys;

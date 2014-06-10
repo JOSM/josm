@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
@@ -623,10 +624,46 @@ public final class ExpressionFactory {
             return cs.getValue();
         }
         
+        /**
+         * check if there is right-hand traffic at the current location
+         * @param env the environment
+         * @return true if there is right-hand traffic
+         * @since 7193
+         */
         public static boolean is_right_hand_traffic(Environment env) {
             if (env.osm instanceof Node)
                 return RightAndLefthandTraffic.isRightHandTraffic(((Node) env.osm).getCoor());
             return RightAndLefthandTraffic.isRightHandTraffic(env.osm.getBBox().getCenter());
+        }
+        
+        /**
+         * Prints the object to the command line (for debugging purpose).
+         * @param o the object
+         * @return the same object, unchanged
+         */
+        public static Object print(Object o) {
+            System.out.print(o == null ? "none" : o.toString());
+            return o;
+        }
+
+        /**
+         * Prints the object to the command line, with new line at the end
+         * (for debugging purpose).
+         * @param o the object
+         * @return the same object, unchanged
+         */
+        public static Object println(Object o) {
+            System.out.println(o == null ? "none" : o.toString());
+            return o;
+        }
+        
+        /**
+         * Get the number of tags for the current primitive.
+         * @param env
+         * @return number of tags
+         */
+        public static int number_of_tags(Environment env) {
+            return env.osm.getNumKeys();
         }
     }
 
