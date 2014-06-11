@@ -32,10 +32,30 @@ import org.openstreetmap.josm.tools.Utils;
  * The file mirrored is only downloaded if it has been more than 7 days since last download
  */
 public class MirroredInputStream extends InputStream {
+    
+    /**
+     * Caching strategy.
+     */
+    public enum CachingStrategy {
+        /**
+         * If cached file on disk is older than a certain time (7 days by default),
+         * consider the cache stale and try to download the file again.
+         */
+        MaxAge, 
+        /**
+         * Similar to MaxAge, considers the cache stale when a certain age is
+         * exceeded. In addition, a If-Modified-Since HTTP header is added.
+         * When the server replies "304 Not Modified", this is considered the same
+         * as a full download.
+         */
+        IfModifiedSince 
+    }
+    
     InputStream fs = null;
     File file = null;
 
     public static final long DEFAULT_MAXTIME = -1L;
+    public static final long DAYS = 24*60*60; // factor to get caching time in days
 
     /**
      * Constructs an input stream from a given filename, URL or internal resource.
@@ -135,6 +155,26 @@ public class MirroredInputStream extends InputStream {
      * @since 6867
      */
     public MirroredInputStream(String name, String destDir, long maxTime, String httpAccept) throws IOException {
+        this(name, destDir, maxTime, httpAccept, CachingStrategy.MaxAge);
+    }
+
+    /**
+     * Constructs an input stream from a given filename, URL or internal resource.
+     *
+     * @param name can be:<ul>
+     *  <li>relative or absolute file name</li>
+     *  <li>{@code file:///SOME/FILE} the same as above</li>
+     *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm config directory (since r7058)</li>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li></ul>
+     * @param destDir the destination directory for the cache file. Only applies for URLs.
+     * @param maxTime the maximum age of the cache file (in seconds)
+     * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Only applies for URLs.
+     * @param caching the caching strategy
+     * @throws IOException when the resource with the given name could not be retrieved
+     * @since 6867
+     */
+    public MirroredInputStream(String name, String destDir, long maxTime, String httpAccept, CachingStrategy caching) throws IOException {
         URL url;
         try {
             url = new URL(name);
@@ -144,7 +184,7 @@ public class MirroredInputStream extends InputStream {
                     file = new File(name.substring("file://".length()));
                 }
             } else {
-                file = checkLocal(url, destDir, maxTime, httpAccept);
+                file = checkLocal(url, destDir, maxTime, httpAccept, caching);
             }
         } catch (java.net.MalformedURLException e) {
             if (name.startsWith("resource://")) {
@@ -275,9 +315,10 @@ public class MirroredInputStream extends InputStream {
         return prefKey.toString().replaceAll("=","_");
     }
 
-    private File checkLocal(URL url, String destDir, long maxTime, String httpAccept) throws IOException {
+    private File checkLocal(URL url, String destDir, long maxTime, String httpAccept, CachingStrategy caching) throws IOException {
         String prefKey = getPrefKey(url, destDir);
         long age = 0L;
+        Long ifModifiedSince = null;
         File localFile = null;
         List<String> localPathEntry = new ArrayList<>(Main.pref.getCollection(prefKey));
         if (localPathEntry.size() == 2) {
@@ -294,6 +335,9 @@ public class MirroredInputStream extends InputStream {
                 if (age < maxTime*1000) {
                     return localFile;
                 }
+                if (caching == CachingStrategy.IfModifiedSince) {
+                    ifModifiedSince = Long.parseLong(localPathEntry.get(0));
+                }
             }
         }
         if (destDir == null) {
@@ -304,12 +348,19 @@ public class MirroredInputStream extends InputStream {
         if (!destDirFile.exists()) {
             destDirFile.mkdirs();
         }
-
+        
         String a = url.toString().replaceAll("[^A-Za-z0-9_.-]", "_");
         String localPath = "mirror_" + a;
         destDirFile = new File(destDir, localPath + ".tmp");
         try {
-            HttpURLConnection con = connectFollowingRedirect(url, httpAccept);
+            HttpURLConnection con = connectFollowingRedirect(url, httpAccept, ifModifiedSince);
+            if (ifModifiedSince != null && con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                Main.debug("304 Not Modified ("+url+")");
+                if (localFile == null) throw new AssertionError();
+                Main.pref.putCollection(prefKey, 
+                        Arrays.asList(Long.toString(System.currentTimeMillis()), localPathEntry.get(1)));
+                return localFile;
+            } 
             try (
                 InputStream bis = new BufferedInputStream(con.getInputStream());
                 OutputStream fos = new FileOutputStream(destDirFile);
@@ -323,8 +374,8 @@ public class MirroredInputStream extends InputStream {
             }
             localFile = new File(destDir, localPath);
             if(Main.platform.rename(destDirFile, localFile)) {
-                Main.pref.putCollection(prefKey, Arrays.asList(new String[]
-                {Long.toString(System.currentTimeMillis()), localFile.toString()}));
+                Main.pref.putCollection(prefKey, 
+                        Arrays.asList(Long.toString(System.currentTimeMillis()), localFile.toString()));
             } else {
                 Main.warn(tr("Failed to rename file {0} to {1}.",
                 destDirFile.getPath(), localFile.getPath()));
@@ -352,16 +403,20 @@ public class MirroredInputStream extends InputStream {
      *
      * @param downloadUrl The resource URL to download
      * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Can be {@code null}
+     * @param ifModifiedSince The download time of the cache file, optional
      * @return The HTTP connection effectively linked to the resource, after all potential redirections
      * @throws MalformedURLException If a redirected URL is wrong
      * @throws IOException If any I/O operation goes wrong
      * @since 6867
      */
-    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept) throws MalformedURLException, IOException {
+    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept, Long ifModifiedSince) throws MalformedURLException, IOException {
         HttpURLConnection con = null;
         int numRedirects = 0;
         while(true) {
             con = Utils.openHttpConnection(downloadUrl);
+            if (ifModifiedSince != null) {
+                con.setIfModifiedSince(ifModifiedSince);
+            }
             con.setInstanceFollowRedirects(false);
             con.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
             con.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
@@ -379,6 +434,9 @@ public class MirroredInputStream extends InputStream {
             switch(con.getResponseCode()) {
             case HttpURLConnection.HTTP_OK:
                 return con;
+            case HttpURLConnection.HTTP_NOT_MODIFIED:
+                if (ifModifiedSince != null)
+                    return con;
             case HttpURLConnection.HTTP_MOVED_PERM:
             case HttpURLConnection.HTTP_MOVED_TEMP:
             case HttpURLConnection.HTTP_SEE_OTHER:

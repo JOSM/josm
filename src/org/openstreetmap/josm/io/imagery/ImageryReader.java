@@ -49,7 +49,8 @@ public class ImageryReader {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
-            try (InputStream in = new MirroredInputStream(source)) {
+            try (InputStream in = new MirroredInputStream(source, null, 1*MirroredInputStream.DAYS, null, 
+                    MirroredInputStream.CachingStrategy.IfModifiedSince)) {
                 InputSource is = new InputSource(UTFInputStreamReader.create(in));
                 factory.newSAXParser().parse(is, parser);
                 return parser.entries;
