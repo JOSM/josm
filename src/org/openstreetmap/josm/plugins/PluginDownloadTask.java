@@ -124,7 +124,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             }
             URL url = new URL(pi.downloadlink);
             synchronized(this) {
-                downloadConnection = MirroredInputStream.connectFollowingRedirect(url, PLUGIN_MIME_TYPES);
+                downloadConnection = MirroredInputStream.connectFollowingRedirect(url, PLUGIN_MIME_TYPES, null);
             }
             try (
                 InputStream in = downloadConnection.getInputStream();
