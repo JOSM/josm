@@ -95,7 +95,7 @@ public abstract class CrossingWays extends Test {
         @Override
         String createMessage(Way w1, Way w2) {
             if (isBuilding(w1)) {
-                return ("Crossing buildings");
+                return tr("Crossing buildings");
             } else if (w1.hasKey(WATERWAY) && w2.hasKey(WATERWAY)) {
                 return tr("Crossing waterways");
             } else if ((w1.hasKey(HIGHWAY) && w2.hasKey(WATERWAY))
@@ -105,7 +105,6 @@ public abstract class CrossingWays extends Test {
                 return tr("Crossing ways");
             }
         }
-
     }
 
     /**
