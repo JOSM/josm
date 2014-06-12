@@ -72,8 +72,7 @@ public class FileWatcher {
             synchronized(this) {
                 // Register directory. Can be called several times for a same directory without problem
                 // (it returns the same key so it should not send events several times)
-                dir.toPath().register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
-                dir.toPath().register(watcher, StandardWatchEventKinds.ENTRY_CREATE);
+                dir.toPath().register(watcher, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE);
                 styleMap.put(file.toPath(), style);
             }
         }
