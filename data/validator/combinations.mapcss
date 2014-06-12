@@ -161,3 +161,8 @@ way[highway][barrier],
     assertNoMatch: "node sport=swimming tourism=hotel";
     assertNoMatch: "node sport=10pin amenity=restaurant";
 }
+
+/* see #10140 */
+*[building:levels][!building][!building:part] {
+  throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
+}
