@@ -430,16 +430,9 @@ public final class ExpressionFactory {
          * @see Object#equals(Object)
          */
         public static boolean equal(Object a, Object b) {
-            // make sure the casts are done in a meaningful way, so
-            // the 2 objects really can be considered equal
-            for (Class<?> klass : new Class<?>[]{Float.class, Boolean.class, Color.class, float[].class, String.class}) {
-                Object a2 = Cascade.convertTo(a, klass);
-                Object b2 = Cascade.convertTo(b, klass);
-                if (a2 != null && b2 != null && a2.equals(b2)) {
-                    return true;
-                }
-            }
-            return false;
+            if (a.getClass() == b.getClass()) return a.equals(b);
+            if (a.equals(Cascade.convertTo(b, a.getClass()))) return true;
+            return b.equals(Cascade.convertTo(a, b.getClass()));
         }
 
         /**
