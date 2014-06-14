@@ -24,7 +24,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
@@ -224,15 +224,15 @@ public final class TaggingPresetReader {
 
     public static Collection<TaggingPreset> readAll(String source, boolean validate) throws SAXException, IOException {
         Collection<TaggingPreset> tp;
+        CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
         try (
-            MirroredInputStream s = new MirroredInputStream(source, null, PRESET_MIME_TYPES);
             // zip may be null, but Java 7 allows it: https://blogs.oracle.com/darcy/entry/project_coin_null_try_with
-            InputStream zip = s.findZipEntryInputStream("xml", "preset")
+            InputStream zip = cf.findZipEntryInputStream("xml", "preset")
         ) {
             if (zip != null) {
-                zipIcons = s.getFile();
+                zipIcons = cf.getFile();
             }
-            try (InputStreamReader r = new InputStreamReader(zip == null ? s : zip, StandardCharsets.UTF_8)) {
+            try (InputStreamReader r = new InputStreamReader(zip == null ? cf.getInputStream() : zip, StandardCharsets.UTF_8)) {
                 tp = readAll(new BufferedReader(r), validate);
             }
         }

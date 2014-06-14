@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
@@ -532,7 +533,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 } else {
                     Main.info(tr("Adding {0} to tag checker", i));
                 }
-                try (MirroredInputStream s = new MirroredInputStream(i)) {
+                try (InputStream s = new CachedFile(i).getInputStream()) {
                     addMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
                 }
             } catch (IOException ex) {
