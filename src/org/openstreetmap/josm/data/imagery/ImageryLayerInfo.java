@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.xml.sax.SAXException;
 
@@ -77,7 +77,7 @@ public class ImageryLayerInfo {
         defaultLayerIds.clear();
         for (String source : Main.pref.getCollection("imagery.layers.sites", Arrays.asList(DEFAULT_LAYER_SITES))) {
             if (clearCache) {
-                MirroredInputStream.cleanup(source);
+                CachedFile.cleanup(source);
             }
             try {
                 ImageryReader reader = new ImageryReader(source);

@@ -27,7 +27,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -280,7 +280,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
     public Iterable<Object> startWithValidation(final Reader in, String namespace, String schemaSource) throws SAXException {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        try (InputStream mis = new MirroredInputStream(schemaSource)) {
+        try (InputStream mis = new CachedFile(schemaSource).getInputStream()) {
             Schema schema = factory.newSchema(new StreamSource(mis));
             ValidatorHandler validator = schema.newValidatorHandler();
             validator.setContentHandler(parser);

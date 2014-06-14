@@ -50,7 +50,7 @@ import javax.xml.validation.Validator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -1389,7 +1389,7 @@ public class Preferences {
 
     public void validateXML(Reader in) throws Exception {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        try (InputStream xsdStream = new MirroredInputStream("resource://data/preferences.xsd")) {
+        try (InputStream xsdStream = new CachedFile("resource://data/preferences.xsd").getInputStream()) {
             Schema schema = factory.newSchema(new StreamSource(xsdStream));
             Validator validator = schema.newValidator();
             validator.validate(new StreamSource(in));

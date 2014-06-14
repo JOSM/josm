@@ -3,7 +3,7 @@ package org.openstreetmap.josm.data.projection.datum;
 
 import java.io.InputStream;
 
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 
 /**
  * Wrapper for {@link NTV2GridShiftFile}.
@@ -47,7 +47,7 @@ public class NTV2GridShiftFileWrapper {
      */
     public NTV2GridShiftFile getShiftFile() {
         if (instance == null) {
-            try (InputStream is = new MirroredInputStream(gridFileName)) {
+            try (InputStream is = new CachedFile(gridFileName).getInputStream()) {
                 instance = new NTV2GridShiftFile();
                 instance.loadGridShiftFile(is, false);
             } catch (Exception e) {

@@ -41,7 +41,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
@@ -274,10 +274,9 @@ public class MapCSSStyleSource extends StyleSource {
         if (css != null) {
             return new ByteArrayInputStream(css.getBytes(StandardCharsets.UTF_8));
         }
-        MirroredInputStream in = getMirroredInputStream();
+        CachedFile cf = getCachedFile();
         if (isZip) {
-            File file = in.getFile();
-            Utils.close(in);
+            File file = cf.getFile();
             zipFile = new ZipFile(file, StandardCharsets.UTF_8);
             zipIcons = file;
             ZipEntry zipEntry = zipFile.getEntry(zipEntryPath);
@@ -285,13 +284,13 @@ public class MapCSSStyleSource extends StyleSource {
         } else {
             zipFile = null;
             zipIcons = null;
-            return in;
+            return cf.getInputStream();
         }
     }
 
     @Override
-    public MirroredInputStream getMirroredInputStream() throws IOException {
-        return new MirroredInputStream(url, null, MAPCSS_STYLE_MIME_TYPES);
+    public CachedFile getCachedFile() throws IOException {
+        return new CachedFile(url).setHttpAccept(MAPCSS_STYLE_MIME_TYPES);
     }
 
     @Override

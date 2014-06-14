@@ -10,8 +10,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.tools.GeoPropertyIndex.GeoProperty;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
@@ -66,7 +66,7 @@ public class RightAndLefthandTraffic {
 
     private static void initialize() {
         leftHandTrafficPolygons = new ArrayList<>();
-        try (InputStream is = new MirroredInputStream("resource://data/left-right-hand-traffic.osm")) {
+        try (InputStream is = new CachedFile("resource://data/left-right-hand-traffic.osm").getInputStream()) {
             DataSet data = OsmReader.parseDataSet(is, null);
             for (Way w : data.getWays()) {
                 leftHandTrafficPolygons.add(Geometry.getAreaLatLon(w.getNodes()));

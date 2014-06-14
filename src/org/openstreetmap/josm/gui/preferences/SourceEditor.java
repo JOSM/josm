@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -88,7 +89,7 @@ import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -1043,7 +1044,7 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            MirroredInputStream.cleanup(url);
+            CachedFile.cleanup(url);
             reloadAvailableSources(url, sourceProviders);
         }
     }
@@ -1279,7 +1280,7 @@ public abstract class SourceEditor extends JPanel {
                     }
                 }
 
-                MirroredInputStream stream = new MirroredInputStream(url);
+                InputStream stream = new CachedFile(url).getInputStream();
                 reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 
                 String line;
