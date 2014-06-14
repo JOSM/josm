@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.Shape;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -49,8 +49,10 @@ public class ImageryReader {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
-            try (InputStream in = new MirroredInputStream(source, null, 1*MirroredInputStream.DAYS, null, 
-                    MirroredInputStream.CachingStrategy.IfModifiedSince)) {
+            try (InputStream in = new CachedFile(source)
+                    .setMaxAge(1*CachedFile.DAYS)
+                    .setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince)
+                    .getInputStream()) {
                 InputSource is = new InputSource(UTFInputStreamReader.create(in));
                 factory.newSAXParser().parse(is, parser);
                 return parser.entries;

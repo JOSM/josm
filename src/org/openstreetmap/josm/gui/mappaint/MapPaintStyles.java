@@ -29,7 +29,7 @@ import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference.MapPaintPrefHelper;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -227,19 +227,19 @@ public final class MapPaintStyles {
     }
 
     private static StyleSource fromSourceEntry(SourceEntry entry) {
-        MirroredInputStream in = null;
+        CachedFile cf = null;
         try {
             Set<String> mimes = new HashSet<>();
             mimes.addAll(Arrays.asList(XmlStyleSource.XML_STYLE_MIME_TYPES.split(", ")));
             mimes.addAll(Arrays.asList(MapCSSStyleSource.MAPCSS_STYLE_MIME_TYPES.split(", ")));
-            in = new MirroredInputStream(entry.url, null, Utils.join(", ", mimes));
-            String zipEntryPath = in.findZipEntryPath("mapcss", "style");
+            cf = new CachedFile(entry.url).setHttpAccept(Utils.join(", ", mimes));
+            String zipEntryPath = cf.findZipEntryPath("mapcss", "style");
             if (zipEntryPath != null) {
                 entry.isZip = true;
                 entry.zipEntryPath = zipEntryPath;
                 return new MapCSSStyleSource(entry);
             }
-            zipEntryPath = in.findZipEntryPath("xml", "style");
+            zipEntryPath = cf.findZipEntryPath("xml", "style");
             if (zipEntryPath != null)
                 return new XmlStyleSource(entry);
             if (entry.url.toLowerCase().endsWith(".mapcss"))
@@ -247,7 +247,7 @@ public final class MapPaintStyles {
             if (entry.url.toLowerCase().endsWith(".xml"))
                 return new XmlStyleSource(entry);
             else {
-                try (InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+                try (InputStreamReader reader = new InputStreamReader(cf.getInputStream(), StandardCharsets.UTF_8)) {
                     WHILE: while (true) {
                         int c = reader.read();
                         switch (c) {
@@ -271,8 +271,6 @@ public final class MapPaintStyles {
         } catch (IOException e) {
             Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
             Main.error(e);
-        } finally {
-            Utils.close(in);
         }
         return null;
     }

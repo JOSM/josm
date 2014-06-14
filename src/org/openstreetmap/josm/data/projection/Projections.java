@@ -31,7 +31,7 @@ import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -132,7 +132,7 @@ public final class Projections {
     private static void loadInits() {
         Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
         try (
-            InputStream in = new MirroredInputStream("resource://data/projection/epsg");
+            InputStream in = new CachedFile("resource://data/projection/epsg").getInputStream();
             BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         ) {
             String line, lastline = "";

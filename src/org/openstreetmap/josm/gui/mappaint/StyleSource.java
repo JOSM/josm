@@ -17,7 +17,7 @@ import javax.swing.ImageIcon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -81,12 +81,12 @@ public abstract class StyleSource extends SourceEntry {
     public abstract InputStream getSourceInputStream() throws IOException;
 
     /**
-     * Returns a new {@code MirroredInputStream} to the local file containing style source (can be a text file or an archive).
-     * @return A new {@code MirroredInputStream} to the local file containing style source
+     * Returns a new {@code CachedFile} to the local file containing style source (can be a text file or an archive).
+     * @return A new {@code CachedFile} to the local file containing style source
      * @throws IOException if any I/O error occurs.
      * @since 7081
      */
-    public abstract MirroredInputStream getMirroredInputStream() throws IOException;
+    public abstract CachedFile getCachedFile() throws IOException;
 
     /**
      * Closes the source input stream previously returned by {@link #getSourceInputStream()} and other linked resources, if applicable.

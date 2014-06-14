@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
-import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
@@ -103,20 +103,20 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
 
     @Override
     public InputStream getSourceInputStream() throws IOException {
-        MirroredInputStream in = getMirroredInputStream();
-        InputStream zip = in.findZipEntryInputStream("xml", "style");
+        CachedFile cf = getCachedFile();
+        InputStream zip = cf.findZipEntryInputStream("xml", "style");
         if (zip != null) {
-            zipIcons = in.getFile();
+            zipIcons = cf.getFile();
             return zip;
         } else {
             zipIcons = null;
-            return in;
+            return cf.getInputStream();
         }
     }
 
     @Override
-    public MirroredInputStream getMirroredInputStream() throws IOException {
-        return new MirroredInputStream(url, null, XML_STYLE_MIME_TYPES);
+    public CachedFile getCachedFile() throws IOException {
+        return new CachedFile(url).setHttpAccept(XML_STYLE_MIME_TYPES);
     }
 
     private static class WayPrototypesRecord {

@@ -58,7 +58,6 @@ import javax.swing.ImageIcon;
 import org.apache.commons.codec.binary.Base64;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -74,6 +73,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
+import org.openstreetmap.josm.io.CachedFile;
 
 /**
  * Helper class to support the application with images.
@@ -532,17 +532,18 @@ public class ImageProvider {
     }
 
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
-        try (MirroredInputStream is = new MirroredInputStream(url,
-                    new File(Main.pref.getCacheDirectory(), "images").getPath())) {
+        CachedFile cf = new CachedFile(url)
+                .setDestDir(new File(Main.pref.getCacheDirectory(), "images").getPath());
+        try (InputStream is = cf.getInputStream()) {
             switch (type) {
             case SVG:
-                URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(is.getFile()).toString());
+                URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(cf.getFile()).toString());
                 SVGDiagram svg = getSvgUniverse().getDiagram(uri);
                 return svg == null ? null : new ImageResource(svg);
             case OTHER:
                 BufferedImage img = null;
                 try {
-                    img = read(Utils.fileToURL(is.getFile()), false, false);
+                    img = read(Utils.fileToURL(cf.getFile()), false, false);
                 } catch (IOException e) {
                     Main.warn("IOException while reading HTTP image: "+e.getMessage());
                 }
@@ -799,10 +800,8 @@ public class ImageProvider {
                 }
             });
 
-            try (InputStream is = new MirroredInputStream(
-                    base + fn,
-                    new File(Main.pref.getPreferencesDir(), "images").toString())
-            ) {
+            CachedFile cf = new CachedFile(base + fn).setDestDir(new File(Main.pref.getPreferencesDir(), "images").toString());
+            try (InputStream is = cf.getInputStream()) {
                 parser.parse(new InputSource(is));
             }
         } catch (SAXReturnException r) {
