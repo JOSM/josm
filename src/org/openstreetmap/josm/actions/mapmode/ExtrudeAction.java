@@ -21,7 +21,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +54,6 @@ import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Makes a rectangle from a line, or modifies a rectangle.
@@ -179,7 +177,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /** Dual alignment reference segments */
     private ReferenceSegment dualAlignSegment1, dualAlignSegment2;
     /** {@code true}, if new segment was collapsed */
-    private boolean dualAlignSegmentCollapsed;
+    private boolean dualAlignSegmentCollapsed = false;
     // Dual alignment UI stuff
     private final DualAlignChangeAction dualAlignChangeAction;
     private final JCheckBoxMenuItem dualAlignCheckboxMenuItem;
@@ -547,6 +545,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             selectedSegment = null;
             moveCommand = null;
             mode = Mode.select;
+            dualAlignSegmentCollapsed = false;
             updateStatusLine();
             Main.map.mapView.repaint();
         }
@@ -589,14 +588,17 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         wnew.addNode(selectedSegment.getFirstNode());
         wnew.addNode(selectedSegment.getSecondNode());
         wnew.addNode(third);
-        if (newN1en.distance(newN2en)>1e-6) {
-            wnew.addNode(fourth); // rectangle can degrade to triangle for dual alignment
+        if (!dualAlignSegmentCollapsed) {
+            // rectangle can degrade to triangle for dual alignment after collapsing
+            wnew.addNode(fourth);
         }
         // ... and close the way
         wnew.addNode(selectedSegment.getFirstNode());
         // undo support
         cmds.add(new AddCommand(third));
-        cmds.add(new AddCommand(fourth));
+        if (!dualAlignSegmentCollapsed) {
+            cmds.add(new AddCommand(fourth));
+        }
         cmds.add(new AddCommand(wnew));
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
         Main.main.undoRedo.add(c);
