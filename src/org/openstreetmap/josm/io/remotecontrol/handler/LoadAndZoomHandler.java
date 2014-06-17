@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -14,6 +16,7 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
+import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
@@ -69,7 +72,7 @@ public class LoadAndZoomHandler extends RequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"new_layer", "addtags", "select", "zoom_mode", "changeset_comment", "changeset_source"};
+        return new String[] {"new_layer", "addtags", "select", "zoom_mode", "changeset_comment", "changeset_source", "search"};
     }
 
     @Override
@@ -90,7 +93,9 @@ public class LoadAndZoomHandler extends RequestHandler {
                     "/load_and_zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&select=node413602999&new_layer=true"};
         } else {
             return new String[] {
-            "/zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&select=node413602999"};
+            "/zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&select=node413602999",
+            "/zoom?left=8.19&right=8.20&top=48.605&bottom=48.590&search=highway+OR+railway",
+            };
         }
     }
 
@@ -162,7 +167,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                 public void run() {
                     Set<OsmPrimitive> newSel = new HashSet<>();
                     DataSet ds = Main.main.getCurrentDataSet();
-                    if(ds == null) // e.g. download failed
+                    if (ds == null) // e.g. download failed
                         return;
                     for (SimplePrimitiveId id : toSelect) {
                         final OsmPrimitive p = ds.getPrimitiveById(id);
@@ -172,14 +177,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     }
                     toSelect.clear();
                     ds.setSelected(newSel);
-                    if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
-                        // zoom_mode=(download|selection), defaults to selection
-                        if (!"download".equals(args.get("zoom_mode")) && !newSel.isEmpty()) {
-                            AutoScaleAction.autoScale("selection");
-                        } else {
-                            zoom(bbox);
-                        }
-                    }
+                    zoom(newSel, bbox);
                     if (Main.isDisplayingMapView() && Main.map.relationListDialog != null) {
                         Main.map.relationListDialog.selectRelations(null); // unselect all relations to fix #7342
                         Main.map.relationListDialog.dataChanged(null);
@@ -187,9 +185,20 @@ public class LoadAndZoomHandler extends RequestHandler {
                     }
                 }
             });
-        } else if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
+        } else if (args.containsKey("search") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
+            try {
+                final DataSet ds = Main.main.getCurrentDataSet();
+                final SearchCompiler.Match search = SearchCompiler.compile(args.get("search"), false, false);
+                final Collection<OsmPrimitive> filteredPrimitives = Utils.filter(ds.allPrimitives(), search);
+                ds.setSelected(filteredPrimitives);
+                zoom(filteredPrimitives, bbox);
+            } catch (SearchCompiler.ParseError ex) {
+                Main.error(ex);
+                throw new RequestHandlerErrorException(ex);
+            }
+        } else {
             // after downloading, zoom to downloaded area.
-            zoom(bbox);
+            zoom(Collections.<OsmPrimitive>emptySet(), bbox);
         }
 
         // add changeset tags after download if necessary
@@ -212,15 +221,21 @@ public class LoadAndZoomHandler extends RequestHandler {
         AddTagsDialog.addTags(args, sender);
     }
 
-    protected void zoom(final Bounds bounds) {
-        // make sure this isn't called unless there *is* a MapView
-        if (Main.isDisplayingMapView()) {
+    protected void zoom(Collection<OsmPrimitive> primitives, final Bounds bbox) {
+        if (!PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
+            return;
+        }
+        // zoom_mode=(download|selection), defaults to selection
+        if (!"download".equals(args.get("zoom_mode")) && !primitives.isEmpty()) {
+            AutoScaleAction.autoScale("selection");
+        } else if (Main.isDisplayingMapView()) {
+            // make sure this isn't called unless there *is* a MapView
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
                 @Override
                 public void run() {
-                    BoundingXYVisitor bbox = new BoundingXYVisitor();
-                    bbox.visit(bounds);
-                    Main.map.mapView.recalculateCenterScale(bbox);
+                    BoundingXYVisitor bbox1 = new BoundingXYVisitor();
+                    bbox1.visit(bbox);
+                    Main.map.mapView.recalculateCenterScale(bbox1);
                 }
             });
         }
