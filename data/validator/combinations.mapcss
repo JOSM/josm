@@ -111,7 +111,6 @@ way[junction                   ][!highway],
 
 /* {0.key} without {1.key} or {2.tag} */
 *[segregated                   ][!highway][railway=crossing],
-*[toll                         ][!highway][route!~/^(ferry|road)$/],
 *[boat                         ][!waterway][natural!=water],
 *[intermittent                 ][!waterway][natural!=water] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
@@ -120,6 +119,11 @@ way[junction                   ][!highway],
 /* {0.key} without {1.key}, {2.key} or {3.key} */
 *[snowplowing                  ][!highway][!amenity][!leisure] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.key}");
+}
+
+/* {0.key} without {1.key}, {2.key} or {3.tag} */
+*[toll                         ][!highway][!barrier][route!~/^(ferry|road)$/] {
+  throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.tag}");
 }
 
 /* {0} on suspicious object */
@@ -152,7 +156,7 @@ way[highway][barrier],
 }
 
 /* see ticket #9593 */
-*[sport][tourism != hotel][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool)$/][natural !~ /^(beach|bare_rock)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/] {
+*[sport][tourism != hotel][highway != raceway][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool)$/][natural !~ /^(beach|bare_rock)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/] {
     throwWarning: tr("sport without physical feature");
     assertMatch: "node sport=tennis";
     assertNoMatch: "node sport=tennis leisure=pitch";
