@@ -125,7 +125,7 @@ public class ImageryHandler extends RequestHandler {
 
     @Override
     public String getUsage() {
-        return "adds an imagery layer (e.g. WMS, TMS))";
+        return "adds an imagery layer (e.g. WMS, TMS)";
     }
 
     @Override
