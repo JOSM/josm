@@ -4,14 +4,17 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.data.Preferences;
 
 /**
@@ -38,21 +41,39 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Class<?> Ccom_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
             Object Ocom_apple_eawt_Application = Ccom_apple_eawt_Application.getConstructor((Class[])null).newInstance((Object[])null);
             Class<?> Ccom_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
-            Method MaddApplicationListener = Ccom_apple_eawt_Application.getDeclaredMethod("addApplicationListener", new Class<?>[] { Ccom_apple_eawt_ApplicationListener });
+            Method MaddApplicationListener = Ccom_apple_eawt_Application.getDeclaredMethod("addApplicationListener", Ccom_apple_eawt_ApplicationListener);
             Object Oproxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] { Ccom_apple_eawt_ApplicationListener }, ivhandler);
-            MaddApplicationListener.invoke(Ocom_apple_eawt_Application, new Object[] { Oproxy });
-            Method MsetEnabledPreferencesMenu = Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", new Class<?>[] { boolean.class });
-            MsetEnabledPreferencesMenu.invoke(Ocom_apple_eawt_Application, new Object[] { Boolean.TRUE });
-        } catch (Exception ex) {
+            MaddApplicationListener.invoke(Ocom_apple_eawt_Application, Oproxy);
+            Method MsetEnabledPreferencesMenu = Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class);
+            MsetEnabledPreferencesMenu.invoke(Ocom_apple_eawt_Application, Boolean.TRUE);
+            // Register callback for file opening through double-click
+            Class<?> Ccom_apple_eawt_OpenFilesHandler = Class.forName("com.apple.eawt.OpenFilesHandler");
+            Method MsetOpenFileHandler = Ccom_apple_eawt_Application.getDeclaredMethod("setOpenFileHandler", Ccom_apple_eawt_OpenFilesHandler);
+            Object Oproxy2 = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] { Ccom_apple_eawt_OpenFilesHandler }, ivhandler);
+            MsetOpenFileHandler.invoke(Ocom_apple_eawt_Application, Oproxy2);
+        } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Main.warn("Failed to register with OSX: " + ex);
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Object invoke (Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Boolean handled = Boolean.TRUE;
         switch (method.getName()) {
+        case "openFiles":
+            if (args[0] != null) {
+                try {
+                    Object oFiles = args[0].getClass().getDeclaredMethod("getFiles").invoke(args[0]);
+                    if (oFiles instanceof List) {
+                        OpenFileAction.openFiles((List<File>)oFiles, true);
+                    }
+                } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
+                    Main.warn("Failed to access open files event: " + ex);
+                }
+            }
+            return null;
         case "handleQuit":
             handled = Main.exitJosm(false, 0);
             break;
@@ -68,7 +89,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         if (args[0] != null) {
             try {
                 args[0].getClass().getDeclaredMethod("setHandled", new Class<?>[] { boolean.class }).invoke(args[0], new Object[] { handled });
-            } catch (Exception ex) {
+            } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
                 Main.warn("Failed to report handled event: " + ex);
             }
         }
