@@ -69,9 +69,12 @@ public class RelationChecker extends Test {
 
     /**
      * Reads the presets data.
-     *
      */
-    public void initializePresets() {
+    public static synchronized void initializePresets() {
+        if (!relationpresets.isEmpty()) {
+            // the presets have already been initialized
+            return;
+        }
         for (TaggingPreset p : TaggingPresets.getTaggingPresets()) {
             for (TaggingPresetItem i : p.data) {
                 if (i instanceof Roles) {
