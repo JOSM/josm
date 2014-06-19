@@ -169,7 +169,7 @@ public final class TaggingPresetItems {
         public SearchCompiler.Match memberExpression;
 
         public boolean required = false;
-        public long count = 0;
+        private long count = 0;
 
         public void setType(String types) throws SAXException {
             this.types = getType(types);
@@ -190,19 +190,24 @@ public final class TaggingPresetItems {
             }
         }
 
-        /* return either argument, the highest possible value or the lowest
-           allowed value */
-        public long getValidCount(long c)
-        {
-            if(count > 0 && !required)
-                return c != 0 ? count : 0;
-            else if(count > 0)
-                return count;
-            else if(!required)
-                return c != 0  ? c : 0;
-            else
-                return c != 0  ? c : 1;
+        public void setCount(String count) {
+            this.count = Long.parseLong(count);
         }
+
+        /**
+         * Return either argument, the highest possible value or the lowest allowed value
+         */
+        public long getValidCount(long c) {
+            if (count > 0 && !required)
+                return c != 0 ? count : 0;
+            else if (count > 0)
+                return count;
+            else if (!required)
+                return c != 0 ? c : 0;
+            else
+                return c != 0 ? c : 1;
+        }
+
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             String cstring;
             if(count > 0 && !required) {
