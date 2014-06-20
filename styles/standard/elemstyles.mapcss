@@ -88,10 +88,10 @@ way[bridge=aqueduct]::core_bridge {
     opacity: 0.5;
 }
 way[tunnel?]::core_tunnel {
-    object-z-index: 1;
-    width: +4;
-    color: bridge#000080;
-    opacity: 0.5;
+    object-z-index: -1;
+    width: +5;
+    color: tunnel#964B00;
+    opacity: 0.7;
 }
 node[oneway],
 node[bridge],
