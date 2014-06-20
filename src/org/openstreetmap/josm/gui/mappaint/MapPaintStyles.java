@@ -310,8 +310,10 @@ public final class MapPaintStyles {
                 public void run() {
                     fireMapPaintSylesUpdated();
                     styles.clearCached();
-                    Main.map.mapView.preferenceChanged(null);
-                    Main.map.mapView.repaint();
+                    if (Main.isDisplayingMapView()) {
+                        Main.map.mapView.preferenceChanged(null);
+                        Main.map.mapView.repaint();
+                    }
                 }
             });
         }
