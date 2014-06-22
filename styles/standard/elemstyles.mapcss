@@ -2724,7 +2724,7 @@ way[railway=rail][service=spur] {
 }
 /* draw tram on top of other way (highway=*) or
    as a standalone style */
-way[railway=tram]::core_railway {
+way[highway][railway=tram]::core_railway, way[!highway][railway=tram] {
     object-z-index: 1;
     modifier: false; /* don't draw default way if there is no line on default layer */
     width: 1;
