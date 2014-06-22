@@ -741,6 +741,10 @@ node[highway=passing_place] {
     icon-image: "vehicle/passing_place.png";
     text: auto;
 }
+node[highway=elevator] {
+    icon-image: "service/elevator.png";
+    text: auto;
+}
 way[highway=construction] {
     width: 2;
     realwidth: 5;
