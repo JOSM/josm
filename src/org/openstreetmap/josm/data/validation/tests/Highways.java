@@ -52,7 +52,7 @@ public class Highways extends Test {
             "living_street");
 
     protected static final List<String> KNOWN_SOURCE_MAXSPEED_CONTEXTS = Arrays.asList(
-            "urban", "rural", "zone", "zone30", "zone:30", "nsl_single", "nsl_dual", "motorway", "trunk", "living_street");
+            "urban", "rural", "zone", "zone30", "zone:30", "nsl_single", "nsl_dual", "motorway", "trunk", "living_street", "bicycle_road");
 
     protected static final List<String> ISO_COUNTRIES = Arrays.asList(Locale.getISOCountries());
 
