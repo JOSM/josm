@@ -99,7 +99,7 @@ public final class CreateCircleAction extends JosmAction {
     private static class PolarNode {
         double a;
         Node node;
-        
+
         PolarNode(EastNorth center, Node n) {
             EastNorth pt = n.getEastNorth();
             this.a = Math.atan2(pt.north() - center.north(), pt.east() - center.east());
@@ -122,13 +122,13 @@ public final class CreateCircleAction extends JosmAction {
                 return 1;
         }
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
 
-        int numberOfNodesInCircle = Main.pref.getInteger("createcircle.nodecount", 8);
+        int numberOfNodesInCircle = Main.pref.getInteger("createcircle.nodecount", 16);
         if (numberOfNodesInCircle < 1) {
             numberOfNodesInCircle = 1;
         } else if (numberOfNodesInCircle > 100) {
@@ -171,7 +171,7 @@ public final class CreateCircleAction extends JosmAction {
         // now we can start doing things to OSM data
         Collection<Command> cmds = new LinkedList<>();
         EastNorth center = null;
-        
+
         if (nodes.size() == 2) {
             // diameter: two single nodes needed or a way with two nodes
             Node   n1 = nodes.get(0);
