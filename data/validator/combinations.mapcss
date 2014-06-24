@@ -144,9 +144,10 @@ node[amenity =~ /^(restaurant|cafe|fast_food)$/][!name] {
 
 way[highway][barrier],
 *[highway][waterway][waterway!=dam],
-*[highway][natural],
+way[highway][natural],
 *[landuse][building] {
   throwWarning: tr("{0} used with {1}", "{0.key}", "{1.key}");
+  assertNoMatch: "node highway=street_lamp natural=birds_nest note=josm#10193";
 }
 
 *[natural=water][leisure=swimming_pool],
