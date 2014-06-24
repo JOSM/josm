@@ -42,6 +42,18 @@ import org.openstreetmap.josm.tools.MultiMap;
  */
 public class ValidatorTreePanel extends JTree implements Destroyable {
 
+    private static final class GroupTreeNode extends DefaultMutableTreeNode {
+
+        public GroupTreeNode(Object userObject) {
+            super(userObject);
+        }
+
+        @Override
+        public String toString() {
+            return tr("{0} ({1})", super.toString(), getLeafCount());
+        }
+    }
+
     /**
      * The validation data.
      */
@@ -208,12 +220,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             }
 
             // Severity node
-            DefaultMutableTreeNode severityNode = new DefaultMutableTreeNode(s) {
-                @Override
-                public String toString() {
-                    return super.toString() + " (" + getLeafCount() + ")";
-                }
-            };
+            DefaultMutableTreeNode severityNode = new GroupTreeNode(s);
             rootNode.add(severityNode);
 
             if (oldSelectedRows.contains(s)) {
@@ -242,8 +249,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                 MultiMap<String, TestError> errorlist = bag.getValue();
                 DefaultMutableTreeNode groupNode = null;
                 if (errorlist.size() > 1) {
-                    String nmsg = tr("{0} ({1})", bag.getKey(), errorlist.size());
-                    groupNode = new DefaultMutableTreeNode(nmsg);
+                    groupNode = new GroupTreeNode(bag.getKey());
                     severityNode.add(groupNode);
                     if (oldSelectedRows.contains(bag.getKey())) {
                         expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode, groupNode }));
