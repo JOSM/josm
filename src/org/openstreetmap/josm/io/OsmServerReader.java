@@ -215,9 +215,10 @@ public abstract class OsmServerReader extends OsmConnection {
     }
 
     private InputStream uncompressAccordingToContentDisposition(InputStream stream, Map<String, List<String>> headerFields) throws IOException {
-        if (headerFields.get("Content-Disposition").toString().contains(".gz\"")) {
+        List<String> field = headerFields.get("Content-Disposition");
+        if (field != null && field.toString().contains(".gz\"")) {
             return Compression.GZIP.getUncompressedInputStream(stream);
-        } else if (headerFields.get("Content-Disposition").toString().contains(".bz2\"")) {
+        } else if (field != null && field.toString().contains(".bz2\"")) {
             return Compression.BZIP2.getUncompressedInputStream(stream);
         } else {
             return stream;
