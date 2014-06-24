@@ -369,7 +369,7 @@ public class TagChecker extends Test.TagTest {
                 withErrors.put(p, "IPK");
             }
             if (checkValues && value != null && (value.startsWith(" ") || value.endsWith(" ")) && !withErrors.contains(p, "SPACE")) {
-                errors.add( new TestError(this, Severity.OTHER, tr("Property values start or end with white space"),
+                errors.add( new TestError(this, Severity.WARNING, tr("Property values start or end with white space"),
                         tr(s, key), MessageFormat.format(s, key), INVALID_SPACE, p) );
                 withErrors.put(p, "SPACE");
             }
