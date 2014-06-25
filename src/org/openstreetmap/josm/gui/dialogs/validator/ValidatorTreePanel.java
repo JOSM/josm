@@ -163,7 +163,10 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                     oldSelectedRows.add(userObject);
                 } else if (userObject instanceof String) {
                     String msg = (String) userObject;
-                    msg = msg.substring(0, msg.lastIndexOf(" ("));
+                    int index = msg.lastIndexOf(" (");
+                    if (index > 0) {
+                        msg = msg.substring(0, index);
+                    }
                     oldSelectedRows.add(msg);
                 }
             }
