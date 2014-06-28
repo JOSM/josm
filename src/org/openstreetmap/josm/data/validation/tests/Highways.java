@@ -98,7 +98,7 @@ public class Highways extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (w.hasKey("highway") && w.hasKey("junction") && "roundabout".equals(w.get("junction"))) {
+            if (w.hasKey("highway") && CLASSIFIED_HIGHWAYS.contains(w.get("highway")) && w.hasKey("junction") && "roundabout".equals(w.get("junction"))) {
                 testWrongRoundabout(w);
             }
             if (w.hasKey("source:maxspeed")) {
@@ -223,7 +223,7 @@ public class Highways extends Test {
             leftByPedestrians = true;
         }
     }
-    
+
     private void testSourceMaxspeed(OsmPrimitive p, boolean testContextHighway) {
         String value = p.get("source:maxspeed");
         if (value.matches("[A-Z]{2}:.+")) {
