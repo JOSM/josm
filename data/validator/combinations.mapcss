@@ -154,6 +154,7 @@ way[highway][natural],
 *[natural=water][amenity=swimming_pool] {
   /* see #6932 */
   throwWarning: tr("natural water used for swimming pool");
+  fixRemove: "natural";
 }
 
 /* see ticket #9593 */
