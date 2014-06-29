@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
 import org.openstreetmap.josm.io.CachedFile;
@@ -538,19 +539,26 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @param url The unique URL of the MapCSS config file
      * @throws ParseException if the config file does not match MapCSS syntax
      * @throws IOException if any I/O error occurs
-     * @since
+     * @since 7275
      */
-    public void addMapCSS(String url) throws ParseException, IOException {
+    public synchronized void addMapCSS(String url) throws ParseException, IOException {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
-        try (InputStream s = new CachedFile(url).getInputStream()) {
-            checks.putAll(url, TagCheck.readMapCSS(new BufferedReader(UTFInputStreamReader.create(s))));
+        CachedFile cache = new CachedFile(url);
+        try (InputStream s = cache.getInputStream()) {
+            List<TagCheck> tagchecks = TagCheck.readMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
+            checks.remove(url);
+            checks.putAll(url, tagchecks);
         }
     }
 
     @Override
     public synchronized void initialize() throws Exception {
         checks.clear();
-        for (String i : new ValidatorTagCheckerRulesPreference.RulePrefHelper().getActiveUrls()) {
+        for (SourceEntry source : new ValidatorTagCheckerRulesPreference.RulePrefHelper().get()) {
+            if (!source.active) {
+                continue;
+            }
+            String i = source.url;
             try {
                 if (i.startsWith("resource:")) {
                     Main.debug(tr("Adding {0} to tag checker", i));
@@ -558,6 +566,13 @@ public class MapCSSTagChecker extends Test.TagTest {
                     Main.info(tr("Adding {0} to tag checker", i));
                 }
                 addMapCSS(i);
+                if (Main.pref.getBoolean("validator.auto_reload_local_rules", true) && source.isLocal()) {
+                    try {
+                        Main.fileWatcher.registerValidatorRule(source);
+                    } catch (IOException e) {
+                        Main.error(e);
+                    }
+                }
             } catch (IOException ex) {
                 Main.warn(tr("Failed to add {0} to tag checker", i));
                 Main.warn(ex, false);
