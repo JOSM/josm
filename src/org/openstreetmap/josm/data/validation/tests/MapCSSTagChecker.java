@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,6 +49,7 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRules
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -57,10 +59,21 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class MapCSSTagChecker extends Test.TagTest {
 
+    /**
+     * A grouped MapCSSRule with multiple selectors for a single declaration.
+     * @see MapCSSRule
+     */
     public static class GroupedMapCSSRule {
+        /** MapCSS selectors **/
         final public List<Selector> selectors;
+        /** MapCSS declaration **/
         final public Declaration declaration;
 
+        /**
+         * Constructs a new {@code GroupedMapCSSRule}.
+         * @param selectors MapCSS selectors
+         * @param declaration MapCSS declaration
+         */
         public GroupedMapCSSRule(List<Selector> selectors, Declaration declaration) {
             this.selectors = selectors;
             this.declaration = declaration;
@@ -111,7 +124,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         super(tr("Tag checker (MapCSS based)"), tr("This test checks for errors in tag keys and values."));
     }
 
-    final List<TagCheck> checks = new ArrayList<>();
+    final MultiMap<String, TagCheck> checks = new MultiMap<>();
 
     static class TagCheck implements Predicate<OsmPrimitive> {
         protected final GroupedMapCSSRule rule;
@@ -203,7 +216,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                         final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, false);
                         check.change.add(toTag);
                     } else if ("fixRemove".equals(ai.key)) {
-                        CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !val.contains("="), "Unexpected '='. Please only specify the key to remove!");
+                        CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !(val != null && val.contains("=")),
+                                "Unexpected '='. Please only specify the key to remove!");
                         final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, true);
                         check.change.add(toTag);
                     } else if ("fixChangeKey".equals(ai.key) && val != null) {
@@ -322,7 +336,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         /**
-         * Replaces occurrences of {@code {i.key}}, {@code {i.value}}, {@code {i.tag}} in {@code s} by the corresponding
+         * Replaces occurrences of <code>{i.key}</code>, <code>{i.value}</code>, <code>{i.tag}</code> in {@code s} by the corresponding
          * key/value/tag of the {@code index}-th {@link Condition} of {@code matchingSelector}.
          */
         static String insertArguments(Selector matchingSelector, String s) {
@@ -483,21 +497,26 @@ public class MapCSSTagChecker extends Test.TagTest {
 
     /**
      * Obtains all {@link TestError}s for the {@link OsmPrimitive} {@code p}.
+     * @param p The OSM primitive
+     * @param includeOtherSeverity if {@code true}, errors of severity {@link Severity#OTHER} (info) will also be returned
+     * @return all errors for the given primitive, with or without those of "info" severity
      */
     public Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
         final ArrayList<TestError> r = new ArrayList<>();
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        for (TagCheck check : checks) {
-            if (Severity.OTHER.equals(check.getSeverity()) && !includeOtherSeverity) {
-                continue;
-            }
-            final Selector selector = check.whichSelectorMatchesEnvironment(env);
-            if (selector != null) {
-                check.rule.declaration.execute(env);
-                final TestError error = check.getErrorForPrimitive(p, selector, env);
-                if (error != null) {
-                    error.setTester(new MapCSSTagCheckerAndRule(check.rule));
-                    r.add(error);
+        for (Set<TagCheck> schecks : checks.values()) {
+            for (TagCheck check : schecks) {
+                if (Severity.OTHER.equals(check.getSeverity()) && !includeOtherSeverity) {
+                    continue;
+                }
+                final Selector selector = check.whichSelectorMatchesEnvironment(env);
+                if (selector != null) {
+                    check.rule.declaration.execute(env);
+                    final TestError error = check.getErrorForPrimitive(p, selector, env);
+                    if (error != null) {
+                        error.setTester(new MapCSSTagCheckerAndRule(check.rule));
+                        r.add(error);
+                    }
                 }
             }
         }
@@ -515,12 +534,17 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     /**
-     * Adds a new MapCSS config file from the given {@code Reader}.
-     * @param css The reader
+     * Adds a new MapCSS config file from the given URL.
+     * @param url The unique URL of the MapCSS config file
      * @throws ParseException if the config file does not match MapCSS syntax
+     * @throws IOException if any I/O error occurs
+     * @since
      */
-    public void addMapCSS(Reader css) throws ParseException {
-        checks.addAll(TagCheck.readMapCSS(css));
+    public void addMapCSS(String url) throws ParseException, IOException {
+        CheckParameterUtil.ensureParameterNotNull(url, "url");
+        try (InputStream s = new CachedFile(url).getInputStream()) {
+            checks.putAll(url, TagCheck.readMapCSS(new BufferedReader(UTFInputStreamReader.create(s))));
+        }
     }
 
     @Override
@@ -533,9 +557,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 } else {
                     Main.info(tr("Adding {0} to tag checker", i));
                 }
-                try (InputStream s = new CachedFile(i).getInputStream()) {
-                    addMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
-                }
+                addMapCSS(i);
             } catch (IOException ex) {
                 Main.warn(tr("Failed to add {0} to tag checker", i));
                 Main.warn(ex, false);
