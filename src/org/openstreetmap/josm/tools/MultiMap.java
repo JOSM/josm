@@ -212,6 +212,22 @@ public class MultiMap<A, B> {
     }
 
     @Override
+    public int hashCode() {
+        return map.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof MultiMap))
+            return false;
+        return map.equals(((MultiMap<?,?>) obj).map);
+    }
+
+    @Override
     public String toString() {
         List<String> entries = new ArrayList<>(map.size());
         for (A key : map.keySet()) {

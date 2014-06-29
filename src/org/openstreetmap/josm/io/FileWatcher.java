@@ -15,8 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.validation.OsmValidator;
+import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -28,6 +32,7 @@ public class FileWatcher {
     private WatchService watcher;
 
     private final Map<Path, StyleSource> styleMap = new HashMap<>();
+    private final Map<Path, SourceEntry> ruleMap = new HashMap<>();
 
     /**
      * Constructs a new {@code FileWatcher}.
@@ -54,26 +59,38 @@ public class FileWatcher {
      * @throws IOException if an I/O error occurs
      */
     public void registerStyleSource(StyleSource style) throws IOException {
-        CheckParameterUtil.ensureParameterNotNull(style, "style");
+        register(style, styleMap);
+    }
+
+    /**
+     * Registers a validator rule for local file changes, allowing dynamic reloading.
+     * @param rule The rule to watch
+     * @throws IllegalArgumentException if {@code rule} is null or if it does not provide a local file
+     * @throws IllegalStateException if the watcher service failed to start
+     * @throws IOException if an I/O error occurs
+     * @since 7276
+     */
+    public void registerValidatorRule(SourceEntry rule) throws IOException {
+        register(rule, ruleMap);
+    }
+
+    private <T extends SourceEntry> void register(T obj, Map<Path, T> map) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(obj, "obj");
         if (watcher == null) {
             throw new IllegalStateException("File watcher is not available");
         }
-        CachedFile cf = style.getCachedFile();
-        // Get underlying file
-        File file = cf.getFile();
-        if (file == null) {
-            throw new IllegalArgumentException("Style "+style+" does not have a local file");
-        }
+        // Get local file, as this method is only called for local style sources
+        File file = new File(obj.url);
         // Get parent directory as WatchService allows only to monitor directories, not single files
         File dir = file.getParentFile();
         if (dir == null) {
-            throw new IllegalArgumentException("Style "+style+" does not have a parent directory");
+            throw new IllegalArgumentException("Resource "+obj+" does not have a parent directory");
         }
         synchronized(this) {
             // Register directory. Can be called several times for a same directory without problem
             // (it returns the same key so it should not send events several times)
             dir.toPath().register(watcher, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE);
-            styleMap.put(file.toPath(), style);
+            map.put(file.toPath(), obj);
         }
     }
 
@@ -114,10 +131,20 @@ public class FileWatcher {
 
                 synchronized(this) {
                     StyleSource style = styleMap.get(fullPath);
+                    SourceEntry rule = ruleMap.get(fullPath);
                     if (style != null) {
                         Main.info("Map style "+style.getDisplayString()+" has been modified. Reloading style...");
-                        //style.loadStyleSource();
                         Main.worker.submit(new MapPaintStyleLoader(Collections.singleton(style)));
+                    } else if (rule != null) {
+                        Main.info("Validator rule "+rule.getDisplayString()+" has been modified. Reloading rule...");
+                        MapCSSTagChecker tagChecker = OsmValidator.getTest(MapCSSTagChecker.class);
+                        if (tagChecker != null) {
+                            try {
+                                tagChecker.addMapCSS(rule.url);
+                            } catch (IOException | ParseException e) {
+                                Main.warn(e);
+                            }
+                        }
                     } else if (Main.isDebugEnabled()) {
                         Main.debug("Received "+kind.name()+" event for unregistered file: "+fullPath);
                     }

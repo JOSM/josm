@@ -10,12 +10,13 @@ import org.openstreetmap.josm.Main;
 
 /**
  * A source entry primarily used to save the user's selection of mappaint styles,
- * but also for preset sources.
+ * but also for preset sources or validator rules.
+ * @since 3796
  */
 public class SourceEntry {
 
     /**
-     *  A URL can be anything that MirroredInputStream understands, i.e.
+     *  A URL can be anything that CachedFile understands, i.e.
      *  a local file, http://, or a file from the current jar
      */
     public String url;
@@ -52,6 +53,21 @@ public class SourceEntry {
      */
     public boolean active;
 
+    /**
+     * Constructs a new {@code SourceEntry}.
+     * @param url URL that {@link org.openstreetmap.josm.io.CachedFile} understands
+     * @param isZip if url is a zip file and the resource is inside the zip file
+     * @param zipEntryPath If {@code isZip} is {@code true}, denotes the path inside the zip file
+     * @param name Source name
+     * @param title title that can be used as menu entry
+     * @param active boolean flag that can be used to turn the source on or off at runtime
+     * @see #url
+     * @see #isZip
+     * @see #zipEntryPath
+     * @see #name
+     * @see #title
+     * @see #active
+     */
     public SourceEntry(String url, boolean isZip, String zipEntryPath, String name, String title, boolean active) {
         this.url = url;
         this.isZip = isZip;
@@ -61,10 +77,25 @@ public class SourceEntry {
         this.active = active;
     }
 
+    /**
+     * Constructs a new {@code SourceEntry}.
+     * @param url URL that {@link org.openstreetmap.josm.io.CachedFile} understands
+     * @param name Source name
+     * @param title title that can be used as menu entry
+     * @param active boolean flag that can be used to turn the source on or off at runtime
+     * @see #url
+     * @see #name
+     * @see #title
+     * @see #active
+     */
     public SourceEntry(String url, String name, String title, Boolean active) {
         this(url, false, null, name, title, active);
     }
 
+    /**
+     * Constructs a new {@code SourceEntry}.
+     * @param e existing source entry to copy
+     */
     public SourceEntry(SourceEntry e) {
         this.url = e.url;
         this.isZip = e.isZip;
@@ -117,8 +148,9 @@ public class SourceEntry {
     }
 
     /**
-     * extract file part from url, e.g.:
-     * http://www.test.com/file.xml?format=text --&gt; file.xml
+     * Extracts file part from url, e.g.:
+     * <code>http://www.test.com/file.xml?format=text --&gt; file.xml</code>
+     * @return The filename part of the URL
      */
     public String getFileNamePart() {
         Pattern p = Pattern.compile("([^/\\\\]*?)([?].*)?$");
@@ -140,20 +172,25 @@ public class SourceEntry {
         return name == null ? "standard" : name;
     }
 
+    /**
+     * Determines if this source denotes a file on a local filesystem.
+     * @return {@code true} if the source is a local file
+     */
     public boolean isLocal() {
         if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("resource://"))
             return false;
         return true;
     }
 
-    public String getLocalSourceDir() {
+    /**
+     * Return the source directory, only for local files.
+     * @return The source directory, or {@code null} if this file isn't local, or does not have a parent
+     * @since 7276
+     */
+    public File getLocalSourceDir() {
         if (!isLocal())
             return null;
-        File f = new File(url);
-        File dir = f.getParentFile();
-        if (dir == null)
-            return null;
-        return dir.getPath();
+        return new File(url).getParentFile();
     }
 
     /**
