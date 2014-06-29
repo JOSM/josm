@@ -11,6 +11,7 @@ import java.text.MessageFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -73,23 +75,25 @@ public class MapCSSTagCheckerTest {
         c.initialize();
 
         LinkedHashSet<String> assertionErrors = new LinkedHashSet<>();
-        for (final MapCSSTagChecker.TagCheck check : c.checks) {
-            System.out.println("Check: "+check);
-            for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
-                System.out.println("- Assertion: "+i);
-                final OsmPrimitive p = TestUtils.createPrimitive(i.getKey());
-                final boolean isError = Utils.exists(c.getErrorsForPrimitive(p, true), new Predicate<TestError>() {
-                    @Override
-                    public boolean evaluate(TestError e) {
-                        //noinspection EqualsBetweenInconvertibleTypes
-                        return e.getTester().equals(check.rule);
+        for (final Set<TagCheck> schecks : c.checks.values()) {
+            for (final TagCheck check : schecks) {
+                System.out.println("Check: "+check);
+                for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
+                    System.out.println("- Assertion: "+i);
+                    final OsmPrimitive p = TestUtils.createPrimitive(i.getKey());
+                    final boolean isError = Utils.exists(c.getErrorsForPrimitive(p, true), new Predicate<TestError>() {
+                        @Override
+                        public boolean evaluate(TestError e) {
+                            //noinspection EqualsBetweenInconvertibleTypes
+                            return e.getTester().equals(check.rule);
+                        }
+                    });
+                    if (isError != i.getValue()) {
+                        final String error = MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
+                                check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
+                        System.err.println(error);
+                        assertionErrors.add(error);
                     }
-                });
-                if (isError != i.getValue()) {
-                    final String error = MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
-                            check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
-                    System.err.println(error);
-                    assertionErrors.add(error);
                 }
             }
         }

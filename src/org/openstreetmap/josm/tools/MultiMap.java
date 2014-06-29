@@ -11,11 +11,15 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * MultiMap - maps keys to multiple values
+ * MultiMap - maps keys to multiple values.
  *
  * Corresponds to Google guava LinkedHashMultimap and Apache Collections MultiValueMap
  * but it is an independent (simple) implementation.
  *
+ * @param <A> Key type
+ * @param <B> Value type
+ *
+ * @since 2702
  */
 public class MultiMap<A, B> {
 
@@ -29,7 +33,7 @@ public class MultiMap<A, B> {
     }
 
     /**
-     * Constructs a new {@code MultiMap} with the specified initial capacity. 
+     * Constructs a new {@code MultiMap} with the specified initial capacity.
      * @param capacity the initial capacity
      */
     public MultiMap(int capacity) {
@@ -40,6 +44,8 @@ public class MultiMap<A, B> {
      * Map a key to a value.
      *
      * Can be called multiple times with the same key, but different value.
+     * @param key key with which the specified value is to be associated
+     * @param value value to be associated with the specified key
      */
     public void put(A key, B value) {
         Set<B> vals = map.get(key);
@@ -55,6 +61,7 @@ public class MultiMap<A, B> {
      *
      * Afterwards containsKey(key) will return true and get(key) will return
      * an empty Set instead of null.
+     * @param key key with which an empty set is to be associated
      */
     public void putVoid(A key) {
         if (map.containsKey(key))
@@ -66,6 +73,8 @@ public class MultiMap<A, B> {
      * Map the key to all the given values.
      *
      * Adds to the mappings that are already there.
+     * @param key key with which the specified values are to be associated
+     * @param values values to be associated with the specified key
      */
     public void putAll(A key, Collection<B> values) {
         Set<B> vals = map.get(key);
@@ -78,6 +87,8 @@ public class MultiMap<A, B> {
 
     /**
      * Get the keySet.
+     * @return a set view of the keys contained in this map
+     * @see Map#keySet()
      */
     public Set<A> keySet() {
         return map.keySet();
@@ -89,6 +100,9 @@ public class MultiMap<A, B> {
      *
      * Modifications of the returned list changes the underling map,
      * but you should better not do that.
+     * @param key the key whose associated value is to be returned
+     * @return the set of values to which the specified key is mapped, or {@code null} if this map contains no mapping for the key
+     * @see Map#get(Object)
      */
     public Set<B> get(A key) {
         return map.get(key);
@@ -96,6 +110,8 @@ public class MultiMap<A, B> {
 
     /**
      * Like get, but returns an empty Set if nothing has been mapped to the key.
+     * @param key the key whose associated value is to be returned
+     * @return the set of values to which the specified key is mapped, or an empty set if this map contains no mapping for the key
      */
     public Set<B> getValues(A key) {
         if (!map.containsKey(key))
@@ -103,10 +119,21 @@ public class MultiMap<A, B> {
         return map.get(key);
     }
 
+    /**
+     * Returns {@code true} if this map contains no key-value mappings.
+     * @return {@code true} if this map contains no key-value mappings
+     * @see Map#isEmpty()
+     */
     public boolean isEmpty() {
         return map.isEmpty();
     }
 
+    /**
+     * Returns {@code true} if this map contains a mapping for the specified key.
+     * @param key key whose presence in this map is to be tested
+     * @return {@code true} if this map contains a mapping for the specified key
+     * @see Map#containsKey(Object)
+     */
     public boolean containsKey(A key) {
         return map.containsKey(key);
     }
@@ -123,16 +150,28 @@ public class MultiMap<A, B> {
         return (values == null) ? false : values.contains(value);
     }
 
+    /**
+     * Removes all of the mappings from this map. The map will be empty after this call returns.
+     * @see Map#clear()
+     */
     public void clear() {
         map.clear();
     }
 
+    /**
+     * Returns a Set view of the mappings contained in this map.
+     * The set is backed by the map, so changes to the map are reflected in the set, and vice-versa.
+     * @return a set view of the mappings contained in this map
+     * @see Map#entrySet()
+     */
     public Set<Entry<A, Set<B>>> entrySet() {
         return map.entrySet();
     }
 
     /**
      * Returns the number of keys.
+     * @return the number of key-value mappings in this map
+     * @see Map#size()
      */
     public int size() {
         return map.size();
@@ -140,15 +179,19 @@ public class MultiMap<A, B> {
 
     /**
      * Returns a collection of all value sets.
+     * @return a collection view of the values contained in this map
+     * @see Map#values()
      */
     public Collection<Set<B>> values() {
         return map.values();
     }
 
     /**
-     * Removes a cerain key=value mapping.
+     * Removes a certain key=value mapping.
+     * @param key key whose mapping is to be removed from the map
+     * @param value value whose mapping is to be removed from the map
      *
-     * @return true, if something was removed
+     * @return {@code true}, if something was removed
      */
     public boolean remove(A key, B value) {
         Set<B> values = get(key);
@@ -160,6 +203,9 @@ public class MultiMap<A, B> {
 
     /**
      * Removes all mappings for a certain key.
+     * @param key key whose mapping is to be removed from the map
+     * @return the previous value associated with key, or {@code null} if there was no mapping for key.
+     * @see Map#remove(Object)
      */
     public Set<B> remove(A key) {
         return map.remove(key);
