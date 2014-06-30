@@ -89,6 +89,10 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
 
     protected String oldModeHelpText;
 
+    /**
+     * Constructs a new {@code ImproveWayAccuracyAction}.
+     * @param mapFrame Map frame
+     */
     public ImproveWayAccuracyAction(MapFrame mapFrame) {
         super(tr("Improve Way Accuracy"), "improvewayaccuracy.png",
                 tr("Improve Way Accuracy mode"),
@@ -156,7 +160,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         Main.map.mapView.removeTemporaryLayer(this);
         DataSet.removeSelectionListener(this);
 
-        Main.map.keyDetector.addModifierListener(this);
+        Main.map.keyDetector.removeModifierListener(this);
         Main.map.mapView.repaint();
     }
 
