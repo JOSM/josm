@@ -139,6 +139,7 @@ TOKEN:
 |   < RBRACE: "}" >
 |   < LPAR: "(" >
 |   < RPAR: ")" >
+|   < COMMA: "," >
 |   < COLON: ":" >
 }
 
@@ -168,7 +169,6 @@ TOKEN:
 |   < TILDE: "~" >
 |   < DCOLON: "::" >
 |   < SEMICOLON: ";" >
-|   < COMMA: "," >
 |   < PIPE: "|" >
 |   < PIPE_Z: "|z" >
 |   < PLUS: "+" >
@@ -242,17 +242,17 @@ void pp_black_box(boolean write):
 }
 {
     (
-        (t=<PP_AND> | t=<PP_NOT> | t=<UINT> | t=<STRING> | t=<REGEX> | t=<LPAR> | t=<RPAR> | t=<COLON> | t=<IDENT> | t=<PP_SOMETHING_ELSE>) { if (write) sb.append(t.image); }
+        (t=<PP_AND> | t=<PP_NOT> | t=<UINT> | t=<STRING> | t=<REGEX> | t=<LPAR> | t=<RPAR> | t=<COMMA> | t=<COLON> | t=<IDENT> | t=<PP_SOMETHING_ELSE>) { if (write) sb.append(t.image); }
         |
             pp_w1()
         |
-            pp_media()
+            pp_media(!write)
         |
             t=<LBRACE> { if (write) sb.append(t.image); } pp_black_box(write) t=<RBRACE> { if (write) sb.append(t.image); }
     )*
 }
 
-void pp_media():
+void pp_media(boolean ignore):
 {
     boolean pass = false;
     boolean q;
@@ -264,7 +264,7 @@ void pp_media():
         ( <COMMA> pp_w() q=pp_media_query() { pass = pass || q; } )*
     )?
     <LBRACE>
-    pp_black_box(empty || pass)
+    pp_black_box((empty || pass) && !ignore)
     <RBRACE>
 }
 
