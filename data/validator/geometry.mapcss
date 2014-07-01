@@ -2,13 +2,18 @@
 node[oneway],
 node[bridge?],
 node[landuse],
-node[source:geometry],
 node[source:outline] {
   throwWarning: tr("{0} on a node", "{0.key}");
   assertMatch: "node oneway=-1";
   assertNoMatch: "way oneway=-1";
   assertMatch: "node bridge=yes";
   assertNoMatch: "node bridge=13";
+}
+
+/* see ticket:#10125 */
+node[source:geometry] {
+  throwWarning: tr("{0} on a node", "{0.key}");
+  fixChangeKey: "source:geometry => source:position";
 }
 
 /* Building inside building (spatial test) */
