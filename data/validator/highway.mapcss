@@ -1,5 +1,8 @@
-way[highway=~/^(motorway|trunk|primary|secondary|tertiary)(_link)?$/] {
+way[highway=~/^(motorway|trunk|primary|secondary|tertiary)$/] {
   set major_road;
+}
+way[highway=~/^.*_link$/] {
+  set link_road;
 }
 way[highway=~/^(unclassified|residential|living_street|service)$/] {
   set minor_road;
