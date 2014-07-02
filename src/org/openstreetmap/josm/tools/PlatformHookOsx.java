@@ -61,6 +61,9 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Boolean handled = Boolean.TRUE;
+        if (Main.isDebugEnabled()) {
+            Main.debug("OSX handler: "+method.getName()+" - "+args);
+        }
         switch (method.getName()) {
         case "openFiles":
             if (args[0] != null) {
@@ -68,10 +71,14 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
                     Object oFiles = args[0].getClass().getDeclaredMethod("getFiles").invoke(args[0]);
                     if (oFiles instanceof List) {
                         OpenFileAction.openFiles((List<File>)oFiles, true);
+                    } else {
+                        Main.warn("OSX openFiles called without List: "+oFiles);
                     }
                 } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
                     Main.warn("Failed to access open files event: " + ex);
                 }
+            } else {
+                Main.warn("OSX openFiles called without args");
             }
             return null;
         case "handleQuit":
