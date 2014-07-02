@@ -174,7 +174,7 @@ public class CachedFile {
                 if (is == null)
                     throw new IOException(tr("Failed to open input stream for resource ''{0}''", name));
                 return is;
-            }
+            } else throw new IOException();
         }
         return new FileInputStream(file);
     }
