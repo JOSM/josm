@@ -9,13 +9,16 @@ import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.OpenFileAction;
+import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.io.OsmTransferException;
+import org.xml.sax.SAXException;
 
 /**
  * {@code PlatformHook} implementation for Apple Mac OS X systems.
@@ -36,21 +39,22 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
 
     @Override
     public void startupHook() {
-        // Here we register callbacks for the menu entries in the system menu
+        // Here we register callbacks for the menu entries in the system menu and file opening through double-click
         try {
             Class<?> Ccom_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
-            Object Ocom_apple_eawt_Application = Ccom_apple_eawt_Application.getConstructor((Class[])null).newInstance((Object[])null);
-            Class<?> Ccom_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
-            Method MaddApplicationListener = Ccom_apple_eawt_Application.getDeclaredMethod("addApplicationListener", Ccom_apple_eawt_ApplicationListener);
-            Object Oproxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] { Ccom_apple_eawt_ApplicationListener }, ivhandler);
-            MaddApplicationListener.invoke(Ocom_apple_eawt_Application, Oproxy);
-            Method MsetEnabledPreferencesMenu = Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class);
-            MsetEnabledPreferencesMenu.invoke(Ocom_apple_eawt_Application, Boolean.TRUE);
-            // Register callback for file opening through double-click
+            Class<?> Ccom_apple_eawt_QuitHandler = Class.forName("com.apple.eawt.QuitHandler");
+            Class<?> Ccom_apple_eawt_AboutHandler = Class.forName("com.apple.eawt.AboutHandler");
             Class<?> Ccom_apple_eawt_OpenFilesHandler = Class.forName("com.apple.eawt.OpenFilesHandler");
-            Method MsetOpenFileHandler = Ccom_apple_eawt_Application.getDeclaredMethod("setOpenFileHandler", Ccom_apple_eawt_OpenFilesHandler);
-            Object Oproxy2 = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] { Ccom_apple_eawt_OpenFilesHandler }, ivhandler);
-            MsetOpenFileHandler.invoke(Ocom_apple_eawt_Application, Oproxy2);
+            Class<?> Ccom_apple_eawt_PreferencesHandler = Class.forName("com.apple.eawt.PreferencesHandler");
+            Object Ocom_apple_eawt_Application = Ccom_apple_eawt_Application.getConstructor((Class[])null).newInstance((Object[])null);
+            Object Oproxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
+                Ccom_apple_eawt_QuitHandler, Ccom_apple_eawt_AboutHandler, Ccom_apple_eawt_OpenFilesHandler, Ccom_apple_eawt_PreferencesHandler}, ivhandler);
+            Ccom_apple_eawt_Application.getDeclaredMethod("setQuitHandler", Ccom_apple_eawt_QuitHandler).invoke(Ocom_apple_eawt_Application, Oproxy);
+            Ccom_apple_eawt_Application.getDeclaredMethod("setAboutHandler", Ccom_apple_eawt_AboutHandler).invoke(Ocom_apple_eawt_Application, Oproxy);
+            Ccom_apple_eawt_Application.getDeclaredMethod("setOpenFileHandler", Ccom_apple_eawt_OpenFilesHandler).invoke(Ocom_apple_eawt_Application, Oproxy);
+            Ccom_apple_eawt_Application.getDeclaredMethod("setPreferencesHandler", Ccom_apple_eawt_PreferencesHandler).invoke(Ocom_apple_eawt_Application, Oproxy);
+            // this method has been deprecated, but without replacement ATM
+            Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(Ocom_apple_eawt_Application, Boolean.TRUE);
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Main.warn("Failed to register with OSX: " + ex);
@@ -60,29 +64,40 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     @SuppressWarnings("unchecked")
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Boolean handled = Boolean.TRUE;
         if (Main.isDebugEnabled()) {
-            Main.debug("OSX handler: "+method.getName()+" - "+args);
+            Main.debug("OSX handler: "+method.getName()+" - "+Arrays.toString(args));
         }
         switch (method.getName()) {
         case "openFiles":
             if (args[0] != null) {
                 try {
-                    Object oFiles = args[0].getClass().getDeclaredMethod("getFiles").invoke(args[0]);
+                    Object oFiles = args[0].getClass().getMethod("getFiles").invoke(args[0]);
                     if (oFiles instanceof List) {
-                        OpenFileAction.openFiles((List<File>)oFiles, true);
-                    } else {
-                        Main.warn("OSX openFiles called without List: "+oFiles);
+                        Main.worker.submit(new OpenFileTask((List<File>)oFiles, null) {
+                            @Override
+                            protected void realRun() throws SAXException, IOException, OsmTransferException {
+                                // Wait for JOSM startup is advanced enough to load a file
+                                while (Main.parent == null || !Main.parent.isVisible()) {
+                                    try {
+                                        Thread.sleep(25);
+                                    } catch (InterruptedException e) {
+                                        Main.warn(e);
+                                    }
+                                }
+                                super.realRun();
+                            }
+                        });
                     }
                 } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
                     Main.warn("Failed to access open files event: " + ex);
                 }
-            } else {
-                Main.warn("OSX openFiles called without args");
             }
-            return null;
-        case "handleQuit":
-            handled = Main.exitJosm(false, 0);
+            break;
+        case "handleQuitRequestWith":
+            boolean closed = Main.exitJosm(false, 0);
+            if (args[1] != null) {
+                args[1].getClass().getDeclaredMethod(closed ? "performQuit" : "cancelQuit").invoke(args[1]);
+            }
             break;
         case "handleAbout":
             Main.main.menu.about.actionPerformed(null);
@@ -91,14 +106,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Main.main.menu.preferences.actionPerformed(null);
             break;
         default:
-            return null;
-        }
-        if (args[0] != null) {
-            try {
-                args[0].getClass().getDeclaredMethod("setHandled", new Class<?>[] { boolean.class }).invoke(args[0], new Object[] { handled });
-            } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
-                Main.warn("Failed to report handled event: " + ex);
-            }
+            Main.warn("OSX unsupported method: "+method.getName());
         }
         return null;
     }
