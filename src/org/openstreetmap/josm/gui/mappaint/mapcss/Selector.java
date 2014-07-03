@@ -276,7 +276,9 @@ public interface Selector {
                 try {
                     // if right selector also matches relations and if matched primitive is a way which is part of a multipolygon,
                     // use the multipolygon for further analysis
-                    if (!((GeneralSelector) right).matchesBase(OsmPrimitiveType.RELATION) || !(e.osm instanceof Way)) {
+                    if (!(e.osm instanceof Way)
+                            || (right instanceof OptimizedGeneralSelector
+                            && !((OptimizedGeneralSelector) right).matchesBase(OsmPrimitiveType.RELATION))) {
                         throw new NoSuchElementException();
                     }
                     final Collection<Relation> multipolygons = Utils.filteredCollection(Utils.filter(
@@ -294,11 +296,11 @@ public interface Selector {
                 }
                 e.parent = e.osm;
 
-                if (left instanceof GeneralSelector) {
-                    if (((GeneralSelector) left).matchesBase(OsmPrimitiveType.NODE)) {
+                if (left instanceof OptimizedGeneralSelector) {
+                    if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.NODE)) {
                         containsFinder.visit(e.osm.getDataSet().searchNodes(e.osm.getBBox()));
                     }
-                    if (((GeneralSelector) left).matchesBase(OsmPrimitiveType.WAY)) {
+                    if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.WAY)) {
                         containsFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
                     }
                 } else {
@@ -311,7 +313,8 @@ public interface Selector {
             } else if (ChildOrParentSelectorType.CROSSING.equals(type) && e.osm instanceof Way) {
                 e.parent = e.osm;
                 final CrossingFinder crossingFinder = new CrossingFinder(e);
-                if (((GeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
+                if (right instanceof OptimizedGeneralSelector
+                        && ((OptimizedGeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
                     crossingFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
                 }
                 return e.child != null;
@@ -470,38 +473,6 @@ public interface Selector {
             super(base, zoom, conds, subpart);
         }
         
-        public boolean matchesBase(OsmPrimitiveType type) {
-            if ("*".equals(base)) {
-                return true;
-            } else if (OsmPrimitiveType.NODE.equals(type)) {
-                return "node".equals(base);
-            } else if (OsmPrimitiveType.WAY.equals(type)) {
-                return "way".equals(base) || "area".equals(base);
-            } else if (OsmPrimitiveType.RELATION.equals(type)) {
-                return "area".equals(base) || "relation".equals(base) || "canvas".equals(base);
-            }
-            return false;
-        }
-
-        public boolean matchesBase(OsmPrimitive p) {
-            if (!matchesBase(p.getType())) {
-                return false;
-            } else {
-                if (p instanceof Relation) {
-                    if ("area".equals(base)) {
-                        return ((Relation) p).isMultipolygon();
-                    } else if ("canvas".equals(base)) {
-                        return p.get("#canvas") != null;
-                    }
-                }
-                return true;
-            }
-        }
-
-        public boolean matchesBase(Environment e) {
-            return matchesBase(e.osm);
-        }
-        
         public boolean matchesConditions(Environment e) {
             return super.matches(e);
         }
@@ -562,6 +533,38 @@ public interface Selector {
 
         public String getBase() {
             return base;
+        }
+
+        public boolean matchesBase(OsmPrimitiveType type) {
+            if ("*".equals(base)) {
+                return true;
+            } else if (OsmPrimitiveType.NODE.equals(type)) {
+                return "node".equals(base);
+            } else if (OsmPrimitiveType.WAY.equals(type)) {
+                return "way".equals(base) || "area".equals(base);
+            } else if (OsmPrimitiveType.RELATION.equals(type)) {
+                return "area".equals(base) || "relation".equals(base) || "canvas".equals(base);
+            }
+            return false;
+        }
+
+        public boolean matchesBase(OsmPrimitive p) {
+            if (!matchesBase(p.getType())) {
+                return false;
+            } else {
+                if (p instanceof Relation) {
+                    if ("area".equals(base)) {
+                        return ((Relation) p).isMultipolygon();
+                    } else if ("canvas".equals(base)) {
+                        return p.get("#canvas") != null;
+                    }
+                }
+                return true;
+            }
+        }
+
+        public boolean matchesBase(Environment e) {
+            return matchesBase(e.osm);
         }
 
         @Override
