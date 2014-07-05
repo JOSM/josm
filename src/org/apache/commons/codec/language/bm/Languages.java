@@ -48,7 +48,7 @@ import java.util.Set;
  * This class is immutable and thread-safe.
  *
  * @since 1.6
- * @version $Id: Languages.java 1541239 2013-11-12 21:20:05Z ggregory $
+ * @version $Id: Languages.java 1608115 2014-07-05 19:58:38Z tn $
  */
 public class Languages {
     // Iimplementation note: This class is divided into two sections. The first part is a static factory interface that
@@ -73,6 +73,8 @@ public class Languages {
         public abstract boolean isSingleton();
 
         public abstract LanguageSet restrictTo(LanguageSet other);
+
+        public abstract LanguageSet merge(LanguageSet other);
     }
 
     /**
@@ -122,6 +124,22 @@ public class Languages {
                     if (sl.languages.contains(lang)) {
                         ls.add(lang);
                     }
+                }
+                return from(ls);
+            }
+        }
+
+        @Override
+        public LanguageSet merge(final LanguageSet other) {
+            if (other == NO_LANGUAGES) {
+                return this;
+            } else if (other == ANY_LANGUAGE) {
+                return other;
+            } else {
+                final SomeLanguages sl = (SomeLanguages) other;
+                final Set<String> ls = new HashSet<String>(languages);
+                for (String lang : sl.languages) {
+                  ls.add(lang);
                 }
                 return from(ls);
             }
@@ -217,6 +235,11 @@ public class Languages {
         }
 
         @Override
+        public LanguageSet merge(final LanguageSet other) {
+            return other;
+        }
+
+        @Override
         public String toString() {
             return "NO_LANGUAGES";
         }
@@ -248,6 +271,11 @@ public class Languages {
 
         @Override
         public LanguageSet restrictTo(final LanguageSet other) {
+            return other;
+        }
+
+        @Override
+        public LanguageSet merge(final LanguageSet other) {
             return other;
         }
 

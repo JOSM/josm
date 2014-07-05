@@ -66,7 +66,7 @@ import java.util.regex.Pattern;
  * Port of lang.php
  *
  * @since 1.6
- * @version $Id: Lang.java 1542813 2013-11-17 20:52:32Z tn $
+ * @version $Id: Lang.java 1608115 2014-07-05 19:58:38Z tn $
  */
 public class Lang {
     // Implementation note: This class is divided into two sections. The first part is a static factory interface that
@@ -95,11 +95,11 @@ public class Lang {
 
     private static final Map<NameType, Lang> Langs = new EnumMap<NameType, Lang>(NameType.class);
 
-    private static final String LANGUAGE_RULES_RN = "org/apache/commons/codec/language/bm/lang.txt";
+    private static final String LANGUAGE_RULES_RN = "org/apache/commons/codec/language/bm/%s_lang.txt";
 
     static {
         for (final NameType s : NameType.values()) {
-            Langs.put(s, loadFromResource(LANGUAGE_RULES_RN, Languages.getInstance(s)));
+            Langs.put(s, loadFromResource(String.format(LANGUAGE_RULES_RN, s.getName()), Languages.getInstance(s)));
         }
     }
 
