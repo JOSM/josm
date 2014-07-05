@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.MenuComponent;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,9 +106,9 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
 
     private void setupMenuScroller() {
         if (!GraphicsEnvironment.isHeadless()) {
-            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
             int menuItemHeight = singleOffset.getPreferredSize().height;
-            MenuScroller.setScrollerFor(this, (screenHeight / menuItemHeight)-1);
+            MenuScroller.setScrollerFor(this, 
+                    MenuScroller.computeScrollCount(this, menuItemHeight));
         }
     }
 

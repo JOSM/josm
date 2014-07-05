@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -570,9 +569,9 @@ public class MainMenu extends JMenuBar {
     public JMenu addMenu(String name, int mnemonicKey, int position, String relativeHelpTopic) {
         final JMenu menu = new JMenu(tr(name));
         if (!GraphicsEnvironment.isHeadless()) {
-            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
             int menuItemHeight = new JMenu().add(newAction).getPreferredSize().height;
-            MenuScroller.setScrollerFor(menu, screenHeight / menuItemHeight);
+            MenuScroller.setScrollerFor(menu,
+                    MenuScroller.computeScrollCount(menu, menuItemHeight));
         }
         return addMenu(menu, name, mnemonicKey, position, relativeHelpTopic);
     }
