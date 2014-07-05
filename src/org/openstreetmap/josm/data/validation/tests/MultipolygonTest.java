@@ -71,7 +71,7 @@ public class MultipolygonTest extends Test {
     public void initialize() {
         styles = MapPaintStyles.getStyles();
     }
-    
+
     @Override
     public void startTest(ProgressMonitor progressMonitor) {
         super.startTest(progressMonitor);
@@ -83,7 +83,7 @@ public class MultipolygonTest extends Test {
             }
         }
     }
-    
+
     @Override
     public void endTest() {
         keysCheckedByAnotherTest.clear();
@@ -216,11 +216,14 @@ public class MultipolygonTest extends Test {
                             break;
                         }
                     }
-                    if(area == null)
-                        addError(r, new TestError(this, Severity.OTHER, tr("No style for multipolygon"), NO_STYLE, r));
-                    else
-                        addError(r, new TestError(this, Severity.OTHER, tr("No style in multipolygon relation"),
-                            NO_STYLE_POLYGON, r));
+                    if (!"boundary".equals(r.get("type"))) {
+                        if (area == null) {
+                            addError(r, new TestError(this, Severity.OTHER, tr("No style for multipolygon"), NO_STYLE, r));
+                        } else {
+                            addError(r, new TestError(this, Severity.OTHER, tr("No style in multipolygon relation"),
+                                NO_STYLE_POLYGON, r));
+                        }
+                    }
                 }
 
                 if (area != null) {
