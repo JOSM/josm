@@ -8,6 +8,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
@@ -25,13 +27,15 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * A class that provides scrolling capabilities to a long menu dropdown or
  * popup menu.  A number of items can optionally be frozen at the top and/or
  * bottom of the menu.
  * <P>
  * <B>Implementation note:</B>  The default number of items to display
- * at a time is 15, and the default scrolling interval is 125 milliseconds.
+ * at a time is 15, and the default scrolling interval is 150 milliseconds.
  * <P>
  * @author Darryl, https://tips4java.wordpress.com/2009/02/01/menu-scroller/
  */
@@ -49,6 +53,40 @@ public class MenuScroller {
     private int bottomFixedCount;
     private int firstIndex = 0;
     private int keepVisibleIndex = -1;
+
+    private static final int ARROW_ICON_HEIGHT = 10;
+
+    /**
+     * Computes the number of items to display at once for the given component and a given item height.
+     * @param comp The menu
+     * @param itemHeight Average item height
+     * @return the number of items to display at once
+     * @since 7291
+     */
+    public static int computeScrollCount(JComponent comp, int itemHeight) {
+        int result = 15;
+        if (comp != null && itemHeight > 0) {
+            // Compute max height of current screen
+            int maxHeight = 0;
+            GraphicsConfiguration gc = comp.getGraphicsConfiguration();
+            if (gc == null && Main.parent != null) {
+                gc = Main.parent.getGraphicsConfiguration();
+            }
+            if (gc != null) {
+                // Max displayable height (max screen height - vertical insets)
+                Insets insets = comp.getToolkit().getScreenInsets(gc);
+                maxHeight = gc.getBounds().height - insets.top - insets.bottom;
+            }
+
+            // Remove height of our two arrow icons + 2 pixels each for borders (arbitrary value)
+            maxHeight -= 2*(ARROW_ICON_HEIGHT+2);
+
+            if (maxHeight > 0) {
+                result = (maxHeight/itemHeight)-2;
+            }
+        }
+        return result;
+    }
 
     /**
      * Registers a menu to be scrolled with the default number of items to
@@ -176,7 +214,7 @@ public class MenuScroller {
      * @param menu the menu
      */
     public MenuScroller(JMenu menu) {
-        this(menu, 15);
+        this(menu, computeScrollCount(menu, 30));
     }
 
     /**
@@ -187,7 +225,7 @@ public class MenuScroller {
      * @param menu the popup menu
      */
     public MenuScroller(JPopupMenu menu) {
-        this(menu, 15);
+        this(menu, computeScrollCount(menu, 30));
     }
 
     /**
@@ -593,7 +631,7 @@ public class MenuScroller {
 
         @Override
         public int getIconHeight() {
-            return 10;
+            return ARROW_ICON_HEIGHT;
         }
     }
 

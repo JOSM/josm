@@ -10,7 +10,6 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
@@ -205,7 +204,7 @@ public abstract class ImageryLayer extends Layer {
             hasBookmarks = true;
         }
         if (menuItemHeight > 0) {
-            int scrollcount = (Toolkit.getDefaultToolkit().getScreenSize().height / menuItemHeight) - 1;
+            int scrollcount = MenuScroller.computeScrollCount(subMenu, menuItemHeight);
             if (subMenu instanceof JMenu) {
                 MenuScroller.setScrollerFor((JMenu) subMenu, scrollcount);
             } else if (subMenu instanceof JPopupMenu) {
