@@ -6287,7 +6287,6 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="natural" value="tree" />
             <text key="name" text="Name" />
-            <combo key="type" text="Type" values="broad_leaved,conifer,palm" />
             <text key="height" text="Height in meter (m)" />
             <text key="name:botanical" text="Botanical Name" />
             <optional>
