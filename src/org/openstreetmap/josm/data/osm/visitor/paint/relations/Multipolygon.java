@@ -410,8 +410,7 @@ public class Multipolygon {
         }
     }
 
-    public static Collection<JoinedWay> joinWays(Collection<Way> waysToJoin)
-    {
+    public static Collection<JoinedWay> joinWays(Collection<Way> waysToJoin) {
         final Collection<JoinedWay> result = new ArrayList<>();
         final Way[] joinArray = waysToJoin.toArray(new Way[waysToJoin.size()]);
         int left = waysToJoin.size();
@@ -426,6 +425,9 @@ public class Multipolygon {
                 for (int i = 0; i < joinArray.length && left != 0; ++i) {
                     if (joinArray[i] != null) {
                         Way c = joinArray[i];
+                        if (c.getNodesCount() == 0) {
+                            continue;
+                        }
                         if (w == null) {
                             w = c;
                             selected = w.isSelected();
