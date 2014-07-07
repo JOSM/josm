@@ -332,7 +332,7 @@ public class PluginInformation {
             return null;
         try {
             return Class.forName(className, true, classLoader);
-        } catch (ClassNotFoundException | ClassCastException e) {
+        } catch (NoClassDefFoundError | ClassNotFoundException | ClassCastException e) {
             throw new PluginException(name, e);
         }
     }

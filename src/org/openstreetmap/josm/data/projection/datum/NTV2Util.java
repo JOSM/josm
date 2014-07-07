@@ -113,7 +113,7 @@ public final class NTV2Util {
         try {
             Class.forName("java.nio.channels.FileChannel");
             nioAvailable = true;
-        } catch (ClassNotFoundException cnfe) {
+        } catch (NoClassDefFoundError | ClassNotFoundException cnfe) {
             Main.info(cnfe.getMessage());
         }
         return nioAvailable;

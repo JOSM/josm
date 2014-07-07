@@ -101,8 +101,8 @@ public final class MapRendererFactory {
         for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
             try {
                 return Class.forName(className, true, cl);
-            } catch (final ClassNotFoundException e) {
-                // ignore
+            } catch (final NoClassDefFoundError | ClassNotFoundException e) {
+                Main.trace(e.getMessage());
             }
         }
         Main.error(tr("Failed to load map renderer class ''{0}''. The class wasn''t found.", className));

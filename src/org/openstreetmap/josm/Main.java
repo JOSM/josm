@@ -789,7 +789,7 @@ public abstract class Main {
             try {
                 UIManager.setLookAndFeel(laf);
             }
-            catch (final ClassNotFoundException e) {
+            catch (final NoClassDefFoundError | ClassNotFoundException e) {
                 info("Look and Feel not found: " + laf);
                 Main.pref.put("laf", defaultlaf);
             }
