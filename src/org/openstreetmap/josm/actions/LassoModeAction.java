@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class LassoModeAction extends MapMode {
@@ -33,5 +34,10 @@ public class LassoModeAction extends MapMode {
             Main.map.mapModeSelect.exitMode();
         }
         super.exitMode();
+    }
+
+    @Override
+    public boolean layerIsSupported(Layer l) {
+        return Main.map.mapModeSelect.layerIsSupported(l);
     }
 }
