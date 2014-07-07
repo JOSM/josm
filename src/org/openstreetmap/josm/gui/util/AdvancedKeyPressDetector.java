@@ -97,7 +97,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
             Main.warn(tr("Some of the key listeners forgot to remove themselves: {0}"), keyListeners.toString());
         }
         if (!modifierListeners.isEmpty()) {
-            Main.warn(tr("Some of the key listeners forgot to remove themselves: {0}"), modifierListeners.toString());
+            Main.warn(tr("Some of the key modifier listeners forgot to remove themselves: {0}"), modifierListeners.toString());
         }
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
@@ -159,6 +159,6 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
      * @return true if the key is pressed now
      */
     public boolean isKeyPressed(int keyCode) {
-        return set.contains(Integer.valueOf(keyCode));
+        return set.contains(keyCode);
     }
 }
