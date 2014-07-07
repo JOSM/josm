@@ -1821,7 +1821,7 @@ node[amenity=fuel] {
 /*    priority="10000"*/
 }
 node[amenity=charging_station] {
-    icon-image: "accommodation/camping/hookup.png";
+    icon-image: "vehicle/fuel/charging_station.png";
     text: auto;
 /*    priority="1000"*/
 }

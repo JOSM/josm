@@ -2346,7 +2346,7 @@ Note that for a match, at least one positive and no negative is required.
                 </checkgroup>
             </optional>
         </item>
-        <item name="Charging Station" icon="styles/standard/accommodation/camping/hookup.png" type="node" preset_name_label="true">
+        <item name="Charging Station" icon="styles/standard/vehicle/fuel/charging_station.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=charging_station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=charging_station"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=charging_station"
