@@ -1433,7 +1433,17 @@ area[shop=variety_store],
 area[shop=video],
 area[shop=bookmaker],
 area[shop=lottery],
-area[shop=shopping_centre] {
+area[shop=shopping_centre],
+area[shop=pet],
+area[shop=ticket],
+area[shop=interior_decoration],
+area[shop=car_parts],
+area[shop=video_games],
+area[shop=bed],
+area[shop=beauty],
+area[shop=tea],
+area[shop=coffee],
+area[shop=bag] {
     fill-color: shop#00005f;
 }
 node[shop=supermarket] {
@@ -1678,6 +1688,46 @@ node[shop=lottery] {
 /* duplicate of shopping_centre? */
 node[shop=shopping_centre] {
     icon-image: "shop/mall.png";
+    text: auto;
+}
+node[shop=pet] {
+    icon-image: "shop/pet.png";
+    text: auto;
+}
+node[shop=ticket] {
+    icon-image: "shop/ticket.png";
+    text: auto;
+}
+node[shop=interior_decoration] {
+    icon-image: "shop/interior_decoration.png";
+    text: auto;
+}
+node[shop=car_parts] {
+    icon-image: "vehicle/car_parts.png";
+    text: auto;
+}
+node[shop=video_games] {
+    icon-image: "shop/video_games.png";
+    text: auto;
+}
+node[shop=bed] {
+    icon-image: "shop/bed.png";
+    text: auto;
+}
+node[shop=beauty] {
+    icon-image: "shop/beauty.png";
+    text: auto;
+}
+node[shop=tea] {
+    icon-image: "shop/groceries/tea.png";
+    text: auto;
+}
+node[shop=coffee] {
+    icon-image: "shop/groceries/coffee.png";
+    text: auto;
+}
+node[shop=bag] {
+    icon-image: "shop/bag.png";
     text: auto;
 }
 
