@@ -7074,7 +7074,7 @@ Note that for a match, at least one positive and no negative is required.
                 <reference ref="name_ref_operator"/>
                 <optional>
                     <text key="destination" text="Destination"/>
-                    <text key="deour" text="Ref of the way this is a detour to"/>
+                    <text key="detour" text="Ref of the way this is a detour to"/>
                 </optional>
                 <roles>
                     <role key="" text="route segment" requisite="required" type="way"/>
