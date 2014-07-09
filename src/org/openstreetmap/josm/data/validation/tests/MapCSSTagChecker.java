@@ -215,12 +215,20 @@ public class MapCSSTagChecker extends Test.TagTest {
                         }
                     } else if ("fixAdd".equals(ai.key)) {
                         final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, false);
-                        check.change.add(toTag);
+                        if (toTag != null) {
+                            check.change.add(toTag);
+                        } else {
+                            Main.warn("Invalid value for "+ai.key+": "+ai.val);
+                        }
                     } else if ("fixRemove".equals(ai.key)) {
                         CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !(val != null && val.contains("=")),
                                 "Unexpected '='. Please only specify the key to remove!");
                         final PrimitiveToTag toTag = PrimitiveToTag.ofMapCSSObject(ai.val, true);
-                        check.change.add(toTag);
+                        if (toTag != null) {
+                            check.change.add(toTag);
+                        } else {
+                            Main.warn("Invalid value for "+ai.key+": "+ai.val);
+                        }
                     } else if ("fixChangeKey".equals(ai.key) && val != null) {
                         CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
                         final String[] x = val.split("=>", 2);
