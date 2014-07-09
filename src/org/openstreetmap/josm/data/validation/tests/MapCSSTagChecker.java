@@ -502,7 +502,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @param includeOtherSeverity if {@code true}, errors of severity {@link Severity#OTHER} (info) will also be returned
      * @return all errors for the given primitive, with or without those of "info" severity
      */
-    public Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
+    public synchronized Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
         final ArrayList<TestError> r = new ArrayList<>();
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         for (Set<TagCheck> schecks : checks.values()) {
@@ -584,7 +584,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     @Override
-    public int hashCode() {
+    public synchronized int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((checks == null) ? 0 : checks.hashCode());
@@ -592,7 +592,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public synchronized boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (!super.equals(obj))
