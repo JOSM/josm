@@ -14,11 +14,12 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * A {@link ListCellRenderer} for the list of changesets in the upload dialog.
  *
- *
+ * @since 2115
  */
 public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Changeset> {
     private ImageIcon icon;
@@ -36,7 +37,8 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Ch
         sb.append("<html>");
         sb.append("<strong>").append(tr("Changeset id:")).append("</strong>").append(cs.getId()).append("<br>");
         if (cs.getCreatedAt() != null) {
-            sb.append("<strong>").append(tr("Created at:")).append("</strong>").append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(cs.getCreatedAt())).append("<br>");
+            sb.append("<strong>").append(tr("Created at:")).append("</strong>").append(
+                    DateUtils.formatDateTime(cs.getCreatedAt(), DateFormat.SHORT, DateFormat.SHORT)).append("<br>");
         }
         if (cs.get("comment") != null) {
             sb.append("<strong>").append(tr("Changeset comment:")).append("</strong>").append(cs.get("comment")).append("<br>");

@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * This is the model used by the history browser.
@@ -429,7 +430,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             case 3:
                 HistoryOsmPrimitive p3 = getPrimitive(row);
                 if (p3 != null && p3.getTimestamp() != null)
-                    return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(p3.getTimestamp());
+                    return DateUtils.formatDateTime(p3.getTimestamp(), DateFormat.SHORT, DateFormat.SHORT);
                 return null;
             case 4:
                 HistoryOsmPrimitive p4 = getPrimitive(row);

@@ -16,6 +16,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * The cell renderer for the changeset table
@@ -89,7 +90,7 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         if (d == null) {
             setText("");
         } else {
-            setText(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(d));
+            setText(DateUtils.formatDateTime(d, DateFormat.SHORT, DateFormat.SHORT));
         }
         setToolTipText("");
     }

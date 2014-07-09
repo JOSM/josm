@@ -11,7 +11,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.tools.PrimaryDateParser;
+import org.openstreetmap.josm.tools.date.PrimaryDateParser;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 public class WayPoint extends WithAttributes implements Comparable<WayPoint>, TemplateEngineDataProvider {

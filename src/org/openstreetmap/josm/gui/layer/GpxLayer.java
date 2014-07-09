@@ -56,6 +56,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 public class GpxLayer extends Layer {
 
@@ -141,22 +142,24 @@ public class GpxLayer extends Layer {
 
 
     /**
-     * returns a human readable string that shows the timespan of the given track
+     * Returns a human readable string that shows the timespan of the given track
+     * @param trk The GPX track for which timespan is displayed
+     * @return The timespan as a string
      */
     public static String getTimespanForTrack(GpxTrack trk) {
         Date[] bounds = getMinMaxTimeForTrack(trk);
         String ts = "";
         if (bounds != null) {
-            DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+            DateFormat df = DateUtils.getDateFormat(DateFormat.SHORT);
             String earliestDate = df.format(bounds[0]);
             String latestDate = df.format(bounds[1]);
 
             if (earliestDate.equals(latestDate)) {
-                DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT);
+                DateFormat tf = DateUtils.getTimeFormat(DateFormat.SHORT);
                 ts += earliestDate + " ";
                 ts += tf.format(bounds[0]) + " - " + tf.format(bounds[1]);
             } else {
-                DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+                DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
                 ts += dtf.format(bounds[0]) + " - " + dtf.format(bounds[1]);
             }
 

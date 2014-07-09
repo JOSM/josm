@@ -1064,16 +1064,17 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         public String getStandardTooltipText() {
+            Date date = new Date();
             return  tr(
                     "Please enter a date in the usual format for your locale.<br>"
                     + "Example: {0}<br>"
                     + "Example: {1}<br>"
                     + "Example: {2}<br>"
                     + "Example: {3}<br>",
-                    DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()).format(new Date()),
-                    DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(new Date()),
-                    DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(new Date()),
-                    DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault()).format(new Date())
+                    DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()).format(date),
+                    DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(date),
+                    DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(date),
+                    DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault()).format(date)
             );
         }
 
@@ -1128,16 +1129,17 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         public String getStandardTooltipText() {
+            Date date = new Date();
             return tr(
                     "Please enter a valid time in the usual format for your locale.<br>"
                     + "Example: {0}<br>"
                     + "Example: {1}<br>"
                     + "Example: {2}<br>"
                     + "Example: {3}<br>",
-                    DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(new Date()),
-                    DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault()).format(new Date()),
-                    DateFormat.getTimeInstance(DateFormat.LONG, Locale.getDefault()).format(new Date()),
-                    DateFormat.getTimeInstance(DateFormat.FULL, Locale.getDefault()).format(new Date())
+                    DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(date),
+                    DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault()).format(date),
+                    DateFormat.getTimeInstance(DateFormat.LONG, Locale.getDefault()).format(date),
+                    DateFormat.getTimeInstance(DateFormat.FULL, Locale.getDefault()).format(date)
             );
         }
 

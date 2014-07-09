@@ -12,10 +12,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +32,7 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 @SuppressWarnings("CallToThreadDumpStack")
 public final class ExceptionUtil {
@@ -361,12 +360,9 @@ public final class ExceptionUtil {
             Matcher m = p.matcher(msg);
             if (m.matches()) {
                 long changesetId = Long.parseLong(m.group(1));
-                // Example: "2010-09-07 14:39:41 UTC". Always parsed with US locale, regardless
-                // of the current locale in JOSM
-                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US);
                 Date closeDate = null;
                 try {
-                    closeDate = formatter.parse(m.group(2));
+                    closeDate = DateUtils.newOsmApiDateTimeFormat().parse(m.group(2));
                 } catch (ParseException ex) {
                     Main.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
                     Main.error(ex);
@@ -377,12 +373,11 @@ public final class ExceptionUtil {
                             changesetId
                     );
                 } else {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat();
                     msg = tr(
                             "<html>Closing of changeset <strong>{0}</strong> failed<br>"
                             +" because it has already been closed on {1}.",
                             changesetId,
-                            dateFormat.format(closeDate)
+                            DateUtils.formatDateTime(closeDate, DateFormat.DEFAULT, DateFormat.DEFAULT)
                     );
                 }
                 return msg;
@@ -407,13 +402,12 @@ public final class ExceptionUtil {
      * @return The HTML formatted error message to display
      */
     public static String explainChangesetClosedException(ChangesetClosedException e) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat();
         Main.error(e);
         return tr(
                 "<html>Failed to upload to changeset <strong>{0}</strong><br>"
                 +"because it has already been closed on {1}.",
                 e.getChangesetId(),
-                e.getClosedOn() == null ? "?" : dateFormat.format(e.getClosedOn())
+                e.getClosedOn() == null ? "?" : DateUtils.formatDateTime(e.getClosedOn(), DateFormat.DEFAULT, DateFormat.DEFAULT)
         );
     }
 

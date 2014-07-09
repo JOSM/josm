@@ -89,7 +89,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     /**
-     * Property to enable dyanmic buttons globally.
+     * Property to enable dynamic buttons globally.
      * @since 6752
      */
     public static final BooleanProperty PROP_DYNAMIC_BUTTONS = new BooleanProperty("dialog.dynamic.buttons", false);

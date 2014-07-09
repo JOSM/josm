@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GridBagLayout;
+import java.text.DateFormat;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -29,6 +31,7 @@ import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Look-and-feel preferences.
@@ -55,6 +58,7 @@ public class LafPreference implements SubPreferenceSetting {
     private JCheckBox showLocalizedName = new JCheckBox(tr("Show localized name in selection lists"));
     private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
     private JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
+    private JCheckBox isoDates = new JCheckBox(tr("Display ISO dates"));
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
@@ -86,7 +90,7 @@ public class LafPreference implements SubPreferenceSetting {
         lafCombo.setRenderer(new ListCellRenderer<LookAndFeelInfo>(){
             final DefaultListCellRenderer def = new DefaultListCellRenderer();
             @Override
-            public Component getListCellRendererComponent(JList<? extends LookAndFeelInfo> list, LookAndFeelInfo value, 
+            public Component getListCellRendererComponent(JList<? extends LookAndFeelInfo> list, LookAndFeelInfo value,
                     int index, boolean isSelected, boolean cellHasFocus) {
                 return def.getListCellRendererComponent(list, value.getName(), index, isSelected, cellHasFocus);
             }
@@ -121,6 +125,14 @@ public class LafPreference implements SubPreferenceSetting {
         dynamicButtons.setSelected(ToggleDialog.PROP_DYNAMIC_BUTTONS.get());
         panel.add(dynamicButtons, GBC.eop().insets(20, 0, 0, 0));
 
+        Date today = new Date();
+        isoDates.setToolTipText(tr("Format dates according to {0}. Today''s date will be displayed as {1} instead of {2}",
+                tr("ISO 8601"),
+                DateUtils.newIsoDateFormat().format(today),
+                DateFormat.getDateInstance(DateFormat.SHORT).format(today)));
+        isoDates.setSelected(DateUtils.PROP_ISO_DATES.get());
+        panel.add(isoDates, GBC.eop().insets(20, 0, 0, 0));
+
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
         panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
@@ -140,6 +152,7 @@ public class LafPreference implements SubPreferenceSetting {
         Main.pref.put("osm-primitives.localize-name", showLocalizedName.isSelected());
         Main.pref.put("modeless", modeless.isSelected());
         Main.pref.put(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
+        Main.pref.put(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
         mod |= Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
         return mod;
     }
