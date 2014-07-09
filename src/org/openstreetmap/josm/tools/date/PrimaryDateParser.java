@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.tools.date;
 
 import java.text.ParseException;
 import java.util.Calendar;

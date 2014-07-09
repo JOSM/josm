@@ -139,7 +139,8 @@ public class UrlBasedQueryPanel extends JPanel {
 
         try {
             return ChangesetQuery.buildFromUrlQuery(query);
-        } catch(ChangesetQueryUrlException e) {
+        } catch (ChangesetQueryUrlException e) {
+            Main.warn(e.getMessage());
             return null;
         }
     }

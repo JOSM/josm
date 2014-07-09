@@ -27,7 +27,7 @@ import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.tools.DateUtils;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Save the dataset into a stream as osm intern xml format. This is not using any

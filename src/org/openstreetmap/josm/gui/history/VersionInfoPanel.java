@@ -31,11 +31,12 @@ import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * VersionInfoPanel is an UI component which displays the basic properties of a version
  * of a {@link OsmPrimitive}.
- *
+ * @since 1709
  */
 public class VersionInfoPanel extends JPanel implements Observer{
     private PointInTimeType pointInTimeType;
@@ -129,7 +130,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         } else {
             String date = "?";
             if (primitive.getTimestamp() != null) {
-                date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(primitive.getTimestamp());
+                date = DateUtils.formatDateTime(primitive.getTimestamp(), DateFormat.SHORT, DateFormat.SHORT);
             }
             text = tr(
                     "<html>Version <strong>{0}</strong> created on <strong>{1}</strong></html>",
@@ -220,7 +221,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
         updateText(cs, "comment", lblChangesetComment, null, oppCs, lblChangesetComment);
         updateText(cs, "source", lblChangesetSource, lblSource, oppCs, pnlChangesetSource);
     }
-    
+
     protected static void updateText(Changeset cs, String attr, JTextArea textArea, JLabel label, Changeset oppCs, JComponent container) {
         final String text = cs != null ? cs.get(attr) : null;
         // Update text, hide prefixing label if empty

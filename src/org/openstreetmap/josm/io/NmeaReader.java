@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.tools.DateUtils;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Reads a NMEA file. Based on information from

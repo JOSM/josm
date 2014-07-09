@@ -45,10 +45,10 @@ import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
-import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.WindowGeometry;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Panel to inspect one or more OsmPrimitives.

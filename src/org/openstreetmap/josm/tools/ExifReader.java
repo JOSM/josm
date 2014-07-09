@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.date.PrimaryDateParser;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -56,7 +57,7 @@ public final class ExifReader {
             }
             if (dateStr != null) {
                 dateStr = dateStr.replace('/', ':'); // workaround for HTC Sensation bug, see #7228
-                return DateParser.parse(dateStr);
+                return new PrimaryDateParser().parse(dateStr);
             }
         } catch (ParseException e) {
             throw e;
