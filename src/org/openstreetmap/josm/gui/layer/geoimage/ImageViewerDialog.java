@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 public final class ImageViewerDialog extends ToggleDialog {
 
@@ -53,7 +54,7 @@ public final class ImageViewerDialog extends ToggleDialog {
 
     public static ImageViewerDialog getInstance() {
         if (dialog == null)
-            throw new AssertionError("a new instance needs to be created first"); 
+            throw new AssertionError("a new instance needs to be created first");
         return dialog;
     }
 
@@ -247,7 +248,7 @@ public final class ImageViewerDialog extends ToggleDialog {
 
         if (entry != null) {
             if (imageChanged) {
-                // Set only if the image is new to preserve zoom and position if the same image is redisplayed 
+                // Set only if the image is new to preserve zoom and position if the same image is redisplayed
                 // (e.g. to update the OSD).
                 imgDisplay.setImage(entry.getFile(), entry.getExifOrientation());
             }
@@ -262,7 +263,7 @@ public final class ImageViewerDialog extends ToggleDialog {
             if (entry.getExifImgDir() != null) {
                 osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
             }
-            DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+            DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
             if (entry.hasExifTime()) {
                 osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifTime())));
             }

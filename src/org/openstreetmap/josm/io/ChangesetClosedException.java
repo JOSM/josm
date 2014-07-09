@@ -3,15 +3,13 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * A ChangesetClosedException is thrown if the server replies with a HTTP
@@ -76,11 +74,8 @@ public class ChangesetClosedException extends OsmTransferException {
         Matcher m = p.matcher(errorHeader);
         if (m.matches()) {
             changesetId = Long.parseLong(m.group(1));
-            // Example: "2010-09-07 14:39:41 UTC". Always parsed with US locale regardless
-            // of the current locale in JOSM
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US);
             try {
-                closedOn = formatter.parse(m.group(2));
+                closedOn = DateUtils.newOsmApiDateTimeFormat().parse(m.group(2));
             } catch(ParseException ex) {
                 Main.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
                 Main.error(ex);

@@ -31,10 +31,10 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
-import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     public AbstractUploadTask(String title, boolean ignoreException) {
@@ -195,7 +195,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         String msg =  tr("<html>Uploading <strong>failed</strong> because you have been using<br>"
                 + "changeset {0} which was already closed at {1}.<br>"
                 + "Please upload again with a new or an existing open changeset.</html>",
-                changesetId, DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(d)
+                changesetId, DateUtils.formatDateTime(d, DateFormat.SHORT, DateFormat.SHORT)
         );
         JOptionPane.showMessageDialog(
                 Main.parent,

@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,7 +76,8 @@ import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.PrimaryDateParser;
+import org.openstreetmap.josm.tools.date.DateUtils;
+import org.openstreetmap.josm.tools.date.PrimaryDateParser;
 import org.xml.sax.SAXException;
 
 /**
@@ -235,7 +237,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            SimpleDateFormat dateFormat = (SimpleDateFormat) DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
 
             panel = new JPanel();
             panel.setLayout(new BorderLayout());
@@ -284,7 +286,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             gc.gridx = 2;
             gc.weightx = 0.2;
-            panelTf.add(new JLabel(tr(" [dd/mm/yyyy hh:mm:ss]")), gc);
+            panelTf.add(new JLabel(" ["+dateFormat.toLocalizedPattern()+"]"), gc);
 
             gc.gridx = 0;
             gc.gridy = 2;
@@ -359,8 +361,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     imgDisp.setImage(yLayer.data.get(index).getFile(), orientation);
                     Date date = yLayer.data.get(index).getExifTime();
                     if (date != null) {
-                        lbExifTime.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(date));
-                        tfGpsTime.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(date));
+                        DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
+                        lbExifTime.setText(df.format(date));
+                        tfGpsTime.setText(df.format(date));
                         tfGpsTime.setCaretPosition(tfGpsTime.getText().length());
                         tfGpsTime.setEnabled(true);
                         tfGpsTime.requestFocus();
@@ -370,7 +373,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         tfGpsTime.setEnabled(false);
                     }
                 }
-
             });
             panelLst.add(new JScrollPane(imgList), BorderLayout.CENTER);
 
@@ -379,7 +381,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 @Override
                 public void actionPerformed(ActionEvent ae) {
-                    JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(), JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
+                    JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(),
+                            JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
                     if (fc == null)
                         return;
                     File sel = fc.getSelectedFile();
@@ -399,8 +402,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         Main.warn(e);
                     }
                     if (date != null) {
-                        lbExifTime.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(date));
-                        tfGpsTime.setText(new SimpleDateFormat("dd/MM/yyyy ").format(date));
+                        lbExifTime.setText(DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT).format(date));
+                        tfGpsTime.setText(DateUtils.getDateFormat(DateFormat.SHORT).format(date)+" ");
                         tfGpsTime.setEnabled(true);
                     } else {
                         lbExifTime.setText(tr("No date"));
@@ -928,7 +931,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
                     tfOffset.getDocument().addDocumentListener(statusBarUpdater);
 
-                    lblMatches.setText(statusBarText.getText() + "<br>" + trn("(Time difference of {0} day)", "Time difference of {0} days", Math.abs(dayOffset), Math.abs(dayOffset)));
+                    lblMatches.setText(statusBarText.getText() + "<br>" + trn("(Time difference of {0} day)",
+                            "Time difference of {0} days", Math.abs(dayOffset), Math.abs(dayOffset)));
 
                     statusBarUpdater.updateStatusBar();
                     yLayer.updateBufferAndRepaint();

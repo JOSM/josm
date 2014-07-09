@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * This panel displays the properties of the currently selected changeset in the
@@ -224,7 +225,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             msg = cs.getUser().getName();
         }
         tfUser.setText(msg);
-        DateFormat sdf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+        DateFormat sdf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
 
         tfCreatedOn.setText(cs.getCreatedAt() == null ? "" : sdf.format(cs.getCreatedAt()));
         tfClosedOn.setText(cs.getClosedAt() == null ? "" : sdf.format(cs.getClosedAt()));

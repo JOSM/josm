@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.SoftReference;
 import java.net.URLConnection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -44,6 +43,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 public class WmsCache {
     //TODO Property for maximum cache size
@@ -557,7 +557,7 @@ public class WmsCache {
     }
 
     public static String printDate(Calendar c) {
-        return (new SimpleDateFormat("yyyy-MM-dd")).format(c.getTime());
+        return DateUtils.newIsoDateFormat().format(c.getTime());
     }
 
     private boolean isInsideAreaToCache(CacheEntry cacheEntry) {

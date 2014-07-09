@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.tools.date;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author Brett Henderson
  */
-public class FallbackDateParser {
+class FallbackDateParser {
 
     private static final String[] formats = {
         "yyyy-MM-dd'T'HH:mm:ss'Z'",

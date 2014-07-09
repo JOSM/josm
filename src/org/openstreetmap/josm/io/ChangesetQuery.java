@@ -8,7 +8,6 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 public class ChangesetQuery {
 
@@ -96,11 +96,9 @@ public class ChangesetQuery {
     }
 
     /**
-     * Replies true if this query is restricted to user whom we only know the user name
-     * for.
+     * Replies true if this query is restricted to user whom we only know the user name for.
      *
-     * @return true if this query is restricted to user whom we only know the user name
-     * for
+     * @return true if this query is restricted to user whom we only know the user name for
      */
     public boolean isRestrictedToPartiallyIdentifiedUser() {
         return userName != null;
@@ -205,7 +203,7 @@ public class ChangesetQuery {
      * @throws IllegalArgumentException thrown if closedAfter is null
      * @throws IllegalArgumentException thrown if createdBefore is null
      */
-    public ChangesetQuery closedAfterAndCreatedBefore(Date closedAfter, Date createdBefore ) throws IllegalArgumentException{
+    public ChangesetQuery closedAfterAndCreatedBefore(Date closedAfter, Date createdBefore ) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(closedAfter, "closedAfter");
         CheckParameterUtil.ensureParameterNotNull(createdBefore, "createdBefore");
         this.closedAfter = closedAfter;
@@ -276,14 +274,14 @@ public class ChangesetQuery {
             if (sb.length() > 0) {
                 sb.append("&");
             }
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+            DateFormat df = DateUtils.newIsoDateTimeFormat();
             sb.append("time").append("=").append(df.format(closedAfter));
             sb.append(",").append(df.format(createdBefore));
         } else if (closedAfter != null) {
             if (sb.length() > 0) {
                 sb.append("&");
             }
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+            DateFormat df = DateUtils.newIsoDateTimeFormat();
             sb.append("time").append("=").append(df.format(closedAfter));
         }
 
@@ -314,65 +312,69 @@ public class ChangesetQuery {
 
     public static class ChangesetQueryUrlException extends Exception {
 
-        public ChangesetQueryUrlException() {
-            super();
+        /**
+         * Constructs a new {@code ChangesetQueryUrlException} with the specified detail message.
+         *
+         * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+         */
+        public ChangesetQueryUrlException(String message) {
+            super(message);
         }
 
-        public ChangesetQueryUrlException(String arg0, Throwable arg1) {
-            super(arg0, arg1);
-        }
-
-        public ChangesetQueryUrlException(String arg0) {
-            super(arg0);
-        }
-
-        public ChangesetQueryUrlException(Throwable arg0) {
-            super(arg0);
+        /**
+         * Constructs a new {@code ChangesetQueryUrlException} with the specified cause and a detail message of
+         * <tt>(cause==null ? null : cause.toString())</tt> (which typically contains the class and detail message of <tt>cause</tt>).
+         *
+         * @param  cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+         *         (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or unknown.)
+         */
+        public ChangesetQueryUrlException(Throwable cause) {
+            super(cause);
         }
     }
 
     public static class ChangesetQueryUrlParser {
         protected int parseUid(String value) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid",value));
+                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
             int id;
             try {
                 id = Integer.parseInt(value);
                 if (id <= 0)
-                    throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid",value));
+                    throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
             } catch(NumberFormatException e) {
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid",value));
+                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "uid", value));
             }
             return id;
         }
 
         protected boolean parseBoolean(String value, String parameter) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
+                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             switch (value) {
             case "true":
                 return true;
             case "false":
                 return false;
             default:
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
+                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             }
         }
 
         protected Date parseDate(String value, String parameter) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
+                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             if (value.endsWith("Z")) {
-                // OSM API generates date strings we time zone abbreviation "Z" which Java SimpleDateFormat
+                // OSM API generates date strings with time zone abbreviation "Z" which Java SimpleDateFormat
                 // doesn't understand. Convert into GMT time zone before parsing.
                 //
                 value = value.substring(0,value.length() - 1) + "GMT+00:00";
             }
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+            DateFormat formatter = DateUtils.newIsoDateTimeFormat();
             try {
                 return formatter.parse(value);
             } catch(ParseException e) {
-                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter,value));
+                throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
             }
         }
 
@@ -383,7 +385,7 @@ public class ChangesetQuery {
             if (dates.length == 1)
                 return new Date[]{parseDate(dates[0], "time")};
             else if (dates.length == 2)
-                return new Date[]{parseDate(dates[0], "time"),parseDate(dates[1], "time")};
+                return new Date[]{parseDate(dates[0], "time"), parseDate(dates[1], "time")};
             return null;
         }
 
@@ -434,7 +436,7 @@ public class ChangesetQuery {
                 case "bbox":
                     try {
                         csQuery.inBbox(new Bounds(entry.getValue(), ","));
-                    } catch(IllegalArgumentException e) {
+                    } catch (IllegalArgumentException e) {
                         throw new ChangesetQueryUrlException(e);
                     }
                     break;
@@ -478,13 +480,13 @@ public class ChangesetQuery {
          * @return the changeset query
          * @throws ChangesetQueryUrlException if the query string doesn't represent a legal query for changesets
          */
-        public ChangesetQuery parse(String query) throws  ChangesetQueryUrlException{
+        public ChangesetQuery parse(String query) throws ChangesetQueryUrlException {
             if (query == null)
                 return new ChangesetQuery();
             query = query.trim();
             if (query.isEmpty())
                 return new ChangesetQuery();
-            Map<String,String> queryParams  = createMapFromQueryString(query);
+            Map<String,String> queryParams = createMapFromQueryString(query);
             return createFromMap(queryParams);
         }
     }
