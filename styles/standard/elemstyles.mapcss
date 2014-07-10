@@ -1691,19 +1691,19 @@ node[shop=shopping_centre] {
     text: auto;
 }
 node[shop=pet] {
-    icon-image: "shop/pet.png";
+    icon-image: "shop/pet.svg";
     text: auto;
 }
 node[shop=ticket] {
-    icon-image: "shop/ticket.png";
+    icon-image: "shop/ticket.svg";
     text: auto;
 }
 node[shop=interior_decoration] {
-    icon-image: "shop/interior_decoration.png";
+    icon-image: "shop/interior_decoration.svg";
     text: auto;
 }
 node[shop=car_parts] {
-    icon-image: "vehicle/car_parts.png";
+    icon-image: "vehicle/car_parts.svg";
     text: auto;
 }
 node[shop=video_games] {
@@ -1711,23 +1711,23 @@ node[shop=video_games] {
     text: auto;
 }
 node[shop=bed] {
-    icon-image: "shop/bed.png";
+    icon-image: "shop/bed.svg";
     text: auto;
 }
 node[shop=beauty] {
-    icon-image: "shop/beauty.png";
+    icon-image: "shop/beauty.svg";
     text: auto;
 }
 node[shop=tea] {
-    icon-image: "shop/groceries/tea.png";
+    icon-image: "shop/groceries/tea.svg";
     text: auto;
 }
 node[shop=coffee] {
-    icon-image: "shop/groceries/coffee.png";
+    icon-image: "shop/groceries/coffee.svg";
     text: auto;
 }
 node[shop=bag] {
-    icon-image: "shop/bag.png";
+    icon-image: "shop/bag.svg";
     text: auto;
 }
 
