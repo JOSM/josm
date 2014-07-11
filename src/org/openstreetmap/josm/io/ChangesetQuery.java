@@ -364,12 +364,6 @@ public class ChangesetQuery {
         protected Date parseDate(String value, String parameter) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
                 throw new ChangesetQueryUrlException(tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
-            if (value.endsWith("Z")) {
-                // OSM API generates date strings with time zone abbreviation "Z" which Java SimpleDateFormat
-                // doesn't understand. Convert into GMT time zone before parsing.
-                //
-                value = value.substring(0,value.length() - 1) + "GMT+00:00";
-            }
             DateFormat formatter = DateUtils.newIsoDateTimeFormat();
             try {
                 return formatter.parse(value);
