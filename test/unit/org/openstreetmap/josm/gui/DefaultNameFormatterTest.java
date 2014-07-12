@@ -79,8 +79,11 @@ public class DefaultNameFormatterTest {
         }
     }
 
+    /**
+     * Tests formatting of relation names.
+     */
     @Test
-    public void testRelationName() throws Exception {
+    public void testRelationName() {
         assertThat(getFormattedRelationName("X=Y"), is("relation (0, 0 members)"));
         assertThat(getFormattedRelationName("name=Foo"), is("relation (\"Foo\", 0 members)"));
         assertThat(getFormattedRelationName("type=route route=tram ref=123"), is("route (\"123\", 0 members)"));
@@ -90,8 +93,11 @@ public class DefaultNameFormatterTest {
         assertThat(getFormattedRelationName("type=multipolygon building=residential addr:housenumber=123"), is("multipolygon (\"residential\", 0 members)"));
     }
 
+    /**
+     * Tests formatting of way names.
+     */
     @Test
-    public void testWayName() throws Exception {
+    public void testWayName() {
         assertThat(getFormattedWayName("building=yes"), is("building (0 nodes)"));
         assertThat(getFormattedWayName("building=yes addr:housenumber=123"), is("House number 123 (0 nodes)"));
         assertThat(getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"), is("House number 123 at FooStreet (0 nodes)"));
@@ -99,10 +105,12 @@ public class DefaultNameFormatterTest {
     }
 
     static String getFormattedRelationName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Relation) TestUtils.createPrimitive("relation " + tagsString));
+        return DefaultNameFormatter.getInstance().format((Relation) TestUtils.createPrimitive("relation " + tagsString))
+                .replace("\u200E", "").replace("\u200F", "");
     }
 
     static String getFormattedWayName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Way) TestUtils.createPrimitive("way " + tagsString));
+        return DefaultNameFormatter.getInstance().format((Way) TestUtils.createPrimitive("way " + tagsString))
+                .replace("\u200E", "").replace("\u200F", "");
     }
 }
