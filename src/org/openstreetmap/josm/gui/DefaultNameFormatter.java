@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trc_lazy;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.ComponentOrientation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -219,6 +221,19 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     @Override
     public String format(Way way) {
         StringBuilder name = new StringBuilder();
+
+        char mark = 0;
+        // If current language is left-to-right (almost all languages)
+        if (ComponentOrientation.getOrientation(Locale.getDefault()).isLeftToRight()) {
+            // will insert Left-To-Right Mark to ensure proper display of text in the case when object name is right-to-left
+            mark = '\u200E';
+        } else {
+            // otherwise will insert Right-To-Left Mark to ensure proper display in the opposite case
+            mark = '\u200F';
+        }
+        // Initialize base direction of the string
+        name.append(mark);
+
         if (way.isIncomplete()) {
             name.append(tr("incomplete"));
         } else {
@@ -234,14 +249,12 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     n = way.get("ref");
                 }
                 if (n == null) {
-                    n =
-                            (way.get("highway") != null) ? tr("highway") :
+                    n =     (way.get("highway") != null) ? tr("highway") :
                                 (way.get("railway") != null) ? tr("railway") :
                                     (way.get("waterway") != null) ? tr("waterway") :
                                             (way.get("landuse") != null) ? tr("landuse") : null;
                 }
-                if(n == null)
-                {
+                if (n == null) {
                     String s;
                     if((s = way.get("addr:housename")) != null) {
                         /* I18n: name of house as parameter */
@@ -275,7 +288,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                nevertheless, who knows what future brings */
             /* I18n: count of nodes as parameter */
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
-            name.append(" (").append(nodes).append(")");
+            name.append(mark).append(" (").append(nodes).append(")");
         }
         decorateNameWithId(name, way);
 
