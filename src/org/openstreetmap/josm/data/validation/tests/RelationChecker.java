@@ -57,7 +57,7 @@ public class RelationChecker extends Test {
      */
     public RelationChecker() {
         super(tr("Relation checker"),
-                tr("This plugin checks for errors in relations."));
+                tr("Checks for errors in relations."));
     }
 
     @Override
