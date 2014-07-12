@@ -150,8 +150,16 @@ public class Highways extends Test {
         }
 
         final HashSet<OsmPrimitive> referrers = new HashSet<>();
-        referrers.addAll(way.firstNode().getReferrers());
-        referrers.addAll(way.lastNode().getReferrers());
+        
+        if (way.isClosed()) { 
+            // for closed way we need to check all adjacent ways
+            for (Node n: way.getNodes()) {
+                referrers.addAll(n.getReferrers());
+            }
+        } else {
+            referrers.addAll(way.firstNode().getReferrers());
+            referrers.addAll(way.lastNode().getReferrers());
+        }
 
         return Utils.exists(Utils.filteredCollection(referrers, Way.class), new Predicate<Way>() {
             @Override
