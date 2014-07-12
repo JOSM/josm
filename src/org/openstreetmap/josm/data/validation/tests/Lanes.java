@@ -26,7 +26,7 @@ public class Lanes extends Test.TagTest {
      * Constructs a new {@code Lanes} test.
      */
     public Lanes() {
-        super(tr("Lane tags"));
+        super(tr("Lane tags"), tr("Test that validates ''lane:'' tags."));
     }
 
     static int getLanesCount(String value) {

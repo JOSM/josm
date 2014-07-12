@@ -43,7 +43,7 @@ public class TurnrestrictionTest extends Test {
      * Constructs a new {@code TurnrestrictionTest}.
      */
     public TurnrestrictionTest() {
-        super(tr("Turnrestrictions"), tr("This test checks if turnrestrictions are valid"));
+        super(tr("Turnrestrictions"), tr("This test checks if turnrestrictions are valid."));
     }
 
     @Override
@@ -152,13 +152,13 @@ public class TurnrestrictionTest extends Test {
             final Way viaPseudoWay = new Way();
             viaPseudoWay.addNode(viaNode);
             checkIfConnected(fromWay, viaPseudoWay,
-                    tr("The \"from\" way does not start or end at a \"via\" node"), FROM_VIA_NODE);
+                    tr("The \"from\" way does not start or end at a \"via\" node."), FROM_VIA_NODE);
             if (toWay.isOneway() != 0 && viaNode.equals(toWay.lastNode(true))) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Superfluous turnrestriction as \"to\" way is oneway"), SUPERFLUOUS, r));
                 return;
             }
             checkIfConnected(viaPseudoWay, toWay,
-                    tr("The \"to\" way does not start or end at a \"via\" node"), TO_VIA_NODE);
+                    tr("The \"to\" way does not start or end at a \"via\" node."), TO_VIA_NODE);
         } else {
             // check if consecutive ways are connected: from/via[0], via[i-1]/via[i], via[last]/to
             checkIfConnected(fromWay, (Way) via.get(0),

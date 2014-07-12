@@ -31,7 +31,7 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
- * Tests if there are segments that crosses in the same layer.
+ * Checks if a way has an endpoint very near to another way.
  * <br>
  * This class is abstract since highway/railway/waterway/… ways must be handled separately.
  * An actual implementation must override {@link #isPrimitiveUsable(OsmPrimitive)}
