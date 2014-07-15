@@ -246,11 +246,11 @@ public final class PlayHeadMarker extends Marker {
         else if (recent.parentLayer.synchronizeAudioMarkers(ca)) {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("Audio synchronized at point {0}.", ca.getText()),
+                    tr("Audio synchronized at point {0}.", recent.parentLayer.syncAudioMarker.getText()),
                     tr("Information"),
                     JOptionPane.INFORMATION_MESSAGE
                     );
-            setCoor(ca.getCoor());
+            setCoor(recent.parentLayer.syncAudioMarker.getCoor());
             endDrag(false);
         } else {
             JOptionPane.showMessageDialog(
