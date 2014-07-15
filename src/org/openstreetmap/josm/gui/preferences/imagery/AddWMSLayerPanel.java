@@ -24,6 +24,7 @@ import javax.swing.JScrollPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
@@ -85,9 +86,17 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                     JOptionPane.showMessageDialog(getParent(), tr("Could not retrieve WMS layer list."),
                             tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
                 } catch (WMSImagery.WMSGetCapabilitiesException ex) {
-                    JOptionPane.showMessageDialog(getParent(), tr("Could not parse WMS layer list."),
-                            tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
-                    Main.error("Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData());
+                    String incomingData = ex.getIncomingData().trim();
+                    String title = tr("WMS Error");
+                    String message = tr("Could not parse WMS layer list.");
+                    Main.error("Could not parse WMS layer list. Incoming data:\n"+incomingData);
+                    if (incomingData != null
+                            && (incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
+                            && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
+                        GuiHelper.notifyUserHtmlError(AddWMSLayerPanel.this, title, message, incomingData);
+                    } else {
+                        JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });
