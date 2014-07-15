@@ -70,6 +70,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     private boolean mousePressed = false;
     public GpxLayer fromLayer = null;
     private Marker currentMarker;
+    public AudioMarker syncAudioMarker = null;
 
     public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
         super(name);
@@ -257,29 +258,30 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         return components.toArray(new Action[components.size()]);
     }
 
-    public boolean synchronizeAudioMarkers(AudioMarker startMarker) {
-        if (startMarker != null && ! data.contains(startMarker)) {
-            startMarker = null;
+    public boolean synchronizeAudioMarkers(final AudioMarker startMarker) {
+        syncAudioMarker = startMarker;
+        if (syncAudioMarker != null && ! data.contains(syncAudioMarker)) {
+            syncAudioMarker = null;
         }
-        if (startMarker == null) {
+        if (syncAudioMarker == null) {
             // find the first audioMarker in this layer
             for (Marker m : data) {
                 if (m instanceof AudioMarker) {
-                    startMarker = (AudioMarker) m;
+                    syncAudioMarker = (AudioMarker) m;
                     break;
                 }
             }
         }
-        if (startMarker == null)
+        if (syncAudioMarker == null)
             return false;
 
         // apply adjustment to all subsequent audio markers in the layer
-        double adjustment = AudioPlayer.position() - startMarker.offset; // in seconds
+        double adjustment = AudioPlayer.position() - syncAudioMarker.offset; // in seconds
         boolean seenStart = false;
         try {
-            URI uri = startMarker.url().toURI();
+            URI uri = syncAudioMarker.url().toURI();
             for (Marker m : data) {
-                if (m == startMarker) {
+                if (m == syncAudioMarker) {
                     seenStart = true;
                 }
                 if (seenStart && m instanceof AudioMarker) {
@@ -515,7 +517,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             if (synchronizeAudioMarkers(recent)) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("Audio synchronized at point {0}.", recent.getText()),
+                        tr("Audio synchronized at point {0}.", syncAudioMarker.getText()),
                         tr("Information"),
                         JOptionPane.INFORMATION_MESSAGE
                         );
