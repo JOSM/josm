@@ -58,6 +58,7 @@ import javax.swing.ImageIcon;
 import org.apache.commons.codec.binary.Base64;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,7 +74,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
-import org.openstreetmap.josm.io.CachedFile;
 
 /**
  * Helper class to support the application with images.
@@ -1263,38 +1263,43 @@ public class ImageProvider {
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html">javax_imageio_1.0 metadata</a>
      */
     public static Color getTransparentColor(ImageReader reader) throws IOException {
-        IIOMetadata metadata = reader.getImageMetadata(0);
-        if (metadata != null) {
-            String[] formats = metadata.getMetadataFormatNames();
-            if (formats != null) {
-                for (String f : formats) {
-                    if ("javax_imageio_1.0".equals(f)) {
-                        Node root = metadata.getAsTree(f);
-                        if (root instanceof Element) {
-                            NodeList list = ((Element)root).getElementsByTagName("TransparentColor");
-                            if (list.getLength() > 0) {
-                                Node item = list.item(0);
-                                if (item instanceof Element) {
-                                    String value = ((Element)item).getAttribute("value");
-                                    String[] s = value.split(" ");
-                                    if (s.length == 3) {
-                                        int[] rgb = new int[3];
-                                        try {
-                                            for (int i = 0; i<3; i++) {
-                                                rgb[i] = Integer.parseInt(s[i]);
+        try {
+            IIOMetadata metadata = reader.getImageMetadata(0);
+            if (metadata != null) {
+                String[] formats = metadata.getMetadataFormatNames();
+                if (formats != null) {
+                    for (String f : formats) {
+                        if ("javax_imageio_1.0".equals(f)) {
+                            Node root = metadata.getAsTree(f);
+                            if (root instanceof Element) {
+                                NodeList list = ((Element)root).getElementsByTagName("TransparentColor");
+                                if (list.getLength() > 0) {
+                                    Node item = list.item(0);
+                                    if (item instanceof Element) {
+                                        String value = ((Element)item).getAttribute("value");
+                                        String[] s = value.split(" ");
+                                        if (s.length == 3) {
+                                            int[] rgb = new int[3];
+                                            try {
+                                                for (int i = 0; i<3; i++) {
+                                                    rgb[i] = Integer.parseInt(s[i]);
+                                                }
+                                                return new Color(rgb[0], rgb[1], rgb[2]);
+                                            } catch (IllegalArgumentException e) {
+                                                Main.error(e);
                                             }
-                                            return new Color(rgb[0], rgb[1], rgb[2]);
-                                        } catch (IllegalArgumentException e) {
-                                            Main.error(e);
                                         }
-                                    }
+                                }
+                                }
                             }
-                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }
+        } catch (IIOException e) {
+            // JAI doesn't like some JPEG files with error "Inconsistent metadata read from stream" (see #10267)
+            Main.warn(e);
         }
         return null;
     }
