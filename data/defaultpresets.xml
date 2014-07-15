@@ -358,6 +358,11 @@ Note that for a match, at least one positive and no negative is required.
         <combo key="leaf_type" text="Type" values="broadleaved,needleleaved,mixed,leafless" />
         <combo key="leaf_cycle" text="Cycle" values="deciduous,evergreen,semi_deciduous,semi_evergreen,mixed" />
     </chunk>
+    <chunk id="religious">
+        <text key="name" text="Name" />
+        <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,unitarian,zoroastrian" />
+        <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
+    </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact">
     <preset_link preset_name="Contact (common schema)" />
@@ -6604,9 +6609,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=grave_yard" />
             <space />
             <key key="amenity" value="grave_yard" />
-            <text key="name" text="Name" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,unitarian,zoroastrian" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
+            <reference ref="religious" />
         </item>
         <item name="Cemetery" icon="presets/cemetery.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=cemetery"
@@ -6621,9 +6624,14 @@ Note that for a match, at least one positive and no negative is required.
                   zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:landuse=cemetery" />
             <space />
             <key key="landuse" value="cemetery" />
-            <text key="name" text="Name" />
-            <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,unitarian,zoroastrian" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
+            <reference ref="religious" />
+        </item>
+        <item name="Religious" icon="styles/standard/religion.png" type="node,closedway,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=religious"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=cemetery" />
+            <space />
+            <key key="landuse" value="religious" />
+            <reference ref="religious" />
         </item>
         <item name="Retail" icon="styles/standard/shop/supermarket.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=retail"
