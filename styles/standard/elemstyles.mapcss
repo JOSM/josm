@@ -2602,6 +2602,9 @@ node[landuse=military] {
     icon-image: "vehicle/tank.png";
     text: auto;
 }
+area[landuse=religious] {
+    fill-color: religious#ffd454;
+}
 area[landuse=cemetery] {
     fill-color: cemetery#b1efc8;
 }
