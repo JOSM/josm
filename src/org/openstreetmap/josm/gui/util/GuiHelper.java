@@ -10,6 +10,7 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.Toolkit;
@@ -28,13 +29,17 @@ import java.util.concurrent.FutureTask;
 import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -131,6 +136,11 @@ public final class GuiHelper {
     }
 
     /**
+     * Warns user about a dangerous action requiring confirmation.
+     * @param title Title of dialog
+     * @param content Content of dialog
+     * @param baseActionIcon Unused? FIXME why is this parameter unused?
+     * @param continueToolTip Tooltip to display for "continue" button
      * @return true if the user wants to cancel, false if they want to continue
      */
     public static final boolean warnUser(String title, String content, ImageIcon baseActionIcon, String continueToolTip) {
@@ -149,6 +159,28 @@ public final class GuiHelper {
         dlg.setIcon(JOptionPane.WARNING_MESSAGE);
         dlg.setCancelButton(1);
         return dlg.showDialog().getValue() != 2;
+    }
+
+    /**
+     * Notifies user about an error received from an external source as an HTML page.
+     * @param parent Parent component
+     * @param title Title of dialog
+     * @param message Message displayed at the top of the dialog
+     * @param html HTML content to display (real error message)
+     * @since 7312
+     */
+    public static final void notifyUserHtmlError(Component parent, String title, String message, String html) {
+        JPanel p = new JPanel(new GridBagLayout());
+        p.add(new JLabel(message), GBC.eol());
+        p.add(new JLabel(tr("Received error page:")), GBC.eol());
+        JScrollPane sp = embedInVerticalScrollPane(new HtmlPanel(html));
+        sp.setPreferredSize(new Dimension(640, 240));
+        p.add(sp, GBC.eol().fill(GBC.BOTH));
+
+        ExtendedDialog ed = new ExtendedDialog(parent, title, new String[] {tr("OK")});
+        ed.setButtonIcons(new String[] {"ok.png"});
+        ed.setContent(p);
+        ed.showDialog();
     }
 
     /**
