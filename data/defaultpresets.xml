@@ -5261,7 +5261,7 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="circuits" text="Amount of circuits" values="1,2,3" />
                 <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-                <check key="communication" text="Used to communication data" value_on="line" value_off="" default="off" />
+                <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
             </optional>
         </item>
         <item name="Power Cable" icon="presets/power.png" type="way" preset_name_label="true">
@@ -5280,7 +5280,7 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="circuits" text="Amount of circuits" values="1,2,3" />
                 <combo key="location" text="Location" values="underground,underwater,overground" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-                <check key="communication" text="Used to communication data" value_on="line" value_off="" default="off" />
+                <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
             </optional>
         </item>
     </group> <!-- Power -->
@@ -6163,7 +6163,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:boundary=political" />
             <space />
             <key key="boundary" value="political" />
-            <combo key="political_division" text="Division" values="canton, linguistic_community, ward" />
+            <combo key="political_division" text="Division" values="canton,linguistic_community,ward" />
             <text key="name" text="Name" />
         </item>
         <item name="Postal Code" icon="presets/boundaries.png" type="closedway,relation" preset_name_label="true">
