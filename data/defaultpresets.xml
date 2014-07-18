@@ -5782,6 +5782,118 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="link_contact" />
         </item>
     </group> <!-- Cash -->
+    <group name="Home decoration" icon="styles/standard/shop/interior_decoration.svg">	
+        <item name="Furniture" icon="styles/standard/shop/furniture.png" type="node,closedway" preset_name_label="true">
+            <space />
+            <key key="shop" value="furniture" />
+            <reference ref="name_brand_operator_oh" />
+            <reference ref="link_contact" />
+        </item>
+        <item name="Kitchen" icon="presets/kitchen.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=kitchen"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=kitchen"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=kitchen"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=kitchen"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=kitchen"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=kitchen" />
+            <space />
+            <key key="shop" value="kitchen" />
+            <reference ref="name_brand_operator_oh" />
+            <reference ref="link_contact" />
+        </item>
+        <item name="Curtain" icon="presets/curtain.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=curtain"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=curtain"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=curtain" />
+            <space />
+            <key key="shop" value="curtain" />
+            <reference ref="name_operator_oh" />
+            <reference ref="link_contact" />
+        </item>
+        <item name="Frame" icon="presets/frame.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=frame"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=frame"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=frame"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=frame" />
+            <space />
+            <key key="shop" value="frame" />
+            <reference ref="name_operator_oh" />
+            <reference ref="link_contact" />
+        </item>
+        <item name="Bed" icon="styles/standard/shop/bed.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bed"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=bed"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=bed"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=bed"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=bed" />
+            <space />
+            <key key="shop" value="bed" />
+            <reference ref="name_oh" />
+            <reference ref="link_contact" />
+        </item>
+        <item name="Interior decoration" icon="styles/standard/shop/interior_decoration.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=interior_decoration"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=interior_decoration"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=interior_decoration" />
+            <space />
+            <key key="shop" value="interior_decoration" />
+            <reference ref="name_oh" />
+            <reference ref="link_contact" />
+        </item>
+    </group> <!-- Home decoration -->
+    <group name="Printed material" icon="presets/stationery.png">
+	        <item name="Stationery" icon="presets/stationery.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=stationery"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=stationery"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=stationery"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=stationery"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=stationery" />
+            <space />
+            <key key="shop" value="stationery" />
+            <reference ref="name_oh" />
+        </item>
+        <item name="Copyshop" icon="presets/copyshop.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=copyshop"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=copyshop"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=copyshop"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=copyshop"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=copyshop" />
+            <space />
+            <key key="shop" value="copyshop" />
+            <reference ref="name_operator_oh" />
+        </item>
+        <item name="Book Store" icon="presets/book.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=books"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=books"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=books"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=books"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=books"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=books" />
+            <space />
+            <key key="shop" value="books" />
+            <reference ref="name_brand_oh" />
+            <combo key="second_hand" text="Second hand" values="only,yes,no" />
+        </item>
+        <item name="Newsagent's shop" icon="presets/kiosk.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=newsagent"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=newsagent"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=newsagent"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=newsagent"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=newsagent"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=newsagent" />
+            <space />
+            <key key="shop" value="newsagent" />
+            <reference ref="name_oh" />
+        </item>
+        <item name="Ticket" icon="styles/standard/shop/ticket.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=ticket"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=ticket" />
+            <space />
+            <key key="shop" value="ticket" />
+            <reference ref="name_oh" />
+            <reference ref="link_contact" />
+        </item>
+    </group> <!-- Printed material -->
     <group name="Other" icon="styles/standard/shop/mall.png">
         <item name="Department Store" icon="styles/standard/shop/mall.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=department_store"
@@ -5945,116 +6057,6 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="link_contact" />
         </item>
         <separator/>
-        <item name="Furniture" icon="styles/standard/shop/furniture.png" type="node,closedway" preset_name_label="true">
-            <space />
-            <key key="shop" value="furniture" />
-            <reference ref="name_brand_operator_oh" />
-            <reference ref="link_contact" />
-        </item>
-        <item name="Kitchen" icon="presets/kitchen.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=kitchen"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=kitchen"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=kitchen"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=kitchen"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=kitchen"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=kitchen" />
-            <space />
-            <key key="shop" value="kitchen" />
-            <reference ref="name_brand_operator_oh" />
-            <reference ref="link_contact" />
-        </item>
-        <item name="Curtain" icon="presets/curtain.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=curtain"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=curtain"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=curtain" />
-            <space />
-            <key key="shop" value="curtain" />
-            <reference ref="name_operator_oh" />
-            <reference ref="link_contact" />
-        </item>
-        <item name="Frame" icon="presets/frame.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=frame"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=frame"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=frame"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=frame" />
-            <space />
-            <key key="shop" value="frame" />
-            <reference ref="name_operator_oh" />
-            <reference ref="link_contact" />
-        </item>
-        <item name="Bed" icon="styles/standard/shop/bed.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bed"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=bed"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=bed"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=bed"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=bed" />
-            <space />
-            <key key="shop" value="bed" />
-            <reference ref="name_oh" />
-            <reference ref="link_contact" />
-        </item>
-        <item name="Interior decoration" icon="styles/standard/shop/interior_decoration.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=interior_decoration"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=interior_decoration"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=interior_decoration" />
-            <space />
-            <key key="shop" value="interior_decoration" />
-            <reference ref="name_oh" />
-            <reference ref="link_contact" />
-        </item>
-        <separator/>
-        <item name="Stationery" icon="presets/stationery.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=stationery"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=stationery"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=stationery"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=stationery"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=stationery" />
-            <space />
-            <key key="shop" value="stationery" />
-            <reference ref="name_oh" />
-        </item>
-        <item name="Copyshop" icon="presets/copyshop.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=copyshop"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=copyshop"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=copyshop"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=copyshop"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=copyshop" />
-            <space />
-            <key key="shop" value="copyshop" />
-            <reference ref="name_operator_oh" />
-        </item>
-        <item name="Book Store" icon="presets/book.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=books"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=books"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=books"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=books"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=books"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=books" />
-            <space />
-            <key key="shop" value="books" />
-            <reference ref="name_brand_oh" />
-            <combo key="second_hand" text="Second hand" values="only,yes,no" />
-        </item>
-        <item name="Newsagent's shop" icon="presets/kiosk.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=newsagent"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=newsagent"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=newsagent"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=newsagent"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=newsagent"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=newsagent" />
-            <space />
-            <key key="shop" value="newsagent" />
-            <reference ref="name_oh" />
-        </item>
-        <item name="Ticket" icon="styles/standard/shop/ticket.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=ticket"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=ticket" />
-            <space />
-            <key key="shop" value="ticket" />
-            <reference ref="name_oh" />
-            <reference ref="link_contact" />
-        </item>
-        <separator/>
         <item name="Travel Agency" icon="presets/travel.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=travel_agency"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=travel_agency"
@@ -6126,6 +6128,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="link_contact" />
         </item>
     </group> <!-- Other -->
+        <separator/>
     <item name="Vending machine" icon="presets/vending_machine.png" type="node" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
