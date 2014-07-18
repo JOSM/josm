@@ -6,12 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Deque;
@@ -302,7 +301,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 boolean skipFile = false;
                 File pidFile = getPidFile(file);
                 if (pidFile.exists()) {
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pidFile), StandardCharsets.UTF_8))) {
+                    try (BufferedReader reader = Files.newBufferedReader(pidFile.toPath(), StandardCharsets.UTF_8)) {
                         String jvmId = reader.readLine();
                         if (jvmId != null) {
                             String pid = jvmId.split("@")[0];

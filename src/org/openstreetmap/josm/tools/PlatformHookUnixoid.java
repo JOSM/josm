@@ -9,13 +9,13 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -277,9 +277,9 @@ public class PlatformHookUnixoid implements PlatformHook {
         public String extractDescription() {
             String result = null;
             if (path != null) {
-                File file = new File(path);
-                if (file.exists()) {
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+                Path p = Paths.get(path);
+                if (Files.exists(p)) {
+                    try (BufferedReader reader = Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
                         String id = null;
                         String release = null;
                         String line;
