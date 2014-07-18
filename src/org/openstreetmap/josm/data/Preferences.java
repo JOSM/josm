@@ -7,11 +7,9 @@ import java.awt.Color;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -19,6 +17,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,6 +55,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Utils;
+import org.xml.sax.SAXException;
 
 /**
  * This class holds all preferences for JOSM.
@@ -789,20 +789,30 @@ public class Preferences {
         file.setWritable(true, true);
     }
 
-    public void load() throws Exception {
+    /**
+     * Loads preferences from settings file.
+     * @throws IOException if any I/O error occurs while reading the file
+     * @throws SAXException if the settings file does not contain valid XML
+     * @throws XMLStreamException if an XML error occurs while parsing the file (after validation)
+     */
+    public void load() throws IOException, SAXException, XMLStreamException {
         settingsMap.clear();
         File pref = getPreferenceFile();
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), StandardCharsets.UTF_8))) {
+        try (BufferedReader in = Files.newBufferedReader(pref.toPath(), StandardCharsets.UTF_8)) {
             validateXML(in);
         }
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(pref), StandardCharsets.UTF_8))) {
+        try (BufferedReader in = Files.newBufferedReader(pref.toPath(), StandardCharsets.UTF_8)) {
             fromXML(in);
         }
         updateSystemProperties();
         removeObsolete();
     }
 
-    public void init(boolean reset){
+    /**
+     * Initializes preferences.
+     * @param reset if {@code true}, current settings file is replaced by the default one
+     */
+    public void init(boolean reset) {
         // get the preferences.
         File prefDir = getPreferencesDirFile();
         if (prefDir.exists()) {
@@ -1387,7 +1397,7 @@ public class Preferences {
 
     protected XMLStreamReader parser;
 
-    public void validateXML(Reader in) throws Exception {
+    public void validateXML(Reader in) throws IOException, SAXException {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try (InputStream xsdStream = new CachedFile("resource://data/preferences.xsd").getInputStream()) {
             Schema schema = factory.newSchema(new StreamSource(xsdStream));
