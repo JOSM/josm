@@ -3,16 +3,16 @@ package org.openstreetmap.josm.data.validation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -169,12 +169,10 @@ public class OsmValidator implements LayerChangeListener {
     private void loadIgnoredErrors() {
         ignoredErrors.clear();
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
-            File file = new File(getValidatorDir() + "ignorederrors");
-            if (file.exists()) {
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-                    for (String line = in.readLine(); line != null; line = in.readLine()) {
-                        ignoredErrors.add(line);
-                    }
+            Path path = Paths.get(getValidatorDir() + "ignorederrors");
+            if (Files.exists(path)) {
+                try {
+                    ignoredErrors.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
                 } catch (final FileNotFoundException e) {
                     Main.debug(Main.getErrorMessage(e));
                 } catch (final IOException e) {

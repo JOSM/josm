@@ -9,10 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -291,7 +290,7 @@ public class OpenFileAction extends DiskAccessAction {
                 }
 
                 for (File urlFile: urlFiles) {
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(urlFile), StandardCharsets.UTF_8))) {
+                    try (BufferedReader reader = Files.newBufferedReader(urlFile.toPath(), StandardCharsets.UTF_8)) {
                         String line;
                         while ((line = reader.readLine()) != null) {
                             Matcher m = Pattern.compile(".*(https?://.*)").matcher(line);
