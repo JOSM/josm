@@ -15,6 +15,8 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -112,20 +114,6 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     /**
-     * Determines if the distribution is Debian or Ubuntu, or a derivative.
-     * @return {@code true} if the distribution is Debian, Ubuntu or Mint, {@code false} otherwise
-     */
-    public static boolean isDebianOrUbuntu() {
-        try {
-            String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
-            return "Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist) || "Mint".equalsIgnoreCase(dist);
-        } catch (IOException e) {
-            Main.warn(e);
-            return false;
-        }
-    }
-
-    /**
      * Determines if the JVM is OpenJDK-based.
      * @return {@code true} if {@code java.home} contains "openjdk", {@code false} otherwise
      * @since 6951
@@ -137,15 +125,27 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     /**
      * Get the package name including detailed version.
-     * @param packageName The package name
+     * @param packageNames The possible package names (when a package can have different names on different distributions)
      * @return The package name and package version if it can be identified, null otherwise
+     * @since 7314
      */
-    public static String getPackageDetails(String packageName) {
+    public static String getPackageDetails(String ... packageNames) {
         try {
-            String version = Utils.execOutput(Arrays.asList(
-                    "dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", packageName));
-            if (version != null) {
-                return packageName + ":" + version;
+            boolean dpkg = Files.exists(Paths.get("/usr/bin/dpkg-query"));
+            boolean rpm  = Files.exists(Paths.get("/usr/bin/rpm"));
+            if (dpkg || rpm) {
+                for (String packageName : packageNames) {
+                    String[] args = null;
+                    if (dpkg) {
+                        args = new String[] {"dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", packageName};
+                    } else {
+                        args = new String[] {"rpm", "-q", "--qf", "%{arch}-%{version}", packageName};
+                    }
+                    String version = Utils.execOutput(Arrays.asList(args));
+                    if (version != null) {
+                        return packageName + ":" + version;
+                    }
+                }
             }
         } catch (IOException e) {
             Main.warn(e);
@@ -159,20 +159,15 @@ public class PlatformHookUnixoid implements PlatformHook {
      * Some Java bugs are specific to a certain security update, so in addition
      * to the Java version, we also need the exact package version.
      *
-     * This was originally written for #8921, so only Debian based distributions
-     * are covered at the moment. This can be extended to other distributions
-     * if needed.
-     *
-     * @return The package name and package version if it can be identified, null
-     * otherwise
+     * @return The package name and package version if it can be identified, null otherwise
      */
     public String getJavaPackageDetails() {
-        if (isDebianOrUbuntu()) {
-            switch(System.getProperty("java.home")) {
-            case "/usr/lib/jvm/java-7-openjdk-amd64/jre":
-            case "/usr/lib/jvm/java-7-openjdk-i386/jre":
-                return getPackageDetails("openjdk-7-jre");
-            }
+        switch(System.getProperty("java.home")) {
+        case "/usr/lib/jvm/java-7-openjdk-amd64/jre":
+        case "/usr/lib/jvm/java-7-openjdk-i386/jre":
+        case "/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre":
+        case "/usr/lib/jvm/java-1.7.0-openjdk-1.7.0/jre":
+            return getPackageDetails("openjdk-7-jre", "java-1_7_0-openjdk");
         }
         return null;
     }
@@ -180,19 +175,16 @@ public class PlatformHookUnixoid implements PlatformHook {
     /**
      * Get the Web Start package name including detailed version.
      *
-     * Debian and Ubuntu OpenJDK packages are shipped with icedtea-web package,
-     * but its version does not match main java package version.
-     *
-     * Only Debian based distributions are covered at the moment.
-     * This can be extended to other distributions if needed.
+     * OpenJDK packages are shipped with icedtea-web package,
+     * but its version generally does not match main java package version.
      *
      * Simply return {@code null} if there's no separate package for Java WebStart.
      *
      * @return The package name and package version if it can be identified, null otherwise
      */
     public String getWebStartPackageDetails() {
-        if (isDebianOrUbuntu() && isOpenJDK()) {
-            return getPackageDetails("icedtea-netx");
+        if (isOpenJDK()) {
+            return getPackageDetails("icedtea-netx", "icedtea-web");
         }
         return null;
     }
@@ -223,7 +215,8 @@ public class PlatformHookUnixoid implements PlatformHook {
                         new LinuxReleaseInfo("/etc/debian_version", "Debian GNU/Linux "),
                         new LinuxReleaseInfo("/etc/fedora-release"),
                         new LinuxReleaseInfo("/etc/gentoo-release"),
-                        new LinuxReleaseInfo("/etc/redhat-release")
+                        new LinuxReleaseInfo("/etc/redhat-release"),
+                        new LinuxReleaseInfo("/etc/SuSE-release")
                 }) {
                     String description = info.extractDescription();
                     if (description != null && !description.isEmpty()) {
