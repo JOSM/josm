@@ -132,7 +132,7 @@ public class PlatformHookUnixoid implements PlatformHook {
     public static String getPackageDetails(String ... packageNames) {
         try {
             boolean dpkg = Files.exists(Paths.get("/usr/bin/dpkg-query"));
-            boolean rpm  = Files.exists(Paths.get("/usr/bin/rpm"));
+            boolean rpm  = Files.exists(Paths.get("/bin/rpm"));
             if (dpkg || rpm) {
                 for (String packageName : packageNames) {
                     String[] args = null;
@@ -142,7 +142,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                         args = new String[] {"rpm", "-q", "--qf", "%{arch}-%{version}", packageName};
                     }
                     String version = Utils.execOutput(Arrays.asList(args));
-                    if (version != null) {
+                    if (version != null && !version.contains("not installed")) {
                         return packageName + ":" + version;
                     }
                 }
@@ -162,12 +162,9 @@ public class PlatformHookUnixoid implements PlatformHook {
      * @return The package name and package version if it can be identified, null otherwise
      */
     public String getJavaPackageDetails() {
-        switch(System.getProperty("java.home")) {
-        case "/usr/lib/jvm/java-7-openjdk-amd64/jre":
-        case "/usr/lib/jvm/java-7-openjdk-i386/jre":
-        case "/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre":
-        case "/usr/lib/jvm/java-1.7.0-openjdk-1.7.0/jre":
-            return getPackageDetails("openjdk-7-jre", "java-1_7_0-openjdk");
+        String home = System.getProperty("java.home");
+        if(home.contains("java-7-openjdk") || home.contains("java-1.7.0-openjdk")) {
+            return getPackageDetails("openjdk-7-jre", "java-1_7_0-openjdk", "java-1.7.0-openjdk");
         }
         return null;
     }
