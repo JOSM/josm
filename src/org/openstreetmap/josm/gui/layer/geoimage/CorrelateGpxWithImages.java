@@ -237,7 +237,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            SimpleDateFormat dateFormat = (SimpleDateFormat) DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
+            SimpleDateFormat dateFormat = (SimpleDateFormat) DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
 
             panel = new JPanel();
             panel.setLayout(new BorderLayout());
@@ -361,7 +361,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     imgDisp.setImage(yLayer.data.get(index).getFile(), orientation);
                     Date date = yLayer.data.get(index).getExifTime();
                     if (date != null) {
-                        DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
+                        DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
                         lbExifTime.setText(df.format(date));
                         tfGpsTime.setText(df.format(date));
                         tfGpsTime.setCaretPosition(tfGpsTime.getText().length());
@@ -402,7 +402,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         Main.warn(e);
                     }
                     if (date != null) {
-                        lbExifTime.setText(DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT).format(date));
+                        lbExifTime.setText(DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM).format(date));
                         tfGpsTime.setText(DateUtils.getDateFormat(DateFormat.SHORT).format(date)+" ");
                         tfGpsTime.setEnabled(true);
                     } else {
