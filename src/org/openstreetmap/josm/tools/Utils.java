@@ -886,7 +886,7 @@ public final class Utils {
      */
     public static String getDurationString(long elapsedTime) throws IllegalArgumentException {
         if (elapsedTime < 0) {
-            throw new IllegalArgumentException("elapsedTime must be > 0");
+            throw new IllegalArgumentException("elapsedTime must be >= 0");
         }
         // Is it less than 1 second ?
         if (elapsedTime < MILLIS_OF_SECOND) {
