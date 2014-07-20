@@ -21,16 +21,14 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import org.openstreetmap.josm.Main;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.GpxRoute;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -63,7 +61,7 @@ public class GpxLayer extends Layer {
     private int lastUpdateCount;
 
     private final GpxDrawHelper drawHelper;
-    
+
     public GpxLayer(GpxData d) {
         super((String) d.attr.get("name"));
         data = d;
@@ -86,7 +84,7 @@ public class GpxLayer extends Layer {
     public Color getColor(boolean ignoreCustom) {
         return drawHelper.getColor(getName(), ignoreCustom);
     }
-    
+
     /**
      * Returns a human readable string that shows the timespan of the given track
      * @param trk The GPX track for which timespan is displayed
@@ -105,7 +103,7 @@ public class GpxLayer extends Layer {
                 ts += earliestDate + " ";
                 ts += tf.format(bounds[0]) + " - " + tf.format(bounds[1]);
             } else {
-                DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
+                DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
                 ts += dtf.format(bounds[0]) + " - " + dtf.format(bounds[1]);
             }
 
@@ -289,16 +287,16 @@ public class GpxLayer extends Layer {
                 drawHelper.drawColorBar(g, mv);
             }
         }
-        
+
     }
-    
+
     private LinkedList<WayPoint> listVisibleSegments(Bounds box) {
         WayPoint last = null;
         LinkedList<WayPoint> visibleSegments = new LinkedList<>();
-        
+
         ensureTrackVisibilityLength();
         for (Collection<WayPoint> segment : data.getLinesIterable(trackVisibility)) {
-            
+
             for(WayPoint pt : segment)
             {
                 Bounds b = new Bounds(pt.getCoor());
