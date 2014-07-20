@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.gpx;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -81,6 +82,7 @@ public class GpxData extends WithAttributes {
      * this function is called.
      *
      * FIXME might perhaps use visitor pattern?
+     * @return the bounds
      */
     public Bounds recalculateBounds() {
         Bounds bounds = null;
@@ -115,6 +117,7 @@ public class GpxData extends WithAttributes {
 
     /**
      * calculates the sum of the lengths of all track segments
+     * @return the length in meters
      */
     public double length(){
         double result = 0.0; // in meters
@@ -124,6 +127,56 @@ public class GpxData extends WithAttributes {
         }
 
         return result;
+    }
+    
+    /**
+     * returns minimum and maximum timestamps in the track
+     * @param trk track to analyze
+     * @return  minimum and maximum dates in array of 2 elements
+     */
+    public static Date[] getMinMaxTimeForTrack(GpxTrack trk) {
+        WayPoint earliest = null, latest = null;
+
+        for (GpxTrackSegment seg : trk.getSegments()) {
+            for (WayPoint pnt : seg.getWayPoints()) {
+                if (latest == null) {
+                    latest = earliest = pnt;
+                } else {
+                    if (pnt.compareTo(earliest) < 0) {
+                        earliest = pnt;
+                    } else {
+                        latest = pnt;
+                    }
+                }
+            }
+        }
+        if (earliest==null || latest==null) return null;
+        return new Date[]{earliest.getTime(), latest.getTime()};
+    }
+
+    /**
+    * Returns minimum and maximum timestamps for all tracks
+    * Warning: there are lot of track with broken timestamps,
+    * so we just ingore points from future and from year before 1970 in this method
+    * works correctly @since 5815
+     * @return minimum and maximum dates in array of 2 elements
+    */
+    public Date[] getMinMaxTimeForAllTracks() {
+        double min=1e100, max=-1e100, t;
+        double now = System.currentTimeMillis()/1000.0;
+        for (GpxTrack trk: tracks) {
+            for (GpxTrackSegment seg : trk.getSegments()) {
+                for (WayPoint pnt : seg.getWayPoints()) {
+                    t = pnt.time;
+                    if (t>0 && t<=now) {
+                        if (t>max) max=t;
+                        if (t<min) min=t;
+                    }
+                }
+            }
+        }
+        if (min==1e100 || max==-1e100) return null;
+        return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000)), };
     }
 
      /**
@@ -257,6 +310,33 @@ public class GpxData extends WithAttributes {
         };
     }
 
+    public void resetEastNorthCache() {
+        if (waypoints != null) {
+            for (WayPoint wp : waypoints){
+                wp.invalidateEastNorthCache();
+            }
+        }
+        if (tracks != null){
+            for (GpxTrack track: tracks) {
+                for (GpxTrackSegment segment: track.getSegments()) {
+                    for (WayPoint wp: segment.getWayPoints()) {
+                        wp.invalidateEastNorthCache();
+                    }
+                }
+            }
+        }
+        if (routes != null) {
+            for (GpxRoute route: routes) {
+                if (route.routePoints == null) {
+                    continue;
+                }
+                for (WayPoint wp: route.routePoints) {
+                    wp.invalidateEastNorthCache();
+                }
+            }
+        }
+    }
+
     /**
      * Iterates over all track segments and then over all routes.
      */
@@ -265,10 +345,10 @@ public class GpxData extends WithAttributes {
         private Iterator<GpxTrack> itTracks;
         private int idxTracks;
         private Iterator<GpxTrackSegment> itTrackSegments;
-        private Iterator<GpxRoute> itRoutes;
+        private final Iterator<GpxRoute> itRoutes;
 
         private Collection<WayPoint> next;
-        private boolean[] trackVisibility;
+        private final boolean[] trackVisibility;
 
         public LinesIterator(GpxData data, boolean[] trackVisibility) {
             itTracks = data.tracks.iterator();
