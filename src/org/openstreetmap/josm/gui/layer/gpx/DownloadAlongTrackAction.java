@@ -43,7 +43,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
      * @param data The GPX data used to download along
      */
     public DownloadAlongTrackAction(GpxData data) {
-        super(tr("Download from OSM along this track"), "downloadalongtrack", null, null, true);
+        super(tr("Download from OSM along this track"), "downloadalongtrack", null, null, false);
         this.data = data;
     }
 

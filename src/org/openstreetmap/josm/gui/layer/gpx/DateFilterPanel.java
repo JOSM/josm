@@ -46,7 +46,7 @@ public class DateFilterPanel extends JPanel {
         this.layer = layer;
         
         final Date startTime, endTime;
-        Date[] bounds = layer.getMinMaxTimeForAllTracks();
+        Date[] bounds = layer.data.getMinMaxTimeForAllTracks();
         startTime = (bounds==null) ? new GregorianCalendar(2000, 1, 1).getTime():bounds[0];
         endTime = (bounds==null) ? new Date() : bounds[1];
                 
