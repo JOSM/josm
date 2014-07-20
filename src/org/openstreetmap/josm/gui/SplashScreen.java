@@ -196,7 +196,8 @@ public class SplashScreen extends JFrame {
             }
             long now = System.currentTimeMillis();
             String prevMessageTitle = messages.getLast();
-            if (!prevMessageTitle.isEmpty()) {
+            // now should always be >= time but if can be inferior sometimes, see #10287
+            if (!prevMessageTitle.isEmpty() && now >= time) {
                 messages.removeLast();
                 messages.add(tr("{0} ({1})", prevMessageTitle, Utils.getDurationString(now - time)));
             }
