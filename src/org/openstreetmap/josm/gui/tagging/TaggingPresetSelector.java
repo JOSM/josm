@@ -326,7 +326,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
         DataSet ds = Main.main.getCurrentDataSet();
-        Collection<OsmPrimitive> selected = (ds==null)? Collections.EMPTY_LIST : ds.getSelected();
+        Collection<OsmPrimitive> selected = (ds==null)? Collections.<OsmPrimitive>emptyList() : ds.getSelected();
         final List<PresetClassification> result = classifications.getMatchingPresets(
                 text, onlyApplicable, inTags, getTypesInSelection(), selected);
 
