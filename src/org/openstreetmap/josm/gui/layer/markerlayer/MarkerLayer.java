@@ -72,6 +72,13 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     private Marker currentMarker;
     public AudioMarker syncAudioMarker = null;
 
+    /**
+     * Constructs a new {@code MarkerLayer}.
+     * @param indata The GPX data for this layer
+     * @param name The marker layer name
+     * @param associatedFile The associated GPX file
+     * @param fromLayer The associated GPX layer
+     */
     public MarkerLayer(GpxData indata, String name, File associatedFile, GpxLayer fromLayer) {
         super(name);
         this.setAssociatedFile(associatedFile);

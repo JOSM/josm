@@ -12,13 +12,12 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Element;
-
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
+import org.w3c.dom.Element;
 
 public class OsmDataSessionImporter implements SessionLayerImporter {
 
@@ -40,12 +39,12 @@ public class OsmDataSessionImporter implements SessionLayerImporter {
             OsmImporter importer = new OsmImporter();
             try (InputStream in = support.getInputStream(fileStr)) {
                 OsmImporter.OsmImporterData importData = importer.loadLayer(in, support.getFile(fileStr), support.getLayerName(), progressMonitor);
-    
+
                 support.addPostLayersTask(importData.getPostLayerTask());
                 return importData.getLayer();
             }
         } catch (XPathExpressionException e) {
-            throw new RuntimeException(e);
+            throw new IllegalDataException(e);
         }
     }
 }
