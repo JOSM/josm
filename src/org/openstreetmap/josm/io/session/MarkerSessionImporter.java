@@ -13,8 +13,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Element;
-
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -22,6 +20,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
+import org.w3c.dom.Element;
 
 public class MarkerSessionImporter implements SessionLayerImporter {
 
@@ -29,7 +28,7 @@ public class MarkerSessionImporter implements SessionLayerImporter {
     public Layer load(Element elem, ImportSupport support, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         String version = elem.getAttribute("version");
         if (!"0.1".equals(version)) {
-            throw new IllegalDataException(tr("Version ''{0}'' of meta data for imagery layer is not supported. Expected: 0.1", version));
+            throw new IllegalDataException(tr("Version ''{0}'' of meta data for marker layer is not supported. Expected: 0.1", version));
         }
         try {
             XPathFactory xPathFactory = XPathFactory.newInstance();
@@ -42,9 +41,9 @@ public class MarkerSessionImporter implements SessionLayerImporter {
 
             try (InputStream in = support.getInputStream(fileStr)) {
                 GpxImporter.GpxImporterData importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
-    
+
                 support.addPostLayersTask(importData.getPostLayerTask());
-    
+
                 GpxLayer gpxLayer = null;
                 List<SessionReader.LayerDependency> deps = support.getLayerDependencies();
                 if (!deps.isEmpty()) {
@@ -53,14 +52,16 @@ public class MarkerSessionImporter implements SessionLayerImporter {
                         gpxLayer = (GpxLayer) layer;
                     }
                 }
-    
+
                 MarkerLayer markerLayer = importData.getMarkerLayer();
-                markerLayer.fromLayer = gpxLayer;
-    
+                if (markerLayer != null) {
+                    markerLayer.fromLayer = gpxLayer;
+                }
+
                 return markerLayer;
             }
         } catch (XPathExpressionException e) {
-            throw new RuntimeException(e);
+            throw new IllegalDataException(e);
         }
     }
 }

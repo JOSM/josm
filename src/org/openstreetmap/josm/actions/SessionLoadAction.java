@@ -103,7 +103,6 @@ public class SessionLoadAction extends DiskAccessAction {
 
         @Override
         public void cancel() {
-            Thread.dumpStack();
             canceled = true;
         }
 
@@ -178,7 +177,7 @@ public class SessionLoadAction extends DiskAccessAction {
                 throw e;
             }
         }
-        
+
         private void handleException(String dialogTitle, Exception e) {
             Main.error(e);
             HelpAwareOptionPane.showMessageDialogInEDT(

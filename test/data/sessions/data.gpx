@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gpx version="1.1" creator="JOSM GPX export" xmlns="http://www.topografix.com/GPX/1/1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <trk>
+    <name><![CDATA[GPX test track]]></name>
+    <trkseg>
+      <trkpt lat="42.72665" lon="-0.00747">
+        <ele>1438.5</ele>
+        <time>2011-08-20T06:32:30Z</time>
+      </trkpt>
+      <trkpt lat="42.72659" lon="-0.00749">
+        <ele>1445.3</ele>
+        <time>2011-08-20T06:32:32Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

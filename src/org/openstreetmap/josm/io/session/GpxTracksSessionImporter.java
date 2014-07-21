@@ -12,12 +12,12 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Element;
-
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.io.NMEAImporter;
+import org.w3c.dom.Element;
 
 public class GpxTracksSessionImporter implements SessionLayerImporter {
 
@@ -37,14 +37,20 @@ public class GpxTracksSessionImporter implements SessionLayerImporter {
             }
 
             try (InputStream in = support.getInputStream(fileStr)) {
-                GpxImporter.GpxImporterData importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
-    
+                GpxImporter.GpxImporterData importData = null;
+
+                if (NMEAImporter.FILE_FILTER.acceptName(fileStr)) {
+                    importData = NMEAImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null);
+                } else {
+                    importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
+                }
+
                 support.addPostLayersTask(importData.getPostLayerTask());
                 return importData.getGpxLayer();
             }
 
         } catch (XPathExpressionException e) {
-            throw new RuntimeException(e);
+            throw new IllegalDataException(e);
         }
     }
 }
