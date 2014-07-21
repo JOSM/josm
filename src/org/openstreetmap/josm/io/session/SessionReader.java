@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io.session;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -412,7 +413,7 @@ public class SessionReader {
             }
             String type = e.getAttribute("type");
             SessionLayerImporter imp = getSessionLayerImporter(type);
-            if (imp == null) {
+            if (imp == null && !GraphicsEnvironment.isHeadless()) {
                 CancelOrContinueDialog dialog = new CancelOrContinueDialog();
                 dialog.show(
                         tr("Unable to load layer"),
@@ -426,7 +427,7 @@ public class SessionReader {
                 } else {
                     continue;
                 }
-            } else {
+            } else if (imp != null) {
                 importers.put(idx, imp);
                 List<LayerDependency> depsImp = new ArrayList<>();
                 for (int d : deps.get(idx)) {
@@ -458,18 +459,20 @@ public class SessionReader {
                 }
                 if (exception != null) {
                     Main.error(exception);
-                    CancelOrContinueDialog dialog = new CancelOrContinueDialog();
-                    dialog.show(
-                            tr("Error loading layer"),
-                            tr("<html>Could not load layer {0} ''{1}''.<br>Error is:<br>{2}</html>", idx, name, exception.getMessage()),
-                            JOptionPane.ERROR_MESSAGE,
-                            progressMonitor
-                            );
-                    if (dialog.isCancel()) {
-                        progressMonitor.cancel();
-                        return;
-                    } else {
-                        continue;
+                    if (!GraphicsEnvironment.isHeadless()) {
+                        CancelOrContinueDialog dialog = new CancelOrContinueDialog();
+                        dialog.show(
+                                tr("Error loading layer"),
+                                tr("<html>Could not load layer {0} ''{1}''.<br>Error is:<br>{2}</html>", idx, name, exception.getMessage()),
+                                JOptionPane.ERROR_MESSAGE,
+                                progressMonitor
+                                );
+                        if (dialog.isCancel()) {
+                            progressMonitor.cancel();
+                            return;
+                        } else {
+                            continue;
+                        }
                     }
                 }
 

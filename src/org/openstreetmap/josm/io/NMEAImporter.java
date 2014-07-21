@@ -19,9 +19,17 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.GpxImporter.GpxImporterData;
 
+/**
+ * File importer allowing to import NMEA-0183 files (*.nmea/nme/nma/log/txt files).
+ * @since 1637
+ */
 public class NMEAImporter extends FileImporter {
 
+    /**
+     * The NMEA file filter (*.nmea *.nme *.nma *.log *.txt files).
+     */
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "nmea,nme,nma,log,txt", "nmea", tr("NMEA-0183 Files") + " (*.nmea *.nme *.nma *.log *.txt)");
 
@@ -41,7 +49,7 @@ public class NMEAImporter extends FileImporter {
                 r.data.storageFile = file;
                 final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
                 final File fileFinal = file;
-    
+
                 GuiHelper.runInEDT(new Runnable() {
                     @Override
                     public void run() {
@@ -86,5 +94,13 @@ public class NMEAImporter extends FileImporter {
                     tr("NMEA import failure!"),
                     JOptionPane.ERROR_MESSAGE, null);
         }
+    }
+
+    public static GpxImporterData loadLayers(InputStream is, final File associatedFile,
+            final String gpxLayerName, String markerLayerName) throws IOException {
+        final NmeaReader r = new NmeaReader(is);
+        final boolean parsedProperly = r.getNumberOfCoordinates() > 0;
+        r.data.storageFile = associatedFile;
+        return GpxImporter.loadLayers(r.data, parsedProperly, gpxLayerName, markerLayerName);
     }
 }

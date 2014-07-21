@@ -12,15 +12,19 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Unit tests for Session writing.
@@ -105,15 +109,22 @@ public class SessionWriterTest {
     }
 
     private OsmDataLayer createOsmLayer() {
-        OsmDataLayer layer = new OsmDataLayer(new DataSet(), null, null);
+        OsmDataLayer layer = new OsmDataLayer(new DataSet(), "OSM layer name", null);
         layer.setAssociatedFile(new File("data.osm"));
         return layer;
     }
 
     private GpxLayer createGpxLayer() {
-        GpxLayer layer = new GpxLayer(new GpxData());
+        GpxData data = new GpxData();
+        data.waypoints.add(new WayPoint(new LatLon(42.72665, -0.00747)));
+        data.waypoints.add(new WayPoint(new LatLon(42.72659, -0.00749)));
+        GpxLayer layer = new GpxLayer(data, "GPX layer name");
         layer.setAssociatedFile(new File("data.gpx"));
         return layer;
+    }
+
+    private MarkerLayer createMarkerLayer(GpxLayer gpx) {
+        return new MarkerLayer(gpx.data, "Marker layer name", gpx.getAssociatedFile(), gpx);
     }
 
     /**
@@ -168,5 +179,15 @@ public class SessionWriterTest {
     @Test
     public void testWriteGpxJoz() throws IOException {
         testWrite(Collections.<Layer>singletonList(createGpxLayer()), true);
+    }
+
+    /**
+     * Tests to write a .joz file containing GPX and marker data.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testWriteGpxAndMarkerJoz() throws IOException {
+        GpxLayer gpx = createGpxLayer();
+        testWrite(Pair.toArrayList(new Pair<Layer, Layer>(gpx, createMarkerLayer(gpx))), true);
     }
 }
