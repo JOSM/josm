@@ -42,6 +42,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Key;
@@ -324,8 +325,10 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
+        DataSet ds = Main.main.getCurrentDataSet();
+        Collection<OsmPrimitive> selected = (ds==null)? Collections.EMPTY_LIST : ds.getSelected();
         final List<PresetClassification> result = classifications.getMatchingPresets(
-                text, onlyApplicable, inTags, getTypesInSelection(), Main.main.getCurrentDataSet().getSelected());
+                text, onlyApplicable, inTags, getTypesInSelection(), selected);
 
         lsResultModel.setPresets(result);
 
