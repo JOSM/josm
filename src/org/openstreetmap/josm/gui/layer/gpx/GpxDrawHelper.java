@@ -333,8 +333,9 @@ public class GpxDrawHelper {
                     trkPnt.drawLine = false;
                     color = neutralColor;
                 }
-               
-                trkPnt.customColoring = color;
+                if (color!=null) {
+                    trkPnt.customColoring = color;
+                }
                 oldWp = trkPnt;
             }
         }
