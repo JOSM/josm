@@ -1180,6 +1180,11 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=turning_circle" />
             <key key="highway" value="turning_circle" />
         </item>
+        <item name="Turning Loop" icon="styles/standard/vehicle/turning_loop.png" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=turning_lopp"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=turning_loop" />
+            <key key="highway" value="turning_loop" />
+        </item>
         <item name="City Limit" icon="presets/citylimit.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:traffic_sign=city_limit"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_sign"
