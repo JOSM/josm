@@ -165,7 +165,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         }
         tile.setLoaded(true);
         needRedraw = true;
-        Main.map.repaint(100);
+        if (Main.map != null) {
+            Main.map.repaint(100);
+        }
         tileRequestsOutstanding.remove(tile);
         if (Main.isDebugEnabled()) {
             Main.debug("tileLoadingFinished() tile: " + tile + " success: " + success);
