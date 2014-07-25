@@ -248,6 +248,8 @@ public class MapPaintPreference implements SubPreferenceSetting {
             for (SourceEntry def : defaults) {
                 knownDefaults.add(def.url);
             }
+            // XML style is not bundled anymore
+            knownDefaults.remove("resource://styles/standard/elemstyles.xml");
             Main.pref.putCollection("mappaint.style.known-defaults", knownDefaults);
 
             /* Migration code can be removed ~ Nov. 2014 */
@@ -292,6 +294,13 @@ public class MapPaintPreference implements SubPreferenceSetting {
                 // in any case, do this check only once:
                 Main.pref.put("mappaint.style.migration.switchedToMapCSS", true);
             }
+
+            // XML style is not bundled anymore
+            list.remove(Utils.find(list, new Predicate<SourceEntry>() {
+                        @Override
+                        public boolean evaluate(SourceEntry se) {
+                            return "resource://styles/standard/elemstyles.xml".equals(se.url);
+                        }}));
 
             return changed;
         }
