@@ -103,7 +103,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * If the primitive is annotated with a tag such as note, fixme, etc.
-     * Match the "work in progress" tags in default elemstyles.xml.
+     * Match the "work in progress" tags in default map style.
      */
     protected static final int FLAG_ANNOTATED = 1 << 12;
 
