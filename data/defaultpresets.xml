@@ -376,8 +376,10 @@ Note that for a match, at least one positive and no negative is required.
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=motorway"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=motorway"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=motorway"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=motorway"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:highway=motorway"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=motorway"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:highway=motorway"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=motorway"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=motorway"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:highway=motorway" />
@@ -1046,6 +1048,7 @@ Note that for a match, at least one positive and no negative is required.
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=steps"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=steps"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=steps"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=steps"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=steps"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=steps" />
             <key key="highway" value="steps" />
@@ -1063,6 +1066,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway_junction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=motorway_junction"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=motorway_junction"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=motorway_junction"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=motorway_junction"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=motorway_junction" />
             <space />
@@ -1181,8 +1185,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="turning_circle" />
         </item>
         <item name="Turning Loop" icon="styles/standard/vehicle/turning_loop.png" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=turning_lopp"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=turning_loop" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=turning_lopp" />
             <key key="highway" value="turning_loop" />
         </item>
         <item name="City Limit" icon="presets/citylimit.png" type="node" preset_name_label="true">
@@ -1245,6 +1248,7 @@ Note that for a match, at least one positive and no negative is required.
     <group name="Barriers" icon="presets/barrier.png"> <!-- *** node barriers *** -->
         <item name="Block" icon="presets/block.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=block"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=block"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=block"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=block" />
             <key key="barrier" value="block" />
@@ -1506,6 +1510,7 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:tunnel"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Key:tunnel"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:tunnel"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:tunnel"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:tunnel"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:tunnel"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:tunnel" />
@@ -1624,6 +1629,7 @@ Note that for a match, at least one positive and no negative is required.
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:waterway=stream"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:waterway=stream"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:waterway=stream"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:waterway=stream"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:waterway=stream"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:waterway=stream" />
             <space />
@@ -1657,6 +1663,7 @@ Note that for a match, at least one positive and no negative is required.
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:waterway=river"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:waterway=river"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:waterway=river"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:waterway=river"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:waterway=river"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:waterway=river" />
             <space />
@@ -1782,6 +1789,7 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Coastline" icon="presets/coastline.png" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=coastline"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=coastline"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=coastline"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=coastline"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=coastline"
@@ -1797,6 +1805,7 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:waterway=riverbank"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:waterway=riverbank"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:waterway=riverbank"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:waterway=riverbank"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:waterway=riverbank"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:waterway=riverbank"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:waterway=riverbank" />
@@ -1903,7 +1912,8 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:waterway=lock_gate"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:waterway=lock_gate"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:waterway=lock_gate"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:waterway=lock_gate" />
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:waterway=lock_gate"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:waterway=lock_gate" />
             <key key="waterway" value="lock_gate" />
         </item>
         <item name="Turning Point" icon="presets/turning.png" type="node" preset_name_label="true">
@@ -1984,6 +1994,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Preserved" icon="presets/rail_preserved.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=preserved"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=preserved"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=preserved" />
             <key key="railway" value="preserved" />
             <optional>
@@ -2379,6 +2390,7 @@ Note that for a match, at least one positive and no negative is required.
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:shop=car"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=car"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=car"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=car"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:shop=car"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=car"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=car" />
@@ -2870,7 +2882,8 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Hangar" icon="presets/hangar.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=hangar"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:aeroway=hangar" />
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:aeroway=hangar"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:aeroway=hangar" />
             <key key="building" value="hangar" />
         </item>
         <item name="Beacon" icon="styles/standard/misc/landmark/beacon.png" type="node" preset_name_label="true">
@@ -3445,6 +3458,7 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=playground"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:leisure=playground"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=playground"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:leisure=playground"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=playground"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=playground"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:leisure=playground" />
@@ -4748,7 +4762,8 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=crane"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=crane"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=crane"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=crane" />
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=crane"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=crane" />
             <space />
             <key key="man_made" value="crane" />
             <text key="name" text="Name" />
@@ -4757,7 +4772,8 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=mineshaft"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=mineshaft"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=mineshaft"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=mineshaft" />
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=mineshaft"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=mineshaft" />
             <space />
             <key key="man_made" value="mineshaft" />
             <text key="name" text="Name" />
@@ -4831,7 +4847,8 @@ Note that for a match, at least one positive and no negative is required.
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=fountain"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=fountain"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=fountain"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=fountain" />
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=fountain"
+                  zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=fountain" />
             <space />
             <key key="amenity" value="fountain" />
             <text key="name" text="Name" />
@@ -4842,7 +4859,8 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=water_well"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=water_well"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:man_made=water_well"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=water_well" />
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=water_well"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=water_well" />
             <space />
             <key key="man_made" value="water_well" />
             <text key="name" text="Name" />
@@ -4877,6 +4895,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Monitoring Station" icon="presets/monitoring_station.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=monitoring_station"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=monitoring_station"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=monitoring_station"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=monitoring_station" />
             <space />
@@ -5071,6 +5090,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=substation"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=substation"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <key key="power" value="substation" />
@@ -5112,6 +5132,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=substation"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <label text="(Please only use this tag if more detailed mapping using busbars and bays is impossible!)" />
@@ -5127,6 +5148,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:line=busbar"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=substation"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <key key="power" value="line" />
@@ -5140,6 +5162,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:line=bay"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=substation"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <key key="power" value="line" />
@@ -5159,6 +5182,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=converter"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=substation"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <key key="power" value="converter" />
@@ -5176,6 +5200,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=compensator"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=substation"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=substation" />
             <space />
             <key key="power" value="compensator" />
@@ -5292,6 +5317,7 @@ Note that for a match, at least one positive and no negative is required.
     <group name="Historic Places" icon="presets/State_Tourist.png">
         <item name="Castle" icon="presets/State_Tourist.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=castle"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:historic=castle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=castle"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:historic=castle"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:historic=castle" />
@@ -5516,6 +5542,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Farm Stand" icon="presets/apple.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=farm"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=farm"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=farm"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=farm"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=farm" />
@@ -6161,7 +6188,8 @@ Note that for a match, at least one positive and no negative is required.
                   hu.href="http://wiki.openstreetmap.org/wiki/Hu:Tag:boundary=administrative"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:boundary=administrative"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:boundary=administrative"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:boundary=administrative" />
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:boundary=administrative"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:boundary=administrative" />
             <space />
             <key key="boundary" value="administrative" />
             <text key="name" text="Name" />
@@ -6391,6 +6419,7 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Tree Row" icon="presets/tree.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree_row"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=tree_row"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=tree_row"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=tree_row"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:natural=tree_row"
@@ -6571,6 +6600,7 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=village_green"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=village_green"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=village_green"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=village_green"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=village_green"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=village_green" />
             <space />
@@ -6594,6 +6624,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=recreation_ground"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=recreation_ground"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=recreation_ground"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=recreation_ground"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:landuse=recreation_ground"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=recreation_ground" />
             <space />
@@ -6636,7 +6667,9 @@ Note that for a match, at least one positive and no negative is required.
         </item>
         <item name="Religious" icon="styles/standard/religion.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=religious"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=cemetery" />
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=religious"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=religious"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=religious" />
             <space />
             <key key="landuse" value="religious" />
             <reference ref="religious" />
@@ -6810,7 +6843,8 @@ Note that for a match, at least one positive and no negative is required.
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:addr"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:addr"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:addr"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:addr" />
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:addr"
+                  vi.href="http://wiki.openstreetmap.org/wiki/Vi:Key:addr" />
             <space />
             <text key="addr:housenumber" text="House number" match="key" auto_increment="-2,-1,+1,+2" />
             <optional>
@@ -7000,6 +7034,7 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Mountain_biking"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Mountain_biking"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Mountain_biking"
+                  no.href="http://wiki.openstreetmap.org/wiki/No:Mountain_biking"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Mountain_biking"/>
                 <space/>
                 <key key="type" value="route"/>
@@ -7158,6 +7193,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Relation:associatedStreet"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:associatedStreet"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:associatedStreet"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Relation:associatedStreet"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Relation:associatedStreet"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:associatedStreet"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Relation:associatedStreet" />
