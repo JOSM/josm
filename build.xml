@@ -102,9 +102,6 @@ Build-Date: ${build.tstamp}
         <schemavalidate file="data/defaultpresets.xml" >
             <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="data/tagging-preset.xsd" />
         </schemavalidate>
-        <schemavalidate file="styles/standard/elemstyles.xml" >
-            <schema namespace="http://josm.openstreetmap.de/mappaint-style-1.0" file="data/mappaint-style.xsd" />
-        </schemavalidate>
     </target>
     <!--
       ** Main target that builds JOSM and checks XML against schemas
