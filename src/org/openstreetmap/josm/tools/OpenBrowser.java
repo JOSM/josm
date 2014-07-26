@@ -43,7 +43,7 @@ public final class OpenBrowser {
 
         if (Desktop.isDesktopSupported()) {
             try {
-                if (Main.platform instanceof PlatformHookWindows) {
+                if (Main.isPlatformWindows()) {
                     // Desktop API works fine under Windows, so we don't try any fallback in case of I/O exceptions because it's not API's fault
                     Desktop.getDesktop().browse(uri);
                 } else if (Main.platform instanceof PlatformHookUnixoid) {

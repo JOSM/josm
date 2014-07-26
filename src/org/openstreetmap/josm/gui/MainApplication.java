@@ -12,15 +12,19 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.ProxySelector;
 import java.net.URL;
 import java.security.AllPermission;
 import java.security.CodeSource;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PermissionCollection;
 import java.security.Permissions;
 import java.security.Policy;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,6 +62,7 @@ import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
+import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -322,14 +327,14 @@ public class MainApplication extends Main {
         if (args.containsKey(Option.DEBUG) || args.containsKey(Option.TRACE)) {
             // Enable JOSM debug level
             logLevel = 4;
-            // Enable debug in OAuth signpost
-            Preferences.updateSystemProperty("debug", "true");
             Main.info(tr("Printing debugging messages to console"));
         }
 
         if (args.containsKey(Option.TRACE)) {
             // Enable JOSM debug level
             logLevel = 5;
+            // Enable debug in OAuth signpost via system preference, but only at trace level
+            Preferences.updateSystemProperty("debug", "true");
             Main.info(tr("Enabled detailed debug level (trace)"));
         }
 
@@ -434,6 +439,16 @@ public class MainApplication extends Main {
         }
 
         SwingUtilities.invokeLater(new GuiFinalizationWorker(args, proxySelector));
+
+        if (Main.isPlatformWindows()) {
+            try {
+                // Check for insecure certificates to remove.
+                // This is Windows-dependant code but it can't go to preStartupHook (need i18n) neither startupHook (need to be called before remote control)
+                ((PlatformHookWindows)Main.platform).removeInsecureCertificates();
+            } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
+                error(e);
+            }
+        }
 
         if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
             RemoteControl.start();

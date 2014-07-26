@@ -29,12 +29,22 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
+import java.security.NoSuchProviderException;
+import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 
@@ -43,6 +53,32 @@ import org.openstreetmap.josm.Main;
   * @since 1023
   */
 public class PlatformHookWindows extends PlatformHookUnixoid implements PlatformHook {
+
+    private static final byte[] INSECURE_PUBLIC_KEY = new byte[] {
+        0x30, (byte) 0x82, 0x1, 0x22, 0x30, 0xd, 0x6, 0x9, 0x2a, (byte) 0x86, 0x48, (byte) 0x86, (byte) 0xf7, 0xd, 0x1, 0x1, 0x1, 0x5, 0x0, 0x3, (byte) 0x82, 0x1, 0xf, 0x0,
+        0x30, (byte) 0x82, 0x01, 0x0a, 0x02, (byte) 0x82, 0x01, 0x01, 0x00, (byte) 0x95, (byte) 0x95, (byte) 0x88,
+        (byte) 0x84, (byte) 0xc8, (byte) 0xd9, 0x6b, (byte) 0xc5, (byte) 0xda, 0x0b, 0x69, (byte) 0xbf, (byte) 0xfc, 0x7e, (byte) 0xb9, (byte) 0x96, 0x2c, (byte) 0xeb, (byte) 0x8f,
+        (byte) 0xbc, 0x6e, 0x40, (byte) 0xe6, (byte) 0xe2, (byte) 0xfc, (byte) 0xf1, 0x7f, 0x73, (byte) 0xa7, (byte) 0x9d, (byte) 0xde, (byte) 0xc7, (byte) 0x88,
+        0x57, 0x51, (byte) 0x84, (byte) 0xed, (byte) 0x96, (byte) 0xfb, (byte) 0xe1, 0x38, (byte) 0xef, 0x08, 0x2b, (byte) 0xf3, (byte) 0xc7, (byte) 0xc3,
+        0x5d, (byte) 0xfe, (byte) 0xf9, 0x51, (byte) 0xe6, 0x29, (byte) 0xfc, (byte) 0xe5, 0x0d, (byte) 0xa1, 0x0d, (byte) 0xa8, (byte) 0xb4, (byte) 0xae,
+        0x26, 0x18, 0x19, 0x4d, 0x6c, 0x0c, 0x3b, 0x12, (byte) 0xba, (byte) 0xbc, 0x5f, 0x32, (byte) 0xb3, (byte) 0xbe,
+        (byte) 0x9d, 0x17, 0x0d, 0x4d, 0x2f, 0x1a, 0x48, (byte) 0xb7, (byte) 0xac, (byte) 0xf7, 0x1a, 0x43, 0x01, (byte) 0x97,
+        (byte) 0xf4, (byte) 0xf8, 0x4c, (byte) 0xbb, 0x6a, (byte) 0xbc, 0x33, (byte) 0xe1, 0x73, 0x1e, (byte) 0x86, (byte) 0xfb, 0x2e, (byte) 0xb1,
+        0x63, 0x75, (byte) 0x85, (byte) 0xdc, (byte) 0x82, 0x6c, 0x28, (byte) 0xf1, (byte) 0xe3, (byte) 0x90, 0x63, (byte) 0x9d, 0x3d, 0x48,
+        (byte) 0x8a, (byte) 0x8c, 0x47, (byte) 0xe2, 0x10, 0x0b, (byte) 0xef, (byte) 0x91, (byte) 0x94, (byte) 0xb0, 0x6c, 0x4c, (byte) 0x80, 0x76,
+        0x03, (byte) 0xe1, (byte) 0xb6, (byte) 0x90, (byte) 0x87, (byte) 0xd9, (byte) 0xae, (byte) 0xf4, (byte) 0x8e, (byte) 0xe0, (byte) 0x9f, (byte) 0xe7, 0x3a, 0x2c,
+        0x2f, 0x21, (byte) 0xd4, 0x46, (byte) 0xba, (byte) 0x95, 0x70, (byte) 0xa9, 0x5b, 0x20, 0x2a, (byte) 0xfa, 0x52, 0x3e,
+        (byte) 0x9d, (byte) 0xd9, (byte) 0xef, 0x28, (byte) 0xc5, (byte) 0xd1, 0x60, (byte) 0x89, 0x68, 0x6e, 0x7f, (byte) 0xd7, (byte) 0x9e, (byte) 0x89,
+        0x4c, (byte) 0xeb, 0x4d, (byte) 0xd2, (byte) 0xc6, (byte) 0xf4, 0x2d, 0x02, 0x5d, (byte) 0xda, (byte) 0xde, 0x33, (byte) 0xfe, (byte) 0xc1,
+        0x7e, (byte) 0xde, 0x4f, 0x1f, (byte) 0x9b, 0x6e, 0x6f, 0x0f, 0x66, 0x71, 0x19, (byte) 0xe9, 0x43, 0x3c,
+        (byte) 0x83, 0x0a, 0x0f, 0x28, 0x21, (byte) 0xc8, 0x38, (byte) 0xd3, 0x4e, 0x48, (byte) 0xdf, (byte) 0xd4, (byte) 0x99, (byte) 0xb5,
+        (byte) 0xc6, (byte) 0x8d, (byte) 0xd4, (byte) 0xc1, 0x69, 0x58, 0x79, (byte) 0x82, 0x32, (byte) 0x82, (byte) 0xd4, (byte) 0x86, (byte) 0xe2, 0x04,
+        0x08, 0x63, (byte) 0x87, (byte) 0xf0, 0x2a, (byte) 0xf6, (byte) 0xec, 0x3e, 0x51, 0x0f, (byte) 0xda, (byte) 0xb4, 0x67, 0x19,
+        0x5e, 0x16, 0x02, (byte) 0x9f, (byte) 0xf1, 0x19, 0x0c, 0x3e, (byte) 0xb8, 0x04, 0x49, 0x07, 0x53, 0x02,
+        0x03, 0x01, 0x00, 0x01
+    };
+
+    private static final String WINDOWS_ROOT = "Windows-ROOT";
 
     @Override
     public void openUrl(String url) throws IOException {
@@ -137,22 +173,96 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
                 ((System.getenv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
     }
 
-    @Override
-    public void setupHttpsCertificate(KeyStore.PrivateKeyEntry privateKeyEntry)
-            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-        KeyStore ks = KeyStore.getInstance("Windows-ROOT");
+    /**
+     * Loads Windows-ROOT keystore.
+     * @return Windows-ROOT keystore
+     * @throws NoSuchAlgorithmException if the algorithm used to check the integrity of the keystore cannot be found
+     * @throws CertificateException if any of the certificates in the keystore could not be loaded
+     * @throws IOException if there is an I/O or format problem with the keystore data, if a password is required but not given
+     * @throws KeyStoreException if no Provider supports a KeyStore implementation for the type "Windows-ROOT"
+     */
+    private KeyStore getWindowsKeystore() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
+        KeyStore ks = KeyStore.getInstance(WINDOWS_ROOT);
         ks.load(null, null);
+        return ks;
+    }
+
+    /**
+     * Removes potential insecure certificates installed with previous versions of JOSM on Windows.
+     * @throws NoSuchAlgorithmException on unsupported signature algorithms
+     * @throws CertificateException if any of the certificates in the Windows keystore could not be loaded
+     * @throws KeyStoreException if no Provider supports a KeyStoreSpi implementation for the type "Windows-ROOT"
+     * @throws IOException if there is an I/O or format problem with the keystore data, if a password is required but not given
+     * @since 7335
+     */
+    public void removeInsecureCertificates() throws NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
+        // We offered before a public private key we need now to remove from Windows PCs as it might be a huge security risk (see #10230)
+        PublicKey insecurePubKey = null;
+        try {
+            insecurePubKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(INSECURE_PUBLIC_KEY));
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            Main.error(e);
+            return;
+        }
+        KeyStore ks = getWindowsKeystore();
         Enumeration<String> en = ks.aliases();
+        Collection<String> insecureCertificates = new ArrayList<>();
         while (en.hasMoreElements()) {
             String alias = en.nextElement();
-            Certificate c = ks.getCertificate(alias);
-            if (ks.isKeyEntry(alias) && c.equals(privateKeyEntry.getCertificate())) {
+            // Look for certificates associated with a private key
+            if (ks.isKeyEntry(alias)) {
+                try {
+                    ks.getCertificate(alias).verify(insecurePubKey);
+                    // If no exception, this is a certificate signed with the insecure key -> remove it
+                    insecureCertificates.add(alias);
+                } catch (InvalidKeyException | NoSuchProviderException | SignatureException e) {
+                    // If exception this is not a certificate related to JOSM, just trace it
+                    Main.trace(alias + " --> " + e.getClass().getName());
+                }
+            }
+        }
+        // Remove insecure certificates
+        if (!insecureCertificates.isEmpty()) {
+            StringBuilder message = new StringBuilder("<html>");
+            message.append(tr("A previous version of JOSM has installed a custom certificate in order to provide HTTPS support for Remote Control:"));
+            message.append("<br><ul>");
+            for (String alias : insecureCertificates) {
+                message.append("<li>");
+                message.append(alias);
+                message.append("</li>");
+            }
+            message.append("</ul>");
+            message.append(tr("It appears it could be an important <b>security risk</b>.<br><br>"+
+                    "You are now going to be prompted by Windows to remove this insecure certificate.<br>For your own safety, <b>please click Yes</b> in next dialog."));
+            message.append("</html>");
+            JOptionPane.showMessageDialog(Main.parent, message.toString(), tr("Warning"), JOptionPane.WARNING_MESSAGE);
+            for (String alias : insecureCertificates) {
+                Main.warn(tr("Removing insecure certificate from {0} keystore: {1}", WINDOWS_ROOT, alias));
+                try {
+                    ks.deleteEntry(alias);
+                } catch (KeyStoreException e) {
+                    Main.error(tr("Unable to remove insecure certificate from keystore: {0}", e.getMessage()));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void setupHttpsCertificate(KeyStore.TrustedCertificateEntry trustedCert)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        KeyStore ks = getWindowsKeystore();
+        Enumeration<String> en = ks.aliases();
+
+        while (en.hasMoreElements()) {
+            String alias = en.nextElement();
+            // Look for certificate to install
+            if (ks.isKeyEntry(alias) && ks.getCertificate(alias).equals(trustedCert.getTrustedCertificate())) {
                 // JOSM certificate found, return
                 return;
             }
         }
         // JOSM certificate not found, install it
-        Main.info("Adding JOSM localhost certificate to Windows-ROOT keystore");
-        ks.setEntry("josm_localhost", privateKeyEntry, new KeyStore.PasswordProtection("josm_ssl".toCharArray()));
+        Main.info(tr("Adding JOSM localhost certificate to {0} keystore", WINDOWS_ROOT));
+        ks.setEntry("josm_localhost", trustedCert, null);
     }
 }
