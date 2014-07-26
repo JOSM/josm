@@ -144,9 +144,9 @@ public class OsmValidator implements LayerChangeListener {
     }
 
     /**
-     * Returns the plugin's directory of the plugin
+     * Returns the validator directory.
      *
-     * @return The directory of the plugin
+     * @return The validator directory
      */
     public static String getValidatorDir() {
         return Main.pref.getPreferencesDir() + "validator/";

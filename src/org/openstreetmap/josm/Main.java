@@ -1513,4 +1513,13 @@ public abstract class Main {
     public static boolean isPlatformOsx() {
         return Main.platform instanceof PlatformHookOsx;
     }
+
+    /**
+     * Determines if we are currently running on Windows.
+     * @return {@code true} if we are currently running on Windows
+     * @since 7335
+     */
+    public static boolean isPlatformWindows() {
+        return Main.platform instanceof PlatformHookWindows;
+    }
 }

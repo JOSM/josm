@@ -30,7 +30,6 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
-import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -104,7 +103,7 @@ public final class ShowStatusReportAction extends JosmAction {
         }
         try {
             final String envJavaHome = System.getenv("JAVA_HOME");
-            final String envJavaHomeAlt = Main.platform instanceof PlatformHookWindows ? "%JAVA_HOME%" : "${JAVA_HOME}";
+            final String envJavaHomeAlt = Main.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
             final String propJavaHome = System.getProperty("java.home");
             final String propJavaHomeAlt = "<java.home>";
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
@@ -159,13 +158,10 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append(reportHeader);
         try {
             Map<String, Setting<?>> settings = Main.pref.getAllSettings();
-            settings.remove("osm-server.username");
-            settings.remove("osm-server.password");
-            settings.remove("oauth.access-token.key");
-            settings.remove("oauth.access-token.secret");
             Set<String> keys = new HashSet<>(settings.keySet());
             for (String key : keys) {
-                if (key.startsWith("marker.show")) {
+                // Remove sensitive information from status report
+                if (key.startsWith("marker.show") || key.contains("username") || key.contains("password") || key.contains("access-token")) {
                     settings.remove(key);
                 }
             }

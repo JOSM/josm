@@ -108,13 +108,13 @@ public interface PlatformHook {
 
     /**
      * Setup system keystore to add JOSM HTTPS certificate (for remote control).
-     * @param privateKeyEntry the JOSM certificate for localhost and associated private key
+     * @param trustedCert the JOSM certificate for localhost
      * @throws KeyStoreException in case of error
      * @throws IOException in case of error
      * @throws CertificateException in case of error
      * @throws NoSuchAlgorithmException in case of error
      * @since 7206
      */
-    public void setupHttpsCertificate(KeyStore.PrivateKeyEntry privateKeyEntry)
+    public void setupHttpsCertificate(KeyStore.TrustedCertificateEntry trustedCert)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 }

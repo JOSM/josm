@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControlHttpsServer;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -58,6 +59,7 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
     }
     private final Map<PermissionPrefWithDefault, JCheckBox> prefs = new LinkedHashMap<>();
     private JCheckBox enableRemoteControl;
+    private JCheckBox enableHttpsSupport;
     private JCheckBox loadInNewLayer = new JCheckBox(tr("Download objects to new layer"));
     private JCheckBox alwaysAskUserConfirm = new JCheckBox(tr("Confirm all Remote Control actions manually"));
 
@@ -88,7 +90,11 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
 
         remote.add(wrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 5));
 
-        wrapper.add(new JLabel(tr("Permitted actions:")), GBC.eol());
+        enableHttpsSupport = new JCheckBox(tr("Enable HTTPS support"), RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.get());
+        wrapper.add(enableHttpsSupport, GBC.eol().fill(GBC.HORIZONTAL));
+        wrapper.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL).insets(15, 5, 15, 5));
+
+        wrapper.add(new JLabel(tr("Permitted actions:")), GBC.eol().insets(5, 0, 0, 0));
         for (JCheckBox p : prefs.values()) {
             wrapper.add(p, GBC.eol().insets(15, 5, 0, 0).fill(GBC.HORIZONTAL));
         }
@@ -119,7 +125,9 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
     @Override
     public boolean ok() {
         boolean enabled = enableRemoteControl.isSelected();
+        boolean httpsEnabled = enableHttpsSupport.isSelected();
         boolean changed = RemoteControl.PROP_REMOTECONTROL_ENABLED.put(enabled);
+        boolean httpsChanged = RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.put(httpsEnabled);
         if (enabled) {
             for (Entry<PermissionPrefWithDefault, JCheckBox> p : prefs.entrySet()) {
                 Main.pref.put(p.getKey().pref, p.getValue().isSelected());
@@ -132,6 +140,12 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
                 RemoteControl.start();
             } else {
                 RemoteControl.stop();
+            }
+        } else if (httpsChanged) {
+            if (httpsEnabled) {
+                RemoteControlHttpsServer.restartRemoteControlHttpsServer();
+            } else {
+                RemoteControlHttpsServer.stopRemoteControlHttpsServer();
             }
         }
         return false;
