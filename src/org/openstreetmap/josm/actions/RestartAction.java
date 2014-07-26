@@ -17,7 +17,6 @@ import java.util.List;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -75,7 +74,7 @@ public class RestartAction extends JosmAction {
         try {
             // java binary
             final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator +
-                    (Main.platform instanceof PlatformHookWindows ? "java.exe" : "java");
+                    (Main.isPlatformWindows() ? "java.exe" : "java");
             if (!new File(java).isFile()) {
                 throw new IOException("Unable to find suitable java runtime at "+java);
             }

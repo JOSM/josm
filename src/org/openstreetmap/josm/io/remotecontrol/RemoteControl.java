@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 
@@ -10,13 +11,20 @@ import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
  * IMPORTANT! increment the minor version on compatible API extensions
  * and increment the major version and set minor to 0 on incompatible changes.
  */
-public class RemoteControl
-{
+public class RemoteControl {
+
     /**
      * If the remote control feature is enabled or disabled. If disabled,
      * it should not start the server.
      */
     public static final BooleanProperty PROP_REMOTECONTROL_ENABLED = new BooleanProperty("remotecontrol.enabled", false);
+
+    /**
+     * If the remote control feature is enabled or disabled for HTTPS. If disabled,
+     * only HTTP access will be available.
+     * @since 7335
+     */
+    public static final BooleanProperty PROP_REMOTECONTROL_HTTPS_ENABLED = new BooleanProperty("remotecontrol.https.enabled", false);
 
     /**
      * RemoteControl HTTP protocol version. Change minor number for compatible
@@ -52,5 +60,14 @@ public class RemoteControl
      */
     public void addRequestHandler(String command, Class<? extends RequestHandler> handlerClass) {
         RequestProcessor.addRequestHandlerClass(command, handlerClass);
+    }
+
+    /**
+     * Returns the remote control directory.
+     * @return The remote control directory
+     * @since 7335
+     */
+    public static String getRemoteControlDir() {
+        return Main.pref.getPreferencesDir() + "remotecontrol/";
     }
 }
