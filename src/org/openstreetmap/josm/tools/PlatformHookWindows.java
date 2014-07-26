@@ -261,7 +261,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
                 return;
             }
         }
-        // JOSM certificate not found, install it
+        // JOSM certificate not found, install it to Windows-ROOT keystore, used by IE, Chrome and Safari, but not by Firefox
         Main.info(tr("Adding JOSM localhost certificate to {0} keystore", WINDOWS_ROOT));
         ks.setEntry("josm_localhost", trustedCert, null);
     }

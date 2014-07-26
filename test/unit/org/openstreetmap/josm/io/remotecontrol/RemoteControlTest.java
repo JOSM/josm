@@ -12,6 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -44,6 +46,13 @@ public class RemoteControlTest {
     public void setUp() {
         JOSMFixture.createUnitTestFixture().init();
         RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.put(true);
+        try {
+            Files.deleteIfExists(Paths.get(
+                    RemoteControl.getRemoteControlDir()).resolve(RemoteControlHttpsServer.KEYSTORE_FILENAME));
+        } catch (IOException e) {
+            Main.error(e);
+        }
+
         RemoteControl.start();
         disableCertificateValidation();
         httpBase = "http://127.0.0.1:"+Main.pref.getInteger("remote.control.port", 8111);
