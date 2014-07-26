@@ -43,6 +43,7 @@ public class RemoteControlTest {
     @Before
     public void setUp() {
         JOSMFixture.createUnitTestFixture().init();
+        RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.put(true);
         RemoteControl.start();
         disableCertificateValidation();
         httpBase = "http://127.0.0.1:"+Main.pref.getInteger("remote.control.port", 8111);
