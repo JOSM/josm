@@ -2,8 +2,8 @@
 
 package org.openstreetmap.josm.gui.layer.gpx;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -14,6 +14,7 @@ import java.awt.Stroke;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -23,12 +24,12 @@ import org.openstreetmap.josm.tools.ColorScale;
 
 
 /**
- * Class that helps to draw large set of GPS tracks with different colors and options 
+ * Class that helps to draw large set of GPS tracks with different colors and options
  * @since 7319
  */
 public class GpxDrawHelper {
     private GpxData data;
-    
+
     // draw lines between points belonging to different segments
     private boolean forceLines;
     // draw direction arrows on the lines
@@ -50,7 +51,7 @@ public class GpxDrawHelper {
     private int hdopfactor;
 
     private static final double PHI = Math.toRadians(15);
-    
+
     //// Variables used only to check cache validity
     private boolean computeCacheInSync = false;
     private int computeCacheMaxLineLengthUsed;
@@ -61,7 +62,7 @@ public class GpxDrawHelper {
 
     //// Color-related fields
     /** Mode of the line coloring **/
-    private ColorMode colored; 
+    private ColorMode colored;
     /** max speed for coloring - allows to tweak line coloring for different speed levels. **/
     private int colorTracksTune;
     private boolean colorModeDynamic;
@@ -74,10 +75,10 @@ public class GpxDrawHelper {
     ColorScale hdopScale;
     ColorScale dateScale;
     ColorScale directionScale;
-    
+
     /** Opacity for hdop points **/
     private int hdopAlpha;
-    
+
 
     // lookup array to draw arrows without doing any math
     private static final int ll0 = 9;
@@ -87,7 +88,7 @@ public class GpxDrawHelper {
         { -ll0, -sl9, -ll0, +sl9 }, { -sl4, -ll0, -ll0, -sl4 }, { +sl9, -ll0, -sl9, -ll0 },
         { +ll0, -sl4, +sl4, -ll0 }, { +ll0, +sl9, +ll0, -sl9 }, { +sl4, +ll0, +ll0, +sl4 },
         { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 }, { -ll0, -sl9, -ll0, +sl9 } };
-    
+
     private void setupColors() {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
         velocityScale = ColorScale.createHSBScale(256).addTitle(tr("Velocity, km/h"));
@@ -103,17 +104,17 @@ public class GpxDrawHelper {
     public enum ColorMode {
         NONE, VELOCITY, HDOP, DIRECTION, TIME
     }
-    
+
     public GpxDrawHelper(GpxData gpxData) {
         data = gpxData;
         setupColors();
     }
-   
+
     /**
-     * Get the default color for gps tracks for specified layer 
+     * Get the default color for gps tracks for specified layer
      * @param layerName name of the GpxLayer
      * @param ignoreCustom do not use preferences
-     * @return the color or null if the color is not constant 
+     * @return the color or null if the color is not constant
      */
     public Color getColor(String layerName, boolean ignoreCustom) {
         Color c = Main.pref.getColor(marktr("gps point"), "layer " + layerName, Color.gray);
@@ -141,7 +142,7 @@ public class GpxDrawHelper {
     public static Color getGenericColor() {
         return Main.pref.getColor(marktr("gps point"), Color.gray);
     }
-    
+
     /**
      * Read all drawing-related settings from preferences
      * @param layerName layer name used to access its specific preferences
@@ -176,26 +177,26 @@ public class GpxDrawHelper {
         dateScale.setNoDataColor(neutralColor);
         hdopScale.setNoDataColor(neutralColor);
         directionScale.setNoDataColor(neutralColor);
-        
+
         largesize += lineWidth;
     }
-    
-    
+
+
     public void drawAll(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
 
         checkCache();
-        
+
         // STEP 2b - RE-COMPUTE CACHE DATA *********************
         if (!computeCacheInSync) { // don't compute if the cache is good
             calculateColors();
         }
 
         Stroke storedStroke = g.getStroke();
-        
+
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
             Main.pref.getBoolean("mappaint.gpx.use-antialiasing", false) ?
                     RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
-        
+
         if(lineWidth != 0) {
            g.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
         }
@@ -206,12 +207,12 @@ public class GpxDrawHelper {
             g.setStroke(storedStroke);
         }
     }
-    
+
     public void calculateColors() {
         double minval = +1e10;
         double maxval = -1e10;
         WayPoint oldWp = null;
-        
+
         if (colorModeDynamic) {
             if (colored == ColorMode.VELOCITY) {
                 for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
@@ -279,7 +280,7 @@ public class GpxDrawHelper {
             dateScale.setRange(minval, maxval);
         }
 
-        
+
         // Now the colors for all the points will be assigned
         for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
             if (!forceLines) { // don't draw lines between segments, unless forced to
@@ -292,8 +293,8 @@ public class GpxDrawHelper {
                     continue;
                 }
                  // now we are sure some color will be assigned
-                Color color = null; 
-            
+                Color color = null;
+
                 if (colored == ColorMode.HDOP) {
                     Float hdop = ((Float) trkPnt.attr.get("hdop"));
                     color = hdopScale.getColor(hdop);
@@ -328,7 +329,7 @@ public class GpxDrawHelper {
                         trkPnt.dir = (int) oldWp.getCoor().heading(trkPnt.getCoor());
                     } else {
                         trkPnt.drawLine = false;
-                    } 
+                    }
                 } else { // make sure we reset outdated data
                     trkPnt.drawLine = false;
                     color = neutralColor;
@@ -339,12 +340,12 @@ public class GpxDrawHelper {
                 oldWp = trkPnt;
             }
         }
-        
+
         computeCacheInSync = true;
     }
 
 
-  
+
     private void drawLines(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
         if (lines) {
             Point old = null;
@@ -395,8 +396,8 @@ public class GpxDrawHelper {
                     old = screen;
                 }
             } // end for trkpnt
-        } 
-        
+        }
+
         /****************************************************************
          ********** STEP 3c - DRAW FAST ARROWS **************************
          ****************************************************************/
@@ -424,7 +425,7 @@ public class GpxDrawHelper {
                     old = screen;
                 }
             } // end for trkpnt
-        } 
+        }
     }
 
     private void drawPoints(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
@@ -439,8 +440,8 @@ public class GpxDrawHelper {
                     continue;
                 }
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
-                
-                    
+
+
                 if (hdopCircle && trkPnt.attr.get("hdop") != null) {
                     // hdop value
                     float hdop = ((Float)trkPnt.attr.get("hdop"));
@@ -456,10 +457,12 @@ public class GpxDrawHelper {
                 }
                 if (large) {
                     // color the large GPS points like the gps lines
-                    Color customColoringTransparent = largePointAlpha<0 ? trkPnt.customColoring: 
-                        new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | largePointAlpha<<24, true);
-                    
-                    g.setColor(customColoringTransparent);
+                    if (trkPnt.customColoring != null) {
+                        Color customColoringTransparent = largePointAlpha<0 ? trkPnt.customColoring:
+                            new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | largePointAlpha<<24, true);
+
+                        g.setColor(customColoringTransparent);
+                    }
                     g.fillRect(screen.x-halfSize, screen.y-halfSize, largesize, largesize);
                 }
             } // end for trkpnt
@@ -518,7 +521,7 @@ public class GpxDrawHelper {
     public void dataChanged() {
         computeCacheInSync = false;
     }
-    
+
     public void drawColorBar(Graphics2D g, MapView mv) {
         int w = mv.getWidth();
         int h = mv.getHeight();
@@ -530,5 +533,5 @@ public class GpxDrawHelper {
             directionScale.drawColorBar(g, w-30, 50, 20, 100, 180.0/Math.PI);
         }
     }
-    
+
 }
