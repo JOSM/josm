@@ -69,7 +69,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
     }
 
     protected void updateCheckboxes(Object v) {
-        if (checkBoxes[0] != null && checkBoxes[1] != null) {
+        if (v != null && checkBoxes[0] != null && checkBoxes[1] != null) {
             boolean[] values;
             if(v instanceof SaveLayerInfo) {
                 values = new boolean[2];
