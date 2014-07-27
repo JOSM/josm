@@ -135,8 +135,21 @@ public class RemoteControlHttpsServer extends Thread {
 
         info.set(X509CertInfo.VALIDITY, interval);
         info.set(X509CertInfo.SERIAL_NUMBER, new CertificateSerialNumber(sn));
-        info.set(X509CertInfo.SUBJECT, new CertificateSubjectName(owner));
-        info.set(X509CertInfo.ISSUER, new CertificateIssuerName(owner));
+
+        // Change of behaviour in JDK8:
+        // https://bugs.openjdk.java.net/browse/JDK-8040820
+        // https://bugs.openjdk.java.net/browse/JDK-7198416
+        String version = System.getProperty("java.version");
+        if (version == null || version.matches("^(1\\.)?[7].*")) {
+            // Java 7 code. To remove with Java 8 migration
+            info.set(X509CertInfo.SUBJECT, new CertificateSubjectName(owner));
+            info.set(X509CertInfo.ISSUER, new CertificateIssuerName(owner));
+        } else {
+            // Java 8 and later code
+            info.set(X509CertInfo.SUBJECT, owner);
+            info.set(X509CertInfo.ISSUER, owner);
+        }
+
         info.set(X509CertInfo.KEY, new CertificateX509Key(pair.getPublic()));
         info.set(X509CertInfo.VERSION, new CertificateVersion(CertificateVersion.V3));
         AlgorithmId algo = new AlgorithmId(AlgorithmId.md5WithRSAEncryption_oid);
@@ -202,7 +215,7 @@ public class RemoteControlHttpsServer extends Thread {
                     KeyPair pair = generator.generateKeyPair();
 
                     X509Certificate cert = generateCertificate("CN=localhost, OU=JOSM, O=OpenStreetMap", pair, 1825, "SHA256withRSA",
-                            "ip:127.0.0.1,dns:localhost,uri:https://127.0.0.1:"+HTTPS_PORT);
+                            "dns:localhost,ip:127.0.0.1,ip:::1,uri:https://127.0.0.1:"+HTTPS_PORT+",uri:https://::1:"+HTTPS_PORT);
 
                     KeyStore ks = KeyStore.getInstance("JKS");
                     ks.load(null, null);
