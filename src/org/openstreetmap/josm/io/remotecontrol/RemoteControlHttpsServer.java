@@ -53,7 +53,6 @@ import sun.security.x509.CertificateSubjectName;
 import sun.security.x509.CertificateValidity;
 import sun.security.x509.CertificateVersion;
 import sun.security.x509.CertificateX509Key;
-import sun.security.x509.DNSName;
 import sun.security.x509.ExtendedKeyUsageExtension;
 import sun.security.x509.GeneralName;
 import sun.security.x509.GeneralNameInterface;
@@ -229,7 +228,9 @@ public class RemoteControlHttpsServer extends Thread {
             KeyPair pair = generator.generateKeyPair();
 
             X509Certificate cert = generateCertificate("CN=localhost, OU=JOSM, O=OpenStreetMap", pair, 1825, "SHA256withRSA",
-                    "dns:localhost,ip:127.0.0.1,ip:::1,uri:https://127.0.0.1:"+HTTPS_PORT+",uri:https://::1:"+HTTPS_PORT);
+                    // see #10033#comment:20: All browsers respect "ip" in SAN, except IE which only understands DNS entries:
+                    // https://connect.microsoft.com/IE/feedback/details/814744/the-ie-doesnt-trust-a-san-certificate-when-connecting-to-ip-address
+                    "dns:localhost,ip:127.0.0.1,dns:127.0.0.1,ip:::1,uri:https://127.0.0.1:"+HTTPS_PORT+",uri:https://::1:"+HTTPS_PORT);
 
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(null, null);
