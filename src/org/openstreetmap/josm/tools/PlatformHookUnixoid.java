@@ -357,8 +357,9 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     @Override
-    public void setupHttpsCertificate(KeyStore.TrustedCertificateEntry trustedCert)
+    public boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         // TODO setup HTTPS certificate on Unix systems
+        return false;
     }
 }

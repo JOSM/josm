@@ -8,14 +8,22 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
@@ -30,6 +38,7 @@ import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlHttpsServer;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.PlatformHookWindows;
 
 /**
  * Preference settings for Remote Control.
@@ -60,8 +69,12 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
     private final Map<PermissionPrefWithDefault, JCheckBox> prefs = new LinkedHashMap<>();
     private JCheckBox enableRemoteControl;
     private JCheckBox enableHttpsSupport;
-    private JCheckBox loadInNewLayer = new JCheckBox(tr("Download objects to new layer"));
-    private JCheckBox alwaysAskUserConfirm = new JCheckBox(tr("Confirm all Remote Control actions manually"));
+
+    private JButton installCertificate;
+    private JButton uninstallCertificate;
+
+    private final JCheckBox loadInNewLayer = new JCheckBox(tr("Download objects to new layer"));
+    private final JCheckBox alwaysAskUserConfirm = new JCheckBox(tr("Confirm all Remote Control actions manually"));
 
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
@@ -90,8 +103,65 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
 
         remote.add(wrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 5));
 
-        enableHttpsSupport = new JCheckBox(tr("Enable HTTPS support"), RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.get());
+        boolean https = RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.get();
+
+        enableHttpsSupport = new JCheckBox(tr("Enable HTTPS support"), https);
         wrapper.add(enableHttpsSupport, GBC.eol().fill(GBC.HORIZONTAL));
+
+        // Certificate installation only available on Windows for now, see #10033
+        if (Main.isPlatformWindows()) {
+            installCertificate = new JButton(tr("Install..."));
+            uninstallCertificate = new JButton(tr("Uninstall..."));
+            installCertificate.setToolTipText(tr("Install JOSM localhost certificate to system/browser root keystores"));
+            uninstallCertificate.setToolTipText(tr("Uninstall JOSM localhost certificate from system/browser root keystores"));
+            wrapper.add(new JLabel(tr("Certificate:")), GBC.std().insets(15, 5, 0, 0));
+            wrapper.add(installCertificate, GBC.std().insets(5, 5, 0, 0));
+            wrapper.add(uninstallCertificate, GBC.eol().insets(5, 5, 0, 0));
+            enableHttpsSupport.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    installCertificate.setEnabled(enableHttpsSupport.isSelected());
+                }
+            });
+            installCertificate.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        boolean changed = RemoteControlHttpsServer.setupPlatform(
+                                RemoteControlHttpsServer.loadJosmKeystore());
+                        String msg = changed ?
+                                tr("Certificate has been successfully installed.") :
+                                tr("Certificate is already installed. Nothing to do.");
+                        Main.info(msg);
+                        JOptionPane.showMessageDialog(wrapper, msg);
+                    } catch (IOException | GeneralSecurityException ex) {
+                        Main.error(ex);
+                    }
+                }
+            });
+            uninstallCertificate.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        String msg;
+                        KeyStore ks = PlatformHookWindows.getRootKeystore();
+                        if (ks.containsAlias(RemoteControlHttpsServer.ENTRY_ALIAS)) {
+                            Main.info(tr("Removing certificate {0} from root keystore.", RemoteControlHttpsServer.ENTRY_ALIAS));
+                            ks.deleteEntry(RemoteControlHttpsServer.ENTRY_ALIAS);
+                            msg = tr("Certificate has been successfully uninstalled.");
+                        } else {
+                            msg = tr("Certificate is not installed. Nothing to do.");
+                        }
+                        Main.info(msg);
+                        JOptionPane.showMessageDialog(wrapper, msg);
+                    } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
+                        Main.error(ex);
+                    }
+                }
+            });
+            installCertificate.setEnabled(https);
+        }
+
         wrapper.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL).insets(15, 5, 15, 5));
 
         wrapper.add(new JLabel(tr("Permitted actions:")), GBC.eol().insets(5, 0, 0, 0));
@@ -115,6 +185,12 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
                 GuiHelper.setEnabledRec(wrapper, enableRemoteControl.isSelected());
                 // 'setEnabled(false)' does not work for JLabel with html text, so do it manually
                 // FIXME: use QuadStateCheckBox to make checkboxes unset when disabled
+                if (installCertificate != null && uninstallCertificate != null) {
+                    // Install certificate button is enabled if HTTPS is also enabled
+                    installCertificate.setEnabled(enableRemoteControl.isSelected() && enableHttpsSupport.isSelected());
+                    // Uninstall certificate button is always enabled
+                    uninstallCertificate.setEnabled(true);
+                }
             }
         };
         enableRemoteControl.addActionListener(remoteControlEnabled);
