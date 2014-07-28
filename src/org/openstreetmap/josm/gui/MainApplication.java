@@ -444,7 +444,7 @@ public class MainApplication extends Main {
             try {
                 // Check for insecure certificates to remove.
                 // This is Windows-dependant code but it can't go to preStartupHook (need i18n) neither startupHook (need to be called before remote control)
-                ((PlatformHookWindows)Main.platform).removeInsecureCertificates();
+                PlatformHookWindows.removeInsecureCertificates();
             } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
                 error(e);
             }
