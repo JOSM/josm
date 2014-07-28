@@ -180,8 +180,9 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
      * @throws CertificateException if any of the certificates in the keystore could not be loaded
      * @throws IOException if there is an I/O or format problem with the keystore data, if a password is required but not given
      * @throws KeyStoreException if no Provider supports a KeyStore implementation for the type "Windows-ROOT"
+     * @since 7343
      */
-    private KeyStore getWindowsKeystore() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
+    public static KeyStore getRootKeystore() throws NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
         KeyStore ks = KeyStore.getInstance(WINDOWS_ROOT);
         ks.load(null, null);
         return ks;
@@ -195,7 +196,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
      * @throws IOException if there is an I/O or format problem with the keystore data, if a password is required but not given
      * @since 7335
      */
-    public void removeInsecureCertificates() throws NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
+    public static void removeInsecureCertificates() throws NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
         // We offered before a public private key we need now to remove from Windows PCs as it might be a huge security risk (see #10230)
         PublicKey insecurePubKey = null;
         try {
@@ -204,7 +205,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
             Main.error(e);
             return;
         }
-        KeyStore ks = getWindowsKeystore();
+        KeyStore ks = getRootKeystore();
         Enumeration<String> en = ks.aliases();
         Collection<String> insecureCertificates = new ArrayList<>();
         while (en.hasMoreElements()) {
@@ -248,22 +249,19 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     }
 
     @Override
-    public void setupHttpsCertificate(KeyStore.TrustedCertificateEntry trustedCert)
+    public boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-        KeyStore ks = getWindowsKeystore();
-        Enumeration<String> en = ks.aliases();
-
-        while (en.hasMoreElements()) {
-            String alias = en.nextElement();
-            // Look for certificate to install
-            if (ks.getCertificate(alias).equals(trustedCert.getTrustedCertificate())) {
-                // JOSM certificate found, return
-                Main.debug("JOSM certificate found: "+alias);
-                return;
-            }
+        KeyStore ks = getRootKeystore();
+        // Look for certificate to install
+        String alias = ks.getCertificateAlias(trustedCert.getTrustedCertificate());
+        if (alias != null) {
+            // JOSM certificate found, return
+            Main.debug(tr("JOSM localhost certificate found in {0} keystore: {1}", WINDOWS_ROOT, alias));
+            return false;
         }
         // JOSM certificate not found, install it to Windows-ROOT keystore, used by IE, Chrome and Safari, but not by Firefox
         Main.info(tr("Adding JOSM localhost certificate to {0} keystore", WINDOWS_ROOT));
-        ks.setEntry("josm_localhost", trustedCert, null);
+        ks.setEntry(entryAlias, trustedCert, null);
+        return true;
     }
 }
