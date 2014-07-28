@@ -119,6 +119,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("licensechange", tr("no longer required")),
             new DeprecatedPlugin("restart", IN_CORE),
             new DeprecatedPlugin("wayselector", IN_CORE),
+            new DeprecatedPlugin("openstreetbugs", tr("replaced by new {0} plugin", "notes")),
         });
     }
 
@@ -367,7 +368,7 @@ public final class PluginHandler {
                 Main.info(tr("Running plugin update after elapsed update interval. Automatic update at startup is disabled."));
             }
             return true;
-            
+
         case "ask":
             break;
 
