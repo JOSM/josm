@@ -20,6 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.MenuSelectionManager;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
@@ -82,7 +83,7 @@ public class MenuScroller {
             maxHeight -= 2*(ARROW_ICON_HEIGHT+2);
 
             if (maxHeight > 0) {
-                result = (maxHeight/itemHeight)-2;
+                result = (maxHeight/itemHeight)-1;
             }
         }
         return result;
@@ -481,11 +482,14 @@ public class MenuScroller {
 
     private void refreshMenu() {
         if (menuItems != null && menuItems.length > 0) {
+
+            int numOfNonSepItems = getNumberOfNonSeparatorItems(menuItems);
+
             firstIndex = Math.max(topFixedCount, firstIndex);
-            firstIndex = Math.min(menuItems.length - bottomFixedCount - scrollCount, firstIndex);
+            firstIndex = Math.min(numOfNonSepItems - bottomFixedCount - scrollCount, firstIndex);
 
             upItem.setEnabled(firstIndex > topFixedCount);
-            downItem.setEnabled(firstIndex + scrollCount < menuItems.length - bottomFixedCount);
+            downItem.setEnabled(firstIndex + scrollCount < numOfNonSepItems - bottomFixedCount);
 
             menu.removeAll();
             for (int i = 0; i < topFixedCount; i++) {
@@ -539,14 +543,15 @@ public class MenuScroller {
 
         private void setMenuItems() {
             menuItems = menu.getComponents();
+            int numOfNonSepItems = getNumberOfNonSeparatorItems(menuItems);
             if (keepVisibleIndex >= topFixedCount
-                    && keepVisibleIndex <= menuItems.length - bottomFixedCount
+                    && keepVisibleIndex <= numOfNonSepItems - bottomFixedCount
                     && (keepVisibleIndex > firstIndex + scrollCount
                     || keepVisibleIndex < firstIndex)) {
                 firstIndex = Math.min(firstIndex, keepVisibleIndex);
                 firstIndex = Math.max(firstIndex, keepVisibleIndex - scrollCount + 1);
             }
-            if (menuItems.length > topFixedCount + scrollCount + bottomFixedCount) {
+            if (numOfNonSepItems > topFixedCount + scrollCount + bottomFixedCount) {
                 refreshMenu();
             }
         }
@@ -638,11 +643,21 @@ public class MenuScroller {
     private class MouseScrollListener implements MouseWheelListener {
         @Override
         public void mouseWheelMoved(MouseWheelEvent mwe) {
-            if (menu.getComponents().length > scrollCount) {
+            if (getNumberOfNonSeparatorItems(menu.getComponents()) > scrollCount) {
                 firstIndex += mwe.getWheelRotation();
                 refreshMenu();
             }
             mwe.consume(); // (Comment 16, Huw)
         }
+    }
+
+    private int getNumberOfNonSeparatorItems(Component[] items) {
+        int result = 0;
+        for (Component c : items) {
+            if (!(c instanceof JSeparator)) {
+                result++;
+            }
+        }
+        return result;
     }
 }
