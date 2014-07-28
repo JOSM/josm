@@ -200,6 +200,7 @@ public class GpxDrawHelper {
         if(lineWidth != 0) {
            g.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
         }
+        fixColors(visibleSegments);
         drawLines(g, mv, visibleSegments);
         drawArrows(g, mv, visibleSegments);
         drawPoints(g, mv, visibleSegments);
@@ -500,6 +501,14 @@ public class GpxDrawHelper {
                 g.drawRect(screen.x, screen.y, 0, 0);
             } // end for trkpnt
         } // end if large
+    }
+
+    private void fixColors(List<WayPoint> visibleSegments) {
+        for (WayPoint trkPnt : visibleSegments) {
+            if (trkPnt.customColoring == null) {
+                trkPnt.customColoring = neutralColor;
+            }
+        }
     }
 
     /**
