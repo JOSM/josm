@@ -256,8 +256,9 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         while (en.hasMoreElements()) {
             String alias = en.nextElement();
             // Look for certificate to install
-            if (ks.isKeyEntry(alias) && ks.getCertificate(alias).equals(trustedCert.getTrustedCertificate())) {
+            if (ks.getCertificate(alias).equals(trustedCert.getTrustedCertificate())) {
                 // JOSM certificate found, return
+                Main.debug("JOSM certificate found: "+alias);
                 return;
             }
         }
