@@ -132,12 +132,15 @@ public class PlatformHookUnixoid implements PlatformHook {
     public static String getPackageDetails(String ... packageNames) {
         try {
             boolean dpkg = Files.exists(Paths.get("/usr/bin/dpkg-query"));
+            boolean eque = Files.exists(Paths.get("/usr/bin/equery"));
             boolean rpm  = Files.exists(Paths.get("/bin/rpm"));
-            if (dpkg || rpm) {
+            if (dpkg || rpm || eque) {
                 for (String packageName : packageNames) {
                     String[] args = null;
                     if (dpkg) {
                         args = new String[] {"dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", packageName};
+                    } else if (eque) {
+                        args = new String[] {"equery", "-q", "list", "-e", "--format=$fullversion", packageName};
                     } else {
                         args = new String[] {"rpm", "-q", "--qf", "%{arch}-%{version}", packageName};
                     }
@@ -163,8 +166,12 @@ public class PlatformHookUnixoid implements PlatformHook {
      */
     public String getJavaPackageDetails() {
         String home = System.getProperty("java.home");
-        if(home.contains("java-7-openjdk") || home.contains("java-1.7.0-openjdk")) {
+        if (home.contains("java-7-openjdk") || home.contains("java-1.7.0-openjdk")) {
             return getPackageDetails("openjdk-7-jre", "java-1_7_0-openjdk", "java-1.7.0-openjdk");
+        } else if (home.contains("icedtea")) {
+            return getPackageDetails("icedtea-bin");
+        } else if (home.contains("oracle")) {
+            return getPackageDetails("oracle-jdk-bin", "oracle-jre-bin");
         }
         return null;
     }
