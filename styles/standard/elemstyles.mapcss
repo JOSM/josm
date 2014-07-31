@@ -396,7 +396,7 @@ node[barrier=retaining_wall] {
     text: auto;
 }
 node[barrier=block] {
-    icon-image: "vehicle/block.png";
+    icon-image: "vehicle/block.svg";
     text: auto;
 }
 node[barrier=stile] {
