@@ -84,7 +84,9 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
     public void exitMode() {
         super.exitMode();
         if (offsetDialog != null) {
-            layer.setOffset(oldDx, oldDy);
+            if (layer != null) {
+                layer.setOffset(oldDx, oldDy);
+            }
             offsetDialog.setVisible(false);
             offsetDialog = null;
         }
