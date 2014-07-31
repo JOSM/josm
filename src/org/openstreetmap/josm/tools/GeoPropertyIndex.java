@@ -96,7 +96,7 @@ public class GeoPropertyIndex<T> {
         }
 
         public T get(LatLon ll) {
-            if (bbox.bounds(ll))
+            if (isInside(ll))
                 return getBounded(ll);
             if (DEBUG) System.err.print("up["+level+"]");
             return parent.get(ll);
@@ -104,7 +104,7 @@ public class GeoPropertyIndex<T> {
         
         private T getBounded(LatLon ll) {
             if (DEBUG) System.err.print("GPLevel["+level+"]"+bbox+" ");
-            if (!bbox.bounds(ll)) {
+            if (!isInside(ll)) {
                 throw new AssertionError("Point "+ll+" should be inside "+bbox);
             }
             if (val != null) {
@@ -152,6 +152,20 @@ public class GeoPropertyIndex<T> {
                 children[idx] = new GPLevel<>(level + 1, b, this, owner);
             }
             return children[idx].getBounded(ll);
+        }
+        
+        /**
+         * Checks, if a point is inside this tile.
+         * Makes sure, that neighboring tiles do not overlap, i.e. a point exactly
+         * on the border of two tiles must be inside exactly one of the tiles.
+         * @param ll the coordinates of the point
+         * @return true, if it is inside of the box
+         */
+        boolean isInside(LatLon ll) {
+            return bbox.getTopLeftLon() <= ll.lon() && 
+                    (ll.lon() < bbox.getBottomRightLon() || (ll.lon() == 180.0 && bbox.getBottomRightLon() == 180.0)) && 
+                    bbox.getBottomRightLat() <= ll.lat() && 
+                    (ll.lat() < bbox.getTopLeftLat() || (ll.lat() == 90.0 && bbox.getTopLeftLat() == 90.0));
         }
 
     }
