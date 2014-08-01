@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
 
+import org.openstreetmap.josm.gui.layer.ModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public class SaveLayersModel extends DefaultTableModel {
@@ -58,10 +59,15 @@ public class SaveLayersModel extends DefaultTableModel {
         return mode;
     }
 
-    public void populate(List<OsmDataLayer> layers) {
+    /**
+     * Populates the model with given modifiable layers.
+     * @param layers The layers to use to populate this model
+     * @since 7358
+     */
+    public void populate(List<? extends ModifiableLayer> layers) {
         layerInfo = new ArrayList<>();
         if (layers == null) return;
-        for (OsmDataLayer layer: layers) {
+        for (ModifiableLayer layer: layers) {
             layerInfo.add(new SaveLayerInfo(layer));
         }
         Collections.sort(
@@ -134,9 +140,10 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersWithConflictsAndUploadRequest() {
-        List<SaveLayerInfo> ret =new ArrayList<>();
+        List<SaveLayerInfo> ret = new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
-            if (info.isDoUploadToServer() && !info.getLayer().getConflicts().isEmpty()) {
+            ModifiableLayer l = info.getLayer();
+            if (info.isDoUploadToServer() && l instanceof OsmDataLayer && !((OsmDataLayer)l).getConflicts().isEmpty()) {
                 ret.add(info);
             }
         }
@@ -144,7 +151,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersToUpload() {
-        List<SaveLayerInfo> ret =new ArrayList<>();
+        List<SaveLayerInfo> ret = new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
             if (info.isDoUploadToServer()) {
                 ret.add(info);
@@ -154,7 +161,7 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersToSave() {
-        List<SaveLayerInfo> ret =new ArrayList<>();
+        List<SaveLayerInfo> ret = new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
             if (info.isDoSaveToFile()) {
                 ret.add(info);
@@ -163,7 +170,7 @@ public class SaveLayersModel extends DefaultTableModel {
         return ret;
     }
 
-    public void setUploadState(OsmDataLayer layer, UploadOrSaveState state) {
+    public void setUploadState(ModifiableLayer layer, UploadOrSaveState state) {
         SaveLayerInfo info = getSaveLayerInfo(layer);
         if (info != null) {
             info.setUploadState(state);
@@ -171,7 +178,7 @@ public class SaveLayersModel extends DefaultTableModel {
         fireTableDataChanged();
     }
 
-    public void setSaveState(OsmDataLayer layer, UploadOrSaveState state) {
+    public void setSaveState(ModifiableLayer layer, UploadOrSaveState state) {
         SaveLayerInfo info = getSaveLayerInfo(layer);
         if (info != null) {
             info.setSaveState(state);
@@ -179,7 +186,7 @@ public class SaveLayersModel extends DefaultTableModel {
         fireTableDataChanged();
     }
 
-    public SaveLayerInfo getSaveLayerInfo(OsmDataLayer layer) {
+    public SaveLayerInfo getSaveLayerInfo(ModifiableLayer layer) {
         for (SaveLayerInfo info: this.layerInfo) {
             if (info.getLayer() == layer)
                 return info;

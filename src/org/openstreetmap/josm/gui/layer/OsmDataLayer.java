@@ -43,6 +43,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
+import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -75,6 +76,10 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.io.AbstractIOTask;
+import org.openstreetmap.josm.gui.io.AbstractUploadDialog;
+import org.openstreetmap.josm.gui.io.UploadDialog;
+import org.openstreetmap.josm.gui.io.UploadLayerTask;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -90,7 +95,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  *
  * @author imi
  */
-public class OsmDataLayer extends Layer implements Listener, SelectionChangedListener {
+public class OsmDataLayer extends ModifiableLayer implements Listener, SelectionChangedListener {
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
     public static final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 
@@ -621,27 +626,12 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         return conflicts;
     }
 
-    /**
-     * Replies true if the data managed by this layer needs to be uploaded to
-     * the server because it contains at least one modified primitive.
-     *
-     * @return true if the data managed by this layer needs to be uploaded to
-     * the server because it contains at least one modified primitive; false,
-     * otherwise
-     */
+    @Override
     public boolean requiresUploadToServer() {
         return requiresUploadToServer;
     }
 
-    /**
-     * Replies true if the data managed by this layer needs to be saved to
-     * a file. Only replies true if a file is assigned to this layer and
-     * if the data managed by this layer has been modified since the last
-     * save operation to the file.
-     *
-     * @return true if the data managed by this layer needs to be saved to
-     * a file
-     */
+    @Override
     public boolean requiresSaveToFile() {
         return getAssociatedFile() != null && requiresSaveToFile;
     }
@@ -649,12 +639,12 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     @Override
     public void onPostLoadFromFile() {
         setRequiresSaveToFile(false);
-        setRequiresUploadToServer(data.isModified());
+        setRequiresUploadToServer(isModified());
     }
 
     public void onPostDownloadFromServer() {
         setRequiresSaveToFile(true);
-        setRequiresUploadToServer(data.isModified());
+        setRequiresUploadToServer(isModified());
     }
 
     @Override
@@ -662,21 +652,15 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         return isChanged || highlightUpdateCount != data.getHighlightUpdateCount();
     }
 
-    /**
-     * Initializes the layer after a successful save of OSM data to a file
-     *
-     */
+    @Override
     public void onPostSaveToFile() {
         setRequiresSaveToFile(false);
-        setRequiresUploadToServer(data.isModified());
+        setRequiresUploadToServer(isModified());
     }
 
-    /**
-     * Initializes the layer after a successful upload to the server
-     *
-     */
+    @Override
     public void onPostUploadToServer() {
-        setRequiresUploadToServer(data.isModified());
+        setRequiresUploadToServer(isModified());
         // keep requiresSaveToDisk unchanged
     }
 
@@ -729,6 +713,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
          */
     }
 
+    @Override
     public final boolean isUploadDiscouraged() {
         return data.isUploadDiscouraged();
     }
@@ -740,6 +725,11 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 l.uploadDiscouragedChanged(this, uploadDiscouraged);
             }
         }
+    }
+
+    @Override
+    public final boolean isModified() {
+        return data.isModified();
     }
 
     @Override
@@ -808,5 +798,22 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     @Override
     public File createAndOpenSaveFileChooser() {
         return SaveActionBase.createAndOpenSaveFileChooser(tr("Save OSM file"), "osm");
+    }
+
+    @Override
+    public AbstractIOTask createUploadTask(final ProgressMonitor monitor) {
+        UploadDialog dialog = UploadDialog.getUploadDialog();
+        return new UploadLayerTask(
+                dialog.getUploadStrategySpecification(),
+                this,
+                monitor,
+                dialog.getChangeset());
+    }
+
+    @Override
+    public AbstractUploadDialog getUploadDialog() {
+        UploadDialog dialog = UploadDialog.getUploadDialog();
+        dialog.setUploadedPrimitives(new APIDataSet(data));
+        return dialog;
     }
 }

@@ -14,6 +14,9 @@ public abstract class AbstractIOTask implements Runnable {
     /** the last exception caught */
     private Exception lastException;
 
+    /**
+     * Contructs a new {@code AbstractIOTask}.
+     */
     public AbstractIOTask() {
         canceled = false;
         failed = false;

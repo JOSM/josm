@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
+import org.openstreetmap.josm.gui.layer.ModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -141,8 +142,9 @@ public class UploadAction extends JosmAction{
         setEnabled(getEditLayer() != null);
     }
 
-    public boolean checkPreUploadConditions(OsmDataLayer layer) {
-        return checkPreUploadConditions(layer, new APIDataSet(layer.data));
+    public static boolean checkPreUploadConditions(ModifiableLayer layer) {
+        return checkPreUploadConditions(layer,
+                layer instanceof OsmDataLayer ? new APIDataSet(((OsmDataLayer)layer).data) : null);
     }
 
     protected static void alertUnresolvedConflicts(OsmDataLayer layer) {
@@ -161,7 +163,7 @@ public class UploadAction extends JosmAction{
      * returns true if the user wants to cancel, false if they
      * want to continue
      */
-    public static boolean warnUploadDiscouraged(OsmDataLayer layer) {
+    public static boolean warnUploadDiscouraged(ModifiableLayer layer) {
         return GuiHelper.warnUser(tr("Upload discouraged"),
                 "<html>" +
                 tr("You are about to upload data from the layer ''{0}''.<br /><br />"+
@@ -181,23 +183,28 @@ public class UploadAction extends JosmAction{
      * @param apiData the data to be uploaded
      * @return true, if the preconditions are met; false, otherwise
      */
-    public boolean checkPreUploadConditions(OsmDataLayer layer, APIDataSet apiData) {
+    public static boolean checkPreUploadConditions(ModifiableLayer layer, APIDataSet apiData) {
         if (layer.isUploadDiscouraged()) {
             if (warnUploadDiscouraged(layer)) {
                 return false;
             }
         }
-        ConflictCollection conflicts = layer.getConflicts();
-        if (apiData.participatesInConflict(conflicts)) {
-            alertUnresolvedConflicts(layer);
-            return false;
+        if (layer instanceof OsmDataLayer) {
+            OsmDataLayer osmLayer = (OsmDataLayer) layer;
+            ConflictCollection conflicts = osmLayer.getConflicts();
+            if (apiData.participatesInConflict(conflicts)) {
+                alertUnresolvedConflicts(osmLayer);
+                return false;
+            }
         }
         // Call all upload hooks in sequence.
         // FIXME: this should become an asynchronous task
         //
-        for (UploadHook hook : uploadHooks) {
-            if (!hook.checkUpload(apiData))
-                return false;
+        if (apiData != null) {
+            for (UploadHook hook : uploadHooks) {
+                if (!hook.checkUpload(apiData))
+                    return false;
+            }
         }
 
         return true;
