@@ -6,9 +6,9 @@ import org.junit.Before
 import org.junit.Test
 import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.Main
-import org.openstreetmap.josm.TestUtils
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
+import org.openstreetmap.josm.data.osm.OsmUtils
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.ColorHelper
 class MapCSSParserTest {
 
     protected static Environment getEnvironment(String key, String value) {
-        return new Environment().withPrimitive(TestUtils.createPrimitive("way " + key + "=" + value))
+        return new Environment().withPrimitive(OsmUtils.createPrimitive("way " + key + "=" + value))
     }
 
     protected static MapCSSParser getParser(String stringToParse) {
@@ -66,15 +66,15 @@ class MapCSSParserTest {
         css.loadStyleSource()
         assert css.getErrors().isEmpty()
         def mc1 = new MultiCascade()
-        css.apply(mc1, TestUtils.createPrimitive("way highway=path"), 1, null, false);
+        css.apply(mc1, OsmUtils.createPrimitive("way highway=path"), 1, null, false);
         assert "green".equals(mc1.getCascade("default").get("text-color", null, String.class))
         assert "brown".equals(mc1.getCascade("default").get("color", null, String.class))
         def mc2 = new MultiCascade()
-        css.apply(mc2, TestUtils.createPrimitive("way highway=residential"), 1, null, false);
+        css.apply(mc2, OsmUtils.createPrimitive("way highway=residential"), 1, null, false);
         assert "orange".equals(mc2.getCascade("default").get("color", null, String.class))
         assert mc2.getCascade("default").get("text-color", null, String.class) == null
         def mc3 = new MultiCascade()
-        css.apply(mc3, TestUtils.createPrimitive("way highway=footway"), 1, null, false);
+        css.apply(mc3, OsmUtils.createPrimitive("way highway=footway"), 1, null, false);
         assert ColorHelper.html2color("#FF6644").equals(mc3.getCascade("default").get("color", null, Color.class))
     }
 
@@ -191,12 +191,12 @@ class MapCSSParserTest {
     @Test
     public void testNRegexKeyConditionSelector() throws Exception {
         def s1 = getParser("*[sport][tourism != hotel]").selector()
-        assert s1.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar")))
-        assert !s1.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar tourism=hotel")))
+        assert s1.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar")))
+        assert !s1.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar tourism=hotel")))
         def s2 = getParser("*[sport][tourism != hotel][leisure !~ /^(sports_centre|stadium|)\$/]").selector()
-        assert s2.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar")))
-        assert !s2.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar tourism=hotel")))
-        assert !s2.matches(new Environment().withPrimitive(TestUtils.createPrimitive("node sport=foobar leisure=stadium")))
+        assert s2.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar")))
+        assert !s2.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar tourism=hotel")))
+        assert !s2.matches(new Environment().withPrimitive(OsmUtils.createPrimitive("node sport=foobar leisure=stadium")))
     }
 
     @Test
@@ -225,13 +225,13 @@ class MapCSSParserTest {
                 "way[keyA], way[keyB] { width: eval(prop(width)+10); }")
         sheet.loadStyleSource()
         def mc = new MultiCascade()
-        sheet.apply(mc, TestUtils.createPrimitive("way foo=bar"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way foo=bar"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 5
-        sheet.apply(mc, TestUtils.createPrimitive("way keyA=true"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way keyA=true"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
-        sheet.apply(mc, TestUtils.createPrimitive("way keyB=true"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way keyB=true"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
-        sheet.apply(mc, TestUtils.createPrimitive("way keyA=true keyB=true"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way keyA=true keyB=true"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("width") == 15
     }
 
@@ -241,17 +241,17 @@ class MapCSSParserTest {
                 "*[rcn_ref], *[name] {text: concat(tag(rcn_ref), \" \", tag(name)); }")
         sheet.loadStyleSource()
         def mc = new MultiCascade()
-        sheet.apply(mc, TestUtils.createPrimitive("way name=Foo"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way name=Foo"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == " Foo"
-        sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way rcn_ref=15"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 "
-        sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15 name=Foo"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way rcn_ref=15 name=Foo"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 Foo"
 
         sheet = new MapCSSStyleSource("" +
                 "*[rcn_ref], *[name] {text: join(\" - \", tag(rcn_ref), tag(ref), tag(name)); }")
         sheet.loadStyleSource()
-        sheet.apply(mc, TestUtils.createPrimitive("way rcn_ref=15 ref=1.5 name=Foo"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way rcn_ref=15 ref=1.5 name=Foo"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("text") == "15 - 1.5 - Foo"
     }
 
@@ -357,11 +357,11 @@ class MapCSSParserTest {
         sheet.loadStyleSource()
         def mc = new MultiCascade()
 
-        sheet.apply(mc, TestUtils.createPrimitive("way x=4 y=6 z=8 u=100"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way x=4 y=6 z=8 u=100"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", Float.NaN, Float.class) == 4.0f
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", Float.NaN, Float.class) == 8.0f
 
-        sheet.apply(mc, TestUtils.createPrimitive("way x=4 y=6 widths=1;2;8;56;3;a"), 20, null, false)
+        sheet.apply(mc, OsmUtils.createPrimitive("way x=4 y=6 widths=1;2;8;56;3;a"), 20, null, false)
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", -777f, Float.class) == 4
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", -777f, Float.class) == 6
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_split", -777f, Float.class) == 56
