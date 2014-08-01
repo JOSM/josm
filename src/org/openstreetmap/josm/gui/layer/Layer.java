@@ -118,6 +118,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
 
     /**
      * Create the layer and fill in the necessary components.
+     * @param name Layer name
      */
     public Layer(String name) {
         this.propertyChangeSupport = new PropertyChangeSupport(this);
