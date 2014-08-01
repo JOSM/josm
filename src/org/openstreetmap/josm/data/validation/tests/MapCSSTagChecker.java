@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -339,7 +342,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                     return tag.toString();
                 }
             } catch (IndexOutOfBoundsException ignore) {
-                Main.debug(ignore.getMessage());
+                if (Main.isDebugEnabled()) {
+                    Main.debug(ignore.getMessage());
+                }
             }
             return null;
         }
@@ -556,6 +561,12 @@ public class MapCSSTagChecker extends Test.TagTest {
             List<TagCheck> tagchecks = TagCheck.readMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
             checks.remove(url);
             checks.putAll(url, tagchecks);
+            // Check assertions, useful for development of local files
+            if (Main.pref.getBoolean("validator.check_assert_local_rules", false) && Utils.isLocalUrl(url)) {
+                for (String msg : checkAsserts(tagchecks)) {
+                    Main.warn(msg);
+                }
+            }
         }
     }
 
@@ -568,10 +579,10 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
             String i = source.url;
             try {
-                if (i.startsWith("resource:")) {
-                    Main.debug(tr("Adding {0} to tag checker", i));
-                } else {
+                if (!i.startsWith("resource:")) {
                     Main.info(tr("Adding {0} to tag checker", i));
+                } else if (Main.isDebugEnabled()) {
+                    Main.debug(tr("Adding {0} to tag checker", i));
                 }
                 addMapCSS(i);
                 if (Main.pref.getBoolean("validator.auto_reload_local_rules", true) && source.isLocal()) {
@@ -589,6 +600,40 @@ public class MapCSSTagChecker extends Test.TagTest {
                 Main.warn(ex);
             }
         }
+    }
+
+    /**
+     * Checks that rule assertions are met for the given set of TagChecks.
+     * @param schecks The TagChecks for which assertions have to be checked
+     * @return A set of error messages, empty if all assertions are met
+     * @since 7356
+     */
+    public Set<String> checkAsserts(final Collection<TagCheck> schecks) {
+        Set<String> assertionErrors = new LinkedHashSet<>();
+        for (final TagCheck check : schecks) {
+            if (Main.isDebugEnabled()) {
+                Main.debug("Check: "+check);
+            }
+            for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
+                if (Main.isDebugEnabled()) {
+                    Main.debug("- Assertion: "+i);
+                }
+                final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey());
+                final boolean isError = Utils.exists(getErrorsForPrimitive(p, true), new Predicate<TestError>() {
+                    @Override
+                    public boolean evaluate(TestError e) {
+                        //noinspection EqualsBetweenInconvertibleTypes
+                        return e.getTester().equals(check.rule);
+                    }
+                });
+                if (isError != i.getValue()) {
+                    final String error = MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
+                            check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
+                    assertionErrors.add(error);
+                }
+            }
+        }
+        return assertionErrors;
     }
 
     @Override

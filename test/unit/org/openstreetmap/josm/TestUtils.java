@@ -8,15 +8,15 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Map;
 
 import org.junit.Test;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.TextTagParser;
 
+/**
+ * Various utils, useful for unit tests.
+ */
 public class TestUtils {
 
     /**
@@ -31,30 +31,9 @@ public class TestUtils {
         return testDataRoot.endsWith("/") ? testDataRoot : testDataRoot + "/";
     }
 
-    public static OsmPrimitive createPrimitive(String assertion) {
-        if (Main.pref == null) {
-            Main.initApplicationPreferences();
-        }
-        final String[] x = assertion.split("\\s+", 2);
-        final OsmPrimitive p = "n".equals(x[0]) || "node".equals(x[0])
-                ? new Node()
-                : "w".equals(x[0]) || "way".equals(x[0])
-                ? new Way()
-                : "r".equals(x[0]) || "relation".equals(x[0])
-                ? new Relation()
-                : null;
-        if (p == null) {
-            throw new IllegalArgumentException("Expecting n/node/w/way/r/relation, but got " + x[0]);
-        }
-        for (final Map.Entry<String, String> i : TextTagParser.readTagsFromText(x[1]).entrySet()) {
-            p.put(i.getKey(), i.getValue());
-        }
-        return p;
-    }
-
     @Test
     public void testCreatePrimitive() throws Exception {
-        final OsmPrimitive p = createPrimitive("way name=Foo railway=rail");
+        final OsmPrimitive p = OsmUtils.createPrimitive("way name=Foo railway=rail");
         assertTrue(p instanceof Way);
         assertThat(p.keySet().size(), is(2));
         assertThat(p.get("name"), is("Foo"));
@@ -63,7 +42,7 @@ public class TestUtils {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreatePrimitiveFail() throws Exception {
-        TestUtils.createPrimitive("noway name=Foo");
+        OsmUtils.createPrimitive("noway name=Foo");
     }
 
     /**
