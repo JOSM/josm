@@ -1,15 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.Utils;
-import org.xml.sax.SAXException;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -17,7 +9,15 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Utils;
+import org.xml.sax.SAXException;
 
 public class PresetClassificationsTest {
 
@@ -60,10 +60,9 @@ public class PresetClassificationsTest {
 
     @Test
     public void testRelationsForTram() {
-        final OsmPrimitive tram = TestUtils.createPrimitive("way railway=tram");
+        final OsmPrimitive tram = OsmUtils.createPrimitive("way railway=tram");
         assertTrue("railway=tram should match 'Railway route' for relation creation", getMatchingPresetNames("route", tram).contains("Railway route"));
         assertTrue("railway=tram should match 'Public transport route' for relation creation", getMatchingPresetNames("route", tram).contains("Public transport route"));
         assertTrue("railway=tram should not match 'Bus route'", !getMatchingPresetNames("route", tram).contains("Bus route"));
     }
-
 }
