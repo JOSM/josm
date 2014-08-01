@@ -30,7 +30,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -58,9 +57,9 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * This is a dialog for entering upload options like the parameters for
  * the upload changeset and the strategy for opening/closing a changeset.
- *
+ * @since 2025
  */
-public class UploadDialog extends JDialog implements PropertyChangeListener, PreferenceChangedListener{
+public class UploadDialog extends AbstractUploadDialog implements PropertyChangeListener, PreferenceChangedListener {
     /**  the unique instance of the upload dialog */
     private static UploadDialog uploadDialog;
 
@@ -96,7 +95,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     private JTabbedPane tpConfigPanels;
     /** the upload button */
     private JButton btnUpload;
-    private boolean canceled = false;
 
     /** the changeset comment model keeping the state of the changeset comment */
     private final ChangesetCommentModel changesetCommentModel = new ChangesetCommentModel();
@@ -266,9 +264,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         );
     }
 
-    /**
-     * Remembers the user input in the preference settings
-     */
+    @Override
     public void rememberUserInput() {
         pnlBasicUploadSettings.rememberUserInput();
         pnlUploadStrategySelectionPanel.rememberUserInput();
@@ -344,24 +340,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
      */
     protected String getUploadSource() {
         return changesetSourceModel.getComment();
-    }
-
-    /**
-     * Returns true if the dialog was canceled
-     *
-     * @return true if the dialog was canceled
-     */
-    public boolean isCanceled() {
-        return canceled;
-    }
-
-    /**
-     * Sets whether the dialog was canceled
-     *
-     * @param canceled true if the dialog is canceled
-     */
-    protected void setCanceled(boolean canceled) {
-        this.canceled = canceled;
     }
 
     @Override

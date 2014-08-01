@@ -43,9 +43,9 @@ import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
-import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
+import org.openstreetmap.josm.gui.layer.ModifiableLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -448,51 +448,53 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         protected void uploadLayers(List<SaveLayerInfo> toUpload) {
             for (final SaveLayerInfo layerInfo: toUpload) {
+                ModifiableLayer layer = layerInfo.getLayer();
                 if (canceled) {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
+                    model.setUploadState(layer, UploadOrSaveState.CANCELED);
                     continue;
                 }
                 monitor.subTask(tr("Preparing layer ''{0}'' for upload ...", layerInfo.getName()));
 
-                if (!new UploadAction().checkPreUploadConditions(layerInfo.getLayer())) {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
+                if (!UploadAction.checkPreUploadConditions(layer)) {
+                    model.setUploadState(layer, UploadOrSaveState.FAILED);
                     continue;
                 }
-                final UploadDialog dialog = UploadDialog.getUploadDialog();
-                dialog.setUploadedPrimitives(new APIDataSet(layerInfo.getLayer().data));
-                dialog.setVisible(true);
-                if (dialog.isCanceled()) {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
-                    continue;
-                }
-                dialog.rememberUserInput();
 
-                currentTask = new UploadLayerTask(
-                        UploadDialog.getUploadDialog().getUploadStrategySpecification(),
-                        layerInfo.getLayer(),
-                        monitor,
-                        UploadDialog.getUploadDialog().getChangeset()
-                );
+                AbstractUploadDialog dialog = layer.getUploadDialog();
+                if (dialog != null) {
+                    dialog.setVisible(true);
+                    if (dialog.isCanceled()) {
+                        model.setUploadState(layer, UploadOrSaveState.CANCELED);
+                        continue;
+                    }
+                    dialog.rememberUserInput();
+                }
+
+                currentTask = layer.createUploadTask(monitor);
+                if (currentTask == null) {
+                    model.setUploadState(layer, UploadOrSaveState.FAILED);
+                    continue;
+                }
                 currentFuture = worker.submit(currentTask);
                 try {
                     // wait for the asynchronous task to complete
                     //
                     currentFuture.get();
                 } catch(CancellationException e) {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
+                    model.setUploadState(layer, UploadOrSaveState.CANCELED);
                 } catch(Exception e) {
                     Main.error(e);
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
+                    model.setUploadState(layer, UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
                 }
                 if (currentTask.isCanceled()) {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
+                    model.setUploadState(layer, UploadOrSaveState.CANCELED);
                 } else if (currentTask.isFailed()) {
                     Main.error(currentTask.getLastException());
                     ExceptionDialogUtil.explainException(currentTask.getLastException());
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
+                    model.setUploadState(layer, UploadOrSaveState.FAILED);
                 } else {
-                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.OK);
+                    model.setUploadState(layer, UploadOrSaveState.OK);
                 }
                 currentTask = null;
                 currentFuture = null;

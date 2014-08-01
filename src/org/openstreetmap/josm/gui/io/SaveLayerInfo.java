@@ -3,18 +3,18 @@ package org.openstreetmap.josm.gui.io;
 
 import java.io.File;
 
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.ModifiableLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * SaveLayerInfo represents the information, user preferences and save/upload states of
  * a layer which might be uploaded/saved.
- *
+ * @since 2025
  */
 class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
-    /** the osm data layer */
-    private OsmDataLayer layer;
+    /** the modifiable layer */
+    private ModifiableLayer layer;
     private boolean doCheckSaveConditions;
     private boolean doSaveToFile;
     private boolean doUploadToServer;
@@ -27,7 +27,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      * @param layer the layer. Must not be null.
      * @throws IllegalArgumentException thrown if layer is null
      */
-    public SaveLayerInfo(OsmDataLayer layer) {
+    public SaveLayerInfo(ModifiableLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         this.doCheckSaveConditions = true;
@@ -41,7 +41,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      *
      * @return the layer this info objects holds information for
      */
-    public OsmDataLayer getLayer() {
+    public ModifiableLayer getLayer() {
         return layer;
     }
 
