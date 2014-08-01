@@ -938,19 +938,20 @@ node[cycleway=opposite] {
 /******************/
 
 way[highway=track][tracktype=grade1] {
+    width: 2;
     dashes: 2,2;
 }
 way[highway=track][tracktype=grade2] {
-    dashes: 4,4;
+    dashes: 2,3;
 }
 way[highway=track][tracktype=grade3] {
-    dashes: 6,6;
+    dashes: 2,4;
 }
 way[highway=track][tracktype=grade4] {
-    dashes: 8,8;
+    dashes: 2,5;
 }
 way[highway=track][tracktype=grade5] {
-    dashes: 10,10;
+    dashes: 1,5;
 }
 
 /**************/
