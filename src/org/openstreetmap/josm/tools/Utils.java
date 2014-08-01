@@ -1052,4 +1052,15 @@ public final class Utils {
         return sb.toString();
     }
 
+    /**
+     * Determines if the given URL denotes a file on a local filesystem.
+     * @param url The URL to test
+     * @return {@code true} if the url points to a local file
+     * @since 7356
+     */
+    public static boolean isLocalUrl(String url) {
+        if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("resource://"))
+            return false;
+        return true;
+    }
 }

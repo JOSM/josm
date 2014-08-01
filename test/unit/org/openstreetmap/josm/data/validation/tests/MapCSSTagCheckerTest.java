@@ -7,26 +7,23 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
-import java.text.MessageFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.Severity;
-import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
-import org.openstreetmap.josm.tools.Predicate;
-import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * JUnit Test of MapCSS TagChecker.
+ */
 public class MapCSSTagCheckerTest {
 
     /**
@@ -71,31 +68,15 @@ public class MapCSSTagCheckerTest {
 
     @Test
     public void testInit() throws Exception {
-        final MapCSSTagChecker c = new MapCSSTagChecker();
+        MapCSSTagChecker c = new MapCSSTagChecker();
         c.initialize();
 
-        LinkedHashSet<String> assertionErrors = new LinkedHashSet<>();
-        for (final Set<TagCheck> schecks : c.checks.values()) {
-            for (final TagCheck check : schecks) {
-                System.out.println("Check: "+check);
-                for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
-                    System.out.println("- Assertion: "+i);
-                    final OsmPrimitive p = TestUtils.createPrimitive(i.getKey());
-                    final boolean isError = Utils.exists(c.getErrorsForPrimitive(p, true), new Predicate<TestError>() {
-                        @Override
-                        public boolean evaluate(TestError e) {
-                            //noinspection EqualsBetweenInconvertibleTypes
-                            return e.getTester().equals(check.rule);
-                        }
-                    });
-                    if (isError != i.getValue()) {
-                        final String error = MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
-                                check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());
-                        System.err.println(error);
-                        assertionErrors.add(error);
-                    }
-                }
-            }
+        Set<String> assertionErrors = new LinkedHashSet<>();
+        for (Set<TagCheck> schecks : c.checks.values()) {
+            assertionErrors.addAll(c.checkAsserts(schecks));
+        }
+        for (String msg : assertionErrors) {
+            Main.error(msg);
         }
         assertTrue("not all assertions included in the tests are met", assertionErrors.isEmpty());
     }

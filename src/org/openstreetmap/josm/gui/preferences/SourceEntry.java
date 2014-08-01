@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A source entry primarily used to save the user's selection of mappaint styles,
@@ -177,9 +178,7 @@ public class SourceEntry {
      * @return {@code true} if the source is a local file
      */
     public boolean isLocal() {
-        if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("resource://"))
-            return false;
-        return true;
+        return Utils.isLocalUrl(url);
     }
 
     /**

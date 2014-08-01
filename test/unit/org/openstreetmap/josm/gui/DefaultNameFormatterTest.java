@@ -17,6 +17,7 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetReader;
@@ -105,12 +106,12 @@ public class DefaultNameFormatterTest {
     }
 
     static String getFormattedRelationName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Relation) TestUtils.createPrimitive("relation " + tagsString))
+        return DefaultNameFormatter.getInstance().format((Relation) OsmUtils.createPrimitive("relation " + tagsString))
                 .replace("\u200E", "").replace("\u200F", "");
     }
 
     static String getFormattedWayName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Way) TestUtils.createPrimitive("way " + tagsString))
+        return DefaultNameFormatter.getInstance().format((Way) OsmUtils.createPrimitive("way " + tagsString))
                 .replace("\u200E", "").replace("\u200F", "");
     }
 }
