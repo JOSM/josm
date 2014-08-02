@@ -1987,55 +1987,55 @@ node[amenity=place_of_worship] {
     text: auto;
 /*    priority="-10000"*/
 }
-node[religion=bahai] {
+node[amenity=place_of_worship][religion=bahai] {
     icon-image: "religion/bahai.png";
     text: auto;
 }
-node[religion=buddhist] {
+node[amenity=place_of_worship][religion=buddhist] {
     icon-image: "religion/buddhism.png";
     text: auto;
 }
-node[religion=christian] {
+node[amenity=place_of_worship][religion=christian] {
     icon-image: "religion/church.png";
     text: auto;
 }
-node[religion=hindu] {
+node[amenity=place_of_worship][religion=hindu] {
     icon-image: "religion/hinduism.png";
     text: auto;
 }
-node[religion=jain] {
+node[amenity=place_of_worship][religion=jain] {
     icon-image: "religion/jainism.png";
     text: auto;
 }
-node[religion=jewish] {
+node[amenity=place_of_worship][religion=jewish] {
     icon-image: "religion/jewish.png";
     text: auto;
 }
-node[religion=muslim] {
+node[amenity=place_of_worship][religion=muslim] {
     icon-image: "religion/muslim.png";
     text: auto;
 }
-node[religion=sikh] {
+node[amenity=place_of_worship][religion=sikh] {
     icon-image: "religion/sikhism.png";
     text: auto;
 }
-node[religion=shinto] {
+node[amenity=place_of_worship][religion=shinto] {
     icon-image: "religion/shinto.png";
     text: auto;
 }
-node[religion=spiritualist] {
+node[amenity=place_of_worship][religion=spiritualist] {
     icon-image: "misc/no_icon.png";
     text: auto;
 }
-node[religion=taoist] {
+node[amenity=place_of_worship][religion=taoist] {
     icon-image: "religion/taoism.png";
     text: auto;
 }
-node[religion=unitarian] {
+node[amenity=place_of_worship][religion=unitarian] {
     icon-image: "misc/no_icon.png";
     text: auto;
 }
-node[religion=zoroastrian] {
+node[amenity=place_of_worship][religion=zoroastrian] {
     icon-image: "misc/no_icon.png";
     text: auto;
 }
