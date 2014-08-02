@@ -21,12 +21,10 @@ node[fixme]::core_fixme,
 node[FIXME]::core_fixme {
     object-z-index: 20;
     icon-image: "misc/fixme-annotation.png";
-/*    priority="10000"*/
 }
 node[note]::core_note {
     object-z-index: 10;
     icon-image: "misc/note-annotation.png";
-/*    priority="-100000"*/
 }
 
 /*********************/
@@ -113,35 +111,29 @@ node["addr:housenumber"],
 node["addr:postcode"] {
     icon-image: "misc/housenumber.png";
     text: auto;
-/*    priority="-50000"*/
 }
 way["addr:interpolation"=odd] {
     width: 1;
-    realwidth: 1;
     color: address#1C86EE;
     dashes: 15,4;
 }
 way["addr:interpolation"=even] {
     width: 1;
-    realwidth: 1;
     color: address#1C86EE;
     dashes: 4,4;
 }
 way["addr:interpolation"=all],
 way["addr:interpolation"=alphabetic] {
     width: 1;
-    realwidth: 1;
     color: address#1C86EE;
     dashes: 2,2;
 }
 area[building][!building?!] {
     fill-color: building#cb9999;
-/*    priority="-10000"*/
 }
 node[building][!building?!] {
     icon-image: "misc/landmark/building.png";
     text: auto;
-/*    priority="-10000"*/
 }
 node[building=garage] {
     icon-image: "misc/landuse/garages.png";
@@ -154,7 +146,6 @@ node[building=garages] {
 node[building=entrance] {
     icon-image: "misc/entrance-yes.png";
     text: auto;
-/*    priority="100"*/
 }
 node[entrance=yes] {
     icon-image: "misc/entrance-yes.png";
@@ -207,32 +198,26 @@ way[access=destination]::core_access {
 }
 node[access?!] {
     icon-image: "vehicle/restriction/access.png";
-/*    priority="-100"*/
 }
 node[access=permissive],
 node[access=private],
 node[access=destination] {
     icon-image: "misc/no_icon.png";
     text: auto;
-/*    priority="-100"*/
 }
 node[bicycle?!] {
     icon-image: "vehicle/restriction/bicycle.png";
-/*    priority="-100"*/
 }
 node[bicycle=designated] {
     icon-image: "vehicle/restriction/bicycle-designated.png";
     text: auto;
-/*    priority="-100"*/
 }
 node[foot?!] {
     icon-image: "vehicle/restriction/foot.png";
-/*    priority="-100"*/
 }
 node[foot=designated] {
     icon-image: "vehicle/restriction/foot-designated.png";
     text: auto;
-/*    priority="-100"*/
 }
 node[goods?!],
 node[hgv?!] {
@@ -259,7 +244,6 @@ node[boat?!] {
 }
 node[noexit?] {
     icon-image: "vehicle/restriction/dead_end.png";
-/*    priority="-100"*/
 }
 node[maxweight] {
     icon-image: "vehicle/restriction/maxweight.png";
@@ -466,69 +450,56 @@ way[motorroad?]::core_motorroad {
 }
 way[highway=motorway] {
     width: 3;
-    realwidth: 8;
     color: motorway#809bc0;
 }
 way[highway=motorway_link] {
     width: 3;
-    realwidth: 5;
     color: motorway#809bc0;
 }
 way[highway=trunk] {
     width: 3;
-    realwidth: 8;
     color: trunk#7fc97f;
 }
 way[highway=trunk_link] {
     width: 3;
-    realwidth: 5;
     color: trunk#7fc97f;
 }
 way[highway=primary] {
     width: 3;
-    realwidth: 8;
     color: primary#fb805f;
 }
 way[highway=primary_link] {
     width: 3;
-    realwidth: 5;
     color: primary#fb805f;
 }
 way[highway=secondary] {
     width: 3;
-    realwidth: 6;
     color: secondary#fdbf6f;
 }
 way[highway=secondary_link] {
     width: 3;
-    realwidth: 5;
     color: secondary#fdbf6f;
 }
 way[highway=tertiary] {
     width: 2;
-    realwidth: 5;
     color: tertiary#f7f496;
 }
 way[highway=tertiary_link] {
     width: 2;
-    realwidth: 4;
     color: tertiary#f7f496;
 }
 way[highway=unclassified] {
     width: 2;
-    realwidth: 5;
     color: street#c0c0c0;
 }
 way[highway=road] {
     width: 2;
     casing-width: 0.5;
     casing-color: #ff9696;
-    realwidth: 5;
     color: #770000;
 }
 way[highway=unsurfaced] {
     width: 1;
-    realwidth: 3;
     color: street#c0c0c0;
 }
 way[highway=track][area?], relation[type=multipolygon][highway=track] {
@@ -536,18 +507,14 @@ way[highway=track][area?], relation[type=multipolygon][highway=track] {
 }
 way[highway=track] {
     width: 1;
-    realwidth: 3;
     color: highway_track#006600;
-/*    priority="-10000"*/
 }
 way[highway=residential] {
     width: 2;
-    realwidth: 5;
     color: street#c0c0c0;
 }
 way[highway=living_street] {
     width: 2;
-    realwidth: 3;
     dashes: 9,9;
     dashes-background-color: livingdashed#00ff00;
     color: street#c0c0c0;
@@ -557,17 +524,14 @@ way[highway=service][area?], relation[type=multipolygon][highway=service] {
 }
 way[highway=service][!area?] {
     width: 1;
-    realwidth: 3;
     color: service#809bc0;
 }
 way[highway=bridleway] {
     width: 1;
-    realwidth: 2;
     color: horse#c08000;
 }
 way[highway=cycleway] {
     width: 1;
-    realwidth: 2;
     color: bicycle#b100ff;
 }
 way[highway=footway][area?], relation[type=multipolygon][highway=footway] {
@@ -575,12 +539,10 @@ way[highway=footway][area?], relation[type=multipolygon][highway=footway] {
 }
 way[highway=footway][!area?] {
     width: 1;
-    realwidth: 1;
     color: foot#00ff00;
 }
 way[highway=path][bicycle!=designated][bicycle!=official][foot!=designated][foot!=official] {
     width: 1;
-    realwidth: 1;
     dashes: 9,9;
     color: foot#00ff00;
 }
@@ -588,31 +550,24 @@ way[highway=path][bicycle!=designated][bicycle!=official][foot!=designated][foot
 way[highway=path][bicycle=designated],
 way[highway=path][bicycle=official] {
     width: 1;
-    realwidth: 2;
     color: bicycle#b100ff;
-/*    priority="100"*/
 }
 way[highway=path][foot=designated],
 way[highway=path][foot=official] {
     width: 1;
-    realwidth: 1;
     color: foot#00ff00;
-/*    priority="100"*/
 }
 way[highway=path][bicycle=designated][foot=designated],
 way[highway=path][bicycle=official][foot=official] {
     width: 1;
-    realwidth: 2;
     color: bicycle#b100ff;
     dashes: 14,14;
     dashes-background-color: foot#00ff00;
-/*    priority="200"*/
 }
 way[highway=cycleway][foot=yes],
 way[highway=path][bicycle=designated][foot=yes],
 way[highway=path][bicycle=official][foot=yes] {
     width: 1;
-    realwidth: 2;
     color: bicycle#b100ff;
     dashes: 21,7;
     dashes-background-color: foot#00ff00;
@@ -621,25 +576,21 @@ way[highway=footway][bicycle=yes],
 way[highway=path][bicycle=yes][foot=designated],
 way[highway=path][bicycle=yes][foot=official] {
     width: 1;
-    realwidth: 2;
     color: foot#00ff00;
     dashes: 21,7;
     dashes-background-color: bicycle#b100ff;
 }
 way[highway=pedestrian][area?], relation[type=multipolygon][highway=pedestrian] {
     width: 3;
-    realwidth: 5;
     color: foot#00ff00;
     fill-color: foot#00ff00;
 }
 way[highway=pedestrian] {
     width: 3;
-    realwidth: 5;
     color: foot#00ff00;
 }
 way[highway=steps] {
     width: 1;
-    realwidth: 1;
     color: foot#00ff00;
     dashes: 2,2;
 }
@@ -659,7 +610,6 @@ way[highway=raceway] {
 node[direction=clockwise] {
     icon-image: "vehicle/restriction/roundabout_left.png";
     text: auto;
-/*    priority="10000"*/
 }
 node[highway=mini_roundabout] {
     icon-image: "vehicle/restriction/roundabout_left.png";
@@ -725,7 +675,6 @@ node[highway=ford], node[ford?] {
 way[ford?]::core_ford {
     z-index: 1;
     width: 2;
-    realwidth: 5;
     color: water#0000ff;
     dashes: 9,9;
 }
@@ -754,15 +703,12 @@ node[highway=elevator] {
 }
 way[highway=construction] {
     width: 2;
-    realwidth: 5;
     color: construction#ffff00;
     dashes: 9,9;
-/*    priority="10"*/
 }
 node[highway=construction] {
     icon-image: "misc/construction.png";
     text: auto;
-/*    priority="10"*/
 }
 area[highway=emergency_access_point] {
     fill-color: emergency_access_point#c0c0c0;
@@ -801,7 +747,6 @@ node[highway=platform] {
 node[traffic_calming] {
     icon-image: "vehicle/traffic_calming.png";
     text: auto;
-/*    priority="-5"*/
 }
 node[traffic_calming=chicane] {
     icon-image: "vehicle/chicane.png";
@@ -1101,7 +1046,6 @@ node[power_source=nuclear], node[generator:source=nuclear] {
 node[power=generator] {
     icon-image: "misc/landmark/power.png";
     text: auto;
-/*    priority="-10000"*/
 }
 
 /*****************/
@@ -1814,7 +1758,6 @@ area[amenity=charging_station] {
 node[amenity=parking_space] {
     icon-image: "vehicle/parking.png";
     text: auto;
-/*    priority="-500"*/
 }node[amenity=parking] {
     icon-image: vehicle/parking.png;
     text: auto;
@@ -1822,17 +1765,14 @@ node[amenity=parking_space] {
 node[parking=multi-storey] {
     icon-image: "vehicle/parking/multi-storey.png";
     text: auto;
-/*    priority="10000"*/
 }
 node[amenity=motorcycle_parking] {
     icon-image: "vehicle/parking/motorbike.png";
     text: auto;
-/*     priority="20000";*/
 }
 node[amenity=bicycle_parking] {
     icon-image: "vehicle/parking/bicycle.png";
     text: auto;
-/*    priority="20000"*/
 }
 node[parking=park_and_ride] {
     icon-image: "vehicle/parking/park_ride.png";
@@ -1873,12 +1813,10 @@ node[amenity=taxi] {
 node[amenity=fuel] {
     icon-image: "vehicle/fuel.png";
     text: auto;
-/*    priority="10000"*/
 }
 node[amenity=charging_station] {
     icon-image: "vehicle/fuel/charging_station.png";
     text: auto;
-/*    priority="1000"*/
 }
 node[amenity=grit_bin] {
     icon-image: "misc/grit_bin.png";
@@ -1985,7 +1923,6 @@ area[amenity=driving_school] {
 node[amenity=place_of_worship] {
     icon-image: "religion.png";
     text: auto;
-/*    priority="-10000"*/
 }
 node[amenity=place_of_worship][religion=bahai] {
     icon-image: "religion/bahai.png";
@@ -2227,7 +2164,6 @@ node[amenity=wlan] {
 }
 node[amenity=vending_machine] {
     icon-image: "transport/ticket-machine.png";
-/*    priority="-10"*/
 }
 node[vending=excrement_bags] {
     icon-image: "service/excrement_bags.png";
@@ -2373,7 +2309,6 @@ node[tourism=information] {
 node[information=guidepost] {
     icon-image: "misc/information/guidepost.png";
     text: auto;
-/*    priority="10"*/
 }
 area[information=office] {
     fill-color: tourism#e180a2;
@@ -2381,17 +2316,14 @@ area[information=office] {
 node[information=office] {
     icon-image: "misc/information/informationoffice.png";
     text: auto;
-/*    priority="10"*/
 }
 node[information=map] {
     icon-image: "misc/information/map.png";
     text: auto;
-/*    priority="10"*/
 }
 node[information=board] {
     icon-image: "misc/information/board.png";
     text: auto;
-/*    priority="10"*/
 }
 
 /*****************/
@@ -2671,7 +2603,6 @@ node[military=range] {
 node[public_transport=stop_position] {
     icon-image: "transport/railway_small.png";
     text: auto;
-/*    priority="-10"*/
 }
 node[highway=bus_stop] {
     icon-image: "transport/bus_small.png";
@@ -2680,62 +2611,51 @@ node[highway=bus_stop] {
 node[public_transport=stop_position][bus=yes] {
     icon-image: "transport/bus_small.png";
     text: auto;
-/*    priority="4"*/
 }
 node[public_transport=stop_position][aerial=yes] {
     icon-image: "transport/aerialway.png";
     text: auto;
-/*    priority="6"*/
 }
 node[public_transport=stop_position][ferry=yes] {
     icon-image: "transport/ferry.png";
     text: auto;
-/*    priority="7"*/
 }
 node[public_transport=stop_position][tram=yes] {
     icon-image: "transport/tram.png";
     text: auto;
-/*    priority="8"*/
 }
 node[public_transport=stop_position][train=yes] {
     icon-image: "transport/railway_small.png";
     text: auto;
-/*    priority="10"*/
 }
 area[public_transport=platform]:closed {
     fill-color: service#809bc0;
 }
 way[public_transport=platform]!:closed {
     width: 3;
-    realwidth: 1;
     color: service#809bc0;
     dashes: 12,3;
 }
 node[public_transport=platform] {
     icon-image: "transport/bus_small.png";
     text: auto;
-/*    priority="-10"*/
 }
 node[public_transport=platform][bus=yes] {
     icon-image: "transport/bus_small.png";
     text: auto;
-/*    priority="4"*/
 }
 node[public_transport=platform][aerial=yes] {
     icon-image: "transport/aerialway/station.png";
     text: auto;
-/*    priority="6"*/
 }
 node[public_transport=platform][ferry=yes] {
     icon-image: "transport/ferry.png";
     text: auto;
-/*    priority="7"*/
 }
 node[public_transport=platform][tram=yes],
 node[public_transport=platform][train=yes] {
     icon-image: "transport/railway_station.png";
     text: auto;
-/*    priority="10"*/
 }
 
 /****************/
@@ -2779,13 +2699,11 @@ way[railway=rail] {
 }
 way[railway=rail][service=siding] {
     width: 1;
-/*    priority="2"*/
 }
 way[railway=rail][service=yard],
 way[railway=rail][service=spur] {
     width: 1;
     color: railyard#552200
-/*    priority="2"*/
 }
 /* draw tram on top of other way (highway=*) or
    as a standalone style */
@@ -2826,7 +2744,6 @@ way[railway=abandoned]::core_railway {
     z-index: 1;
     color: oldrail#404040;
     dashes: 9,9;
-/*    priority="-10000"*/
 }
 way[railway=narrow_gauge],
 way[railway=monorail] {
@@ -2900,7 +2817,6 @@ node[aeroway=helipad] {
 }
 way[aeroway=runway] {
     width: 3;
-    realwidth: 10;
     color: aeroway_dark#330000;
 }
 node[aeroway=runway] {
@@ -2909,7 +2825,6 @@ node[aeroway=runway] {
 }
 way[aeroway=taxiway] {
     width: 2;
-    realwidth: 10;
     color: aeroway#660000;
 }
 node[aeroway=taxiway] {
@@ -3161,18 +3076,15 @@ node[natural=tree][type=conifer],
 node[natural=tree][leaf_type=needleleaved] {
     icon-image: "misc/landmark/trees_conifer.png";
     text: auto;
-/*    priority="10"*/
 }
 node[natural=tree][type=broad_leaved],
 node[natural=tree][leaf_type=broadleaved] {
     icon-image: "misc/landmark/trees_broad_leaved.png";
     text: auto;
-/*    priority="10"*/
 }
 node[natural=tree][type=palm] {
     icon-image: "misc/landmark/trees_palm.png";
     text: auto;
-/*    priority="10"*/
 }
 
 /*****************/
@@ -3181,29 +3093,23 @@ node[natural=tree][type=palm] {
 
 way[waterway=river] {
     width: 2;
-    realwidth: 5;
     color: water#0000ff;
 }
 area[waterway=riverbank] {
     fill-color: riverbank#0000cf;
-/*    priority="10000"*/
     width: 1;
-    realwidth: 5;
     color: riverbank#0000cf;
 }
 way[waterway=canal], way[waterway=wadi] {
     width: 2;
-    realwidth: 2;
     color: water#0000ff;
 }
 way[waterway=stream] {
     width: 1;
-    realwidth: 1;
     color: stream#6600cc;
 }
 way[waterway=ditch], way[waterway=drain] {
     width: 1;
-    realwidth: 1;
     color: water#0000ff;
 }
 area[waterway=dock] {
@@ -3616,7 +3522,6 @@ way[boundary=national_park]::core_boundary {
     width: 1;
     color: boundary#FF6600;
     dashes: 9,9;
-/*    priority="-10"*/
 }
 way[admin_level=9]::core_boundary,
 relation[admin_level=9] > way::core_boundary,
