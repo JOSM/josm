@@ -261,8 +261,7 @@ Note that for a match, at least one positive and no negative is required.
         <reference ref="oh" />
     </chunk>
     <chunk id="name_operator_oh">
-        <text key="name" text="Name" />
-        <text key="operator" text="Operator" />
+        <reference ref="name_operator" />
         <reference ref="oh" />
     </chunk>
     <chunk id="name_brand_operator_oh">
@@ -362,6 +361,67 @@ Note that for a match, at least one positive and no negative is required.
         <text key="name" text="Name" />
         <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,unitarian,zoroastrian" />
         <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" />
+    </chunk>
+    <chunk id="voltage">
+        <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
+    </chunk>
+    <chunk id="frequency">
+        <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+    </chunk>
+    <chunk id="voltage_frequency">
+        <reference ref="voltage" />
+        <reference ref="frequency" />
+    </chunk>
+    <chunk id="ref_operator_branch">
+        <text key="ref" text="Reference" />
+        <text key="operator" text="Operator" />
+        <text key="branch" text="Branch operator" />
+    </chunk>
+    <chunk id="cable_circuit">
+        <combo key="cables" text="Amount of Cables" values="1,3,6,9,12" lenght="2" />
+        <combo key="circuits" text="Amount of circuits" values="1,2,3" lenght="2" />
+    </chunk>
+    <chunk id="power_loc">
+        <combo key="location" text="Location" values="outdoor,indoor,underground,platform,kiosk" values_context="power" />
+    </chunk>
+    <chunk id="power_extra">
+        <reference ref="power_loc" />
+        <reference ref="voltage_frequency" />
+        <reference ref="ref_operator_branch" />
+    </chunk>
+    <chunk id="power_line_extra">
+        <reference ref="cable_circuit" />
+        <reference ref="voltage_frequency" />
+    </chunk>
+    <chunk id="power_generator">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:power=generator"
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=generator"
+              fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=generator"
+              it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=generator"
+              ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:power=generator"
+              pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=generator"
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=generator"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=generator" />
+        <space />
+        <key key="power" value="generator" />
+        <reference ref="name_ref_operator" />
+        <text key="branch" text="Branch operator" />
+        <text key="start_date" text="Start date" />
+    </chunk>
+    <chunk id="power_output">
+        <optional text="Output forms of energy:">
+            <combo key="generator:output:biogas" text="biogas" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:hot_water" text="hot water" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:hot_air" text="hot air" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:cold_water" text="cold water" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:cold_air" text="cold air" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:compressed_air" text="compressed air" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <combo key="generator:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
+            <space />
+            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+        </optional>
     </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact">
@@ -4974,9 +5034,8 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=plant" />
             <space />
             <key key="power" value="plant" />
-            <reference ref="name_operator" />
+            <reference ref="name_ref_operator" />
             <text key="branch" text="Branch operator" />
-            <text key="ref" text="Reference" />
             <text key="start_date" text="Start date" />
             <optional text="Output forms of energy (optional):">
                 <combo key="plant:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
@@ -4991,101 +5050,164 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
             </optional>
         </item>
-        <item name="Power Generator" icon="presets/power.png" type="node,closedway,relation" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=generator"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=generator"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=generator"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=generator"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:power=generator"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=generator"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=generator"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=generator" />
-            <space />
-            <key key="power" value="generator" />
-            <reference ref="name_operator" />
-            <text key="branch" text="Branch operator" />
-            <text key="ref" text="Reference" />
-            <text key="start_date" text="Start date" />
-            <combo key="generator:source" text="Source" values_searchable="true">
-                <list_entry value="biofuel"    icon="presets/power_source-biofuel.svg" />
-                <list_entry value="biogas"     icon="presets/power_source-biofuel.svg" />
-                <list_entry value="biomass"    icon="presets/power_source-biofuel.svg" />
-                <list_entry value="coal"       icon="presets/power_source-coal.svg" />
-                <list_entry value="diesel"     icon="presets/power_source-oil.svg" />
-                <list_entry value="gas"        icon="presets/power_source-gas.svg" />
-                <list_entry value="gasoline"   icon="presets/power_source-oil.svg" />
-                <list_entry value="geothermal" icon="presets/power_source-water.svg" />
-                <list_entry value="hydro"      icon="presets/power_source-water.svg" />
-                <list_entry value="nuclear"    icon="presets/power_source-nuclear.svg" />
-                <list_entry value="oil"        icon="presets/power_source-oil.svg" />
-                <list_entry value="osmotic"    icon="presets/power_source-water.svg" />
-                <list_entry value="solar"      icon="presets/power_source-sun.svg" />
-                <list_entry value="tidal"      icon="presets/power_source-water.svg" />
-                <list_entry value="waste"      icon="presets/power_source-waste.svg" />
-                <list_entry value="wave"       icon="presets/power_source-water.svg" />
-                <list_entry value="wind"       icon="presets/power_source-wind.svg" />
-            </combo>
-            <combo key="generator:method" text="Method" values_context="generator method" values_searchable="true">
-                <list_entry value="anaerobic_digestion" short_description="" /> <!-- Recheck -->
-                <list_entry value="barrage" short_description="tidal" />
-                <list_entry value="combustion" short_description="bio / coal / diesel / gas / gasoline / oil / waste" />
-                <list_entry value="fission" short_description="nuclear" />
-                <list_entry value="fusion" short_description="nuclear" />
-                <list_entry value="gasification" short_description="biomass / waste" />
-                <list_entry value="photovoltaic" short_description="solar" />
-                <list_entry value="pyrolysis" short_description="" /> <!-- Recheck -->
-                <list_entry value="run-of-the-river" short_description="hydro" />
-                <list_entry value="stream" short_description="tidal" />
-                <list_entry value="thermal" short_description="solar" />
-                <list_entry value="water-pumped-storage" short_description="hydro" />
-                <list_entry value="water-storage" short_description="hydro" />
-            </combo>
-            <combo key="generator:type" text="Generator Type" values_searchable="true">
-                <list_entry value="combined_cycle" short_description="gas combustion" />
-                <list_entry value="francis_turbine" short_description="hydro" />
-                <list_entry value="gas_turbine" short_description="biogas, biomass, gas, waste combustion" />
-                <list_entry value="heat_pump" short_description="geothermal" />
-                <list_entry value="horizontal_axis" short_description="tidal steam / wind" />
-                <list_entry value="kaplan_turbine" short_description="hygro run-of-the-river / hydro water-storage / tidal barrage" />
-                <list_entry value="pelton_turbine" short_description="hygro run-of-the-river / hydro water-storage" />
-                <list_entry value="reciprocating_engine" short_description="biofuel, biogas, diesel, gas, gasoline" />
-                <list_entry value="solar_photovoltaic_panel" short_description="solar photovoltaic" />
-                <list_entry value="solar_thermal_collector" short_description="solar thermal" />
-                <list_entry value="steam_generator" short_description="bio, coal, diesel, gas, gasoline, oil, waste combustion" />
-                <list_entry value="steam_turbine" short_description="geothermal / solar thermal / bio, coal, oil, waste combustion" />
-                <list_entry value="stellarator" short_description="nuclear fusion" />
-                <list_entry value="tokamak" short_description="nuclear fusion" />
-                <list_entry value="vertical_axis" short_description="tidal steam / wind" />
-                <list_entry value="BWR-1" display_value="Boiling Water Reactor 1 (BWR-1)" short_description="nuclear fission" />
-                <list_entry value="BWR-2" display_value="Boiling Water Reactor 2 (BWR-2)" short_description="nuclear fission" />
-                <list_entry value="BWR-3" display_value="Boiling Water Reactor 3 (BWR-3)" short_description="nuclear fission" />
-                <list_entry value="BWR-4" display_value="Boiling Water Reactor 4 (BWR-4)" short_description="nuclear fission" />
-                <list_entry value="BWR-5" display_value="Boiling Water Reactor 5 (BWR-5)" short_description="nuclear fission" />
-                <list_entry value="BWR-6" display_value="Boiling Water Reactor 6 (BWR-6)" short_description="nuclear fission" />
-                <list_entry value="CANDU" display_value="CANada Deuterium Uranium reactor (CANDU)" short_description="nuclear fission" />
-                <list_entry value="CPR-1000" display_value="China Pressurized Reactor (CPR-1000)" short_description="nuclear fission" />
-                <list_entry value="EPR" display_value="European Pressurized Reactor (EPR)" short_description="nuclear fission" />
-                <list_entry value="ICF" display_value="Inertial Confinement Fusion (ICF)" short_description="nuclear fusion" />
-                <list_entry value="PWR" display_value="Pressurized water reactor (PWR)" short_description="nuclear fission" />
-                <list_entry value="RBMK-1000" display_value="Reactor Bolshoy Moshchnosti Kanalniy 1000 (RBMK-1000)" short_description="nuclear fission" />
-                <list_entry value="RBMK-1500" display_value="Reactor Bolshoy Moshchnosti Kanalniy 1500 (RBMK-1500)" short_description="nuclear fission" />
-                <list_entry value="VVER" display_value="Vodo-Vodyanoi Energetichesky Reactor (VVER)" short_description="nuclear fission" />
-            </combo>
-            <optional>
-                <label text="Output forms of energy:" />
-                <space />
-                <combo key="generator:output:electricity" text="electricity" values="yes,2 W,3 kW,5 MW,7 GW" />
-                <combo key="generator:output:hot_water" text="hot water" values="yes,2 W,3 kW,5 MW,7 GW" />
-                <combo key="generator:output:hot_air" text="hot air" values="yes,2 W,3 kW,5 MW,7 GW" />
-                <combo key="generator:output:cold_water" text="cold water" values="yes,2 W,3 kW,5 MW,7 GW" />
-                <combo key="generator:output:cold_air" text="cold air" values="yes,2 W,3 kW,5 MW,7 GW" />
-                <combo key="generator:output:compressed_air" text="compressed air" values="yes,2 W,3 kW,5 MW,7 GW" />
-                <combo key="generator:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
-                <combo key="generator:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
-                <space />
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
-            </optional>
-        </item>
+        <group name="Power Generator" icon="presets/power.png">
+            <item name="Biofuel Power Generator" icon="presets/power_source-biofuel.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="biofuel" />
+                <reference ref="power_generator" />
+                <key key="generator:method" value="combustion" />
+                <combo key="generator:type" text="Generator Type" values="gas_turbine,reciprocating_engine,steam_generator" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Biogas Power Generator" icon="presets/power_source-biofuel.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="biogas" />
+                <reference ref="power_generator" />
+                <key key="generator:method" value="combustion" />
+                <combo key="generator:type" text="Generator Type" values="reciprocating_engine,steam_generator" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Biomass Power Generator" icon="presets/power_source-biofuel.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="biomass" />
+                <reference ref="power_generator" />
+                <combo key="generator:method" text="Method" values_context="generator method" values="anaerobic_digestion,combustion,gasification" />
+                <combo key="generator:type" text="Generator Type" values_searchable="true">
+                    <list_entry value="bioreactor" short_description="anaerobic_digestion / combustion" />
+                    <list_entry value="pyrolysis" short_description="" />
+                    <list_entry value="steam_generator" short_description="combustion" />
+                    <list_entry value="steam_turbine" short_description="combustion" />
+                </combo>
+                <reference ref="power_output" />
+            </item>
+            <item name="Coal Power Generator" icon="presets/power_source-coal.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="coal" />
+                <reference ref="power_generator" />
+                <key key="generator:method" value="combustion" />
+                <combo key="generator:type" text="Generator Type" values="steam_generator,steam_turbine" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Gas Power Generator" icon="presets/power_source-gas.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="gas" />
+                <reference ref="power_generator" />
+                <key key="generator:method" value="combustion" />
+                <combo key="generator:type" text="Generator Type" values="combined_cycle,gas_turbine,reciprocating_engine,steam_generator,steam_turbine" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Oil Power Generator" icon="presets/power_source-oil.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="oil" />
+                <reference ref="power_generator" />
+                <key key="generator:method" value="combustion" />
+                <combo key="generator:type" text="Generator Type" values="steam_generator,steam_turbine" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Diesel Power Generator" icon="presets/power_source-oil.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="diesel" />
+                <reference ref="power_generator" />
+                <key key="generator:method" value="combustion" />
+                <combo key="generator:type" text="Generator Type" values="reciprocating_engine,steam_generator" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Gasoline Power Generator" icon="presets/power_source-oil.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="gasoline" />
+                <reference ref="power_generator" />
+                <key key="generator:method" value="combustion" />
+                <combo key="generator:type" text="Generator Type" values="reciprocating_engine,steam_generator" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Nuclear Reactor" icon="presets/power_source-nuclear.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="nuclear" />
+                <reference ref="power_generator" />
+                <combo key="generator:method" text="Method" values_context="generator method" values="fission,fusion" />
+                <combo key="generator:type" text="Generator Type" values_searchable="true">
+                    <list_entry value="BWR-1" display_value="Boiling Water Reactor 1 (BWR-1)" short_description="fission" />
+                    <list_entry value="BWR-2" display_value="Boiling Water Reactor 2 (BWR-2)" short_description="fission" />
+                    <list_entry value="BWR-3" display_value="Boiling Water Reactor 3 (BWR-3)" short_description="fission" />
+                    <list_entry value="BWR-4" display_value="Boiling Water Reactor 4 (BWR-4)" short_description="fission" />
+                    <list_entry value="BWR-5" display_value="Boiling Water Reactor 5 (BWR-5)" short_description="fission" />
+                    <list_entry value="BWR-6" display_value="Boiling Water Reactor 6 (BWR-6)" short_description="fission" />
+                    <list_entry value="CANDU" display_value="CANada Deuterium Uranium reactor (CANDU)" short_description="fission" />
+                    <list_entry value="cold-fusion" short_description="fusion" />
+                    <list_entry value="CPR-1000" display_value="China Pressurized Reactor (CPR-1000)" short_description="fission" />
+                    <list_entry value="EPR" display_value="European Pressurized Reactor (EPR)" short_description="fission" />
+                    <list_entry value="ICF" display_value="Inertial Confinement Fusion (ICF)" short_description="fusion" />
+                    <list_entry value="PWR" display_value="Pressurized water reactor (PWR)" short_description="fission" />
+                    <list_entry value="RBMK-1000" display_value="Reactor Bolshoy Moshchnosti Kanalniy 1000 (RBMK-1000)" short_description="fission" />
+                    <list_entry value="RBMK-1500" display_value="Reactor Bolshoy Moshchnosti Kanalniy 1500 (RBMK-1500)" short_description="fission" />
+                    <list_entry value="stellarator" short_description="fusion" />
+                    <list_entry value="tokamak" short_description="fusion" />
+                    <list_entry value="VVER" display_value="Vodo-Vodyanoi Energetichesky Reactor (VVER)" short_description="fission" />
+                </combo>
+                <reference ref="power_output" />
+            </item>
+            <item name="Solar Power Generator" icon="presets/power_source-sun.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="solar" />
+                <reference ref="power_generator" />
+                <combo key="generator:method" text="Method" values_context="generator method" values="photovoltaic,thermal" />
+                <combo key="generator:type" text="Generator Type" values_searchable="true">
+                    <list_entry value="solar_photovoltaic_panel" short_description="photovoltaic" />
+                    <list_entry value="solar_thermal_collector" short_description="thermal" />
+                    <list_entry value="steam_turbine" short_description="thermal" />
+                </combo>
+                <reference ref="power_output" />
+            </item>
+            <item name="Waste Power Generator" icon="presets/power_source-waste.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="waste" />
+                <reference ref="power_generator" />
+                <combo key="generator:method" text="Method" values_context="generator method" values="combustion,gasification,pyrolysis" />
+                <combo key="generator:type" text="Generator Type" values_searchable="true">
+                    <list_entry value="bioreactor" short_description="gasification" />
+                    <list_entry value="pyrolysis" short_description="" />
+                    <list_entry value="reciprocating_engine" short_description="combustion" />
+                    <list_entry value="steam_generator" short_description="combustion" />
+                </combo>
+                <combo key="generator:type" text="Generator Type" values="bioreactor,reciprocating_engine,steam_generator" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Water Turbine" icon="presets/power_source-water.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="hydro" />
+                <reference ref="power_generator" />
+                <combo key="generator:method" text="Method" values_context="generator method" values="run-of-the-river,water-pumped-storage,water-storage" />
+                <combo key="generator:type" text="Generator Type" values_searchable="true">
+                    <list_entry value="francis_turbine" short_description="all methods" />
+                    <list_entry value="hydrodynamic_screw" short_description="run-of-the-river" />
+                    <list_entry value="kaplan_turbine" short_description="run-of-the-river / water-storage" />
+                    <list_entry value="pelton_turbine" short_description="run-of-the-river / water-storage" />
+                </combo>
+                <reference ref="power_output" />
+            </item>
+            <item name="Tidal Water Turbine" icon="presets/power_source-water.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="tidal" />
+                <reference ref="power_generator" />
+                <combo key="generator:method" text="Method" values_context="generator method" values="barrage,stream" />
+                <combo key="generator:type" text="Generator Type" values_searchable="true">
+                    <list_entry value="horizontal_axis" short_description="steam" />
+                    <list_entry value="kaplan_turbine" short_description="barrage" />
+                    <list_entry value="vertical_axis" short_description="steam" />
+                </combo>
+                <reference ref="power_output" />
+            </item>
+            <item name="Wave Energy Converter" icon="presets/power_source-water.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="wave" />
+                <reference ref="power_generator" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Osmotic Power Generator" icon="presets/power_source-water.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="osmotic" />
+                <reference ref="power_generator" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Geothermal Power Generator" icon="presets/power_source-water.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="geothermal" />
+                <reference ref="power_generator" />
+                <combo key="generator:type" text="Generator Type" values="heat_pump,steam_turbine" />
+                <reference ref="power_output" />
+            </item>
+            <item name="Wind Turbine" icon="presets/power_source-wind.svg" type="node,closedway,relation" preset_name_label="true">
+                <key key="generator:source" value="wind" />
+                <reference ref="power_generator" />
+                <key key="generator:method" value="wind_turbine" />
+                <combo key="generator:type" text="Generator Type" values="horizontal_axis,vertical_axis" />
+                <reference ref="power_output" />
+            </item>
+        </group>
         <separator/>
         <item name="Power Substation" icon="icons/power_substation.n.16.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=substation"
@@ -5097,14 +5219,9 @@ Note that for a match, at least one positive and no negative is required.
             <key key="power" value="substation" />
             <text key="name" text="Name" />
             <combo key="substation" text="Type of substation" values="transmission,distribution,minor_distribution,converter,compensation,transition,traction,industrial" values_context="power" />
-            <combo key="location" text="Location" values="outdoor,indoor,underground,platform,kiosk" values_context="power" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
-            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
-            <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
-            <text key="operator" text="Operator" />
-            <text key="branch" text="Branch operator" />
-            <text key="ref" text="Reference" />
+            <reference ref="power_extra" />
             <optional>
+                <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
                 <text key="start_date" text="Start date" />
                 <check key="gas_insulated" text="Gas insulated" />
             </optional>
@@ -5119,11 +5236,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="power" value="transformer" />
             <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,yes" match="key" values_context="power" />
-            <combo key="location" text="Location" values="outdoor,indoor,underground,platform,kiosk" values_context="power" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
-            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
-            <text key="operator" text="Operator" />
-            <text key="branch" text="Branch operator" />
+            <reference ref="power_extra" />
             <optional>
                 <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
                 <combo key="phases" text="Phases" values="1,3" length="1" />
@@ -5139,8 +5252,8 @@ Note that for a match, at least one positive and no negative is required.
             <label text="(Please only use this tag if more detailed mapping using busbars and bays is impossible!)" />
             <space />
             <key key="power" value="switchgear" />
-            <combo key="location" text="Location" values="outdoor,indoor,underground,platform,kiosk" values_context="power" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
+            <reference ref="power_loc" />
+            <reference ref="voltage" />
             <optional>
                 <check key="gas_insulated" text="Gas insulated" />
             </optional>
@@ -5154,10 +5267,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="power" value="line" />
             <key key="line" value="busbar" />
-            <combo key="cables" text="Amount of Cables" values="3,6,9,12" />
-            <combo key="circuits" text="Amount of circuits" values="1,2,3" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
-            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            <reference ref="power_line_extra" />
         </item>
         <item name="Power Bay" icon="presets/power.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:line=bay"
@@ -5168,10 +5278,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="power" value="line" />
             <key key="line" value="bay" />
-            <combo key="cables" text="Amount of Cables" values="3,6,9,12" />
-            <combo key="circuits" text="Amount of circuits" values="1,2,3" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
-            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            <reference ref="power_line_extra" />
         </item>
         <item name="Power Switch" icon="presets/power.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch" />
@@ -5188,10 +5295,8 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="power" value="converter" />
             <combo key="converter" text="Type of converter" values="lcc,vsc,back-to-back" match="key" values_context="power" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
-            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60,0;50" length="5" />
-            <text key="operator" text="Operator" />
-            <text key="branch" text="Branch operator" />
+            <reference ref="voltage_frequency" />
+            <reference ref="ref_operator_branch" />
             <optional>
                 <combo key="poles" text="Amount of poles" values="monopole,bipole" />
                 <combo key="rating" text="Power rating (MVA)" values="15 MVA,50 MVA,100 MVA" />
@@ -5206,10 +5311,8 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="power" value="compensator" />
             <combo key="compensator" text="Type of compensator" values="shunt_reactor,shunt_capacitor,static_var,statcom,synchronous_condenser,filter,series_reactor,series_capacitor" match="key" values_context="power" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,high,medium,low,750000;200000,110000;20000" />
-            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60,0;50" length="5" />
-            <text key="operator" text="Operator" />
-            <text key="branch" text="Branch operator" />
+            <reference ref="voltage_frequency" />
+            <reference ref="ref_operator_branch" />
             <optional>
                 <combo key="rating" text="Power rating (kvar/Mvar)" values="500 kvar,1 Mvar,5 Mvar" />
             </optional>
@@ -5221,10 +5324,8 @@ Note that for a match, at least one positive and no negative is required.
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=cable" />
             <space />
             <key key="power" value="cable_distribution_cabinet" />
-            <text key="ref" text="Reference" />
             <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110,low" /> <!-- Recheck values -->
-            <text key="operator" text="Operator" />
-            <text key="branch" text="Branch operator" />
+            <reference ref="ref_operator_branch" />
         </item>
         <separator/>
         <item name="Power Tower" icon="icons/power_tower_high2.n.16.png" type="node" preset_name_label="true">
@@ -5239,13 +5340,11 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=tower" />
             <space />
             <key key="power" value="tower" />
-            <text key="ref" text="Tower reference" />
             <text key="height" text="Height in meter (m)" />
             <combo key="structure" text="Type of construction" values="lattice,tubular,solid " />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
-            <text key="operator" text="Operator" />
-            <text key="branch" text="Branch operator" />
+            <reference ref="ref_operator_branch" />
             <optional>
                 <combo key="tower:type" text="Tower type" values="suspension,anchor,termination,branch,transposing,crossing,transition" values_context="power" />
                 <combo key="branch:type" text="Branch tower type" values="tap,split,loop,cross" values_context="power" />
@@ -5265,11 +5364,9 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=pole" />
             <space />
             <key key="power" value="pole" />
-            <text key="operator" text="Operator" />
-            <text key="branch" text="Branch operator" />
-            <text key="ref" text="Pole reference" />
             <text key="height" text="Height in meter (m)" />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+            <reference ref="ref_operator_branch" />
         </item>
         <item name="Power Line" icon="presets/power.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
@@ -5282,14 +5379,10 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=line" />
             <space />
             <combo key="power" text="Line type" values="line,minor_line" default="line" match="keyvalue" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,750,400,220,110,high,medium,low,750000;200000,110000;20000" />
-            <text key="ref" text="Line reference" />
-            <text key="operator" text="Operator" />
-            <text key="branch" text="Branch operator" />
-            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            <reference ref="voltage_frequency" />
+            <reference ref="ref_operator_branch" />
             <optional>
-                <combo key="cables" text="Amount of Cables" values="1,3,6,9" />
-                <combo key="circuits" text="Amount of circuits" values="1,2,3" />
+                <reference ref="cable_circuit" />
                 <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
@@ -5301,14 +5394,10 @@ Note that for a match, at least one positive and no negative is required.
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=cable" />
             <space />
             <key key="power" value="cable" />
-            <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,20000,15000,750,400,220,110,high,medium,low,750000;200000,110000;20000" />
-            <text key="ref" text="Line reference" />
-            <text key="operator" text="Operator" />
-            <text key="branch" text="Branch operator" />
-            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            <reference ref="voltage_frequency" />
+            <reference ref="ref_operator_branch" />
             <optional>
-                <combo key="cables" text="Amount of Cables" values="1,3,6,9" />
-                <combo key="circuits" text="Amount of circuits" values="1,2,3" />
+                <reference ref="cable_circuit" />
                 <combo key="location" text="Location" values="underground,underwater,overground" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
