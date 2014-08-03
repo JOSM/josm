@@ -21,6 +21,7 @@ public class TestUtils {
 
     /**
      * Returns the path to test data root directory.
+     * @return path to test data root directory
      */
     public static String getTestDataRoot() {
         String testDataRoot = System.getProperty("josm.test.data");
@@ -29,6 +30,25 @@ public class TestUtils {
             System.out.println("System property josm.test.data is not set, using '" + testDataRoot + "'");
         }
         return testDataRoot.endsWith("/") ? testDataRoot : testDataRoot + "/";
+    }
+
+    /**
+     * Gets path to test data directory for given ticket id.
+     * @param ticketid Ticket numeric identifier
+     * @return path to test data directory for given ticket id
+     */
+    public static String getRegressionDataDir(int ticketid) {
+        return TestUtils.getTestDataRoot() + "/regress/" + ticketid;
+    }
+
+    /**
+     * Gets path to given file in test data directory for given ticket id.
+     * @param ticketid Ticket numeric identifier
+     * @param filename File name
+     * @return path to given file in test data directory for given ticket id
+     */
+    public static String getRegressionDataFile(int ticketid, String filename) {
+        return getRegressionDataDir(ticketid) + '/' + filename;
     }
 
     @Test
