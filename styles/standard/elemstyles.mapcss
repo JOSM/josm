@@ -86,7 +86,10 @@ way[bridge=aqueduct]::core_bridge {
     color: bridge#0000FF;
     opacity: 0.9;
 }
-way[tunnel][!tunnel?!]::core_tunnel {
+way[tunnel?]::core_tunnel,
+way[tunnel=culvert]::core_tunnel,
+way[tunnel=building_passage]::core_tunnel,
+way[tunnel=avalanche_protector]::core_tunnel {
     major-z-index: 2.1;
     object-z-index: -1;
     width: +5;
