@@ -1529,7 +1529,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="barrier_2" />
             <reference ref="optional_maxwidth" />
         </item> <!-- kissing_gate -->
-        <item name="Chain" type="node" preset_name_label="true">
+        <item name="Chain" icon="styles/standard/vehicle/chain.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=chain"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=chain" />
             <key key="barrier" value="chain" />
