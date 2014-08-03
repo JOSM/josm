@@ -22,7 +22,7 @@ public class ImageProviderTest {
      */
     @Test
     public void testTicket9984() throws IOException {
-        File file = new File(TestUtils.getTestDataRoot()+"regress/9984/tile.png");
+        File file = new File(TestUtils.getRegressionDataFile(9984, "tile.png"));
         assertThat(ImageProvider.read(file, true, true).getTransparency(), is(Transparency.TRANSLUCENT));
         assertThat(ImageProvider.read(file, false, true).getTransparency(), is(Transparency.TRANSLUCENT));
         assertThat(ImageProvider.read(file, false, false).getTransparency(), is(Transparency.OPAQUE));
@@ -35,7 +35,7 @@ public class ImageProviderTest {
      */
     @Test
     public void testTicket10030() throws IOException {
-        File file = new File(TestUtils.getTestDataRoot()+"regress/10030/tile.jpg");
+        File file = new File(TestUtils.getRegressionDataFile(10030, "tile.jpg"));
         ImageProvider.read(file, true, true);
     }
 }
