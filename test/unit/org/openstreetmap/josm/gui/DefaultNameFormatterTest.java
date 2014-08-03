@@ -54,7 +54,7 @@ public class DefaultNameFormatterTest {
 
         Comparator<Relation> comparator = DefaultNameFormatter.getInstance().getRelationComparator();
 
-        try (InputStream is = new FileInputStream(TestUtils.getTestDataRoot() + "regress/9632/data.osm.zip")) {
+        try (InputStream is = new FileInputStream(TestUtils.getRegressionDataFile(9632, "data.osm.zip"))) {
             DataSet ds = OsmReader.parseDataSet(Compression.ZIP.getUncompressedInputStream(is), null);
 
             // Test with 3 known primitives causing the problem. Correct order is p1, p3, p2 with this preset

@@ -31,30 +31,11 @@ public class TaggingPresetReaderTest {
     }
 
     /**
-     * Gets path to test data directory for given ticketid.
-     * @param ticketid
-     * @return
-     */
-    protected static String getRegressionDataDir(int ticketid) {
-        return TestUtils.getTestDataRoot() + "/regress/" + ticketid;
-    }
-
-    /**
-     * Gets path to given file in test data directory for given ticketid.
-     * @param ticketid
-     * @param filename
-     * @return
-     */
-    protected static String getRegressionDataFile(int ticketid, String filename) {
-        return getRegressionDataDir(ticketid) + '/' + filename;
-    }
-
-    /**
      * #8954 - last checkbox in the preset is not added
      */
     @Test
     public void test8954() throws SAXException, IOException {
-        String presetfile = getRegressionDataFile(8954, "preset.xml");
+        String presetfile = TestUtils.getRegressionDataFile(8954, "preset.xml");
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(presetfile, false);
         Assert.assertEquals("Number of preset items", 1, presets.size());
         final TaggingPreset preset = presets.iterator().next();
