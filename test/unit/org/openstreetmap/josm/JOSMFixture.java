@@ -4,34 +4,55 @@ package org.openstreetmap.josm;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
 
+/**
+ * Fixture to define a proper and safe environment before running tests.
+ */
 public class JOSMFixture {
-    static private final Logger logger = Logger.getLogger(JOSMFixture.class.getName());
 
+    /**
+     * Returns a new test fixture initialized to "unit" home.
+     * @return A new test fixture for unit tests
+     */
     static public JOSMFixture createUnitTestFixture() {
         return new JOSMFixture("test/config/unit-josm.home");
     }
 
+    /**
+     * Returns a new test fixture initialized to "functional" home.
+     * @return A new test fixture for functional tests
+     */
     static public JOSMFixture createFunctionalTestFixture() {
         return new JOSMFixture("test/config/functional-josm.home");
     }
 
+    /**
+     * Returns a new test fixture initialized to "performance" home.
+     * @return A new test fixture for performance tests
+     */
     static public JOSMFixture createPerformanceTestFixture() {
         return new JOSMFixture("test/config/performance-josm.home");
     }
 
     private final String josmHome;
 
+    /**
+     * Constructs a new text fixture initialized to a given josm home.
+     * @param josmHome The user home where preferences are to be read/written
+     */
     public JOSMFixture(String josmHome) {
         this.josmHome = josmHome;
     }
 
+    /**
+     * Initializes the test fixture.
+     */
     public void init() {
 
         // check josm.home
@@ -41,7 +62,8 @@ public class JOSMFixture {
         } else {
             File f = new File(josmHome);
             if (! f.exists() || ! f.canRead()) {
-                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing or not readable.", "josm.home", josmHome));
+                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing ({2}) or not readable ({3}). Current directory is ''{4}''.",
+                        "josm.home", josmHome, f.exists(), f.canRead(), Paths.get("").toAbsolutePath()));
             }
         }
         System.setProperty("josm.home", josmHome);
