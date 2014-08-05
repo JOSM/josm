@@ -168,8 +168,8 @@ Build-Date: ${build.tstamp}
         <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="tools/xmltask.jar"/>
         
         <xmltask source="${bundle.outdir}/JOSM.app/Contents/Info.plist" dest="${bundle.outdir}/JOSM.app/Contents/Info.plist" indent="false">
-        	<!-- remove empty CFBundleDocumentTypes definition -->
-        	<remove path="/plist/dict/key[text()='CFBundleDocumentTypes']|/plist/dict/key[text()='CFBundleDocumentTypes']/following-sibling::array[1]"/>
+            <!-- remove empty CFBundleDocumentTypes definition -->
+            <remove path="/plist/dict/key[text()='CFBundleDocumentTypes']|/plist/dict/key[text()='CFBundleDocumentTypes']/following-sibling::array[1]"/>
             <!-- insert our own keys -->
             <insert position="before" path="/plist/dict/key[1]" file="macosx/JOSM.app/Contents/Info.plist_template.xml" />
         </xmltask>
@@ -236,7 +236,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xlint:static"/>
             <compilerarg value="-Xlint:try"/>
             <compilerarg value="-Xlint:unchecked"/>
-        	<!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
+            <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
         </javac>
         <copy todir="build" failonerror="no" includeemptydirs="no">
@@ -282,7 +282,7 @@ Build-Date: ${build.tstamp}
             <include name="**/*.jar"/>
         </fileset>
         <pathelement path="dist/josm-custom.jar"/>
-        <pathelement path="tools/groovy-all-2.3.4.jar"/>
+        <pathelement path="tools/groovy-all-2.3.6.jar"/>
     </path>
     <macrodef name="init-test-preferences">
         <attribute name="testfamily"/>
@@ -321,7 +321,7 @@ Build-Date: ${build.tstamp}
                 <classpath>
                     <cp-elements/>
                 </classpath>
-                <javac target="1.7" source="1.7" debug="on">
+                <javac target="1.7" source="1.7" debug="on" encoding="UTF-8">
                     <compilerarg value="-Xlint:all"/>
                     <compilerarg value="-Xlint:-serial"/>
                 </javac>
@@ -329,7 +329,7 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
     <target name="test-compile" depends="test-init,dist">
-        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.3.4.jar"/>
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpath="tools/groovy-all-2.3.6.jar"/>
         <call-groovyc testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>
@@ -354,6 +354,7 @@ Build-Date: ${build.tstamp}
             <echo message="Running @{testfamily} tests with JUnit"/>
             <jacoco:coverage destfile="${test.dir}/jacoco.exec">
                 <junit printsummary="yes" fork="true" forkmode="once">
+                    <jvmarg value="-Dfile.encoding=UTF-8"/>
                     <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
                     <sysproperty key="josm.test.data" value="${test.dir}/data"/>
                     <sysproperty key="java.awt.headless" value="true"/>
@@ -406,43 +407,43 @@ Build-Date: ${build.tstamp}
     <target name="dist-optimized" depends="dist">
         <taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar"/>
         <proguard>
-	 	-injars dist/josm-custom.jar
-	 	-outjars dist/josm-custom-optimized.jar
+        -injars dist/josm-custom.jar
+        -outjars dist/josm-custom-optimized.jar
 
-	 	-libraryjars ${java.home}/lib/rt.jar
-	 	-libraryjars ${java.home}/lib/jce.jar
+        -libraryjars ${java.home}/lib/rt.jar
+        -libraryjars ${java.home}/lib/jce.jar
 
-	 	-dontoptimize
-	 	-dontobfuscate
+        -dontoptimize
+        -dontobfuscate
 
-	 	# These options probably are not necessary (and make processing a bit slower)
-	 	-dontskipnonpubliclibraryclasses
-		-dontskipnonpubliclibraryclassmembers
+        # These options probably are not necessary (and make processing a bit slower)
+        -dontskipnonpubliclibraryclasses
+        -dontskipnonpubliclibraryclassmembers
 
-	 	-keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplication {
-	 	    public static void main(java.lang.String[]);
-	 	}
-		-keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplet
+        -keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplication {
+            public static void main(java.lang.String[]);
+        }
+        -keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplet
 
-		-keep class JOSM
-	 	-keep class * extends org.openstreetmap.josm.io.FileImporter
-	 	-keep class * extends org.openstreetmap.josm.io.FileExporter
-		-keep class org.w3._2001.xmlschema.Adapter1
-		-keep class org.openstreetmap.josm.actions.search.SearchCompiler$Never
+        -keep class JOSM
+        -keep class * extends org.openstreetmap.josm.io.FileImporter
+        -keep class * extends org.openstreetmap.josm.io.FileExporter
+        -keep class org.w3._2001.xmlschema.Adapter1
+        -keep class org.openstreetmap.josm.actions.search.SearchCompiler$Never
 
-	 	-keepclassmembers enum  * {
-	 	    public static **[] values();
-	 	    public static ** valueOf(java.lang.String);
-	 	}
+        -keepclassmembers enum  * {
+            public static **[] values();
+            public static ** valueOf(java.lang.String);
+        }
 
-	 	# Keep unused public methods (can be useful for plugins)
-	 	-keepclassmembers class * {
-	 	    public protected *;
-	 	}
+        # Keep unused public methods (can be useful for plugins)
+        -keepclassmembers class * {
+            public protected *;
+        }
 
-		# Disable annoying [proguard] Note: the configuration keeps the entry point '...', but not the descriptor class '...'.
-		# This note should not be a problem as we don't use obfuscation
-		-dontnote
+        # Disable annoying [proguard] Note: the configuration keeps the entry point '...', but not the descriptor class '...'.
+        # This note should not be a problem as we don't use obfuscation
+        -dontnote
         </proguard>
     </target>
     <target name="check-plugins" depends="dist-optimized">
@@ -451,7 +452,7 @@ Build-Date: ${build.tstamp}
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-            <classpath path="tools/animal-sniffer-ant-tasks-1.8.jar"/>
+            <classpath path="tools/animal-sniffer-ant-tasks-1.11.jar"/>
         </typedef>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
@@ -520,16 +521,28 @@ Build-Date: ${build.tstamp}
             </path>
         </as:build-signatures>
         <as:check-signature signature="${dir}/api.sig">
-            <ignore classname="org.jgraph.*"/>
-            <ignore classname="com.touchgraph.*"/>
-            <ignore classname="com.sun.xml.fastinfoset.*"/>
-            <ignore classname="javax.jms.*"/>
-            <ignore classname="org.jvnet.staxex.*"/>
-            <ignore classname="javax.mail.*"/>
-            <ignore classname="com.sun.jdmk.*"/>
-            <ignore classname="org.apache.avalon.framework.logger.Logger"/>
-            <ignore classname="org.apache.log.*"/>
+            <ignore classname="au.edu.*"/>
+            <ignore classname="au.com.*"/>
+            <ignore classname="com.*"/>
+            <ignore classname="javax.*"/>
+            <ignore classname="jogamp.*"/>
             <ignore classname="junit.*"/>
+            <ignore classname="net.sf.*"/>
+            <ignore classname="nu.xom.*"/>
+            <ignore classname="org.apache.*"/>
+            <ignore classname="org.codehaus.*"/>
+            <ignore classname="org.dom4j.*"/>
+            <ignore classname="org.hsqldb.*"/>
+            <ignore classname="org.ibex.*"/>
+            <ignore classname="org.jaitools.*"/>
+            <ignore classname="org.jaxen.*"/>
+            <ignore classname="org.jdom2.*"/>
+            <ignore classname="org.jgraph.*"/>
+            <ignore classname="org.joda.time.*"/>
+            <ignore classname="org.jvnet.staxex.*"/>
+            <ignore classname="org.kxml2.*"/>
+            <ignore classname="org.python.*"/>
+            <ignore classname="org.slf4j.*"/>
             <path path="${dir}"/>
         </as:check-signature>
     </target>

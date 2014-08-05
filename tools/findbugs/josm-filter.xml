@@ -3,17 +3,29 @@
 	<Match>
 		<Class name="~com.*" />
 	</Match>
+    <Match>
+        <Class name="~gnu.getopt.*" />
+    </Match>
+    <Match>
+        <Class name="~javax.json.*" />
+    </Match>
 	<Match>
 		<Class name="~oauth.signpost.*" />
 	</Match>
 	<Match>
 		<Class name="~org.apache.*" />
 	</Match>
+    <Match>
+        <Class name="~org.glassfish.json.*" />
+    </Match>
 	<Match>
 		<Class name="~org.jdesktop.swinghelper.debug.*" />
 	</Match>
 	<Match>
 		<Class name="~org.openstreetmap.gui.jmapviewer.*" />
 	</Match>
+    <Match>
+        <Class name="~org.w3._2001.xmlschema.*" />
+    </Match>
 
 </FindBugsFilter>
