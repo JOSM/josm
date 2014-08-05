@@ -138,7 +138,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * The tags table.
      */
     private final JTable tagTable = new JTable(tagData);
-    
+
     /**
      * The membership table.
      */
@@ -256,7 +256,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if(!top) {
             bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
         }
-        
+
         setupBlankSpaceMenu();
         setupKeyboardShortcuts();
 
@@ -278,7 +278,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         presets.setSize(scrollPane.getSize());
 
         editHelper.loadTagsIfNeeded();
-        
+
         Main.pref.addPreferenceChangeListener(this);
     }
 
@@ -582,7 +582,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if (tagTable.getCellEditor() != null) {
             tagTable.getCellEditor().cancelCellEditing();
         }
-        
+
         // Ignore parameter as we do not want to operate always on real selection here, especially in draw mode
         Collection<OsmPrimitive> newSel = Main.main.getInProgressSelection();
         if (newSel == null) {
@@ -1077,9 +1077,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     uris.add(new URI(String.format("%sMap_Features", base)));
                 } else if (membershipTable.getSelectedRowCount() == 1) {
                     row = membershipTable.getSelectedRow();
-                    String type = URLEncoder.encode(
-                            ((Relation)membershipData.getValueAt(row, 0)).get("type"), "UTF-8"
-                            );
+                    String type = ((Relation)membershipData.getValueAt(row, 0)).get("type");
+                    if (type != null) {
+                        type = URLEncoder.encode(type, "UTF-8");
+                    }
 
                     if (type != null && !type.isEmpty()) {
                         uris.add(new URI(String.format("%s%sRelation:%s", base, lang, type)));
@@ -1110,7 +1111,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                     int osize = conn.getContentLength();
                                     if (osize > -1) {
                                         conn.disconnect();
-    
+
                                         conn = Utils.openHttpConnection(new URI(u.toString()
                                                 .replace("=", "%3D") /* do not URLencode whole string! */
                                                 .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
