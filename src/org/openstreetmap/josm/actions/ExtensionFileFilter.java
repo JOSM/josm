@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ServiceConfigurationError;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -64,7 +65,25 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 importers.add(importer);
                 MapView.addLayerChangeListener(importer);
             } catch (Exception e) {
-                Main.debug(e.getMessage());
+                if (Main.isDebugEnabled()) {
+                    Main.debug(e.getMessage());
+                }
+            } catch (ServiceConfigurationError e) {
+                // error seen while initializing WMSLayerImporter in plugin unit tests:
+                // -
+                // ServiceConfigurationError: javax.imageio.spi.ImageWriterSpi:
+                // Provider com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageWriterSpi could not be instantiated
+                // Caused by: java.lang.IllegalArgumentException: vendorName == null!
+                //      at javax.imageio.spi.IIOServiceProvider.<init>(IIOServiceProvider.java:76)
+                //      at javax.imageio.spi.ImageReaderWriterSpi.<init>(ImageReaderWriterSpi.java:231)
+                //      at javax.imageio.spi.ImageWriterSpi.<init>(ImageWriterSpi.java:213)
+                //      at com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageWriterSpi.<init>(CLibJPEGImageWriterSpi.java:84)
+                // -
+                // This is a very strange behaviour of JAI:
+                // http://thierrywasyl.wordpress.com/2009/07/24/jai-how-to-solve-vendorname-null-exception/
+                // -
+                // that can lead to various problems, see #8583 comments
+                Main.error(e);
             }
         }
 
@@ -85,7 +104,12 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 exporters.add(exporter);
                 MapView.addLayerChangeListener(exporter);
             } catch (Exception e) {
-                Main.debug(e.getMessage());
+                if (Main.isDebugEnabled()) {
+                    Main.debug(e.getMessage());
+                }
+            } catch (ServiceConfigurationError e) {
+                // see above in importers initialization
+                Main.error(e);
             }
         }
     }
