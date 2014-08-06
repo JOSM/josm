@@ -96,9 +96,12 @@ public class CustomProjection extends AbstractProjection {
         wmssrs("wmssrs", true),
         bounds("bounds", true);
 
-        public String key;
-        public boolean hasValue;
+        /** Parameter key */
+        public final String key;
+        /** {@code true} if the parameter has a value */
+        public final boolean hasValue;
 
+        /** Map of all parameters by key */
         public static final Map<String, Param> paramsByKey = new HashMap<>();
         static {
             for (Param p : Param.values()) {
