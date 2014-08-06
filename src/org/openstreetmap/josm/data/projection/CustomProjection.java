@@ -27,9 +27,10 @@ import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Custom projection
+ * Custom projection.
  *
  * Inspired by PROJ.4 and Proj4J.
+ * @since 5072
  */
 public class CustomProjection extends AbstractProjection {
 
@@ -44,27 +45,51 @@ public class CustomProjection extends AbstractProjection {
     protected String cacheDir;
     protected Bounds bounds;
 
-    protected static enum Param {
+    /**
+     * Proj4-like projection parameters. See <a href="https://trac.osgeo.org/proj/wiki/GenParms">reference</a>.
+     * @since 7370 (public)
+     */
+    public static enum Param {
 
+        /** False easting */
         x_0("x_0", true),
+        /** False northing */
         y_0("y_0", true),
+        /** Central meridian */
         lon_0("lon_0", true),
+        /** Scaling factor */
         k_0("k_0", true),
+        /** Ellipsoid name (see {@code proj -le}) */
         ellps("ellps", true),
+        /** Semimajor radius of the ellipsoid axis */
         a("a", true),
+        /** Eccentricity of the ellipsoid squared */
         es("es", true),
+        /** Reciprocal of the ellipsoid flattening term (e.g. 298) */
         rf("rf", true),
+        /** Flattening of the ellipsoid = 1-sqrt(1-e^2) */
         f("f", true),
+        /** Semiminor radius of the ellipsoid axis */
         b("b", true),
+        /** Datum name (see {@code proj -ld}) */
         datum("datum", true),
+        /** 3 or 7 term datum transform parameters */
         towgs84("towgs84", true),
+        /** Filename of NTv2 grid file to use for datum transforms */
         nadgrids("nadgrids", true),
+        /** Projection name (see {@code proj -l}) */
         proj("proj", true),
+        /** Latitude of origin */
         lat_0("lat_0", true),
+        /** Latitude of first standard parallel */
         lat_1("lat_1", true),
+        /** Latitude of second standard parallel */
         lat_2("lat_2", true),
+        /** the exact proj.4 string will be preserved in the WKT representation */
         wktext("wktext", false),  // ignored
+        /** meters, US survey feet, etc. */
         units("units", true),     // ignored
+        /** Don't use the /usr/share/proj/proj_def.dat defaults file */
         no_defs("no_defs", false),
         init("init", true),
         // JOSM extensions, not present in PROJ.4
@@ -87,15 +112,22 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
+    /**
+     * Constructs a new empty {@code CustomProjection}.
+     */
     public CustomProjection() {
     }
 
+    /**
+     * Constructs a new {@code CustomProjection} with given parameters.
+     * @param pref String containing projection parameters (ex: "+proj=tmerc +lon_0=-3 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-8,-5,2,85")
+     */
     public CustomProjection(String pref) {
         this(null, null, pref, null);
     }
 
     /**
-     * Constructor.
+     * Constructs a new {@code CustomProjection} with given name, code and parameters.
      *
      * @param name describe projection in one or two words
      * @param code unique code for this projection - may be null
@@ -118,6 +150,11 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
+    /**
+     * Updates this {@code CustomProjection} with given parameters.
+     * @param pref String containing projection parameters (ex: "+proj=lonlat +ellps=WGS84 +datum=WGS84 +bounds=-180,-90,180,90")
+     * @throws ProjectionConfigurationException if {@code pref} cannot be parsed properly
+     */
     public final void update(String pref) throws ProjectionConfigurationException {
         this.pref = pref;
         if (pref == null) {
