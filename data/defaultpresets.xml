@@ -5119,6 +5119,13 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
             <check key="disused" text="Disused" />
         </item>
+        <item name="Embankment" icon="presets/cliff.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=embankment"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=embankment"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:man_made=embankment" />
+            <space />
+            <key key="man_made" value="embankment" />
+        </item>
         <separator/>
         <item name="Water Tower" icon="presets/water_tower.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=water_tower"
