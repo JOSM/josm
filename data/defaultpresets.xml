@@ -1605,10 +1605,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=sally_port" />
             <key key="barrier" value="sally_port" />
             <reference ref="barrier_5" />
-            <optional>
-                <text key="maxheight" text="Max. height (meters)" length="7" />
-                <text key="maxwidth" text="Max. width (meters)" length="7" />
-            </optional>
+            <reference ref="optional_maxheight_maxwidth" />
         </item> <!-- sally_port -->
     </group> <!-- Barriers -->
     <group name="Passageways" icon="presets/tunnel.png">
@@ -1628,6 +1625,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="name" text="Name" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="-1" length="3" />
                 <text key="width" text="Width (meters)" />
+                <text key="maxheight" text="Max. height (meters)" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
                 <check key="toll" text="Toll" />
@@ -1647,6 +1645,7 @@ Note that for a match, at least one positive and no negative is required.
             <optional>
                 <reference ref="name_layer" />
                 <text key="width" text="Width (meters)" />
+                <text key="maxheight" text="Max. height (meters)" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
