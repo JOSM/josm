@@ -104,7 +104,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         pnl.add(rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY), gc);
         gc.gridx = 1;
         gc.gridy = 1;
-        gc.weightx = 0.0;
+        gc.weightx = 1.0;
         gc.weighty = 0.0;
         gc.gridwidth = 2;
         JMultilineLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
@@ -112,7 +112,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         pnl.add(lbl, gc);
         gc.gridx = 3;
         gc.gridy = 1;
-        gc.weightx = 1.0;
+        gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.gridwidth = 1;
         pnl.add(lblNumRequests.get(UploadStrategy.SINGLE_REQUEST_STRATEGY), gc);
@@ -125,7 +125,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         pnl.add(rbStrategy.get(UploadStrategy.CHUNKED_DATASET_STRATEGY), gc);
         gc.gridx = 1;
         gc.gridy = 2;
-        gc.weightx = 0.0;
+        gc.weightx = 1.0;
         gc.weighty = 0.0;
         gc.gridwidth = 1;
         lbl = lblStrategies.get(UploadStrategy.CHUNKED_DATASET_STRATEGY);
@@ -139,7 +139,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         pnl.add(tfChunkSize = new JosmTextField(4), gc);
         gc.gridx = 3;
         gc.gridy = 2;
-        gc.weightx = 1.0;
+        gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.gridwidth = 1;
         pnl.add(lblNumRequests.get(UploadStrategy.CHUNKED_DATASET_STRATEGY), gc);
@@ -152,7 +152,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         pnl.add(rbStrategy.get(UploadStrategy.INDIVIDUAL_OBJECTS_STRATEGY), gc);
         gc.gridx = 1;
         gc.gridy = 3;
-        gc.weightx = 0.0;
+        gc.weightx = 1.0;
         gc.weighty = 0.0;
         gc.gridwidth = 2;
         lbl = lblStrategies.get(UploadStrategy.INDIVIDUAL_OBJECTS_STRATEGY);
@@ -160,7 +160,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         pnl.add(lbl, gc);
         gc.gridx = 3;
         gc.gridy = 3;
-        gc.weightx = 1.0;
+        gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.gridwidth = 1;
         pnl.add(lblNumRequests.get(UploadStrategy.INDIVIDUAL_OBJECTS_STRATEGY), gc);

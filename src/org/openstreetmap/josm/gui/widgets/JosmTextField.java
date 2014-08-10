@@ -29,6 +29,10 @@ public class JosmTextField extends JTextField {
     public JosmTextField(Document doc, String text, int columns) {
         super(doc, text, columns);
         TextContextualPopupMenu.enableMenuFor(this);
+        // Fix minimum size when columns are specified
+        if (columns > 0) {
+            setMinimumSize(getPreferredSize());
+        }
     }
 
     /**
