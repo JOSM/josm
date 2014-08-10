@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -161,22 +162,26 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             JPanel p = new JPanel(new GridBagLayout());
             p.add(new JMultilineLabel(
                     tr("You have encountered an error in JOSM. Before you file a bug report " +
-                            "make sure you have updated to the latest version of JOSM here:")), GBC.eol());
+                            "make sure you have updated to the latest version of JOSM here:")),
+                            GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p.add(new UrlLabel(Main.getJOSMWebsite(),2), GBC.eop().insets(8,0,0,0));
             p.add(new JMultilineLabel(
                     tr("You should also update your plugins. If neither of those help please " +
-                            "file a bug report in our bugtracker using this link:")), GBC.eol());
+                            "file a bug report in our bugtracker using this link:")),
+                            GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p.add(getBugReportUrlLabel(urltext), GBC.eop().insets(8,0,0,0));
             p.add(new JMultilineLabel(
                     tr("There the error information provided below should already be " +
                             "filled in for you. Please include information on how to reproduce " +
-                            "the error and try to supply as much detail as possible.")), GBC.eop());
+                            "the error and try to supply as much detail as possible.")),
+                            GBC.eop().fill(GridBagConstraints.HORIZONTAL));
             p.add(new JMultilineLabel(
                     tr("Alternatively, if that does not work you can manually fill in the information " +
-                            "below at this URL:")), GBC.eol());
+                            "below at this URL:")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket",2), GBC.eop().insets(8,0,0,0));
             if (Utils.copyToClipboard(text)) {
-                p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")), GBC.eop());
+                p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")),
+                        GBC.eop().fill(GridBagConstraints.HORIZONTAL));
             }
 
             JosmTextArea info = new JosmTextArea(text, 18, 60);
