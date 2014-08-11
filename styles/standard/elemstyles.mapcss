@@ -17,12 +17,12 @@ meta {
 /* "work in progress" tags */
 /***************************/
 
-node[fixme]::core_fixme,
-node[FIXME]::core_fixme {
+node|z16-[fixme]::core_fixme,
+node|z16-[FIXME]::core_fixme {
     object-z-index: 20;
     icon-image: "misc/fixme-annotation.png";
 }
-node[note]::core_note {
+node|z16-[note]::core_note {
     object-z-index: 10;
     icon-image: "misc/note-annotation.png";
 }
@@ -3604,6 +3604,57 @@ node[boundary=national_park] {
     icon-image: "misc/deprecated.png";
     text: auto;
 }
+
+/***************/
+/* zoom levels */
+/***************/
+
+canvas {
+    default-points: false;
+}
+node {
+    text: auto;
+}
+node|z16- {
+    symbol-size:1;
+    symbol-shape: square;
+    symbol-stroke-color: node_standard#ffff00;
+}
+node|z16-:connection {
+    symbol-stroke-color: node_connection#ffff00;
+}
+node|z16-:tagged {
+    symbol-stroke-color: node_tagged#ccffff;
+}
+
+node|z16             { symbol-size: 2; }
+way > node|z16       { symbol-size: 1; }
+node|z16:connection  { symbol-size: 2; }
+
+node|z17             { symbol-size: 4; }
+way > node|z17       { symbol-size: 2; }
+node|z17:connection  { symbol-size: 4; }
+
+node|z18             { symbol-size: 5; }
+way > node|z18       { symbol-size: 3; }
+node|z18:connection  { symbol-size: 5; }
+
+node|z19-            { symbol-size: 6; }
+way > node|z19-      { symbol-size: 4; }
+node|z19-:connection { symbol-size: 6; }
+
+node|z-16,
+relation|z-16[type=restriction] {
+    icon-image: none;
+}
+node|z-17 {
+    text: none;
+}
+
+node|z20,area|z20   { font-size: 9; }
+node|z21,area|z21   { font-size: 10; }
+node|z22-,area|z22- { font-size: 11; }
+
 /* "deprecated" tags 
      historic=museum -> tourism=museum 
      man_made=power_wind -> power=generator and power_source=wind 
