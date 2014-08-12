@@ -13,6 +13,10 @@ meta {
     icon: "dialogs/mappaint/josm_small.png";
 }
 
+canvas {
+    default-points: false;
+}
+
 /***************************/
 /* "work in progress" tags */
 /***************************/
@@ -25,6 +29,14 @@ node|z16-[FIXME]::core_fixme {
 node|z16-[note]::core_note {
     object-z-index: 10;
     icon-image: "misc/note-annotation.png";
+}
+
+/* special display of unreviewed tiger data (USA) */
+way["tiger:reviewed"=no]::core_tiger {
+    major-z-index: -10;
+    width: 11;
+    color: tiger_data#808000;
+    opacity: 0.6;
 }
 
 /*********************/
@@ -269,78 +281,6 @@ node[minspeed] {
 node[maxstay],
 node[toll] {
     icon-image: "misc/no_icon.png";
-}
-
-/**************/
-/* place tags */
-/**************/
-
-/* lot's of "openGeoDB:..." tags can be found in germany */
-node["openGeoDB:type"=Stadt],
-node["openGeoDB:type"=Kreis],
-node["openGeoDB:type"=Gemeinde],
-node["openGeoDB:type"=Ort],
-node["openGeoDB:type"=District],
-node["openGeoDB:location"=locality] {
-    icon-image: "place/settlement/town.png";
-    text: auto;
-}
-area[place=continent],
-area[place=country],
-area[place=state],
-area[place=region],
-area[place=county],
-area[place=city],
-area[place=town],
-area[place=village],
-area[place=hamlet],
-area[place=isolated_dwelling],
-area[place=neighbourhood],
-area[place=suburb],
-area[place=locality],
-area[place=island],
-area[place=islet] {
-    fill-color: place#8de3cb;
-}
-node[place=continent],
-node[place=country],
-node[place=state],
-node[place=region],
-node[place=county] {
-    icon-image: "place/settlement/capital.png";
-    text: auto;
-}
-node[place=city] {
-    icon-image: "place/settlement/city.png";
-    text: auto;
-}
-node[place=town],
-node[place=village],
-node[place=hamlet],
-node[place=isolated_dwelling],
-node[place=neighbourhood],
-node[place=suburb] {
-    icon-image: "place/settlement/town.png";
-    text: auto;
-}
-node[place=locality] {
-    icon-image: "place/locality.png";
-    text: auto;
-}
-node[place=island] {
-    icon-image: "place/island.png";
-    text: auto;
-}
-node[place=islet] {
-    icon-image: "place/islet.png";
-    text: auto;
-}
-/* special display of unreviewed tiger data (USA) */
-way["tiger:reviewed"=no]::core_tiger {
-    major-z-index: -10;
-    width: 11;
-    color: tiger_data#808000;
-    opacity: 0.6;
 }
 
 /****************/
@@ -3609,9 +3549,6 @@ node[boundary=national_park] {
 /* zoom levels */
 /***************/
 
-canvas {
-    default-points: false;
-}
 node {
     text: auto;
 }
@@ -3624,7 +3561,8 @@ node|z16-:connection {
     symbol-stroke-color: node_connection#ffff00;
 }
 node|z16-:tagged {
-    symbol-stroke-color: node_tagged#ccffff;
+    symbol-stroke-color: none;
+    symbol-fill-color: node_tagged#00ffff;
 }
 
 node|z16             { symbol-size: 2; }
@@ -3654,6 +3592,71 @@ node|z-17 {
 node|z20,area|z20   { font-size: 9; }
 node|z21,area|z21   { font-size: 10; }
 node|z22-,area|z22- { font-size: 11; }
+
+/**************/
+/* place tags */
+/**************/
+
+/* lot's of "openGeoDB:..." tags can be found in germany */
+node|z11-["openGeoDB:type"=Stadt],
+node|z11-["openGeoDB:type"=Kreis],
+node|z11-["openGeoDB:type"=Gemeinde],
+node|z11-["openGeoDB:type"=Ort],
+node|z11-["openGeoDB:type"=District],
+node|z11-["openGeoDB:location"=locality] {
+    icon-image: "place/settlement/town.png";
+    text: auto;
+}
+area[place=continent],
+area[place=country],
+area[place=state],
+area[place=region],
+area[place=county],
+area[place=city],
+area[place=town],
+area[place=village],
+area[place=hamlet],
+area[place=isolated_dwelling],
+area[place=neighbourhood],
+area[place=suburb],
+area[place=locality],
+area[place=island],
+area[place=islet] {
+    fill-color: place#8de3cb;
+}
+node|z11-[place=continent],
+node|z11-[place=country],
+node|z11-[place=state],
+node|z11-[place=region],
+node|z11-[place=county] {
+    icon-image: "place/settlement/capital.png";
+    text: auto;
+}
+node|z11-[place=city] {
+    icon-image: "place/settlement/city.png";
+    text: auto;
+}
+node|z11-[place=town],
+node|z11-[place=village],
+node|z11-[place=hamlet],
+node|z11-[place=isolated_dwelling],
+node|z11-[place=neighbourhood],
+node|z11-[place=suburb] {
+    icon-image: "place/settlement/town.png";
+    text: auto;
+}
+node|z11-[place=locality] {
+    icon-image: "place/locality.png";
+    text: auto;
+}
+node|z11-[place=island] {
+    icon-image: "place/island.png";
+    text: auto;
+}
+node|z11-[place=islet] {
+    icon-image: "place/islet.png";
+    text: auto;
+}
 
 /* "deprecated" tags 
      historic=museum -> tourism=museum 
