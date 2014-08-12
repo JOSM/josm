@@ -165,6 +165,10 @@ Note that for a match, at least one positive and no negative is required.
     <chunk id="surface">
         <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground,sett" />
     </chunk>
+    <chunk id="riding_surface">
+        <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="riding" />
+        <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
+    </chunk>
     <chunk id="highway_base">
         <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3"/>
         <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3"/>
@@ -231,7 +235,7 @@ Note that for a match, at least one positive and no negative is required.
         <text key="phone" text="Phone Number"/>
         <text key="fax" text="Fax Number"/>
         <text key="website" text="Website"/>
-    <text key="email" text="Email Address"/>
+        <text key="email" text="Email Address"/>
     </chunk>
     <chunk id="name_ref">
         <text key="name" text="Name" />
@@ -300,6 +304,11 @@ Note that for a match, at least one positive and no negative is required.
     <chunk id="name_leisure_pitch">
         <text key="name" text="Name" />
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
+    </chunk>
+    <chunk id="optional_sport">
+        <optional text="Select sport:">
+            <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" values_context="sport" />
+        </optional>
     </chunk>
     <chunk id="payment_base">
         <check key="payment:coins" text="Coins" />
@@ -3217,7 +3226,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <reference ref="contact" />
         </item>
-    </group> <!-- Accomodation -->
+    </group> <!-- Accommodation -->
     <group name="Food+Drinks" icon="presets/restaurant.png">
         <item name="Restaurant" icon="presets/restaurant.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=restaurant"
@@ -3391,7 +3400,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="tourism" value="viewpoint" />
             <text key="name" text="Name" />
-<!--<check key="man_made" value="tower" text="Look-Out Tower" />-->
+            <!--<check key="man_made" value="tower" text="Look-Out Tower" />-->
         </item>
         <separator/>
         <item name="Information Office" icon="presets/informationoffice.png" type="node,closedway" preset_name_label="true">
@@ -4502,9 +4511,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="leisure" value="stadium" />
             <text key="name" text="Name" />
-            <optional text="Select sport:">
-                <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" values_context="sport" />
-            </optional>
+            <reference ref="optional_sport" />
         </item>
         <item name="Sports Centre" icon="presets/sports_centre.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=sports_centre"
@@ -4516,9 +4523,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="leisure" value="sports_centre" />
             <text key="name" text="Name" />
-            <optional text="Select sport:">
-                <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" values_context="sport" />
-            </optional>
+            <reference ref="optional_sport" />
         </item>
         <item name="Pitch" icon="presets/pitch.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=pitch"
@@ -4533,9 +4538,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="leisure" value="pitch" />
             <text key="name" text="Name" />
-            <optional text="Select sport:">
-                <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" values_context="sport" />
-            </optional>
+            <reference ref="optional_sport" />
         </item>
         <item name="Racetrack" icon="presets/stadium.png" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=track"
@@ -4548,9 +4551,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="leisure" value="track" />
             <text key="name" text="Name" />
-            <optional text="Select sport:">
-                <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_games,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" values_context="sport" />
-            </optional>
+            <reference ref="optional_sport" />
         </item>
         <item name="Golf Course" icon="presets/golf.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
@@ -4645,16 +4646,14 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="sport" value="equestrian" />
             <text key="name" text="Name" />
-            <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="riding" />
-            <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
+            <reference ref="riding_surface" />
         </item>
         <item name="Horse Racing" icon="presets/equestrian.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=horse_racing" />
             <space />
             <key key="sport" value="horse_racing" />
             <text key="name" text="Name" />
-            <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="riding" />
-            <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
+            <reference ref="riding_surface" />
         </item>
         <item name="Gymnastics" icon="presets/gymnastics.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=gymnastics" />
@@ -4784,7 +4783,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="name_operator" />
             <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" />
         </item>
-        <item name="Beachvolleyball" icon="presets/beachvolleyball.png" type="node,closedway" preset_name_label="true">
+        <item name="Beach volleyball" icon="presets/beachvolleyball.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=beachvolleyball" />
             <space />
             <key key="sport" value="beachvolleyball" />
