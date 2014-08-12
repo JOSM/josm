@@ -595,6 +595,12 @@ public interface Selector {
             // or similar level are displayed at the given scale
             return 2.0 * Math.PI * R / Math.pow(2.0, lvl) / 2.56;
         }
+        
+        public static int scale2level(double scale) {
+            if (scale < 0)
+                throw new IllegalArgumentException();
+            return (int) Math.floor(Math.log(2 * Math.PI * R / 2.56 / scale) / Math.log(2));
+        }
 
         @Override
         public String toString() {

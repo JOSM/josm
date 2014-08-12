@@ -69,6 +69,7 @@ import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.RepeatImageElemStyle.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -1243,7 +1244,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
-
+            
         highlightLineWidth = Main.pref.getInteger("mappaint.highlight.width", 4);
         highlightPointRadius = Main.pref.getInteger("mappaint.highlight.radius", 7);
         widerHighlight = Main.pref.getInteger("mappaint.highlight.bigger-increment", 5);
@@ -1487,9 +1488,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             List<Node> nodes = data.searchNodes(bbox);
             List<Way> ways = data.searchWays(bbox);
             List<Relation> relations = data.searchRelations(bbox);
-    
+
             final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
-    
+
             ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems, data);
 
             // Need to process all relations first.
@@ -1505,7 +1506,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 System.err.print("phase 1 (calculate styles): " + (timePhase1 - timeStart) + " ms");
             }
 
-            Collections.sort(allStyleElems);
+            Collections.sort(allStyleElems); // TODO: try parallel sort when switching to Java 8
 
             for (StyleRecord r : allStyleElems) {
                 r.style.paintPrimitive(
@@ -1516,12 +1517,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
                 );
             }
-    
+
             if (Main.isTraceEnabled()) {
                 timeFinished = System.currentTimeMillis();
-                System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms");
+                System.err.println("; phase 2 (draw): " + (timeFinished - timePhase1) + " ms; total: " + (timeFinished - timeStart) + " ms" +
+                    " (scale: " + circum + " zoom level: " + Selector.GeneralSelector.scale2level(circum) + ")");
             }
-    
+
             drawVirtualNodes(data, bbox);
         } finally {
             data.getReadLock().unlock();
