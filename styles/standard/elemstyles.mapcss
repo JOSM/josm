@@ -3548,23 +3548,23 @@ node[boundary=national_park] {
 node[maxspeed=none] {
     icon-image: "vehicle/restriction/maxspeed_none.svg";
 }
-node[maxspeed=~/^[0-9]+$/] {
+node|z17-[maxspeed=~/^[0-9]+$/] {
     maxspeedprop: tag(maxspeed);
     set maxspeedclass;
 }
-node[maxspeed=signals] {
+node|z17-[maxspeed=signals] {
     maxspeedprop: " ?";
     set maxspeedclass;
 }
-node[maxspeed=~/^[0-9]+ mph/] {
+node|z17-[maxspeed=~/^[0-9]+ mph/] {
     maxspeedprop: get(split(" mph",tag(maxspeed)),0);
     set maxspeedclass;
 }
-node[maxspeed=~/[0-9]+ km\/h/] {
+node|z17-[maxspeed=~/[0-9]+ km\/h/] {
     maxspeedprop: get(split(" km/h",tag(maxspeed)),0);
     set maxspeedclass;
 }
-node[maxspeed=~/[0-9]+ knots/] {
+node|z17-[maxspeed=~/[0-9]+ knots/] {
     maxspeedprop: get(split(" knots",tag(maxspeed)),0);
     set maxspeedclass;
 }
