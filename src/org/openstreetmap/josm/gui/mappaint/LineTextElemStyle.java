@@ -17,14 +17,14 @@ public class LineTextElemStyle extends ElemStyle {
         super(c, 4.9f);
         this.text = text;
     }
-    public static LineTextElemStyle create(Environment env) {
-        Cascade c = env.mc.getCascade(env.layer);
+    public static LineTextElemStyle create(final Environment env) {
+        final Cascade c = env.mc.getCascade(env.layer);
 
         Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
         if (textPos != null && !"line".equals(textPos.val))
             return null;
 
-        TextElement text = TextElement.create(c, PaintColors.TEXT.get(), false);
+        TextElement text = TextElement.create(env, PaintColors.TEXT.get(), false);
         if (text == null)
             return null;
         return new LineTextElemStyle(c, text);

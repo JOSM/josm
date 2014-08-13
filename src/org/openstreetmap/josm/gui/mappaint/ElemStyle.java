@@ -111,7 +111,7 @@ public abstract class ElemStyle implements StyleKeys {
             synchronized (lock) {
                 n = DEFAULT_FONT_NAME;
                 if (n == null) {
-                    DEFAULT_FONT_NAME = n = Main.pref.get("mappaint.font", "Helvetica");
+                    DEFAULT_FONT_NAME = n = Main.pref.get("mappaint.font", "Droid Sans");
                 }
             }
         }
@@ -173,7 +173,7 @@ public abstract class ElemStyle implements StyleKeys {
         return getCachedFont(new FontDescriptor(name, style, size));
     }
 
-    protected static Font getFont(Cascade c) {
+    protected static Font getFont(Cascade c, String s) {
         String name = c.get("font-family", getDefaultFontName(), String.class);
         float size = c.get("font-size", getDefaultFontSize(), Float.class);
         int weight = Font.PLAIN;
@@ -184,7 +184,14 @@ public abstract class ElemStyle implements StyleKeys {
         if ("italic".equalsIgnoreCase(c.get("font-style", null, String.class))) {
             style = Font.ITALIC;
         }
-        return getCachedFont(name, style | weight, Math.round(size));
+        Font f = getCachedFont(name, style | weight, Math.round(size));
+        if (f.canDisplayUpTo(s) == -1)
+            return f;
+        else {
+            // fallback if the string contains characters that cannot be
+            // rendered by the selected font
+            return getCachedFont("SansSerif", style | weight, Math.round(size));
+        }
     }
 
     @Override

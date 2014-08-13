@@ -110,7 +110,7 @@ public class BoxTextElemStyle extends ElemStyle {
         initDefaultParameters();
         Cascade c = env.mc.getCascade(env.layer);
 
-        TextElement text = TextElement.create(c, DEFAULT_TEXT_COLOR, false);
+        TextElement text = TextElement.create(env, DEFAULT_TEXT_COLOR, false);
         if (text == null) return null;
         // Skip any primitives that don't have text to draw. (Styles are recreated for any tag change.)
         // The concrete text to render is not cached in this object, but computed for each
