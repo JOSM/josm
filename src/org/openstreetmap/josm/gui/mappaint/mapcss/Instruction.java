@@ -35,15 +35,15 @@ public interface Instruction extends StyleKeys {
         public AssignmentInstruction(String key, Object val, boolean isSetInstruction) {
             this.key = key;
             this.isSetInstruction = isSetInstruction;
-            if (val instanceof Keyword) {
-                if ("none".equals(((Keyword) val).val)) {
-                    this.val = null;
-                } else {
-                    this.val = val;
-                }
-            } else if (val instanceof LiteralExpression) {
+            if (val instanceof LiteralExpression) {
                 Object litValue = ((LiteralExpression) val).evaluate(null);
-                if (key.equals(TEXT)) {
+                if (litValue instanceof Keyword) {
+                    if ("none".equals(((Keyword) litValue).val)) {
+                        this.val = null;
+                    } else {
+                        this.val = val;
+                    }
+                } else if (key.equals(TEXT)) {
                     /* Special case for declaration 'text: ...'
                      *
                      * - Treat the value 'auto' as keyword.
