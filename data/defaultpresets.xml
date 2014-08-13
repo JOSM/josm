@@ -3430,7 +3430,7 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
             <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
             <reference ref="link_contact" />
-        </item>
+        </item> <!-- Information Office -->
         <item name="Map" icon="presets/map.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:information"
@@ -3438,6 +3438,7 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:information"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:information"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:information" />
+            <label text="A board with a map." />
             <space />
             <key key="tourism" value="information" />
             <key key="information" value="map" />
@@ -3454,7 +3455,7 @@ Note that for a match, at least one positive and no negative is required.
                 <space />
                 <label text="... other transportation modes possible" />
             </optional>
-        </item>
+        </item> <!-- Map -->
         <item name="Information Board" icon="presets/board.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:information"
@@ -3469,7 +3470,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="board_type" text="Board Content" values="notice,history,nature,wildlife,plants,geology" />
             <text key="description" text="Closer Description" />
-        </item>
+        </item> <!-- Information Board -->
         <item name="Guidepost" icon="presets/guidepost.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:information=guidepost"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:information=guidepost"
@@ -3490,7 +3491,7 @@ Note that for a match, at least one positive and no negative is required.
                 <space />
                 <label text="... other transportation modes possible" />
             </optional>
-        </item>
+        </item> <!-- Guidepost -->
         <item name="Information Terminal" icon="presets/information.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:information"
@@ -3498,17 +3499,17 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:information"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:information"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:information" />
+            <label text="Information access via electronic methods." />
             <space />
             <key key="tourism" value="information" />
             <key key="information" value="terminal" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator" />
             <text key="description" text="Closer description" />
-            <text key="operator" text="Operator" />
             <text key="ref" text="Reference number" />
             <combo key="fee" text="Fee" values="yes,no" />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
             <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
-        </item>
+        </item> <!-- Information Terminal -->
         <item name="Audioguide" icon="presets/information.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:information"
@@ -3516,18 +3517,18 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:information"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:information"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:information" />
+            <label text="Information using headphones or a mobile phone." />
             <space />
             <key key="tourism" value="information" />
             <key key="information" value="audioguide" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator" />
             <text key="description" text="Closer description" />
-            <text key="operator" text="Operator" />
             <text key="ref" text="Reference number" />
             <combo key="fee" text="Fee" values="yes,no" />
             <space />
             <label text="Audioguide via mobile phone?" />
             <text key="phone" text="Phone number" />
-        </item>
+        </item> <!-- Audioguide -->
         <item name="Other Information Point" icon="presets/information.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=information"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=information"
@@ -3540,7 +3541,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="tourism" value="information" />
             <text key="name" text="Name" />
             <text key="description" text="Closer Description" />
-        </item>
+        </item> <!-- Other Information Point -->
     </group> <!-- Tourism -->
     <group name="Leisure" icon="presets/theme_park.png">
         <item name="Cinema" icon="presets/cinema.png" type="node,closedway,relation" preset_name_label="true">
