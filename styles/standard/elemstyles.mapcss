@@ -3687,6 +3687,10 @@ node|z11-["openGeoDB:location"=locality] {
     icon-image: "place/settlement/town.png";
     text: auto;
     font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
 }
 area[place=continent],
 area[place=country],
@@ -3713,11 +3717,19 @@ node|z11-[place=county] {
     icon-image: "place/settlement/capital.png";
     text: auto;
     font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
 }
 node|z11-[place=city] {
     icon-image: "place/settlement/city.png";
     text: auto;
     font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
 }
 node|z11-[place=town],
 node|z11-[place=village],
@@ -3728,21 +3740,37 @@ node|z11-[place=suburb] {
     icon-image: "place/settlement/town.png";
     text: auto;
     font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
 }
 node|z11-[place=locality] {
     icon-image: "place/locality.png";
     text: auto;
     font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
 }
 node|z11-[place=island] {
     icon-image: "place/island.png";
     text: auto;
     font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
 }
 node|z11-[place=islet] {
     icon-image: "place/islet.png";
     text: auto;
     font-size: 10;
+    font-weight: bold;
+    text-color:black;
+    text-halo-color: white;
+    text-halo-radius: 1;
 }
 
 /* "deprecated" tags 
