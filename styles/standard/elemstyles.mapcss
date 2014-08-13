@@ -3568,19 +3568,19 @@ node[maxspeed=~/[0-9]+ knots/] {
     maxspeedprop: get(split(" knots",tag(maxspeed)),0);
     set maxspeedclass;
 }
-node[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core_maxnodebg {
+node|z17-[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core_maxnodebg {
     /* background (white) */
     symbol-shape: circle;
     symbol-size: 17;
     symbol-fill-color: white;
     major-z-index: 4.2;
 }
-node[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"][!is_prop_set(icon-image, default)]::core_maxnodebg,
-node[maxspeed=signals][!is_prop_set(icon-image, default)]::core_maxnodebg {
+node|z17-[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"][!is_prop_set(icon-image, default)]::core_maxnodebg,
+node|z17-[maxspeed=signals][!is_prop_set(icon-image, default)]::core_maxnodebg {
     /* background (black) */
     symbol-fill-color: black;
 }
-node[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core_maxnodefg {
+node|z17-[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core_maxnodefg {
     /* foreground (black text and red circle) */
     symbol-shape: circle;
     symbol-size: 15;
@@ -3597,8 +3597,8 @@ node[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core_maxn
     text-offset-y: -1;
     major-z-index: 4.2;
 }
-node[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"][!is_prop_set(icon-image, default)]::core_maxnodefg,
-node[maxspeed=signals][!is_prop_set(icon-image, default)]::core_maxnodefg {
+node|z17-[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"][!is_prop_set(icon-image, default)]::core_maxnodefg,
+node|z17-[maxspeed=signals][!is_prop_set(icon-image, default)]::core_maxnodefg {
     /* foreground (white text) */
     text-color: white;
 }
