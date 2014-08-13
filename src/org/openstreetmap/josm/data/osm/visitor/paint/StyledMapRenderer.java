@@ -1239,7 +1239,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         showNames = paintSettings.getShowNamesDistance() > circum;
         showIcons = paintSettings.getShowIconsDistance() > circum;
         isOutlineOnly = paintSettings.isOutlineOnly();
-        orderFont = new Font(Main.pref.get("mappaint.font", "Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
+        orderFont = new Font(Main.pref.get("mappaint.font", "Droid Sans"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 Main.pref.getBoolean("mappaint.use-antialiasing", true) ?

@@ -3589,7 +3589,6 @@ node|z17-[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core
     text: prop(maxspeedprop, default);
     font-size: 8;
     font-weight: bold;
-    font-family: "Droid Sans";
     text-color: black;
     text-anchor-horizontal: center;
     text-anchor-vertical: center;
@@ -3610,10 +3609,11 @@ node|z17-[maxspeed=signals][!is_prop_set(icon-image, default)]::core_maxnodefg {
 node {
     text: auto;
 }
-node|z16- {
+node|z16-[!is_prop_set("icon-image")] {
     symbol-size:1;
     symbol-shape: square;
     symbol-stroke-color: node_standard#ffff00;
+    major-z-index: 4.95; /* put node squares above line text */
 }
 node|z16-:connection {
     symbol-stroke-color: node_connection#ffff00;
@@ -3650,6 +3650,29 @@ node|z-17 {
 node|z19,area|z19   { font-size: 9; }
 node|z20-,area|z20-   { font-size: 10; }
 
+/*******************/
+/* way text labels */
+/*******************/
+
+way|z17-[highway=residential] {
+    text: auto;
+    text-color: black;
+    font-size: 9;
+    text-position: line;
+    text-halo-color: #ffffff;
+    text-halo-opacity: 1;
+    text-halo-radius: 1.5;
+}
+way|z18[highway=residential] {
+    font-size: 10;
+}
+way|z19[highway=residential] {
+    font-size: 11;
+}
+way|z20-[highway=residential] {
+    font-size: 12;
+}
+
 /**************/
 /* place tags */
 /**************/
@@ -3663,6 +3686,7 @@ node|z11-["openGeoDB:type"=District],
 node|z11-["openGeoDB:location"=locality] {
     icon-image: "place/settlement/town.png";
     text: auto;
+    font-size: 10;
 }
 area[place=continent],
 area[place=country],
@@ -3688,10 +3712,12 @@ node|z11-[place=region],
 node|z11-[place=county] {
     icon-image: "place/settlement/capital.png";
     text: auto;
+    font-size: 10;
 }
 node|z11-[place=city] {
     icon-image: "place/settlement/city.png";
     text: auto;
+    font-size: 10;
 }
 node|z11-[place=town],
 node|z11-[place=village],
@@ -3701,18 +3727,22 @@ node|z11-[place=neighbourhood],
 node|z11-[place=suburb] {
     icon-image: "place/settlement/town.png";
     text: auto;
+    font-size: 10;
 }
 node|z11-[place=locality] {
     icon-image: "place/locality.png";
     text: auto;
+    font-size: 10;
 }
 node|z11-[place=island] {
     icon-image: "place/island.png";
     text: auto;
+    font-size: 10;
 }
 node|z11-[place=islet] {
     icon-image: "place/islet.png";
     text: auto;
+    font-size: 10;
 }
 
 /* "deprecated" tags 
