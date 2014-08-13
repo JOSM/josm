@@ -1185,11 +1185,11 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=traffic_signals" />
             <key key="highway" value="traffic_signals" />
             <optional text="Optional crossing attributes:">
-                 <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
-                 <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
-                 <check key="supervised" text="Crossing attendant" />
-                 <check key="bicycle" text="Cross by bicycle" />
-                 <check key="horse" text="Cross on horseback" />
+                <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
+                <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
+                <check key="supervised" text="Crossing attendant" />
+                <check key="bicycle" text="Cross by bicycle" />
+                <check key="horse" text="Cross on horseback" />
             </optional>
         </item>
         <item name="Stop" icon="presets/Stop.png" type="node" preset_name_label="true">
@@ -1713,8 +1713,8 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item>
-    </group>
-  </group> <!-- Passageways -->
+    </group> <!-- Passageways -->
+  </group>
   <group name="Water" icon="presets/waterway.png">
     <group name="Water" icon="presets/waterway.png">
         <item name="Drain" icon="presets/waterway.png" type="way" preset_name_label="true">
@@ -1798,10 +1798,12 @@ Note that for a match, at least one positive and no negative is required.
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:natural=spring"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=spring"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=spring" />
+            <label text="A point where groundwater naturally flows to the surface of the earth from underground." />
             <space />
             <key key="natural" value="spring" />
             <text key="name" text="Name" />
-        </item>
+            <check key="drinking_water" text="Drinking Water" />
+        </item> <!-- Spring -->
         <item name="Waterfall" icon="presets/waterfall.png" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=waterfall" />
             <space />
@@ -1908,18 +1910,15 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=water"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=water"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=water" />
+            <label text="A body of standing water, such as a lake or pond." />
             <space />
             <key key="natural" value="water" />
             <text key="name" text="Name" />
             <combo key="water" text="Water Body" values="canal,lake,lagoon,oxbow,pond,reservoir,river" match="key" values_searchable="true" />
-        </item>
-        <item name="Land" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=land" />
-            <space />
-            <key key="natural" value="land" />
-            <text key="name" text="Name" />
-        </item>
-        <item name="Coastline" icon="presets/coastline.png" type="node,way,closedway,relation" preset_name_label="true">
+            <check key="salt" text="Salt Water" disable_off="true" />
+            <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+        </item> <!-- Water -->
+        <item name="Coastline" icon="presets/coastline.png" type="way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=coastline"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=coastline"
@@ -1927,10 +1926,11 @@ Note that for a match, at least one positive and no negative is required.
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=coastline"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=coastline"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=coastline" />
+            <label text="Line between the sea and land (with the water on the right side of the way)." />
             <space />
             <key key="natural" value="coastline" />
             <text key="name" text="Name" />
-        </item>
+        </item> <!-- Coastline -->
         <item name="Riverbank" icon="presets/waterway.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=riverbank"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=riverbank"
@@ -1947,7 +1947,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
         </item>
         <separator/>
-        <item name="Wetland" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Wetland" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wetland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wetland"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:natural=wetland"
@@ -1958,19 +1958,21 @@ Note that for a match, at least one positive and no negative is required.
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=wetland"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=wetland"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=wetland" />
+            <label text="Waterlogged area, either permanently or seasonally with vegetation." />
             <space />
             <key key="natural" value="wetland" />
             <text key="name" text="Name" />
             <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" values_searchable="true" />
-        </item>
-        <item name="Mud" icon="presets/mud.png" type="node,closedway,relation" preset_name_label="true">
+        </item> <!-- Wetland -->
+        <item name="Mud" icon="presets/mud.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=mud"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=mud"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=mud" />
-            <key key="natural" value="mud" />
+            <label text="Large area covered with mud." />
             <space />
+            <key key="natural" value="mud" />
             <text key="name" text="Name" />
-        </item>
+        </item> <!-- Mud -->
         <item name="Beach" icon="presets/beach.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=beach"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=beach"
@@ -1978,20 +1980,29 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=beach"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=beach"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=beach" />
+            <label text="A flat area of sand, gravel or pebble next to water." />
             <space />
             <key key="natural" value="beach" />
-            <text key="name" text="Name" />
-        </item>
+            <reference ref="name_wikipedia" />
+            <optional>
+                <combo key="supervised" text="Supervised" values="yes,no,interval" />
+                <reference ref="oh" />
+                <reference ref="general_access" />
+                <combo key="surface" text="Surface" values="gravel,pebblestone,sand" />
+                <combo key="sport" text="Sport" values="swimming,surfing" />
+            </optional>
+        </item> <!-- Beach -->
         <item name="Bay" icon="presets/bay.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=bay"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=bay"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=bay"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=bay"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=bay" />
+            <label text="A large body of water partially enclosed by land but with a wide mouth." />
             <space />
             <key key="natural" value="bay" />
             <text key="name" text="Name" />
-        </item>
+        </item> <!-- Bay -->
         <item name="Cliff" icon="presets/cliff.png" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=cliff"
@@ -1999,11 +2010,12 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=cliff"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=cliff"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=cliff" />
+            <label text="A steep rock face exposure, with a significant vertical, or near vertical (leave the lower face to the right of the way)." />
             <space />
             <key key="natural" value="cliff" />
             <text key="name" text="Name" />
-        </item>
-      </group> <!-- Water -->
+        </item> <!-- Cliff -->
+    </group> <!-- Water -->
     <group name="Shipping" icon="presets/ferry.png">
         <item name="Ferry Terminal" icon="presets/ferry.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=ferry_terminal"
@@ -2026,7 +2038,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:route=ferry" />
             <key key="route" value="ferry" />
             <optional>
-              <text key="name" text="Name" />
+                <text key="name" text="Name" />
             </optional>
         </item>
         <separator/>
@@ -3410,6 +3422,7 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:information"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:information"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:information" />
+            <label text="An office where you can get information about a town or region." />
             <space />
             <key key="tourism" value="information" />
             <key key="information" value="office" />
@@ -3450,10 +3463,11 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:information"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:information" />
             <space />
+            <label text="A board with information." />
             <key key="tourism" value="information" />
             <key key="information" value="board" />
             <text key="name" text="Name" />
-            <combo key="board_type" text="Board Content" values="notice,history,nature,wildlife,plants" />
+            <combo key="board_type" text="Board Content" values="notice,history,nature,wildlife,plants,geology" />
             <text key="description" text="Closer Description" />
         </item>
         <item name="Guidepost" icon="presets/guidepost.png" type="node" preset_name_label="true">
@@ -3461,10 +3475,11 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:information=guidepost"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:information=guidepost"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:information=guidepost" />
+            <label text="A Signpost/Guidepost to indicate the directions to different destinations." />
             <space />
             <key key="tourism" value="information" />
             <key key="information" value="guidepost" />
-            <text key="name" text="Name" />
+            <reference ref="name_ref_operator" />
             <text key="ele" text="Elevation" />
             <optional text="Routes shown for:">
                 <check key="hiking" text="Hiking" />
@@ -6780,51 +6795,63 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=peak"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=peak"
                   zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:natural=peak" />
+            <label text="The top (summit) of a mountain or hill." />
             <space />
             <key key="natural" value="peak" />
             <reference ref="name_wikipedia" />
             <text key="ele" text="Elevation" />
-        </item>
+        </item> <!-- Peak -->
         <item name="Saddle" icon="presets/saddle.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=saddle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=saddle"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=saddle"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=saddle" />
+            <label text="A saddle point between mountains or hills." />
             <space/>
             <key key="natural" value="saddle" />
             <reference ref="name_wikipedia" />
             <text key="ele" text="Elevation" />
-        </item>
-        <item name="Glacier" icon="presets/glacier.png" type="node,closedway" preset_name_label="true">
+        </item> <!-- Saddle -->
+        <item name="Glacier" icon="presets/glacier.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=glacier"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=glacier"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=glacier"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=glacier" />
+            <label text="A persistent body of dense ice that is constantly moving under its own weight." />
             <space />
             <key key="natural" value="glacier" />
             <reference ref="name_wikipedia" />
             <text key="ele" text="Elevation" />
-        </item>
-        <item name="Volcano" icon="presets/volcano.png" type="node,closedway" preset_name_label="true">
+        </item> <!-- Glacier -->
+        <item name="Volcano" icon="presets/volcano.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=volcano"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=volcano"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=volcano"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=volcano"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=volcano" />
+            <label text="A volcano, either dormant, extinct or active." />
             <space />
             <key key="natural" value="volcano" />
             <reference ref="name_wikipedia" />
             <text key="ele" text="Elevation" />
-        </item>
-        <item name="Cave Entrance" icon="presets/cave_entrance.png" type="node,closedway" preset_name_label="true">
+            <optional>
+                <combo key="volcano:status" text="Current Status" values="active,dormant,extinct" />
+                <combo key="volcano:type" text="Type" values="stratovolcano,shield,scoria" />
+            </optional>
+        </item> <!-- Volcano -->
+        <item name="Cave Entrance" icon="presets/cave_entrance.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=cave_entrance"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=cave_entrance"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=cave_entrance" />
+            <label text="The entrance to a cave." />
             <space />
             <key key="natural" value="cave_entrance" />
             <reference ref="name_wikipedia" />
-        </item>
+            <reference ref="oh" />
+            <reference ref="general_access" />
+            <combo key="fee" text="Fee" values="yes,no" />
+        </item> <!-- Cave Entrance -->
         <separator/>
         <item name="Island" icon="presets/island.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=island"
@@ -6845,6 +6872,16 @@ Note that for a match, at least one positive and no negative is required.
             <key key="place" value="islet" />
             <reference ref="name_wikipedia" />
         </item>
+        <item name="Ridge" icon="presets/empty.png" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=ridge"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=ridge"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=ridge" />
+            <label text="A mountain or hill ridge." />
+            <space />
+            <key key="natural" value="ridge" />
+            <reference ref="name_wikipedia" />
+            <text key="ele" text="Elevation" />
+        </item> <!-- Ridge -->
     </group> <!-- Geography -->
     <group name="Nature" icon="presets/tree.png">
         <item name="Tree" icon="presets/tree.png" type="node" preset_name_label="true">
@@ -6858,6 +6895,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=tree"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=tree"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:natural=tree" />
+            <label text="A single tree." />
             <space />
             <key key="natural" value="tree" />
             <text key="name" text="Name" />
@@ -6869,7 +6907,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="taxon" text="Taxon" />
                 <reference ref="leaf" />
             </optional>
-        </item>
+        </item> <!-- Tree -->
         <item name="Tree Row" icon="presets/tree.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree_row"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=tree_row"
@@ -6879,11 +6917,14 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=tree_row"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=tree_row"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=tree_row" />
+            <label text="A line of trees." />
+            <space />
             <key key="natural" value="tree_row" />
+            <text key="height" text="Height in meter (m)" />
             <optional>
                 <reference ref="leaf" />
             </optional>
-        </item>
+        </item> <!-- Tree Row -->
         <item name="Wood" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wood"
@@ -6891,11 +6932,12 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=wood"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=wood"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=wood" />
+            <label text="Woodland where timber production does not dominate use." />
             <space />
             <key key="natural" value="wood" />
             <text key="name" text="Name" />
             <reference ref="leaf" />
-        </item>
+        </item> <!-- Wood -->
         <item name="Forest" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=forest"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=forest"
@@ -6908,8 +6950,8 @@ Note that for a match, at least one positive and no negative is required.
             <key key="landuse" value="forest" />
             <text key="name" text="Name" />
             <reference ref="leaf" />
-        </item>
-        <item name="Grassland" icon="presets/landuse.png" type="node,closedway,relation" preset_name_label="true">
+        </item> <!-- Forest -->
+        <item name="Grassland" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=grassland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=grassland"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:natural=grassland"
@@ -6918,11 +6960,12 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=grassland"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=grassland"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:natural=grassland" />
+            <label text="Where vegetation is dominated by grasses (Poaceae) and other herbaceous (non-woody) plants. Excludes cultivated areas and wetlands." />
             <space />
             <key key="natural" value="grassland" />
             <text key="name" text="Name" />
             <combo key="grassland" text="Type" values="pampas,prairie,puszta,savanna,steppe,veld" />
-        </item>
+        </item> <!-- Grassland -->
         <item name="Nature Reserve" icon="styles/standard/leisure/nature_reserve.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=nature_reserve"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=nature_reserve"
@@ -6933,7 +6976,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="leisure" value="nature_reserve" />
             <text key="name" text="Name" />
-        </item>
+        </item> <!-- Nature Reserve -->
         <separator/>
         <item name="Scree" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=scree"
@@ -6942,20 +6985,22 @@ Note that for a match, at least one positive and no negative is required.
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=scree"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=scree"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=scree" />
+            <label text="An accumulation of loose rocks." />
             <space />
             <key key="natural" value="scree" />
             <text key="name" text="Name" />
-        </item>
+        </item> <!-- Scree -->
         <item name="Fell" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=fell"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=fell"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=fell"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=fell" />
+            <label text="Bare upper lying uncultivated land principally covered with grass and often grazed." />
             <space />
             <key key="natural" value="fell" />
             <text key="name" text="Name" />
-        </item>
+        </item> <!-- Fell -->
         <item name="Scrub" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=scrub"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=scrub"
@@ -6964,10 +7009,14 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=scrub"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=scrub"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:natural=scrub" />
+            <label text="Bare lower lying uncultivated land with bushes but little or no tree cover." />
             <space />
             <key key="natural" value="scrub" />
             <text key="name" text="Name" />
-        </item>
+            <optional>
+                <reference ref="leaf" />
+            </optional>
+        </item> <!-- Scrub -->
         <item name="Heath" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=heath"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=heath"
@@ -6975,18 +7024,43 @@ Note that for a match, at least one positive and no negative is required.
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=heath"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=heath"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=heath" />
+            <label text="Bare lower lying uncultivated land with a shrubland habitat found mainly on free-draining infertile, acidic soils, and is characterised by open, low-growing woody vegetation." />
             <space />
             <key key="natural" value="heath" />
             <text key="name" text="Name" />
-        </item>
+        </item> <!-- Heath -->
         <item name="Sand" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=sand"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=sand"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=sand" />
+            <label text="Large area covered with sand." />
             <space />
             <key key="natural" value="sand" />
             <text key="name" text="Name" />
-        </item>
+        </item> <!-- Sand -->
+        <item name="Bare Rock" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=bare_rock"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=bare_rock"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=bare_rock" />
+            <label text="For areas of solid visible rock that is sparsely vegetated or not vegetated at all." />
+            <space />
+            <key key="natural" value="bare_rock" />
+            <text key="name" text="Name" />
+        </item> <!-- Bare Rock -->
+        <item name="Stone" icon="presets/empty.png" type="node,closedway,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=stone"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=stone"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=stone"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=stone" />
+            <label text="A single notable free-standing rock, which may differ from the composition of the terrain it lies in." />
+            <space />
+            <key key="natural" value="stone" />
+            <reference ref="name_wikipedia" />
+            <optional>
+                <text key="height" text="Height (meters)" length="7" />
+                <text key="width" text="Width (meters)" />
+            </optional>
+        </item> <!-- Stone -->
     </group> <!-- Nature -->
     <group name="Land use" icon="presets/landuse.png">
         <item name="Farmyard" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
