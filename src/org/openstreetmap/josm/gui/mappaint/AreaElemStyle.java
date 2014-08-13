@@ -33,7 +33,8 @@ public class AreaElemStyle extends ElemStyle {
         this.text = text;
     }
 
-    public static AreaElemStyle create(Cascade c) {
+    public static AreaElemStyle create(final Environment env) {
+        final Cascade c = env.mc.getCascade(env.layer);
         MapImage fillImage = null;
         Color color = null;
 
@@ -74,7 +75,7 @@ public class AreaElemStyle extends ElemStyle {
         TextElement text = null;
         Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
         if (textPos == null || "center".equals(textPos.val)) {
-            text = TextElement.create(c, PaintColors.AREA_TEXT.get(), true);
+            text = TextElement.create(env, PaintColors.AREA_TEXT.get(), true);
         }
 
         if (color != null)

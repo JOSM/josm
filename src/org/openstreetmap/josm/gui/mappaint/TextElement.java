@@ -115,12 +115,15 @@ public class TextElement implements StyleKeys {
      * properties for text rendering
      * @throws IllegalArgumentException thrown if {@code defaultTextColor} is null
      */
-    public static TextElement create(Cascade c, Color defaultTextColor, boolean defaultAnnotate)  throws IllegalArgumentException{
+    public static TextElement create(Environment env, Color defaultTextColor, boolean defaultAnnotate)  throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(defaultTextColor);
+        Cascade c = env.mc.getCascade(env.layer);
 
         LabelCompositionStrategy strategy = buildLabelCompositionStrategy(c, defaultAnnotate);
         if (strategy == null) return null;
-        Font font = ElemStyle.getFont(c);
+        String s = strategy.compose(env.osm);
+        if (s == null) return null;
+        Font font = ElemStyle.getFont(c, s);
 
         float xOffset = 0;
         float yOffset = 0;
