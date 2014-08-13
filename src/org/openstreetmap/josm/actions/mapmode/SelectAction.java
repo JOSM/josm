@@ -232,7 +232,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      */
     private boolean giveUserFeedback(MouseEvent e, int modifiers) {
         Collection<OsmPrimitive> c = asColl(
-                mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, true));
+                mv.getNearestNodeOrWay(e.getPoint(), mv.isSelectablePredicate, true));
 
         updateKeyModifiers(modifiers);
         determineMapMode(!c.isEmpty());
@@ -405,7 +405,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
         // primitives under cursor are stored in c collection
 
-        OsmPrimitive nearestPrimitive = mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, true);
+        OsmPrimitive nearestPrimitive = mv.getNearestNodeOrWay(e.getPoint(), mv.isSelectablePredicate, true);
 
         determineMapMode(nearestPrimitive!=null);
 
@@ -686,7 +686,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         // So don't add them in the first place to make handling easier
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelectedNodesAndWays();
         if (selection.isEmpty()) { // if nothing was selected to drag, just select nearest node/way to the cursor
-            OsmPrimitive nearestPrimitive = mv.getNearestNodeOrWay(mv.getPoint(startEN), OsmPrimitive.isSelectablePredicate, true);
+            OsmPrimitive nearestPrimitive = mv.getNearestNodeOrWay(mv.getPoint(startEN), mv.isSelectablePredicate, true);
             getCurrentDataSet().setSelected(nearestPrimitive);
         }
 
@@ -857,7 +857,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     private final Node findNodeToMergeTo(Point p) {
         Collection<Node> target = mv.getNearestNodes(p,
                 getCurrentDataSet().getSelectedNodes(),
-                OsmPrimitive.isSelectablePredicate);
+                mv.isSelectablePredicate);
         return target.isEmpty() ? null : target.iterator().next();
     }
 
@@ -963,11 +963,11 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
                     if (waitForMouseUpParameter) {
                         // prefer a selected nearest node or way, if possible
-                        osm = mv.getNearestNodeOrWay(p, OsmPrimitive.isSelectablePredicate, true);
+                        osm = mv.getNearestNodeOrWay(p, mv.isSelectablePredicate, true);
                     }
                 } else {
                     // Alt + left mouse button pressed: we need to build cycle list
-                    cycleList = mv.getAllNearest(p, OsmPrimitive.isSelectablePredicate);
+                    cycleList = mv.getAllNearest(p, mv.isSelectablePredicate);
 
                     if (cycleList.size() > 1) {
                         cyclePrims = false;
@@ -1103,7 +1103,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 Pair<Node, Node> vnp = null, wnp = new Pair<>(null, null);
 
                 Way w = null;
-                for (WaySegment ws : mv.getNearestWaySegments(p, OsmPrimitive.isSelectablePredicate)) {
+                for (WaySegment ws : mv.getNearestWaySegments(p, mv.isSelectablePredicate)) {
                     w = ws.way;
 
                     Point2D p1 = mv.getPoint2D(wnp.a = w.getNode(ws.lowerIndex));
