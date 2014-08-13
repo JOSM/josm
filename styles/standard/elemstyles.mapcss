@@ -3609,7 +3609,7 @@ node|z17-[maxspeed=signals][!is_prop_set(icon-image, default)]::core_maxnodefg {
 node {
     text: auto;
 }
-node|z16-[!is_prop_set("icon-image")] {
+node|z16-[!is_prop_set("icon-image")]!.maxspeedclass {
     symbol-size:1;
     symbol-shape: square;
     symbol-stroke-color: node_standard#ffff00;
