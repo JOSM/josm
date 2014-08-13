@@ -250,3 +250,8 @@
   fixRemove: "type";
   fixAdd: "leaf_cycle=deciduous";
 }
+
+*[natural=land] {
+  throwWarning: tr("{0}={1} is deprecated. Please use instead a multipolygon.", "{0.key}", "{0.value}");
+  assertMatch: "way natural=land";
+}
