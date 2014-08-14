@@ -15,12 +15,16 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.MultiMap;
 
-public class MultipolygonCreate {
+/**
+ * Helper class to build multipolygons from multiple ways.
+ * @author viesturs
+ * @since 7392 (rename)
+ * @since 3704
+ */
+public class MultipolygonBuilder {
 
     /**
      * Represents one polygon that consists of multiple ways.
-     * @author Viesturs
-     *
      */
     public static class JoinedPolygon {
         public final List<Way> ways;
@@ -28,6 +32,10 @@ public class MultipolygonCreate {
         public final List<Node> nodes;
         public final Area area;
 
+        /**
+         * Constructs a new {@code JoinedPolygon} from given list of ways.
+         * @param ways The ways used to build joined polygon
+         */
         public JoinedPolygon(List<Way> ways, List<Boolean> reversed) {
             this.ways = ways;
             this.reversed = reversed;
@@ -54,7 +62,7 @@ public class MultipolygonCreate {
                 Way way = this.ways.get(waypos);
                 boolean reversed = this.reversed.get(waypos).booleanValue();
 
-                if (!reversed){
+                if (!reversed) {
                     for (int pos = 0; pos < way.getNodesCount() - 1; pos++) {
                         nodes.add(way.getNode(pos));
                     }
@@ -70,10 +78,8 @@ public class MultipolygonCreate {
         }
     }
 
-
     /**
      * Helper storage class for finding findOuterWays
-     * @author viesturs
      */
     static class PolygonLevel {
         public final int level; //nesting level , even for outer, odd for inner polygons.
@@ -88,15 +94,25 @@ public class MultipolygonCreate {
         }
     }
 
-    public List<JoinedPolygon> outerWays;
-    public List<JoinedPolygon> innerWays;
+    /** List of outer ways **/
+    public final List<JoinedPolygon> outerWays;
+    /** List of inner ways **/
+    public final List<JoinedPolygon> innerWays;
 
-    public MultipolygonCreate(List<JoinedPolygon> outerWays, List<JoinedPolygon> innerWays){
+    /**
+     * Constructs a new {@code MultipolygonBuilder} initialized with given ways.
+     * @param outerWays The outer ways
+     * @param innerWays The inner ways
+     */
+    public MultipolygonBuilder(List<JoinedPolygon> outerWays, List<JoinedPolygon> innerWays) {
         this.outerWays = outerWays;
         this.innerWays = innerWays;
     }
 
-    public MultipolygonCreate(){
+    /**
+     * Constructs a new empty {@code MultipolygonBuilder}.
+     */
+    public MultipolygonBuilder() {
         this.outerWays = new ArrayList<>(0);
         this.innerWays = new ArrayList<>(0);
     }
@@ -121,6 +137,11 @@ public class MultipolygonCreate {
      * An exception indicating an error while joining ways to multipolygon rings.
      */
     public static class JoinedPolygonCreationException extends RuntimeException {
+        /**
+         * Constructs a new {@code JoinedPolygonCreationException}.
+         * @param message the detail message. The detail message is saved for
+         *                later retrieval by the {@link #getMessage()} method
+         */
         public JoinedPolygonCreationException(String message) {
             super(message);
         }
@@ -158,7 +179,7 @@ public class MultipolygonCreate {
 
         //process unclosed ways
         for (Way startWay: ways) {
-            if (usedWays.contains(startWay)){
+            if (usedWays.contains(startWay)) {
                 continue;
             }
 
@@ -190,8 +211,8 @@ public class MultipolygonCreate {
                 }
 
                 Way nextWay = null;
-                for(Way way: adjacentWays){
-                    if (way != curWay){
+                for(Way way: adjacentWays) {
+                    if (way != curWay) {
                         nextWay = way;
                     }
                 }
@@ -216,12 +237,12 @@ public class MultipolygonCreate {
     private String makeFromPolygons(List<JoinedPolygon> polygons) {
         List<PolygonLevel> list = findOuterWaysRecursive(0, polygons);
 
-        if (list == null){
+        if (list == null) {
             return tr("There is an intersection between ways.");
         }
 
-        this.outerWays = new ArrayList<>(0);
-        this.innerWays = new ArrayList<>(0);
+        this.outerWays.clear();
+        this.innerWays.clear();
 
         //take every other level
         for (PolygonLevel pol : list) {
@@ -264,8 +285,7 @@ public class MultipolygonCreate {
                 } else if (intersection == PolygonIntersection.SECOND_INSIDE_FIRST) {
                     innerCandidates.add(innerWay);
                 }
-                else if (intersection == PolygonIntersection.CROSSING)
-                {
+                else if (intersection == PolygonIntersection.CROSSING) {
                     //ways intersect
                     return null;
                 }

@@ -26,8 +26,8 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.osm.MultipolygonCreate;
-import org.openstreetmap.josm.data.osm.MultipolygonCreate.JoinedPolygon;
+import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
+import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -190,7 +190,7 @@ public class CreateMultipolygonAction extends JosmAction {
         Set<Way> ways = new HashSet<>(selectedWays);
         ways.addAll(selectedMultipolygonRelation.getMemberPrimitives(Way.class));
 
-        final MultipolygonCreate polygon = analyzeWays(ways, true);
+        final MultipolygonBuilder polygon = analyzeWays(ways, true);
         if (polygon == null) {
             return null; //could not make multipolygon.
         } else {
@@ -203,7 +203,7 @@ public class CreateMultipolygonAction extends JosmAction {
      */
     public static Pair<Relation, Relation> createMultipolygonRelation(Collection<Way> selectedWays, boolean showNotif) {
 
-        final MultipolygonCreate polygon = analyzeWays(selectedWays, showNotif);
+        final MultipolygonBuilder polygon = analyzeWays(selectedWays, showNotif);
         if (polygon == null) {
             return null; //could not make multipolygon.
         } else {
@@ -264,9 +264,9 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param selectedWays list of selected ways
      * @return <code>null</code>, if there was a problem with the ways.
      */
-    private static MultipolygonCreate analyzeWays(Collection < Way > selectedWays, boolean showNotif) {
+    private static MultipolygonBuilder analyzeWays(Collection < Way > selectedWays, boolean showNotif) {
 
-        MultipolygonCreate pol = new MultipolygonCreate();
+        MultipolygonBuilder pol = new MultipolygonBuilder();
         String error = pol.makeFromWays(selectedWays);
 
         if (error != null) {
@@ -286,7 +286,7 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param pol data storage class containing polygon information
      * @return multipolygon relation
      */
-    private static Relation createRelation(MultipolygonCreate pol, final Relation rel) {
+    private static Relation createRelation(MultipolygonBuilder pol, final Relation rel) {
         // Create new relation
         rel.put("type", "multipolygon");
         // Add ways to it
