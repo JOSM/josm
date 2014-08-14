@@ -20,15 +20,27 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public abstract class FileImporter implements Comparable<FileImporter>, LayerChangeListener {
 
+    /**
+     * The extension file filter used to accept files.
+     */
     public final ExtensionFileFilter filter;
 
     private boolean enabled;
 
+    /**
+     * Constructs a new {@code FileImporter} with the given extension file filter.
+     * @param filter The extension file filter
+     */
     public FileImporter(ExtensionFileFilter filter) {
         this.filter = filter;
         this.enabled = true;
     }
 
+    /**
+     * Determines if this file importer accepts the given file.
+     * @param pathname The file to test
+     * @return {@code true} if this file importer accepts the given file, {@code false} otherwise
+     */
     public boolean acceptFile(File pathname) {
         return filter.acceptName(pathname.getName());
     }

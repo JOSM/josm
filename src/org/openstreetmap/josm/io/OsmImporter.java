@@ -17,13 +17,18 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.Utils;
 
 public class OsmImporter extends FileImporter {
 
+    /**
+     * The OSM file filter (*.osm and *.xml files).
+     */
     public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
             "osm,xml", "osm", tr("OSM Server Files") + " (*.osm *.xml)");
 
+    /**
+     * Utility class containing imported OSM layer, and a task to run after it is added to MapView.
+     */
     public static class OsmImporterData {
 
         private OsmDataLayer layer;
@@ -50,6 +55,10 @@ public class OsmImporter extends FileImporter {
         super(FILE_FILTER);
     }
 
+    /**
+     * Constructs a new {@code OsmImporter} with the given extension file filter.
+     * @param filter The extension file filter
+     */
     public OsmImporter(ExtensionFileFilter filter) {
         super(filter);
     }
