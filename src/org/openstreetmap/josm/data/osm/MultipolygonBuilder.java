@@ -284,8 +284,7 @@ public class MultipolygonBuilder {
                     break;
                 } else if (intersection == PolygonIntersection.SECOND_INSIDE_FIRST) {
                     innerCandidates.add(innerWay);
-                }
-                else if (intersection == PolygonIntersection.CROSSING) {
+                } else if (intersection == PolygonIntersection.CROSSING) {
                     //ways intersect
                     return null;
                 }

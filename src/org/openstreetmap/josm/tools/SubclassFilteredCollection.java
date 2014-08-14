@@ -13,6 +13,7 @@ import java.util.Iterator;
  * @param <S> element type of the underlying collection
  * @param <T> element type of filtered collection (and subclass of S). The predicate
  *      must accept only objects of type T.
+ * @since 3147
  */
 public class SubclassFilteredCollection<S, T extends S> extends AbstractCollection<T> {
 
@@ -62,6 +63,11 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
         }
     }
 
+    /**
+     * Constructs a new {@code SubclassFilteredCollection}.
+     * @param collection The base collection to filter
+     * @param predicate The predicate to use as filter
+     */
     public SubclassFilteredCollection(Collection<? extends S> collection, Predicate<? super S> predicate) {
         this.collection = collection;
         this.predicate = predicate;
@@ -89,5 +95,4 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
     public boolean isEmpty() {
         return !iterator().hasNext();
     }
-
 }
