@@ -95,7 +95,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  *
  * @author imi
  */
-public class OsmDataLayer extends ModifiableLayer implements Listener, SelectionChangedListener {
+public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener {
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
     public static final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 

@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
 
-import org.openstreetmap.josm.gui.layer.ModifiableLayer;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public class SaveLayersModel extends DefaultTableModel {
@@ -64,10 +64,10 @@ public class SaveLayersModel extends DefaultTableModel {
      * @param layers The layers to use to populate this model
      * @since 7358
      */
-    public void populate(List<? extends ModifiableLayer> layers) {
+    public void populate(List<? extends AbstractModifiableLayer> layers) {
         layerInfo = new ArrayList<>();
         if (layers == null) return;
-        for (ModifiableLayer layer: layers) {
+        for (AbstractModifiableLayer layer: layers) {
             layerInfo.add(new SaveLayerInfo(layer));
         }
         Collections.sort(
@@ -142,7 +142,7 @@ public class SaveLayersModel extends DefaultTableModel {
     public List<SaveLayerInfo> getLayersWithConflictsAndUploadRequest() {
         List<SaveLayerInfo> ret = new ArrayList<>();
         for (SaveLayerInfo info: layerInfo) {
-            ModifiableLayer l = info.getLayer();
+            AbstractModifiableLayer l = info.getLayer();
             if (info.isDoUploadToServer() && l instanceof OsmDataLayer && !((OsmDataLayer)l).getConflicts().isEmpty()) {
                 ret.add(info);
             }
@@ -170,7 +170,7 @@ public class SaveLayersModel extends DefaultTableModel {
         return ret;
     }
 
-    public void setUploadState(ModifiableLayer layer, UploadOrSaveState state) {
+    public void setUploadState(AbstractModifiableLayer layer, UploadOrSaveState state) {
         SaveLayerInfo info = getSaveLayerInfo(layer);
         if (info != null) {
             info.setUploadState(state);
@@ -178,7 +178,7 @@ public class SaveLayersModel extends DefaultTableModel {
         fireTableDataChanged();
     }
 
-    public void setSaveState(ModifiableLayer layer, UploadOrSaveState state) {
+    public void setSaveState(AbstractModifiableLayer layer, UploadOrSaveState state) {
         SaveLayerInfo info = getSaveLayerInfo(layer);
         if (info != null) {
             info.setSaveState(state);
@@ -186,7 +186,7 @@ public class SaveLayersModel extends DefaultTableModel {
         fireTableDataChanged();
     }
 
-    public SaveLayerInfo getSaveLayerInfo(ModifiableLayer layer) {
+    public SaveLayerInfo getSaveLayerInfo(AbstractModifiableLayer layer) {
         for (SaveLayerInfo info: this.layerInfo) {
             if (info.getLayer() == layer)
                 return info;

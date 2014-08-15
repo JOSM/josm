@@ -76,7 +76,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.ModifiableLayer;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -890,31 +890,31 @@ public abstract class Main {
     }
 
     /**
-     * Asks user to perform "save layer" operations (save on disk and/or upload data to server) for all {@link ModifiableLayer} before JOSM exits.
+     * Asks user to perform "save layer" operations (save on disk and/or upload data to server) for all {@link AbstractModifiableLayer} before JOSM exits.
      * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
      * @since 2025
      */
     public static boolean saveUnsavedModifications() {
         if (!isDisplayingMapView()) return true;
-        return saveUnsavedModifications(map.mapView.getLayersOfType(ModifiableLayer.class), true);
+        return saveUnsavedModifications(map.mapView.getLayersOfType(AbstractModifiableLayer.class), true);
     }
 
     /**
      * Asks user to perform "save layer" operations (save on disk and/or upload data to server) before data layers deletion.
      *
-     * @param selectedLayers The layers to check. Only instances of {@link ModifiableLayer} are considered.
+     * @param selectedLayers The layers to check. Only instances of {@link AbstractModifiableLayer} are considered.
      * @param exit {@code true} if JOSM is exiting, {@code false} otherwise.
      * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations. {@code false} if the user cancels.
      * @since 5519
      */
     public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, boolean exit) {
         SaveLayersDialog dialog = new SaveLayersDialog(parent);
-        List<ModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
+        List<AbstractModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
         for (Layer l: selectedLayers) {
-            if (!(l instanceof ModifiableLayer)) {
+            if (!(l instanceof AbstractModifiableLayer)) {
                 continue;
             }
-            ModifiableLayer odl = (ModifiableLayer)l;
+            AbstractModifiableLayer odl = (AbstractModifiableLayer)l;
             if ((odl.requiresSaveToFile() || (odl.requiresUploadToServer() && !odl.isUploadDiscouraged())) && odl.isModified()) {
                 layersWithUnmodifiedChanges.add(odl);
             }

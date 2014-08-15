@@ -26,7 +26,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
-import org.openstreetmap.josm.gui.layer.ModifiableLayer;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -142,7 +142,7 @@ public class UploadAction extends JosmAction{
         setEnabled(getEditLayer() != null);
     }
 
-    public static boolean checkPreUploadConditions(ModifiableLayer layer) {
+    public static boolean checkPreUploadConditions(AbstractModifiableLayer layer) {
         return checkPreUploadConditions(layer,
                 layer instanceof OsmDataLayer ? new APIDataSet(((OsmDataLayer)layer).data) : null);
     }
@@ -163,7 +163,7 @@ public class UploadAction extends JosmAction{
      * returns true if the user wants to cancel, false if they
      * want to continue
      */
-    public static boolean warnUploadDiscouraged(ModifiableLayer layer) {
+    public static boolean warnUploadDiscouraged(AbstractModifiableLayer layer) {
         return GuiHelper.warnUser(tr("Upload discouraged"),
                 "<html>" +
                 tr("You are about to upload data from the layer ''{0}''.<br /><br />"+
@@ -183,7 +183,7 @@ public class UploadAction extends JosmAction{
      * @param apiData the data to be uploaded
      * @return true, if the preconditions are met; false, otherwise
      */
-    public static boolean checkPreUploadConditions(ModifiableLayer layer, APIDataSet apiData) {
+    public static boolean checkPreUploadConditions(AbstractModifiableLayer layer, APIDataSet apiData) {
         if (layer.isUploadDiscouraged()) {
             if (warnUploadDiscouraged(layer)) {
                 return false;

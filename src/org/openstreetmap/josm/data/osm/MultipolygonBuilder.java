@@ -58,7 +58,7 @@ public class MultipolygonBuilder {
         public List<Node> getNodes() {
             List<Node> nodes = new ArrayList<>();
 
-            for(int waypos = 0; waypos < this.ways.size(); waypos ++) {
+            for (int waypos = 0; waypos < this.ways.size(); waypos ++) {
                 Way way = this.ways.get(waypos);
                 boolean reversed = this.reversed.get(waypos).booleanValue();
 
@@ -66,8 +66,7 @@ public class MultipolygonBuilder {
                     for (int pos = 0; pos < way.getNodesCount() - 1; pos++) {
                         nodes.add(way.getNode(pos));
                     }
-                }
-                else {
+                } else {
                     for (int pos = way.getNodesCount() - 1; pos > 0; pos--) {
                         nodes.add(way.getNode(pos));
                     }
@@ -87,9 +86,9 @@ public class MultipolygonBuilder {
 
         public List<JoinedPolygon> innerWays;
 
-        public PolygonLevel(JoinedPolygon _pol, int _level) {
-            this.outerWay = _pol;
-            this.level = _level;
+        public PolygonLevel(JoinedPolygon pol, int level) {
+            this.outerWay = pol;
+            this.level = level;
             this.innerWays = new ArrayList<>();
         }
     }
@@ -160,7 +159,7 @@ public class MultipolygonBuilder {
         MultiMap<Node, Way> nodesWithConnectedWays = new MultiMap<>();
         Set<Way> usedWays = new HashSet<>();
 
-        for(Way w: ways) {
+        for (Way w: ways) {
             if (w.getNodesCount() < 2) {
                 throw new JoinedPolygonCreationException(tr("Cannot add a way with only {0} nodes.", w.getNodesCount()));
             }
@@ -170,8 +169,7 @@ public class MultipolygonBuilder {
                 JoinedPolygon jw = new JoinedPolygon(w);
                 joinedWays.add(jw);
                 usedWays.add(w);
-            }
-            else {
+            } else {
                 nodesWithConnectedWays.put(w.lastNode(), w);
                 nodesWithConnectedWays.put(w.firstNode(), w);
             }
@@ -248,8 +246,7 @@ public class MultipolygonBuilder {
         for (PolygonLevel pol : list) {
             if (pol.level % 2 == 0) {
                 this.outerWays.add(pol.outerWay);
-            }
-            else {
+            } else {
                 this.innerWays.add(pol.outerWay);
             }
         }

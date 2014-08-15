@@ -10,7 +10,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * SaveLayerTask saves the data managed by an {@link org.openstreetmap.josm.gui.layer.ModifiableLayer} to the
+ * SaveLayerTask saves the data managed by an {@link org.openstreetmap.josm.gui.layer.AbstractModifiableLayer} to the
  * {@link org.openstreetmap.josm.gui.layer.Layer#getAssociatedFile()}.
  *
  * <pre>
