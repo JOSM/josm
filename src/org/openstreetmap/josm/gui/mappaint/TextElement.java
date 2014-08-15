@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Represents the rendering style for a textual label placed somewhere on the map.
- *
+ * @since 3880
  */
 public class TextElement implements StyleKeys {
     public static final LabelCompositionStrategy AUTO_LABEL_COMPOSITION_STRATEGY = new DeriveLabelFromNameTagsCompositionStrategy();
@@ -72,8 +72,7 @@ public class TextElement implements StyleKeys {
     }
 
     /**
-     * Derives a suitable label composition strategy from the style properties in
-     * {@code c}.
+     * Derives a suitable label composition strategy from the style properties in {@code c}.
      *
      * @param c the style properties
      * @return the label composition strategy
@@ -107,7 +106,7 @@ public class TextElement implements StyleKeys {
      * Builds a text element from style properties in {@code c} and the
      * default text color {@code defaultTextColor}
      *
-     * @param c the style properties
+     * @param env the environment
      * @param defaultTextColor the default text color. Must not be null.
      * @param defaultAnnotate true, if a text label shall be rendered by default, even if the style sheet
      *   doesn't include respective style declarations

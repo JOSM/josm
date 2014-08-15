@@ -10,22 +10,26 @@ package org.openstreetmap.josm.data.projection;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
- * the reference ellipsoids
+ * Reference ellipsoids.
  */
 public final class Ellipsoid {
+
     /**
      * Clarke 1880 IGN (French national geographic institute)
      */
     public static final Ellipsoid clarkeIGN = Ellipsoid.create_a_b(6378249.2, 6356515.0);
+
     /**
-     * Hayford's ellipsoid 1909 (ED50 system)
+     * Hayford's ellipsoid 1909 (ED50 system)<br>
      * Proj.4 code: intl
      */
     public static final Ellipsoid hayford = Ellipsoid.create_a_rf(6378388.0, 297.0);
+
     /**
      * GRS67 ellipsoid
      */
     public static final Ellipsoid GRS67 = Ellipsoid.create_a_rf(6378160.0, 298.247167472);
+
     /**
      * GRS80 ellipsoid
      */
@@ -45,14 +49,17 @@ public final class Ellipsoid {
      * half long axis
      */
     public final double a;
+
     /**
      * half short axis
      */
     public final double b;
+
     /**
      * first eccentricity
      */
     public final double e;
+
     /**
      * first eccentricity squared
      */
@@ -85,6 +92,7 @@ public final class Ellipsoid {
      *
      * @param a semimajor radius of the ellipsoid axis (in meters)
      * @param b semiminor radius of the ellipsoid axis (in meters)
+     * @return the new ellipsoid
      */
     public static Ellipsoid create_a_b(double a, double b) {
         double e2 = (a*a - b*b) / (a*a);
@@ -98,6 +106,7 @@ public final class Ellipsoid {
      *
      * @param a semimajor radius of the ellipsoid axis (in meters)
      * @param es first eccentricity squared
+     * @return the new ellipsoid
      */
     public static Ellipsoid create_a_es(double a, double es) {
         double b = a * Math.sqrt(1.0 - es);
@@ -111,6 +120,7 @@ public final class Ellipsoid {
      *
      * @param a semimajor radius of the ellipsoid axis (in meters)
      * @param f flattening ( = (a - b) / a)
+     * @return the new ellipsoid
      */
     public static Ellipsoid create_a_f(double a, double f) {
         double b = a * (1.0 - f);
@@ -125,6 +135,7 @@ public final class Ellipsoid {
      *
      * @param a semimajor radius of the ellipsoid axis (in meters)
      * @param rf inverse flattening
+     * @return the new ellipsoid
      */
     public static Ellipsoid create_a_rf(double a, double rf) {
         return create_a_f(a, 1.0 / rf);
@@ -216,8 +227,10 @@ public final class Ellipsoid {
         return Math.log(Math.tan(Math.PI/4+phi/2)*Math.pow(v1/v2,e/2));
     }
 
-    /*
+    /**
      * Returns geographic latitude of isometric latitude of first eccentricity (e)
+     * and epsilon precision
+     * @return geographic latitude of isometric latitude of first eccentricity (e)
      * and epsilon precision
      */
     public double latitude(double latIso, double e, double epsilon) {

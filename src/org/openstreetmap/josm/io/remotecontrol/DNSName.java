@@ -101,7 +101,7 @@ public class DNSName implements GeneralNameInterface {
      * Return the type of the GeneralName.
      */
     public int getType() {
-        return (GeneralNameInterface.NAME_DNS);
+        return GeneralNameInterface.NAME_DNS;
     }
 
     /**
@@ -127,7 +127,7 @@ public class DNSName implements GeneralNameInterface {
      */
     @Override
     public String toString() {
-        return ("DNSName: " + name);
+        return "DNSName: " + name;
     }
 
     /**
@@ -191,7 +191,8 @@ public class DNSName implements GeneralNameInterface {
      * @throws UnsupportedOperationException if name is not exact match, but narrowing and widening are
      *          not supported for this name type.
      */
-    public int constrains(GeneralNameInterface inputName) throws UnsupportedOperationException {
+    @Override
+    public int constrains(GeneralNameInterface inputName) {
         int constraintType;
         if (inputName == null)
             constraintType = NAME_DIFF_TYPE;
@@ -230,7 +231,8 @@ public class DNSName implements GeneralNameInterface {
      * @returns distance of name from root
      * @throws UnsupportedOperationException if not supported for this name type
      */
-    public int subtreeDepth() throws UnsupportedOperationException {
+    @Override
+    public int subtreeDepth() {
         String subtree=name;
         int i=1;
 

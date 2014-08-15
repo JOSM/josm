@@ -8,23 +8,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
+
 import org.openstreetmap.josm.io.CachedFile;
 
+/**
+ * Custom fonts manager that provides some embedded fonts to ensure
+ * a common rendering on different platforms.
+ * @since 7383
+ */
 public class FontsManager {
 
-    public static Map<String, Font> fonts;
-    public static Collection<String> includedFonts = Arrays.asList(
+    /**
+     * List of fonts embedded into JOSM jar.
+     */
+    public static final Collection<String> INCLUDED_FONTS = Arrays.asList(
             "DroidSans.ttf",
             "DroidSans-Bold.ttf"
     );
-    
+
+    private FontsManager() {
+        // Hide constructor for utility classes
+    }
+
+    /**
+     * Initializes the fonts manager.
+     */
     public static void initialize() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        for (String fontFile : includedFonts) {
+        for (String fontFile : INCLUDED_FONTS) {
             String url = "resource://data/fonts/"+fontFile;
-            try (InputStream i = new CachedFile(url).getInputStream())
-            {
+            try (InputStream i = new CachedFile(url).getInputStream()) {
                 Font f = Font.createFont(Font.TRUETYPE_FONT, i);
                 if (f == null) {
                     throw new RuntimeException("unable to load font: "+fontFile);

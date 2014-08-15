@@ -92,7 +92,6 @@ public class ImageProvider {
 
     /**
      * Position of an overlay icon
-     * @author imi
      */
     public static enum OverlayPosition {
         NORTHWEST, NORTHEAST, SOUTHWEST, SOUTHEAST
@@ -1276,20 +1275,11 @@ public class ImageProvider {
                                 if (list.getLength() > 0) {
                                     Node item = list.item(0);
                                     if (item instanceof Element) {
-                                        String value = ((Element)item).getAttribute("value");
-                                        String[] s = value.split(" ");
+                                        String[] s = ((Element)item).getAttribute("value").split(" ");
                                         if (s.length == 3) {
-                                            int[] rgb = new int[3];
-                                            try {
-                                                for (int i = 0; i<3; i++) {
-                                                    rgb[i] = Integer.parseInt(s[i]);
-                                                }
-                                                return new Color(rgb[0], rgb[1], rgb[2]);
-                                            } catch (IllegalArgumentException e) {
-                                                Main.error(e);
-                                            }
+                                            return parseRGB(s);
                                         }
-                                }
+                                    }
                                 }
                             }
                             break;
@@ -1302,6 +1292,19 @@ public class ImageProvider {
             Main.warn(e);
         }
         return null;
+    }
+
+    private static Color parseRGB(String[] s) {
+        int[] rgb = new int[3];
+        try {
+            for (int i = 0; i<3; i++) {
+                rgb[i] = Integer.parseInt(s[i]);
+            }
+            return new Color(rgb[0], rgb[1], rgb[2]);
+        } catch (IllegalArgumentException e) {
+            Main.error(e);
+            return null;
+        }
     }
 
     /**

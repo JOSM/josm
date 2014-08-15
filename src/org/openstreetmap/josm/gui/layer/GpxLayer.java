@@ -262,7 +262,7 @@ public class GpxLayer extends Layer {
 
             if (t==null) continue;
             long tm = t[1].getTime();
-            trackVisibility[i]= (tm==0 && showWithoutDate) || (from<=tm && tm <= to);
+            trackVisibility[i]= (tm==0 && showWithoutDate) || (from <= tm && tm <= to);
             i++;
         }
     }
@@ -279,36 +279,32 @@ public class GpxLayer extends Layer {
         lastTracks.clear();
         lastTracks.addAll(data.tracks);
 
-        LinkedList<WayPoint> visibleSegments = listVisibleSegments(box);
-        if(!visibleSegments.isEmpty()) {
+        List<WayPoint> visibleSegments = listVisibleSegments(box);
+        if (!visibleSegments.isEmpty()) {
             drawHelper.readPreferences(getName());
             drawHelper.drawAll(g, mv, visibleSegments);
             if (Main.map.mapView.getActiveLayer() == this) {
                 drawHelper.drawColorBar(g, mv);
             }
         }
-
     }
 
-    private LinkedList<WayPoint> listVisibleSegments(Bounds box) {
+    private List<WayPoint> listVisibleSegments(Bounds box) {
         WayPoint last = null;
         LinkedList<WayPoint> visibleSegments = new LinkedList<>();
 
         ensureTrackVisibilityLength();
         for (Collection<WayPoint> segment : data.getLinesIterable(trackVisibility)) {
 
-            for(WayPoint pt : segment)
-            {
+            for (WayPoint pt : segment) {
                 Bounds b = new Bounds(pt.getCoor());
-                // last should never be null when this is true!
-                if(pt.drawLine) {
+                if (pt.drawLine && last != null) {
                     b.extend(last.getCoor());
                 }
-                if(b.intersects(box))
-                {
-                    if(last != null && (visibleSegments.isEmpty()
+                if (b.intersects(box)) {
+                    if (last != null && (visibleSegments.isEmpty()
                             || visibleSegments.getLast() != last)) {
-                        if(last.drawLine) {
+                        if (last.drawLine) {
                             WayPoint l = new WayPoint(last);
                             l.drawLine = false;
                             visibleSegments.add(l);

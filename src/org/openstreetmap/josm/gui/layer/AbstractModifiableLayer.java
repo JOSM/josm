@@ -9,13 +9,13 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * A modifiable layer.
  * @since 7358
  */
-public abstract class ModifiableLayer extends Layer {
+public abstract class AbstractModifiableLayer extends Layer {
 
     /**
      * Constructs a new {@code ModifiableLayer}.
      * @param name Layer name
      */
-    public ModifiableLayer(String name) {
+    public AbstractModifiableLayer(String name) {
         super(name);
     }
 

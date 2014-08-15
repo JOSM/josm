@@ -41,7 +41,7 @@ public class ElemStyles {
      * Clear the style cache for all primitives of all DataSets.
      */
     public void clearCached() {
-        // run in EDT to make sure this isn't called during rendering run 
+        // run in EDT to make sure this isn't called during rendering run
         // {@link org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer#render}
         GuiHelper.runInEDT(new Runnable() {
             @Override
@@ -334,7 +334,6 @@ public class ElemStyles {
                 continue;
             }
             env.layer = e.getKey();
-            Cascade c = e.getValue();
             if (osm instanceof Way) {
                 addIfNotNull(sl, AreaElemStyle.create(env));
                 addIfNotNull(sl, RepeatImageElemStyle.create(env));
