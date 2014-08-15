@@ -848,7 +848,7 @@ way[highway=track][tracktype=grade5] {
 /* piste tags */
 /**************/
 
-area[piste:difficulty=easy]:closed::core_piste {
+area[piste:difficulty=easy][!highway]:closed::core_piste {
     fill-color: piste_easy#0000ff;
 }
 way[piste:difficulty=easy]::core_piste {
@@ -857,7 +857,7 @@ way[piste:difficulty=easy]::core_piste {
     width: 6;
     color: piste_easy#0000ff;
 }
-area[piste:difficulty=intermediate]:closed::core_piste {
+area[piste:difficulty=intermediate][!highway]:closed::core_piste {
     fill-color: piste_intermediate#ff0000;
 }
 way[piste:difficulty=intermediate]::core_piste {
@@ -866,7 +866,7 @@ way[piste:difficulty=intermediate]::core_piste {
     width: 6;
     color: piste_intermediate#ff0000;
 }
-area[piste:difficulty=advanced]:closed::core_piste {
+area[piste:difficulty=advanced][!highway]:closed::core_piste {
     fill-color: piste_advanced#606060;
 }
 way[piste:difficulty=advanced]::core_piste {
@@ -875,7 +875,7 @@ way[piste:difficulty=advanced]::core_piste {
     width: 6;
     color: piste_advanced#606060;
 }
-area[piste:difficulty=expert]:closed::core_piste {
+area[piste:difficulty=expert][!highway]:closed::core_piste {
     fill-color: piste_expert#606060;
 }
 way[piste:difficulty=expert]::core_piste {
@@ -884,7 +884,7 @@ way[piste:difficulty=expert]::core_piste {
     width: 6;
     color: piste_expert#606060;
 }
-area[piste:difficulty=freeride]:closed::core_piste {
+area[piste:difficulty=freeride][!highway]:closed::core_piste {
     fill-color: piste_freeride#ffff00;
 }
 way[piste:difficulty=freeride]::core_piste {
@@ -893,7 +893,7 @@ way[piste:difficulty=freeride]::core_piste {
     width: 6;
     color: piste_freeride#ffff00;
 }
-area[piste:difficulty=novice]:closed::core_piste {
+area[piste:difficulty=novice][!highway]:closed::core_piste {
     fill-color: piste_novice#00ff00;
 }
 way[piste:difficulty=novice]::core_piste {
