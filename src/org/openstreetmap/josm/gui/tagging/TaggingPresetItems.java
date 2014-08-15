@@ -361,8 +361,13 @@ public final class TaggingPresetItems {
             return false;
         }
 
+        /**
+         * Adds a new {@code JLabel} to the given panel.
+         * @param p The panel
+         * @param label The text label
+         */
         public static void addLabel(JPanel p, String label) {
-            p.add(new JLabel(label), GBC.eol());
+            p.add(new JLabel(label), GBC.eol().fill(GBC.HORIZONTAL));
         }
     }
 
@@ -386,7 +391,7 @@ public final class TaggingPresetItems {
                 url = href;
             }
             if (url != null) {
-                p.add(new UrlLabel(url, locale_text, 2), GBC.eol().insets(0, 10, 0, 0));
+                p.add(new UrlLabel(url, locale_text, 2), GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL));
             }
             return false;
         }
