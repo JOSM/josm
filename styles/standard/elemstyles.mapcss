@@ -1793,7 +1793,7 @@ node[amenity=clock] {
     icon-image: "service/clock.png";
     text: auto;
 }
-/* Rule to delete by end of 2013 if this deprecated tag has finally been replaced by emergency=phone below */
+/* Rule to delete by end of 2014 if this deprecated tag has finally been replaced by emergency=phone below */
 area[amenity=emergency_phone] {
     fill-color: amenity_light#f7efb7;
 }
@@ -2427,7 +2427,7 @@ node[landuse=residential] {
     text: auto;
 }
 area[landuse=garages] {
-    fill-color: garages#f0f0f0;
+    fill-color: garages#d6c8aa;
 }
 node[landuse=garages] {
     icon-image: "misc/landuse/garages.png";
