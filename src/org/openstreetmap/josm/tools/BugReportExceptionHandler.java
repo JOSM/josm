@@ -105,6 +105,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                             pnl.add(cbSuppress, GBC.eol());
                         }
                         ed.setContent(pnl);
+                        ed.setFocusOnDefaultButton(true);
                         ed.showDialog();
                         if (cbSuppress != null && cbSuppress.isSelected()) {
                             suppressExceptionDialogs = true;
