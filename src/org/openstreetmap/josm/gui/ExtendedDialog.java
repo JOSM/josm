@@ -27,11 +27,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -537,7 +537,7 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * Sets the button that will react to ENTER.
-     * @param defaultButtonIdx The button index (starts to )
+     * @param defaultButtonIdx The button index (starts to 1)
      * @return {@code this}
      */
     public ExtendedDialog setDefaultButton(int defaultButtonIdx) {
@@ -557,12 +557,13 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * Don't focus the "do not show this again" check box, but the default button.
+     * Always makes sure the default button has initial focus.
      */
     protected void fixFocus() {
-        if (toggleable && defaultButton != null) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override public void run() {
+        if (defaultButton != null) {
+            GuiHelper.runInEDT(new Runnable() {
+                @Override
+                public void run() {
                     defaultButton.requestFocusInWindow();
                 }
             });
