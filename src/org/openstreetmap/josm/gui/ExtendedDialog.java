@@ -87,6 +87,7 @@ public class ExtendedDialog extends JDialog {
     protected JButton defaultButton = null;
     private Icon icon;
     private boolean modal;
+    private boolean focusOnDefaultButton = false;
 
     /** true, if the dialog should include a help button */
     private boolean showHelpButton;
@@ -277,7 +278,10 @@ public class ExtendedDialog extends JDialog {
         if (defaultButton != null) {
             getRootPane().setDefaultButton(defaultButton);
         }
-        fixFocus();
+        // Don't focus the "do not show this again" check box, but the default button.
+        if (toggleable || focusOnDefaultButton) {
+            requestFocusToDefaultButton();
+        }
         setVisible(true);
         toggleSaveState();
         return this;
@@ -557,9 +561,15 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * Always makes sure the default button has initial focus.
+     * Makes default button request initial focus or not.
+     * @param focus {@code true} to make default button request initial focus
+     * @since 7407
      */
-    protected void fixFocus() {
+    public void setFocusOnDefaultButton(boolean focus) {
+        focusOnDefaultButton = focus;
+    }
+
+    private void requestFocusToDefaultButton() {
         if (defaultButton != null) {
             GuiHelper.runInEDT(new Runnable() {
                 @Override
