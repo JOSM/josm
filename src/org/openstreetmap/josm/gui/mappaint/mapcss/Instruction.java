@@ -37,12 +37,8 @@ public interface Instruction extends StyleKeys {
             this.isSetInstruction = isSetInstruction;
             if (val instanceof LiteralExpression) {
                 Object litValue = ((LiteralExpression) val).evaluate(null);
-                if (litValue instanceof Keyword) {
-                    if ("none".equals(((Keyword) litValue).val)) {
-                        this.val = null;
-                    } else {
-                        this.val = val;
-                    }
+                if (litValue instanceof Keyword && "none".equals(((Keyword) litValue).val)) {
+                    this.val = null;
                 } else if (key.equals(TEXT)) {
                     /* Special case for declaration 'text: ...'
                      *
