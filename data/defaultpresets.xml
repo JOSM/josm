@@ -7457,6 +7457,14 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="addr:postcode" text="Post code" use_last_as_default="force" match="key" />
                 <combo key="addr:country" text="Country code" values_from="java.util.Locale#getISOCountries" use_last_as_default="force" match="key" />
             </optional>
+            <optional text="Optional values for specific countries">
+                <text key="addr:hamlet" text="Hamlet" match="key" />
+                <text key="addr:suburb" text="Suburb" use_last_as_default="force" match="key" />
+                <text key="addr:subdistrict" text="Subdistrict" use_last_as_default="force" match="key" />
+                <text key="addr:district" text="District" use_last_as_default="force" match="key" />
+                <!--  US/Canadian States as defined in ISO 3166-2 -->
+                <combo key="addr:state" text="State" values="AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,DC,AS,GU,MP,PR,UM,VI,AB,BC,MB,NB,NL,NS,ON,PE,QC,SK,NT,NU,YT" use_last_as_default="force" match="key" />
+            </optional>
         </item> <!-- Addresses -->
         <item name="Address Interpolation" icon="presets/interpolation.png" type="way" preset_name_label="true">
            <link href="http://wiki.openstreetmap.org/wiki/Key:addr"
