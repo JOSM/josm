@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="test/unit"/>
 	<classpathentry kind="src" path="test/functional"/>
 	<classpathentry kind="src" path="test/performance"/>
-	<classpathentry excluding="build/|data_nodist/|dist/|doc/|lib/|macosx/|nb/|src/|test/|test/build/|test/functional/|test/performance/|test/unit/|tools/|utils/" kind="src" path=""/>
+	<classpathentry excluding="build/|data_nodist/|dist/|doc/|lib/|macosx/|nb/|src/|test/|test/build/|test/functional/|test/performance/|test/unit/|tools/|utils/|linux/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-assert-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-reflect-1.1.jar"/>
