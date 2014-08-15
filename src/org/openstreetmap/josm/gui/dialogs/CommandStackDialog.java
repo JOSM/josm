@@ -50,13 +50,17 @@ import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Dialog displaying list of all executed commands (undo/redo buffer).
+ * @since 94
+ */
 public class CommandStackDialog extends ToggleDialog implements CommandQueueListener {
 
-    private DefaultTreeModel undoTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
-    private DefaultTreeModel redoTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
+    private final DefaultTreeModel undoTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
+    private final DefaultTreeModel redoTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
 
-    private JTree undoTree = new JTree(undoTreeModel);
-    private JTree redoTree = new JTree(redoTreeModel);
+    private final JTree undoTree = new JTree(undoTreeModel);
+    private final JTree redoTree = new JTree(redoTreeModel);
 
     private UndoRedoSelectionListener undoSelectionListener;
     private UndoRedoSelectionListener redoSelectionListener;
@@ -99,6 +103,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         redoTree.setCellRenderer(new CommandCellRenderer());
         redoSelectionListener = new UndoRedoSelectionListener(redoTree);
         redoTree.getSelectionModel().addTreeSelectionListener(redoSelectionListener);
+        InputMapUtils.unassignCtrlShiftUpDown(redoTree, JComponent.WHEN_FOCUSED);
 
         JPanel treesPanel = new JPanel(new GridBagLayout());
 
@@ -131,7 +136,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     }
 
     private static class CommandCellRenderer extends DefaultTreeCellRenderer {
-        @Override public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             DefaultMutableTreeNode v = (DefaultMutableTreeNode)value;
             if (v.getUserObject() instanceof JLabel) {
@@ -140,6 +146,16 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
                 setText(l.getText());
             }
             return this;
+        }
+    }
+
+    private void updateTitle() {
+        int undo = undoTreeModel.getChildCount(undoTreeModel.getRoot());
+        int redo = redoTreeModel.getChildCount(redoTreeModel.getRoot());
+        if (undo > 0 || redo > 0) {
+            setTitle(tr("Command Stack: Undo: {0} / Redo: {1}", undo, redo));
+        } else {
+            setTitle(tr("Command Stack"));
         }
     }
 
@@ -178,7 +194,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     }
 
     /**
-     * Wires updater for enabled state to the events.
+     * Wires updater for enabled state to the events. Also updates dialog title if needed.
      */
     protected void wireUpdateEnabledStateUpdater(final IEnabledStateUpdating updater, JTree tree) {
         addShowNotifyListener(updater);
@@ -194,21 +210,25 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             @Override
             public void treeNodesChanged(TreeModelEvent e) {
                 updater.updateEnabledState();
+                updateTitle();
             }
 
             @Override
             public void treeNodesInserted(TreeModelEvent e) {
                 updater.updateEnabledState();
+                updateTitle();
             }
 
             @Override
             public void treeNodesRemoved(TreeModelEvent e) {
                 updater.updateEnabledState();
+                updateTitle();
             }
 
             @Override
             public void treeStructureChanged(TreeModelEvent e) {
                 updater.updateEnabledState();
+                updateTitle();
             }
         });
     }
@@ -338,6 +358,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         buildTrees();
     }
 
+    /**
+     * Action that selects the objects that take part in a command.
+     */
     public class SelectAction extends AbstractAction implements IEnabledStateUpdating {
 
         /**
@@ -371,6 +394,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         }
     }
 
+    /**
+     * Action that selects the objects that take part in a command, then zoom to them.
+     */
     public class SelectAndZoomAction extends SelectAction {
         /**
          * Constructs a new {@code SelectAndZoomAction}.
