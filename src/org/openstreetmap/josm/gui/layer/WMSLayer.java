@@ -61,8 +61,8 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.WMSLayerImporter;
-import org.openstreetmap.josm.io.imagery.Grabber;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
+import org.openstreetmap.josm.io.imagery.WMSException;
 import org.openstreetmap.josm.io.imagery.WMSGrabber;
 import org.openstreetmap.josm.io.imagery.WMSRequest;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -146,7 +146,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     private final List<WMSRequest> processingRequests = new ArrayList<>();
     private final Lock requestQueueLock = new ReentrantLock();
     private final Condition queueEmpty = requestQueueLock.newCondition();
-    private final List<Grabber> grabbers = new ArrayList<>();
+    private final List<WMSGrabber> grabbers = new ArrayList<>();
     private final List<Thread> grabberThreads = new ArrayList<>();
     private boolean canceled;
 
@@ -162,6 +162,9 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         this(new ImageryInfo(tr("Blank Layer")));
     }
 
+    /**
+     * Constructs a new {@code WMSLayer}.
+     */
     public WMSLayer(ImageryInfo info) {
         super(info);
         imageSize = PROP_IMAGE_SIZE.get();
@@ -647,7 +650,8 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             for (WMSRequest request: finishedRequests) {
                 GeorefImage img = images[modulo(request.getXIndex(),dax)][modulo(request.getYIndex(),day)];
                 if (img.equalPosition(request.getXIndex(), request.getYIndex())) {
-                    img.changeImage(request.getState(), request.getImage());
+                    WMSException we = request.getException();
+                    img.changeImage(request.getState(), request.getImage(), we != null ? we.getMessage() : null);
                 }
             }
         } finally {
@@ -930,14 +934,13 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         public void actionPerformed(ActionEvent e) {
             Main.map.mapView.zoomTo(Main.map.mapView.getCenter(), 1 / info.getPixelPerDegree());
         }
-
     }
 
     private void cancelGrabberThreads(boolean wait) {
         requestQueueLock.lock();
         try {
             canceled = true;
-            for (Grabber grabber: grabbers) {
+            for (WMSGrabber grabber: grabbers) {
                 grabber.cancel();
             }
             queueEmpty.signalAll();
@@ -963,7 +966,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
             grabbers.clear();
             grabberThreads.clear();
             for (int i=0; i<threadCount; i++) {
-                Grabber grabber = getGrabber(i == 0 && threadCount > 1);
+                WMSGrabber grabber = getGrabber(i == 0 && threadCount > 1);
                 grabbers.add(grabber);
                 Thread t = new Thread(grabber, "WMS " + getName() + " " + i);
                 t.setDaemon(true);
@@ -1004,7 +1007,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
         }
     }
 
-    protected Grabber getGrabber(boolean localOnly) {
+    protected WMSGrabber getGrabber(boolean localOnly) {
         if (getInfo().getImageryType() == ImageryType.HTML)
             return new HTMLGrabber(Main.map.mapView, this, localOnly);
         else if (getInfo().getImageryType() == ImageryType.WMS)

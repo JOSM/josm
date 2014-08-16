@@ -72,10 +72,10 @@ public class GeorefImage implements Serializable {
         if (image != null) {
             image.flush();
         }
-        changeImage(null, null);
+        changeImage(null, null, null);
     }
 
-    public void changeImage(State state, BufferedImage image) {
+    public void changeImage(State state, BufferedImage image, String errorMsg) {
         flushResizedCachedInstance();
         this.image = image;
         this.state = state;
@@ -84,7 +84,7 @@ public class GeorefImage implements Serializable {
         switch (state) {
         case FAILED:
             BufferedImage imgFailed = createImage();
-            layer.drawErrorTile(imgFailed);
+            layer.drawErrorTile(imgFailed, errorMsg);
             this.image = imgFailed;
             break;
         case NOT_IN_CACHE:

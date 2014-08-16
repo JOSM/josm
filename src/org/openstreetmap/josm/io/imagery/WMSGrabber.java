@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,14 +17,21 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
@@ -34,18 +42,40 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.ProgressInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-public class WMSGrabber extends Grabber {
+/**
+ * WMS grabber, fetching tiles from WMS server.
+ * @since 3715
+ */
+public class WMSGrabber implements Runnable {
+
+    protected final MapView mv;
+    protected final WMSLayer layer;
+    private final boolean localOnly;
+
+    protected ProjectionBounds b;
+    protected volatile boolean canceled;
 
     protected String baseURL;
     private ImageryInfo info;
     private Map<String, String> props = new HashMap<>();
 
+    /**
+     * Constructs a new {@code WMSGrabber}.
+     * @param mv Map view
+     * @param layer WMS layer
+     */
     public WMSGrabber(MapView mv, WMSLayer layer, boolean localOnly) {
-        super(mv, layer, localOnly);
+        this.mv = mv;
+        this.layer = layer;
+        this.localOnly = localOnly;
         this.info = layer.getInfo();
         this.baseURL = info.getUrl();
-        if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().isEmpty()) {
+        if (layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().isEmpty()) {
             props.put("Cookie", layer.getInfo().getCookies());
         }
         Pattern pattern = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
@@ -59,24 +89,92 @@ public class WMSGrabber extends Grabber {
         this.baseURL = output.toString();
     }
 
+    int width() {
+        return layer.getBaseImageWidth();
+    }
+
+    int height() {
+        return layer.getBaseImageHeight();
+    }
+
     @Override
-    void fetch(WMSRequest request, int attempt) throws Exception{
+    public void run() {
+        while (true) {
+            if (canceled)
+                return;
+            WMSRequest request = layer.getRequest(localOnly);
+            if (request == null)
+                return;
+            this.b = layer.getBounds(request);
+            if (request.isPrecacheOnly()) {
+                if (!layer.cache.hasExactMatch(Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth)) {
+                    attempt(request);
+                } else if (Main.isDebugEnabled()) {
+                    Main.debug("Ignoring "+request+" (precache only + exact match)");
+                }
+            } else if (!loadFromCache(request)){
+                attempt(request);
+            } else if (Main.isDebugEnabled()) {
+                Main.debug("Ignoring "+request+" (loaded from cache)");
+            }
+            layer.finishRequest(request);
+        }
+    }
+
+    protected void attempt(WMSRequest request){ // try to fetch the image
+        int maxTries = 5; // n tries for every image
+        for (int i = 1; i <= maxTries; i++) {
+            if (canceled)
+                return;
+            try {
+                if (!request.isPrecacheOnly() && !layer.requestIsVisible(request))
+                    return;
+                fetch(request, i);
+                break; // break out of the retry loop
+            } catch (IOException e) {
+                try { // sleep some time and then ask the server again
+                    Thread.sleep(random(1000, 2000));
+                } catch (InterruptedException e1) {
+                    Main.debug("InterruptedException in "+getClass().getSimpleName()+" during WMS request");
+                }
+                if (i == maxTries) {
+                    Main.error(e);
+                    request.finish(State.FAILED, null, null);
+                }
+            } catch (WMSException e) {
+                // Fail fast in case of WMS Service exception: useless to retry:
+                // either the URL is wrong or the server suffers huge problems
+                Main.error("WMS service exception while requesting "+e.getUrl()+":\n"+e.getMessage().trim());
+                request.finish(State.FAILED, null, e);
+                break; // break out of the retry loop
+            }
+        }
+    }
+
+    public static int random(int min, int max) {
+        return (int)(Math.random() * ((max+1)-min) ) + min;
+    }
+
+    public final void cancel() {
+        canceled = true;
+    }
+
+    private void fetch(WMSRequest request, int attempt) throws IOException, WMSException {
         URL url = null;
         try {
             url = getURL(
                     b.minEast, b.minNorth,
                     b.maxEast, b.maxNorth,
                     width(), height());
-            request.finish(State.IMAGE, grab(request, url, attempt));
+            request.finish(State.IMAGE, grab(request, url, attempt), null);
 
-        } catch(Exception e) {
+        } catch (IOException | OsmTransferException e) {
             Main.error(e);
-            throw new Exception(e.getMessage() + "\nImage couldn't be fetched: " + (url != null ? url.toString() : ""), e);
+            throw new IOException(e.getMessage() + "\nImage couldn't be fetched: " + (url != null ? url.toString() : ""), e);
         }
     }
 
-    public static final NumberFormat latLonFormat = new DecimalFormat("###0.0000000",
-            new DecimalFormatSymbols(Locale.US));
+    public static final NumberFormat latLonFormat = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
 
     protected URL getURL(double w, double s,double e,double n,
             int wi, int ht) throws MalformedURLException {
@@ -132,45 +230,58 @@ public class WMSGrabber extends Grabber {
                 .replace(" ", "%20"));
     }
 
-    @Override
     public boolean loadFromCache(WMSRequest request) {
         BufferedImage cached = layer.cache.getExactMatch(
                 Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
 
         if (cached != null) {
-            request.finish(State.IMAGE, cached);
+            request.finish(State.IMAGE, cached, null);
             return true;
         } else if (request.isAllowPartialCacheMatch()) {
             BufferedImage partialMatch = layer.cache.getPartialMatch(
                     Main.getProjection(), request.getPixelPerDegree(), b.minEast, b.minNorth);
             if (partialMatch != null) {
-                request.finish(State.PARTLY_IN_CACHE, partialMatch);
+                request.finish(State.PARTLY_IN_CACHE, partialMatch, null);
                 return true;
             }
         }
 
-        if((!request.isReal() && !layer.hasAutoDownload())){
-            request.finish(State.NOT_IN_CACHE, null);
+        if ((!request.isReal() && !layer.hasAutoDownload())){
+            request.finish(State.NOT_IN_CACHE, null, null);
             return true;
         }
 
         return false;
     }
 
-    protected BufferedImage grab(WMSRequest request, URL url, int attempt) throws IOException, OsmTransferException {
+    protected BufferedImage grab(WMSRequest request, URL url, int attempt) throws WMSException, IOException, OsmTransferException {
         Main.info("Grabbing WMS " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
         HttpURLConnection conn = Utils.openHttpConnection(url);
-        for(Entry<String, String> e : props.entrySet()) {
+        for (Entry<String, String> e : props.entrySet()) {
             conn.setRequestProperty(e.getKey(), e.getValue());
         }
         conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15) * 1000);
         conn.setReadTimeout(Main.pref.getInteger("socket.timeout.read", 30) * 1000);
 
         String contentType = conn.getHeaderField("Content-Type");
-        if( conn.getResponseCode() != 200
-                || contentType != null && !contentType.startsWith("image") )
-            throw new IOException(readException(conn));
+        if (conn.getResponseCode() != 200
+                || contentType != null && !contentType.startsWith("image") ) {
+            String xml = readException(conn);
+            try {
+                DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                InputSource is = new InputSource(new StringReader(xml));
+                Document doc = db.parse(is);
+                NodeList nodes = doc.getElementsByTagName("ServiceException");
+                List<String> exceptions = new ArrayList<>(nodes.getLength());
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    exceptions.add(nodes.item(i).getTextContent());
+                }
+                throw new WMSException(request, url, exceptions);
+            } catch (SAXException | ParserConfigurationException ex) {
+                throw new IOException(xml, ex);
+            }
+        }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (InputStream is = new ProgressInputStream(conn, null)) {
