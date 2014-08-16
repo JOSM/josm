@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -75,8 +76,8 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -214,11 +215,37 @@ public abstract class Main {
 
     protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
+    // First lines of last 10 error and warning messages, used for bug reports
+    private static final List<String> ERRORS_AND_WARNINGS = Collections.<String>synchronizedList(new ArrayList<String>());
+
     /**
      * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
      * @since 6248
      */
     public static int logLevel = 3;
+
+    private static void rememberWarnErrorMsg(String msg) {
+        // Only remember first line of message
+        int idx = msg.indexOf('\n');
+        if (idx > 0) {
+            ERRORS_AND_WARNINGS.add(msg.substring(0, idx));
+        } else {
+            ERRORS_AND_WARNINGS.add(msg);
+        }
+        // Only keep 10 lines to avoid memory leak
+        while (ERRORS_AND_WARNINGS.size() > 10) {
+            ERRORS_AND_WARNINGS.remove(0);
+        }
+    }
+
+    /**
+     * Replies the first lines of last 10 error and warning messages, used for bug reports
+     * @return the first lines of last 10 error and warning messages
+     * @since 7420
+     */
+    public static final Collection<String> getLastErrorAndWarnings() {
+        return Collections.unmodifiableList(ERRORS_AND_WARNINGS);
+    }
 
     /**
      * Prints an error message if logging is on.
@@ -230,6 +257,7 @@ public abstract class Main {
             return;
         if (msg != null && !msg.isEmpty()) {
             System.err.println(tr("ERROR: {0}", msg));
+            rememberWarnErrorMsg("E: "+msg);
         }
     }
 
@@ -242,6 +270,7 @@ public abstract class Main {
             return;
         if (msg != null && !msg.isEmpty()) {
             System.err.println(tr("WARNING: {0}", msg));
+            rememberWarnErrorMsg("W: "+msg);
         }
     }
 

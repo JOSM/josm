@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -120,6 +121,9 @@ public final class ShowStatusReportAction extends JosmAction {
                         shortenParam(it, param, envJavaHome, envJavaHomeAlt);
                         shortenParam(it, param, propJavaHome, propJavaHomeAlt);
                     }
+                } else if (value.startsWith("-X")) {
+                    // Remove arguments like -Xbootclasspath/a, -Xverify:remote, that can be very long and unhelpful
+                    it.remove();
                 }
             }
             if (!vmArguments.isEmpty()) {
@@ -147,6 +151,15 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("\n");
         text.append(PluginHandler.getBugReportText());
         text.append("\n");
+
+        Collection<String> errorsWarnings = Main.getLastErrorAndWarnings();
+        if (!errorsWarnings.isEmpty()) {
+            text.append("Last errors/warnings:\n");
+            for (String s : errorsWarnings) {
+                text.append("- ").append(s).append("\n");
+            }
+            text.append("\n");
+        }
 
         return text.toString();
     }

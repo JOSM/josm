@@ -1270,8 +1270,11 @@ public final class PluginHandler {
                     ? pi.localversion : "unknown") + ")");
         }
         Collections.sort(pl);
+        if (!pl.isEmpty()) {
+            text.append("Plugins:\n");
+        }
         for (String s : pl) {
-            text.append("Plugin: ").append(s).append("\n");
+            text.append("- ").append(s).append("\n");
         }
         return text.toString();
     }
