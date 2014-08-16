@@ -3545,26 +3545,26 @@ node[boundary=national_park] {
 /******************/
 /* maxspeed nodes */
 /******************/
-node[maxspeed=none] {
+node[maxspeed=none][!is_prop_set(icon-image)] {
     icon-image: "vehicle/restriction/maxspeed_none.svg";
 }
-node|z17-[maxspeed=~/^[0-9]+$/] {
+node|z17-[maxspeed=~/^[0-9]+$/][!is_prop_set(icon-image)] {
     maxspeedprop: tag(maxspeed);
     set maxspeedclass;
 }
-node|z17-[maxspeed=signals] {
+node|z17-[maxspeed=signals][!is_prop_set(icon-image)] {
     maxspeedprop: " ?";
     set maxspeedclass;
 }
-node|z17-[maxspeed=~/^[0-9]+ mph/] {
+node|z17-[maxspeed=~/^[0-9]+ mph/][!is_prop_set(icon-image)] {
     maxspeedprop: get(split(" mph",tag(maxspeed)),0);
     set maxspeedclass;
 }
-node|z17-[maxspeed=~/[0-9]+ km\/h/] {
+node|z17-[maxspeed=~/[0-9]+ km\/h/][!is_prop_set(icon-image)] {
     maxspeedprop: get(split(" km/h",tag(maxspeed)),0);
     set maxspeedclass;
 }
-node|z17-[maxspeed=~/[0-9]+ knots/] {
+node|z17-[maxspeed=~/[0-9]+ knots/][!is_prop_set(icon-image)] {
     maxspeedprop: get(split(" knots",tag(maxspeed)),0);
     set maxspeedclass;
 }
@@ -3575,12 +3575,12 @@ node|z17-[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core
     symbol-fill-color: white;
     major-z-index: 4.2;
 }
-node|z17-[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"][!is_prop_set(icon-image, default)]::core_maxnodebg,
-node|z17-[maxspeed=signals][!is_prop_set(icon-image, default)]::core_maxnodebg {
+node|z17-[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"]::core_maxnodebg,
+node|z17-[maxspeed=signals]::core_maxnodebg {
     /* background (black) */
     symbol-fill-color: black;
 }
-node|z17-[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core_maxnodefg {
+node|z17-[prop(maxspeedclass, default)]::core_maxnodefg {
     /* foreground (black text and red circle) */
     symbol-shape: circle;
     symbol-size: 15;
@@ -3596,8 +3596,8 @@ node|z17-[prop(maxspeedclass, default)][!is_prop_set(icon-image, default)]::core
     text-offset-y: -1;
     major-z-index: 4.2;
 }
-node|z17-[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"][!is_prop_set(icon-image, default)]::core_maxnodefg,
-node|z17-[maxspeed=signals][!is_prop_set(icon-image, default)]::core_maxnodefg {
+node|z17-[maxspeed]["maxspeed:variable"]["maxspeed:variable"!="no"]::core_maxnodefg,
+node|z17-[maxspeed=signals]::core_maxnodefg {
     /* foreground (white text) */
     text-color: white;
 }
@@ -3609,7 +3609,7 @@ node|z17-[maxspeed=signals][!is_prop_set(icon-image, default)]::core_maxnodefg {
 node {
     text: auto;
 }
-node|z16-[!is_prop_set("icon-image")]!.maxspeedclass {
+node|z16, node|z17-[!is_prop_set("icon-image")]!.maxspeedclass {
     symbol-size:1;
     symbol-shape: square;
     symbol-stroke-color: node_standard#ffff00;
