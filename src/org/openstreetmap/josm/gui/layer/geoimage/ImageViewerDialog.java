@@ -52,6 +52,10 @@ public final class ImageViewerDialog extends ToggleDialog {
         dialog = new ImageViewerDialog();
     }
 
+    /**
+     * Replies the unique instance of this dialog
+     * @return the unique instance
+     */
     public static ImageViewerDialog getInstance() {
         if (dialog == null)
             throw new AssertionError("a new instance needs to be created first");
@@ -65,11 +69,6 @@ public final class ImageViewerDialog extends ToggleDialog {
     private ImageViewerDialog() {
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged",
         tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.DIRECT), 200);
-
-        // Don't show a detached dialog right from the start.
-        if (isShowing && !isDocked) {
-            setIsShowing(false);
-        }
 
         JPanel content = new JPanel();
         content.setLayout(new BorderLayout());
@@ -286,17 +285,6 @@ public final class ImageViewerDialog extends ToggleDialog {
             }
         }
 
-    }
-
-    /**
-     * When pressing the Toggle button always show the docked dialog.
-     */
-    @Override
-    protected void toggleButtonHook() {
-        if (! isShowing) {
-            setIsDocked(true);
-            setIsCollapsed(false);
-        }
     }
 
     /**
