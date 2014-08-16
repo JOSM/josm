@@ -138,7 +138,6 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
         handleException(e);
     }
 
-    //http://stuffthathappens.com/blog/2007/10/15/one-more-note-on-uncaught-exception-handlers/
     /**
      * Handles the given throwable object
      * @param t The throwable object
@@ -219,6 +218,10 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     tr("Alternatively, if that does not work you can manually fill in the information " +
                             "below at this URL:")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
             p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket",2), GBC.eop().insets(8,0,0,0));
+
+            // Wiki formatting for manual copy-paste
+            text = "{{{\n"+text+"}}}";
+
             if (Utils.copyToClipboard(text)) {
                 p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")),
                         GBC.eop().fill(GridBagConstraints.HORIZONTAL));
