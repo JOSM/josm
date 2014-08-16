@@ -162,6 +162,9 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
+            if (!Objects.equals(getLayer(w1), getLayer(w2))) {
+                return true;
+            }
             return false;
         }
 
