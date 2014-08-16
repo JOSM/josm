@@ -42,10 +42,10 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Create multipolygon from selected ways automatically.
  *
- * New relation with type=multipolygon is created
+ * New relation with type=multipolygon is created.
  *
  * If one or more of ways is already in relation with type=multipolygon or the
- * way is not closed, then error is reported and no relation is created
+ * way is not closed, then error is reported and no relation is created.
  *
  * The "inner" and "outer" roles are guessed automatically. First, bbox is
  * calculated for each way. then the largest area is assumed to be outside and
@@ -92,7 +92,6 @@ public class CreateMultipolygonAction extends JosmAction {
             final Command command = commandAndRelation.a;
             final Relation relation = commandAndRelation.b;
 
-
             // to avoid EDT violations
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -102,8 +101,7 @@ public class CreateMultipolygonAction extends JosmAction {
                     // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
                     // knows about the new relation before we try to select it.
                     // (Yes, we are already in event dispatch thread. But DatasetEventManager
-                    // uses 'SwingUtilities.invokeLater' to fire events so we have to do
-                    // the same.)
+                    // uses 'SwingUtilities.invokeLater' to fire events so we have to do the same.)
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -122,11 +120,6 @@ public class CreateMultipolygonAction extends JosmAction {
         }
     }
 
-    /**
-     * The action button has been clicked
-     *
-     * @param e Action Event
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!Main.main.hasEditLayer()) {
@@ -238,7 +231,8 @@ public class CreateMultipolygonAction extends JosmAction {
     }
 
     /** Enable this action only if something is selected */
-    @Override protected void updateEnabledState() {
+    @Override
+    protected void updateEnabledState() {
         if (getCurrentDataSet() == null) {
             setEnabled(false);
         } else {
@@ -251,7 +245,8 @@ public class CreateMultipolygonAction extends JosmAction {
       *
       * @param selection the current selection, gets tested for emptyness
       */
-    @Override protected void updateEnabledState(Collection < ? extends OsmPrimitive > selection) {
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         if (update) {
             setEnabled(getSelectedMultipolygonRelation() != null);
         } else {
@@ -264,7 +259,7 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param selectedWays list of selected ways
      * @return <code>null</code>, if there was a problem with the ways.
      */
-    private static MultipolygonBuilder analyzeWays(Collection < Way > selectedWays, boolean showNotif) {
+    private static MultipolygonBuilder analyzeWays(Collection<Way> selectedWays, boolean showNotif) {
 
         MultipolygonBuilder pol = new MultipolygonBuilder();
         String error = pol.makeFromWays(selectedWays);
@@ -323,7 +318,7 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param relation the multipolygon style relation to process
      * @return a list of commands to execute
      */
-    public static List<Command> removeTagsFromWaysIfNeeded( Relation relation ) {
+    public static List<Command> removeTagsFromWaysIfNeeded(Relation relation) {
         Map<String, String> values = new HashMap<>(relation.getKeys());
 
         List<Way> innerWays = new ArrayList<>();
@@ -341,10 +336,10 @@ public class CreateMultipolygonAction extends JosmAction {
                 Way way = m.getWay();
                 outerWays.add(way);
 
-                for( String key : way.keySet() ) {
-                    if( !values.containsKey(key) ) { //relation values take precedence
+                for (String key : way.keySet()) {
+                    if (!values.containsKey(key)) { //relation values take precedence
                         values.put(key, way.get(key));
-                    } else if( !relation.hasKey(key) && !values.get(key).equals(way.get(key)) ) {
+                    } else if (!relation.hasKey(key) && !values.get(key).equals(way.get(key))) {
                         conflictingKeys.add(key);
                     }
                 }
@@ -352,17 +347,17 @@ public class CreateMultipolygonAction extends JosmAction {
         }
 
         // filter out empty key conflicts - we need second iteration
-        if( !Main.pref.getBoolean("multipoly.alltags", false) )
-            for( RelationMember m : relation.getMembers() )
-                if( m.hasRole() && "outer".equals(m.getRole()) && m.isWay() )
-                    for( String key : values.keySet() )
-                        if( !m.getWay().hasKey(key) && !relation.hasKey(key) )
+        if (!Main.pref.getBoolean("multipoly.alltags", false))
+            for (RelationMember m : relation.getMembers())
+                if (m.hasRole() && "outer".equals(m.getRole()) && m.isWay())
+                    for (String key : values.keySet())
+                        if (!m.getWay().hasKey(key) && !relation.hasKey(key))
                             conflictingKeys.add(key);
 
-        for( String key : conflictingKeys )
+        for (String key : conflictingKeys)
             values.remove(key);
 
-        for( String linearTag : Main.pref.getCollection("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS) )
+        for (String linearTag : Main.pref.getCollection("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS))
             values.remove(linearTag);
 
         if ("coastline".equals(values.get("natural")))
@@ -401,7 +396,6 @@ public class CreateMultipolygonAction extends JosmAction {
 
         if (moveTags) {
             // add those tag values to the relation
-
             boolean fixed = false;
             Relation r2 = new Relation(relation);
             for (Entry<String, String> entry : values.entrySet()) {

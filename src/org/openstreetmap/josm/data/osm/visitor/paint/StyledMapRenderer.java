@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractButton;
@@ -72,23 +71,17 @@ import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * <p>A map renderer which renders a map according to style rules in a set of style sheets.</p>
- *
+ * A map renderer which renders a map according to style rules in a set of style sheets.
+ * @since 486
  */
 public class StyledMapRenderer extends AbstractMapRenderer {
 
-    final public static int noThreads;
-    final public static ExecutorService styleCreatorPool;
-
-    static {
-        noThreads = Main.pref.getInteger(
-                "mappaint.StyledMapRenderer.style_creation.numberOfThreads",
-                Runtime.getRuntime().availableProcessors());
-        styleCreatorPool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads);
-    }
+    private static final Pair<Integer, ExecutorService> THREAD_POOL =
+            Utils.newThreadPool("mappaint.StyledMapRenderer.style_creation.numberOfThreads");
 
     /**
      * Iterates over a list of Way Nodes and returns screen coordinates that
@@ -1244,7 +1237,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
-            
+
         highlightLineWidth = Main.pref.getInteger("mappaint.highlight.width", 4);
         highlightPointRadius = Main.pref.getInteger("mappaint.highlight.radius", 7);
         widerHighlight = Main.pref.getInteger("mappaint.highlight.bigger-increment", 5);
@@ -1440,9 +1433,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         void process(List<? extends OsmPrimitive> prims) {
             final List<ComputeStyleListWorker> tasks = new ArrayList<>();
-            final int bucketsize = Math.max(100, prims.size()/noThreads/3);
+            final int bucketsize = Math.max(100, prims.size()/THREAD_POOL.a/3);
             final int noBuckets = (prims.size() + bucketsize - 1) / bucketsize;
-            final boolean singleThread = noThreads == 1 || noBuckets == 1;
+            final boolean singleThread = THREAD_POOL.a == 1 || noBuckets == 1;
             for (int i=0; i<noBuckets; i++) {
                 int from = i*bucketsize;
                 int to = Math.min((i+1)*bucketsize, prims.size());
@@ -1457,10 +1450,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
-            } else if (tasks.size() > 1) {
+            } else if (!tasks.isEmpty()) {
                 try {
-                    for (Future<List<StyleRecord>> future : styleCreatorPool.invokeAll(tasks)) {
-                            allStyleElems.addAll(future.get());
+                    for (Future<List<StyleRecord>> future : THREAD_POOL.b.invokeAll(tasks)) {
+                        allStyleElems.addAll(future.get());
                     }
                 } catch (InterruptedException | ExecutionException ex) {
                     throw new RuntimeException(ex);
