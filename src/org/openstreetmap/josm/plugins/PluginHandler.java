@@ -120,6 +120,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("restart", IN_CORE),
             new DeprecatedPlugin("wayselector", IN_CORE),
             new DeprecatedPlugin("openstreetbugs", tr("replaced by new {0} plugin", "notes")),
+            new DeprecatedPlugin("nearclick", tr("no longer required")),
         });
     }
 
