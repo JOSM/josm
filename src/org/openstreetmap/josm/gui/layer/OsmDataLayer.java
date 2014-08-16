@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -94,9 +95,12 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * The data can be fully edited.
  *
  * @author imi
+ * @since 17
  */
 public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener {
+    /** Property used to know if this layer has to be saved on disk */
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
+    /** Property used to know if this layer has to be uploaded */
     public static final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 
     private boolean requiresSaveToFile = false;
@@ -231,10 +235,18 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         createHatchTexture();
     }
 
+    /**
+     * Replies background color for downloaded areas.
+     * @return background color for downloaded areas. Black by default
+     */
     public static Color getBackgroundColor() {
         return Main.pref.getColor(marktr("background"), Color.BLACK);
     }
 
+    /**
+     * Replies background color for non-downloaded areas.
+     * @return background color for non-downloaded areas. Yellow by default
+     */
     public static Color getOutsideColor() {
         return Main.pref.getColor(marktr("outside downloaded area"), Color.YELLOW);
     }
@@ -256,7 +268,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     /**
-     * Construct a OsmDataLayer.
+     * Construct a new {@code OsmDataLayer}.
+     * @param data OSM data
+     * @param name Layer name
+     * @param associatedFile Associated .osm file (can be null)
      */
     public OsmDataLayer(final DataSet data, final String name, final File associatedFile) {
         super(name);
@@ -523,11 +538,23 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         return actions.toArray(new Action[actions.size()]);
     }
 
+    /**
+     * Converts given OSM dataset to GPX data.
+     * @param data OSM dataset
+     * @param file output .gpx file
+     * @return GPX data
+     */
     public static GpxData toGpxData(DataSet data, File file) {
         GpxData gpxData = new GpxData();
         gpxData.storageFile = file;
         HashSet<Node> doneNodes = new HashSet<>();
-        for (Way w : data.getWays()) {
+        waysToGpxData(data.getWays(), gpxData, doneNodes);
+        nodesToGpxData(data.getNodes(), gpxData, doneNodes);
+        return gpxData;
+    }
+
+    private static void waysToGpxData(Collection<Way> ways, GpxData gpxData, HashSet<Node> doneNodes) {
+        for (Way w : ways) {
             if (!w.isUsable()) {
                 continue;
             }
@@ -561,9 +588,14 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
             gpxData.tracks.add(new ImmutableGpxTrack(trk, trkAttr));
         }
+    }
 
-        for (Node n : data.getNodes()) {
-            if (n.isIncomplete() || n.isDeleted() || doneNodes.contains(n)) {
+    private static void nodesToGpxData(Collection<Node> nodes, GpxData gpxData, HashSet<Node> doneNodes) {
+        List<Node> sortedNodes = new ArrayList<>(nodes);
+        sortedNodes.removeAll(doneNodes);
+        Collections.sort(sortedNodes);
+        for (Node n : sortedNodes) {
+            if (n.isIncomplete() || n.isDeleted()) {
                 continue;
             }
             WayPoint wpt = new WayPoint(n.getCoor());
@@ -582,14 +614,23 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
             gpxData.waypoints.add(wpt);
         }
-        return gpxData;
     }
 
+    /**
+     * Converts OSM data behind this layer to GPX data.
+     * @return GPX data
+     */
     public GpxData toGpxData() {
         return toGpxData(data, getAssociatedFile());
     }
 
+    /**
+     * Action that converts this OSM layer to a GPX layer.
+     */
     public class ConvertToGpxLayerAction extends AbstractAction {
+        /**
+         * Constructs a new {@code ConvertToGpxLayerAction}.
+         */
         public ConvertToGpxLayerAction() {
             super(tr("Convert to GPX layer"), ImageProvider.get("converttogpx"));
             putValue("help", ht("/Action/ConvertToGpxLayer"));
@@ -601,6 +642,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
+    /**
+     * Determines if this layer contains data at the given coordinate.
+     * @param coor the coordinate
+     * @return {@code true} if data sources bounding boxes contain {@code coor}
+     */
     public boolean containsPoint(LatLon coor) {
         // we'll assume that if this has no data sources
         // that it also has no borders
@@ -618,7 +664,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     /**
-     * replies the set of conflicts currently managed in this layer
+     * Replies the set of conflicts currently managed in this layer.
      *
      * @return the set of conflicts currently managed in this layer
      */
@@ -642,6 +688,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         setRequiresUploadToServer(isModified());
     }
 
+    /**
+     * Actions run after data has been downloaded to this layer.
+     */
     public void onPostDownloadFromServer() {
         setRequiresSaveToFile(true);
         setRequiresUploadToServer(isModified());
@@ -707,10 +756,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
-        /*
-         * No reprojection required. The dataset itself is registered as projection
-         * change listener and already got notified.
-         */
+         // No reprojection required. The dataset itself is registered as projection
+         // change listener and already got notified.
     }
 
     @Override
@@ -718,6 +765,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         return data.isUploadDiscouraged();
     }
 
+    /**
+     * Sets the "discouraged upload" flag.
+     * @param uploadDiscouraged {@code true} if upload of data managed by this layer is discouraged. This feature allows to use "private" data layers.
+     */
     public final void setUploadDiscouraged(boolean uploadDiscouraged) {
         if (uploadDiscouraged ^ isUploadDiscouraged()) {
             data.setUploadDiscouraged(uploadDiscouraged);
