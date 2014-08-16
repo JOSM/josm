@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +32,7 @@ public class MultipolygonBuilder {
         public final List<Boolean> reversed;
         public final List<Node> nodes;
         public final Area area;
+        public final Rectangle bounds;
 
         /**
          * Constructs a new {@code JoinedPolygon} from given list of ways.
@@ -41,6 +43,7 @@ public class MultipolygonBuilder {
             this.reversed = reversed;
             this.nodes = this.getNodes();
             this.area = Geometry.getArea(nodes);
+            this.bounds = area.getBounds();
         }
 
         /**
@@ -274,16 +277,20 @@ public class MultipolygonBuilder {
                     continue;
                 }
 
-                PolygonIntersection intersection = Geometry.polygonIntersection(outerWay.area, innerWay.area);
+                // Preliminary computation on bounds. If bounds do not intersect, no need to do a costly area intersection
+                if (outerWay.bounds.intersects(innerWay.bounds)) {
+                    // Bounds intersection, let's see in detail
+                    PolygonIntersection intersection = Geometry.polygonIntersection(outerWay.area, innerWay.area);
 
-                if (intersection == PolygonIntersection.FIRST_INSIDE_SECOND) {
-                    outerGood = false;  // outer is inside another polygon
-                    break;
-                } else if (intersection == PolygonIntersection.SECOND_INSIDE_FIRST) {
-                    innerCandidates.add(innerWay);
-                } else if (intersection == PolygonIntersection.CROSSING) {
-                    //ways intersect
-                    return null;
+                    if (intersection == PolygonIntersection.FIRST_INSIDE_SECOND) {
+                        outerGood = false;  // outer is inside another polygon
+                        break;
+                    } else if (intersection == PolygonIntersection.SECOND_INSIDE_FIRST) {
+                        innerCandidates.add(innerWay);
+                    } else if (intersection == PolygonIntersection.CROSSING) {
+                        //ways intersect
+                        return null;
+                    }
                 }
             }
 

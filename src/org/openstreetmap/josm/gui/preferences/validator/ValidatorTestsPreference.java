@@ -43,7 +43,7 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
             return new ValidatorTestsPreference();
         }
     }
-    
+
     private JCheckBox prefUseIgnore;
     private JCheckBox prefUseLayer;
     private JCheckBox prefOtherUpload;
@@ -91,7 +91,7 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
         for (Test test: allTests) {
             test.addGui(testPanel);
         }
-        
+
         gui.getValidatorPreference().addSubTab(this, tr("Tests"),
                 GuiHelper.embedInVerticalScrollPane(testPanel),
                 tr("Choose tests to enable"));
@@ -104,13 +104,13 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
 
         for (Test test : allTests) {
             test.ok();
-            String name = test.getClass().getSimpleName();
+            String name = test.getClass().getName();
             if(!test.enabled)
                 tests.add(name);
             if(!test.testBeforeUpload)
                 testsBeforeUpload.add(name);
         }
-        
+
         // Initializes all tests but MapCSSTagChecker because it is initialized
         // later in ValidatorTagCheckerRulesPreference.ok(),
         // after its list of rules has been saved to preferences
