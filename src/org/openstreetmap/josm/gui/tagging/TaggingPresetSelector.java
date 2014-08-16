@@ -15,7 +15,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -342,7 +341,6 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         TaggingPreset newPreset = getSelectedPreset();
         if (!Objects.equals(oldPreset, newPreset)) {
             int[] indices = lsResult.getSelectedIndices();
-            System.out.println(newPreset + " / "+Arrays.toString(indices));
             for (ListSelectionListener listener : listSelectionListeners) {
                 listener.valueChanged(new ListSelectionEvent(lsResult, lsResult.getSelectedIndex(),
                         indices.length > 0 ? indices[indices.length-1] : -1, false));
