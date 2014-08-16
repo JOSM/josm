@@ -11,10 +11,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Helper class to build multipolygons from multiple ways.
@@ -23,6 +29,9 @@ import org.openstreetmap.josm.tools.MultiMap;
  * @since 3704
  */
 public class MultipolygonBuilder {
+
+    private static final Pair<Integer, ExecutorService> THREAD_POOL =
+            Utils.newThreadPool("multipolygon_creation.numberOfThreads");
 
     /**
      * Represents one polygon that consists of multiple ways.
@@ -236,7 +245,7 @@ public class MultipolygonBuilder {
      * @return error description if the ways cannot be split, {@code null} if all fine.
      */
     private String makeFromPolygons(List<JoinedPolygon> polygons) {
-        List<PolygonLevel> list = findOuterWaysRecursive(0, polygons);
+        List<PolygonLevel> list = findOuterWaysMultiThread(polygons);
 
         if (list == null) {
             return tr("There is an intersection between ways.");
@@ -257,69 +266,148 @@ public class MultipolygonBuilder {
         return null;
     }
 
-    /**
-     * Collects outer way and corresponding inner ways from all boundaries.
-     * @param boundaryWays
-     * @return the outermostWay, or {@code null} if intersection found.
-     */
-    private List<PolygonLevel> findOuterWaysRecursive(int level, Collection<JoinedPolygon> boundaryWays) {
+    private static Pair<Boolean, List<JoinedPolygon>> findInnerWaysCandidates(JoinedPolygon outerWay, Collection<JoinedPolygon> boundaryWays) {
+        boolean outerGood = true;
+        List<JoinedPolygon> innerCandidates = new ArrayList<>();
 
-        //TODO: bad performance for deep nesting...
-        List<PolygonLevel> result = new ArrayList<>();
-
-        for (JoinedPolygon outerWay : boundaryWays) {
-
-            boolean outerGood = true;
-            List<JoinedPolygon> innerCandidates = new ArrayList<>();
-
-            for (JoinedPolygon innerWay : boundaryWays) {
-                if (innerWay == outerWay) {
-                    continue;
-                }
-
-                // Preliminary computation on bounds. If bounds do not intersect, no need to do a costly area intersection
-                if (outerWay.bounds.intersects(innerWay.bounds)) {
-                    // Bounds intersection, let's see in detail
-                    PolygonIntersection intersection = Geometry.polygonIntersection(outerWay.area, innerWay.area);
-
-                    if (intersection == PolygonIntersection.FIRST_INSIDE_SECOND) {
-                        outerGood = false;  // outer is inside another polygon
-                        break;
-                    } else if (intersection == PolygonIntersection.SECOND_INSIDE_FIRST) {
-                        innerCandidates.add(innerWay);
-                    } else if (intersection == PolygonIntersection.CROSSING) {
-                        //ways intersect
-                        return null;
-                    }
-                }
-            }
-
-            if (!outerGood) {
+        for (JoinedPolygon innerWay : boundaryWays) {
+            if (innerWay == outerWay) {
                 continue;
             }
 
-            //add new outer polygon
-            PolygonLevel pol = new PolygonLevel(outerWay, level);
+            // Preliminary computation on bounds. If bounds do not intersect, no need to do a costly area intersection
+            if (outerWay.bounds.intersects(innerWay.bounds)) {
+                // Bounds intersection, let's see in detail
+                PolygonIntersection intersection = Geometry.polygonIntersection(outerWay.area, innerWay.area);
 
-            //process inner ways
-            if (!innerCandidates.isEmpty()) {
-                List<PolygonLevel> innerList = this.findOuterWaysRecursive(level + 1, innerCandidates);
-                if (innerList == null) {
-                    return null; //intersection found
+                if (intersection == PolygonIntersection.FIRST_INSIDE_SECOND) {
+                    outerGood = false;  // outer is inside another polygon
+                    break;
+                } else if (intersection == PolygonIntersection.SECOND_INSIDE_FIRST) {
+                    innerCandidates.add(innerWay);
+                } else if (intersection == PolygonIntersection.CROSSING) {
+                    // ways intersect
+                    return null;
                 }
+            }
+        }
 
-                result.addAll(innerList);
+        return new Pair<>(outerGood, innerCandidates);
+    }
 
-                for (PolygonLevel pl : innerList) {
-                    if (pl.level == level + 1) {
-                        pol.innerWays.add(pl.outerWay);
+    /**
+     * Collects outer way and corresponding inner ways from all boundaries.
+     * @return the outermostWay, or {@code null} if intersection found.
+     */
+    private static List<PolygonLevel> findOuterWaysMultiThread(List<JoinedPolygon> boundaryWays) {
+        final List<PolygonLevel> result = new ArrayList<>();
+        final List<Worker> tasks = new ArrayList<>();
+        final int bucketsize = Math.max(32, boundaryWays.size()/THREAD_POOL.a/3);
+        final int noBuckets = (boundaryWays.size() + bucketsize - 1) / bucketsize;
+        final boolean singleThread = THREAD_POOL.a == 1 || noBuckets == 1;
+        for (int i=0; i<noBuckets; i++) {
+            int from = i*bucketsize;
+            int to = Math.min((i+1)*bucketsize, boundaryWays.size());
+            List<PolygonLevel> target = singleThread ? result : new ArrayList<PolygonLevel>(to - from);
+            tasks.add(new Worker(boundaryWays, from, to, target));
+        }
+        if (singleThread) {
+            try {
+                for (Worker task : tasks) {
+                    if (task.call() == null) {
+                        return null;
                     }
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        } else if (!tasks.isEmpty()) {
+            try {
+                for (Future<List<PolygonLevel>> future : THREAD_POOL.b.invokeAll(tasks)) {
+                    List<PolygonLevel> res = future.get();
+                    if (res == null) {
+                        return null;
+                    }
+                    result.addAll(res);
+                }
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return result;
+    }
+
+    private static class Worker implements Callable<List<PolygonLevel>> {
+
+        private final List<JoinedPolygon> input;
+        private final int from;
+        private final int to;
+        private final List<PolygonLevel> output;
+
+        public Worker(List<JoinedPolygon> input, int from, int to, List<PolygonLevel> output) {
+            this.input = input;
+            this.from = from;
+            this.to = to;
+            this.output = output;
+        }
+
+        /**
+         * Collects outer way and corresponding inner ways from all boundaries.
+         * @return the outermostWay, or {@code null} if intersection found.
+         */
+        private static List<PolygonLevel> findOuterWaysRecursive(int level, List<JoinedPolygon> boundaryWays) {
+
+            final List<PolygonLevel> result = new ArrayList<>();
+
+            for (JoinedPolygon outerWay : boundaryWays) {
+                if (processOuterWay(level, boundaryWays, result, outerWay) == null) {
+                    return null;
                 }
             }
 
-            result.add(pol);
+            return result;
         }
 
-        return result;
+        private static List<PolygonLevel> processOuterWay(int level, List<JoinedPolygon> boundaryWays, final List<PolygonLevel> result, JoinedPolygon outerWay) {
+            Pair<Boolean, List<JoinedPolygon>> p = findInnerWaysCandidates(outerWay, boundaryWays);
+            if (p == null) {
+                // ways intersect
+                return null;
+            }
+
+            if (p.a) {
+                //add new outer polygon
+                PolygonLevel pol = new PolygonLevel(outerWay, level);
+
+                //process inner ways
+                if (!p.b.isEmpty()) {
+                    List<PolygonLevel> innerList = findOuterWaysRecursive(level + 1, p.b);
+                    if (innerList == null) {
+                        return null; //intersection found
+                    }
+
+                    result.addAll(innerList);
+
+                    for (PolygonLevel pl : innerList) {
+                        if (pl.level == level + 1) {
+                            pol.innerWays.add(pl.outerWay);
+                        }
+                    }
+                }
+
+                result.add(pol);
+            }
+            return result;
+        }
+
+        @Override
+        public List<PolygonLevel> call() throws Exception {
+            for (int i = from; i<to; i++) {
+                if (processOuterWay(0, input, output, input.get(i)) == null) {
+                    return null;
+                }
+            }
+            return output;
+        }
     }
 }

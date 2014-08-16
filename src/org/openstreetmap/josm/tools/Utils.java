@@ -41,6 +41,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -1062,5 +1064,18 @@ public final class Utils {
         if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("resource://"))
             return false;
         return true;
+    }
+
+    /**
+     * Returns a pair containing the number of threads (n), and a thread pool (if n > 1) to perform
+     * multi-thread computation in the context of the given preference key.
+     * @param pref The preference key
+     * @return a pair containing the number of threads (n), and a thread pool (if n > 1, null otherwise)
+     * @since 7423
+     */
+    public static Pair<Integer, ExecutorService> newThreadPool(String pref) {
+        int noThreads = Main.pref.getInteger(pref, Runtime.getRuntime().availableProcessors());
+        ExecutorService pool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads);
+        return new Pair<>(noThreads, pool);
     }
 }
