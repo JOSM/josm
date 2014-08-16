@@ -36,8 +36,13 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Exports data to a .gpx file. Data may be native GPX or OSM data which will be converted.
+ * @since 1949
+ */
 public class GpxExporter extends FileExporter implements GpxConstants {
-    private static final String warningGpl = "<html><font color='red' size='-2'>"
+
+    private static final String GPL_WARNING = "<html><font color='red' size='-2'>"
         + tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.") + "</html>";
 
     /**
@@ -73,8 +78,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
         GpxData gpxData;
         // At this moment, we only need to know the attributes of the GpxData,
-        // conversion of OsmDataLayer (if needed) will be done after the dialog
-        // is closed.
+        // conversion of OsmDataLayer (if needed) will be done after the dialog is closed.
         if (layer instanceof GpxLayer) {
             gpxData = ((GpxLayer) layer).data;
         } else {
@@ -174,7 +178,6 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             gpxData.attr.put(META_KEYWORDS, keywords.getText());
         }
 
-        
         try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
             new GpxWriter(fo).write(gpxData);
             fo.flush();
@@ -193,7 +196,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         copyrightYear.setEnabled(enable);
         copyrightLabel.setEnabled(enable);
         copyrightYearLabel.setEnabled(enable);
-        warning.setText(enable ? warningGpl : "<html><font size='-2'>&nbsp;</html");
+        warning.setText(enable ? GPL_WARNING : "<html><font size='-2'>&nbsp;</html");
 
         if (enable) {
             if (copyrightYear.getText().length()==0) {
@@ -219,11 +222,6 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
     /**
      * Add all those listeners to handle the enable state of the fields.
-     * @param copyrightYearLabel
-     * @param copyrightLabel
-     * @param emailLabel
-     * @param nameLabel
-     * @param warning
      */
     private static void addDependencies(
             final GpxData data,
@@ -298,7 +296,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                 if (answer != JOptionPane.OK_OPTION || l.getSelectedIndex() == -1)
                     return;
                 final String[] urls = {
-                        "https://creativecommons.org/licenses/by-sa/2.5",
+                        "https://creativecommons.org/licenses/by-sa/3.0",
                         "http://opendatacommons.org/licenses/odbl/1.0",
                         "public domain",
                         "https://www.gnu.org/copyleft/lesser.html",
@@ -328,5 +326,4 @@ public class GpxExporter extends FileExporter implements GpxConstants {
     private DataSet getCurrentDataSet() {
         return Main.main.getCurrentDataSet();
     }
-
 }
