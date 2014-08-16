@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -194,7 +195,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             return sb.toString();
         }
 
-        static TagCheck ofMapCSSRule(final GroupedMapCSSRule rule) {
+        static TagCheck ofMapCSSRule(final GroupedMapCSSRule rule) throws IllegalDataException {
             final TagCheck check = new TagCheck(rule);
             boolean containsSetClassExpression = false;
             for (Instruction i : rule.declaration.instructions) {
@@ -243,14 +244,14 @@ public class MapCSSTagChecker extends Test.TagTest {
                     } else if ("assertNoMatch".equals(ai.key) && val != null) {
                         check.assertions.put(val, false);
                     } else {
-                        throw new RuntimeException("Cannot add instruction " + ai.key + ": " + ai.val + "!");
+                        throw new IllegalDataException("Cannot add instruction " + ai.key + ": " + ai.val + "!");
                     }
                 }
             }
             if (check.errors.isEmpty() && !containsSetClassExpression) {
-                throw new RuntimeException("No "+POSSIBLE_THROWS+" given! You should specify a validation error message for " + rule.selectors);
+                throw new IllegalDataException("No "+POSSIBLE_THROWS+" given! You should specify a validation error message for " + rule.selectors);
             } else if (check.errors.size() > 1) {
-                throw new RuntimeException("More than one "+POSSIBLE_THROWS+" given! You should specify a single validation error message for " + rule.selectors);
+                throw new IllegalDataException("More than one "+POSSIBLE_THROWS+" given! You should specify a single validation error message for " + rule.selectors);
             }
             return check;
         }
@@ -280,8 +281,12 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
             List<TagCheck> result = new ArrayList<>();
             for (Map.Entry<Declaration, List<Selector>> map : g.entrySet()) {
-                result.add(TagCheck.ofMapCSSRule(
-                        new GroupedMapCSSRule(map.getValue(), map.getKey())));
+                try {
+                    result.add(TagCheck.ofMapCSSRule(
+                            new GroupedMapCSSRule(map.getValue(), map.getKey())));
+                } catch (IllegalDataException e) {
+                    Main.error("Cannot add MapCss rule: "+e.getMessage());
+                }
             }
             return result;
         }
