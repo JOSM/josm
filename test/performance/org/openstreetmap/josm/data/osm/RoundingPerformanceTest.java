@@ -7,12 +7,19 @@ import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.LatLonTest;
 
+/**
+ * Checks that rounding of coordinates is not too slow.
+ */
 public class RoundingPerformanceTest {
 
     private static double oldRoundToOsmPrecision(double value) {
-        return Math.round(value / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION; // Old method, causes rounding errors, but efficient
+        // Old method, causes rounding errors, but efficient
+        return Math.round(value / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION;
     }
 
+    /**
+     * Checks that rounding of coordinates is not too slow.
+     */
     @Test
     public void test() {
         final int n = 1000000;
@@ -36,6 +43,6 @@ public class RoundingPerformanceTest {
         long newTime = end-start;
         System.out.println("New time: "+newTime/1000000.0 + " ms");
 
-        assertTrue(newTime <= oldTime*10);
+        assertTrue(newTime <= oldTime*12);
     }
 }
