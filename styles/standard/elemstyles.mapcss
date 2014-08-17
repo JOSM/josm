@@ -3609,16 +3609,20 @@ node|z17-[maxspeed=signals]::core_maxnodefg {
 node {
     text: auto;
 }
-node|z16, node|z17-[!is_prop_set("icon-image")]!.maxspeedclass {
+node|z-16, node|z17-[!is_prop_set("icon-image")]!.maxspeedclass {
     symbol-size:1;
     symbol-shape: square;
     symbol-stroke-color: node_standard#ffff00;
     major-z-index: 4.95; /* put node squares above line text */
 }
+way > node|z-15!:tagged {
+    symbol-shape: none;
+}
+
 node|z16-:connection {
     symbol-stroke-color: node_connection#ffff00;
 }
-node|z16-:tagged {
+node:tagged {
     symbol-stroke-color: none;
     symbol-fill-color: node_tagged#00ffff;
 }
