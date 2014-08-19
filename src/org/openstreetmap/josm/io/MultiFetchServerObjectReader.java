@@ -386,7 +386,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         int n = nodes.size() + ways.size() + relations.size();
-        progressMonitor.beginTask(trn("Downloading {0} object from ''{1}''", "Downloading {0} objects from ''{1}''", n, n, OsmApi.getOsmApi().getBaseUrl()));
+        progressMonitor.beginTask(trn("Downloading {0} object from ''{1}''",
+                "Downloading {0} objects from ''{1}''", n, n, OsmApi.getOsmApi().getBaseUrl()));
         try {
             missingPrimitives = new HashSet<>();
             if (isCanceled()) return null;
