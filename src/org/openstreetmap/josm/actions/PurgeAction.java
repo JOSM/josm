@@ -262,7 +262,7 @@ public class PurgeAction extends JosmAction {
             JScrollPane scroll = new JScrollPane(list);
             scroll.setPreferredSize(new Dimension(250, 300));
             scroll.setMinimumSize(new Dimension(250, 300));
-            pnl.add(scroll, GBC.std().fill(GBC.VERTICAL).weight(0.0, 1.0));
+            pnl.add(scroll, GBC.std().fill(GBC.BOTH).weight(1.0, 1.0));
 
             JButton addToSelection = new JButton(new AbstractAction() {
                 {
@@ -276,7 +276,7 @@ public class PurgeAction extends JosmAction {
                 }
             });
             addToSelection.setMargin(new Insets(0,0,0,0));
-            pnl.add(addToSelection, GBC.eol().anchor(GBC.SOUTHWEST).weight(1.0, 1.0).insets(2,0,0,3));
+            pnl.add(addToSelection, GBC.eol().anchor(GBC.SOUTHWEST).weight(0.0, 1.0).insets(2,0,0,3));
         }
 
         if (modified) {
