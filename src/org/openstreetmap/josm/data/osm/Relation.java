@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * An relation, having a set of tags and any number (0...n) of members.
+ * A relation, having a set of tags and any number (0...n) of members.
  *
  * @author Frederik Ramm
  */
@@ -501,7 +501,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     /**
-     * Replies true if at least one child primitive is incomplete
+     * Determines if at least one child primitive is incomplete.
      *
      * @return true if at least one child primitive is incomplete
      */
@@ -514,8 +514,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     /**
-     * Replies a collection with the incomplete children this relation
-     * refers to
+     * Replies a collection with the incomplete children this relation refers to.
      *
      * @return the incomplete children. Empty collection if no children are incomplete.
      */

@@ -103,8 +103,7 @@ public class OsmServerObjectReader extends OsmServerReader {
     /**
      * Downloads and parses the data.
      *
-     * @param progressMonitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if
-     * null
+     * @param progressMonitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the downloaded data
      * @throws OsmTransferException
      */
