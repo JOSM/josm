@@ -1210,8 +1210,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     class CopyKeyValueAction extends AbstractCopyAction {
 
         public CopyKeyValueAction() {
-            putValue(NAME, tr("Copy Key/Value"));
-            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tag to clipboard"));
+            putValue(NAME, tr("Copy selected Key(s)/Value(s)"));
+            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tag(s) to clipboard"));
         }
 
         @Override
@@ -1225,7 +1225,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         public CopyAllKeyValueAction() {
             putValue(NAME, tr("Copy all Keys/Values"));
-            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the all tags to clipboard"));
+            putValue(SHORT_DESCRIPTION, tr("Copy the key and value of all the tags to clipboard"));
         }
 
         @Override
