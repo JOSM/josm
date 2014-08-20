@@ -72,8 +72,7 @@ public class OpenLocationAction extends JosmAction {
      */
     protected void restoreUploadAddressHistory(HistoryComboBox cbHistory) {
         List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(getClass().getName() + ".uploadAddressHistory", new LinkedList<String>()));
-        // we have to reverse the history, because ComboBoxHistory will reverse it again
-        // in addElement()
+        // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         //
         Collections.reverse(cmtHistory);
         cbHistory.setPossibleItems(cmtHistory);

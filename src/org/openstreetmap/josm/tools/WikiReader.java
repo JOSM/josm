@@ -29,7 +29,16 @@ public class WikiReader {
      * Constructs a new {@code WikiReader}.
      */
     public WikiReader() {
-        this.baseurl = Main.pref.get("help.baseurl", Main.getJOSMWebsite());
+        this(Main.pref.get("help.baseurl", Main.getJOSMWebsite()));
+    }
+
+    /**
+     * Returns the base URL of wiki.
+     * @return the base URL of wiki
+     * @since 7434
+     */
+    public final String getBaseUrlWiki() {
+        return baseurl + "/wiki/";
     }
 
     /**
@@ -45,7 +54,7 @@ public class WikiReader {
         URL u = new URL(url);
         try (BufferedReader in = Utils.openURLReader(u)) {
             boolean txt = url.endsWith("?format=txt");
-            if (url.startsWith(baseurl) && !txt)
+            if (url.startsWith(getBaseUrlWiki()) && !txt)
                 return readFromTrac(in, u);
             return readNormal(in, !txt);
         }
@@ -63,20 +72,20 @@ public class WikiReader {
 
         languageCode = LanguageInfo.getWikiLanguagePrefix(LocaleType.DEFAULTNOTENGLISH);
         if(languageCode != null) {
-            res = readLang(new URL(baseurl + "/wiki/" + languageCode + text));
+            res = readLang(new URL(getBaseUrlWiki() + languageCode + text));
         }
 
         if(res.isEmpty()) {
             languageCode = LanguageInfo.getWikiLanguagePrefix(LocaleType.BASELANGUAGE);
             if(languageCode != null) {
-                res = readLang(new URL(baseurl + "/wiki/" + languageCode + text));
+                res = readLang(new URL(getBaseUrlWiki() + languageCode + text));
             }
         }
 
         if(res.isEmpty()) {
             languageCode = LanguageInfo.getWikiLanguagePrefix(LocaleType.ENGLISH);
             if(languageCode != null) {
-                res = readLang(new URL(baseurl + "/wiki/" + languageCode + text));
+                res = readLang(new URL(getBaseUrlWiki() + languageCode + text));
             }
         }
 

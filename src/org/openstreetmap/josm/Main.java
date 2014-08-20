@@ -24,10 +24,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -90,6 +92,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresets;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.FileWatcher;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
@@ -217,6 +220,8 @@ public abstract class Main {
 
     // First lines of last 10 error and warning messages, used for bug reports
     private static final List<String> ERRORS_AND_WARNINGS = Collections.<String>synchronizedList(new ArrayList<String>());
+
+    private static final Set<OnlineResource> OFFLINE_RESOURCES = new HashSet<>();
 
     /**
      * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
@@ -542,20 +547,24 @@ public abstract class Main {
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
         List<Callable<Void>> tasks = new ArrayList<>();
 
-        tasks.add(new InitializationTask(tr("Initializing OSM API")) {
+        if (isOffline(OnlineResource.OSM_API)) {
+            Main.warn(tr("{0} not available (offline mode)", tr("OSM API")));
+        } else {
+            tasks.add(new InitializationTask(tr("Initializing OSM API")) {
 
-            @Override
-            public void initialize() throws Exception {
-                // We try to establish an API connection early, so that any API
-                // capabilities are already known to the editor instance. However
-                // if it goes wrong that's not critical at this stage.
-                try {
-                    OsmApi.getOsmApi().initialize(null, true);
-                } catch (Exception e) {
-                    Main.warn(getErrorMessage(Utils.getRootCause(e)));
+                @Override
+                public void initialize() throws Exception {
+                    // We try to establish an API connection early, so that any API
+                    // capabilities are already known to the editor instance. However
+                    // if it goes wrong that's not critical at this stage.
+                    try {
+                        OsmApi.getOsmApi().initialize(null, true);
+                    } catch (Exception e) {
+                        Main.warn(getErrorMessage(Utils.getRootCause(e)));
+                    }
                 }
-            }
-        });
+            });
+        }
 
         tasks.add(new InitializationTask(tr("Initializing validator")) {
 
@@ -1551,5 +1560,34 @@ public abstract class Main {
      */
     public static boolean isPlatformWindows() {
         return Main.platform instanceof PlatformHookWindows;
+    }
+
+    /**
+     * Determines if the given online resource is currently offline.
+     * @param r the online resource
+     * @return {@code true} if {@code r} is offline and should not be accessed
+     * @since 7434
+     */
+    public static boolean isOffline(OnlineResource r) {
+        return OFFLINE_RESOURCES.contains(r) || OFFLINE_RESOURCES.contains(OnlineResource.ALL);
+    }
+
+    /**
+     * Sets the given online resource to offline state.
+     * @param r the online resource
+     * @return {@code true} if {@code r} was not already offline
+     * @since 7434
+     */
+    public static boolean setOffline(OnlineResource r) {
+        return OFFLINE_RESOURCES.add(r);
+    }
+
+    /**
+     * Replies the set of online resources currently offline.
+     * @return the set of online resources currently offline
+     * @since 7434
+     */
+    public static Set<OnlineResource> getOfflineResources() {
+        return new HashSet<>(OFFLINE_RESOURCES);
     }
 }

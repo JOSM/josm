@@ -86,10 +86,12 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -1040,6 +1042,7 @@ public abstract class SourceEditor extends JPanel {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
             this.url = url;
             this.sourceProviders = sourceProviders;
+            setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
         }
 
         @Override
@@ -1255,15 +1258,20 @@ public abstract class SourceEditor extends JPanel {
         protected void warn(Exception e) {
             String emsg = e.getMessage() != null ? e.getMessage() : e.toString();
             emsg = emsg.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-            String msg = tr(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM), url, emsg);
+            final String msg = tr(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM), url, emsg);
 
-            HelpAwareOptionPane.showOptionDialog(
-                    Main.parent,
-                    msg,
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE,
-                    ht(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC))
-                    );
+            GuiHelper.runInEDT(new Runnable() {
+                @Override
+                public void run() {
+                    HelpAwareOptionPane.showOptionDialog(
+                            Main.parent,
+                            msg,
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE,
+                            ht(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC))
+                            );
+                }
+            });
         }
 
         @Override

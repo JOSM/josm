@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -102,7 +103,7 @@ public class DownloadDialog extends JDialog  {
         buildMainPanelAboveDownloadSelections(pnl);
 
         slippyMapChooser = new SlippyMapChooser();
-        
+
         // predefined download selections
         downloadSelections.add(slippyMapChooser);
         downloadSelections.add(new BookmarkSelection());
@@ -304,7 +305,7 @@ public class DownloadDialog extends JDialog  {
             slippyMapChooser.refreshTileSources();
         }
     }
-    
+
     /**
      * Remembers the current settings in the download dialog.
      */
@@ -348,7 +349,7 @@ public class DownloadDialog extends JDialog  {
             }
         }
     }
-    
+
     /**
      * Returns the previously saved bounding box from preferences.
      * @return The bounding box saved in preferences if any, {@code null} otherwise
@@ -443,6 +444,7 @@ public class DownloadDialog extends JDialog  {
             putValue(NAME, tr("Download"));
             putValue(SMALL_ICON, ImageProvider.get("download"));
             putValue(SHORT_DESCRIPTION, tr("Click to download the currently selected area"));
+            setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
 
         public void run() {

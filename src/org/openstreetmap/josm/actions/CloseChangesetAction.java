@@ -22,14 +22,18 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.CloseChangesetDialog;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
-public class CloseChangesetAction extends JosmAction{
+public class CloseChangesetAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code CloseChangesetAction}.
+     */
     public CloseChangesetAction() {
         super(tr("Close open changesets"),
             "closechangeset",
@@ -40,6 +44,7 @@ public class CloseChangesetAction extends JosmAction{
             true
         );
         putValue("help", ht("/Action/CloseChangeset"));
+        setEnabled(!Main.isOffline(OnlineResource.OSM_API));
 
     }
     @Override

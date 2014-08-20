@@ -49,6 +49,8 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePan
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.io.OfflineAccessException;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
@@ -113,7 +115,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
         return sb.toString();
     }
-    
+
     /**
      * Notifies user about result of a finished plugin download task.
      * @param parent The parent component
@@ -312,9 +314,21 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         Main.worker.submit(r);
     }
 
+    private static Collection<String> getOnlinePluginSites() {
+        Collection<String> pluginSites = new ArrayList<>(Main.pref.getPluginSites());
+        for (Iterator<String> it = pluginSites.iterator(); it.hasNext();) {
+            try {
+                OnlineResource.JOSM_WEBSITE.checkOfflineAccess(it.next(), Main.getJOSMWebsite());
+            } catch (OfflineAccessException ex) {
+                Main.warn(ex.getMessage());
+                it.remove();
+            }
+        }
+        return pluginSites;
+    }
+
     /**
      * The action for downloading the list of available plugins
-     *
      */
     class DownloadAvailablePluginsAction extends AbstractAction {
 
@@ -326,7 +340,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final ReadRemotePluginInformationTask task = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
+            Collection<String> pluginSites = getOnlinePluginSites();
+            if (pluginSites.isEmpty()) {
+                return;
+            }
+            final ReadRemotePluginInformationTask task = new ReadRemotePluginInformationTask(pluginSites);
             Runnable continuation = new Runnable() {
                 @Override
                 public void run() {
@@ -344,11 +362,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             Main.worker.submit(task);
             Main.worker.submit(continuation);
         }
+
     }
 
     /**
-     * The action for downloading the list of available plugins
-     *
+     * The action for updating the list of selected plugins
      */
     class UpdateSelectedPluginsAction extends AbstractAction {
         public UpdateSelectedPluginsAction() {
@@ -386,7 +404,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     tr("Update plugins")
                     );
             // the async task for downloading plugin information
-            final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
+            final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(getOnlinePluginSites());
 
             // to be run asynchronously after the plugin download
             //

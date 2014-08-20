@@ -23,12 +23,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Downloads a file and caches it on disk in order to reduce network load.
- * 
+ *
  * Supports URLs, local files, and a custom scheme (<code>resource:</code>) to get
  * resources from the current *.jar file. (Local caching is only done for URLs.)
  * <p>
@@ -48,21 +49,21 @@ public class CachedFile {
          * If cached file on disk is older than a certain time (7 days by default),
          * consider the cache stale and try to download the file again.
          */
-        MaxAge, 
+        MaxAge,
         /**
          * Similar to MaxAge, considers the cache stale when a certain age is
          * exceeded. In addition, a If-Modified-Since HTTP header is added.
          * When the server replies "304 Not Modified", this is considered the same
          * as a full download.
          */
-        IfModifiedSince 
+        IfModifiedSince
     }
     protected String name;
     protected long maxAge;
     protected String destDir;
     protected String httpAccept;
     protected CachingStrategy cachingStrategy;
-    
+
     protected File cacheFile = null;
     boolean initialized = false;
 
@@ -97,7 +98,7 @@ public class CachedFile {
         this.name = name;
         return this;
     }
-    
+
     /**
      * Set maximum age of cache file. Only applies to URLs.
      * When this time has passed after the last download of the file, the
@@ -200,7 +201,7 @@ public class CachedFile {
             } else {
                 cacheFile = checkLocal(url);
             }
-        } catch (java.net.MalformedURLException e) {
+        } catch (MalformedURLException e) {
             if (name.startsWith("resource://")) {
                 return null;
             } else if (name.startsWith("josmdir://")) {
@@ -210,10 +211,10 @@ public class CachedFile {
             }
         }
         if (cacheFile == null)
-            throw new IOException();
+            throw new IOException("Unable to get cache file for "+name);
         return cacheFile;
     }
-    
+
     /**
      * Looks for a certain entry inside a zip file and returns the entry path.
      *
@@ -291,7 +292,7 @@ public class CachedFile {
     /**
      * Clear the cache for the given resource.
      * This forces a fresh download.
-     * @param name the URL 
+     * @param name the URL
      */
     public static void cleanup(String name) {
         cleanup(name, null);
@@ -340,23 +341,30 @@ public class CachedFile {
 
     private File checkLocal(URL url) throws IOException {
         String prefKey = getPrefKey(url, destDir);
+        String urlStr = url.toExternalForm();
         long age = 0L;
         long lMaxAge = maxAge;
         Long ifModifiedSince = null;
         File localFile = null;
         List<String> localPathEntry = new ArrayList<>(Main.pref.getCollection(prefKey));
+        boolean offline = false;
+        try {
+            checkOfflineAccess(urlStr);
+        } catch (OfflineAccessException e) {
+            offline = true;
+        }
         if (localPathEntry.size() == 2) {
             localFile = new File(localPathEntry.get(1));
-            if(!localFile.exists())
+            if (!localFile.exists()) {
                 localFile = null;
-            else {
+            } else {
                 if ( maxAge == DEFAULT_MAXTIME
                         || maxAge <= 0 // arbitrary value <= 0 is deprecated
                 ) {
                     lMaxAge = Main.pref.getInteger("mirror.maxtime", 7*24*60*60); // one week
                 }
                 age = System.currentTimeMillis() - Long.parseLong(localPathEntry.get(0));
-                if (age < lMaxAge*1000) {
+                if (offline || age < lMaxAge*1000) {
                     return localFile;
                 }
                 if (cachingStrategy == CachingStrategy.IfModifiedSince) {
@@ -372,19 +380,27 @@ public class CachedFile {
         if (!destDirFile.exists()) {
             destDirFile.mkdirs();
         }
-        
-        String a = url.toString().replaceAll("[^A-Za-z0-9_.-]", "_");
+
+        // No local file + offline => nothing to do
+        if (offline) {
+            return null;
+        }
+
+        String a = urlStr.replaceAll("[^A-Za-z0-9_.-]", "_");
         String localPath = "mirror_" + a;
         destDirFile = new File(destDir, localPath + ".tmp");
         try {
             HttpURLConnection con = connectFollowingRedirect(url, httpAccept, ifModifiedSince);
             if (ifModifiedSince != null && con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                Main.debug("304 Not Modified ("+url+")");
-                if (localFile == null) throw new AssertionError();
-                Main.pref.putCollection(prefKey, 
+                if (Main.isDebugEnabled()) {
+                    Main.debug("304 Not Modified ("+urlStr+")");
+                }
+                if (localFile == null)
+                    throw new AssertionError();
+                Main.pref.putCollection(prefKey,
                         Arrays.asList(Long.toString(System.currentTimeMillis()), localPathEntry.get(1)));
                 return localFile;
-            } 
+            }
             try (
                 InputStream bis = new BufferedInputStream(con.getInputStream());
                 OutputStream fos = new FileOutputStream(destDirFile);
@@ -397,8 +413,8 @@ public class CachedFile {
                 }
             }
             localFile = new File(destDir, localPath);
-            if(Main.platform.rename(destDirFile, localFile)) {
-                Main.pref.putCollection(prefKey, 
+            if (Main.platform.rename(destDirFile, localFile)) {
+                Main.pref.putCollection(prefKey,
                         Arrays.asList(Long.toString(System.currentTimeMillis()), localFile.toString()));
             } else {
                 Main.warn(tr("Failed to rename file {0} to {1}.",
@@ -406,7 +422,7 @@ public class CachedFile {
             }
         } catch (IOException e) {
             if (age >= lMaxAge*1000 && age < lMaxAge*1000*2) {
-                Main.warn(tr("Failed to load {0}, use cached file and retry next time: {1}", url, e));
+                Main.warn(tr("Failed to load {0}, use cached file and retry next time: {1}", urlStr, e));
                 return localFile;
             } else {
                 throw e;
@@ -416,6 +432,11 @@ public class CachedFile {
         return localFile;
     }
 
+    private static void checkOfflineAccess(String urlString) {
+        OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlString, Main.getJOSMWebsite());
+        OnlineResource.OSM_API.checkOfflineAccess(urlString, Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
+    }
+
     /**
      * Opens a connection for downloading a resource.
      * <p>
@@ -423,7 +444,7 @@ public class CachedFile {
      * {@link HttpURLConnection#setFollowRedirects(boolean)} fails if the redirect
      * is going from a http to a https URL, see <a href="https://bugs.openjdk.java.net/browse/JDK-4620571">bug report</a>.
      * <p>
-     * This can causes problems when downloading from certain GitHub URLs.
+     * This can cause problems when downloading from certain GitHub URLs.
      *
      * @param downloadUrl The resource URL to download
      * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Can be {@code null}
@@ -431,22 +452,35 @@ public class CachedFile {
      * @return The HTTP connection effectively linked to the resource, after all potential redirections
      * @throws MalformedURLException If a redirected URL is wrong
      * @throws IOException If any I/O operation goes wrong
+     * @throws OfflineAccessException if resource is accessed in offline mode, in any protocol
      * @since 6867
      */
     public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept, Long ifModifiedSince) throws MalformedURLException, IOException {
+        CheckParameterUtil.ensureParameterNotNull(downloadUrl, "downloadUrl");
+        String downloadString = downloadUrl.toExternalForm();
+
+        checkOfflineAccess(downloadString);
+
         HttpURLConnection con = null;
         int numRedirects = 0;
         while(true) {
             con = Utils.openHttpConnection(downloadUrl);
+            if (con == null) {
+                throw new IOException("Cannot open http connection to "+downloadString);
+            }
             if (ifModifiedSince != null) {
                 con.setIfModifiedSince(ifModifiedSince);
             }
             con.setInstanceFollowRedirects(false);
             con.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
             con.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
-            Main.debug("GET "+downloadUrl);
+            if (Main.isDebugEnabled()) {
+                Main.debug("GET "+downloadString);
+            }
             if (httpAccept != null) {
-                Main.debug("Accept: "+httpAccept);
+                if (Main.isTraceEnabled()) {
+                    Main.trace("Accept: "+httpAccept);
+                }
                 con.setRequestProperty("Accept", httpAccept);
             }
             try {
@@ -465,11 +499,14 @@ public class CachedFile {
             case HttpURLConnection.HTTP_MOVED_TEMP:
             case HttpURLConnection.HTTP_SEE_OTHER:
                 String redirectLocation = con.getHeaderField("Location");
-                if (downloadUrl == null) {
-                    /* I18n: argument is HTTP response code */ String msg = tr("Unexpected response from HTTP server. Got {0} response without ''Location'' header. Can''t redirect. Aborting.", con.getResponseCode());
+                if (redirectLocation == null) {
+                    /* I18n: argument is HTTP response code */
+                    String msg = tr("Unexpected response from HTTP server. Got {0} response without ''Location'' header."+
+                            " Can''t redirect. Aborting.", con.getResponseCode());
                     throw new IOException(msg);
                 }
                 downloadUrl = new URL(redirectLocation);
+                downloadString = downloadUrl.toExternalForm();
                 // keep track of redirect attempts to break a redirect loops if it happens
                 // to occur for whatever reason
                 numRedirects++;
@@ -477,13 +514,12 @@ public class CachedFile {
                     String msg = tr("Too many redirects to the download URL detected. Aborting.");
                     throw new IOException(msg);
                 }
-                Main.info(tr("Download redirected to ''{0}''", downloadUrl));
+                Main.info(tr("Download redirected to ''{0}''", downloadString));
                 break;
             default:
-                String msg = tr("Failed to read from ''{0}''. Server responded with status code {1}.", downloadUrl, con.getResponseCode());
+                String msg = tr("Failed to read from ''{0}''. Server responded with status code {1}.", downloadString, con.getResponseCode());
                 throw new IOException(msg);
             }
         }
     }
-
 }

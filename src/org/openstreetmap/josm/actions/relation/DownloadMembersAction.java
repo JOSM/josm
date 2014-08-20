@@ -11,6 +11,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
@@ -30,7 +31,7 @@ public class DownloadMembersAction extends AbstractRelationAction {
         putValue(SMALL_ICON, ImageProvider.get("dialogs", "downloadincomplete"));
         putValue("help", ht("/Dialog/RelationList#DownloadMembers"));
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty() || !Main.isDisplayingMapView()) return;
@@ -45,5 +46,10 @@ public class DownloadMembersAction extends AbstractRelationAction {
                 return !r.isNew();
             }});
         updateEnabledState();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(!relations.isEmpty() && !Main.isOffline(OnlineResource.OSM_API));
     }
 }

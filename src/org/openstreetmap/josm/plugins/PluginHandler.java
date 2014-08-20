@@ -62,6 +62,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.io.OfflineAccessException;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -302,6 +304,10 @@ public final class PluginHandler {
      * @return true if a plugin update should be run; false, otherwise
      */
     public static boolean checkAndConfirmPluginUpdate(Component parent) {
+        if (!checkOfflineAccess()) {
+            Main.info(tr("{0} not available (offline mode)", tr("Plugin update")));
+            return false;
+        }
         String message = null;
         String togglePreferenceKey = null;
         int v = Version.getInstance().getVersion();
@@ -402,6 +408,25 @@ public final class PluginHandler {
             Main.pref.put(togglePreferenceKey, "ask");
         }
         return ret == 0;
+    }
+
+    private static boolean checkOfflineAccess() {
+        if (Main.isOffline(OnlineResource.ALL)) {
+            return false;
+        }
+        if (Main.isOffline(OnlineResource.JOSM_WEBSITE)) {
+            for (String updateSite : Main.pref.getPluginSites()) {
+                try {
+                    OnlineResource.JOSM_WEBSITE.checkOfflineAccess(updateSite, Main.getJOSMWebsite());
+                } catch (OfflineAccessException e) {
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

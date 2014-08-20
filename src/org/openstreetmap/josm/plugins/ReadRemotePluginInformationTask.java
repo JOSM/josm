@@ -59,7 +59,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
 
     protected enum CacheType {PLUGIN_LIST, ICON_LIST}
 
-    protected final void init(Collection<String> sites, boolean displayErrMsg){
+    protected final void init(Collection<String> sites, boolean displayErrMsg) {
         this.sites = sites;
         if (sites == null) {
             this.sites = Collections.emptySet();
@@ -67,8 +67,9 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         this.availablePlugins = new LinkedList<>();
         this.displayErrMsg = displayErrMsg;
     }
+
     /**
-     * Creates the task
+     * Constructs a new {@code ReadRemotePluginInformationTask}.
      *
      * @param sites the collection of download sites. Defaults to the empty collection if null.
      */
@@ -78,7 +79,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     }
 
     /**
-     * Creates the task
+     * Constructs a new {@code ReadRemotePluginInformationTask}.
      *
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null
      * @param sites the collection of download sites. Defaults to the empty collection if null.
@@ -103,8 +104,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     protected void finish() {}
 
     /**
-     * Creates the file name for the cached plugin list and the icon cache
-     * file.
+     * Creates the file name for the cached plugin list and the icon cache file.
      *
      * @param site the name of the site
      * @param type icon cache or plugin list cache
@@ -402,8 +402,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             if (canceled) return;
             siteCacheFiles.remove(createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST));
             siteCacheFiles.remove(createSiteCacheFile(pluginDir, site, CacheType.ICON_LIST));
-            if(list != null)
-            {
+            if (list != null) {
                 getProgressMonitor().worked(1);
                 cachePluginList(site, list);
                 if (canceled) return;
@@ -415,8 +414,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             }
             downloadPluginIcons(site+"-icons.zip", createSiteCacheFile(pluginDir, site, CacheType.ICON_LIST), getProgressMonitor().createSubTaskMonitor(0, false));
         }
-        for (File file: siteCacheFiles) /* remove old stuff or whole update process is broken */
-        {
+        // remove old stuff or whole update process is broken
+        for (File file: siteCacheFiles) {
             file.delete();
         }
     }

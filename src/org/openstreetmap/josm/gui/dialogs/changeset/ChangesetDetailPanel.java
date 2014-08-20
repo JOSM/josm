@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -344,12 +345,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         }
 
         public void initProperties(Changeset cs) {
-            if (cs == null) {
-                setEnabled(false);
-                return;
-            } else {
-                setEnabled(true);
-            }
+            setEnabled(cs != null && !Main.isOffline(OnlineResource.OSM_API));
         }
     }
 

@@ -15,6 +15,7 @@ import javax.swing.JCheckBox;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.dialogs.OsmIdSelectionDialog;
+import org.openstreetmap.josm.io.OnlineResource;
 
 /**
  * Dialog prompt to user to let him choose OSM primitives to download by specifying their type and IDs
@@ -48,6 +49,13 @@ public class DownloadObjectDialog extends OsmIdSelectionDialog {
         configureContextsensitiveHelp("/Action/DownloadObject", true /* show help button */);
     }
 
+    @Override
+    public void setupDialog() {
+        super.setupDialog();
+        buttons.get(0).setEnabled(!Main.isOffline(OnlineResource.OSM_API));
+    }
+
+    @Override
     protected Collection<Component> getComponentsBeforeHelp() {
         newLayer.setToolTipText(tr("Select if the data should be downloaded into a new layer"));
         newLayer.setSelected(Main.pref.getBoolean("download.newlayer"));

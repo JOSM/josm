@@ -51,8 +51,10 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetsInActiveDataLayerL
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -362,7 +364,7 @@ public class ChangesetDialog extends ToggleDialog{
         }
 
         protected void updateEnabledState() {
-            setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0);
+            setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0 && !Main.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -485,10 +487,12 @@ public class ChangesetDialog extends ToggleDialog{
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();
             final Set<Integer> toDownload = new HashSet<>();
-            ChangesetCache cc = ChangesetCache.getInstance();
-            for (int id: sel) {
-                if (!cc.contains(id)) {
-                    toDownload.add(id);
+            if (!Main.isOffline(OnlineResource.OSM_API)) {
+                ChangesetCache cc = ChangesetCache.getInstance();
+                for (int id: sel) {
+                    if (!cc.contains(id)) {
+                        toDownload.add(id);
+                    }
                 }
             }
 
@@ -505,8 +509,7 @@ public class ChangesetDialog extends ToggleDialog{
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    // first, wait for the download task to finish, if a download
-                    // task was launched
+                    // first, wait for the download task to finish, if a download task was launched
                     if (future != null) {
                         try {
                             future.get();
@@ -520,15 +523,19 @@ public class ChangesetDialog extends ToggleDialog{
                     }
                     if (task != null) {
                         if (task.isCanceled())
-                            // don't launch the changeset manager if the download task
-                            // was canceled
+                            // don't launch the changeset manager if the download task was canceled
                             return;
                         if (task.isFailed()) {
                             toDownload.clear();
                         }
                     }
                     // launch the task
-                    launchChangesetManager(toDownload);
+                    GuiHelper.runInEDT(new Runnable() {
+                        @Override
+                        public void run() {
+                            launchChangesetManager(toDownload);
+                        }
+                    });
                 }
             };
             Main.worker.submit(r);

@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -285,7 +286,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         }
 
         protected void updateEnabledState() {
-            setEnabled(historyTable.getSelectedRowCount() > 0);
+            setEnabled(historyTable.getSelectedRowCount() > 0 && !Main.isOffline(OnlineResource.OSM_API));
         }
 
         @Override

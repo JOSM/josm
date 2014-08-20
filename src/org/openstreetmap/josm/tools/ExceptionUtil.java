@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
+import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -492,6 +493,21 @@ public final class ExceptionUtil {
         return tr("<html>Failed to download data. "
                 + "Its format is either unsupported, ill-formed, and/or inconsistent.<br>"
                 + "<br>Details (untranslated): {0}</html>", ide.getMessage());
+    }
+
+    /**
+     * Explains a {@link OfflineAccessException} which has caused an {@link OsmTransferException}.
+     * This is most likely happening when JOSM tries to access OSM API or JOSM website while in offline mode.
+     *
+     * @param e the exception
+     * @return The HTML formatted error message to display
+     * @since 7434
+     */
+    public static String explainOfflineAccessException(OsmTransferException e) {
+        OfflineAccessException oae = getNestedException(e, OfflineAccessException.class);
+        Main.error(e);
+        return tr("<html>Failed to download data.<br>"
+                + "<br>Details: {0}</html>", oae.getMessage());
     }
 
     /**

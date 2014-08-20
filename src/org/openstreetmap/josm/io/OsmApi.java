@@ -97,14 +97,17 @@ public class OsmApi extends OsmConnection {
         return api;
     }
 
+    private static String getServerUrlFromPref() {
+        return Main.pref.get("osm-server.url", DEFAULT_API_URL);
+    }
+
     /**
      * Replies the {@link OsmApi} for the URL given by the preference <code>osm-server.url</code>
      *
      * @return the OsmApi
      */
     public static OsmApi getOsmApi() {
-        String serverUrl = Main.pref.get("osm-server.url", DEFAULT_API_URL);
-        return getOsmApi(serverUrl);
+        return getOsmApi(getServerUrlFromPref());
     }
 
     /** the server URL */
@@ -179,18 +182,25 @@ public class OsmApi extends OsmConnection {
 
     private class CapabilitiesCache extends CacheCustomContent<OsmTransferException> {
 
+        private static final String CAPABILITIES = "capabilities";
+
         ProgressMonitor monitor;
         boolean fastFail;
 
         public CapabilitiesCache(ProgressMonitor monitor, boolean fastFail) {
-            super("capabilities" + getBaseUrl().hashCode(), CacheCustomContent.INTERVAL_WEEKLY);
+            super(CAPABILITIES + getBaseUrl().hashCode(), CacheCustomContent.INTERVAL_WEEKLY);
             this.monitor = monitor;
             this.fastFail = fastFail;
         }
 
         @Override
+        protected void checkOfflineAccess() {
+            OnlineResource.OSM_API.checkOfflineAccess(getBaseUrl(getServerUrlFromPref(), "0.6")+CAPABILITIES, getServerUrlFromPref());
+        }
+
+        @Override
         protected byte[] updateData() throws OsmTransferException {
-            return sendRequest("GET", "capabilities", null, monitor, false, fastFail).getBytes(StandardCharsets.UTF_8);
+            return sendRequest("GET", CAPABILITIES, null, monitor, false, fastFail).getBytes(StandardCharsets.UTF_8);
         }
     }
 
@@ -216,6 +226,10 @@ public class OsmApi extends OsmConnection {
     public void initialize(ProgressMonitor monitor, boolean fastFail) throws OsmTransferCanceledException, OsmApiInitializationException {
         if (initialized)
             return;
+        if (Main.isOffline(OnlineResource.OSM_API)) {
+            // At this point this is an error because all automatic or UI actions requiring OSM API should have been disabled earlier
+            throw new OfflineAccessException(tr("{0} not available (offline mode)", OnlineResource.OSM_API.getLocName()));
+        }
         cancel = false;
         try {
             CapabilitiesCache cache = new CapabilitiesCache(monitor, fastFail);
@@ -323,11 +337,7 @@ public class OsmApi extends OsmConnection {
         return swriter.toString();
     }
 
-    /**
-     * Returns the base URL for API requests, including the negotiated version number.
-     * @return base URL string
-     */
-    public String getBaseUrl() {
+    private static String getBaseUrl(String serverUrl, String version) {
         StringBuilder rv = new StringBuilder(serverUrl);
         if (version != null) {
             rv.append("/");
@@ -338,6 +348,14 @@ public class OsmApi extends OsmConnection {
         // an URL will cause a "404 not found" response.
         int p; while ((p = rv.indexOf("//", rv.indexOf("://")+2)) > -1) { rv.delete(p, p + 1); }
         return rv.toString();
+    }
+
+    /**
+     * Returns the base URL for API requests, including the negotiated version number.
+     * @return base URL string
+     */
+    public String getBaseUrl() {
+        return getBaseUrl(serverUrl, version);
     }
 
     /**

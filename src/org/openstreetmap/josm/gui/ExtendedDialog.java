@@ -29,10 +29,12 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -641,9 +643,11 @@ public class ExtendedDialog extends JDialog {
             putValue(SHORT_DESCRIPTION, tr("Show help information"));
             putValue(NAME, tr("Help"));
             putValue(SMALL_ICON, ImageProvider.get("help"));
+            setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
         }
 
-        @Override public void actionPerformed(ActionEvent e) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
             HelpBrowser.setUrlForHelpTopic(helpTopic);
         }
     }
