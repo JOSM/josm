@@ -3,9 +3,10 @@ package org.openstreetmap.josm.gui.preferences.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+
+import org.openstreetmap.josm.tools.Utils;
 
 public class PuwgProjectionChoice extends ListProjectionChoice {
 
@@ -45,7 +46,7 @@ public class PuwgProjectionChoice extends ListProjectionChoice {
 
     @Override
     public String[] allCodes() {
-        return Arrays.copyOf(CODES, CODES.length);
+        return Utils.copyArray(CODES);
     }
 
     @Override

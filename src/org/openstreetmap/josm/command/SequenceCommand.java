@@ -11,6 +11,7 @@ import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A command consisting of a sequence of other commands. Executes the other commands
@@ -68,7 +69,7 @@ public class SequenceCommand extends Command {
             return null;
         return sequence[sequence.length-1];
     }
-    
+
     protected final void undoCommands(int start) {
         // We probably aborted this halfway though the
         // execution sequence because of a sub-command
@@ -113,11 +114,11 @@ public class SequenceCommand extends Command {
         }
         return prims;
     }
-    
+
     protected final void setSequence(Command[] sequence) {
-        this.sequence = Arrays.copyOf(sequence, sequence.length);
+        this.sequence = Utils.copyArray(sequence);
     }
-    
+
     protected final void setSequenceComplete(boolean sequenceComplete) {
         this.sequenceComplete = sequenceComplete;
     }
