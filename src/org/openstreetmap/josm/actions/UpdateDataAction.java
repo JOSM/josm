@@ -14,11 +14,15 @@ import java.util.concurrent.Future;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTaskList;
 import org.openstreetmap.josm.data.osm.DataSource;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class UpdateDataAction extends JosmAction{
+public class UpdateDataAction extends JosmAction {
+
+    /**
+     * Constructs a new {@code UpdateDataAction}.
+     */
     public UpdateDataAction() {
         super(tr("Update data"),
                 "updatedata",
@@ -32,15 +36,10 @@ public class UpdateDataAction extends JosmAction{
 
     /**
      * Refreshes the enabled state
-     *
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getEditLayer() != null);
-    }
-
-    public void updateLayer(OsmDataLayer layer) {
-
+        setEnabled(getEditLayer() != null && !Main.isOffline(OnlineResource.OSM_API));
     }
 
     @Override

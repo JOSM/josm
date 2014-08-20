@@ -12,6 +12,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
@@ -61,5 +62,10 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
                 return !r.isNew() && r.hasIncompleteMembers();
             }});
         updateEnabledState();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(!relations.isEmpty() && !Main.isOffline(OnlineResource.OSM_API));
     }
 }

@@ -82,6 +82,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -211,7 +212,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     }
                 }
         );
-        registerCopyPasteAction(tagEditorPanel.getPasteAction(), 
+        registerCopyPasteAction(tagEditorPanel.getPasteAction(),
                 "PASTE_TAGS",
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.CTRL_SHIFT).getKeyStroke());
         registerCopyPasteAction(new PasteMembersAction(), "PASTE_MEMBERS", Shortcut.getPasteKeyStroke());
@@ -1474,7 +1475,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected void updateEnabledState() {
-            setEnabled(memberTableModel.hasIncompleteMembers());
+            setEnabled(memberTableModel.hasIncompleteMembers() && !Main.isOffline(OnlineResource.OSM_API));
         }
 
         @Override
@@ -1506,7 +1507,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected void updateEnabledState() {
-            setEnabled(memberTableModel.hasIncompleteSelectedMembers());
+            setEnabled(memberTableModel.hasIncompleteSelectedMembers() && !Main.isOffline(OnlineResource.OSM_API));
         }
 
         @Override

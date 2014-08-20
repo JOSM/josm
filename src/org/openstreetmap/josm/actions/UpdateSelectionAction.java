@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.io.UpdatePrimitivesTask;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -121,7 +122,7 @@ public class UpdateSelectionAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        setEnabled(selection != null && !selection.isEmpty() && !Main.isOffline(OnlineResource.OSM_API));
     }
 
     @Override

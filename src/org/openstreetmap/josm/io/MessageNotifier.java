@@ -39,18 +39,18 @@ public final class MessageNotifier {
     private MessageNotifier() {
         // Hide default constructor for utils classes
     }
-    
+
     /** Property defining if this task is enabled or not */
     public static final BooleanProperty PROP_NOTIFIER_ENABLED = new BooleanProperty("message.notifier.enabled", true);
     /** Property defining the update interval in minutes */
     public static final IntegerProperty PROP_INTERVAL = new IntegerProperty("message.notifier.interval", 5);
-    
+
     private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor();
-    
+
     private static final Runnable WORKER = new Worker();
-    
+
     private static ScheduledFuture<?> task = null;
-        
+
     private static class Worker implements Runnable {
 
         private int lastUnreadCount = 0;
@@ -81,13 +81,15 @@ public final class MessageNotifier {
             }
         }
     }
-    
+
     /**
      * Starts the message notifier task if not already started and if user is fully identified
      */
     public static void start() {
         int interval = PROP_INTERVAL.get();
-        if (!isRunning() && interval > 0 && isUserEnoughIdentified()) {
+        if (Main.isOffline(OnlineResource.OSM_API)) {
+            Main.info(tr("{0} not available (offline mode)", tr("Message notifier")));
+        } else if (!isRunning() && interval > 0 && isUserEnoughIdentified()) {
             task = EXECUTOR.scheduleAtFixedRate(WORKER, 0, interval * 60, TimeUnit.SECONDS);
             Main.info("Message notifier active (checks every "+interval+" minute"+(interval>1?"s":"")+")");
         }
@@ -103,7 +105,7 @@ public final class MessageNotifier {
             task = null;
         }
     }
-    
+
     /**
      * Determines if the message notifier is currently running
      * @return {@code true} if the notifier is running, {@code false} otherwise
@@ -111,7 +113,7 @@ public final class MessageNotifier {
     public static boolean isRunning() {
         return task != null;
     }
-    
+
     /**
      * Determines if user set enough information in JOSM preferences to make the request to OSM API without
      * prompting him for a password.

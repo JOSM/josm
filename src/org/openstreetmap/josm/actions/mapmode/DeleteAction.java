@@ -128,8 +128,12 @@ public class DeleteAction extends MapMode implements ModifierListener {
         doActionPerformed(e);
     }
 
+    /**
+     * Invoked when the action occurs.
+     * @param e Action event
+     */
     public static void doActionPerformed(ActionEvent e) {
-        if(!Main.map.mapView.isActiveLayerDrawable())
+        if (!Main.map.mapView.isActiveLayerDrawable())
             return;
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
@@ -148,7 +152,8 @@ public class DeleteAction extends MapMode implements ModifierListener {
         }
     }
 
-    @Override public void mouseDragged(MouseEvent e) {
+    @Override
+    public void mouseDragged(MouseEvent e) {
         mouseMoved(e);
     }
 
@@ -156,7 +161,8 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * Listen to mouse move to be able to update the cursor (and highlights)
      * @param e The mouse event that has been captured
      */
-    @Override public void mouseMoved(MouseEvent e) {
+    @Override
+    public void mouseMoved(MouseEvent e) {
         oldEvent = e;
         giveUserFeedback(e);
     }
@@ -244,6 +250,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
         Main.map.mapView.setNewCursor(parameters.mode.cursor(), this);
     }
+
     /**
      * Gives the user feedback for the action he/she is about to do. Currently
      * calls the cursor and target highlighting routines. Allows for modifiers
@@ -273,7 +280,8 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * If user clicked with the left button, delete the nearest object.
      * position.
      */
-    @Override public void mouseReleased(MouseEvent e) {
+    @Override
+    public void mouseReleased(MouseEvent e) {
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
         if(!Main.map.mapView.isActiveLayerVisible())
@@ -292,11 +300,13 @@ public class DeleteAction extends MapMode implements ModifierListener {
         giveUserFeedback(e);
     }
 
-    @Override public String getModeHelpText() {
+    @Override
+    public String getModeHelpText() {
         return tr("Click to delete. Shift: delete way segment. Alt: do not delete unused nodes when deleting a way. Ctrl: delete referring objects.");
     }
 
-    @Override public boolean layerIsSupported(Layer l) {
+    @Override
+    public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
     }
 
@@ -390,10 +400,9 @@ public class DeleteAction extends MapMode implements ModifierListener {
      */
     @Override
     public void modifiersChanged(int modifiers) {
-        if(oldEvent == null)
+        if (oldEvent == null)
             return;
-        // We don't have a mouse event, so we pass the old mouse event but the
-        // new modifiers.
+        // We don't have a mouse event, so we pass the old mouse event but the new modifiers.
         giveUserFeedback(oldEvent, modifiers);
     }
 }

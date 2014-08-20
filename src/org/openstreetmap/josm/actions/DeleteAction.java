@@ -12,8 +12,15 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Action that deletes selected objects.
+ * @since 770
+ */
 public final class DeleteAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code DeleteAction}.
+     */
     public DeleteAction() {
         super(tr("Delete"), "dialogs/delete", tr("Delete selected objects."),
                 Shortcut.registerShortcut("system:delete", tr("Edit: {0}", tr("Delete")), KeyEvent.VK_DELETE, Shortcut.DIRECT), true);
@@ -22,9 +29,7 @@ public final class DeleteAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled())
-            return;
-        if(!Main.map.mapView.isActiveLayerVisible())
+        if (!isEnabled() || !Main.map.mapView.isActiveLayerVisible())
             return;
         org.openstreetmap.josm.actions.mapmode.DeleteAction.doActionPerformed(e);
     }

@@ -26,6 +26,7 @@ import java.security.Permissions;
 import java.security.Policy;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -53,6 +54,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.MessageNotifier;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
@@ -86,7 +88,7 @@ public class MainApplication extends Main {
         mainFrame.setContentPane(contentPanePrivate);
         mainFrame.setJMenuBar(menu);
         geometry.applySafe(mainFrame);
-        LinkedList<Image> l = new LinkedList<>();
+        List<Image> l = new LinkedList<>();
         l.add(ImageProvider.get("logo_16x16x32").getImage());
         l.add(ImageProvider.get("logo_16x16x8").getImage());
         l.add(ImageProvider.get("logo_32x32x32").getImage());
@@ -130,6 +132,7 @@ public class MainApplication extends Main {
                 "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
                 "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
                 "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
+                "\t--offline=<osm_api|josm_website|all>      "+tr("Disable access to the given resource(s), separated by comma")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
                 "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
@@ -153,37 +156,39 @@ public class MainApplication extends Main {
      * @since 5279
      */
     public enum Option {
-        /** --help|-h                                 Show this help */
+        /** --help|-h                                  Show this help */
         HELP(false),
-        /** --version                                 Displays the JOSM version and exits */
+        /** --version                                  Displays the JOSM version and exits */
         VERSION(false),
-        /** --debug                                   Print debugging messages to console */
+        /** --debug                                    Print debugging messages to console */
         DEBUG(false),
-        /** --trace                                   Print detailed debugging messages to console */
+        /** --trace                                    Print detailed debugging messages to console */
         TRACE(false),
-        /** --language=&lt;language&gt;               Set the language */
+        /** --language=&lt;language&gt;                Set the language */
         LANGUAGE(true),
-        /** --reset-preferences                       Reset the preferences to default */
+        /** --reset-preferences                        Reset the preferences to default */
         RESET_PREFERENCES(false),
-        /** --load-preferences=&lt;url-to-xml&gt;     Changes preferences according to the XML file */
+        /** --load-preferences=&lt;url-to-xml&gt;      Changes preferences according to the XML file */
         LOAD_PREFERENCES(true),
-        /** --set=&lt;key&gt;=&lt;value&gt;           Set preference key to value */
+        /** --set=&lt;key&gt;=&lt;value&gt;            Set preference key to value */
         SET(true),
-        /** --geometry=widthxheight(+|-)x(+|-)y       Standard unix geometry argument */
+        /** --geometry=widthxheight(+|-)x(+|-)y        Standard unix geometry argument */
         GEOMETRY(true),
-        /** --no-maximize                             Do not launch in maximized mode */
+        /** --no-maximize                              Do not launch in maximized mode */
         NO_MAXIMIZE(false),
-        /** --maximize                                Launch in maximized mode */
+        /** --maximize                                 Launch in maximized mode */
         MAXIMIZE(false),
-        /** --download=minlat,minlon,maxlat,maxlon    Download the bounding box <br>
-         *  --download=&lt;URL&gt;                    Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) <br>
-         *  --download=&lt;filename&gt;               Open a file (any file type that can be opened with File/Open) */
+        /** --download=minlat,minlon,maxlat,maxlon     Download the bounding box <br>
+         *  --download=&lt;URL&gt;                     Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) <br>
+         *  --download=&lt;filename&gt;                Open a file (any file type that can be opened with File/Open) */
         DOWNLOAD(true),
-        /** --downloadgps=minlat,minlon,maxlat,maxlon Download the bounding box as raw GPS <br>
-         *  --downloadgps=&lt;URL&gt;                 Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) as raw GPS */
+        /** --downloadgps=minlat,minlon,maxlat,maxlon  Download the bounding box as raw GPS <br>
+         *  --downloadgps=&lt;URL&gt;                  Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) as raw GPS */
         DOWNLOADGPS(true),
-        /** --selection=&lt;searchstring&gt;          Select with the given search */
-        SELECTION(true);
+        /** --selection=&lt;searchstring&gt;           Select with the given search */
+        SELECTION(true),
+        /** --offline=&lt;osm_api|josm_website|all&gt; Disable access to the given resource(s), delimited by comma */
+        OFFLINE(true);
 
         private String name;
         private boolean requiresArgument;
@@ -283,6 +288,7 @@ public class MainApplication extends Main {
             args = buildCommandLineArgumentMap(argArray);
         } catch (IllegalArgumentException e) {
             System.exit(1);
+            return;
         }
 
         final boolean languageGiven = args.containsKey(Option.LANGUAGE);
@@ -346,8 +352,10 @@ public class MainApplication extends Main {
         }
         Main.pref.updateSystemProperties();
 
+        processOffline(args);
+
         FontsManager.initialize();
-        
+
         final JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
 
@@ -465,6 +473,27 @@ public class MainApplication extends Main {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process but they don't seem to break anything and are difficult to fix
             info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
+        }
+    }
+
+    private static void processOffline(Map<Option, Collection<String>> args) {
+        if (args.containsKey(Option.OFFLINE)) {
+            for (String s : args.get(Option.OFFLINE).iterator().next().split(",")) {
+                try {
+                    Main.setOffline(OnlineResource.valueOf(s.toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    Main.error(tr("''{0}'' is not a valid value for argument ''{1}''. Possible values are {2}, possibly delimited by commas.",
+                            s.toUpperCase(), Option.OFFLINE.getName(), Arrays.toString(OnlineResource.values())));
+                    System.exit(1);
+                    return;
+                }
+            }
+            Set<OnlineResource> offline = Main.getOfflineResources();
+            if (!offline.isEmpty()) {
+                Main.warn(trn("JOSM is running in offline mode. This resource will not be available: {0}",
+                        "JOSM is running in offline mode. These resources will not be available: {0}",
+                        offline.size(), offline.size() == 1 ? offline.iterator().next() : Arrays.toString(offline.toArray())));
+            }
         }
     }
 

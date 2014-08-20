@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -8,10 +11,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.dialogs.OsmIdSelectionDialog;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 /**
  * Display history information about OSM ways, nodes, or relations.
@@ -59,6 +60,12 @@ public class HistoryInfoAction extends JosmAction {
             super(Main.parent, tr("Show history"), new String[]{tr("Show history"), tr("Cancel")});
             setButtonIcons(new String[]{"dialogs/history.png", "cancel.png"});
             init();
+        }
+
+        @Override
+        public void setupDialog() {
+            super.setupDialog();
+            buttons.get(0).setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
     }
 }

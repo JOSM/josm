@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
+import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -153,7 +154,6 @@ public final class ExceptionDialogUtil {
      *
      * @param e the exception
      */
-
     public static void explainNestedIllegalDataException(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
@@ -165,11 +165,27 @@ public final class ExceptionDialogUtil {
     }
 
     /**
+     * Explains a {@link OfflineAccessException} which has caused an {@link OsmTransferException}.
+     * This is most likely happening when JOSM tries to access OSM API or JOSM website while in offline mode.
+     *
+     * @param e the exception
+     * @since 7434
+     */
+    public static void explainNestedOfflineAccessException(OsmTransferException e) {
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainOfflineAccessException(e),
+                tr("Offline mode"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#OfflineAccessException")
+        );
+    }
+
+    /**
      * Explains a {@link InvocationTargetException }
      *
      * @param e the exception
      */
-
     public static void explainNestedInvocationTargetException(Exception e) {
         InvocationTargetException ex = getNestedException(e, InvocationTargetException.class);
         if (ex != null) {
@@ -432,6 +448,10 @@ public final class ExceptionDialogUtil {
         }
         if (getNestedException(e, IllegalDataException.class) != null) {
             explainNestedIllegalDataException(e);
+            return;
+        }
+        if (getNestedException(e, OfflineAccessException.class) != null) {
+            explainNestedOfflineAccessException(e);
             return;
         }
         if (e instanceof OsmApiInitializationException) {

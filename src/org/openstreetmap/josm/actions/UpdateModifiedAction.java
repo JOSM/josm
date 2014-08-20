@@ -8,7 +8,9 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -43,7 +45,7 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
     //
     @Override
     protected void updateEnabledState() {
-        setEnabled(getCurrentDataSet() != null);
+        setEnabled(getCurrentDataSet() != null && !Main.isOffline(OnlineResource.OSM_API));
     }
 
     @Override
