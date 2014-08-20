@@ -269,7 +269,7 @@ public class OsmValidator implements LayerChangeListener {
      * @return An array of the test classes
      */
     public static Class<Test>[] getAllAvailableTests() {
-        return Arrays.copyOf(allAvailableTests, allAvailableTests.length);
+        return Utils.copyArray(allAvailableTests);
     }
 
     /**

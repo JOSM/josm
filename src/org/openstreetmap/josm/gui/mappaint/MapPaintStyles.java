@@ -341,7 +341,7 @@ public final class MapPaintStyles {
     public static void moveStyles(int[] sel, int delta) {
         if (!canMoveStyles(sel, delta))
             return;
-        int[] selSorted = Arrays.copyOf(sel, sel.length);
+        int[] selSorted = Utils.copyArray(sel);
         Arrays.sort(selSorted);
         List<StyleSource> data = new ArrayList<>(styles.getStyleSources());
         for (int row: selSorted) {
@@ -360,7 +360,7 @@ public final class MapPaintStyles {
     public static boolean canMoveStyles(int[] sel, int i) {
         if (sel.length == 0)
             return false;
-        int[] selSorted = Arrays.copyOf(sel, sel.length);
+        int[] selSorted = Utils.copyArray(sel);
         Arrays.sort(selSorted);
 
         if (i < 0) // Up
