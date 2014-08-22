@@ -56,7 +56,7 @@ import org.apache.commons.codec.StringEncoder;
  * If multiple hyphenated words where found, or if the word may contain a name prefix, each encoded word is placed
  * in elipses and these blocks are then joined with hyphens. For example, "<code>d'ortley</code>" has a possible
  * prefix. The form without prefix encodes to "<code>ortlaj|ortlej</code>", while the form with prefix encodes to
- * "<code>dortlaj|dortlej</code>". Thus, the full, combined encoding is "{@code (ortlaj|ortlej)-(dortlaj|dortlej)}".
+ * "<code>dortlaj|dortlej</code>". Thus, the full, combined encoding is "<code>(ortlaj|ortlej)-(dortlaj|dortlej)</code>".
  * <p>
  * The encoded forms are often quite a bit longer than the input strings. This is because a single input may have many
  * potential phonetic interpretations. For example, "<code>Renault</code>" encodes to
@@ -71,7 +71,7 @@ import org.apache.commons.codec.StringEncoder;
  * @see <a href="http://stevemorse.org/phoneticinfo.htm">Reference implementation</a>
  *
  * @since 1.6
- * @version $Id: BeiderMorseEncoder.java 1608115 2014-07-05 19:58:38Z tn $
+ * @version $Id: BeiderMorseEncoder.java 1619948 2014-08-22 22:53:55Z ggregory $
  */
 public class BeiderMorseEncoder implements StringEncoder {
     // Implementation note: This class is a spring-friendly facade to PhoneticEngine. It allows read/write configuration

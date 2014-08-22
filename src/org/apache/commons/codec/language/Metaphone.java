@@ -48,7 +48,7 @@ import org.apache.commons.codec.StringEncoder;
  * is used to ensure safe publication of the value between threads, and must not invoke {@link #setMaxCodeLen(int)}
  * after initial setup.
  *
- * @version $Id: Metaphone.java 1586298 2014-04-10 13:45:36Z ggregory $
+ * @version $Id: Metaphone.java 1619948 2014-08-22 22:53:55Z ggregory $
  */
 public class Metaphone implements StringEncoder {
 
@@ -408,8 +408,8 @@ public class Metaphone implements StringEncoder {
      *
      * @param str1 First of two strings to compare
      * @param str2 Second of two strings to compare
-     * @return {@code true} if the metaphones of these strings are identical,
-     *        {@code false} otherwise.
+     * @return <code>true</code> if the metaphones of these strings are identical,
+     *        <code>false</code> otherwise.
      */
     public boolean isMetaphoneEqual(final String str1, final String str2) {
         return metaphone(str1).equals(metaphone(str2));

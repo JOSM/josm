@@ -47,7 +47,7 @@ import org.apache.commons.codec.StringEncoder;
  *          Header Extensions for Non-ASCII Text</a>
  *
  * @since 1.3
- * @version $Id: QCodec.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: QCodec.java 1619948 2014-08-22 22:53:55Z ggregory $
  */
 public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**
@@ -340,7 +340,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
     /**
      * Tests if optional transformation of SPACE characters is to be used
      *
-     * @return {@code true} if SPACE characters are to be transformed, {@code false} otherwise
+     * @return <code>true</code> if SPACE characters are to be transformed, <code>false</code> otherwise
      */
     public boolean isEncodeBlanks() {
         return this.encodeBlanks;
@@ -350,7 +350,7 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
      * Defines whether optional transformation of SPACE characters is to be used
      *
      * @param b
-     *            {@code true} if SPACE characters are to be transformed, {@code false} otherwise
+     *            <code>true</code> if SPACE characters are to be transformed, <code>false</code> otherwise
      */
     public void setEncodeBlanks(final boolean b) {
         this.encodeBlanks = b;

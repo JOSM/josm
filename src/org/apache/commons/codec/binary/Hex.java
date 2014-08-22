@@ -33,7 +33,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  *
  * @since 1.1
- * @version $Id: Hex.java 1429868 2013-01-07 16:08:05Z ggregory $
+ * @version $Id: Hex.java 1619948 2014-08-22 22:53:55Z ggregory $
  */
 public class Hex implements BinaryEncoder, BinaryDecoder {
 
@@ -117,7 +117,7 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
      * @param data
      *            a byte[] to convert to Hex characters
      * @param toLowerCase
-     *            {@code true} converts to lowercase, {@code false} to uppercase
+     *            <code>true</code> converts to lowercase, <code>false</code> to uppercase
      * @return A char[] containing hexadecimal characters
      * @since 1.4
      */
