@@ -238,6 +238,18 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public boolean hasAutoDownload(){
         return autoDownloadEnabled;
     }
+    
+    public void setAutoDownload(boolean val) {
+        autoDownloadEnabled = val;
+    }
+    
+    public boolean isAutoResolution() {
+        return autoResolutionEnabled;
+    }
+    
+    public void setAutoResolution(boolean val) {
+        autoResolutionEnabled = val;
+    }
 
     public void downloadAreaToCache(PrecacheTask precacheTask, List<LatLon> points, double bufferX, double bufferY) {
         Set<Point> requestedTiles = new HashSet<>();
