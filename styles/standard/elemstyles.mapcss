@@ -2775,6 +2775,9 @@ node[aeroway=helipad] {
     icon-image: "transport/airport/helipad.png";
     text: auto;
 }
+area[aeroway=runway] {
+    fill-color: aeroway_dark#330000;
+}
 way[aeroway=runway] {
     width: 3;
     color: aeroway_dark#330000;
@@ -2782,6 +2785,9 @@ way[aeroway=runway] {
 node[aeroway=runway] {
     icon-image: "transport/airport/runway.png";
     text: auto;
+}
+area[aeroway=taxiway] {
+    fill-color: aeroway#660000;
 }
 way[aeroway=taxiway] {
     width: 2;
