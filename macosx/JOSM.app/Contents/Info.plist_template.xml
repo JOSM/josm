@@ -23,6 +23,29 @@
             <array>
                 <string>osm</string>
             </array>
+            <key>public.mime-type</key>
+            <string>application/x-osm+xml</string>
+        </dict>
+    </dict>
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.topografix.gpx</string>
+        <key>UTTypeReferenceURL</key>
+        <string>http://www.topografix.com/GPX/1/1/</string>
+        <key>UTTypeDescription</key>
+        <string>GPS Exchange Format (GPX)</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.xml</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>public.filename-extension</key>
+            <array>
+                <string>gpx</string>
+            </array>
+            <key>public.mime-type</key>
+            <string>application/gpx+xml</string>
         </dict>
     </dict>
 </array>
@@ -44,9 +67,28 @@
         <key>NSExportableTypes</key>
         <array>
             <string>org.openstreetmap.josm.osm</string>
+            <string>com.topografix.gpx</string>
             <string>com.pkware.zip-archive</string>
             <string>org.gnu.gnu-zip-archive</string>
             <string>public.archive.bzip2</string>
+        </array>
+    </dict>
+    <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>macosx/JOSM.app/Contents/Resources/JOSM.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>GPX Files</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>com.topografix.gpx</string>
+        </array>
+        <key>NSExportableTypes</key>
+        <array>
+            <string>org.openstreetmap.josm.osm</string>
         </array>
     </dict>
     <dict>
