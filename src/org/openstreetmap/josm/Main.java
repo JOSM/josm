@@ -218,7 +218,7 @@ public abstract class Main {
 
     protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
-    // First lines of last 10 error and warning messages, used for bug reports
+    // First lines of last 5 error and warning messages, used for bug reports
     private static final List<String> ERRORS_AND_WARNINGS = Collections.<String>synchronizedList(new ArrayList<String>());
 
     private static final Set<OnlineResource> OFFLINE_RESOURCES = new HashSet<>();
@@ -237,8 +237,8 @@ public abstract class Main {
         } else {
             ERRORS_AND_WARNINGS.add(msg);
         }
-        // Only keep 10 lines to avoid memory leak
-        while (ERRORS_AND_WARNINGS.size() > 10) {
+        // Only keep 5 lines to avoid memory leak and incomplete stacktraces in bug reports
+        while (ERRORS_AND_WARNINGS.size() > 5) {
             ERRORS_AND_WARNINGS.remove(0);
         }
     }
