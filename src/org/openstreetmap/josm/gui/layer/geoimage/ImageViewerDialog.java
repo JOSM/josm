@@ -22,13 +22,16 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
-public final class ImageViewerDialog extends ToggleDialog {
+public final class ImageViewerDialog extends ToggleDialog implements LayerChangeListener {
 
     private static final String COMMAND_ZOOM = "zoom";
     private static final String COMMAND_CENTERVIEW = "centre";
@@ -86,6 +89,7 @@ public final class ImageViewerDialog extends ToggleDialog {
         Main.registerActionShortcut(prevAction, scPrev);
         btnPrevious.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scPrev.getKeyStroke(), APREVIOUS);
         btnPrevious.getActionMap().put(APREVIOUS, prevAction);
+        btnPrevious.setEnabled(false);
 
         final String DELETE_TEXT = tr("Remove photo from layer");
         ImageAction delAction = new ImageAction(COMMAND_REMOVE, ImageProvider.get("dialogs", "delete"), DELETE_TEXT);
@@ -116,6 +120,7 @@ public final class ImageViewerDialog extends ToggleDialog {
         Main.registerActionShortcut(nextAction, scNext);
         btnNext.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scNext.getKeyStroke(), ANEXT);
         btnNext.getActionMap().put(ANEXT, nextAction);
+        btnNext.setEnabled(false);
 
         Main.registerActionShortcut(
                 new ImageAction(COMMAND_FIRST, null, null),
@@ -166,6 +171,14 @@ public final class ImageViewerDialog extends ToggleDialog {
         content.add(bottomPane, BorderLayout.SOUTH);
 
         add(content, BorderLayout.CENTER);
+
+        MapView.addLayerChangeListener(this);
+    }
+
+    @Override
+    public void destroy() {
+        MapView.removeLayerChangeListener(this);
+        super.destroy();
     }
 
     class ImageAction extends AbstractAction {
@@ -217,12 +230,27 @@ public final class ImageViewerDialog extends ToggleDialog {
 
     public static void showImage(GeoImageLayer layer, ImageEntry entry) {
         getInstance().displayImage(layer, entry);
-        layer.checkPreviousNextButtons();
+        if (layer != null) {
+            layer.checkPreviousNextButtons();
+        } else {
+            setPreviousEnabled(false);
+            setNextEnabled(false);
+        }
     }
-    public static void setPreviousEnabled(Boolean value) {
+
+    /**
+     * Enables (or disables) the "Previous" button.
+     * @param value {@code true} to enable the button, {@code false} otherwise
+     */
+    public static void setPreviousEnabled(boolean value) {
         getInstance().btnPrevious.setEnabled(value);
     }
-    public static void setNextEnabled(Boolean value) {
+
+    /**
+     * Enables (or disables) the "Next" button.
+     * @param value {@code true} to enable the button, {@code false} otherwise
+     */
+    public static void setNextEnabled(boolean value) {
         getInstance().btnNext.setEnabled(value);
     }
 
@@ -284,7 +312,6 @@ public final class ImageViewerDialog extends ToggleDialog {
                 dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, this);
             }
         }
-
     }
 
     /**
@@ -332,5 +359,23 @@ public final class ImageViewerDialog extends ToggleDialog {
      */
     public static GeoImageLayer getCurrentLayer() {
         return getInstance().currentLayer;
+    }
+
+    @Override
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        // Ignored
+    }
+
+    @Override
+    public void layerAdded(Layer newLayer) {
+        // Ignored
+    }
+
+    @Override
+    public void layerRemoved(Layer oldLayer) {
+        // Clear current image and layer if current layer is deleted
+        if (currentLayer != null && currentLayer.equals(oldLayer)) {
+            showImage(null, null);
+        }
     }
 }
