@@ -1,12 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.validation.Severity;
-import org.openstreetmap.josm.data.validation.Test;
-import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.tools.Predicates;
-import org.openstreetmap.josm.tools.Utils;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,12 +12,21 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.validation.Severity;
+import org.openstreetmap.josm.data.validation.Test;
+import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Checks for <a href="http://wiki.openstreetmap.org/wiki/Conditional_restrictions">conditional restrictions</a>
+ * @since 6605
+ */
 public class ConditionalKeys extends Test.TagTest {
 
     final OpeningHourTest openingHourTest = new OpeningHourTest();
-    static final Set<String> RESTRICTION_TYPES = new HashSet<>(Arrays.asList("oneway", "toll", "noexit", "maxspeed", "minspeed",
+    static final Set<String> RESTRICTION_TYPES = new HashSet<>(Arrays.asList("oneway", "toll", "noexit", "maxspeed", "minspeed", "maxstay",
             "maxweight", "maxaxleload", "maxheight", "maxwidth", "maxlength", "overtaking", "maxgcweight", "maxgcweightrating", "fee"));
     static final Set<String> RESTRICTION_VALUES = new HashSet<>(Arrays.asList("yes", "official", "designated", "destination",
             "delivery", "permissive", "private", "agricultural", "forestry", "no"));
@@ -140,7 +144,7 @@ public class ConditionalKeys extends Test.TagTest {
 
     public List<TestError> validatePrimitive(OsmPrimitive p) {
         final List<TestError> errors = new ArrayList<>();
-        for (final String key : Utils.filter(p.keySet(), Predicates.stringMatchesPattern(Pattern.compile(".*:conditional$")))) {
+        for (final String key : Utils.filter(p.keySet(), Predicates.stringMatchesPattern(Pattern.compile(".*:conditional(:.*)?$")))) {
             if (!isKeyValid(key)) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Wrong syntax in {0} key", key), 3201, p));
                 continue;
