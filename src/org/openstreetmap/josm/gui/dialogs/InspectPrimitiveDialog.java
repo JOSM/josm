@@ -336,31 +336,32 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         NavigatableComponent nc = Main.map.mapView;
         double scale = nc.getDist100Pixel();
 
-        for (OsmPrimitive osm : sel) {
-            txtMappaint.append(tr("Styles Cache for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance())));
+        synchronized (MapCSSStyleSource.STYLE_SOURCE_LOCK) {
+            for (OsmPrimitive osm : sel) {
+                txtMappaint.append(tr("Styles Cache for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance())));
 
-            MultiCascade mc = new MultiCascade();
+                MultiCascade mc = new MultiCascade();
 
-            for (StyleSource s : elemstyles.getStyleSources()) {
-                if (s.active) {
-                    txtMappaint.append(tr("\n\n> applying {0} style \"{1}\"\n", getSort(s), s.getDisplayString()));
-                    s.apply(mc, osm, scale, null, false);
-                    txtMappaint.append(tr("\nRange:{0}", mc.range));
-                    for (Entry<String, Cascade> e : mc.getLayers()) {
-                        txtMappaint.append("\n " + e.getKey() + ": \n" + e.getValue());
+                for (StyleSource s : elemstyles.getStyleSources()) {
+                    if (s.active) {
+                        txtMappaint.append(tr("\n\n> applying {0} style \"{1}\"\n", getSort(s), s.getDisplayString()));
+                        s.apply(mc, osm, scale, null, false);
+                        txtMappaint.append(tr("\nRange:{0}", mc.range));
+                        for (Entry<String, Cascade> e : mc.getLayers()) {
+                            txtMappaint.append("\n " + e.getKey() + ": \n" + e.getValue());
+                        }
+                    } else {
+                        txtMappaint.append(tr("\n\n> skipping \"{0}\" (not active)", s.getDisplayString()));
                     }
-                } else {
-                    txtMappaint.append(tr("\n\n> skipping \"{0}\" (not active)", s.getDisplayString()));
                 }
+                txtMappaint.append(tr("\n\nList of generated Styles:\n"));
+                StyleList sl = elemstyles.get(osm, scale, nc);
+                for (ElemStyle s : sl) {
+                    txtMappaint.append(" * " + s + "\n");
+                }
+                txtMappaint.append("\n\n");
             }
-            txtMappaint.append(tr("\n\nList of generated Styles:\n"));
-            StyleList sl = elemstyles.get(osm, scale, nc);
-            for (ElemStyle s : sl) {
-                txtMappaint.append(" * " + s + "\n");
-            }
-            txtMappaint.append("\n\n");
         }
-
         if (sel.size() == 2) {
             List<OsmPrimitive> selList = new ArrayList<>(sel);
             StyleCache sc1 = selList.get(0).mappaintStyle;

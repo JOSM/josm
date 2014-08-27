@@ -69,6 +69,15 @@ public class MapCSSStyleSource extends StyleSource {
     private ZipFile zipFile;
 
     /**
+     * This lock prevents concurrent execution of {@link MapCSSRuleIndex#clear() },
+     * {@link MapCSSRuleIndex#initIndex()} and {@link MapCSSRuleIndex#getRuleCandidates }.
+     * 
+     * For efficiency reasons, these methods are synchronized higher up the
+     * stack trace.
+     */
+    public final static Object STYLE_SOURCE_LOCK = new Object();
+    
+    /**
      * A collection of {@link MapCSSRule}s, that are indexed by tag key and value.
      * 
      * Speeds up the process of finding all rules that match a certain primitive.
@@ -90,14 +99,23 @@ public class MapCSSStyleSource extends StyleSource {
         /* rules without SimpleKeyValueCondition */
         public final Set<MapCSSRule> remaining = new HashSet<>();
         
+        private static final boolean DEBUG_LOCKING = false;
+        
         public void add(MapCSSRule rule) {
             rules.add(rule);
         }
 
         /**
          * Initialize the index.
+         * 
+         * You must own the lock STYLE_SOURCE_LOCK when calling this method.
          */
         public void initIndex() {
+            if (DEBUG_LOCKING) {
+                if (!Thread.holdsLock(STYLE_SOURCE_LOCK)) {
+                    throw new RuntimeException();
+                }
+            }
             for (MapCSSRule r: rules) {
                 // find the rightmost selector, this must be a GeneralSelector
                 Selector selRightmost = r.selector;
@@ -134,8 +152,15 @@ public class MapCSSStyleSource extends StyleSource {
          * @param osm the primitive to match
          * @return a Collection of rules that filters out most of the rules
          * that cannot match, based on the tags of the primitive
+         * 
+         * You must own the lock STYLE_SOURCE_LOCK when calling this method.
          */
         public Collection<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
+            if (DEBUG_LOCKING) {
+                if (!Thread.holdsLock(STYLE_SOURCE_LOCK)) {
+                    throw new RuntimeException();
+                }
+            }
             List<MapCSSRule> ruleCandidates = new ArrayList<>(remaining);
             for (Map.Entry<String,String> e : osm.getKeys().entrySet()) {
                 Map<String,Set<MapCSSRule>> v = index.get(e.getKey());
@@ -150,7 +175,17 @@ public class MapCSSStyleSource extends StyleSource {
             return ruleCandidates;
         } 
 
+        /**
+         * Clear the index.
+         * 
+         * You must own the lock STYLE_SOURCE_LOCK when calling this method.
+         */
         public void clear() {
+            if (DEBUG_LOCKING) {
+                if (!Thread.holdsLock(STYLE_SOURCE_LOCK)) {
+                    throw new RuntimeException();
+                }
+            }
             rules.clear();
             index.clear();
             remaining.clear();
@@ -180,93 +215,95 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public void loadStyleSource() {
-        init();
-        rules.clear();
-        nodeRules.clear();
-        wayRules.clear();
-        wayNoAreaRules.clear();
-        relationRules.clear();
-        multipolygonRules.clear();
-        canvasRules.clear();
-        try (InputStream in = getSourceInputStream()) {
-            try {
-                // evaluate @media { ... } blocks
-                MapCSSParser preprocessor = new MapCSSParser(in, "UTF-8", MapCSSParser.LexicalState.PREPROCESSOR);
-                String mapcss = preprocessor.pp_root(this);
+        synchronized (STYLE_SOURCE_LOCK) {
+            init();
+            rules.clear();
+            nodeRules.clear();
+            wayRules.clear();
+            wayNoAreaRules.clear();
+            relationRules.clear();
+            multipolygonRules.clear();
+            canvasRules.clear();
+            try (InputStream in = getSourceInputStream()) {
+                try {
+                    // evaluate @media { ... } blocks
+                    MapCSSParser preprocessor = new MapCSSParser(in, "UTF-8", MapCSSParser.LexicalState.PREPROCESSOR);
+                    String mapcss = preprocessor.pp_root(this);
 
-                // do the actual mapcss parsing
-                InputStream in2 = new ByteArrayInputStream(mapcss.getBytes(StandardCharsets.UTF_8));
-                MapCSSParser parser = new MapCSSParser(in2, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
-                parser.sheet(this);
+                    // do the actual mapcss parsing
+                    InputStream in2 = new ByteArrayInputStream(mapcss.getBytes(StandardCharsets.UTF_8));
+                    MapCSSParser parser = new MapCSSParser(in2, "UTF-8", MapCSSParser.LexicalState.DEFAULT);
+                    parser.sheet(this);
 
-                loadMeta();
-                loadCanvas();
-            } finally {
-                closeSourceInputStream(in);
+                    loadMeta();
+                    loadCanvas();
+                } finally {
+                    closeSourceInputStream(in);
+                }
+            } catch (IOException e) {
+                Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
+                Main.error(e);
+                logError(e);
+            } catch (TokenMgrError e) {
+                Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                Main.error(e);
+                logError(e);
+            } catch (ParseException e) {
+                Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                Main.error(e);
+                logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
             }
-        } catch (IOException e) {
-            Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
-            Main.error(e);
-            logError(e);
-        } catch (TokenMgrError e) {
-            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-            Main.error(e);
-            logError(e);
-        } catch (ParseException e) {
-            Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-            Main.error(e);
-            logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
+            // optimization: filter rules for different primitive types
+            for (MapCSSRule r: rules) {
+                // find the rightmost selector, this must be a GeneralSelector
+                Selector selRightmost = r.selector;
+                while (selRightmost instanceof ChildOrParentSelector) {
+                    selRightmost = ((ChildOrParentSelector) selRightmost).right;
+                }
+                MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
+                final String base = ((GeneralSelector) selRightmost).getBase();
+                switch (base) {
+                    case "node":
+                        nodeRules.add(optRule);
+                        break;
+                    case "way":
+                        wayNoAreaRules.add(optRule);
+                        wayRules.add(optRule);
+                        break;
+                    case "area":
+                        wayRules.add(optRule);
+                        multipolygonRules.add(optRule);
+                        break;
+                    case "relation":
+                        relationRules.add(optRule);
+                        multipolygonRules.add(optRule);
+                        break;
+                    case "*":
+                        nodeRules.add(optRule);
+                        wayRules.add(optRule);
+                        wayNoAreaRules.add(optRule);
+                        relationRules.add(optRule);
+                        multipolygonRules.add(optRule);
+                        break;
+                    case "canvas":
+                        canvasRules.add(r);
+                        break;
+                    case "meta":
+                        break;
+                    default:
+                        final RuntimeException e = new RuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
+                        Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                        Main.error(e);
+                        logError(e);
+                }
+            }
+            nodeRules.initIndex();
+            wayRules.initIndex();
+            wayNoAreaRules.initIndex();
+            relationRules.initIndex();
+            multipolygonRules.initIndex();
+            canvasRules.initIndex();
         }
-        // optimization: filter rules for different primitive types
-        for (MapCSSRule r: rules) {
-            // find the rightmost selector, this must be a GeneralSelector
-            Selector selRightmost = r.selector;
-            while (selRightmost instanceof ChildOrParentSelector) {
-                selRightmost = ((ChildOrParentSelector) selRightmost).right;
-            }
-            MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
-            final String base = ((GeneralSelector) selRightmost).getBase();
-            switch (base) {
-                case "node":
-                    nodeRules.add(optRule);
-                    break;
-                case "way":
-                    wayNoAreaRules.add(optRule);
-                    wayRules.add(optRule);
-                    break;
-                case "area":
-                    wayRules.add(optRule);
-                    multipolygonRules.add(optRule);
-                    break;
-                case "relation":
-                    relationRules.add(optRule);
-                    multipolygonRules.add(optRule);
-                    break;
-                case "*":
-                    nodeRules.add(optRule);
-                    wayRules.add(optRule);
-                    wayNoAreaRules.add(optRule);
-                    relationRules.add(optRule);
-                    multipolygonRules.add(optRule);
-                    break;
-                case "canvas":
-                    canvasRules.add(r);
-                    break;
-                case "meta":
-                    break;
-                default:
-                    final RuntimeException e = new RuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
-                    Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-                    Main.error(e);
-                    logError(e);
-            }
-        }
-        nodeRules.initIndex();
-        wayRules.initIndex();
-        wayNoAreaRules.initIndex();
-        relationRules.initIndex();
-        multipolygonRules.initIndex();
-        canvasRules.initIndex();
     }
     
     @Override

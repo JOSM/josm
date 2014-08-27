@@ -48,6 +48,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
@@ -89,7 +90,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         public boolean evaluate(OsmPrimitive prim) {
             if (!prim.isSelectable()) return false;
             // if it isn't displayed on screen, you cannot click on it
-            return !MapPaintStyles.getStyles().get(prim, getDist100Pixel(), NavigatableComponent.this).isEmpty();
+            synchronized (MapCSSStyleSource.STYLE_SOURCE_LOCK) {
+                return !MapPaintStyles.getStyles().get(prim, getDist100Pixel(), NavigatableComponent.this).isEmpty();
+            }
         }
     };
 

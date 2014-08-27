@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
@@ -445,13 +446,15 @@ public class ElemStyles {
      * @return first AreaElemStyle found or {@code null}.
      */
     public static AreaElemStyle getAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
-        if (MapPaintStyles.getStyles() == null)
+        synchronized (MapCSSStyleSource.STYLE_SOURCE_LOCK) {
+            if (MapPaintStyles.getStyles() == null)
+                return null;
+            for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, null, pretendWayIsClosed).a) {
+                if (s instanceof AreaElemStyle)
+                    return (AreaElemStyle) s;
+            }
             return null;
-        for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, null, pretendWayIsClosed).a) {
-            if (s instanceof AreaElemStyle)
-                return (AreaElemStyle) s;
         }
-        return null;
     }
 
     /**

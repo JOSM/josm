@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.RepeatImageElemStyle.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -1341,13 +1342,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         @Override
         public List<StyleRecord> call() throws Exception {
-            for (int i = from; i<to; i++) {
-                OsmPrimitive osm = input.get(i);
-                if (osm.isDrawable()) {
-                    osm.accept(this);
+            synchronized (MapCSSStyleSource.STYLE_SOURCE_LOCK) {
+                for (int i = from; i<to; i++) {
+                    OsmPrimitive osm = input.get(i);
+                    if (osm.isDrawable()) {
+                        osm.accept(this);
+                    }
                 }
+                return output;
             }
-            return output;
         }
 
         @Override
