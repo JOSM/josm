@@ -334,8 +334,8 @@ Note that for a match, at least one positive and no negative is required.
         <reference ref="surface" />
         <space />
     </chunk>
-    <chunk id="stay">
-        <combo key="stay" text="Time Limit (minutes)" values="0,30-60,30-180,30+" />
+    <chunk id="maxstay">
+        <combo key="maxstay" text="Time Limit (minutes)" values="0,30,60,90,120,180" />
     </chunk>
     <chunk id="supervised_lit_oh">
         <combo key="supervised" text="Supervised" values="yes,no,interval" />
@@ -2448,7 +2448,7 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="capacity:parent" text="Spaces for Parents" values="yes,no,unknown,1,2,3" />
             <label text="See the Wiki for other capacity:[types]=*." />
             <space />
-            <reference ref="stay" />
+            <reference ref="maxstay" />
             <reference ref="supervised_lit_oh" />
         </item> <!-- Parking -->
         <item name="Parking Space" icon="presets/parking.png" type="node,closedway" preset_name_label="true">
@@ -2463,7 +2463,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="parking_name_type_ref" />
             <text key="capacity" text="Capacity" />
             <reference ref="parking_access_fee_operator_surface" />
-            <reference ref="stay" />
+            <reference ref="maxstay" />
             <reference ref="supervised_lit_oh" />
             <check key="covered" text="Covered (with roof)" />
         </item> <!-- Parking Space -->
