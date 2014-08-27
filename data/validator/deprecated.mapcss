@@ -182,6 +182,11 @@
   fixChangeKey: "monitoring:river_level => monitoring:water_level";
 }
 
+*[stay] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  fixChangeKey: "stay => maxstay";
+}
+
 *[emergency=aed] {
   /* see #9554 - http://wiki.openstreetmap.org/wiki/Proposed_features/automated_external_defibrillator */
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
