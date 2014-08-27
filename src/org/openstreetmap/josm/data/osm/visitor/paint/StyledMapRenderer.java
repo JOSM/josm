@@ -1342,7 +1342,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         @Override
         public List<StyleRecord> call() throws Exception {
-            synchronized (MapCSSStyleSource.STYLE_SOURCE_LOCK) {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+            try {
                 for (int i = from; i<to; i++) {
                     OsmPrimitive osm = input.get(i);
                     if (osm.isDrawable()) {
@@ -1350,6 +1351,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     }
                 }
                 return output;
+            } finally {
+                MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
             }
         }
 

@@ -336,7 +336,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         NavigatableComponent nc = Main.map.mapView;
         double scale = nc.getDist100Pixel();
 
-        synchronized (MapCSSStyleSource.STYLE_SOURCE_LOCK) {
+        MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+        try {
             for (OsmPrimitive osm : sel) {
                 txtMappaint.append(tr("Styles Cache for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance())));
 
@@ -361,6 +362,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 }
                 txtMappaint.append("\n\n");
             }
+        } finally {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
         }
         if (sel.size() == 2) {
             List<OsmPrimitive> selList = new ArrayList<>(sel);
