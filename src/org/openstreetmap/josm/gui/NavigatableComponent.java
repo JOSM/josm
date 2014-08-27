@@ -90,8 +90,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
         public boolean evaluate(OsmPrimitive prim) {
             if (!prim.isSelectable()) return false;
             // if it isn't displayed on screen, you cannot click on it
-            synchronized (MapCSSStyleSource.STYLE_SOURCE_LOCK) {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+            try {
                 return !MapPaintStyles.getStyles().get(prim, getDist100Pixel(), NavigatableComponent.this).isEmpty();
+            } finally {
+                MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
             }
         }
     };

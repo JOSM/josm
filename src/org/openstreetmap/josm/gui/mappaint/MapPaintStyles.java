@@ -143,8 +143,11 @@ public final class MapPaintStyles {
             Node virtualNode = new Node(LatLon.ZERO);
             virtualNode.put(tag.getKey(), tag.getValue());
             StyleList styleList;
-            synchronized (MapCSSStyleSource.STYLE_SOURCE_LOCK) {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+            try {
                 styleList = getStyles().generateStyles(virtualNode, 0.5, null, false).a;
+            } finally {
+                MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
             }
             if (styleList != null) {
                 for (ElemStyle style : styleList) {

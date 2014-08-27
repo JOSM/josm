@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -69,14 +71,14 @@ public class MapCSSStyleSource extends StyleSource {
     private ZipFile zipFile;
 
     /**
-     * This lock prevents concurrent execution of {@link MapCSSRuleIndex#clear() },
+     * This lock prevents concurrent execution of {@link MapCSSRuleIndex#clear() } /
      * {@link MapCSSRuleIndex#initIndex()} and {@link MapCSSRuleIndex#getRuleCandidates }.
      * 
      * For efficiency reasons, these methods are synchronized higher up the
      * stack trace.
      */
-    public final static Object STYLE_SOURCE_LOCK = new Object();
-    
+    public final static ReadWriteLock STYLE_SOURCE_LOCK = new ReentrantReadWriteLock();
+
     /**
      * A collection of {@link MapCSSRule}s, that are indexed by tag key and value.
      * 
@@ -99,8 +101,6 @@ public class MapCSSStyleSource extends StyleSource {
         /* rules without SimpleKeyValueCondition */
         public final Set<MapCSSRule> remaining = new HashSet<>();
         
-        private static final boolean DEBUG_LOCKING = false;
-        
         public void add(MapCSSRule rule) {
             rules.add(rule);
         }
@@ -108,14 +108,9 @@ public class MapCSSStyleSource extends StyleSource {
         /**
          * Initialize the index.
          * 
-         * You must own the lock STYLE_SOURCE_LOCK when calling this method.
+         * You must own the write lock of STYLE_SOURCE_LOCK when calling this method.
          */
         public void initIndex() {
-            if (DEBUG_LOCKING) {
-                if (!Thread.holdsLock(STYLE_SOURCE_LOCK)) {
-                    throw new RuntimeException();
-                }
-            }
             for (MapCSSRule r: rules) {
                 // find the rightmost selector, this must be a GeneralSelector
                 Selector selRightmost = r.selector;
@@ -153,14 +148,9 @@ public class MapCSSStyleSource extends StyleSource {
          * @return a Collection of rules that filters out most of the rules
          * that cannot match, based on the tags of the primitive
          * 
-         * You must own the lock STYLE_SOURCE_LOCK when calling this method.
+         * You must have a read lock of STYLE_SOURCE_LOCK when calling this method.
          */
         public Collection<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
-            if (DEBUG_LOCKING) {
-                if (!Thread.holdsLock(STYLE_SOURCE_LOCK)) {
-                    throw new RuntimeException();
-                }
-            }
             List<MapCSSRule> ruleCandidates = new ArrayList<>(remaining);
             for (Map.Entry<String,String> e : osm.getKeys().entrySet()) {
                 Map<String,Set<MapCSSRule>> v = index.get(e.getKey());
@@ -178,14 +168,9 @@ public class MapCSSStyleSource extends StyleSource {
         /**
          * Clear the index.
          * 
-         * You must own the lock STYLE_SOURCE_LOCK when calling this method.
+         * You must own the write lock STYLE_SOURCE_LOCK when calling this method.
          */
         public void clear() {
-            if (DEBUG_LOCKING) {
-                if (!Thread.holdsLock(STYLE_SOURCE_LOCK)) {
-                    throw new RuntimeException();
-                }
-            }
             rules.clear();
             index.clear();
             remaining.clear();
@@ -215,7 +200,8 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public void loadStyleSource() {
-        synchronized (STYLE_SOURCE_LOCK) {
+        STYLE_SOURCE_LOCK.writeLock().lock();
+        try {
             init();
             rules.clear();
             nodeRules.clear();
@@ -303,6 +289,8 @@ public class MapCSSStyleSource extends StyleSource {
             relationRules.initIndex();
             multipolygonRules.initIndex();
             canvasRules.initIndex();
+        } finally {
+            STYLE_SOURCE_LOCK.writeLock().unlock();
         }
     }
     

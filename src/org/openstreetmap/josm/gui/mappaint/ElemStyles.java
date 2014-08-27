@@ -446,7 +446,8 @@ public class ElemStyles {
      * @return first AreaElemStyle found or {@code null}.
      */
     public static AreaElemStyle getAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
-        synchronized (MapCSSStyleSource.STYLE_SOURCE_LOCK) {
+        MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+        try {
             if (MapPaintStyles.getStyles() == null)
                 return null;
             for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, null, pretendWayIsClosed).a) {
@@ -454,6 +455,8 @@ public class ElemStyles {
                     return (AreaElemStyle) s;
             }
             return null;
+        } finally {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
         }
     }
 
