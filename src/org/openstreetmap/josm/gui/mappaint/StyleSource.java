@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 
@@ -40,6 +42,15 @@ public abstract class StyleSource extends SourceEntry {
      */
 
     public String icon;
+
+    /**
+     * List of settings for user customization.
+     */
+    public final List<StyleSetting> settings = new ArrayList<>();
+    /**
+     * Values of the settings for efficient lookup.
+     */
+    public Map<String, Object> settingValues = new HashMap<>();
 
     public StyleSource(String url, String name, String title) {
         super(url, name, title, true);

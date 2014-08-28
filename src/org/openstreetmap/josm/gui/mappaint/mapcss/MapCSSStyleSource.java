@@ -34,6 +34,8 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.gui.mappaint.StyleSetting;
+import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
@@ -69,7 +71,7 @@ public class MapCSSStyleSource extends StyleSource {
     private Color backgroundColorOverride;
     private String css = null;
     private ZipFile zipFile;
-
+    
     /**
      * This lock prevents concurrent execution of {@link MapCSSRuleIndex#clear() } /
      * {@link MapCSSRuleIndex#initIndex()} and {@link MapCSSRuleIndex#getRuleCandidates }.
@@ -223,6 +225,7 @@ public class MapCSSStyleSource extends StyleSource {
 
                     loadMeta();
                     loadCanvas();
+                    loadSettings();
                 } finally {
                     closeSourceInputStream(in);
                 }
@@ -275,6 +278,7 @@ public class MapCSSStyleSource extends StyleSource {
                         canvasRules.add(r);
                         break;
                     case "meta":
+                    case "setting":
                         break;
                     default:
                         final RuntimeException e = new RuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
@@ -348,6 +352,48 @@ public class MapCSSStyleSource extends StyleSource {
             backgroundColorOverride = c.get("background-color", null, Color.class);
             if (backgroundColorOverride != null) {
                 Main.warn(tr("Detected deprecated ''{0}'' in ''{1}'' which will be removed shortly. Use ''{2}'' instead.", "canvas{background-color}", url, "fill-color"));
+            }
+        }
+    }
+    
+    private void loadSettings() {
+        settings.clear();
+        settingValues.clear();
+        MultiCascade mc = new MultiCascade();
+        Node n = new Node();
+        String code = LanguageInfo.getJOSMLocaleCode();
+        n.put("lang", code);
+        // create a fake environment to read the meta data block
+        Environment env = new Environment(n, mc, "default", this);
+
+        for (MapCSSRule r : rules) {
+            if ((r.selector instanceof GeneralSelector)) {
+                GeneralSelector gs = (GeneralSelector) r.selector;
+                if (gs.getBase().equals("setting")) {
+                    if (!gs.matchesConditions(env)) {
+                        continue;
+                    }
+                    env.layer = gs.getSubpart();
+                    r.execute(env);
+                }
+            }
+        }
+        for (Entry<String, Cascade> e : mc.getLayers()) {
+            if ("default".equals(e.getKey())) {
+                Main.warn("setting requires layer identifier e.g. 'setting::my_setting {...}'");
+                continue;
+            }
+            Cascade c = e.getValue();
+            String type = c.get("type", null, String.class);
+            StyleSetting set = null;
+            if ("boolean".equals(type)) {
+                set = BooleanStyleSetting.create(c, this, e.getKey());
+            } else {
+                Main.warn("Unkown setting type: "+type);
+            }
+            if (set != null) {
+                settings.add(set);
+                settingValues.put(e.getKey(), set.getValue());
             }
         }
     }

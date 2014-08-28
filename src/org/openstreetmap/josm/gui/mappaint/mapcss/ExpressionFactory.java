@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
@@ -644,11 +643,21 @@ public final class ExpressionFactory {
         
         /**
          * Get the number of tags for the current primitive.
-         * @param env
+         * @param env the environment
          * @return number of tags
          */
         public static int number_of_tags(Environment env) {
             return env.osm.getNumKeys();
+        }
+        
+        /**
+         * Get value of a setting.
+         * @param env the environment
+         * @param key setting key (given as layer identifier, e.g. setting::mykey {...})
+         * @return the value of the setting (calculated when the style is loaded)
+         */
+        public static Object setting(Environment env, String key) {
+            return env.source.settingValues.get(key);
         }
     }
 
