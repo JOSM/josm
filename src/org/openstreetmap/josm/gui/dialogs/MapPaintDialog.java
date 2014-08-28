@@ -34,6 +34,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -65,6 +66,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
+import org.openstreetmap.josm.gui.mappaint.StyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
@@ -666,6 +668,26 @@ public class MapPaintDialog extends ToggleDialog {
         public MapPaintPopup() {
             add(reloadAction);
             add(new SaveAsAction());
+
+            JMenu setMenu = new JMenu(tr("Style settings"));
+            setMenu.setIcon(ImageProvider.overlay(ImageProvider.get("preference"),
+                ImageProvider.get("dialogs/mappaint/pencil.png"),
+                ImageProvider.OverlayPosition.SOUTHEAST));
+            add(setMenu);
+
+            int sel = tblStyles.getSelectionModel().getLeadSelectionIndex();
+            StyleSource style = null;
+            if (sel >= 0 && sel < model.getRowCount()) {
+                style = model.getRow(sel);
+            }
+            if (style == null || style.settings.isEmpty()) {
+                setMenu.setEnabled(false);
+            } else {
+                for (StyleSetting s : style.settings) {
+                    s.addMenuEntry(setMenu);
+                }
+            }
+
             addSeparator();
             add(new InfoAction());
         }
