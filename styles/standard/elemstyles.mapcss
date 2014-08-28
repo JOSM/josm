@@ -4347,6 +4347,7 @@ way|z17-[highway^=tertiary],
 way|z17-[highway=unclassified],
 way|z17-[highway=residential],
 way|z17-[highway=living_street],
+way|z17-[highway=pedestrian][!area?],
 way|z17-[highway=service],
 way|z17-[highway=track] {
     text: auto;
@@ -4375,6 +4376,9 @@ way|z17-[highway=unclassified],
 way|z17-[highway=residential],
 way|z17-[highway=living_street] {
     text-halo-color: street#c0c0c0;
+}
+way[highway=pedestrian][!area?] {
+    text-halo-color: foot#00ff00;
 }
 way|z17-[highway=service] {
     text-halo-color: service#809bc0;
