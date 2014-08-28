@@ -4279,7 +4279,7 @@ node {
 }
 node|z-16[setting("hide_icons")],
 node|z17-[!is_prop_set("icon-image")][setting("hide_icons")]!.maxspeedclass {
-    symbol-size:2;
+    symbol-size: 2;
     symbol-shape: square;
     symbol-stroke-color: node_standard#ffff00;
     major-z-index: 4.95; /* put node squares above line text */
@@ -4300,23 +4300,23 @@ node:tagged {
     symbol-fill-color: node_tagged#00ffff;
 }
 
-way > node|z16[setting("shrink_nodes")]       { symbol-size: 1; }
+way > node|z16[setting("shrink_nodes")]!:tagged { symbol-size: 1; }
 
-node|z17[setting("shrink_nodes")]             { symbol-size: 4; }
-way > node|z17[setting("shrink_nodes")]       { symbol-size: 2; }
-node|z17[setting("shrink_nodes")]:connection  { symbol-size: 4; }
+node|z17[setting("shrink_nodes")]               { symbol-size: 4; }
+way > node|z17[setting("shrink_nodes")]         { symbol-size: 2; }
+node|z17[setting("shrink_nodes")]:connection    { symbol-size: 4; }
 
-node|z18[setting("shrink_nodes")]             { symbol-size: 4; }
-way > node|z18[setting("shrink_nodes")]       { symbol-size: 3; }
-node|z18[setting("shrink_nodes")]:connection  { symbol-size: 5; }
+node|z18[setting("shrink_nodes")]               { symbol-size: 4; }
+way > node|z18[setting("shrink_nodes")]         { symbol-size: 3; }
+node|z18[setting("shrink_nodes")]:connection    { symbol-size: 5; }
 
-node|z19-[setting("shrink_nodes")]            { symbol-size: 4; }
-way > node|z19-[setting("shrink_nodes")]      { symbol-size: 4; }
-node|z19-[setting("shrink_nodes")]:connection { symbol-size: 6; }
+node|z19-[setting("shrink_nodes")]              { symbol-size: 4; }
+way > node|z19-[setting("shrink_nodes")]        { symbol-size: 4; }
+node|z19-[setting("shrink_nodes")]:connection   { symbol-size: 6; }
 
-node[!setting("shrink_nodes")]            { symbol-size: 4; }
-way > node[!setting("shrink_nodes")]      { symbol-size: 4; }
-node[!setting("shrink_nodes")]:connection { symbol-size: 6; }
+node[!setting("shrink_nodes")]                  { symbol-size: 4; }
+way > node[!setting("shrink_nodes")]            { symbol-size: 4; }
+node[!setting("shrink_nodes")]:connection       { symbol-size: 6; }
 
 node|z-10[setting("hide_icons")] {
     icon-image: none;
