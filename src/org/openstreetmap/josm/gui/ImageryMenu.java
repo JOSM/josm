@@ -32,12 +32,18 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.Shape;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
+/**
+ * Imagery menu, holding entries for imagery preferences, offset actions and dynamic imagery entries
+ * depending on current maview coordinates.
+ * @since 3737
+ */
+public class ImageryMenu extends JMenu implements LayerChangeListener {
 
     private Action offsetAction = new JosmAction(
             tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false) {
@@ -82,6 +88,10 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     private JMenuItem offsetMenuItem = singleOffset;
     private final MapRectifierWMSmenuAction rectaction = new MapRectifierWMSmenuAction();
 
+    /**
+     * Constructs a new {@code ImageryMenu}.
+     * @param subMenu submenu in that contains plugin-managed additional imagery layers
+     */
     public ImageryMenu(JMenu subMenu) {
         super(tr("Imagery"));
         setupMenuScroller();
@@ -106,9 +116,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
 
     private void setupMenuScroller() {
         if (!GraphicsEnvironment.isHeadless()) {
-            int menuItemHeight = singleOffset.getPreferredSize().height;
-            MenuScroller.setScrollerFor(this, 
-                    MenuScroller.computeScrollCount(this, menuItemHeight));
+            MenuScroller.setScrollerFor(this, 150, 2);
         }
     }
 

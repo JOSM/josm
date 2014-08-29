@@ -5,14 +5,18 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 
@@ -366,6 +370,31 @@ public class WindowGeometry {
             }
         }
         return virtualBounds;
+    }
+
+    /**
+     * Computes the maximum dimension for a component to fit in screen displaying {@code component}.
+     * @param component The component to get current screen info from. Must not be {@code null}
+     * @return the maximum dimension for a component to fit in current screen
+     * @throws IllegalArgumentException if {@code component} is null
+     * @since 7463
+     */
+    public static Dimension getMaxDimensionOnScreen(JComponent component) {
+        CheckParameterUtil.ensureParameterNotNull(component, "component");
+        // Compute max dimension of current screen
+        Dimension result = new Dimension();
+        GraphicsConfiguration gc = component.getGraphicsConfiguration();
+        if (gc == null && Main.parent != null) {
+            gc = Main.parent.getGraphicsConfiguration();
+        }
+        if (gc != null) {
+            // Max displayable dimension (max screen dimension - insets)
+            Rectangle bounds = gc.getBounds();
+            Insets insets = component.getToolkit().getScreenInsets(gc);
+            result.width  = bounds.width  - insets.left - insets.right;
+            result.height = bounds.height - insets.top - insets.bottom;
+        }
+        return result;
     }
 
     /**

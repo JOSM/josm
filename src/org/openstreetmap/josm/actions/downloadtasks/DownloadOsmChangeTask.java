@@ -53,18 +53,12 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
         return tr("Download OSM Change");
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask#download(boolean, org.openstreetmap.josm.data.Bounds, org.openstreetmap.josm.gui.progress.ProgressMonitor)
-     */
     @Override
     public Future<?> download(boolean newLayer, Bounds downloadArea,
             ProgressMonitor progressMonitor) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask#loadUrl(boolean, java.lang.String, org.openstreetmap.josm.gui.progress.ProgressMonitor)
-     */
     @Override
     public Future<?> loadUrl(boolean new_layer, String url,
             ProgressMonitor progressMonitor) {
@@ -83,17 +77,11 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
             super(newLayer, reader, progressMonitor);
         }
 
-        /* (non-Javadoc)
-         * @see org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask.DownloadTask#parseDataSet()
-         */
         @Override
         protected DataSet parseDataSet() throws OsmTransferException {
             return reader.parseOsmChange(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
         }
 
-        /* (non-Javadoc)
-         * @see org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask.DownloadTask#finish()
-         */
         @Override
         protected void finish() {
             super.finish();

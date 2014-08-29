@@ -569,9 +569,7 @@ public class MainMenu extends JMenuBar {
     public JMenu addMenu(String name, int mnemonicKey, int position, String relativeHelpTopic) {
         final JMenu menu = new JMenu(tr(name));
         if (!GraphicsEnvironment.isHeadless()) {
-            int menuItemHeight = new JMenu().add(newAction).getPreferredSize().height;
-            MenuScroller.setScrollerFor(menu,
-                    MenuScroller.computeScrollCount(menu, menuItemHeight));
+            MenuScroller.setScrollerFor(menu);
         }
         return addMenu(menu, name, mnemonicKey, position, relativeHelpTopic);
     }
