@@ -8,7 +8,6 @@ Documentation of MapCSS format:
 
 */
 
-
 meta {
     icon: "dialogs/mappaint/josm_small.png";
 }
@@ -3301,6 +3300,12 @@ area[natural=peak] {
 }
 node[natural=peak] {
     icon-image: "presets/peak.svg";
+    set icon_z11;
+    text: auto;
+    set text_z11;
+}
+node[natural=peak][tourism=viewpoint] {
+    icon-image: "sightseeing/peak_viewpoint.svg";
     set icon_z11;
     text: auto;
     set text_z11;
