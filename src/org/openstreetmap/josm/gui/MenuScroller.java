@@ -1,6 +1,7 @@
 /**
  * MenuScroller.java    1.5.0 04/02/12
  * License: use / modify without restrictions (see https://tips4java.wordpress.com/about/)
+ * Heavily modified for JOSM needs => drop unused features and replace static scrollcount approach by dynamic behaviour
  */
 package org.openstreetmap.josm.gui;
 
@@ -8,20 +9,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.Arrays;
 
 import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
-import javax.swing.MenuSelectionManager;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -29,15 +28,16 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * A class that provides scrolling capabilities to a long menu dropdown or
  * popup menu. A number of items can optionally be frozen at the top of the menu.
- * <P>
- * <B>Implementation note:</B>  The default number of items to display
- * at a time is 15, and the default scrolling interval is 150 milliseconds.
- * <P>
+ * <p>
+ * <b>Implementation note:</B>  The default scrolling interval is 150 milliseconds.
+ * <p>
  * @author Darryl, https://tips4java.wordpress.com/2009/02/01/menu-scroller/
+ * @since 4593
  */
 public class MenuScroller {
 
@@ -47,49 +47,58 @@ public class MenuScroller {
     private MenuScrollItem downItem;
     private final MenuScrollListener menuListener = new MenuScrollListener();
     private final MouseWheelListener mouseWheelListener = new MouseScrollListener();
-    private int scrollCount;
     private int interval;
     private int topFixedCount;
     private int firstIndex = 0;
-    private int keepVisibleIndex = -1;
 
     private static final int ARROW_ICON_HEIGHT = 10;
 
-    /**
-     * Computes the number of items to display at once for the given component and a given item height.
-     * @param comp The menu
-     * @param itemHeight Average item height
-     * @return the number of items to display at once
-     * @since 7291
-     */
-    public static int computeScrollCount(JComponent comp, int itemHeight) {
+    private int computeScrollCount(int startIndex) {
         int result = 15;
-        if (comp != null && itemHeight > 0) {
+        if (menu != null) {
             // Compute max height of current screen
-            int maxHeight = 0;
-            GraphicsConfiguration gc = comp.getGraphicsConfiguration();
-            if (gc == null && Main.parent != null) {
-                gc = Main.parent.getGraphicsConfiguration();
-            }
-            if (gc != null) {
-                // Max displayable height (max screen height - vertical insets)
-                Insets insets = comp.getToolkit().getScreenInsets(gc);
-                maxHeight = gc.getBounds().height - insets.top - insets.bottom;
+            int maxHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame)Main.parent).getInsets().top;
+
+            // Remove top fixed part height
+            if (topFixedCount > 0) {
+                for (int i = 0; i < topFixedCount; i++) {
+                    maxHeight -= menuItems[i].getPreferredSize().height;
+                }
+                maxHeight -= new JSeparator().getPreferredSize().height;
             }
 
-            // Remove height of our two arrow icons + 2 pixels each for borders (arbitrary value)
-            maxHeight -= 2*(ARROW_ICON_HEIGHT+2);
+            // Remove height of our two arrow items + insets
+            maxHeight -= menu.getInsets().top;
+            maxHeight -= upItem.getPreferredSize().height;
+            maxHeight -= downItem.getPreferredSize().height;
+            maxHeight -= menu.getInsets().bottom;
 
-            if (maxHeight > 0) {
-                result = (maxHeight/itemHeight)-1;
+            // Compute scroll count
+            result = 0;
+            int height = 0;
+            for (int i = startIndex; i < menuItems.length && height <= maxHeight; i++, result++) {
+                height += menuItems[i].getPreferredSize().height;
+            }
+
+            if (height > maxHeight) {
+                // Remove extra item from count
+                result--;
+            } else {
+                // Increase scroll count to take into account upper items that will be displayed
+                // after firstIndex is updated
+                for (int i=startIndex-1; i >= 0 && height <= maxHeight; i--, result++) {
+                    height += menuItems[i].getPreferredSize().height;
+                }
+                if (height > maxHeight) {
+                    result--;
+                }
             }
         }
         return result;
     }
 
     /**
-     * Registers a menu to be scrolled with the default number of items to
-     * display at a time and the default scrolling interval.
+     * Registers a menu to be scrolled with the default scrolling interval.
      *
      * @param menu the menu
      * @return the MenuScroller
@@ -99,8 +108,7 @@ public class MenuScroller {
     }
 
     /**
-     * Registers a popup menu to be scrolled with the default number of items to
-     * display at a time and the default scrolling interval.
+     * Registers a popup menu to be scrolled with the default scrolling interval.
      *
      * @param menu the popup menu
      * @return the MenuScroller
@@ -110,204 +118,142 @@ public class MenuScroller {
     }
 
     /**
-     * Registers a menu to be scrolled with the default number of items to
-     * display at a time and the specified scrolling interval.
+     * Registers a menu to be scrolled, with the specified scrolling interval.
      *
      * @param menu the menu
-     * @param scrollCount the number of items to display at a time
-     * @return the MenuScroller
-     * @throws IllegalArgumentException if scrollCount is 0 or negative
-     */
-    public static MenuScroller setScrollerFor(JMenu menu, int scrollCount) {
-        return new MenuScroller(menu, scrollCount);
-    }
-
-    /**
-     * Registers a popup menu to be scrolled with the default number of items to
-     * display at a time and the specified scrolling interval.
-     *
-     * @param menu the popup menu
-     * @param scrollCount the number of items to display at a time
-     * @return the MenuScroller
-     * @throws IllegalArgumentException if scrollCount is 0 or negative
-     */
-    public static MenuScroller setScrollerFor(JPopupMenu menu, int scrollCount) {
-        return new MenuScroller(menu, scrollCount);
-    }
-
-    /**
-     * Registers a menu to be scrolled, with the specified number of items to
-     * display at a time and the specified scrolling interval.
-     *
-     * @param menu the menu
-     * @param scrollCount the number of items to be displayed at a time
      * @param interval the scroll interval, in milliseconds
      * @return the MenuScroller
      * @throws IllegalArgumentException if scrollCount or interval is 0 or negative
+     * @since 7463
      */
-    public static MenuScroller setScrollerFor(JMenu menu, int scrollCount, int interval) {
-        return new MenuScroller(menu, scrollCount, interval);
+    public static MenuScroller setScrollerFor(JMenu menu, int interval) {
+        return new MenuScroller(menu, interval);
     }
 
     /**
-     * Registers a popup menu to be scrolled, with the specified number of items to
-     * display at a time and the specified scrolling interval.
+     * Registers a popup menu to be scrolled, with the specified scrolling interval.
      *
      * @param menu the popup menu
-     * @param scrollCount the number of items to be displayed at a time
      * @param interval the scroll interval, in milliseconds
      * @return the MenuScroller
      * @throws IllegalArgumentException if scrollCount or interval is 0 or negative
+     * @since 7463
      */
-    public static MenuScroller setScrollerFor(JPopupMenu menu, int scrollCount, int interval) {
-        return new MenuScroller(menu, scrollCount, interval);
+    public static MenuScroller setScrollerFor(JPopupMenu menu, int interval) {
+        return new MenuScroller(menu, interval);
     }
 
     /**
-     * Registers a menu to be scrolled, with the specified number of items
-     * to display in the scrolling region, the specified scrolling interval,
+     * Registers a menu to be scrolled, with the specified scrolling interval,
      * and the specified numbers of items fixed at the top of the menu.
      *
      * @param menu the menu
-     * @param scrollCount the number of items to display in the scrolling portion
      * @param interval the scroll interval, in milliseconds
      * @param topFixedCount the number of items to fix at the top.  May be 0.
      * @throws IllegalArgumentException if scrollCount or interval is 0 or
      * negative or if topFixedCount is negative
      * @return the MenuScroller
+     * @since 7463
      */
-    public static MenuScroller setScrollerFor(JMenu menu, int scrollCount, int interval,
-            int topFixedCount) {
-        return new MenuScroller(menu, scrollCount, interval, topFixedCount);
+    public static MenuScroller setScrollerFor(JMenu menu, int interval, int topFixedCount) {
+        return new MenuScroller(menu, interval, topFixedCount);
     }
 
     /**
-     * Registers a popup menu to be scrolled, with the specified number of items
-     * to display in the scrolling region, the specified scrolling interval,
+     * Registers a popup menu to be scrolled, with the specified scrolling interval,
      * and the specified numbers of items fixed at the top of the popup menu.
      *
      * @param menu the popup menu
-     * @param scrollCount the number of items to display in the scrolling portion
      * @param interval the scroll interval, in milliseconds
-     * @param topFixedCount the number of items to fix at the top.  May be 0
+     * @param topFixedCount the number of items to fix at the top. May be 0
      * @throws IllegalArgumentException if scrollCount or interval is 0 or
      * negative or if topFixedCount is negative
      * @return the MenuScroller
+     * @since 7463
      */
-    public static MenuScroller setScrollerFor(JPopupMenu menu, int scrollCount, int interval,
-            int topFixedCount) {
-        return new MenuScroller(menu, scrollCount, interval, topFixedCount);
+    public static MenuScroller setScrollerFor(JPopupMenu menu, int interval, int topFixedCount) {
+        return new MenuScroller(menu, interval, topFixedCount);
     }
 
     /**
      * Constructs a <code>MenuScroller</code> that scrolls a menu with the
-     * default number of items to display at a time, and default scrolling
-     * interval.
+     * default scrolling interval.
      *
      * @param menu the menu
+     * @throws IllegalArgumentException if scrollCount is 0 or negative
      */
     public MenuScroller(JMenu menu) {
-        this(menu, computeScrollCount(menu, 30));
+        this(menu, 150);
     }
 
     /**
      * Constructs a <code>MenuScroller</code> that scrolls a popup menu with the
-     * default number of items to display at a time, and default scrolling
-     * interval.
+     * default scrolling interval.
      *
      * @param menu the popup menu
+     * @throws IllegalArgumentException if scrollCount is 0 or negative
      */
     public MenuScroller(JPopupMenu menu) {
-        this(menu, computeScrollCount(menu, 30));
+        this(menu, 150);
     }
 
     /**
      * Constructs a <code>MenuScroller</code> that scrolls a menu with the
-     * specified number of items to display at a time, and default scrolling
-     * interval.
+     * specified scrolling interval.
      *
      * @param menu the menu
-     * @param scrollCount the number of items to display at a time
-     * @throws IllegalArgumentException if scrollCount is 0 or negative
+     * @param interval the scroll interval, in milliseconds
+     * @throws IllegalArgumentException if scrollCount or interval is 0 or negative
+     * @since 7463
      */
-    public MenuScroller(JMenu menu, int scrollCount) {
-        this(menu, scrollCount, 150);
+    public MenuScroller(JMenu menu, int interval) {
+        this(menu, interval, 0);
     }
 
     /**
      * Constructs a <code>MenuScroller</code> that scrolls a popup menu with the
-     * specified number of items to display at a time, and default scrolling
-     * interval.
+     * specified scrolling interval.
      *
      * @param menu the popup menu
-     * @param scrollCount the number of items to display at a time
-     * @throws IllegalArgumentException if scrollCount is 0 or negative
+     * @param interval the scroll interval, in milliseconds
+     * @throws IllegalArgumentException if scrollCount or interval is 0 or negative
+     * @since 7463
      */
-    public MenuScroller(JPopupMenu menu, int scrollCount) {
-        this(menu, scrollCount, 150);
+    public MenuScroller(JPopupMenu menu, int interval) {
+        this(menu, interval, 0);
     }
 
     /**
      * Constructs a <code>MenuScroller</code> that scrolls a menu with the
-     * specified number of items to display at a time, and specified scrolling
-     * interval.
-     *
-     * @param menu the menu
-     * @param scrollCount the number of items to display at a time
-     * @param interval the scroll interval, in milliseconds
-     * @throws IllegalArgumentException if scrollCount or interval is 0 or negative
-     */
-    public MenuScroller(JMenu menu, int scrollCount, int interval) {
-        this(menu, scrollCount, interval, 0);
-    }
-
-    /**
-     * Constructs a <code>MenuScroller</code> that scrolls a popup menu with the
-     * specified number of items to display at a time, and specified scrolling
-     * interval.
-     *
-     * @param menu the popup menu
-     * @param scrollCount the number of items to display at a time
-     * @param interval the scroll interval, in milliseconds
-     * @throws IllegalArgumentException if scrollCount or interval is 0 or negative
-     */
-    public MenuScroller(JPopupMenu menu, int scrollCount, int interval) {
-        this(menu, scrollCount, interval, 0);
-    }
-
-    /**
-     * Constructs a <code>MenuScroller</code> that scrolls a menu with the
-     * specified number of items to display in the scrolling region, the
      * specified scrolling interval, and the specified numbers of items fixed at
      * the top of the menu.
      *
      * @param menu the menu
-     * @param scrollCount the number of items to display in the scrolling portion
      * @param interval the scroll interval, in milliseconds
      * @param topFixedCount the number of items to fix at the top.  May be 0
      * @throws IllegalArgumentException if scrollCount or interval is 0 or
      * negative or if topFixedCount is negative
+     * @since 7463
      */
-    public MenuScroller(JMenu menu, int scrollCount, int interval, int topFixedCount) {
-        this(menu.getPopupMenu(), scrollCount, interval, topFixedCount);
+    public MenuScroller(JMenu menu, int interval, int topFixedCount) {
+        this(menu.getPopupMenu(), interval, topFixedCount);
     }
 
     /**
      * Constructs a <code>MenuScroller</code> that scrolls a popup menu with the
-     * specified number of items to display in the scrolling region, the
      * specified scrolling interval, and the specified numbers of items fixed at
      * the top of the popup menu.
      *
      * @param menu the popup menu
-     * @param scrollCount the number of items to display in the scrolling portion
      * @param interval the scroll interval, in milliseconds
      * @param topFixedCount the number of items to fix at the top.  May be 0
      * @throws IllegalArgumentException if scrollCount or interval is 0 or
      * negative or if topFixedCount is negative
+     * @since 7463
      */
-    public MenuScroller(JPopupMenu menu, int scrollCount, int interval, int topFixedCount) {
-        if (scrollCount <= 0 || interval <= 0) {
-            throw new IllegalArgumentException("scrollCount and interval must be greater than 0");
+    public MenuScroller(JPopupMenu menu, int interval, int topFixedCount) {
+        if (interval <= 0) {
+            throw new IllegalArgumentException("interval must be greater than 0");
         }
         if (topFixedCount < 0) {
             throw new IllegalArgumentException("topFixedCount cannot be negative");
@@ -315,7 +261,6 @@ public class MenuScroller {
 
         upItem = new MenuScrollItem(MenuIcon.UP, -1);
         downItem = new MenuScrollItem(MenuIcon.DOWN, +1);
-        setScrollCount(scrollCount);
         setInterval(interval);
         setTopFixedCount(topFixedCount);
 
@@ -349,29 +294,6 @@ public class MenuScroller {
     }
 
     /**
-     * Returns the number of items in the scrolling portion of the menu.
-     *
-     * @return the number of items to display at a time
-     */
-    public int getscrollCount() {
-        return scrollCount;
-    }
-
-    /**
-     * Sets the number of items in the scrolling portion of the menu.
-     *
-     * @param scrollCount the number of items to display at a time
-     * @throws IllegalArgumentException if scrollCount is 0 or negative
-     */
-    public void setScrollCount(int scrollCount) {
-        if (scrollCount <= 0) {
-            throw new IllegalArgumentException("scrollCount must be greater than 0");
-        }
-        this.scrollCount = scrollCount;
-        MenuSelectionManager.defaultManager().clearSelectedPath();
-    }
-
-    /**
      * Returns the number of items fixed at the top of the menu or popup menu.
      *
      * @return the number of items
@@ -392,35 +314,6 @@ public class MenuScroller {
             firstIndex += (topFixedCount - this.topFixedCount);
         }
         this.topFixedCount = topFixedCount;
-    }
-
-    /**
-     * Scrolls the specified item into view each time the menu is opened.  Call this method with
-     * <code>null</code> to restore the default behavior, which is to show the menu as it last
-     * appeared.
-     *
-     * @param item the item to keep visible
-     * @see #keepVisible(int)
-     */
-    public void keepVisible(JMenuItem item) {
-        if (item == null) {
-            keepVisibleIndex = -1;
-        } else {
-            int index = menu.getComponentIndex(item);
-            keepVisibleIndex = index;
-        }
-    }
-
-    /**
-     * Scrolls the item at the specified index into view each time the menu is opened.  Call this
-     * method with <code>-1</code> to restore the default behavior, which is to show the menu as
-     * it last appeared.
-     *
-     * @param index the index of the item to keep visible
-     * @see #keepVisible(javax.swing.JMenuItem)
-     */
-    public void keepVisible(int index) {
-        keepVisibleIndex = index;
     }
 
     /**
@@ -452,37 +345,53 @@ public class MenuScroller {
     private void refreshMenu() {
         if (menuItems != null && menuItems.length > 0) {
 
-            int numOfNonSepItems = getNumberOfNonSeparatorItems(menuItems);
-
-            firstIndex = Math.max(topFixedCount, firstIndex);
-            firstIndex = Math.min(numOfNonSepItems - scrollCount, firstIndex);
-
-            upItem.setEnabled(firstIndex > topFixedCount);
-            downItem.setEnabled(firstIndex + scrollCount < numOfNonSepItems);
-
-            menu.removeAll();
-            for (int i = 0; i < topFixedCount; i++) {
-                menu.add(menuItems[i]);
-            }
-            if (topFixedCount > 0) {
-                menu.addSeparator();
-            }
-
-            menu.add(upItem);
-            for (int i = firstIndex; i < scrollCount + firstIndex; i++) {
-                menu.add(menuItems[i]);
-            }
-            menu.add(downItem);
-
-            int preferredWidth = 0;
+            int allItemsHeight = 0;
             for (Component item : menuItems) {
-                preferredWidth = Math.max(preferredWidth, item.getPreferredSize().width);
+                allItemsHeight += item.getPreferredSize().height;
             }
-            menu.setPreferredSize(new Dimension(preferredWidth, menu.getPreferredSize().height));
 
-            JComponent parent = (JComponent) upItem.getParent();
-            parent.revalidate();
-            parent.repaint();
+            int allowedHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - ((JFrame)Main.parent).getInsets().top;
+
+            boolean mustSCroll = allItemsHeight > allowedHeight;
+
+            if (mustSCroll) {
+                firstIndex = Math.max(topFixedCount, firstIndex);
+                int scrollCount = computeScrollCount(firstIndex);
+                firstIndex = Math.min(menuItems.length - scrollCount, firstIndex);
+
+                upItem.setEnabled(firstIndex > topFixedCount);
+                downItem.setEnabled(firstIndex + scrollCount < menuItems.length);
+
+                menu.removeAll();
+                for (int i = 0; i < topFixedCount; i++) {
+                    menu.add(menuItems[i]);
+                }
+                if (topFixedCount > 0) {
+                    menu.addSeparator();
+                }
+
+                menu.add(upItem);
+                for (int i = firstIndex; i < scrollCount + firstIndex; i++) {
+                    menu.add(menuItems[i]);
+                }
+                menu.add(downItem);
+
+                int preferredWidth = 0;
+                for (Component item : menuItems) {
+                    preferredWidth = Math.max(preferredWidth, item.getPreferredSize().width);
+                }
+                menu.setPreferredSize(new Dimension(preferredWidth, menu.getPreferredSize().height));
+
+            } else if (!Arrays.equals(menu.getComponents(), menuItems)) {
+                // Scroll is not needed but menu is not up to date
+                menu.removeAll();
+                for (Component item : menuItems) {
+                    menu.add(item);
+                }
+            }
+
+            menu.revalidate();
+            menu.repaint();
         }
     }
 
@@ -505,17 +414,7 @@ public class MenuScroller {
 
         private void setMenuItems() {
             menuItems = menu.getComponents();
-            int numOfNonSepItems = getNumberOfNonSeparatorItems(menuItems);
-            if (keepVisibleIndex >= topFixedCount
-                    && keepVisibleIndex <= numOfNonSepItems
-                    && (keepVisibleIndex > firstIndex + scrollCount
-                    || keepVisibleIndex < firstIndex)) {
-                firstIndex = Math.min(firstIndex, keepVisibleIndex);
-                firstIndex = Math.max(firstIndex, keepVisibleIndex - scrollCount + 1);
-            }
-            if (numOfNonSepItems > topFixedCount + scrollCount) {
-                refreshMenu();
-            }
+            refreshMenu();
         }
 
         private void restoreMenuItems() {
@@ -605,21 +504,9 @@ public class MenuScroller {
     private class MouseScrollListener implements MouseWheelListener {
         @Override
         public void mouseWheelMoved(MouseWheelEvent mwe) {
-            if (getNumberOfNonSeparatorItems(menu.getComponents()) > scrollCount) {
-                firstIndex += mwe.getWheelRotation();
-                refreshMenu();
-            }
-            mwe.consume(); // (Comment 16, Huw)
+            firstIndex += mwe.getWheelRotation();
+            refreshMenu();
+            mwe.consume();
         }
-    }
-
-    private int getNumberOfNonSeparatorItems(Component[] items) {
-        int result = 0;
-        for (Component c : items) {
-            if (!(c instanceof JSeparator)) {
-                result++;
-            }
-        }
-        return result;
     }
 }

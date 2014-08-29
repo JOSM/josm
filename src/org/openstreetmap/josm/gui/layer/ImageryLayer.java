@@ -215,11 +215,10 @@ public abstract class ImageryLayer extends Layer {
             hasBookmarks = true;
         }
         if (menuItemHeight > 0) {
-            int scrollcount = MenuScroller.computeScrollCount(subMenu, menuItemHeight);
             if (subMenu instanceof JMenu) {
-                MenuScroller.setScrollerFor((JMenu) subMenu, scrollcount);
+                MenuScroller.setScrollerFor((JMenu) subMenu);
             } else if (subMenu instanceof JPopupMenu) {
-                MenuScroller.setScrollerFor((JPopupMenu)subMenu, scrollcount);
+                MenuScroller.setScrollerFor((JPopupMenu)subMenu);
             }
         }
         return hasBookmarks ? subMenu : adjustMenuItem;
