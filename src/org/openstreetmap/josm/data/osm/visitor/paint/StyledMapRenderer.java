@@ -1048,11 +1048,23 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (name == null || name.isEmpty())
             return;
 
+        FontMetrics fontMetrics = g.getFontMetrics(text.font);
+        Rectangle2D rec = fontMetrics.getStringBounds(name, g);
+
+        Rectangle bounds = g.getClipBounds();
+        
         Polygon poly = new Polygon();
         Point lastPoint = null;
         Iterator<Node> it = way.getNodes().iterator();
         double pathLength = 0;
         long dx, dy;
+        
+        // find half segments that are long enough to draw text on
+        // (don't draw text over the cross hair in the center of each segment)
+        List<Double> longHalfSegmentSart = new ArrayList<>(); // start point of half segment (as length along the way)
+        List<Double> longHalfSegmentEnd = new ArrayList<>(); // end point of half segment (as length along the way)
+        List<Double> longHalfsegmentQuality = new ArrayList<>(); // quality factor (off screen / partly on screen / fully on screen)
+        
         while (it.hasNext()) {
             Node n = it.next();
             Point p = nc.getPoint(n);
@@ -1061,19 +1073,87 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if(lastPoint != null) {
                 dx = p.x - lastPoint.x;
                 dy = p.y - lastPoint.y;
-                pathLength += Math.sqrt(dx*dx + dy*dy);
+                double segmentLength = Math.sqrt(dx*dx + dy*dy);
+                if (segmentLength > 2*(rec.getWidth()+4)) {
+                    Point center = new Point((lastPoint.x + p.x)/2, (lastPoint.y + p.y)/2);
+                    double q = 0;
+                    if (bounds != null) {
+                        if (bounds.contains(lastPoint) && bounds.contains(center)) {
+                            q = 2;
+                        } else if (bounds.contains(lastPoint) || bounds.contains(center)) {
+                            q = 1;
+                        }
+                    }
+                    longHalfSegmentSart.add(pathLength);
+                    longHalfSegmentEnd.add(pathLength + segmentLength / 2);
+                    longHalfsegmentQuality.add(q);
+                    
+                    q = 0;
+                    if (bounds != null) {
+                        if (bounds.contains(center) && bounds.contains(p)) {
+                            q = 2;
+                        } else if (bounds.contains(center) || bounds.contains(p)) {
+                            q = 1;
+                        }
+                    }
+                    longHalfSegmentSart.add(pathLength + segmentLength / 2);
+                    longHalfSegmentEnd.add(pathLength + segmentLength);
+                    longHalfsegmentQuality.add(q);
+                }
+                pathLength += segmentLength;
             }
             lastPoint = p;
         }
-
-        FontMetrics fontMetrics = g.getFontMetrics(text.font); // if slow, use cache
-        Rectangle2D rec = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
-
+        
         if (rec.getWidth() > pathLength)
             return;
 
-        double t1 = (pathLength/2 - rec.getWidth()/2) / pathLength;
-        double t2 = (pathLength/2 + rec.getWidth()/2) / pathLength;
+        double t1, t2;
+        
+        if (!longHalfSegmentSart.isEmpty()) {
+            if (way.getNodesCount() == 2) {
+                // For 2 node ways, the two half segments are exactly
+                // the same size and distance from the center.
+                // Prefer the first one for consistency.
+                longHalfsegmentQuality.set(0, longHalfsegmentQuality.get(0) + 0.5);
+            }
+            
+            // find the long half segment that is closest to the center of the way
+            // candidates with higher quality value are preferred
+            double bestStart = Double.NaN;
+            double bestEnd = Double.NaN;
+            double bestDistanceToCenter = Double.MAX_VALUE;
+            double bestQuality = -1;
+            for (int i=0; i<longHalfSegmentSart.size(); i++) {
+                double start = longHalfSegmentSart.get(i);
+                double end = longHalfSegmentEnd.get(i);
+                double dist = Math.abs(0.5 * (end + start) - 0.5 * pathLength);
+                if (longHalfsegmentQuality.get(i) > bestQuality || (dist < bestDistanceToCenter && longHalfsegmentQuality.get(i) == bestQuality)) {
+                    bestStart = start;
+                    bestEnd = end;
+                    bestDistanceToCenter = dist;
+                    bestQuality = longHalfsegmentQuality.get(i);
+                }
+            }
+            double remaining = bestEnd - bestStart - rec.getWidth(); // total space left and right from the text
+            // The space left and right of the text should be distributed 20% - 80% (towards the center),
+            // but the smaller space should not be less than 7 px.
+            // However, if the total remaining space is less than 14 px, then distribute it evenly.
+            double smallerSpace = Math.min(Math.max(0.2 * remaining, 7), 0.5 * remaining);
+            if ((bestEnd + bestStart)/2 < pathLength/2) {
+                t2 = bestEnd - smallerSpace;
+                t1 = t2 - rec.getWidth();
+            } else {
+                t1 = bestStart + smallerSpace;
+                t2 = t1 + rec.getWidth();
+            }
+        } else {
+            // doesn't fit into one half-segment -> just put it in the center of the way
+            t1 = pathLength/2 - rec.getWidth()/2;
+            t2 = pathLength/2 + rec.getWidth()/2;
+        }
+        t1 /= pathLength;
+        t2 /= pathLength;
 
         double[] p1 = pointAt(t1, poly, pathLength);
         double[] p2 = pointAt(t2, poly, pathLength);
