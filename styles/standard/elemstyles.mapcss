@@ -321,7 +321,7 @@ node[barrier] {
     text: auto;
 }
 way[barrier=bollard] {
-    width: 3;
+    width: 2;
     color: barrier#F0F050;
     dashes: 3,9;
 }
@@ -343,7 +343,7 @@ way[barrier=city_wall],
 way[barrier=retaining_wall],
 way[barrier=block],
 way[barrier=chain] {
-    width: 3;
+    width: 2;
     color: barrier#F0F050;
 }
 node[barrier=hedge],
