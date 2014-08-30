@@ -855,7 +855,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Vehicles per type" />
             <space />
             <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
-            <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
+            <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" match="key" />
             <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
             <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
             <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
@@ -994,7 +994,7 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
                 <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" values_context="trail_visibility" />
                 <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" />
-                <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" />
+                <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" />
                 <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <combo key="wheelchair" text="Wheelchairs" values="unknown,yes,official,no" />
                 <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" />
