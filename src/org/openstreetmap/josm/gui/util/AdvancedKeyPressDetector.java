@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
@@ -12,13 +14,13 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 /**
  * Helper object that allows cross-platform detection of key press and realease events
  * instance is available globally as Main.map.keyDetector
@@ -37,33 +39,36 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     private int previousModifiers;
 
     /**
-     * Adds an object that wants to receive key press and release events
+     * Adds an object that wants to receive key press and release events.
+     * @param l listener to add
      */
-    public void addKeyListener(KeyPressReleaseListener l) {
+    public synchronized void addKeyListener(KeyPressReleaseListener l) {
         keyListeners.add(l);
     }
 
     /**
-     * Adds an object that wants to receive key modifier changed events
+     * Adds an object that wants to receive key modifier changed events.
+     * @param l listener to add
      */
-    public void addModifierListener(ModifierListener l) {
+    public synchronized void addModifierListener(ModifierListener l) {
         modifierListeners.add(l);
     }
 
     /**
-     * Removes the listener
+     * Removes the listener.
+     * @param l listener to remove
      */
-    public void removeKeyListener(KeyPressReleaseListener l) {
+    public synchronized void removeKeyListener(KeyPressReleaseListener l) {
         keyListeners.remove(l);
     }
 
     /**
-     * Removes the key modifier listener
+     * Removes the key modifier listener.
+     * @param l listener to remove
      */
-    public void removeModifierListener(ModifierListener l) {
+    public synchronized void removeModifierListener(ModifierListener l) {
         modifierListeners.remove(l);
     }
-
 
     /**
      * Register this object as AWTEventListener
@@ -79,8 +84,10 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
             public void actionPerformed(ActionEvent e) {
                 timer.stop();
                 if (set.remove(releaseEvent.getKeyCode())) {
-                    for (KeyPressReleaseListener q: keyListeners) {
-                        q.doKeyReleased(releaseEvent);
+                    synchronized (this) {
+                        for (KeyPressReleaseListener q: keyListeners) {
+                            q.doKeyReleased(releaseEvent);
+                        }
                     }
                 }
             }
@@ -92,12 +99,15 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
      * lists of listeners are not cleared!
      */
     public void unregister() {
-        timer.stop(); set.clear();
-        if (!keyListeners.isEmpty()) {
-            Main.warn(tr("Some of the key listeners forgot to remove themselves: {0}"), keyListeners.toString());
-        }
-        if (!modifierListeners.isEmpty()) {
-            Main.warn(tr("Some of the key modifier listeners forgot to remove themselves: {0}"), modifierListeners.toString());
+        timer.stop();
+        set.clear();
+        synchronized (this) {
+            if (!keyListeners.isEmpty()) {
+                Main.warn(tr("Some of the key listeners forgot to remove themselves: {0}"), keyListeners.toString());
+            }
+            if (!modifierListeners.isEmpty()) {
+                Main.warn(tr("Some of the key modifier listeners forgot to remove themselves: {0}"), modifierListeners.toString());
+            }
         }
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
@@ -111,16 +121,20 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
             if (timer.isRunning()) {
                 timer.stop();
             } else if (set.add((e.getKeyCode()))) {
-                for (KeyPressReleaseListener q: keyListeners) {
-                    q.doKeyPressed(e);
+                synchronized (this) {
+                    for (KeyPressReleaseListener q: keyListeners) {
+                        q.doKeyPressed(e);
+                    }
                 }
             }
         } else if (e.getID() == KeyEvent.KEY_RELEASED) {
             if (timer.isRunning()) {
                 timer.stop();
                 if (set.remove(e.getKeyCode())) {
-                    for (KeyPressReleaseListener q: keyListeners) {
-                        q.doKeyReleased(e);
+                    synchronized (this) {
+                        for (KeyPressReleaseListener q: keyListeners) {
+                            q.doKeyReleased(e);
+                        }
                     }
                 }
             } else {
@@ -141,8 +155,10 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         int modif = ke.getModifiers();
         if (previousModifiers != modif) {
             previousModifiers = modif;
-            for (ModifierListener m: modifierListeners) {
-                m.modifiersChanged(modif);
+            synchronized (this) {
+                for (ModifierListener m: modifierListeners) {
+                    m.modifiersChanged(modif);
+                }
             }
         }
 
