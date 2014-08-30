@@ -1061,7 +1061,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         
         // find half segments that are long enough to draw text on
         // (don't draw text over the cross hair in the center of each segment)
-        List<Double> longHalfSegmentSart = new ArrayList<>(); // start point of half segment (as length along the way)
+        List<Double> longHalfSegmentStart = new ArrayList<>(); // start point of half segment (as length along the way)
         List<Double> longHalfSegmentEnd = new ArrayList<>(); // end point of half segment (as length along the way)
         List<Double> longHalfsegmentQuality = new ArrayList<>(); // quality factor (off screen / partly on screen / fully on screen)
         
@@ -1084,7 +1084,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                             q = 1;
                         }
                     }
-                    longHalfSegmentSart.add(pathLength);
+                    longHalfSegmentStart.add(pathLength);
                     longHalfSegmentEnd.add(pathLength + segmentLength / 2);
                     longHalfsegmentQuality.add(q);
                     
@@ -1096,7 +1096,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                             q = 1;
                         }
                     }
-                    longHalfSegmentSart.add(pathLength + segmentLength / 2);
+                    longHalfSegmentStart.add(pathLength + segmentLength / 2);
                     longHalfSegmentEnd.add(pathLength + segmentLength);
                     longHalfsegmentQuality.add(q);
                 }
@@ -1110,7 +1110,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         double t1, t2;
         
-        if (!longHalfSegmentSart.isEmpty()) {
+        if (!longHalfSegmentStart.isEmpty()) {
             if (way.getNodesCount() == 2) {
                 // For 2 node ways, the two half segments are exactly
                 // the same size and distance from the center.
@@ -1124,8 +1124,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             double bestEnd = Double.NaN;
             double bestDistanceToCenter = Double.MAX_VALUE;
             double bestQuality = -1;
-            for (int i=0; i<longHalfSegmentSart.size(); i++) {
-                double start = longHalfSegmentSart.get(i);
+            for (int i=0; i<longHalfSegmentStart.size(); i++) {
+                double start = longHalfSegmentStart.get(i);
                 double end = longHalfSegmentEnd.get(i);
                 double dist = Math.abs(0.5 * (end + start) - 0.5 * pathLength);
                 if (longHalfsegmentQuality.get(i) > bestQuality || (dist < bestDistanceToCenter && longHalfsegmentQuality.get(i) == bestQuality)) {
