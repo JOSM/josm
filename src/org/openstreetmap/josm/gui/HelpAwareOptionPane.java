@@ -210,7 +210,8 @@ public final class HelpAwareOptionPane {
      * @param helpTopic the help topic. Can be null.
      * @return the index of the selected option or {@link JOptionPane#CLOSED_OPTION}
      */
-    public static int showOptionDialog(Component parentComponent, Object msg, String title, int messageType, Icon icon, final ButtonSpec[] options, final ButtonSpec defaultOption, final String helpTopic)  {
+    public static int showOptionDialog(Component parentComponent, Object msg, String title, int messageType,
+            Icon icon, final ButtonSpec[] options, final ButtonSpec defaultOption, final String helpTopic)  {
         final List<JButton> buttons = createOptionButtons(options, helpTopic);
         if (helpTopic != null) {
             buttons.add(createHelpButton(helpTopic));
@@ -317,16 +318,22 @@ public final class HelpAwareOptionPane {
      * @return the index of the selected option or {@link JOptionPane#CLOSED_OPTION}
      * @see #showOptionDialog(Component, Object, String, int, Icon, ButtonSpec[], ButtonSpec, String)
      */
-    public static int showOptionDialog(Component parentComponent, Object msg, String title, int messageType,final String helpTopic)  {
-        return showOptionDialog(parentComponent, msg, title, messageType, null,null,null, helpTopic);
+    public static int showOptionDialog(Component parentComponent, Object msg, String title, int messageType, String helpTopic)  {
+        return showOptionDialog(parentComponent, msg, title, messageType, null, null, null, helpTopic);
     }
 
     /**
      * Run it in Event Dispatch Thread.
-     * This version does not return anything, so it is more like showMessageDialog.
+     * This version does not return anything, so it is more like {@code showMessageDialog}.
      *
      * It can be used, when you need to show a message dialog from a worker thread,
-     * e.g. from PleaseWaitRunnable
+     * e.g. from {@code PleaseWaitRunnable}.
+     *
+     * @param parentComponent the parent component
+     * @param msg the message
+     * @param title the title
+     * @param messageType the message type (see {@link JOptionPane})
+     * @param helpTopic the help topic. Can be null.
      */
     public static void showMessageDialogInEDT(final Component parentComponent, final Object msg, final String title, final int messageType, final String helpTopic)  {
         GuiHelper.runInEDT(new Runnable() {
