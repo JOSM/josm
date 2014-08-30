@@ -137,6 +137,12 @@ public class Addresses extends Test {
                         }
                         list.add(p);
                     }
+                    if (relationName != null && p.hasKey(ADDR_STREET) && !relationName.equals(p.get(ADDR_STREET))) {
+                        if (wrongStreetNames.isEmpty()) {
+                            wrongStreetNames.add(r);
+                        }
+                        wrongStreetNames.add(p);
+                    }
                 } else if ("street".equals(role)) {
                     if (p instanceof Way) {
                         street.add((Way) p);
