@@ -10,27 +10,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.io.OsmChangesetParser;
+import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
  * This is an asynchronous task for testing whether an URL points to an OSM API server.
- * It tries to retrieve a list of changesets from the given URL. If it succeeds, the method
+ * It tries to retrieve capabilities from the given URL. If it succeeds, the method
  * {@link #isSuccess()} replies true, otherwise false.
- *
- * Note: it fetches a list of changesets instead of the much smaller capabilities because - strangely enough -
- * an OSM server "https://x.y.y/api/0.6" not only responds to  "https://x.y.y/api/0.6/capabilities" but also
- * to "https://x.y.y/api/0/capabilities" or "https://x.y.y/a/capabilities" with valid capabilities. If we get
- * valid capabilities with an URL we therefore can't be sure that the base URL is valid API URL.
  * @since 2745
  */
 public class ApiUrlTestTask extends PleaseWaitRunnable {
@@ -70,7 +66,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
         );
     }
 
-    protected void alertInvalidChangesetUrl(String url) {
+    protected void alertInvalidCapabilitiesUrl(String url) {
         HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
@@ -119,7 +115,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
         );
     }
 
-    protected void alertInvalidChangesetList() {
+    protected void alertInvalidCapabilities() {
         HelpAwareOptionPane.showMessageDialogInEDT(
                 parent,
                 tr("<html>"
@@ -149,8 +145,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
     protected void finish() {}
 
     /**
-     * Removes leading and trailing whitespace from the API URL and removes trailing
-     * '/'.
+     * Removes leading and trailing whitespace from the API URL and removes trailing '/'.
      *
      * @return the normalized API URL
      */
@@ -172,11 +167,11 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
                 return;
             }
             URL capabilitiesUrl;
-            String getChangesetsUrl = getNormalizedApiUrl() + "/0.6/changesets";
+            String getCapabilitiesUrl = getNormalizedApiUrl() + "/0.6/capabilities";
             try {
-                capabilitiesUrl = new URL(getChangesetsUrl);
+                capabilitiesUrl = new URL(getCapabilitiesUrl);
             } catch(MalformedURLException e) {
-                alertInvalidChangesetUrl(getChangesetsUrl);
+                alertInvalidCapabilitiesUrl(getCapabilitiesUrl);
                 return;
             }
 
@@ -194,15 +189,11 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             }
 
             try {
-                OsmChangesetParser.parse(connection.getInputStream(), progressMonitor.createSubTaskMonitor(1, true));
-            } catch (IllegalDataException e) {
-                if (e.getCause() instanceof IOException) {
-                    throw (IOException) e.getCause();
-                } else {
-                    Main.warn(e.getMessage());
-                    alertInvalidChangesetList();
-                    return;
-                }
+                Capabilities.CapabilitiesParser.parse(new InputSource(connection.getInputStream()));
+            } catch (SAXException | ParserConfigurationException e) {
+                Main.warn(e.getMessage());
+                alertInvalidCapabilities();
+                return;
             }
             success = true;
         } catch(IOException e) {
