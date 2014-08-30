@@ -3,16 +3,24 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.openstreetmap.josm.Main;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Represents the server capabilities
+ * Represents the OSM API server capabilities.
  *
  * Example capabilites document:
  * <pre>
@@ -42,16 +50,24 @@ import org.openstreetmap.josm.Main;
  */
 public class Capabilities {
 
-    private Map<String, HashMap<String,String>> capabilities;
-    private List<String> imageryBlacklist;
+    private final Map<String, HashMap<String,String>> capabilities;
+    private final List<String> imageryBlacklist;
 
     /**
      * Constructs new {@code Capabilities}.
      */
     public Capabilities() {
-        clear();
+        capabilities = new HashMap<>();
+        imageryBlacklist = new ArrayList<>();
     }
 
+    /**
+     * Determines if given element and attribute are defined.
+     *
+     * @param element the name of the element
+     * @param attribute the name of the attribute
+     * @return {@code true} if defined, {@code false} otherwise
+     */
     public boolean isDefined(String element, String attribute) {
         if (! capabilities.containsKey(element)) return false;
         HashMap<String, String> e = capabilities.get(element);
@@ -59,7 +75,14 @@ public class Capabilities {
         return (e.get(attribute) != null);
     }
 
-    public String get(String element, String attribute ) {
+    /**
+     * Returns the value of configuration item in the capabilities as string value.
+     *
+     * @param element the name of the element
+     * @param attribute the name of the attribute
+     * @return the value; {@code null}, if the respective configuration item does not exist
+     */
+    public String get(String element, String attribute) {
         if (! capabilities.containsKey(element)) return null;
         HashMap<String, String> e = capabilities.get(element);
         if (e == null) return null;
@@ -67,13 +90,12 @@ public class Capabilities {
     }
 
     /**
-     * returns the value of configuration item in the capabilities as
-     * double value
+     * Returns the value of configuration item in the capabilities as double value.
      *
-     * @param element  the name of the element
+     * @param element the name of the element
      * @param attribute the name of the attribute
-     * @return the value; null, if the respective configuration item doesn't exist
-     * @throws NumberFormatException  if the value is not a valid double
+     * @return the value; {@code null}, if the respective configuration item does not exist
+     * @throws NumberFormatException if the value is not a valid double
      */
     public Double getDouble(String element, String attribute) throws NumberFormatException {
         String s = get(element, attribute);
@@ -81,12 +103,27 @@ public class Capabilities {
         return Double.parseDouble(s);
     }
 
+    /**
+     * Returns the value of configuration item in the capabilities as long value.
+     *
+     * @param element the name of the element
+     * @param attribute the name of the attribute
+     * @return the value; {@code null}, if the respective configuration item does not exist
+     * @throws NumberFormatException if the value is not a valid long
+     */
     public Long getLong(String element, String attribute) {
         String s = get(element, attribute);
         if (s == null) return null;
         return Long.parseLong(s);
     }
 
+    /**
+     * Adds a new configuration item.
+     *
+     * @param element the name of the element
+     * @param attribute the name of the attribute
+     * @param value the value as string
+     */
     public void put(String element, String attribute, String value) {
         if ("blacklist".equals(element)) {
             if ("regex".equals(attribute)) {
@@ -102,11 +139,19 @@ public class Capabilities {
         }
     }
 
+    /**
+     * Clears the API capabilities.
+     */
     public final void clear() {
-        capabilities = new HashMap<>();
-        imageryBlacklist = new ArrayList<>();
+        capabilities.clear();
+        imageryBlacklist.clear();
     }
 
+    /**
+     * Determines if a given API version is supported.
+     * @param version The API version to check
+     * @return {@code true} is version is between the minimum supported version and the maximum one, {@code false} otherwise
+     */
     public boolean supportsVersion(String version) {
         return get("version", "minimum").compareTo(version) <= 0
         && get("version", "maximum").compareTo(version) >= 0;
@@ -136,12 +181,11 @@ public class Capabilities {
     }
 
     /**
-     * checks if the given URL is blacklisted by one of the of the
-     * regular expressions.
+     * Checks if the given URL is blacklisted by one of the of the regular expressions.
+     * @param url Imagery URL to check
+     * @return {@code true} if URL is blacklisted, {@code false} otherwise
      */
-
-    public boolean isOnImageryBlacklist(String url)
-    {
+    public boolean isOnImageryBlacklist(String url) {
         if (url != null && imageryBlacklist != null) {
             for (String blacklistRegex : imageryBlacklist) {
                 if (url.matches(blacklistRegex))
@@ -152,10 +196,54 @@ public class Capabilities {
     }
 
     /**
-     * returns the full list of blacklist regular expressions.
+     * Returns the full list of imagery blacklist regular expressions.
+     * @return full list of imagery blacklist regular expressions
      */
-    public List<String> getImageryBlacklist()
-    {
+    public List<String> getImageryBlacklist() {
         return Collections.unmodifiableList(imageryBlacklist);
+    }
+
+    /**
+     * A parser for the "capabilities" response XML.
+     * @since 7473
+     */
+    public static final class CapabilitiesParser extends DefaultHandler {
+
+        private Capabilities capabilities;
+
+        @Override
+        public void startDocument() throws SAXException {
+            capabilities = new Capabilities();
+        }
+
+        @Override
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+            for (int i=0; i< atts.getLength(); i++) {
+                capabilities.put(qName, atts.getQName(i), atts.getValue(i));
+            }
+        }
+
+        /**
+         * Returns the read capabilities.
+         * @return the read capabilities
+         */
+        public Capabilities getCapabilities() {
+            return capabilities;
+        }
+
+        /**
+         * Parses and returns capabilities from the given input source.
+         *
+         * @param inputSource The input source to read capabilities from
+         * @return the capabilities
+         * @throws SAXException if any SAX errors occur during processing
+         * @throws IOException if any I/O errors occur
+         * @throws ParserConfigurationException if a parser cannot be created
+         */
+        public static Capabilities parse(InputSource inputSource) throws SAXException, IOException, ParserConfigurationException {
+            CapabilitiesParser parser = new CapabilitiesParser();
+            SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
+            return parser.getCapabilities();
+        }
     }
 }

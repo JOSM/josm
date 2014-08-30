@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -36,14 +35,13 @@ import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.Capabilities.CapabilitiesParser;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
-import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Class that encapsulates the communications with the <a href="http://wiki.openstreetmap.org/wiki/API_v0.6">OSM API</a>.<br><br>
@@ -110,45 +108,23 @@ public class OsmApi extends OsmConnection {
         return getOsmApi(getServerUrlFromPref());
     }
 
-    /** the server URL */
+    /** Server URL */
     private String serverUrl;
 
-    /**
-     * Object describing current changeset
-     */
+    /** Object describing current changeset */
     private Changeset changeset;
 
-    /**
-     * API version used for server communications
-     */
+    /** API version used for server communications */
     private String version = null;
 
-    /** the api capabilities */
-    private Capabilities capabilities = new Capabilities();
+    /** API capabilities */
+    private Capabilities capabilities = null;
 
-    /**
-     * true if successfully initialized
-     */
+    /** true if successfully initialized */
     private boolean initialized = false;
 
     /**
-     * A parser for the "capabilities" response XML
-     */
-    private class CapabilitiesParser extends DefaultHandler {
-        @Override
-        public void startDocument() throws SAXException {
-            capabilities.clear();
-        }
-
-        @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-            for (int i=0; i< atts.getLength(); i++) {
-                capabilities.put(qName, atts.getQName(i), atts.getValue(i));
-            }
-        }
-    }
-
-    /**
-     * creates an OSM api for a specific server URL
+     * Constructs a new {@code OsmApi} for a specific server URL.
      *
      * @param serverUrl the server URL. Must not be null
      * @throws IllegalArgumentException thrown, if serverUrl is null
@@ -292,8 +268,7 @@ public class OsmApi extends OsmConnection {
     }
 
     private void initializeCapabilities(String xml) throws SAXException, IOException, ParserConfigurationException {
-        InputSource inputSource = new InputSource(new StringReader(xml));
-        SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
+        capabilities = CapabilitiesParser.parse(new InputSource(new StringReader(xml)));
     }
 
     /**
@@ -751,7 +726,7 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Replies the API capabilities
+     * Replies the API capabilities.
      *
      * @return the API capabilities, or null, if the API is not initialized yet
      */

@@ -652,6 +652,9 @@ public final class Utils {
         if (httpURL == null || !HTTP_PREFFIX_PATTERN.matcher(httpURL.getProtocol()).matches()) {
             throw new IllegalArgumentException("Invalid HTTP url");
         }
+        if (Main.isDebugEnabled()) {
+            Main.debug("Opening HTTP connection to "+httpURL.toExternalForm());
+        }
         HttpURLConnection connection = (HttpURLConnection) httpURL.openConnection();
         connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
         connection.setUseCaches(false);
