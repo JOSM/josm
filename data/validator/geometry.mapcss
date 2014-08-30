@@ -10,6 +10,10 @@ node[source:outline] {
   assertNoMatch: "node bridge=13";
 }
 
+node[natural=wood] {
+  throwOther: tr("{0} on a node. Should be drawn as an area", "{0.tag}");
+}
+
 /* see ticket:#10125 */
 node[source:geometry] {
   throwWarning: tr("{0} on a node", "{0.key}");
