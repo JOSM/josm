@@ -3291,42 +3291,42 @@ node[natural=spring] {
 }
 node[natural=saddle] {
     icon-image: "presets/saddle.svg";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
 }
 area[natural=peak] {
     fill-color: peak#663300;
 }
 node[natural=peak] {
     icon-image: "presets/peak.svg";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
 }
 node[natural=peak][tourism=viewpoint] {
     icon-image: "sightseeing/peak_viewpoint.svg";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
 }
 area[natural=glacier] {
     fill-color: glacier#ffffff;
 }
 node[natural=glacier] {
     icon-image: "misc/landmark/glacier_small.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
 }
 area[natural=volcano] {
     fill-color: volcano#5f0000;
 }
 node[natural=volcano] {
     icon-image: "misc/landmark/volcano_small.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
 }
 area[natural=cliff]:closed {
     fill-color: natural#002f00;
@@ -3972,9 +3972,9 @@ node[sport=rc_car] {
 
 node[mountain_pass?] {
     icon-image: "misc/landmark/mountain_pass.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
 }
 
 /*****************/
@@ -4132,9 +4132,9 @@ node["openGeoDB:type"=Ort],
 node["openGeoDB:type"=District],
 node["openGeoDB:location"=locality] {
     icon-image: "place/settlement/town.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
     font-size: 10;
     font-weight: bold;
     text-color:black;
@@ -4165,9 +4165,9 @@ node[place=state],
 node[place=region],
 node[place=county] {
     icon-image: "place/settlement/capital.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
     font-size: 10;
     font-weight: bold;
     text-color:black;
@@ -4176,9 +4176,9 @@ node[place=county] {
 }
 node[place=city] {
     icon-image: "place/settlement/city.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
     font-size: 10;
     font-weight: bold;
     text-color:black;
@@ -4193,9 +4193,9 @@ node[place=isolated_dwelling],
 node[place=neighbourhood],
 node[place=suburb] {
     icon-image: "place/settlement/town.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
     font-size: 10;
     font-weight: bold;
     text-color:black;
@@ -4204,9 +4204,9 @@ node[place=suburb] {
 }
 node[place=locality] {
     icon-image: "place/locality.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
     font-size: 10;
     font-weight: bold;
     text-color:black;
@@ -4215,9 +4215,9 @@ node[place=locality] {
 }
 node[place=island] {
     icon-image: "place/island.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
     font-size: 10;
     font-weight: bold;
     text-color:black;
@@ -4226,9 +4226,9 @@ node[place=island] {
 }
 node[place=islet] {
     icon-image: "place/islet.png";
-    set icon_z11;
+    set icon_z0;
     text: auto;
-    set text_z11;
+    set text_z0;
     font-size: 10;
     font-weight: bold;
     text-color:black;
@@ -4267,12 +4267,12 @@ way["tiger:reviewed"=no]::core_tiger {
 
 /*
 Summary of different zoom levels:
-  |z11-   place=* icons and text is shown
-  |z-15   untagged way nodes are hidden completely
-  |z16-   fixme=* and note=* symbols
-  |z17-   normal POI icons (without text),
-          street name along highway=* ways
-  |z18-   text for normal POI icons is shown
+  (any zoom)    place=* and a few natural icons with their text is shown
+  |z-15         untagged way nodes are hidden completely
+  |z16-         fixme=* and note=* symbols
+  |z17-         normal POI icons (without text),
+                street name along highway=* ways
+  |z18-         text for normal POI icons is shown
   
  * text size and node size is adapted according to zoom level (see style source below)
  * maxspeed icons should not be distinguishable from POIs with "icon-image" property
@@ -4319,17 +4319,11 @@ node[!setting("shrink_nodes")]                  { symbol-size: 4; }
 way > node[!setting("shrink_nodes")]            { symbol-size: 4; }
 node[!setting("shrink_nodes")]:connection       { symbol-size: 6; }
 
-node|z-10[setting("hide_icons")] {
-    icon-image: none;
-}
-node|z-16[setting("hide_icons")].icon_z17!.icon_z11,
+node|z-16[setting("hide_icons")].icon_z17!.icon_z0,
 relation|z-16[type=restriction][setting("hide_icons")] {
     icon-image: none;
 }
-node|z-10[setting("hide_icons")] {
-    text: none;
-}
-node|z-17[setting("hide_icons")]!.text_z11 {
+node|z-17[setting("hide_icons")]!.text_z0 {
     text: none;
 }
 
