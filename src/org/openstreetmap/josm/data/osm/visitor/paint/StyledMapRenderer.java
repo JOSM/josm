@@ -246,30 +246,38 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * so far).
      *
      * This bug has only been observed on Mac OS X, see #7841.
+     * 
+     * After switch to Java 7, this test is a false positive on Mac OS X (see #10446),
+     * i.e. it returns true, but the real rendering code does not require any special
+     * handling.
+     * It hasn't been further investigated why the test reports a wrong result in
+     * this case, but the method has been changed to simply return false by default.
+     * (This can be changed with a setting in the advanced preferences.)
      *
-     * @return true, if the GlyphVector double translation bug is present on
-     * this System
+     * @return false by default, but depends on the value of the advanced
+     * preference glyph-bug=false|true|auto, where auto is the automatic detection
+     * method which apparently no longer gives a useful result for Java 7.
      */
     public static boolean isGlyphVectorDoubleTranslationBug() {
         if (IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG != null)
             return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
-        String overridePref = Main.pref.get("glyph-bug", null);
-        if (overridePref != null) {
+        String overridePref = Main.pref.get("glyph-bug", "false");
+        if ("auto".equals(overridePref)) {
+            FontRenderContext frc = new FontRenderContext(null, false, false);
+            Font font = new Font("Dialog", Font.PLAIN, 12);
+            GlyphVector gv = font.createGlyphVector(frc, "x");
+            gv.setGlyphTransform(0, AffineTransform.getTranslateInstance(1000, 1000));
+            Shape shape = gv.getGlyphOutline(0);
+            Main.trace("#10446: shape: "+shape.getBounds());
+            // x is about 1000 on normal stystems and about 2000 when the bug occurs
+            int x = shape.getBounds().x;
+            IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = x > 1500;
+            return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
+        } else {
             boolean override = Boolean.parseBoolean(overridePref);
-            Main.info("Override glyph vector bug: set to value "+override);
             IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = override;
             return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
         }
-        FontRenderContext frc = new FontRenderContext(null, false, false);
-        Font font = new Font("Dialog", Font.PLAIN, 12);
-        GlyphVector gv = font.createGlyphVector(frc, "x");
-        gv.setGlyphTransform(0, AffineTransform.getTranslateInstance(1000, 1000));
-        Shape shape = gv.getGlyphOutline(0);
-        Main.trace("#10446: shape: "+shape.getBounds());
-        // x is about 1000 on normal stystems and about 2000 when the bug occurs
-        int x = shape.getBounds().x;
-        IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = x > 1500;
-        return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
     }
 
     private double circum;
