@@ -285,7 +285,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
 
     @Override
     public String getDefaultStyle() {
-        return "javax.swing.plaf.metal.MetalLookAndFeel";
+        return "com.apple.laf.AquaLookAndFeel";
     }
 
     @Override
