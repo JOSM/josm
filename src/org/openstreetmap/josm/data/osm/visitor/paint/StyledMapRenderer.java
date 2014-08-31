@@ -253,11 +253,19 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     public static boolean isGlyphVectorDoubleTranslationBug() {
         if (IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG != null)
             return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
+        String overridePref = Main.pref.get("glyph-bug", null);
+        if (overridePref != null) {
+            boolean override = Boolean.parseBoolean(overridePref);
+            Main.info("Override glyph vector bug: set to value "+override);
+            IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = override;
+            return IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG;
+        }
         FontRenderContext frc = new FontRenderContext(null, false, false);
         Font font = new Font("Dialog", Font.PLAIN, 12);
         GlyphVector gv = font.createGlyphVector(frc, "x");
         gv.setGlyphTransform(0, AffineTransform.getTranslateInstance(1000, 1000));
         Shape shape = gv.getGlyphOutline(0);
+        Main.trace("#10446: shape: "+shape.getBounds());
         // x is about 1000 on normal stystems and about 2000 when the bug occurs
         int x = shape.getBounds().x;
         IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = x > 1500;
