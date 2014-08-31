@@ -202,10 +202,6 @@ public class OsmApi extends OsmConnection {
     public void initialize(ProgressMonitor monitor, boolean fastFail) throws OsmTransferCanceledException, OsmApiInitializationException {
         if (initialized)
             return;
-        if (Main.isOffline(OnlineResource.OSM_API)) {
-            // At this point this is an error because all automatic or UI actions requiring OSM API should have been disabled earlier
-            throw new OfflineAccessException(tr("{0} not available (offline mode)", OnlineResource.OSM_API.getLocName()));
-        }
         cancel = false;
         try {
             CapabilitiesCache cache = new CapabilitiesCache(monitor, fastFail);
@@ -216,15 +212,22 @@ public class OsmApi extends OsmConnection {
                 // In that case, force update and try again
                 initializeCapabilities(cache.updateForceString());
             }
-            if (capabilities.supportsVersion("0.6")) {
-                version = "0.6";
-            } else {
+            if (capabilities == null) {
+                if (Main.isOffline(OnlineResource.OSM_API)) {
+                    Main.warn(tr("{0} not available (offline mode)", tr("OSM API")));
+                } else {
+                    Main.error(tr("Unable to initialize OSM API."));
+                }
+                return;
+            } else if (!capabilities.supportsVersion("0.6")) {
                 Main.error(tr("This version of JOSM is incompatible with the configured server."));
                 Main.error(tr("It supports protocol version 0.6, while the server says it supports {0} to {1}.",
                         capabilities.get("version", "minimum"), capabilities.get("version", "maximum")));
-                initialized = false; // FIXME gets overridden by next assignment
+                return;
+            } else {
+                version = "0.6";
+                initialized = true;
             }
-            initialized = true;
 
             /* This is an interim solution for openstreetmap.org not currently
              * transmitting their imagery blacklist in the capabilities call.
@@ -232,8 +235,7 @@ public class OsmApi extends OsmConnection {
              * If you want to update this list, please ask for update of
              * http://trac.openstreetmap.org/ticket/5024
              * This list should not be maintained by each OSM editor (see #9210) */
-            if (this.serverUrl.matches(".*openstreetmap.org/api.*") && capabilities.getImageryBlacklist().isEmpty())
-            {
+            if (this.serverUrl.matches(".*openstreetmap.org/api.*") && capabilities.getImageryBlacklist().isEmpty()) {
                 capabilities.put("blacklist", "regex", ".*\\.google\\.com/.*");
                 capabilities.put("blacklist", "regex", ".*209\\.85\\.2\\d\\d.*");
                 capabilities.put("blacklist", "regex", ".*209\\.85\\.1[3-9]\\d.*");
@@ -244,7 +246,7 @@ public class OsmApi extends OsmConnection {
              * are now on the blacklist, and removes them. This is a rare
              * situation - probably only occurs if the user changes the API URL
              * in the preferences menu. Otherwise they would not have been able
-             * to load the layers in the first place becuase they would have
+             * to load the layers in the first place because they would have
              * been disabled! */
             if (Main.isDisplayingMapView()) {
                 for (Layer l : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {
@@ -267,8 +269,10 @@ public class OsmApi extends OsmConnection {
         }
     }
 
-    private void initializeCapabilities(String xml) throws SAXException, IOException, ParserConfigurationException {
-        capabilities = CapabilitiesParser.parse(new InputSource(new StringReader(xml)));
+    private synchronized void initializeCapabilities(String xml) throws SAXException, IOException, ParserConfigurationException {
+        if (xml != null) {
+            capabilities = CapabilitiesParser.parse(new InputSource(new StringReader(xml)));
+        }
     }
 
     /**
@@ -730,7 +734,7 @@ public class OsmApi extends OsmConnection {
      *
      * @return the API capabilities, or null, if the API is not initialized yet
      */
-    public Capabilities getCapabilities() {
+    public synchronized Capabilities getCapabilities() {
         return capabilities;
     }
 

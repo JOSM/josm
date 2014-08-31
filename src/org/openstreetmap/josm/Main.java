@@ -547,24 +547,20 @@ public abstract class Main {
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
         List<Callable<Void>> tasks = new ArrayList<>();
 
-        if (isOffline(OnlineResource.OSM_API)) {
-            Main.warn(tr("{0} not available (offline mode)", tr("OSM API")));
-        } else {
-            tasks.add(new InitializationTask(tr("Initializing OSM API")) {
+        tasks.add(new InitializationTask(tr("Initializing OSM API")) {
 
-                @Override
-                public void initialize() throws Exception {
-                    // We try to establish an API connection early, so that any API
-                    // capabilities are already known to the editor instance. However
-                    // if it goes wrong that's not critical at this stage.
-                    try {
-                        OsmApi.getOsmApi().initialize(null, true);
-                    } catch (Exception e) {
-                        Main.warn(getErrorMessage(Utils.getRootCause(e)));
-                    }
+            @Override
+            public void initialize() throws Exception {
+                // We try to establish an API connection early, so that any API
+                // capabilities are already known to the editor instance. However
+                // if it goes wrong that's not critical at this stage.
+                try {
+                    OsmApi.getOsmApi().initialize(null, true);
+                } catch (Exception e) {
+                    Main.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
-            });
-        }
+            }
+        });
 
         tasks.add(new InitializationTask(tr("Initializing validator")) {
 
