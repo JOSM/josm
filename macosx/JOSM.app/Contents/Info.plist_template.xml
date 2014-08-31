@@ -2,6 +2,7 @@
 <string>true</string>
 <key>UTExportedTypeDeclarations</key>
 <array>
+    <!-- Export JOSM file format UTI (*.osm) -->
     <dict>
         <key>UTTypeIdentifier</key>
         <string>org.openstreetmap.josm.osm</string>
@@ -27,6 +28,10 @@
             <string>application/x-osm+xml</string>
         </dict>
     </dict>
+</array>
+<key>UTImportedTypeDeclarations</key>
+<array>
+    <!-- Import GPX file format "standard" UTI (*.gpx) -->
     <dict>
         <key>UTTypeIdentifier</key>
         <string>com.topografix.gpx</string>
@@ -48,9 +53,32 @@
             <string>application/gpx+xml</string>
         </dict>
     </dict>
+    <!-- Import GPX file format Apple UTI (*.gpx) -->
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.apple.dt.document.gpx</string>
+        <key>UTTypeReferenceURL</key>
+        <string>http://www.topografix.com/GPX/1/1/</string>
+        <key>UTTypeDescription</key>
+        <string>GPX File</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.xml</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>public.filename-extension</key>
+            <array>
+                <string>gpx</string>
+            </array>
+            <key>public.mime-type</key>
+            <string>application/gpx+xml</string>
+        </dict>
+    </dict>
 </array>
 <key>CFBundleDocumentTypes</key>
 <array>
+    <!-- Registers opening *.osm files -->
     <dict>
         <key>CFBundleTypeIconFile</key>
         <string>macosx/JOSM.app/Contents/Resources/JOSM.icns</string>
@@ -73,6 +101,7 @@
             <string>public.archive.bzip2</string>
         </array>
     </dict>
+    <!-- Registers opening *.gpx files -->
     <dict>
         <key>CFBundleTypeIconFile</key>
         <string>macosx/JOSM.app/Contents/Resources/JOSM.icns</string>
@@ -81,16 +110,18 @@
         <key>CFBundleTypeRole</key>
         <string>Editor</string>
         <key>LSHandlerRank</key>
-        <string>Owner</string>
+        <string>Alternate</string>
         <key>LSItemContentTypes</key>
         <array>
             <string>com.topografix.gpx</string>
+            <string>com.apple.dt.document.gpx</string>
         </array>
         <key>NSExportableTypes</key>
         <array>
             <string>org.openstreetmap.josm.osm</string>
         </array>
     </dict>
+    <!-- Registers opening *.osm.zip, *.osm.gz, *.osm.bz2 files -->
     <dict>
         <key>CFBundleTypeIconFile</key>
         <string>macosx/JOSM.app/Contents/Resources/JOSM.icns</string>
