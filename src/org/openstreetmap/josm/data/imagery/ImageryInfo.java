@@ -23,6 +23,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.pref;
+import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -147,7 +148,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
             return true;
         }
     }
-    
+
     /** name of the imagery entry (gets translated by josm usually) */
     private String name;
     /** original name of the imagery entry in case of translation call */
@@ -392,13 +393,13 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
         return true;
     }
-    
+
     /**
      * Check if this object equals another ImageryInfo with respect to the properties
      * that get written to the preference file.
-     * 
+     *
      * The field {@link #pixelPerDegree} is ignored.
-     * 
+     *
      * @param other the ImageryInfo object to compare to
      * @return true if they are equal
      */
@@ -463,7 +464,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
         return true;
     }
 
-    
+
     @Override
     public int hashCode() {
         int result = url != null ? url.hashCode() : 0;
@@ -678,7 +679,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
 
     /**
      * Gets the entry id.
-     * 
+     *
      * Id can be null. This gets the configured id as is. Due to a user error,
      * this may not be unique. Use {@link ImageryLayerInfo#getUniqueId} to ensure
      * a unique value.
@@ -695,7 +696,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public void clearId() {
         if (this.id != null) {
             Collection<String> newAddedIds = new TreeSet<>(Main.pref.getCollection("imagery.layers.addedIds"));
@@ -933,6 +934,7 @@ public class ImageryInfo implements Comparable<ImageryInfo>, Attributed {
      * @return {@code true} is this entry is blacklisted, {@code false} otherwise
      */
     public boolean isBlacklisted() {
-        return OsmApi.getOsmApi().getCapabilities().isOnImageryBlacklist(this.url);
+        Capabilities capabilities = OsmApi.getOsmApi().getCapabilities();
+        return capabilities != null && capabilities.isOnImageryBlacklist(this.url);
     }
 }
