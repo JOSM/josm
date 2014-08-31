@@ -25,37 +25,41 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Class to read Note objects from their XML representation
+ * Class to read Note objects from their XML representation. It can take
+ * either API style XML which starts with an "osm" tag or a planet dump
+ * style XML which starts with an "osm-notes" tag.
  */
 public class NoteReader {
 
     private InputSource inputSource;
     private List<Note> parsedNotes;
-    private NoteParseMode parseMode;
 
     /**
      * Notes can be represented in two XML formats. One is returned by the API
      * while the other is used to generate the notes dump file. The parser
      * needs to know which one it is handling.
      */
-    public enum NoteParseMode {API, DUMP}
+    private enum NoteParseMode {API, DUMP}
 
     /**
-     * Parser for the notes dump file format.
-     * It is completely different from the API XML format.
+     * SAX handler to read note information from its XML representation.
+     * Reads both API style and planet dump style formats.
      */
-    private class DumpParser extends DefaultHandler {
-        private StringBuffer buffer = new StringBuffer();
+    private class Parser extends DefaultHandler {
+
         private final SimpleDateFormat ISO8601_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX", Locale.ENGLISH);
+        private final SimpleDateFormat NOTE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.ENGLISH);
 
-        private List<Note> notes = new ArrayList<Note>(100000);
+        private NoteParseMode parseMode;
+        private StringBuffer buffer = new StringBuffer();
         private Note thisNote;
-
-        private Date commentCreateDate;
-        private String commentUsername;
         private long commentUid;
+        private String commentUsername;
         private Action noteAction;
+        private Date commentCreateDate;
         private Boolean commentIsNew;
+        private List<Note> notes;
+        String commentText;
 
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
@@ -63,25 +67,30 @@ public class NoteReader {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
-            switch (qName) {
-                case "note":
-                    notes.add(thisNote);
-                    break;
-                case "comment":
-                    User commentUser = User.createOsmUser(commentUid, commentUsername);
-                    thisNote.addComment(new NoteComment(commentCreateDate, commentUser, buffer.toString(), noteAction, commentIsNew));
-                    commentUid = 0;
-                    commentUsername = null;
-                    commentCreateDate = null;
-                    commentIsNew = null;
-                    break;
-            }
-        }
-
-        @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
             buffer.setLength(0);
+            switch(qName) {
+            case "osm":
+                parseMode = NoteParseMode.API;
+                notes = new ArrayList<Note>(100);
+                return;
+            case "osm-notes":
+                parseMode = NoteParseMode.DUMP;
+                notes = new ArrayList<Note>(10000);
+                return;
+            }
+
+            if (parseMode == NoteParseMode.API) {
+                if("note".equals(qName)) {
+                    double lat = Double.parseDouble(attrs.getValue("lat"));
+                    double lon = Double.parseDouble(attrs.getValue("lon"));
+                    LatLon noteLatLon = new LatLon(lat, lon);
+                    thisNote = new Note(noteLatLon);
+                }
+                return;
+            }
+
+            //The rest only applies for dump mode
             switch(qName) {
             case "note":
                 double lat = Double.parseDouble(attrs.getValue("lat"));
@@ -119,79 +128,58 @@ public class NoteReader {
         }
 
         @Override
-        public void endDocument() throws SAXException  {
-            Main.info("parsed notes: " + notes.size());
-            parsedNotes = notes;
-        }
-    }
-
-    private class ApiParser extends DefaultHandler {
-
-        private StringBuffer accumulator = new StringBuffer();
-        private final SimpleDateFormat NOTE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.ENGLISH);
-
-        private List<Note> notes = new ArrayList<Note>();
-        private Note thisNote;
-
-        private Date commentCreateDate;
-        private String commentUsername;
-        private long commentUid;
-        private String commentText;
-        private Action commentAction;
-
-        @Override
-        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-            accumulator.setLength(0);
-            if ("note".equals(qName)) {
-                double lat = Double.parseDouble(atts.getValue("lat"));
-                double lon = Double.parseDouble(atts.getValue("lon"));
-                LatLon noteLatLon = new LatLon(lat, lon);
-                thisNote = new Note(noteLatLon);
-            }
-        }
-
-        @Override
-        public void characters(char[] ch, int start, int length) {
-            accumulator.append(ch, start, length);
-        }
-
-        @Override
         public void endElement(String namespaceURI, String localName, String qName) {
-            switch (qName) {
-            case "id":
-                thisNote.setId(Long.parseLong(accumulator.toString()));
-                break;
-            case "status":
-                thisNote.setState(Note.State.valueOf(accumulator.toString()));
-                break;
-            case "date_created":
-                thisNote.setCreatedAt(parseDate(NOTE_DATE_FORMAT, accumulator.toString()));
-                break;
-            case "note":
+            if("note".equals(qName)) {
                 notes.add(thisNote);
-                break;
-            case "date":
-                commentCreateDate = parseDate(NOTE_DATE_FORMAT, accumulator.toString());
-                break;
-            case "user":
-                commentUsername = accumulator.toString();
-                break;
-            case "uid":
-                commentUid = Long.parseLong(accumulator.toString());
-                break;
-            case "text":
-                commentText = accumulator.toString();
-                break;
-            case "comment":
+            }
+            if("comment".equals(qName)) {
                 User commentUser = User.createOsmUser(commentUid, commentUsername);
-                thisNote.addComment(new NoteComment(commentCreateDate, commentUser, commentText, commentAction, false));
+                if(parseMode == NoteParseMode.API) {
+                    commentIsNew = false;
+                }
+                if(parseMode == NoteParseMode.DUMP) {
+                    commentText = buffer.toString();
+                }
+                thisNote.addComment(new NoteComment(commentCreateDate, commentUser, commentText, noteAction, commentIsNew));
                 commentUid = 0;
                 commentUsername = null;
                 commentCreateDate = null;
+                commentIsNew = null;
                 commentText = null;
+            }
+            if(parseMode == NoteParseMode.DUMP) {
+                return;
+            }
+
+            //the rest only applies to API mode
+            switch (qName) {
+            case "id":
+                thisNote.setId(Long.parseLong(buffer.toString()));
+                break;
+            case "status":
+                thisNote.setState(Note.State.valueOf(buffer.toString()));
+                break;
+            case "date_created":
+                thisNote.setCreatedAt(parseDate(NOTE_DATE_FORMAT, buffer.toString()));
+                break;
+            case "date":
+                commentCreateDate = parseDate(NOTE_DATE_FORMAT, buffer.toString());
+                break;
+            case "user":
+                commentUsername = buffer.toString();
+                break;
+            case "uid":
+                commentUid = Long.parseLong(buffer.toString());
+                break;
+            case "text":
+                commentText = buffer.toString();
+                buffer.setLength(0);
                 break;
             case "action":
-                commentAction = Action.valueOf(accumulator.toString());
+                noteAction = Action.valueOf(buffer.toString());
+                break;
+            case "note": //nothing to do for comment or note, already handled above
+            case "comment":
                 break;
             }
         }
@@ -201,33 +189,31 @@ public class NoteReader {
             Main.info("parsed notes: " + notes.size());
             parsedNotes = notes;
         }
-    }
 
-    /**
-     * Convenience method to handle the date parsing try/catch. Will return null if
-     * there is a parsing exception. This means whatever generated this XML is in error
-     * and there isn't anything we can do about it.
-     * @param dateStr - String to parse
-     * @return Parsed date, null if parsing fails
-     */
-    private Date parseDate(SimpleDateFormat sdf, String dateStr) {
-        try {
-            return sdf.parse(dateStr);
-        } catch(ParseException e) {
-            Main.error("error parsing date in note parser");
-            return null;
+        /**
+         * Convenience method to handle the date parsing try/catch. Will return null if
+         * there is a parsing exception. This means whatever generated this XML is in error
+         * and there isn't anything we can do about it.
+         * @param dateStr - String to parse
+         * @return Parsed date, null if parsing fails
+         */
+        private Date parseDate(SimpleDateFormat sdf, String dateStr) {
+            try {
+                return sdf.parse(dateStr);
+            } catch(ParseException e) {
+                Main.error("error parsing date in note parser");
+                return null;
+            }
         }
     }
 
     /**
      * Initializes the reader with a given InputStream
      * @param source - InputStream containing Notes XML
-     * @param parseMode - Indicate if we are parsing API or dump file style XML
      * @throws IOException
      */
-    public NoteReader(InputStream source, NoteParseMode parseMode) throws IOException {
+    public NoteReader(InputStream source) throws IOException {
         this.inputSource = new InputSource(source);
-        this.parseMode = parseMode;
     }
 
     /**
@@ -238,12 +224,7 @@ public class NoteReader {
      * @throws IOException
      */
     public List<Note> parse() throws SAXException, IOException {
-        DefaultHandler parser;
-        if(parseMode == NoteParseMode.DUMP) {
-            parser = new DumpParser();
-        } else {
-            parser = new ApiParser();
-        }
+        DefaultHandler parser = new Parser();
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
