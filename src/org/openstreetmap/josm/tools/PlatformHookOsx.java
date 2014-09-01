@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -41,23 +42,42 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     public void startupHook() {
         // Here we register callbacks for the menu entries in the system menu and file opening through double-click
         try {
-            Class<?> Ccom_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
-            Class<?> Ccom_apple_eawt_QuitHandler = Class.forName("com.apple.eawt.QuitHandler");
-            Class<?> Ccom_apple_eawt_AboutHandler = Class.forName("com.apple.eawt.AboutHandler");
-            Class<?> Ccom_apple_eawt_OpenFilesHandler = Class.forName("com.apple.eawt.OpenFilesHandler");
-            Class<?> Ccom_apple_eawt_PreferencesHandler = Class.forName("com.apple.eawt.PreferencesHandler");
-            Object Ocom_apple_eawt_Application = Ccom_apple_eawt_Application.getConstructor((Class[])null).newInstance((Object[])null);
-            Object Oproxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
-                Ccom_apple_eawt_QuitHandler, Ccom_apple_eawt_AboutHandler, Ccom_apple_eawt_OpenFilesHandler, Ccom_apple_eawt_PreferencesHandler}, ivhandler);
-            Ccom_apple_eawt_Application.getDeclaredMethod("setQuitHandler", Ccom_apple_eawt_QuitHandler).invoke(Ocom_apple_eawt_Application, Oproxy);
-            Ccom_apple_eawt_Application.getDeclaredMethod("setAboutHandler", Ccom_apple_eawt_AboutHandler).invoke(Ocom_apple_eawt_Application, Oproxy);
-            Ccom_apple_eawt_Application.getDeclaredMethod("setOpenFileHandler", Ccom_apple_eawt_OpenFilesHandler).invoke(Ocom_apple_eawt_Application, Oproxy);
-            Ccom_apple_eawt_Application.getDeclaredMethod("setPreferencesHandler", Ccom_apple_eawt_PreferencesHandler).invoke(Ocom_apple_eawt_Application, Oproxy);
+            Class<?> eawtApplication = Class.forName("com.apple.eawt.Application");
+            Class<?> eawtQuitHandler = Class.forName("com.apple.eawt.QuitHandler");
+            Class<?> eawtAboutHandler = Class.forName("com.apple.eawt.AboutHandler");
+            Class<?> eawtOpenFilesHandler = Class.forName("com.apple.eawt.OpenFilesHandler");
+            Class<?> eawtPreferencesHandler = Class.forName("com.apple.eawt.PreferencesHandler");
+            Object application = eawtApplication.getConstructor((Class[])null).newInstance((Object[])null);
+            Object proxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
+                eawtQuitHandler, eawtAboutHandler, eawtOpenFilesHandler, eawtPreferencesHandler}, ivhandler);
+            eawtApplication.getDeclaredMethod("setQuitHandler", eawtQuitHandler).invoke(application, proxy);
+            eawtApplication.getDeclaredMethod("setAboutHandler", eawtAboutHandler).invoke(application, proxy);
+            eawtApplication.getDeclaredMethod("setOpenFileHandler", eawtOpenFilesHandler).invoke(application, proxy);
+            eawtApplication.getDeclaredMethod("setPreferencesHandler", eawtPreferencesHandler).invoke(application, proxy);
             // this method has been deprecated, but without replacement ATM
-            Ccom_apple_eawt_Application.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(Ocom_apple_eawt_Application, Boolean.TRUE);
+            eawtApplication.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(application, Boolean.TRUE);
+            // enable full screen
+            enableOSXFullscreen((Window) Main.parent);
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Main.warn("Failed to register with OSX: " + ex);
+        }
+    }
+
+    /**
+     * Enables fullscreen support for the given window.
+     * @param window The window for which full screen will be available
+     * @since 7482
+     */
+    public static void enableOSXFullscreen(Window window) {
+        CheckParameterUtil.ensureParameterNotNull(window, "window");
+        try {
+            // http://stackoverflow.com/a/8693890/2257172
+            Class<?> eawtFullScreenUtilities = Class.forName("com.apple.eawt.FullScreenUtilities");
+            eawtFullScreenUtilities.getDeclaredMethod("setWindowCanFullScreen",
+                    new Class[]{Window.class, boolean.class}).invoke(eawtFullScreenUtilities, window, true);
+        } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException e) {
+            Main.warn("Failed to register with OSX: " + e);
         }
     }
 
@@ -290,6 +310,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
 
     @Override
     public boolean canFullscreen() {
+        // OS X provides native full screen support registered at initialization, no need for custom action
         return false;
     }
 
