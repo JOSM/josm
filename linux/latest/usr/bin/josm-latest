@@ -1,0 +1,46 @@
+#!/bin/sh
+# Simple wrapper script used to start JOSM in Debian
+set -e
+
+# First, the alternative (if known to work) or users preference as defined by $JAVA_HOME. Next, use OpenJDK or Oracle's proprietary JDK.
+# Override to a specific one using $JAVACMD
+ALTERNATIVE_JDK="`readlink -n -f /etc/alternatives/java`"
+
+# Let's get the current architecture -- needed for multiarchified Java
+ARCH="`dpkg --print-architecture 2> /dev/null || true`"
+
+# If OpenJDK is only available headless, do not try it
+if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null ; then
+	JAVA_CMDS="$JAVA_HOME/bin/java /usr/lib/jvm/java-7-openjdk/bin/java /usr/lib/jvm/java-7-openjdk-$ARCH/bin/java /usr/lib/jvm/java-7-oracle/bin/java"
+else
+	JAVA_CMDS="$JAVA_HOME/bin/java /usr/lib/jvm/java-7-oracle/bin/java /usr/bin/java"
+fi
+
+JAVA_OPTS="-Djosm.restart=true -Djosm.home=$HOME/.josm-latest -Djava.net.useSystemProxies=true $JAVA_OPTS"
+
+for jcmd in $JAVA_CMDS; do
+	if [ "z$ALTERNATIVE_JDK" = "z`readlink -n -f $jcmd`" ] && [ -z "${JAVACMD}" ]; then
+        JAVACMD="$jcmd"
+    fi
+done
+
+for jcmd in $JAVA_CMDS; do
+    if [ -x "$jcmd" -a -z "${JAVACMD}" ]; then
+        JAVACMD="$jcmd"
+    fi
+done
+
+if [ "$JAVACMD" ]; then
+    echo "Using $JAVACMD to execute josm-latest." || true
+    set +e
+    while true; do
+        $JAVACMD $JAVA_OPTS -jar /usr/share/josm-latest/josm-latest.jar "$@"
+        if [ "z$?" != "z9" ]; then
+            break
+        fi
+        echo ">> restarting josm..."
+    done
+else
+    echo "No valid JVM found to run JOSM." || true
+    exit 1
+fi
