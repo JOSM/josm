@@ -50,9 +50,9 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -298,8 +298,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                                 // The popup != null check is required because a left-click
                                 // produces several events as well, which would make this
                                 // variable true. Of course we only want the popup to show
-                                // if the middle mouse button has been pressed in the first
-                                // place
+                                // if the middle mouse button has been pressed in the first place
                                 boolean mouseNotMoved = oldMousePos != null
                                         && oldMousePos.equals(ms.mousePos);
                                 boolean isAtOldPosition = mouseNotMoved && popup != null;
@@ -721,9 +720,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     private class MapStatusPopupMenu extends JPopupMenu {
 
         private final JMenuItem jumpButton = add(Main.main.menu.jumpToAct);
-        
+
         private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
-        
+
         private final JSeparator separator = new JSeparator();
 
         private final JMenuItem doNotHide = new JCheckBoxMenuItem(new AbstractAction(tr("Do not hide status bar")) {
@@ -781,7 +780,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     public MapStatus(final MapFrame mapFrame) {
         this.mv = mapFrame.mapView;
         this.collector = new Collector(mapFrame);
-        
+
         // Context menu of status bar
         setComponentPopupMenu(new MapStatusPopupMenu());
 
@@ -816,7 +815,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         });
 
         setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        setBorder(BorderFactory.createEmptyBorder(1,2,1,2));
 
         latText.setInheritsPopupMenu(true);
         lonText.setInheritsPopupMenu(true);
@@ -833,7 +832,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         if (Main.pref.getBoolean("statusbar.change-system-of-measurement-on-click", true)) {
             distText.addMouseListener(new MouseAdapter() {
                 private final List<String> soms = new ArrayList<>(new TreeSet<>(SystemOfMeasurement.ALL_SYSTEMS.keySet()));
-    
+
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (!e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON1) {
@@ -881,7 +880,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         thread.setDaemon(true);
         thread.start();
     }
-    
+
     /**
      * Updates the system of measurement and displays a notification.
      * @param newsom The new system of measurement to set
