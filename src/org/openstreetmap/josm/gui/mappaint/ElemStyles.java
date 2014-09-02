@@ -471,4 +471,30 @@ public class ElemStyles {
     public static boolean hasAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
         return getAreaElemStyle(p, pretendWayIsClosed) != null;
     }
+
+    /**
+     * Determines whether primitive has <b>only</b> an AreaElemStyle.
+     * @param p the OSM primitive
+     * @return {@code true} if primitive has only an AreaElemStyle
+     * @since 7486
+     */
+    public static boolean hasOnlyAreaElemStyle(OsmPrimitive p) {
+        MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+        try {
+            if (MapPaintStyles.getStyles() == null)
+                return false;
+            StyleList styles = MapPaintStyles.getStyles().generateStyles(p, 1.0, null, false).a;
+            if (styles.isEmpty()) {
+                return false;
+            }
+            for (ElemStyle s : styles) {
+                if (!(s instanceof AreaElemStyle)) {
+                    return false;
+                }
+            }
+            return true;
+        } finally {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
+        }
+    }
 }
