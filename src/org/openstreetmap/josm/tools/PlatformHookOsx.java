@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -47,15 +48,18 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
             Class<?> eawtAboutHandler = Class.forName("com.apple.eawt.AboutHandler");
             Class<?> eawtOpenFilesHandler = Class.forName("com.apple.eawt.OpenFilesHandler");
             Class<?> eawtPreferencesHandler = Class.forName("com.apple.eawt.PreferencesHandler");
-            Object application = eawtApplication.getConstructor((Class[])null).newInstance((Object[])null);
+            Object appli = eawtApplication.getConstructor((Class[])null).newInstance((Object[])null);
             Object proxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
                 eawtQuitHandler, eawtAboutHandler, eawtOpenFilesHandler, eawtPreferencesHandler}, ivhandler);
-            eawtApplication.getDeclaredMethod("setQuitHandler", eawtQuitHandler).invoke(application, proxy);
-            eawtApplication.getDeclaredMethod("setAboutHandler", eawtAboutHandler).invoke(application, proxy);
-            eawtApplication.getDeclaredMethod("setOpenFileHandler", eawtOpenFilesHandler).invoke(application, proxy);
-            eawtApplication.getDeclaredMethod("setPreferencesHandler", eawtPreferencesHandler).invoke(application, proxy);
+            eawtApplication.getDeclaredMethod("setQuitHandler", eawtQuitHandler).invoke(appli, proxy);
+            eawtApplication.getDeclaredMethod("setAboutHandler", eawtAboutHandler).invoke(appli, proxy);
+            eawtApplication.getDeclaredMethod("setOpenFileHandler", eawtOpenFilesHandler).invoke(appli, proxy);
+            eawtApplication.getDeclaredMethod("setPreferencesHandler", eawtPreferencesHandler).invoke(appli, proxy);
             // this method has been deprecated, but without replacement ATM
-            eawtApplication.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(application, Boolean.TRUE);
+            eawtApplication.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(appli, Boolean.TRUE);
+            // setup the dock icon. It is automatically set with application bundle and Web start but we need
+            // to do it manually if run with `java -jar``
+            eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
             // enable full screen
             enableOSXFullscreen((Window) Main.parent);
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
