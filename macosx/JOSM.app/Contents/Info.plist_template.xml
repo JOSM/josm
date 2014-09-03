@@ -9,7 +9,7 @@
         <key>UTTypeDescription</key>
         <string>JOSM File</string>
         <key>UTTypeIconFile</key>
-        <string>macosx/JOSM.app/Contents/Resources/JOSM.icns</string>
+        <string>JOSM.icns</string>
         <key>UTTypeReferenceURL</key>
         <string>http://wiki.openstreetmap.org/wiki/JOSM_file_format</string>
         <key>UTTypeConformsTo</key>
@@ -81,7 +81,7 @@
     <!-- Registers opening *.osm files -->
     <dict>
         <key>CFBundleTypeIconFile</key>
-        <string>macosx/JOSM.app/Contents/Resources/JOSM.icns</string>
+        <string>JOSM.icns</string>
         <key>CFBundleTypeName</key>
         <string>OSM Files</string>
         <key>CFBundleTypeRole</key>
@@ -104,7 +104,7 @@
     <!-- Registers opening *.gpx files -->
     <dict>
         <key>CFBundleTypeIconFile</key>
-        <string>macosx/JOSM.app/Contents/Resources/JOSM.icns</string>
+        <string>JOSM.icns</string>
         <key>CFBundleTypeName</key>
         <string>GPX Files</string>
         <key>CFBundleTypeRole</key>
@@ -124,7 +124,7 @@
     <!-- Registers opening *.osm.zip, *.osm.gz, *.osm.bz2 files -->
     <dict>
         <key>CFBundleTypeIconFile</key>
-        <string>macosx/JOSM.app/Contents/Resources/JOSM.icns</string>
+        <string>JOSM.icns</string>
         <key>CFBundleTypeName</key>
         <string>OSM Compressed Files</string>
         <key>CFBundleTypeRole</key>
