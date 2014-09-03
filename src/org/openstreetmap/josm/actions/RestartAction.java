@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -26,6 +25,15 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 5857
  */
 public class RestartAction extends JosmAction {
+
+    // AppleScript to restart OS X package
+    private static final String RESTART_APPLE_SCRIPT =
+              "tell application \"System Events\"\n"
+            + "repeat until not (exists process \"JOSM\")\n"
+            + "delay 0.2\n"
+            + "end repeat\n"
+            + "end tell\n"
+            + "tell application \"JOSM\" to activate";
 
     /**
      * Constructs a new {@code RestartAction}.
@@ -72,46 +80,56 @@ public class RestartAction extends JosmAction {
     public static void restartJOSM() throws IOException {
         if (isRestartSupported() && !Main.exitJosm(false, 0)) return;
         try {
-            // java binary
-            final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator +
-                    (Main.isPlatformWindows() ? "java.exe" : "java");
-            if (!new File(java).isFile()) {
-                throw new IOException("Unable to find suitable java runtime at "+java);
-            }
-            final List<String> cmd = new ArrayList<>(Collections.singleton(java));
-            // vm arguments
-            for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
-                // if it's the agent argument : we ignore it otherwise the
-                // address of the old application and the new one will be in conflict
-                if (!arg.contains("-agentlib")) {
-                    cmd.add(arg);
+            final List<String> cmd = new ArrayList<>();
+            // special handling for OSX .app package
+            if (Main.isPlatformOsx() && System.getProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
+                cmd.add("/usr/bin/osascript");
+                for (String line : RESTART_APPLE_SCRIPT.split("\n")) {
+                    cmd.add("-e");
+                    cmd.add(line);
                 }
-            }
-            // program main and program arguments (be careful a sun property. might not be supported by all JVM)
-            String[] mainCommand = System.getProperty("sun.java.command").split(" ");
-            // look for a .jar in all chunks to support paths with spaces (fix #9077)
-            String jarPath = mainCommand[0];
-            for (int i = 1; i < mainCommand.length && !jarPath.endsWith(".jar"); i++) {
-                jarPath += " " + mainCommand[i];
-            }
-            // program main is a jar
-            if (jarPath.endsWith(".jar")) {
-                // if it's a jar, add -jar mainJar
-                cmd.add("-jar");
-                cmd.add(new File(jarPath).getPath());
             } else {
-                // else it's a .class, add the classpath and mainClass
-                cmd.add("-cp");
-                cmd.add("\"" + System.getProperty("java.class.path") + "\"");
-                cmd.add(mainCommand[0]);
+                // java binary
+                final String java = System.getProperty("java.home") + File.separator + "bin" + File.separator +
+                        (Main.isPlatformWindows() ? "java.exe" : "java");
+                if (!new File(java).isFile()) {
+                    throw new IOException("Unable to find suitable java runtime at "+java);
+                }
+                cmd.add(java);
+                // vm arguments
+                for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+                    // if it's the agent argument : we ignore it otherwise the
+                    // address of the old application and the new one will be in conflict
+                    if (!arg.contains("-agentlib")) {
+                        cmd.add(arg);
+                    }
+                }
+                // program main and program arguments (be careful a sun property. might not be supported by all JVM)
+                String[] mainCommand = System.getProperty("sun.java.command").split(" ");
+                // look for a .jar in all chunks to support paths with spaces (fix #9077)
+                String jarPath = mainCommand[0];
+                for (int i = 1; i < mainCommand.length && !jarPath.endsWith(".jar"); i++) {
+                    jarPath += " " + mainCommand[i];
+                }
+                // program main is a jar
+                if (jarPath.endsWith(".jar")) {
+                    // if it's a jar, add -jar mainJar
+                    cmd.add("-jar");
+                    cmd.add(new File(jarPath).getPath());
+                } else {
+                    // else it's a .class, add the classpath and mainClass
+                    cmd.add("-cp");
+                    cmd.add("\"" + System.getProperty("java.class.path") + "\"");
+                    cmd.add(mainCommand[0]);
+                }
+                // if it's webstart add JNLP file
+                String jnlp = System.getProperty("jnlp.application.href");
+                if (jnlp != null) {
+                    cmd.add(jnlp);
+                }
+                // finally add program arguments
+                cmd.addAll(Arrays.asList(Main.commandLineArgs));
             }
-            // if it's webstart add JNLP file
-            String jnlp = System.getProperty("jnlp.application.href");
-            if (jnlp != null) {
-                cmd.add(jnlp);
-            }
-            // finally add program arguments
-            cmd.addAll(Arrays.asList(Main.commandLineArgs));
             Main.info("Restart "+cmd);
             // execute the command in a shutdown hook, to be sure that all the
             // resources have been disposed before restarting the application
