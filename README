@@ -16,7 +16,7 @@ How to get Java Runtime Environment
 -----------------------------------
 You need JRE Version 7, or later.
 
-Microsoft Windows and Apple Mac OS X users should visit http://www.java.com
+Microsoft Windows and Apple Mac OS X users should visit https://www.java.com
 and download the latest Java executable for their system.
 
 Linux users should visit http://www.oracle.com/technetwork/java/index.html
@@ -143,23 +143,24 @@ There are a couple of third party libraries which are directly included in the s
 * Apache commons codec: Better Base64 support
     src/org/apache/commons/codec (svn external)
     -> http://svn.apache.org/repos/asf/commons/proper/codec/trunk/src/main/java/org/apache/commons/codec
+* Apache commons validator: Improved validator routines
+    src/org/openstreetmap/josm/data/validation/routines
+    -> http://commons.apache.org/proper/commons-validator
 * SVG Salamander: Support for SVG image format
     src/com/kitfox/svg
-    -> http://svgsalamander.java.net/
+    -> https://svgsalamander.java.net/
 * Metadata Extractor: Read EXIF Metadata of photos
     src/com/drew
-    -> http://www.drewnoakes.com/code/exif/
+    -> https://www.drewnoakes.com/code/exif/
 * Signpost: OAuth library
     src/oauth, src/com/google
-    -> http://code.google.com/p/oauth-signpost/
+    -> https://code.google.com/p/oauth-signpost/
 * GNU getopt Java port: Command line argument processing library
     src/gnu/getopt
-    -> http://www.urbanophile.com/~arenn/hacking/download.html
+    -> http://www.urbanophile.com/arenn/hacking/download.html
 * MultiSplitPane: Small lib for GUI layout management
     src/org/openstreetmap/josm/gui/MultiSplitLayout.java, MultiSplitPane.java
     -> http://today.java.net/pub/a/today/2006/03/23/multi-split-pane.html
 * swinghelper: Class CheckThreadViolationRepaintManager to find classpath violations
     src/org/jdesktop/swinghelper/debug/CheckThreadViolationRepaintManager.java
-    -> http://java.net/projects/swinghelper
-
-
+    -> https://java.net/projects/swinghelper

@@ -41,6 +41,9 @@ with Apache license version 2.0.
 The signpost code (http://code.google.com/p/oauth-signpost/)
 is from Matthias Käppler and licensed with the Apache License 2.0.
 
+The mail/url validator routines use code from Apache Commons
+Validator which is licensed with Apache license version 2.0.
+
 The NTv2 transformation code (http://jgridshift.sourceforge.net/)
 is from Peter Yuill and licensed with LGPL.
 
