@@ -45,6 +45,7 @@ way[junction                   ][!highway],
 *[canal                        ][!waterway],
 *[have_riverbank               ][!waterway],
 *[border_type                  ][!boundary],
+*[bridge:structure             ][!bridge],
 *[source:date                  ][!source],
 *[source:name                  ][!name],
 *[source:maxspeed:forward      ][!maxspeed:forward],
@@ -99,6 +100,7 @@ way[junction                   ][!highway],
 *[artwork_type                 ][tourism!=artwork],
 *[castle_type                  ][historic!=castle],
 *[reservoir_type               ][landuse!=reservoir][water!=reservoir],
+*[bridge:movable               ][bridge!=movable],
 *[bunker_type                  ][military!=bunker] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
 }
