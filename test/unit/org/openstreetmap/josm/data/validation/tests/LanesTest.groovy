@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.data.validation.tests
 
+import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.data.osm.OsmUtils
 
 class LanesTest extends GroovyTestCase {
@@ -8,6 +9,7 @@ class LanesTest extends GroovyTestCase {
 
     @Override
     void setUp() {
+        JOSMFixture.createUnitTestFixture().init()
         lanes.initialize()
         lanes.startTest(null)
     }
@@ -57,6 +59,11 @@ class LanesTest extends GroovyTestCase {
 
     void test8() {
         lanes.check(OsmUtils.createPrimitive("way destination:country:lanes=X|Y;Z|none destination:ref:lanes=xyz|| destination:sign:lanes=none|airport|none"))
+        assert lanes.errors.isEmpty()
+    }
+
+    void test9() {
+        lanes.check(OsmUtils.createPrimitive("way highway=secondary lanes=2 source:lanes=survey"))
         assert lanes.errors.isEmpty()
     }
 }
