@@ -7901,7 +7901,7 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="waterway" text="Subtype of waterway (largest one of members)" values="river,stream,canal,drain,ditch" values_searchable="true" />
             <text key="name" text="Name" />
             <optional>
-                <text key="destination" text="Name of river/sea/ocean" />
+                <text key="destination" text="Name of river/lake/sea/ocean it runs into" />
                 <text key="ref" text="Reference" />
                 <text key="ref:sandre" text="Reference Sandre (FR)" />
                 <text key="ref:fgkz" text="Reference FGKZ (DE)" />
