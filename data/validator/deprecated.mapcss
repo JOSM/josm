@@ -260,3 +260,23 @@
   throwWarning: tr("{0}={1} is deprecated. Please use instead a multipolygon.", "{0.key}", "{0.value}");
   assertMatch: "way natural=land";
 }
+
+/* see #10447 - https://wiki.openstreetmap.org/wiki/Proposed_features/Bridge_types#Deprecated_bridge_key_values */
+*[bridge=causeway] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  suggestAlternative: "ford=yes";
+  suggestAlternative: "bridge=low_water_crossing";
+  suggestAlternative: "embankment=yes";
+}
+
+*[bridge=swing] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  suggestAlternative: "bridge:movable=swing";
+  suggestAlternative: "bridge:structure=simple-suspension";
+}
+
+*[bridge=suspension] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixAdd: "bridge=yes";
+  fixAdd: "bridge:structure=suspension";
+}
