@@ -352,6 +352,12 @@ public class MainApplication extends Main {
         }
         Main.pref.updateSystemProperties();
 
+        // asking for help? show help and exit
+        if (args.containsKey(Option.HELP)) {
+            showHelp();
+            System.exit(0);
+        }
+
         processOffline(args);
 
         FontsManager.initialize();
@@ -383,12 +389,6 @@ public class MainApplication extends Main {
         DefaultProxySelector proxySelector = new DefaultProxySelector(ProxySelector.getDefault());
         ProxySelector.setDefault(proxySelector);
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
-
-        // asking for help? show help and exit
-        if (args.containsKey(Option.HELP)) {
-            showHelp();
-            System.exit(0);
-        }
 
         final SplashScreen splash = new SplashScreen();
         final ProgressMonitor monitor = splash.getProgressMonitor();
