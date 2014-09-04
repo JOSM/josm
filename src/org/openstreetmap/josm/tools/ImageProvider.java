@@ -679,7 +679,13 @@ public class ImageProvider {
         case OTHER:
             BufferedImage img = null;
             try {
-                img = read(path, false, false);
+                // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
+                // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
+                // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
+                img = read(path, false, true);
+                if (Main.isDebugEnabled() && isTransparencyForced(img)) {
+                    Main.debug("Transparency has been forced for image "+path.toExternalForm());
+                }
             } catch (IOException e) {
                 Main.warn(e);
             }
@@ -1239,8 +1245,8 @@ public class ImageProvider {
                     properties.put(PROP_TRANSPARENCY_COLOR, color);
                     bi = new BufferedImage(bi.getColorModel(), bi.getRaster(), bi.isAlphaPremultiplied(), properties);
                     if (enforceTransparency) {
-                        if (Main.isDebugEnabled()) {
-                            Main.debug("Enforcing image transparency of "+stream+" for "+color);
+                        if (Main.isTraceEnabled()) {
+                            Main.trace("Enforcing image transparency of "+stream+" for "+color);
                         }
                         bi = makeImageTransparent(bi, color);
                     }
@@ -1319,7 +1325,7 @@ public class ImageProvider {
      */
     public static BufferedImage makeImageTransparent(BufferedImage bi, Color color) {
         // the color we are looking for. Alpha bits are set to opaque
-        final int markerRGB = color.getRGB() | 0xFFFFFFFF;
+        final int markerRGB = color.getRGB() | 0xFF000000;
         ImageFilter filter = new RGBImageFilter() {
             @Override
             public int filterRGB(int x, int y, int rgb) {
