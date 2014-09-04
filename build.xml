@@ -540,6 +540,11 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.kxml2.*"/>
             <ignore classname="org.python.*"/>
             <ignore classname="org.slf4j.*"/>
+        	<!-- plugins used by another ones -->
+            <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.jts.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.log4j.*"/>
+            <ignore classname="org.openstreetmap.josm.plugins.utilsplugin2.*"/>
             <path path="${dir}"/>
         </as:check-signature>
     </target>

@@ -1,0 +1,104 @@
+.TH JOSM 1 "September  4, 2014"
+.\" Please adjust this date whenever revising the manpage.
+.SH NAME
+josm \- Java OpenStreetMap Editor
+.SH SYNOPSIS
+.B josm-latest
+.SH DESCRIPTION
+.B JOSM 
+is an editor for OpenStreetMap written in Java 7. 
+.PP
+.B OpenStreetMap 
+is a project aimed squarely at creating and providing free geographic data such as street maps to anyone
+who wants them. It allows you to view, edit and use geographical data in a collaborative way from 
+anywhere on earth.
+The project was started because most maps you think of as free actually have legal or technical 
+restrictions on their use, holding back people from using them in creative, productive or unexpected
+ways.
+.SH OPTIONS
+.TP
+.B \-h, \-?, \-\-help
+Show help
+.TP
+.B \-\-geometry=<width>x<height>(+|-)x(+|-)y
+Standard X geometry argument
+.TP
+.B [\-\-download=]minlat,minlon,maxlat,maxlon
+Download the bounding box
+.TP
+.B [\-\-download=]<url>
+Download the location at the url (with lat=x&lon=y&zoom=z)
+.TP
+.B [\-\-download=]<filename>
+Open file (any file type that can be opened with File/Open)
+.TP
+.B \-\-downloadgps=minlat,minlon,maxlat,maxlon
+Download the bounding box as raw gps
+.TP
+.B \-\-selection=<searchstring>
+Select with the given search
+.TP
+.B \-\-[no\-]maximize
+Do [not] launch in maximized mode
+.TP
+.B \-\-reset\-preferences
+Reset the preferences to the default
+.TP
+.B \-\-load\-preferences=<url\-to\-xml>
+Change preferences according to the XML file
+.TP
+.B \-\-set=<key>=<value>
+Set preference key to value
+.TP
+.B \-\-language=<language>
+Set the language
+.TP
+.B \-\-version
+Display the JOSM version
+.TP
+.B \-\-debug
+Print debugging messages to console
+.TP
+.B \-\-offline=<osm_api|josm_website|all>
+Disable access to the given resource(s), separated by comma
+.SH ENVIRONMENT
+.IP JAVA_HOME
+Specify an alternate Java environment.
+.IP JAVA_OPTS
+Specify Java options.
+For example, to use a HTTP proxy server with this program, set this environment variable
+to something like
+.I JAVA_OPTS="-Dhttp.proxyHost=yourProxyURL"
+before starting josm.
+.SH AUTHOR
+JOSM was originally designed and coded by Immanuel Scholz,
+and is now maintained by the OpenStreetMap community.
+.PP
+The current JOSM maintainer is Dirk Stöcker.
+A lot of administration work is done by Paul Hartmann and Vincent Privat.
+.PP
+Major code contributions from (in alphabetical order):
+.PP
+Stefan Breunig
+David Earl
+Gabriel Ebner
+Dave Hansen
+Paul Hartmann
+Karl Guggisberg
+Matthias Julius
+Alexei Kasatkin
+Jiri Klement
+Ulf Lamping
+Simon Legner
+Raphael Mack
+Upliner Mikhalych
+Vincent Privat
+Frederik Ramm
+Dirk Stöcker
+.PP
+Many minor contributions and patches by others; see SVN history
+at http://josm.openstreetmap.de/svn/ for details. Use
+"josm-dev AT openstreetmap.org" to contact still active authors.
+.PP
+This manual page was initially written by Andreas Putzo <andreas@putzo.net>,
+for the Debian project (but may be used by others).
