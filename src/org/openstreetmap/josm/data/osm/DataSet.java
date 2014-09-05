@@ -101,9 +101,9 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      */
     private static final int MAX_EVENTS = 1000;
 
-    private Storage<OsmPrimitive> allPrimitives = new Storage<>(new Storage.PrimitiveIdHash(), true);
-    private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new Storage.PrimitiveIdHash());
-    private CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<>();
+    private final Storage<OsmPrimitive> allPrimitives = new Storage<>(new Storage.PrimitiveIdHash(), true);
+    private final Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new Storage.PrimitiveIdHash());
+    private final CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<>();
 
     // provide means to highlight map elements that are not osm primitives
     private Collection<WaySegment> highlightedVirtualNodes = new LinkedList<>();
@@ -256,7 +256,7 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
      * All nodes goes here, even when included in other data (ways etc). This enables the instant
      * conversion of the whole DataSet by iterating over this data structure.
      */
-    private QuadBuckets<Node> nodes = new QuadBuckets<>();
+    private final QuadBuckets<Node> nodes = new QuadBuckets<>();
 
     private <T extends OsmPrimitive> Collection<T> getPrimitives(Predicate<OsmPrimitive> predicate) {
         return new SubclassFilteredCollection<>(allPrimitives, predicate);
@@ -286,11 +286,23 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
+     * Determines if the given node can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
+     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
+     *
+     * @param n The node to search
+     * @return {@code true} if {@code n} ban be retrieved in this data set, {@code false} otherwise
+     * @since 7501
+     */
+    public boolean containsNode(Node n) {
+        return nodes.contains(n);
+    }
+
+    /**
      * All ways (Streets etc.) in the DataSet.
      *
      * The way nodes are stored only in the way list.
      */
-    private QuadBuckets<Way> ways = new QuadBuckets<>();
+    private final QuadBuckets<Way> ways = new QuadBuckets<>();
 
     /**
      * Replies an unmodifiable collection of ways in this dataset
@@ -316,9 +328,21 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
     }
 
     /**
+     * Determines if the given way can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
+     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
+     *
+     * @param w The way to search
+     * @return {@code true} if {@code w} ban be retrieved in this data set, {@code false} otherwise
+     * @since 7501
+     */
+    public boolean containsWay(Way w) {
+        return ways.contains(w);
+    }
+
+    /**
      * All relations/relationships
      */
-    private Collection<Relation> relations = new ArrayList<>();
+    private final Collection<Relation> relations = new ArrayList<>();
 
     /**
      * Replies an unmodifiable collection of relations in this dataset
@@ -348,6 +372,18 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         } finally {
             lock.readLock().unlock();
         }
+    }
+
+    /**
+     * Determines if the given relation can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
+     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
+     *
+     * @param r The relation to search
+     * @return {@code true} if {@code r} ban be retrieved in this data set, {@code false} otherwise
+     * @since 7501
+     */
+    public boolean containsRelation(Relation r) {
+        return relations.contains(r);
     }
 
     /**
