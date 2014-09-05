@@ -8,7 +8,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -104,16 +103,16 @@ public class DatasetConsistencyTest {
      */
     public void searchNodes() {
         long startTime = System.currentTimeMillis();
-        for (Node n : dataSet.getNodes()) {
-            if (!n.isIncomplete() && !n.isDeleted()) {
-                LatLon c = n.getCoor();
-                if (c != null) {
-                    BBox box = c.toBBox(0.0001);
-                    if (!dataSet.searchNodes(box).contains(n)) {
-                        printError("SEARCH NODES", "%s not found using Dataset.searchNodes()", n);
-                    }
+        dataSet.getReadLock().lock();
+        try {
+            for (Node n : dataSet.getNodes()) {
+                // Call isDrawable() as an efficient replacement to previous checks (!deleted, !incomplete, getCoor() != null)
+                if (n.isDrawable() && !dataSet.containsNode(n)) {
+                    printError("SEARCH NODES", "%s not found using Dataset.searchNodes()", n);
                 }
             }
+        } finally {
+            dataSet.getReadLock().unlock();
         }
         printElapsedTime(startTime);
     }
@@ -123,10 +122,15 @@ public class DatasetConsistencyTest {
      */
     public void searchWays() {
         long startTime = System.currentTimeMillis();
-        for (Way w : dataSet.getWays()) {
-            if (!w.isIncomplete() && !w.isDeleted() && w.getNodesCount() >= 2 && !dataSet.searchWays(w.getBBox()).contains(w)) {
-                printError("SEARCH WAYS", "%s not found using Dataset.searchWays()", w);
+        dataSet.getReadLock().lock();
+        try {
+            for (Way w : dataSet.getWays()) {
+                if (!w.isIncomplete() && !w.isDeleted() && w.getNodesCount() >= 2 && !dataSet.containsWay(w)) {
+                    printError("SEARCH WAYS", "%s not found using Dataset.searchWays()", w);
+                }
             }
+        } finally {
+            dataSet.getReadLock().unlock();
         }
         printElapsedTime(startTime);
     }
