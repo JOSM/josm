@@ -108,7 +108,7 @@ public class DatasetConsistencyTest {
             for (Node n : dataSet.getNodes()) {
                 // Call isDrawable() as an efficient replacement to previous checks (!deleted, !incomplete, getCoor() != null)
                 if (n.isDrawable() && !dataSet.containsNode(n)) {
-                    printError("SEARCH NODES", "%s not found using Dataset.searchNodes()", n);
+                    printError("SEARCH NODES", "%s not found using Dataset.containsNode()", n);
                 }
             }
         } finally {
@@ -126,7 +126,7 @@ public class DatasetConsistencyTest {
         try {
             for (Way w : dataSet.getWays()) {
                 if (!w.isIncomplete() && !w.isDeleted() && w.getNodesCount() >= 2 && !dataSet.containsWay(w)) {
-                    printError("SEARCH WAYS", "%s not found using Dataset.searchWays()", w);
+                    printError("SEARCH WAYS", "%s not found using Dataset.containsWay()", w);
                 }
             }
         } finally {
