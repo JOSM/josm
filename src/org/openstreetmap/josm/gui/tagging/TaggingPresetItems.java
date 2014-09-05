@@ -591,7 +591,8 @@ public final class TaggingPresetItems {
 
         private JComponent value;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
 
             // find out if our key is already used in the selection.
             Usage usage = determineTextUsage(sel, key);
@@ -601,6 +602,7 @@ public final class TaggingPresetItems {
             } else {
                 initAutoCompletionField(textField, key);
             }
+            textField.setHint(key);
             if (length != null && !length.isEmpty()) {
                 textField.setMaxChars(Integer.valueOf(length));
             }
@@ -1218,6 +1220,7 @@ public final class TaggingPresetItems {
             combo.reinitialize(lhm.values());
             AutoCompletingTextField tf = new AutoCompletingTextField();
             initAutoCompletionField(tf, key);
+            tf.setHint(key);
             if (length != null && !length.isEmpty()) {
                 tf.setMaxChars(Integer.valueOf(length));
             }
