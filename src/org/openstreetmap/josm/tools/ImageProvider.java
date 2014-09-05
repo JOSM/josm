@@ -1239,7 +1239,7 @@ public class ImageProvider {
         try {
             bi = reader.read(0, param);
             if (bi.getTransparency() != Transparency.TRANSLUCENT && (readMetadata || enforceTransparency)) {
-                Color color = getTransparentColor(reader);
+                Color color = getTransparentColor(bi.getColorModel(), reader);
                 if (color != null) {
                     Hashtable<String, Object> properties = new Hashtable<>(1);
                     properties.put(PROP_TRANSPARENCY_COLOR, color);
@@ -1261,13 +1261,14 @@ public class ImageProvider {
 
     /**
      * Returns the {@code TransparentColor} defined in image reader metadata.
+     * @param model The image color model
      * @param reader The image reader
      * @return the {@code TransparentColor} defined in image reader metadata, or {@code null}
      * @throws IOException if an error occurs during reading
-     * @since 7132
+     * @since 7499
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html">javax_imageio_1.0 metadata</a>
      */
-    public static Color getTransparentColor(ImageReader reader) throws IOException {
+    public static Color getTransparentColor(ColorModel model, ImageReader reader) throws IOException {
         try {
             IIOMetadata metadata = reader.getImageMetadata(0);
             if (metadata != null) {
@@ -1281,9 +1282,21 @@ public class ImageProvider {
                                 if (list.getLength() > 0) {
                                     Node item = list.item(0);
                                     if (item instanceof Element) {
-                                        String[] s = ((Element)item).getAttribute("value").split(" ");
-                                        if (s.length == 3) {
-                                            return parseRGB(s);
+                                        // Handle different color spaces (tested with RGB and grayscale)
+                                        String value = ((Element)item).getAttribute("value");
+                                        if (!value.isEmpty()) {
+                                            String[] s = value.split(" ");
+                                            if (s.length == 3) {
+                                                return parseRGB(s);
+                                            } else if (s.length == 1) {
+                                                int pixel = Integer.parseInt(s[0]);
+                                                int r = model.getRed(pixel);
+                                                int g = model.getGreen(pixel);
+                                                int b = model.getBlue(pixel);
+                                                return new Color(r,g,b);
+                                            } else {
+                                                Main.warn("Unable to translate TransparentColor '"+value+"' with color model "+model);
+                                            }
                                         }
                                     }
                                 }
@@ -1293,7 +1306,7 @@ public class ImageProvider {
                     }
                 }
             }
-        } catch (IIOException e) {
+        } catch (IIOException | NumberFormatException e) {
             // JAI doesn't like some JPEG files with error "Inconsistent metadata read from stream" (see #10267)
             Main.warn(e);
         }
