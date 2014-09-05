@@ -86,13 +86,21 @@
 	</complexType>
 
     <complexType name="chunk">
-        <sequence>
-            <choice minOccurs="1" maxOccurs="unbounded">
-                <group ref="tns:optional_elements" />
-                <element name="key" type="tns:key" />
-                <element name="optional" type="tns:optional" minOccurs="0" />
-            </choice>
-        </sequence>
+        <choice minOccurs="1" maxOccurs="1">
+            <sequence>
+                <choice minOccurs="1" maxOccurs="unbounded">
+                    <group ref="tns:optional_elements" />
+                    <element name="key" type="tns:key" />
+                    <element name="optional" type="tns:optional" minOccurs="0" />
+                </choice>
+            </sequence>
+            <sequence>
+                <!-- Cannot use tns:list_elements here because reference is present both in optional_elements and list_elements
+                so it violates cos-nonambig: Unique Particle Attribution :
+                <group ref="tns:list_elements" minOccurs="1" maxOccurs="unbounded" />-->
+                <element name="list_entry" type="tns:list_entry" minOccurs="1" maxOccurs="unbounded" />
+            </sequence>
+        </choice>
         <attribute name="id" type="ID" use="required" />
     </complexType>
 
@@ -116,12 +124,18 @@
 		</choice>
 	</group>
 
+    <group name="list_elements">
+        <choice>
+            <element name="list_entry" type="tns:list_entry" />
+            <element name="reference" type="tns:reference" />
+        </choice>
+    </group>
+
 	<complexType name="key">
 		<attribute name="key" type="string" use="required" />
 		<attribute name="value" type="string" />
 		<attribute name="match" type="string" />
 	</complexType>
-
 
 	<complexType name="link">
 		<attribute name="href" type="string" use="required" />
@@ -178,7 +192,7 @@
 	<complexType name="combo">
 		<!-- use either list_entry's or a combination of values/display_values -->
 		<sequence>
-			<element name="list_entry" type="tns:list_entry" minOccurs="0" maxOccurs="unbounded" />
+            <group ref="tns:list_elements" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
@@ -206,7 +220,7 @@
 	<complexType name="multiselect">
 		<!-- use either list_entry's or a combination of values/display_values -->
 		<sequence>
-			<element name="list_entry" type="tns:list_entry" minOccurs="0" maxOccurs="unbounded" />
+            <group ref="tns:list_elements" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
