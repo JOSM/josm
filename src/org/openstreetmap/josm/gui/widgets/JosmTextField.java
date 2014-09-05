@@ -1,14 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
 import javax.swing.JTextField;
 import javax.swing.text.Document;
 
 /**
- * Subclass of {@link JTextField} that adds a "native" context menu (cut/copy/paste/select all).
+ * Subclass of {@link JTextField} that adds a "native" context menu (cut/copy/paste/select all)
+ * and an optional "hint" displayed when no text has been entered.
  * @since 5886
  */
-public class JosmTextField extends JTextField {
+public class JosmTextField extends JTextField implements FocusListener {
+
+    private String hint;
 
     /**
      * Constructs a new <code>JosmTextField</code> that uses the given text
@@ -33,6 +45,7 @@ public class JosmTextField extends JTextField {
         if (columns > 0) {
             setMinimumSize(getPreferredSize());
         }
+        addFocusListener(this);
     }
 
     /**
@@ -82,5 +95,51 @@ public class JosmTextField extends JTextField {
      */
     public JosmTextField() {
         this(null, null, 0);
+    }
+
+    /**
+     * Replies the hint displayed when no text has been entered.
+     * @return the hint
+     * @since 7505
+     */
+    public final String getHint() {
+        return hint;
+    }
+
+    /**
+     * Sets the hint to display when no text has been entered.
+     * @param hint the hint to set
+     * @since 7505
+     */
+    public final void setHint(String hint) {
+        this.hint = hint;
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        if (hint != null && !hint.isEmpty() && getText().isEmpty() && !isFocusOwner()) {
+            // Taken from http://stackoverflow.com/a/24571681/2257172
+            int h = getHeight();
+            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            Insets ins = getInsets();
+            FontMetrics fm = g.getFontMetrics();
+            int c0 = getBackground().getRGB();
+            int c1 = getForeground().getRGB();
+            int m = 0xfefefefe;
+            int c2 = ((c0 & m) >>> 1) + ((c1 & m) >>> 1);
+            g.setColor(new Color(c2, true));
+            g.drawString(hint, ins.left, h / 2 + fm.getAscent() / 2 - 2);
+        }
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+        repaint();
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        repaint();
     }
 }
