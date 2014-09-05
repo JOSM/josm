@@ -25,12 +25,6 @@
     <condition property="isWindows">
         <os family="Windows"/>
     </condition>
-    <!-- Java classpath addition (all jar files to compile tests with this) -->
-    <path id="classpath">
-        <fileset dir="lib">
-            <include name="**/*.jar"/>
-        </fileset>
-    </path>
 
     <!--
       ** Used by Eclipse ant builder for updating
@@ -273,9 +267,6 @@ Build-Date: ${build.tstamp}
     </target>
     <path id="test.classpath">
         <fileset dir="${test.dir}/lib">
-            <include name="**/*.jar"/>
-        </fileset>
-        <fileset dir="lib">
             <include name="**/*.jar"/>
         </fileset>
         <pathelement path="dist/josm-custom.jar"/>
