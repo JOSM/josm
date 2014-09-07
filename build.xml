@@ -567,5 +567,4 @@ Build-Date: ${build.tstamp}
             <jvmarg value="-Djosm.home=/tmp/.josm/"/>
         </java>
     </target>
-
 </project>
