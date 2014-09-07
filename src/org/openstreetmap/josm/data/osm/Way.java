@@ -742,5 +742,5 @@ public final class Way extends OsmPrimitive implements IWay {
             n.clearCachedStyle();
         }
     }
-    
+
 }

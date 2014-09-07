@@ -111,7 +111,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
                 }
                 userInfo.setLanguages(languages);
             }
-            
+
             // -- messages
             xmlNode = (Node)xpath.compile("/osm/user[1]/messages/received").evaluate(document, XPathConstants.NODE);
             if (xmlNode != null) {
@@ -124,7 +124,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
                     throw new XmlParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "unread", "received", v), e);
                 }
             }
-            
+
             return userInfo;
         } catch(XPathException e) {
             throw new XmlParsingException(e);

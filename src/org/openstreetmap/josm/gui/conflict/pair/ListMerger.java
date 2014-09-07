@@ -415,7 +415,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
      * Base class of all other Copy* inner classes.
      */
     abstract class CopyAction extends AbstractAction implements ListSelectionListener {
-        
+
         protected CopyAction(String icon_name, String action_name, String short_description) {
             ImageIcon icon = ImageProvider.get("dialogs/conflict", icon_name+".png");
             putValue(Action.SMALL_ICON, icon);
@@ -426,7 +426,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
             setEnabled(false);
         }
     }
-    
+
     /**
      * Action for copying selected nodes in the list of my nodes to the list of merged
      * nodes. Inserts the nodes at the beginning of the list of merged nodes.

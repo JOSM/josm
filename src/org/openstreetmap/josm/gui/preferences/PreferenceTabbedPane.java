@@ -68,7 +68,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public final class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener, ExpertModeChangeListener, ChangeListener {
-    
+
     /**
      * Allows PreferenceSettings to do validation of entered values when ok was pressed.
      * If data is invalid then event can return false to cancel closing of preferences dialog.

@@ -8,7 +8,7 @@ package org.openstreetmap.josm.tools;
  * @since 3177
  */
 public interface Predicate<T> {
-    
+
     /**
      * Determines whether the object passes the test or not
      * @param object The object to evaluate

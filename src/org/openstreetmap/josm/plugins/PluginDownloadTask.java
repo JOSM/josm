@@ -39,7 +39,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
      * @since 6867
      */
     public static final String PLUGIN_MIME_TYPES = "application/java-archive, application/zip; q=0.9, application/octet-stream; q=0.5";
-    
+
     private final Collection<PluginInformation> toUpdate = new LinkedList<>();
     private final Collection<PluginInformation> failed = new LinkedList<>();
     private final Collection<PluginInformation> downloaded = new LinkedList<>();

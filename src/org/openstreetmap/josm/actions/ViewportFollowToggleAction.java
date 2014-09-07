@@ -15,9 +15,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 3837
  */
 public class ViewportFollowToggleAction extends ToggleAction {
-    
+
     /**
-     * Constructs a new {@code ViewportFollowToggleAction}. 
+     * Constructs a new {@code ViewportFollowToggleAction}.
      */
     public ViewportFollowToggleAction() {
         super(tr("Viewport Following"),

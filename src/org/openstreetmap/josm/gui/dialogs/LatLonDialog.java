@@ -86,7 +86,7 @@ public class LatLonDialog extends ExtendedDialog {
                         "<li><i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt> <i>seconds</i><tt>&quot</tt></li>" +
                         "</ul>" +
                         "Symbols <tt>&deg;</tt>, <tt>&#39;</tt>, <tt>&prime;</tt>, <tt>&quot;</tt>, <tt>&Prime;</tt> are optional.<br/><br/>" +
-                        "Some examples:<ul>{0}</ul>", 
+                        "Some examples:<ul>{0}</ul>",
                         "<li>49.29918&deg; 19.24788&deg;</li>" +
                         "<li>N 49.29918 E 19.24788</li>" +
                         "<li>W 49&deg;29.918&#39; S 19&deg;24.788&#39;</li>" +

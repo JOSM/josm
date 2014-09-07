@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 public class RelationMemberConflictResolverColumnModel extends DefaultTableColumnModel {
 
     private final DefaultTableCellRenderer defaultTableCellRenderer = new DefaultTableCellRenderer();
-    
+
     private final OsmPrimitivRenderer primitiveRenderer = new OsmPrimitivRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table,
@@ -27,7 +27,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
                     table, isSelected, row);
         }
     };
-    
+
     private final TableCellRenderer tableRenderer = new TableCellRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
@@ -36,10 +36,10 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
                     table, isSelected, row);
         }
     };
-    
+
     private static Component setColors(Component comp, JTable table, boolean isSelected, int row) {
         RelationMemberConflictResolverModel model = (RelationMemberConflictResolverModel) table.getModel();
-        
+
         if (!isSelected && comp != null) {
             switch (model.getDecision(row).getDecision()) {
             case UNDECIDED:
@@ -58,9 +58,9 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         }
         return comp;
     }
-    
+
     protected final void createColumns() {
-        
+
         AutoCompletingTextField roleEditor = new AutoCompletingTextField();
         RelationMemberConflictDecisionRenderer decisionRenderer = new RelationMemberConflictDecisionRenderer();
         RelationMemberConflictDecisionEditor decisionEditor = new RelationMemberConflictDecisionEditor();
@@ -104,7 +104,7 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         col.setWidth(100);
         col.setPreferredWidth(100);
         addColumn(col);
-        
+
         // column 4 - New Way
         col = new TableColumn(4);
         col.setHeaderValue(tr("Decision"));

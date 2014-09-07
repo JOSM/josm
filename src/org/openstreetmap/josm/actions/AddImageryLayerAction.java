@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
 
 /**
- * Action displayed in imagery menu to add a new imagery layer. 
+ * Action displayed in imagery menu to add a new imagery layer.
  * @since 3715
  */
 public class AddImageryLayerAction extends JosmAction implements AdaptableAction {

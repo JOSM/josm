@@ -73,7 +73,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                                     break;
                                 case "exif-coordinates":
                                     entry.setExifCoor(new LatLon(
-                                            Double.parseDouble(attrElem.getAttribute("lat")), 
+                                            Double.parseDouble(attrElem.getAttribute("lat")),
                                             Double.parseDouble(attrElem.getAttribute("lon"))));
                                     break;
                                 case "exif-image-direction":

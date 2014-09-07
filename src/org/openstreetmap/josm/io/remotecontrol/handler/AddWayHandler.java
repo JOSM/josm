@@ -45,7 +45,7 @@ public class AddWayHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"way"};
     }
-    
+
     @Override
     public String[] getOptionalParams() {
         return new String[] { "addtags" };
@@ -63,7 +63,7 @@ public class AddWayHandler extends RequestHandler {
             "/add_way?&addtags=building=yes&way=45.437213,-2.810792;45.437988,-2.455983;45.224080,-2.455036;45.223302,-2.809845;45.437213,-2.810792"
         };
     }
-    
+
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
         GuiHelper.runInEDTAndWait(new Runnable() {

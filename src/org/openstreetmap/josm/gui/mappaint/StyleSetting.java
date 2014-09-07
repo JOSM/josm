@@ -11,10 +11,10 @@ import org.openstreetmap.josm.Main;
 
 /**
  * Setting to customize a MapPaint style.
- * 
- * Can be changed by the user in the right click menu of the mappaint style 
+ *
+ * Can be changed by the user in the right click menu of the mappaint style
  * dialog.
- * 
+ *
  * Defined in the MapCSS style, e.g.
  * <pre>
  * setting::highway_casing {
@@ -22,7 +22,7 @@ import org.openstreetmap.josm.Main;
  *   label: tr("Draw highway casing");
  *   default: true;
  * }
- * 
+ *
  * way[highway][setting("highway_casing")] {
  *   casing-width: 2;
  *   casing-color: white;
@@ -32,9 +32,9 @@ import org.openstreetmap.josm.Main;
 public interface StyleSetting {
 
     void addMenuEntry(JMenu menu);
-    
+
     Object getValue();
-    
+
     /**
      * A style setting for boolean value (yes / no).
      */
@@ -70,7 +70,7 @@ public interface StyleSetting {
             item.setSelected((boolean) getValue());
             menu.add(item);
         }
-        
+
         public static BooleanStyleSetting create(Cascade c, StyleSource parentStyle, String key) {
             String label = c.get("label", null, String.class);
             if (label == null) {
@@ -82,7 +82,7 @@ public interface StyleSetting {
                 Main.warn("property 'default' required for boolean style setting");
                 return null;
             }
-            String prefKey = parentStyle.url + ":boolean:" + key; 
+            String prefKey = parentStyle.url + ":boolean:" + key;
             return new BooleanStyleSetting(parentStyle, prefKey, label, def);
         }
 
@@ -92,6 +92,6 @@ public interface StyleSetting {
             if (val == null) return def;
             return Boolean.parseBoolean(val);
         }
-        
+
     }
 }

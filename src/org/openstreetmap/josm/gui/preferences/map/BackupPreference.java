@@ -97,7 +97,7 @@ public class BackupPreference implements SubPreferenceSetting {
         notification.setSelected(AutosaveTask.PROP_NOTIFICATION.get());
         notification.setToolTipText(tr("When saving, display a small notification"));
         panel.add(notification, GBC.eop());
-        
+
         ActionListener autosaveEnabled = new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {

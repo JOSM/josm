@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.GBC;
  * @since 3669
  */
 public class ValidateUploadHook implements UploadHook {
-    
+
     /**
      * Validate the modified data before uploading
      */

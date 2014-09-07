@@ -122,7 +122,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
             // TODO: resolve dependencies for layers excluded by the user
             layersOut.add(layer);
         }
-        
+
         int active = -1;
         Layer activeLayer = Main.map.mapView.getActiveLayer();
         if (activeLayer != null) {

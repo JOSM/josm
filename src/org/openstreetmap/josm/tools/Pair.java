@@ -9,12 +9,12 @@ import java.util.ArrayList;
  * @since 429
  */
 public final class Pair<A,B> {
-    
+
     /**
      * The first item
      */
     public A a;
-    
+
     /**
      * The second item
      */
@@ -64,7 +64,7 @@ public final class Pair<A,B> {
     }
 
     /**
-     * Convenient constructor method 
+     * Convenient constructor method
      * @param u The first item
      * @param v The second item
      * @return The newly created Pair(u,v)

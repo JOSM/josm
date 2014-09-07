@@ -24,7 +24,7 @@ public final class HelpUtil {
     private HelpUtil() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * Replies the base wiki URL.
      *

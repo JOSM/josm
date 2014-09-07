@@ -128,7 +128,7 @@ public class GpxData extends WithAttributes {
 
         return result;
     }
-    
+
     /**
      * returns minimum and maximum timestamps in the track
      * @param trk track to analyze

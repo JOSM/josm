@@ -11,7 +11,7 @@ import java.util.TreeSet;
  * @since 529
  */
 public final class TigerUtils {
-    
+
     private TigerUtils() {
         // Hide default constructor for utils classes
     }

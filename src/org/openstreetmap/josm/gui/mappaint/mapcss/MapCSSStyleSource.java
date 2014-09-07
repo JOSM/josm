@@ -71,11 +71,11 @@ public class MapCSSStyleSource extends StyleSource {
     private Color backgroundColorOverride;
     private String css = null;
     private ZipFile zipFile;
-    
+
     /**
      * This lock prevents concurrent execution of {@link MapCSSRuleIndex#clear() } /
      * {@link MapCSSRuleIndex#initIndex()} and {@link MapCSSRuleIndex#getRuleCandidates }.
-     * 
+     *
      * For efficiency reasons, these methods are synchronized higher up the
      * stack trace.
      */
@@ -83,16 +83,16 @@ public class MapCSSStyleSource extends StyleSource {
 
     /**
      * A collection of {@link MapCSSRule}s, that are indexed by tag key and value.
-     * 
+     *
      * Speeds up the process of finding all rules that match a certain primitive.
-     * 
+     *
      * Rules with a {@link SimpleKeyValueCondition} [key=value] are indexed by
      * key and value in a HashMap. Now you only need to loop the tags of a
      * primitive to retrieve the possibly matching rules.
-     * 
+     *
      * Rules with no SimpleKeyValueCondition in the selector have to be
      * checked separately.
-     * 
+     *
      * The order of rules gets mixed up by this and needs to be sorted later.
      */
     public static class MapCSSRuleIndex {
@@ -102,14 +102,14 @@ public class MapCSSStyleSource extends StyleSource {
         public final Map<String,Map<String,Set<MapCSSRule>>> index = new HashMap<>();
         /* rules without SimpleKeyValueCondition */
         public final Set<MapCSSRule> remaining = new HashSet<>();
-        
+
         public void add(MapCSSRule rule) {
             rules.add(rule);
         }
 
         /**
          * Initialize the index.
-         * 
+         *
          * You must own the write lock of STYLE_SOURCE_LOCK when calling this method.
          */
         public void initIndex() {
@@ -143,13 +143,13 @@ public class MapCSSStyleSource extends StyleSource {
                 rulesWithMatchingKeyValue.add(r);
             }
         }
-        
+
         /**
          * Get a subset of all rules that might match the primitive.
          * @param osm the primitive to match
          * @return a Collection of rules that filters out most of the rules
          * that cannot match, based on the tags of the primitive
-         * 
+         *
          * You must have a read lock of STYLE_SOURCE_LOCK when calling this method.
          */
         public Collection<MapCSSRule> getRuleCandidates(OsmPrimitive osm) {
@@ -165,11 +165,11 @@ public class MapCSSStyleSource extends StyleSource {
             }
             Collections.sort(ruleCandidates);
             return ruleCandidates;
-        } 
+        }
 
         /**
          * Clear the index.
-         * 
+         *
          * You must own the write lock STYLE_SOURCE_LOCK when calling this method.
          */
         public void clear() {
@@ -297,7 +297,7 @@ public class MapCSSStyleSource extends StyleSource {
             STYLE_SOURCE_LOCK.writeLock().unlock();
         }
     }
-    
+
     @Override
     public InputStream getSourceInputStream() throws IOException {
         if (css != null) {
@@ -355,7 +355,7 @@ public class MapCSSStyleSource extends StyleSource {
             }
         }
     }
-    
+
     private void loadSettings() {
         settings.clear();
         settingValues.clear();
@@ -447,7 +447,7 @@ public class MapCSSStyleSource extends StyleSource {
                 matchingRuleIndex = relationRules;
             }
         }
-        
+
         // the declaration indices are sorted, so it suffices to save the
         // last used index
         int lastDeclUsed = -1;

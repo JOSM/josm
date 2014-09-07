@@ -170,7 +170,7 @@ public final class ExpressionFactory {
         public static List<Object> list(Object... args) {
             return Arrays.asList(args);
         }
-        
+
         /**
          * Returns the number of elements in a list.
          * @param lst the list
@@ -233,7 +233,7 @@ public final class ExpressionFactory {
                 return null;
             }
         }
-        
+
         public static Color rgba(float r, float g, float b, float alpha) {
             try {
                 return new Color(r, g, b, alpha);
@@ -605,7 +605,7 @@ public final class ExpressionFactory {
             cs.update(s.getBytes(StandardCharsets.UTF_8));
             return cs.getValue();
         }
-        
+
         /**
          * check if there is right-hand traffic at the current location
          * @param env the environment
@@ -617,7 +617,7 @@ public final class ExpressionFactory {
                 return RightAndLefthandTraffic.isRightHandTraffic(((Node) env.osm).getCoor());
             return RightAndLefthandTraffic.isRightHandTraffic(env.osm.getBBox().getCenter());
         }
-        
+
         /**
          * Prints the object to the command line (for debugging purpose).
          * @param o the object
@@ -640,7 +640,7 @@ public final class ExpressionFactory {
             System.out.println(o == null ? "none" : o.toString());
             return o;
         }
-        
+
         /**
          * Get the number of tags for the current primitive.
          * @param env the environment
@@ -649,7 +649,7 @@ public final class ExpressionFactory {
         public static int number_of_tags(Environment env) {
             return env.osm.getNumKeys();
         }
-        
+
         /**
          * Get value of a setting.
          * @param env the environment
@@ -783,7 +783,7 @@ public final class ExpressionFactory {
      *
      * Separate implementation to support overloading for different
      * argument types.
-     * 
+     *
      * The use for calculating the length of a list is deprecated, use
      * {@link Functions#count(java.util.List)} instead (see #10061).
      */

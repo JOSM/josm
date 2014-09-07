@@ -10,7 +10,7 @@ public class OsmTransferCanceledException extends OsmTransferException {
      * Constructs a new {@code OsmTransferCanceledException}, without root cause.
      */
     public OsmTransferCanceledException() {
-        
+
     }
 
     /**

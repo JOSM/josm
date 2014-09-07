@@ -70,7 +70,7 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
         rememberConflict(conflict);
         return true;
     }
-    
+
     private void deleteMy() {
         Set<OsmPrimitive> referrers = getLayer().data.unlinkReferencesToPrimitive(conflict.getMy());
         for (OsmPrimitive p : referrers) {

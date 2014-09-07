@@ -50,7 +50,7 @@ public class UrlLabel extends JLabel implements MouseListener {
     /**
      * Constructs a new {@code UrlLabel} for the given URL and description.
      * @param url The URL to use
-     * @param description The description to display 
+     * @param description The description to display
      */
     public UrlLabel(String url, String description) {
         this (url, description, 0);
@@ -59,7 +59,7 @@ public class UrlLabel extends JLabel implements MouseListener {
     /**
      * Constructs a new {@code UrlLabel} for the given URL, description and font increase.
      * @param url The URL to use
-     * @param description The description to display 
+     * @param description The description to display
      * @param fontPlus The font increase in 1/72 of an inch units.
      */
     public UrlLabel(String url, String description, int fontPlus) {
@@ -114,22 +114,22 @@ public class UrlLabel extends JLabel implements MouseListener {
             Utils.copyToClipboard(url);
         }
     }
-    
+
     @Override
     public void mousePressed(MouseEvent e) {
         // Ignored
     }
-    
+
     @Override
     public void mouseEntered(MouseEvent e) {
         // Ignored
     }
-    
+
     @Override
     public void mouseExited(MouseEvent e) {
         // Ignored
     }
-    
+
     @Override
     public void mouseReleased(MouseEvent e) {
         // Ignored

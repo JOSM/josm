@@ -4,11 +4,11 @@ package org.openstreetmap.josm.tools;
 import java.util.Locale;
 
 public final class LanguageInfo {
-    
+
     private LanguageInfo() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * Type of the locale to use
      * @since 5915
@@ -125,7 +125,7 @@ public final class LanguageInfo {
     public static String getLanguageCodeXML() {
         return getJOSMLocaleCode()+".";
     }
-    
+
     public static String getLanguageCodeManifest() {
         return getJOSMLocaleCode()+"_";
     }

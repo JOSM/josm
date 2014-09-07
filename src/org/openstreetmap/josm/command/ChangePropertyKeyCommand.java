@@ -44,7 +44,7 @@ public class ChangePropertyKeyCommand extends Command {
     public ChangePropertyKeyCommand(OsmPrimitive object, String key, String newKey) {
         this(Collections.singleton(object), key, newKey);
     }
-    
+
     /**
      * Constructs a new {@code ChangePropertyKeyCommand}.
      *

@@ -246,7 +246,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * so far).
      *
      * This bug has only been observed on Mac OS X, see #7841.
-     * 
+     *
      * After switch to Java 7, this test is a false positive on Mac OS X (see #10446),
      * i.e. it returns true, but the real rendering code does not require any special
      * handling.
@@ -1068,19 +1068,19 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Rectangle2D rec = fontMetrics.getStringBounds(name, g);
 
         Rectangle bounds = g.getClipBounds();
-        
+
         Polygon poly = new Polygon();
         Point lastPoint = null;
         Iterator<Node> it = way.getNodes().iterator();
         double pathLength = 0;
         long dx, dy;
-        
+
         // find half segments that are long enough to draw text on
         // (don't draw text over the cross hair in the center of each segment)
         List<Double> longHalfSegmentStart = new ArrayList<>(); // start point of half segment (as length along the way)
         List<Double> longHalfSegmentEnd = new ArrayList<>(); // end point of half segment (as length along the way)
         List<Double> longHalfsegmentQuality = new ArrayList<>(); // quality factor (off screen / partly on screen / fully on screen)
-        
+
         while (it.hasNext()) {
             Node n = it.next();
             Point p = nc.getPoint(n);
@@ -1103,7 +1103,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     longHalfSegmentStart.add(pathLength);
                     longHalfSegmentEnd.add(pathLength + segmentLength / 2);
                     longHalfsegmentQuality.add(q);
-                    
+
                     q = 0;
                     if (bounds != null) {
                         if (bounds.contains(center) && bounds.contains(p)) {
@@ -1120,12 +1120,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
             lastPoint = p;
         }
-        
+
         if (rec.getWidth() > pathLength)
             return;
 
         double t1, t2;
-        
+
         if (!longHalfSegmentStart.isEmpty()) {
             if (way.getNodesCount() == 2) {
                 // For 2 node ways, the two half segments are exactly
@@ -1133,7 +1133,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 // Prefer the first one for consistency.
                 longHalfsegmentQuality.set(0, longHalfsegmentQuality.get(0) + 0.5);
             }
-            
+
             // find the long half segment that is closest to the center of the way
             // candidates with higher quality value are preferred
             double bestStart = Double.NaN;

@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class DownloadAction extends JosmAction {
-    
+
     /**
      * Constructs a new {@code DownloadAction}.
      */

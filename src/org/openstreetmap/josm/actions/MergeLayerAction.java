@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * Action that merges two or more OSM data layers. 
+ * Action that merges two or more OSM data layers.
  * @since 1890
  */
 public class MergeLayerAction extends AbstractMergeAction {

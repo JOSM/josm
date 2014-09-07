@@ -130,7 +130,7 @@ public class ImportAudioAction extends AbstractAction {
         Collection<WayPoint> waypoints = new ArrayList<>();
         boolean timedMarkersOmitted = false;
         boolean untimedMarkersOmitted = false;
-        double snapDistance = Main.pref.getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3); 
+        double snapDistance = Main.pref.getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3);
         // about 25 m
         WayPoint wayPointFromTimeStamp = null;
 

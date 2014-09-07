@@ -506,7 +506,7 @@ public class GpxReader implements GpxConstants {
     }
 
     /**
-     * Constructs a new {@code GpxReader}, which can later parse the input stream 
+     * Constructs a new {@code GpxReader}, which can later parse the input stream
      * and store the result in trackData and markerData
      *
      * @param source the source input stream
