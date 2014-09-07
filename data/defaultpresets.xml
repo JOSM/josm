@@ -404,13 +404,13 @@ Note that for a match, at least one positive and no negative is required.
     </chunk>
     <chunk id="power_generator">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:power=generator"
-              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=generator"
-              fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=generator"
-              it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=generator"
-              ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:power=generator"
-              pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=generator"
-              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=generator"
-              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=generator" />
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=generator"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=generator"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=generator"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:power=generator"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=generator"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=generator"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=generator" />
         <space />
         <key key="power" value="generator" />
         <reference ref="name_ref_operator" />
@@ -1106,6 +1106,7 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=steps"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=steps"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=steps"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=steps"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=steps"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=steps"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=steps"
@@ -1170,6 +1171,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=traffic_signals"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=traffic_signals"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=traffic_signals"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=traffic_signals"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=traffic_signals"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=traffic_signals" />
             <key key="highway" value="traffic_signals" />
@@ -2418,6 +2420,7 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Parking" icon="presets/parking.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=parking"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=parking"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=parking"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=parking"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=parking"
@@ -2831,6 +2834,7 @@ Note that for a match, at least one positive and no negative is required.
         </item> <!-- Platform -->
         <item name="Station" name_context="railway" type="node,closedway" icon="styles/standard/transport/railway_station.png" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:public_transport=station"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:public_transport=station"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:public_transport=station"
                   nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:public_transport=station"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:public_transport=station" />
@@ -4334,6 +4338,7 @@ Note that for a match, at least one positive and no negative is required.
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:internet_access"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Key:internet_access"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:internet_access"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:internet_access"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:internet_access"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:internet_access" />
             <space />
@@ -4343,6 +4348,7 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Automated Defibrillator" icon="presets/aed.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=defibrillator"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=defibrillator"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:emergency=defibrillator"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=defibrillator"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:emergency=defibrillator"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=defibrillator" />
@@ -5324,7 +5330,7 @@ Note that for a match, at least one positive and no negative is required.
         </item> <!-- Bridge -->
         <item name="Movable Bridge" icon="presets/bridge_movable.png" type="way,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge:movable"
-                  de.href="http://wiki.openstreetmap.org/wiki/Key:bridge:movable" />
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:bridge:movable" />
             <space />
             <key key="bridge" value="movable" />
             <combo key="bridge:movable" text="Type" values="bascule,drawbridge,lift,submersible,swing,transporter" match="key" />
@@ -6756,6 +6762,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=village"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:place=village"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:place=village"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:place=village"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:place=village"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:place=village"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:place=village"
@@ -6915,6 +6922,7 @@ Note that for a match, at least one positive and no negative is required.
         <item name="Ridge" icon="presets/empty.png" type="way,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=ridge"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=ridge"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=ridge"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=ridge" />
             <label text="A mountain or hill ridge." />
             <space />
