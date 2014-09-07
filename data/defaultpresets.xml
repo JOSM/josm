@@ -142,7 +142,7 @@ reference: include an earlier defined template
    link: a link to a helpful website (optional)
  The fields description, shortdescription and link may also be localized (e.g. de.link)
 
-See also https://josm.openstreetmap.de/wiki/TaggingPresets.
+See also https://josm.openstreetmap.de/wiki/TaggingPresets wiki page.
 
 The fields "name", "text", "display_values" may also be localized (e.g. de.name).
 When translations of equal words but different meanings may conflict, a translation
