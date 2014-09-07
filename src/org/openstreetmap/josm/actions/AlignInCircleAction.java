@@ -100,7 +100,7 @@ public final class AlignInCircleAction extends JosmAction {
         }
     }
 
-    
+
     /**
      * Perform AlignInCircle action.
      *
@@ -136,7 +136,7 @@ public final class AlignInCircleAction extends JosmAction {
         List<Way> ways = new LinkedList<>();
         EastNorth center = null;
         double radius = 0;
-        
+
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Node) {
                 nodes.add((Node) osm);
@@ -162,7 +162,7 @@ public final class AlignInCircleAction extends JosmAction {
             // Case 2
             ArrayList<Node> inside = new ArrayList<>();
             ArrayList<Node> outside = new ArrayList<>();
-            
+
             for(Node n: nodes) {
                 boolean isInside = false;
                 for(Way w: ways) {
@@ -176,7 +176,7 @@ public final class AlignInCircleAction extends JosmAction {
                 else
                     outside.add(n);
             }
-            
+
             if(outside.size() == 1 && inside.isEmpty()) {
                 center = outside.get(0).getEastNorth();
             } else if(outside.size() == 1 && inside.size() == 1) {
@@ -189,7 +189,7 @@ public final class AlignInCircleAction extends JosmAction {
                 center = new EastNorth((en0.east() + en1.east()) / 2, (en0.north() + en1.north()) / 2);
                 radius = distance(en0, en1) / 2;
             }
-            
+
             fixNodes.addAll(inside);
             fixNodes.addAll(collectNodesWithExternReferers(ways));
             nodes = collectNodesAnticlockwise(ways);
@@ -226,7 +226,7 @@ public final class AlignInCircleAction extends JosmAction {
                 return;
             }
         }
-    
+
         // Now calculate the average distance to each node from the
         // center. This method is ok as long as distances are short
         // relative to the distance from the N or S poles.
@@ -242,7 +242,7 @@ public final class AlignInCircleAction extends JosmAction {
         Collection<Command> cmds = new LinkedList<>();
 
         // Move each node to that distance from the center.
-        // Nodes that are not "fix" will be adjust making regular arcs. 
+        // Nodes that are not "fix" will be adjust making regular arcs.
         int nodeCount = nodes.size();
         // Search first fixed node
         int startPosition = 0;
@@ -275,7 +275,7 @@ public final class AlignInCircleAction extends JosmAction {
             }
             i = j; // Update start point for next iteration
         }
-        
+
         Main.main.undoRedo.add(new SequenceCommand(tr("Align Nodes in Circle"), cmds));
         Main.map.repaint();
     }
@@ -293,7 +293,7 @@ public final class AlignInCircleAction extends JosmAction {
                     withReferrers.add(n);
         return withReferrers;
     }
-    
+
     /**
      * Assuming all ways can be joined into polygon, create an ordered list of node.
      * @param ways List of ways to be joined
@@ -359,7 +359,7 @@ public final class AlignInCircleAction extends JosmAction {
                     .show();
         return true;
     }
-    
+
     @Override
     protected void updateEnabledState() {
         setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());

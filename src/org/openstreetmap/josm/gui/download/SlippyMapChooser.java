@@ -79,7 +79,7 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
             repaint();
         }
     }
-    
+
     /**
      * Refreshes the tile sources
      * @since 6364

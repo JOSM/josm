@@ -158,7 +158,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
 
     /**
      * Constructs a new {@code AutoCompletingTextField}.
-     * @param columns the number of columns to use to calculate the preferred width; 
+     * @param columns the number of columns to use to calculate the preferred width;
      * if columns is set to zero, the preferred width will be whatever naturally results from the component implementation
      */
     public AutoCompletingTextField(int columns) {

@@ -136,7 +136,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
         decisions = new HashMap<>();
         rebuild();
     }
-    
+
     /**
      * Returns the OSM key at the given row.
      * @param row The table row
@@ -269,7 +269,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
         }
         rebuild();
     }
-    
+
     /**
      * Returns the set of keys in conflict.
      * @return the set of keys in conflict.

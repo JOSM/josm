@@ -22,7 +22,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem
     public void addElement(String s) {
         addElement(new AutoCompletionListItem(s));
     }
-    
+
     /**
      * Adds or moves an element to the top of the history
      */

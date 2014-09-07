@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  *
  */
 public interface Proj {
-    
+
     /**
      * Replies a human readable name of this projection.
      * @return The projection name. must not be null.

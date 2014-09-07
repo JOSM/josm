@@ -152,7 +152,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         ImageryLayerInfo.instance.load();
         Main.main.menu.imageryMenu.refreshOffsetMenu();
         OffsetBookmark.saveBookmarks();
-        
+
         DownloadDialog.getInstance().refreshTileSources();
 
         boolean commonRestartRequired = commonSettings.saveSettings();

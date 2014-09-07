@@ -220,8 +220,8 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
                 // select "mixed"
                 cbType.setSelectedIndex(3);
             }
-        } else if (buf.matches("[\\d,v\\s]+")) { 
-            //fallback solution for id1,id2,id3 format 
+        } else if (buf.matches("[\\d,v\\s]+")) {
+            //fallback solution for id1,id2,id3 format
             tfId.tryToPasteFrom(buf);
         }
     }

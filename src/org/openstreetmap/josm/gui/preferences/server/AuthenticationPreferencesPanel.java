@@ -92,7 +92,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
 
         rbBasicAuthentication.setSelected(true);
         pnlAuthenticationParameteters.add(pnlBasicAuthPreferences, BorderLayout.CENTER);
-        
+
         //-- the panel for messages preferences
         gc.gridy = 2;
         gc.fill = GridBagConstraints.NONE;

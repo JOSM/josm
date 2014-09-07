@@ -38,7 +38,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             this.progressMonitor = progressMonitor;
             this.compression = compression;
         }
-        
+
         public abstract T parse() throws OsmTransferException, IllegalDataException, IOException, SAXException;
     }
 
@@ -119,7 +119,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             return OsmReader.parseDataSet(compression.getUncompressedInputStream(in), progressMonitor.createSubTaskMonitor(1, false));
         }
     }
-    
+
     protected class OsmChangeParser extends Parser<DataSet> {
         protected OsmChangeParser(ProgressMonitor progressMonitor, Compression compression) {
             super(progressMonitor, compression);
@@ -139,7 +139,7 @@ public class OsmServerLocationReader extends OsmServerReader {
         protected GpxParser(ProgressMonitor progressMonitor, Compression compression) {
             super(progressMonitor, compression);
         }
-        
+
         @Override
         public GpxData parse() throws OsmTransferException, IllegalDataException, IOException, SAXException {
             in = getInputStreamRaw(url, progressMonitor.createSubTaskMonitor(1, true), null, true);

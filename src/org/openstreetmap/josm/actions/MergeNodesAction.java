@@ -49,7 +49,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * However we use the location of the node that was selected *last*.
  * The "surviving" node will be moved to that location if it is
  * different from the last selected node.
- * 
+ *
  * @since 422
  */
 public class MergeNodesAction extends JosmAction {

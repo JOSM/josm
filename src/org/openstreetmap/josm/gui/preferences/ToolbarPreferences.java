@@ -1056,7 +1056,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         control.setVisible(control.getComponentCount() != 0);
         control.repaint();
     }
-    
+
     /**
      * The method to add custom button on toolbar like search or preset buttons
      * @param definitionText toolbar definition text to describe the new button,

@@ -24,7 +24,7 @@ public class OpenFileHandler extends RequestHandler {
     public String[] getMandatoryParams() {
         return new String[]{"filename"};
     }
-    
+
     @Override
     public String[] getOptionalParams() {
         return null;

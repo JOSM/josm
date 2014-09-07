@@ -32,7 +32,7 @@ public class LayerListPopup extends JPopupMenu {
 
     public static final class InfoAction extends AbstractAction {
         private final Layer layer;
-        
+
         /**
          * Constructs a new {@code InfoAction} for the given layer.
          * @param layer The layer
@@ -42,7 +42,7 @@ public class LayerListPopup extends JPopupMenu {
             putValue("help", ht("/Action/LayerInfo"));
             this.layer = layer;
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
             Object object = layer.getInfoComponent();

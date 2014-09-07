@@ -238,15 +238,15 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     public boolean hasAutoDownload(){
         return autoDownloadEnabled;
     }
-    
+
     public void setAutoDownload(boolean val) {
         autoDownloadEnabled = val;
     }
-    
+
     public boolean isAutoResolution() {
         return autoResolutionEnabled;
     }
-    
+
     public void setAutoResolution(boolean val) {
         autoResolutionEnabled = val;
     }

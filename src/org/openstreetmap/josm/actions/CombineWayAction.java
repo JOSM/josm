@@ -259,7 +259,7 @@ public class CombineWayAction extends JosmAction {
     public static class NodePair {
         private final Node a;
         private final Node b;
-        
+
         /**
          * Constructs a new {@code NodePair}.
          * @param a The first node
@@ -350,7 +350,7 @@ public class CombineWayAction extends JosmAction {
             result = prime * result + ((b == null) ? 0 : b.hashCode());
             return result;
         }
-        
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)

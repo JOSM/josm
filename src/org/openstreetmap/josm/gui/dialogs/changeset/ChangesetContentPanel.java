@@ -171,7 +171,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         Changeset cs = (Changeset)evt.getNewValue();
         setCurrentChangeset(cs);
     }
-    
+
     private final void alertNoPrimitivesTo(Collection<HistoryOsmPrimitive> primitives, String title, String helpTopic) {
         HelpAwareOptionPane.showOptionDialog(
                 ChangesetContentPanel.this,
@@ -234,7 +234,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     }
 
     class ShowHistoryAction extends AbstractAction implements ListSelectionListener {
-        
+
         private final class ShowHistoryTask implements Runnable {
             private final Collection<HistoryOsmPrimitive> primitives;
 
@@ -340,7 +340,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 }
             }
             if (target.isEmpty()) {
-                alertNoPrimitivesTo(selected, tr("Nothing to select"), 
+                alertNoPrimitivesTo(selected, tr("Nothing to select"),
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToSelectInLayer"));
                 return;
             }
@@ -390,7 +390,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 }
             }
             if (target.isEmpty()) {
-                alertNoPrimitivesTo(selected, tr("Nothing to zoom to"), 
+                alertNoPrimitivesTo(selected, tr("Nothing to zoom to"),
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToZoomTo"));
                 return;
             }

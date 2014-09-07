@@ -80,7 +80,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @since 6450
      */
     public final boolean hasGpsTime() {
-        return (tmp != null && tmp.gpsTime != null) || gpsTime != null; 
+        return (tmp != null && tmp.gpsTime != null) || gpsTime != null;
     }
 
     /**
@@ -95,16 +95,16 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public Date getExifTime() {
         return getDefensiveDate(exifTime);
     }
-    
+
     /**
      * Convenient way to determine if this entry has a EXIF time, without the cost of building a defensive copy.
      * @return {@code true} if this entry has a EXIF time
      * @since 6450
      */
     public final boolean hasExifTime() {
-        return exifTime != null; 
+        return exifTime != null;
     }
-    
+
     /**
      * Returns the EXIF GPS time.
      * @return the EXIF GPS time
@@ -113,22 +113,22 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public final Date getExifGpsTime() {
         return getDefensiveDate(exifGpsTime);
     }
-    
+
     /**
      * Convenient way to determine if this entry has a EXIF GPS time, without the cost of building a defensive copy.
      * @return {@code true} if this entry has a EXIF GPS time
      * @since 6450
      */
     public final boolean hasExifGpsTime() {
-        return exifGpsTime != null; 
+        return exifGpsTime != null;
     }
-    
+
     private static Date getDefensiveDate(Date date) {
         if (date == null)
             return null;
         return new Date(date.getTime());
     }
-    
+
     public LatLon getExifCoor() {
         return exifCoor;
     }
@@ -164,7 +164,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public void setExifTime(Date exifTime) {
         this.exifTime = getDefensiveDate(exifTime);
     }
-    
+
     /**
      * Sets the EXIF GPS time.
      * @param exifGpsTime the EXIF GPS time
@@ -173,7 +173,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public final void setExifGpsTime(Date exifGpsTime) {
         this.exifGpsTime = getDefensiveDate(exifGpsTime);
     }
-    
+
     public void setGpsTime(Date gpsTime) {
         this.gpsTime = getDefensiveDate(gpsTime);
     }
@@ -249,14 +249,14 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
 
     /**
-     * Indicates that the image has new GPS data. 
+     * Indicates that the image has new GPS data.
      * That flag is used e.g. by the photo_geotagging plugin to decide for which image
      * file the EXIF GPS data needs to be (re-)written.
      * @since 6392
      */
     public void flagNewGpsData() {
         isNewGpsData = true;
-        // We need to set the GPS time to tell the system (mainly the photo_geotagging plug-in) 
+        // We need to set the GPS time to tell the system (mainly the photo_geotagging plug-in)
         // that the GPS data has changed. Check for existing GPS time and take EXIF time otherwise.
         // This can be removed once isNewGpsData is used instead of the GPS time.
         if (gpsTime == null) {

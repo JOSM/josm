@@ -13,7 +13,7 @@ import javax.swing.table.TableColumn;
 public class ChangesetCacheTableColumnModel extends DefaultTableColumnModel {
 
     private final ChangesetCacheTableCellRenderer renderer = new ChangesetCacheTableCellRenderer();
-    
+
     protected void createColumn(int modelIndex, String headerValue, int preferredWidth, int width) {
         TableColumn col = new TableColumn(modelIndex);
         col.setHeaderValue(headerValue);
@@ -25,7 +25,7 @@ public class ChangesetCacheTableColumnModel extends DefaultTableColumnModel {
         col.setCellRenderer(renderer);
         addColumn(col);
     }
-    
+
     protected void createColumns() {
 
         // column 0 - Id

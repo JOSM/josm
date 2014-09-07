@@ -127,23 +127,23 @@ public class BoundingXYVisitor extends AbstractVisitor {
      * its size. If the bounding box is small, it will be enlarged more in relation
      * to its beginning size. The larger the bounding box, the smaller the change,
      * down to the minimum of 1% enlargement.
-     * 
+     *
      * Warning: if the bounding box only contains a single node, no expansion takes
      * place because a node has no width/height. Use <code>enlargeToMinDegrees</code>
      * instead.
-     * 
+     *
      * Example: You specify enlargement to be up to 100%.
-     * 
+     *
      *          Bounding box is a small house: enlargement will be 95–100%, i.e.
      *          making enough space so that the house fits twice on the screen in
      *          each direction.
-     * 
+     *
      *          Bounding box is a large landuse, like a forest: Enlargement will
      *          be 1–10%, i.e. just add a little border around the landuse.
-     * 
+     *
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
-     * 
+     *
      * @param maxEnlargePercent
      */
     public void enlargeBoundingBoxLogarithmically(double maxEnlargePercent) {
@@ -164,13 +164,13 @@ public class BoundingXYVisitor extends AbstractVisitor {
      * Specify a degree larger than 0 in order to make the bounding box at least
      * the specified size in width and height. The value is ignored if the
      * bounding box is already larger than the specified amount.
-     * 
+     *
      * If the bounding box has not been set (<code>min</code> or <code>max</code>
      * equal <code>null</code>) this method does not do anything.
-     * 
+     *
      * If the bounding box contains objects and is to be enlarged, the objects
      * will be centered within the new bounding box.
-     * 
+     *
      * @param size minimum width and height in meter
      */
     public void enlargeToMinSize(double size) {

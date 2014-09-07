@@ -468,7 +468,7 @@ public final class Geometry {
 
         return new Area(path);
     }
-    
+
     /**
      * Returns the Area of a polygon, from its list of nodes.
      * @param polygon List of nodes forming polygon (LatLon coordinates)

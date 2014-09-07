@@ -32,7 +32,7 @@ public class Note {
 
     /** @return The unique OSM ID of this note */
     public long getId() {
-    	return id;
+        return id;
     }
 
     public void setId(long id) {

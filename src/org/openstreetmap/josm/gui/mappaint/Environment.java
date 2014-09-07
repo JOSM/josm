@@ -27,7 +27,7 @@ public class Environment {
      * is evaluated in a {@link LinkSelector} (within a child selector)
      */
     public OsmPrimitive parent;
-    
+
     /**
      * The same for parent selector. Only one of the 2 fields (parent or child) is not null in any environment.
      */

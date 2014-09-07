@@ -49,7 +49,7 @@ public class UnclosedWays extends Test {
         private final List<String> specialValues;
         /** The boolean indicating if special values must be ignored or considered only */
         private final boolean ignore;
-        
+
         /**
          * Constructs a new {@code UnclosedWaysCheck}.
          * @param code The unique numeric code for this check
@@ -59,7 +59,7 @@ public class UnclosedWays extends Test {
         public UnclosedWaysCheck(int code, String key, String engMessage) {
             this(code, key, engMessage, Collections.<String>emptyList());
         }
-        
+
         /**
          * Constructs a new {@code UnclosedWaysCheck}.
          * @param code The unique numeric code for this check
@@ -70,7 +70,7 @@ public class UnclosedWays extends Test {
         public UnclosedWaysCheck(int code, String key, String engMessage, List<String> ignoredValues) {
             this(code, key, engMessage, ignoredValues, true);
         }
-        
+
         /**
          * Constructs a new {@code UnclosedWaysCheck}.
          * @param code The unique numeric code for this check
@@ -86,7 +86,7 @@ public class UnclosedWays extends Test {
             this.specialValues = specialValues;
             this.ignore = ignore;
         }
-        
+
         /**
          * Returns the test error of the given way, if any.
          * @param w The way to check
@@ -105,7 +105,7 @@ public class UnclosedWays extends Test {
             }
             return null;
         }
-        
+
         protected boolean isValueErroneous(String value) {
             return value != null && ignore != specialValues.contains(value);
         }
@@ -148,7 +148,7 @@ public class UnclosedWays extends Test {
         new UnclosedWaysBooleanCheck(1120, "building", marktr("building")),
         new UnclosedWaysBooleanCheck(1130, "area",     marktr("area")),
     };
-    
+
     /**
      * Returns the set of checked OSM keys.
      * @return The set of checked OSM keys.

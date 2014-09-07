@@ -16,11 +16,11 @@ import javax.swing.SwingUtilities;
  *
  */
 public final class InputMapUtils {
-    
+
     private InputMapUtils() {
         // Hide default constructor for utils classes
     }
-    
+
     /**
      * Unassign Ctrl-Shift/Alt-Shift Up/Down from the given component
      * to allow global JOSM shortcuts to work in this component.

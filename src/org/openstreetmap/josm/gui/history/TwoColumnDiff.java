@@ -62,7 +62,7 @@ class TwoColumnDiff {
         currentDiff = new ArrayList<>();
         diff();
     }
-    
+
     private void diff() {
         Diff diff = new Diff(reference, current);
         Diff.Change script = diff.diff_2(false);

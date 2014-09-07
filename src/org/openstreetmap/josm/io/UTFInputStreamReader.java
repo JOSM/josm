@@ -11,7 +11,7 @@ import java.io.UnsupportedEncodingException;
  * Detects the different UTF encodings from byte order mark
  */
 public final class UTFInputStreamReader extends InputStreamReader {
-    
+
     /**
      * Creates a new {@link InputStreamReader} from the {@link InputStream} with UTF-8 as default encoding.
      * @return A reader with the correct encoding. Starts to read after the BOM.

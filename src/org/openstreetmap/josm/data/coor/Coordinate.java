@@ -42,7 +42,7 @@ abstract class Coordinate implements Serializable {
 
     /**
      * Returns the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}.
-     * 
+     *
      * @param coor the specified coordinate to be measured against this {@code Coordinate}
      * @return the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}
      * @since 6166
@@ -50,10 +50,10 @@ abstract class Coordinate implements Serializable {
     protected final double distance(final Coordinate coor) {
         return distance(coor.x, coor.y);
     }
-   
+
     /**
      * Returns the euclidean distance from this {@code Coordinate} to a specified coordinate.
-     * 
+     *
      * @param px the X coordinate of the specified point to be measured against this {@code Coordinate}
      * @param py the Y coordinate of the specified point to be measured against this {@code Coordinate}
      * @return the euclidean distance from this {@code Coordinate} to a specified coordinate
@@ -64,10 +64,10 @@ abstract class Coordinate implements Serializable {
         final double dy = this.y-py;
         return Math.sqrt(dx*dx + dy*dy);
     }
-   
+
     /**
      * Returns the square of the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}.
-     * 
+     *
      * @param coor the specified coordinate to be measured against this {@code Coordinate}
      * @return the square of the euclidean distance from this {@code Coordinate} to a specified {@code Coordinate}
      * @since 6166
@@ -78,7 +78,7 @@ abstract class Coordinate implements Serializable {
 
     /**
      * Returns the square of euclidean distance from this {@code Coordinate} to a specified coordinate.
-     * 
+     *
      * @param px the X coordinate of the specified point to be measured against this {@code Coordinate}
      * @param py the Y coordinate of the specified point to be measured against this {@code Coordinate}
      * @return the square of the euclidean distance from this {@code Coordinate} to a specified coordinate
@@ -92,18 +92,18 @@ abstract class Coordinate implements Serializable {
 
     /**
      * Converts to single point BBox.
-     * 
+     *
      * @return single point BBox defined by this coordinate.
      * @since 6203
      */
     public BBox toBBox() {
         return new BBox(x, y);
     }
-    
+
     /**
      * Creates bbox around this coordinate. Coordinate defines
      * center of bbox, its edge will be 2*r.
-     * 
+     *
      * @param r size
      * @return BBox around this coordinate
      * @since 6203

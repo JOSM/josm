@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 6253
  */
 public class UnJoinNodeWayAction extends JosmAction {
-    
+
     /**
      * Constructs a new {@code UnJoinNodeWayAction}.
      */
