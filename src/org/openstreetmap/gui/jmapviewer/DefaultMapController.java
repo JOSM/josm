@@ -66,7 +66,7 @@ MouseWheelListener {
 
     public void mousePressed(MouseEvent e) {
         debugMouseEvent("DefaultMapController.mousePressed", e);
-	
+
         if (e.getButton() == movementMouseButton || isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) {
             if (JMapViewer.debug) {
                 System.err.println("(#9897)  move start");
@@ -75,7 +75,7 @@ MouseWheelListener {
             isMoving = true;
         }
     }
-    
+
     public void mouseReleased(MouseEvent e) {
         debugMouseEvent("DefaultMapController.mouseReleased", e);
         if (e.getButton() == movementMouseButton || isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
@@ -92,7 +92,7 @@ MouseWheelListener {
             System.err.println("(#9897) " + s + ": Button "+ e.getButton() + " Modifiers: " +Integer.toBinaryString(e.getModifiersEx()));
         }
     }
-    
+
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (wheelZoomEnabled) {
             map.setZoom(map.getZoom() - e.getWheelRotation(), e.getPoint());

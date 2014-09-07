@@ -16,7 +16,7 @@ public class OsmTileSource {
         private static final String[] SERVER = { "a", "b", "c" };
 
         private int SERVER_NUM = 0;
-        
+
         /**
          * Constructs a new {@code "Mapnik"} tile source.
          */

@@ -93,7 +93,7 @@ public class ScanexTileSource extends TMSTileSource {
     public int LatToY(double lat, int zoom) {
         return (int )(latToTileY(lat, zoom) * OsmMercator.TILE_SIZE);
     }
- 
+
     @Override
     public double YToLat(int y, int zoom) {
         return tileYToLat((double )y / OsmMercator.TILE_SIZE, zoom);

@@ -43,7 +43,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
     private static final long serialVersionUID = 1L;
-    
+
     public static boolean debug = false;
 
     /**
