@@ -63,9 +63,12 @@ public class OpeningHourTestTest {
     public void testCheckOpeningHourSyntax2() {
         final String key = "opening_hours";
         final List<OpeningHourTest.OpeningHoursTestError> errors = OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo-Tue");
-        assertThat(errors, hasSize(1));
+        assertThat(errors, hasSize(2));
         assertThat(errors.get(0).getMessage(), is(key + " - Mo-Tue <--- (Please use the abbreviation \"Tu\" for \"tue\".)"));
         assertThat(errors.get(0).getSeverity(), is(Severity.WARNING));
+        assertThat(errors.get(1).getMessage(), is(key + " - Mo-Tue <--- (This rule is not very explicit because there is no time selector being used."+
+                " Please add a time selector to this rule or use a comment to make it more explicit.)"));
+        assertThat(errors.get(1).getSeverity(), is(Severity.WARNING));
     }
 
     /**
@@ -135,7 +138,7 @@ public class OpeningHourTestTest {
         final String key = "opening_hours";
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getSeverity(), is(Severity.WARNING));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getMessage(),
-                is(key + " - Mo,Tu 04-17 <--- (Time range without minutes specified. Not very explicit! Please use this syntax instead e.g. \"12:00-14:00\".)"));
+                is(key + " - Mo,Tu 04-17 <--- (Time range without minutes specified. Not very explicit! Please use this syntax instead \"04:00-17:00\".)"));
         assertThat(OPENING_HOUR_TEST.checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getPrettifiedValue(), is("Mo,Tu 04:00-17:00"));
     }
 
