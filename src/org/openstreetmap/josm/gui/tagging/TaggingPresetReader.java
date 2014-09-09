@@ -114,7 +114,7 @@ public final class TaggingPresetReader {
                 // obtain elements from lastIdIterators with higher priority
                 o = lastIdIterators.peek().next();
                 if (!lastIdIterators.peek().hasNext()) {
-                    // remove iterator is is empty
+                    // remove iterator if is empty
                     lastIdIterators.pop();
                 }
             } else {
@@ -145,7 +145,12 @@ public final class TaggingPresetReader {
                 if (byId.get(ref) == null) {
                     throw new SAXException(tr("Reference {0} is being used before it was defined", ref));
                 }
-                lastIdIterators.push(byId.get(ref).iterator());
+                Iterator<Object> it = byId.get(ref).iterator();
+                if (it.hasNext()) {
+                    lastIdIterators.push(it);
+                } else {
+                    Main.warn("Ignoring reference '"+ref+"' denoting an empty chunk");
+                }
                 continue;
             }
             if (!(o instanceof TaggingPresetItem) && !checks.isEmpty()) {
