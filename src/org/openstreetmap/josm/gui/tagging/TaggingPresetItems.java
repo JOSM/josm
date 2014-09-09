@@ -71,6 +71,7 @@ public final class TaggingPresetItems {
     }
 
     private static int auto_increment_selected = 0;
+    /** Translatation of "&lt;different&gt;". Use in combo boxes to display en entry matching several different values. */
     public static final String DIFFERENT = tr("<different>");
 
     private static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
@@ -85,12 +86,15 @@ public final class TaggingPresetItems {
 
     public static class PresetListEntry {
         public String value;
+        /** The context used for translating {@link #value} */
         public String value_context;
         public String display_value;
         public String short_description;
         public String icon;
         public String icon_size;
+        /** The localized version of {@link #display_value}. */
         public String locale_display_value;
+        /** The localized version of {@link #short_description}. */
         public String locale_short_description;
         private final File zipIcons = TaggingPresetReader.getZipIcons();
 
@@ -117,6 +121,10 @@ public final class TaggingPresetItems {
             return res.toString();
         }
 
+        /**
+         * Returns the entry icon, if any.
+         * @return the entry icon, or {@code null}
+         */
         public ImageIcon getIcon() {
             return icon == null ? null : loadImageIcon(icon, zipIcons, parseInteger(icon_size));
         }
@@ -132,6 +140,9 @@ public final class TaggingPresetItems {
             return null;
         }
 
+        /**
+         * Construxts a new {@code PresetListEntry}, uninitialized.
+         */
         public PresetListEntry() {
         }
 
@@ -163,8 +174,11 @@ public final class TaggingPresetItems {
     public static class Role {
         public EnumSet<TaggingPresetType> types;
         public String key;
+        /** The text to display */
         public String text;
+        /** The context used for translating {@link #text} */
         public String text_context;
+        /** The localized version of {@link #text}. */
         public String locale_text;
         public SearchCompiler.Match memberExpression;
 
@@ -210,7 +224,7 @@ public final class TaggingPresetItems {
 
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             String cstring;
-            if(count > 0 && !required) {
+            if (count > 0 && !required) {
                 cstring = "0,"+count;
             } else if(count > 0) {
                 cstring = String.valueOf(count);
@@ -219,19 +233,13 @@ public final class TaggingPresetItems {
             } else {
                 cstring = "1-...";
             }
-            if(locale_text == null) {
-                if (text != null) {
-                    if(text_context != null) {
-                        locale_text = trc(text_context, fixPresetString(text));
-                    } else {
-                        locale_text = tr(fixPresetString(text));
-                    }
-                }
+            if (locale_text == null) {
+                locale_text = getLocaleText(text, text_context, null);
             }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             p.add(new JLabel(key), GBC.std().insets(0,0,10,0));
             p.add(new JLabel(cstring), types == null ? GBC.eol() : GBC.std().insets(0,0,10,0));
-            if(types != null){
+            if (types != null) {
                 JPanel pp = new JPanel();
                 for(TaggingPresetType t : types) {
                     pp.add(new JLabel(ImageProvider.get(t.getIconName())));
@@ -247,21 +255,13 @@ public final class TaggingPresetItems {
      */
     public static enum MatchType {
 
-        /**
-         * Neutral, i.e., do not consider this item for matching.
-         */
+        /** Neutral, i.e., do not consider this item for matching. */
         NONE("none"),
-        /**
-         * Positive if key matches, neutral otherwise.
-         */
+        /** Positive if key matches, neutral otherwise. */
         KEY("key"),
-        /**
-         * Positive if key matches, negative otherwise.
-         */
+        /** Positive if key matches, negative otherwise. */
         KEY_REQUIRED("key!"),
-        /**
-         * Positive if key and value matches, negative otherwise.
-         */
+        /** Positive if key and value matches, negative otherwise. */
         KEY_VALUE("keyvalue");
 
         private final String value;
@@ -270,10 +270,19 @@ public final class TaggingPresetItems {
             this.value = value;
         }
 
+        /**
+         * Replies the associated textual value.
+         * @return the associated textual value
+         */
         public String getValue() {
             return value;
         }
 
+        /**
+         * Determines the {@code MatchType} for the given textual value.
+         * @param type the textual value
+         * @return the {@code MatchType} for the given textual value
+         */
         public static MatchType ofString(String type) {
             for (MatchType i : EnumSet.allOf(MatchType.class)) {
                 if (i.getValue().equals(type))
@@ -287,6 +296,7 @@ public final class TaggingPresetItems {
         TreeSet<String> values;
         boolean hadKeys = false;
         boolean hadEmpty = false;
+
         public boolean hasUniqueValue() {
             return values.size() == 1 && !hadEmpty;
         }
@@ -294,6 +304,7 @@ public final class TaggingPresetItems {
         public boolean unused() {
             return values.isEmpty();
         }
+
         public String getFirst() {
             return values.first();
         }
@@ -309,30 +320,18 @@ public final class TaggingPresetItems {
      */
     public abstract static class TaggingPresetTextItem extends TaggingPresetItem {
 
-        /**
-         * The text to display
-         */
+        /** The text to display */
         public String text;
 
-        /**
-         * The context used for translating {@link #text}
-         */
+        /** The context used for translating {@link #text} */
         public String text_context;
 
-        /**
-         * The localized version of {@link #text}
-         */
+        /** The localized version of {@link #text} */
         public String locale_text;
 
         protected final void initializeLocaleText(String defaultText) {
             if (locale_text == null) {
-                if (text == null) {
-                    locale_text = defaultText;
-                } else if (text_context != null) {
-                    locale_text = trc(text_context, fixPresetString(text));
-                } else {
-                    locale_text = tr(fixPresetString(text));
-                }
+                locale_text = getLocaleText(text, text_context, defaultText);
             }
         }
 
@@ -352,6 +351,9 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Label type.
+     */
     public static class Label extends TaggingPresetTextItem {
 
         @Override
@@ -371,16 +373,15 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Hyperlink type.
+     */
     public static class Link extends TaggingPresetTextItem {
 
-        /**
-         * The link to display
-         */
+        /** The link to display. */
         public String href;
 
-        /**
-         * The localized version of {@link #href}
-         */
+        /** The localized version of {@link #href}. */
         public String locale_href;
 
         @Override
@@ -473,6 +474,9 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Horizontal separator type.
+     */
     public static class Space extends TaggingPresetItem {
 
         @Override
@@ -513,10 +517,15 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Preset item associated to an OSM key.
+     */
     public abstract static class KeyedItem extends TaggingPresetItem {
 
         public String key;
+        /** The text to display */
         public String text;
+        /** The context used for translating {@link #text} */
         public String text_context;
         public String match = getDefaultMatch().getValue();
 
@@ -547,8 +556,12 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Invisible type allowing to hardcode an OSM key/value from the preset definition.
+     */
     public static class Key extends KeyedItem {
 
+        /** The hardcoded value for key */
         public String value;
 
         @Override
@@ -579,8 +592,12 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Text field type.
+     */
     public static class Text extends KeyedItem {
 
+        /** The localized version of {@link #text}. */
         public String locale_text;
         public String default_;
         public String originalValue;
@@ -642,13 +659,7 @@ public final class TaggingPresetItems {
                 originalValue = DIFFERENT;
             }
             if (locale_text == null) {
-                if (text != null) {
-                    if (text_context != null) {
-                        locale_text = trc(text_context, fixPresetString(text));
-                    } else {
-                        locale_text = tr(fixPresetString(text));
-                    }
-                }
+                locale_text = getLocaleText(text, text_context, null);
             }
 
             // if there's an auto_increment setting, then wrap the text field
@@ -805,38 +816,43 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Checkbox type.
+     */
     public static class Check extends KeyedItem {
 
+        /** The localized version of {@link #text}. */
         public String locale_text;
+        /** the value to set when checked (default is "yes") */
         public String value_on = OsmUtils.trueval;
+        /** the value to set when unchecked (default is "no") */
         public String value_off = OsmUtils.falseval;
+        /** whether the off value is disabled in the dialog, i.e., only unset or yes are provided */
         public boolean disable_off = false;
+        /** ticked on/off (default is "off") */
         public boolean default_ = false; // only used for tagless objects
 
         private QuadStateCheckBox check;
         private QuadStateCheckBox.State initialState;
         private boolean def;
 
-        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
+        @Override
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
 
             // find out if our key is already used in the selection.
             final Usage usage = determineBooleanUsage(sel, key);
             final String oneValue = usage.values.isEmpty() ? null : usage.values.last();
             def = default_;
 
-            if(locale_text == null) {
-                if(text_context != null) {
-                    locale_text = trc(text_context, fixPresetString(text));
-                } else {
-                    locale_text = tr(fixPresetString(text));
-                }
+            if (locale_text == null) {
+                locale_text = getLocaleText(text, text_context, null);
             }
 
             if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
                 if (def && !PROP_FILL_DEFAULT.get()) {
                     // default is set and filling default values feature is disabled - check if all primitives are untagged
                     for (OsmPrimitive s : sel)
-                        if(s.hasKeys()) {
+                        if (s.hasKeys()) {
                             def = false;
                         }
                 }
@@ -872,7 +888,8 @@ public final class TaggingPresetItems {
             return true;
         }
 
-        @Override public void addCommands(List<Tag> changedTags) {
+        @Override
+        public void addCommands(List<Tag> changedTags) {
             // if the user hasn't changed anything, don't create a command.
             if (check.getState() == initialState && !def) return;
 
@@ -882,7 +899,9 @@ public final class TaggingPresetItems {
                         check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? value_off :
                             null));
         }
-        @Override boolean requestFocusInWindow() {return check.requestFocusInWindow();}
+
+        @Override
+        boolean requestFocusInWindow() {return check.requestFocusInWindow();}
 
         @Override
         public MatchType getDefaultMatch() {
@@ -907,15 +926,22 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Abstract superclass for combo box and multi-select list types.
+     */
     public abstract static class ComboMultiSelect extends KeyedItem {
 
+        /** The localized version of {@link #text}. */
         public String locale_text;
         public String values;
         public String values_from;
+        /** The context used for translating {@link #values} */
         public String values_context;
         public String display_values;
+        /** The localized version of {@link #display_values}. */
         public String locale_display_values;
         public String short_descriptions;
+        /** The localized version of {@link #short_descriptions}. */
         public String locale_short_descriptions;
         public String default_;
         public String delimiter = ";";
@@ -999,7 +1025,7 @@ public final class TaggingPresetItems {
                 }
             }
             if (locale_text == null) {
-                locale_text = trc(text_context, fixPresetString(text));
+                locale_text = getLocaleText(text, text_context, null);
             }
             initialized = true;
         }
@@ -1186,6 +1212,9 @@ public final class TaggingPresetItems {
         }
     }
 
+    /**
+     * Combobox type.
+     */
     public static class Combo extends ComboMultiSelect {
 
         public boolean editable = true;
@@ -1274,6 +1303,10 @@ public final class TaggingPresetItems {
                 return null;
         }
     }
+
+    /**
+     * Multi-select list type.
+     */
     public static class MultiSelect extends ComboMultiSelect {
 
         public long rows = -1;
@@ -1309,8 +1342,6 @@ public final class TaggingPresetItems {
                 sp.setPreferredSize(new Dimension((int) sp.getPreferredSize().getWidth(), (int) height));
             }
             p.add(sp, GBC.eol().fill(GBC.HORIZONTAL));
-
-
         }
 
         @Override
@@ -1394,6 +1425,16 @@ public final class TaggingPresetItems {
         return s == null ? s : s.replaceAll("'","''");
     }
 
+    private static String getLocaleText(String text, String text_context, String defaultText) {
+        if (text == null) {
+            return defaultText;
+        } else if (text_context != null) {
+            return trc(text_context, fixPresetString(text));
+        } else {
+            return tr(fixPresetString(text));
+        }
+    }
+
     /**
      * allow escaped comma in comma separated list:
      * "A\, B\, C,one\, two" --&gt; ["A, B, C", "one, two"]
@@ -1427,7 +1468,6 @@ public final class TaggingPresetItems {
         return result.toArray(new String[result.size()]);
     }
 
-
     static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
         Usage returnValue = new Usage();
         returnValue.values = new TreeSet<>();
@@ -1444,6 +1484,7 @@ public final class TaggingPresetItems {
         }
         return returnValue;
     }
+
     static Usage determineBooleanUsage(Collection<OsmPrimitive> sel, String key) {
 
         Usage returnValue = new Usage();
@@ -1456,6 +1497,7 @@ public final class TaggingPresetItems {
         }
         return returnValue;
     }
+
     protected static ImageIcon loadImageIcon(String iconName, File zipIcons, Integer maxSize) {
         final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
         ImageProvider imgProv = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true);
