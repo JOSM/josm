@@ -1,12 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
+import java.util.Collection;
+import java.util.HashSet;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
@@ -67,15 +71,20 @@ public class LoadObjectHandler extends RequestHandler {
                 @Override
                 public void run() {
                     final List<PrimitiveId> downloaded = task.getDownloadedId();
+                    final DataSet ds = Main.main.getCurrentDataSet();
                     if(downloaded != null) {
                         GuiHelper.runInEDT(new Runnable() {
                             @Override
                             public void run() {
-                                Main.main.getCurrentDataSet().setSelected(downloaded);
+                                ds.setSelected(downloaded);
                             }
                         });
                     }
-                    AddTagsDialog.addTags(args, sender);
+                    Collection<OsmPrimitive> downlPrim = new HashSet<>();
+                    for (PrimitiveId id : downloaded) {
+                        downlPrim.add(ds.getPrimitiveById(id));
+                    }
+                    AddTagsDialog.addTags(args, sender, downlPrim);
                     ps.clear();
                 }
             });
