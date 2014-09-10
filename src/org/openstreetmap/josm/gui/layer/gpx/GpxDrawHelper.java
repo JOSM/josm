@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
@@ -252,7 +253,7 @@ public class GpxDrawHelper {
             } else if (colored == ColorMode.HDOP) {
                 for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
                     for (WayPoint trkPnt : segment) {
-                        Object val = trkPnt.attr.get("hdop");
+                        Object val = trkPnt.get(GpxConstants.PT_HDOP);
                         if (val != null) {
                             double hdop = ((Float) val).doubleValue();
                             if(hdop > maxval) {
@@ -303,7 +304,7 @@ public class GpxDrawHelper {
                 Color color = null;
 
                 if (colored == ColorMode.HDOP) {
-                    Float hdop = (Float) trkPnt.attr.get("hdop");
+                    Float hdop = (Float) trkPnt.get(GpxConstants.PT_HDOP);
                     color = hdopScale.getColor(hdop);
                 }
                 if (oldWp != null) { // other coloring modes need segment for calcuation
@@ -445,9 +446,9 @@ public class GpxDrawHelper {
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
 
 
-                if (hdopCircle && trkPnt.attr.get("hdop") != null) {
+                if (hdopCircle && trkPnt.get(GpxConstants.PT_HDOP) != null) {
                     // hdop value
-                    float hdop = (Float)trkPnt.attr.get("hdop");
+                    float hdop = (Float)trkPnt.get(GpxConstants.PT_HDOP);
                     if (hdop < 0) {
                         hdop = 0;
                     }

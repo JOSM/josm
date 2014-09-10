@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -31,10 +32,18 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
  */
 public class GpxWriter extends XmlWriter implements GpxConstants {
 
+    /**
+     * Constructs a new {@code GpxWriter}.
+     * @param out The output writer
+     */
     public GpxWriter(PrintWriter out) {
         super(out);
     }
 
+    /**
+     * Constructs a new {@code GpxWriter}.
+     * @param out The output stream
+     */
     public GpxWriter(OutputStream out) {
         super(new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))));
     }
@@ -46,6 +55,10 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     private static final int ROUTE_POINT = 1;
     private static final int TRACK_POINT = 2;
 
+    /**
+     * Writes the given GPX data.
+     * @param data The data to write
+     */
     public void write(GpxData data) {
         this.data = data;
         // We write JOSM specific meta information into gpx 'extensions' elements.
@@ -79,11 +92,10 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         out.flush();
     }
 
-    private void writeAttr(IWithAttributes obj) {
-        for (String key : WPT_KEYS) {
+    private void writeAttr(IWithAttributes obj, List<String> keys) {
+        for (String key : keys) {
             if (key.equals(META_LINKS)) {
-                @SuppressWarnings("unchecked")
-                Collection<GpxLink> lValue = (Collection<GpxLink>) obj.getCollection(key);
+                Collection<GpxLink> lValue = obj.<GpxLink>getCollection(key);
                 if (lValue != null) {
                     for (GpxLink link : lValue) {
                         gpxLink(link);
@@ -103,14 +115,13 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void writeMetaData() {
         Map<String, Object> attr = data.attr;
         openln("metadata");
 
         // write the description
         if (attr.containsKey(META_DESC)) {
-            simpleTag("desc", (String)attr.get(META_DESC));
+            simpleTag("desc", data.getString(META_DESC));
         }
 
         // write the author details
@@ -118,42 +129,42 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 || attr.containsKey(META_AUTHOR_EMAIL)) {
             openln("author");
             // write the name
-            simpleTag("name", (String) attr.get(META_AUTHOR_NAME));
+            simpleTag("name", data.getString(META_AUTHOR_NAME));
             // write the email address
             if (attr.containsKey(META_AUTHOR_EMAIL)) {
-                String[] tmp = ((String)attr.get(META_AUTHOR_EMAIL)).split("@");
+                String[] tmp = data.getString(META_AUTHOR_EMAIL).split("@");
                 if (tmp.length == 2) {
                     inline("email", "id=\"" + tmp[0] + "\" domain=\""+tmp[1]+"\"");
                 }
             }
             // write the author link
-            gpxLink((GpxLink) attr.get(META_AUTHOR_LINK));
+            gpxLink((GpxLink) data.get(META_AUTHOR_LINK));
             closeln("author");
         }
 
         // write the copyright details
         if (attr.containsKey(META_COPYRIGHT_LICENSE)
                 || attr.containsKey(META_COPYRIGHT_YEAR)) {
-            openAtt("copyright", "author=\""+ attr.get(META_COPYRIGHT_AUTHOR) +"\"");
+            openAtt("copyright", "author=\""+ data.get(META_COPYRIGHT_AUTHOR) +"\"");
             if (attr.containsKey(META_COPYRIGHT_YEAR)) {
-                simpleTag("year", (String) attr.get(META_COPYRIGHT_YEAR));
+                simpleTag("year", (String) data.get(META_COPYRIGHT_YEAR));
             }
             if (attr.containsKey(META_COPYRIGHT_LICENSE)) {
-                simpleTag("license", encode((String) attr.get(META_COPYRIGHT_LICENSE)));
+                simpleTag("license", encode((String) data.get(META_COPYRIGHT_LICENSE)));
             }
             closeln("copyright");
         }
 
         // write links
         if (attr.containsKey(META_LINKS)) {
-            for (GpxLink link : (Collection<GpxLink>) attr.get(META_LINKS)) {
+            for (GpxLink link : data.<GpxLink>getCollection(META_LINKS)) {
                 gpxLink(link);
             }
         }
 
         // write keywords
         if (attr.containsKey(META_KEYWORDS)) {
-            simpleTag("keywords", (String)attr.get(META_KEYWORDS));
+            simpleTag("keywords", data.getString(META_KEYWORDS));
         }
 
         Bounds bounds = data.recalculateBounds();
@@ -181,7 +192,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     private void writeRoutes() {
         for (GpxRoute rte : data.routes) {
             openln("rte");
-            writeAttr(rte);
+            writeAttr(rte, RTE_TRK_KEYS);
             for (WayPoint pnt : rte.routePoints) {
                 wayPoint(pnt, ROUTE_POINT);
             }
@@ -192,7 +203,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     private void writeTracks() {
         for (GpxTrack trk : data.tracks) {
             openln("trk");
-            writeAttr(trk);
+            writeAttr(trk, RTE_TRK_KEYS);
             for (GpxTrackSegment seg : trk.getSegments()) {
                 openln("trkseg");
                 for (WayPoint pnt : seg.getWayPoints()) {
@@ -283,7 +294,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 inline(type, coordAttr);
             } else {
                 openAtt(type, coordAttr);
-                writeAttr(pnt);
+                writeAttr(pnt, WPT_KEYS);
                 closeln(type);
             }
         }

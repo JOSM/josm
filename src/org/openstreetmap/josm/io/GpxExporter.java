@@ -89,7 +89,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         JosmTextArea desc = new JosmTextArea(3, 40);
         desc.setWrapStyleWord(true);
         desc.setLineWrap(true);
-        desc.setText((String) gpxData.attr.get(META_DESC));
+        desc.setText(gpxData.getString(META_DESC));
         p.add(new JScrollPane(desc), GBC.eop().fill(GBC.BOTH));
 
         JCheckBox author = new JCheckBox(tr("Add author information"), Main.pref.getBoolean("lastAddAuthor", true));
@@ -119,7 +119,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
         p.add(new JLabel(tr("Keywords")), GBC.eol());
         JosmTextField keywords = new JosmTextField();
-        keywords.setText((String) gpxData.attr.get(META_KEYWORDS));
+        keywords.setText(gpxData.getString(META_KEYWORDS));
         p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
@@ -154,28 +154,28 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         // add author and copyright details to the gpx data
         if (author.isSelected()) {
             if (authorName.getText().length() > 0) {
-                gpxData.attr.put(META_AUTHOR_NAME, authorName.getText());
-                gpxData.attr.put(META_COPYRIGHT_AUTHOR, authorName.getText());
+                gpxData.put(META_AUTHOR_NAME, authorName.getText());
+                gpxData.put(META_COPYRIGHT_AUTHOR, authorName.getText());
             }
             if (email.getText().length() > 0) {
-                gpxData.attr.put(META_AUTHOR_EMAIL, email.getText());
+                gpxData.put(META_AUTHOR_EMAIL, email.getText());
             }
             if (copyright.getText().length() > 0) {
-                gpxData.attr.put(META_COPYRIGHT_LICENSE, copyright.getText());
+                gpxData.put(META_COPYRIGHT_LICENSE, copyright.getText());
             }
             if (copyrightYear.getText().length() > 0) {
-                gpxData.attr.put(META_COPYRIGHT_YEAR, copyrightYear.getText());
+                gpxData.put(META_COPYRIGHT_YEAR, copyrightYear.getText());
             }
         }
 
         // add the description to the gpx data
         if (desc.getText().length() > 0) {
-            gpxData.attr.put(META_DESC, desc.getText());
+            gpxData.put(META_DESC, desc.getText());
         }
 
         // add keywords to the gpx data
         if (keywords.getText().length() > 0) {
-            gpxData.attr.put(META_KEYWORDS, keywords.getText());
+            gpxData.put(META_KEYWORDS, keywords.getText());
         }
 
         try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
@@ -200,14 +200,14 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
         if (enable) {
             if (copyrightYear.getText().length()==0) {
-                String sCopyrightYear = (String) data.attr.get(META_COPYRIGHT_YEAR);
+                String sCopyrightYear = data.getString(META_COPYRIGHT_YEAR);
                 if (sCopyrightYear == null) {
                     sCopyrightYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
                 }
                 copyrightYear.setText(sCopyrightYear);
             }
             if (copyright.getText().length()==0) {
-                String sCopyright = (String) data.attr.get(META_COPYRIGHT_LICENSE);
+                String sCopyright = data.getString(META_COPYRIGHT_LICENSE);
                 if (sCopyright == null) {
                     sCopyright = Main.pref.get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5");
                 }
@@ -246,12 +246,12 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                 nameLabel.setEnabled(b);
                 emailLabel.setEnabled(b);
                 if (b) {
-                    String sAuthorName = (String) data.attr.get(META_AUTHOR_NAME);
+                    String sAuthorName = data.getString(META_AUTHOR_NAME);
                     if (sAuthorName == null) {
                         sAuthorName = Main.pref.get("lastAuthorName");
                     }
                     authorName.setText(sAuthorName);
-                    String sEmail = (String) data.attr.get(META_AUTHOR_EMAIL);
+                    String sEmail = data.getString(META_AUTHOR_EMAIL);
                     if (sEmail == null) {
                         sEmail = Main.pref.get("lastAuthorEmail");
                     }

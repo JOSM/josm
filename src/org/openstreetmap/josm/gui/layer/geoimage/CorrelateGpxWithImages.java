@@ -62,6 +62,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
@@ -1011,7 +1012,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             outer: for (GpxTrack trk : gpx.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     for (WayPoint curWp : segment.getWayPoints()) {
-                        String curDateWpStr = (String) curWp.attr.get("time");
+                        String curDateWpStr = curWp.getString(GpxConstants.PT_TIME);
                         if (curDateWpStr == null) {
                             continue;
                         }
@@ -1135,7 +1136,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 for (WayPoint curWp : segment.getWayPoints()) {
 
-                    String curWpTimeStr = (String) curWp.attr.get("time");
+                    String curWpTimeStr = curWp.getString(GpxConstants.PT_TIME);
                     if (curWpTimeStr != null) {
 
                         try {
@@ -1162,7 +1163,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private static Double getElevation(WayPoint wp) {
-        String value = (String) wp.attr.get("ele");
+        String value = wp.getString(GpxConstants.PT_ELE);
         if (value != null) {
             try {
                 return new Double(value);

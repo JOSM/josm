@@ -93,23 +93,19 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             boolean wpt_has_link = wpt.attr.containsKey(GpxConstants.META_LINKS);
             if (firstTime < 0 && wpt_has_link) {
                 firstTime = time;
-                for (Object oneLink : wpt.getCollection(GpxConstants.META_LINKS)) {
-                    if (oneLink instanceof GpxLink) {
-                        lastLinkedFile = ((GpxLink)oneLink).uri;
-                        break;
-                    }
+                for (GpxLink oneLink : wpt.<GpxLink>getCollection(GpxConstants.META_LINKS)) {
+                    lastLinkedFile = oneLink.uri;
+                    break;
                 }
             }
             if (wpt_has_link) {
-                for (Object oneLink : wpt.getCollection(GpxConstants.META_LINKS)) {
-                    if (oneLink instanceof GpxLink) {
-                        String uri = ((GpxLink)oneLink).uri;
-                        if (!uri.equals(lastLinkedFile)) {
-                            firstTime = time;
-                        }
-                        lastLinkedFile = uri;
-                        break;
+                for (GpxLink oneLink : wpt.<GpxLink>getCollection(GpxConstants.META_LINKS)) {
+                    String uri = oneLink.uri;
+                    if (!uri.equals(lastLinkedFile)) {
+                        firstTime = time;
                     }
+                    lastLinkedFile = uri;
+                    break;
                 }
             }
             Double offset = null;

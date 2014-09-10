@@ -50,7 +50,9 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
@@ -580,7 +582,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 }
                 WayPoint wpt = new WayPoint(n.getCoor());
                 if (!n.isTimestampEmpty()) {
-                    wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
+                    wpt.put("time", DateUtils.fromDate(n.getTimestamp()));
                     wpt.setTime();
                 }
                 trkseg.add(wpt);
@@ -599,20 +601,108 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 continue;
             }
             WayPoint wpt = new WayPoint(n.getCoor());
-            String name = n.get("name");
-            if (name != null) {
-                wpt.attr.put("name", name);
-            }
+
+            // Position info
+
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
+
             if (!n.isTimestampEmpty()) {
-                wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
+                wpt.put("time", DateUtils.fromDate(n.getTimestamp()));
                 wpt.setTime();
             }
-            String desc = n.get("description");
-            if (desc != null) {
-                wpt.attr.put("desc", desc);
+
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_MAGVAR);
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_GEOIDHEIGHT);
+
+            // Description info
+
+            addStringIfPresent(wpt, n, GpxConstants.GPX_NAME);
+            addStringIfPresent(wpt, n, GpxConstants.GPX_DESC, "description");
+            addStringIfPresent(wpt, n, GpxConstants.GPX_CMT, "comment");
+            addStringIfPresent(wpt, n, GpxConstants.GPX_SRC, "source", "source:position");
+
+            Collection<GpxLink> links = new ArrayList<>();
+            for (String key : new String[]{"link", "url", "website", "contact:website"}) {
+                String value = n.get(key);
+                if (value != null) {
+                    links.add(new GpxLink(value));
+                }
             }
+            wpt.put(GpxConstants.META_LINKS, links);
+
+            addStringIfPresent(wpt, n, GpxConstants.PT_SYM, "wpt_symbol");
+            addStringIfPresent(wpt, n, GpxConstants.PT_TYPE);
+
+            // Accuracy info
+            addStringIfPresent(wpt, n, GpxConstants.PT_FIX, "gps:fix");
+            addIntegerIfPresent(wpt, n, GpxConstants.PT_SAT, "gps:sat");
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_HDOP, "gps:hdop");
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_VDOP, "gps:vdop");
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_PDOP, "gps:pdop");
+            addDoubleIfPresent(wpt, n, GpxConstants.PT_AGEOFDGPSDATA, "gps:ageofdgpsdata");
+            addIntegerIfPresent(wpt, n, GpxConstants.PT_DGPSID, "gps:dgpsid");
 
             gpxData.waypoints.add(wpt);
+        }
+    }
+
+    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+        ArrayList<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
+        possibleKeys.add(0, gpxKey);
+        for (String key : possibleKeys) {
+            String value = p.get(key);
+            if (value != null) {
+                try {
+                    int i = Integer.parseInt(value);
+                    // Sanity checks
+                    if ((!GpxConstants.PT_SAT.equals(gpxKey) || i >= 0) &&
+                        (!GpxConstants.PT_DGPSID.equals(gpxKey) || (0 <= i && i <= 1023))) {
+                        wpt.put(gpxKey, value);
+                        break;
+                    }
+                } catch (NumberFormatException e) {
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+        ArrayList<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
+        possibleKeys.add(0, gpxKey);
+        for (String key : possibleKeys) {
+            String value = p.get(key);
+            if (value != null) {
+                try {
+                    double d = Double.parseDouble(value);
+                    // Sanity checks
+                    if (!GpxConstants.PT_MAGVAR.equals(gpxKey) || (0.0 <= d && d < 360.0)) {
+                        wpt.put(gpxKey, value);
+                        break;
+                    }
+                } catch (NumberFormatException e) {
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+        ArrayList<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
+        possibleKeys.add(0, gpxKey);
+        for (String key : possibleKeys) {
+            String value = p.get(key);
+            if (value != null) {
+                // Sanity checks
+                if (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value)) {
+                    wpt.put(gpxKey, value);
+                    break;
+                }
+            }
         }
     }
 

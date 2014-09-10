@@ -55,10 +55,11 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
      *         or {@code null} if this map contains no Collection mapping for the key
      * @since 5502
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public Collection<?> getCollection(String key) {
+    public <T> Collection<T> getCollection(String key) {
         Object value = attr.get(key);
-        return (value instanceof Collection) ? (Collection<?>)value : null;
+        return (value instanceof Collection) ? (Collection<T>)value : null;
     }
 
     /**

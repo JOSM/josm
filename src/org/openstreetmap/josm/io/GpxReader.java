@@ -155,7 +155,7 @@ public class GpxReader implements GpxConstants {
                 case "copyright":
                     states.push(currentState);
                     currentState = State.copyright;
-                    data.attr.put(META_COPYRIGHT_AUTHOR, atts.getValue("author"));
+                    data.put(META_COPYRIGHT_AUTHOR, atts.getValue("author"));
                     break;
                 case "link":
                     states.push(currentState);
@@ -171,7 +171,7 @@ public class GpxReader implements GpxConstants {
                     currentLink = new GpxLink(atts.getValue("href"));
                     break;
                 case "email":
-                    data.attr.put(META_AUTHOR_EMAIL, atts.getValue("id") + "@" + atts.getValue("domain"));
+                    data.put(META_AUTHOR_EMAIL, atts.getValue("id") + "@" + atts.getValue("domain"));
                 }
                 break;
             case trk:
@@ -274,31 +274,31 @@ public class GpxReader implements GpxConstants {
             case metadata:  // GPX 1.1
                 switch (localName) {
                 case "name":
-                    data.attr.put(META_NAME, accumulator.toString());
+                    data.put(META_NAME, accumulator.toString());
                     break;
                 case "desc":
-                    data.attr.put(META_DESC, accumulator.toString());
+                    data.put(META_DESC, accumulator.toString());
                     break;
                 case "time":
-                    data.attr.put(META_TIME, accumulator.toString());
+                    data.put(META_TIME, accumulator.toString());
                     break;
                 case "keywords":
-                    data.attr.put(META_KEYWORDS, accumulator.toString());
+                    data.put(META_KEYWORDS, accumulator.toString());
                     break;
                 case "author":
                     if ("1.0".equals(version)) {
                         // author is a string in 1.0, but complex element in 1.1
-                        data.attr.put(META_AUTHOR_NAME, accumulator.toString());
+                        data.put(META_AUTHOR_NAME, accumulator.toString());
                     }
                     break;
                 case "email":
                     if ("1.0".equals(version)) {
-                        data.attr.put(META_AUTHOR_EMAIL, accumulator.toString());
+                        data.put(META_AUTHOR_EMAIL, accumulator.toString());
                     }
                     break;
                 case "url":
                 case "urlname":
-                    data.attr.put(localName, accumulator.toString());
+                    data.put(localName, accumulator.toString());
                     break;
                 case "metadata":
                 case "gpx":
@@ -306,7 +306,7 @@ public class GpxReader implements GpxConstants {
                         (currentState == State.gpx && "gpx".equals(localName))) {
                         convertUrlToLink(data.attr);
                         if (currentExtensions != null && !currentExtensions.isEmpty()) {
-                            data.attr.put(META_EXTENSIONS, currentExtensions);
+                            data.put(META_EXTENSIONS, currentExtensions);
                         }
                         currentState = states.pop();
                         break;
@@ -321,13 +321,13 @@ public class GpxReader implements GpxConstants {
                     currentState = states.pop();
                     break;
                 case "name":
-                    data.attr.put(META_AUTHOR_NAME, accumulator.toString());
+                    data.put(META_AUTHOR_NAME, accumulator.toString());
                     break;
                 case "email":
                     // do nothing, has been parsed on startElement
                     break;
                 case "link":
-                    data.attr.put(META_AUTHOR_LINK, currentLink);
+                    data.put(META_AUTHOR_LINK, currentLink);
                     break;
                 }
                 break;
@@ -337,10 +337,10 @@ public class GpxReader implements GpxConstants {
                     currentState = states.pop();
                     break;
                 case "year":
-                    data.attr.put(META_COPYRIGHT_YEAR, accumulator.toString());
+                    data.put(META_COPYRIGHT_YEAR, accumulator.toString());
                     break;
                 case "license":
-                    data.attr.put(META_COPYRIGHT_LICENSE, accumulator.toString());
+                    data.put(META_COPYRIGHT_LICENSE, accumulator.toString());
                     break;
                 }
                 break;
@@ -360,7 +360,7 @@ public class GpxReader implements GpxConstants {
                     break;
                 }
                 if (currentState == State.author) {
-                    data.attr.put(META_AUTHOR_LINK, currentLink);
+                    data.put(META_AUTHOR_LINK, currentLink);
                 } else if (currentState != State.link) {
                     Map<String, Object> attr = getAttr();
                     if (!attr.containsKey(META_LINKS)) {
@@ -380,24 +380,24 @@ public class GpxReader implements GpxConstants {
                 case "sym":
                 case "url":
                 case "urlname":
-                    currentWayPoint.attr.put(localName, accumulator.toString());
+                    currentWayPoint.put(localName, accumulator.toString());
                     break;
                 case "hdop":
                 case "vdop":
                 case "pdop":
                     try {
-                        currentWayPoint.attr.put(localName, Float.parseFloat(accumulator.toString()));
+                        currentWayPoint.put(localName, Float.parseFloat(accumulator.toString()));
                     } catch(Exception e) {
-                        currentWayPoint.attr.put(localName, new Float(0));
+                        currentWayPoint.put(localName, new Float(0));
                     }
                     break;
                 case "time":
-                    currentWayPoint.attr.put(localName, accumulator.toString());
+                    currentWayPoint.put(localName, accumulator.toString());
                     currentWayPoint.setTime();
                     break;
                 case "cmt":
                 case "desc":
-                    currentWayPoint.attr.put(localName, accumulator.toString());
+                    currentWayPoint.put(localName, accumulator.toString());
                     currentWayPoint.setTime();
                     break;
                 case "rtept":
@@ -414,7 +414,7 @@ public class GpxReader implements GpxConstants {
                     currentState = states.pop();
                     convertUrlToLink(currentWayPoint.attr);
                     if (currentExtensions != null && !currentExtensions.isEmpty()) {
-                        currentWayPoint.attr.put(META_EXTENSIONS, currentExtensions);
+                        currentWayPoint.put(META_EXTENSIONS, currentExtensions);
                     }
                     data.waypoints.add(currentWayPoint);
                     break;
@@ -471,7 +471,7 @@ public class GpxReader implements GpxConstants {
         public void endDocument() throws SAXException  {
             if (!states.empty())
                 throw new SAXException(tr("Parse error: invalid document structure for GPX document."));
-            Extensions metaExt = (Extensions) data.attr.get(META_EXTENSIONS);
+            Extensions metaExt = (Extensions) data.get(META_EXTENSIONS);
             if (metaExt != null && "true".equals(metaExt.get("from-server"))) {
                 data.fromServer = true;
             }

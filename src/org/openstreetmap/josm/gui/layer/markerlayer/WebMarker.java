@@ -55,7 +55,7 @@ public class WebMarker extends ButtonMarker {
         WayPoint wpt = super.convertToWayPoint();
         GpxLink link = new GpxLink(webUrl.toString());
         link.type = "web";
-        wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
+        wpt.put(GpxConstants.META_LINKS, Collections.singleton(link));
         return wpt;
     }
 

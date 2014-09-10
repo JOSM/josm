@@ -92,8 +92,7 @@ public class ImageMarker extends ButtonMarker {
         WayPoint wpt = super.convertToWayPoint();
         GpxLink link = new GpxLink(imageUrl.toString());
         link.type = "image";
-        wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
+        wpt.put(GpxConstants.META_LINKS, Collections.singleton(link));
         return wpt;
     }
-
 }
