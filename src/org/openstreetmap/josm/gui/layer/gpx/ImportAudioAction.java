@@ -20,6 +20,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
@@ -183,8 +184,8 @@ public class ImportAudioAction extends AbstractAction {
                 if (wNear != null) {
                     WayPoint wc = new WayPoint(w.getCoor());
                     wc.time = wNear.time;
-                    if (w.attr.containsKey("name")) {
-                        wc.attr.put("name", w.getString("name"));
+                    if (w.attr.containsKey(GpxConstants.GPX_NAME)) {
+                        wc.put(GpxConstants.GPX_NAME, w.getString(GpxConstants.GPX_NAME));
                     }
                     waypoints.add(wc);
                 } else {
@@ -199,7 +200,7 @@ public class ImportAudioAction extends AbstractAction {
             for (GpxTrack track : layer.data.tracks) {
                 for (GpxTrackSegment seg : track.getSegments()) {
                     for (WayPoint w : seg.getWayPoints()) {
-                        if (w.attr.containsKey("name") || w.attr.containsKey("desc")) {
+                        if (w.attr.containsKey(GpxConstants.GPX_NAME) || w.attr.containsKey(GpxConstants.GPX_DESC)) {
                             waypoints.add(w);
                         }
                     }
@@ -244,7 +245,7 @@ public class ImportAudioAction extends AbstractAction {
                 if (dot > 0) {
                     name = name.substring(0, dot);
                 }
-                wayPointFromTimeStamp.attr.put("name", name);
+                wayPointFromTimeStamp.put(GpxConstants.GPX_NAME, name);
                 waypoints.add(wayPointFromTimeStamp);
             }
         }
@@ -258,7 +259,7 @@ public class ImportAudioAction extends AbstractAction {
                 for (GpxTrackSegment seg : track.getSegments()) {
                     for (WayPoint w : seg.getWayPoints()) {
                         WayPoint wStart = new WayPoint(w.getCoor());
-                        wStart.attr.put("name", "start");
+                        wStart.put(GpxConstants.GPX_NAME, "start");
                         wStart.time = w.time;
                         waypoints.add(wStart);
                         gotOne = true;

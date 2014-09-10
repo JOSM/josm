@@ -180,13 +180,12 @@ public class Marker implements TemplateEngineDataProvider {
     // Add one Marker specifying the default behaviour.
     static {
         Marker.markerProducers.add(new MarkerProducers() {
-            @SuppressWarnings("unchecked")
             @Override
             public Marker createMarker(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
                 String uri = null;
                 // cheapest way to check whether "link" object exists and is a non-empty
                 // collection of GpxLink objects...
-                Collection<GpxLink> links = (Collection<GpxLink>)wpt.attr.get(GpxConstants.META_LINKS);
+                Collection<GpxLink> links = wpt.<GpxLink>getCollection(GpxConstants.META_LINKS);
                 if (links != null) {
                     for (GpxLink oneLink : links ) {
                         uri = oneLink.uri;
@@ -209,7 +208,7 @@ public class Marker implements TemplateEngineDataProvider {
                 if (url == null) {
                     String symbolName = wpt.getString("symbol");
                     if (symbolName == null) {
-                        symbolName = wpt.getString("sym");
+                        symbolName = wpt.getString(GpxConstants.PT_SYM);
                     }
                     return new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
                 }

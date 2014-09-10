@@ -31,6 +31,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -110,8 +111,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         int i = 0;
         for (GpxTrack trk : layer.data.tracks) {
             Map<String, Object> attr = trk.getAttributes();
-            String name = (String) (attr.containsKey("name") ? attr.get("name") : "");
-            String desc = (String) (attr.containsKey("desc") ? attr.get("desc") : "");
+            String name = (String) (attr.containsKey(GpxConstants.GPX_NAME) ? attr.get(GpxConstants.GPX_NAME) : "");
+            String desc = (String) (attr.containsKey(GpxConstants.GPX_DESC) ? attr.get(GpxConstants.GPX_DESC) : "");
             String time = GpxLayer.getTimespanForTrack(trk);
             TrackLength length = new TrackLength(trk.length());
             String url = (String) (attr.containsKey("url") ? attr.get("url") : "");

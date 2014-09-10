@@ -14,6 +14,7 @@ import java.util.Date;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -286,7 +287,7 @@ public class NmeaReader {
                 if(!currentwp.attr.containsKey("time")) {
                     // As this sentence has no complete time only use it
                     // if there is no time so far
-                    currentwp.attr.put("time", DateUtils.fromDate(d));
+                    currentwp.put(GpxConstants.PT_TIME, DateUtils.fromDate(d));
                 }
                 // elevation
                 accu=e[GPGGA.HEIGHT_UNTIS.position];
@@ -298,7 +299,7 @@ public class NmeaReader {
                         // if it throws it's malformed; this should only happen if the
                         // device sends nonstandard data.
                         if(!accu.isEmpty()) { // FIX ? same check
-                            currentwp.attr.put("ele", accu);
+                            currentwp.put(GpxConstants.PT_ELE, accu);
                         }
                     }
                 }
@@ -307,12 +308,12 @@ public class NmeaReader {
                 int sat = 0;
                 if(!accu.isEmpty()) {
                     sat = Integer.parseInt(accu);
-                    currentwp.attr.put("sat", accu);
+                    currentwp.put(GpxConstants.PT_SAT, accu);
                 }
                 // h-dilution
                 accu=e[GPGGA.HDOP.position];
                 if(!accu.isEmpty()) {
-                    currentwp.attr.put("hdop", Float.parseFloat(accu));
+                    currentwp.put(GpxConstants.PT_HDOP, Float.parseFloat(accu));
                 }
                 // fix
                 accu=e[GPGGA.QUALITY.position];
@@ -320,17 +321,17 @@ public class NmeaReader {
                     int fixtype = Integer.parseInt(accu);
                     switch(fixtype) {
                     case 0:
-                        currentwp.attr.put("fix", "none");
+                        currentwp.put(GpxConstants.PT_FIX, "none");
                         break;
                     case 1:
                         if(sat < 4) {
-                            currentwp.attr.put("fix", "2d");
+                            currentwp.put(GpxConstants.PT_FIX, "2d");
                         } else {
-                            currentwp.attr.put("fix", "3d");
+                            currentwp.put(GpxConstants.PT_FIX, "3d");
                         }
                         break;
                     case 2:
-                        currentwp.attr.put("fix", "dgps");
+                        currentwp.put(GpxConstants.PT_FIX, "dgps");
                         break;
                     default:
                         break;
@@ -344,7 +345,7 @@ public class NmeaReader {
                     accu = e[GPVTG.COURSE.position];
                     if(!accu.isEmpty()) {
                         Double.parseDouble(accu);
-                        currentwp.attr.put("course", accu);
+                        currentwp.put("course", accu);
                     }
                 }
                 // SPEED
@@ -354,24 +355,24 @@ public class NmeaReader {
                     if(!accu.isEmpty()) {
                         double speed = Double.parseDouble(accu);
                         speed /= 3.6; // speed in m/s
-                        currentwp.attr.put("speed", Double.toString(speed));
+                        currentwp.put("speed", Double.toString(speed));
                     }
                 }
             } else if("$GPGSA".equals(e[0]) || "$GNGSA".equals(e[0])) {
                 // vdop
                 accu=e[GPGSA.VDOP.position];
                 if(!accu.isEmpty()) {
-                    currentwp.attr.put("vdop", Float.parseFloat(accu));
+                    currentwp.put(GpxConstants.PT_VDOP, Float.parseFloat(accu));
                 }
                 // hdop
                 accu=e[GPGSA.HDOP.position];
                 if(!accu.isEmpty()) {
-                    currentwp.attr.put("hdop", Float.parseFloat(accu));
+                    currentwp.put(GpxConstants.PT_HDOP, Float.parseFloat(accu));
                 }
                 // pdop
                 accu=e[GPGSA.PDOP.position];
                 if(!accu.isEmpty()) {
-                    currentwp.attr.put("pdop", Float.parseFloat(accu));
+                    currentwp.put(GpxConstants.PT_PDOP, Float.parseFloat(accu));
                 }
             }
             else if("$GPRMC".equals(e[0]) || "$GNRMC".equals(e[0])) {
@@ -398,19 +399,19 @@ public class NmeaReader {
                     currentwp = new WayPoint(latLon);
                 }
                 // time: this sentence has complete time so always use it.
-                currentwp.attr.put("time", DateUtils.fromDate(d));
+                currentwp.put(GpxConstants.PT_TIME, DateUtils.fromDate(d));
                 // speed
                 accu = e[GPRMC.SPEED.position];
                 if(!accu.isEmpty() && !currentwp.attr.containsKey("speed")) {
                     double speed = Double.parseDouble(accu);
                     speed *= 0.514444444; // to m/s
-                    currentwp.attr.put("speed", Double.toString(speed));
+                    currentwp.put("speed", Double.toString(speed));
                 }
                 // course
                 accu = e[GPRMC.COURSE.position];
                 if(!accu.isEmpty() && !currentwp.attr.containsKey("course")) {
                     Double.parseDouble(accu);
-                    currentwp.attr.put("course", accu);
+                    currentwp.put("course", accu);
                 }
 
                 // TODO fix?

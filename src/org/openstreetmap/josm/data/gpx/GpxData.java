@@ -40,13 +40,12 @@ public class GpxData extends WithAttributes {
             // TODO: Detect conflicts.
             String k = ent.getKey();
             if (k.equals(META_LINKS) && attr.containsKey(META_LINKS)) {
-                @SuppressWarnings("unchecked")
-                Collection<GpxLink> my = (Collection<GpxLink>) attr.get(META_LINKS);
+                Collection<GpxLink> my = super.<GpxLink>getCollection(META_LINKS);
                 @SuppressWarnings("unchecked")
                 Collection<GpxLink> their = (Collection<GpxLink>) ent.getValue();
                 my.addAll(their);
             } else {
-                attr.put(k, ent.getValue());
+                put(k, ent.getValue());
             }
         }
         tracks.addAll(other.tracks);

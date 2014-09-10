@@ -86,7 +86,7 @@ public class AudioMarker extends ButtonMarker {
         WayPoint wpt = super.convertToWayPoint();
         GpxLink link = new GpxLink(audioUrl.toString());
         link.type = "audio";
-        wpt.attr.put(GpxConstants.META_LINKS, Collections.singleton(link));
+        wpt.put(GpxConstants.META_LINKS, Collections.singleton(link));
         wpt.addExtension("offset", Double.toString(offset));
         wpt.addExtension("sync-offset", Double.toString(syncOffset));
         return wpt;

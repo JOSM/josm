@@ -94,16 +94,16 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
 
     @Override
     public String toString() {
-        return "WayPoint (" + (attr.containsKey("name") ? attr.get("name") + ", " :"") + getCoor().toString() + ", " + attr + ")";
+        return "WayPoint (" + (attr.containsKey(GPX_NAME) ? get(GPX_NAME) + ", " :"") + getCoor().toString() + ", " + attr + ")";
     }
 
     /**
      * Convert the time stamp of the waypoint into seconds from the epoch
      */
     public void setTime() {
-        if(attr.containsKey("time")) {
+        if (attr.containsKey(PT_TIME)) {
             try {
-                time = dateParser.get().parse(attr.get("time").toString()).getTime() / 1000.; /* ms => seconds */
+                time = dateParser.get().parse(get(PT_TIME).toString()).getTime() / 1000.; /* ms => seconds */
             } catch(Exception e) {
                 time = 0;
             }
@@ -122,7 +122,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     @Override
     public Object getTemplateValue(String name, boolean special) {
         if (!special)
-            return attr.get(name);
+            return get(name);
         else
             return null;
     }

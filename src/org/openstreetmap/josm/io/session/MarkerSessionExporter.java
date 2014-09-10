@@ -99,7 +99,7 @@ public class MarkerSessionExporter implements SessionLayerExporter {
 
         public void write(MarkerLayer layer) {
             GpxData data = new GpxData();
-            data.attr.put(GpxData.META_DESC, "exported JOSM marker layer");
+            data.put(GpxData.META_DESC, "exported JOSM marker layer");
             for (Marker m : layer.data) {
                 data.waypoints.add(m.convertToWayPoint());
             }
