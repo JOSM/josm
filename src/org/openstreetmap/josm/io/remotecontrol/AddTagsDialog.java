@@ -290,7 +290,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
      * parse addtags parameters Example URL (part):
      * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
      */
-    public static void addTags(final Map<String, String> args, final String sender) {
+    public static void addTags(final Map<String, String> args, final String sender, final Collection<? extends OsmPrimitive> primitives) {
         if (args.containsKey("addtags")) {
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
 
@@ -318,7 +318,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
                             keyValue[i][1] = pair.length<2 ? "": pair[1];
                             i++;
                         }
-                        addTags(keyValue, sender);
+                        addTags(keyValue, sender, primitives);
                     }
                 }
 
@@ -332,12 +332,11 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
      * @param keyValue is a table or {{tag1,val1},{tag2,val2},...}
      * @param sender is a string for skipping confirmations. Use epmty string for always confirmed adding.
      */
-    public static void addTags(String[][] keyValue, String sender) {
+    public static void addTags(String[][] keyValue, String sender, Collection<? extends OsmPrimitive> primitives) {
         if (trustedSenders.contains(sender)) {
             if (Main.main.getCurrentDataSet() != null) {
-                Collection<OsmPrimitive> s = Main.main.getCurrentDataSet().getSelected();
                 for (String[] row : keyValue) {
-                    Main.main.undoRedo.add(new ChangePropertyCommand(s, row[0], row[1]));
+                    Main.main.undoRedo.add(new ChangePropertyCommand(primitives, row[0], row[1]));
                 }
             }
         } else {

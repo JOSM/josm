@@ -159,6 +159,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             });
         }
 
+        final Collection<OsmPrimitive> forTagAdd = new HashSet<>();
         final Bounds bbox = new Bounds(minlat, minlon, maxlat, maxlon);
         if (args.containsKey("select") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             // select objects after downloading, zoom to selection.
@@ -173,6 +174,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                         final OsmPrimitive p = ds.getPrimitiveById(id);
                         if (p != null) {
                             newSel.add(p);
+                            forTagAdd.add(p);
                         }
                     }
                     toSelect.clear();
@@ -187,11 +189,17 @@ public class LoadAndZoomHandler extends RequestHandler {
             });
         } else if (args.containsKey("search") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             try {
-                final DataSet ds = Main.main.getCurrentDataSet();
                 final SearchCompiler.Match search = SearchCompiler.compile(args.get("search"), false, false);
-                final Collection<OsmPrimitive> filteredPrimitives = Utils.filter(ds.allPrimitives(), search);
-                ds.setSelected(filteredPrimitives);
-                zoom(filteredPrimitives, bbox);
+                Main.worker.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        final DataSet ds = Main.main.getCurrentDataSet();
+                        final Collection<OsmPrimitive> filteredPrimitives = Utils.filter(ds.allPrimitives(), search);
+                        ds.setSelected(filteredPrimitives);
+                        forTagAdd.addAll(filteredPrimitives);
+                        zoom(filteredPrimitives, bbox);
+                    }
+                });
             } catch (SearchCompiler.ParseError ex) {
                 Main.error(ex);
                 throw new RequestHandlerErrorException(ex);
@@ -218,7 +226,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             });
         }
 
-        AddTagsDialog.addTags(args, sender);
+        AddTagsDialog.addTags(args, sender, forTagAdd);
     }
 
     protected void zoom(Collection<OsmPrimitive> primitives, final Bounds bbox) {
