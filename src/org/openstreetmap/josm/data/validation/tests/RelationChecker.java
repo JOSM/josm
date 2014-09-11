@@ -99,17 +99,17 @@ public class RelationChecker extends Test {
         if (allroles.isEmpty() && n.hasTag("type", "route")
                 && n.hasTag("route", "train", "subway", "monorail", "tram", "bus", "trolleybus", "aerialway", "ferry")) {
             errors.add(new TestError(this, Severity.WARNING,
-                    tr("Route scheme (public_transport or legacy) is unspecified. Add {0}", "public_transport:version"),
+                    tr("Route scheme is unspecified. Add {0} ({1}=public_transport; {2}=legacy)", "public_transport:version", "2", "1"),
                     RELATION_UNKNOWN, n));
         } else if (allroles.isEmpty()) {
             errors.add(new TestError(this, Severity.WARNING, tr("Relation type is unknown"), RELATION_UNKNOWN, n));
-        } else {
-            HashMap<String, RoleInfo> map = buildRoleInfoMap(n);
-            if (map.isEmpty()) {
-                errors.add(new TestError(this, Severity.ERROR, tr("Relation is empty"), RELATION_EMPTY, n));
-            } else {
-                checkRoles(n, allroles, map);
-            }
+        }
+
+        HashMap<String, RoleInfo> map = buildRoleInfoMap(n);
+        if (map.isEmpty()) {
+            errors.add(new TestError(this, Severity.ERROR, tr("Relation is empty"), RELATION_EMPTY, n));
+        } else if (!allroles.isEmpty()) {
+            checkRoles(n, allroles, map);
         }
     }
 
