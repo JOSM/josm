@@ -157,6 +157,10 @@ public class Capabilities {
         && get("version", "maximum").compareTo(version) >= 0;
     }
 
+    private static void warnIllegalValue(String attr, String elem, Object val) {
+        Main.warn(tr("Illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", attr, elem, val));
+    }
+
     /**
      * Returns the max number of objects in a changeset. -1 if either the capabilities
      * don't include this parameter or if the parameter value is illegal (not a number,
@@ -166,18 +170,43 @@ public class Capabilities {
      */
     public int getMaxChangesetSize() {
         String v = get("changesets", "maximum_elements");
-        if (v == null) return -1;
-        try {
-            int n = Integer.parseInt(v);
-            if (n <= 0) {
-                Main.warn(tr("Illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", "changesets", "maximum_elements", n ));
-                return -1;
+        if (v != null) {
+            try {
+                int n = Integer.parseInt(v);
+                if (n <= 0) {
+                    warnIllegalValue("changesets", "maximum_elements", n);
+                } else {
+                    return n;
+                }
+            } catch (NumberFormatException e) {
+                warnIllegalValue("changesets", "maximum_elements", v);
             }
-            return n;
-        } catch (NumberFormatException e) {
-            Main.warn(tr("Illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", "changesets", "maximum_elements", v ));
-            return -1;
         }
+        return -1;
+    }
+
+    /**
+     * Returns the max number of nodes in a way. -1 if either the capabilities
+     * don't include this parameter or if the parameter value is illegal (not a number,
+     * a negative number)
+     *
+     * @return the max number of nodes in a way
+     */
+    public long getMaxWayNodes() {
+        String v = get("waynodes", "maximum");
+        if (v != null) {
+            try {
+                Long n = Long.parseLong(v);
+                if (n <= 0) {
+                    warnIllegalValue("waynodes", "maximum", n);
+                } else {
+                    return n;
+                }
+            } catch (NumberFormatException e) {
+                warnIllegalValue("waynodes", "maximum", v);
+            }
+        }
+        return -1;
     }
 
     /**
