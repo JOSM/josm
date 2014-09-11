@@ -16,9 +16,10 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 /**
  * Represents the history of an OSM primitive. The history consists
  * of a list of object snapshots with a specific version.
- *
+ * @since 1670
  */
-public class History{
+public class History {
+
     private static interface FilterPredicate {
         boolean matches(HistoryOsmPrimitive primitive);
     }
@@ -37,10 +38,11 @@ public class History{
     private List<HistoryOsmPrimitive> versions;
     /** the object id */
     private final long id;
+    /** the object type */
     private final OsmPrimitiveType type;
 
     /**
-     * Creates a new history for an OSM primitive
+     * Creates a new history for an OSM primitive.
      *
      * @param id the id. &gt; 0 required.
      * @param type the primitive type. Must not be null.
@@ -61,6 +63,10 @@ public class History{
         }
     }
 
+    /**
+     * Returns a new copy of this history, sorted in ascending order.
+     * @return a new copy of this history, sorted in ascending order
+     */
     public History sortAscending() {
         List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
         Collections.sort(
@@ -71,10 +77,14 @@ public class History{
                         return o1.compareTo(o2);
                     }
                 }
-                );
+            );
         return new History(id, type, copy);
     }
 
+    /**
+     * Returns a new copy of this history, sorted in descending order.
+     * @return a new copy of this history, sorted in descending order
+     */
     public History sortDescending() {
         List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
         Collections.sort(
@@ -85,10 +95,15 @@ public class History{
                         return o2.compareTo(o1);
                     }
                 }
-                );
+            );
         return new History(id, type,copy);
     }
 
+    /**
+     * Returns a new partial copy of this history, from the given date
+     * @param fromDate the starting date
+     * @return a new partial copy of this history, from the given date
+     */
     public History from(final Date fromDate) {
         return filter(
                 this,
@@ -98,9 +113,14 @@ public class History{
                         return primitive.getTimestamp().compareTo(fromDate) >= 0;
                     }
                 }
-                );
+            );
     }
 
+    /**
+     * Returns a new partial copy of this history, until the given date
+     * @param untilDate the end date
+     * @return a new partial copy of this history, until the given date
+     */
     public History until(final Date untilDate) {
         return filter(
                 this,
@@ -110,13 +130,24 @@ public class History{
                         return primitive.getTimestamp().compareTo(untilDate) <= 0;
                     }
                 }
-                );
+            );
     }
 
+    /**
+     * Returns a new partial copy of this history, between the given dates
+     * @param fromDate the starting date
+     * @param untilDate the end date
+     * @return a new partial copy of this history, between the given dates
+     */
     public History between(Date fromDate, Date untilDate) {
         return this.from(fromDate).until(untilDate);
     }
 
+    /**
+     * Returns a new partial copy of this history, from the given version number
+     * @param fromVersion the starting version number
+     * @return a new partial copy of this history, from the given version number
+     */
     public History from(final long fromVersion) {
         return filter(
                 this,
@@ -126,9 +157,14 @@ public class History{
                         return primitive.getVersion() >= fromVersion;
                     }
                 }
-                );
+            );
     }
 
+    /**
+     * Returns a new partial copy of this history, to the given version number
+     * @param untilVersion the ending version number
+     * @return a new partial copy of this history, to the given version number
+     */
     public History until(final long untilVersion) {
         return filter(
                 this,
@@ -138,13 +174,24 @@ public class History{
                         return primitive.getVersion() <= untilVersion;
                     }
                 }
-                );
+            );
     }
 
+    /**
+     * Returns a new partial copy of this history, betwwen the given version numbers
+     * @param fromVersion the starting version number
+     * @param untilVersion the ending version number
+     * @return a new partial copy of this history, between the given version numbers
+     */
     public History between(long fromVersion, long untilVersion) {
         return this.from(fromVersion).until(untilVersion);
     }
 
+    /**
+     * Returns a new partial copy of this history, for the given user id
+     * @param uid the user id
+     * @return a new partial copy of this history, for the given user id
+     */
     public History forUserId(final long uid) {
         return filter(
                 this,
@@ -154,9 +201,16 @@ public class History{
                         return primitive.getUser() != null && primitive.getUser().getId() == uid;
                     }
                 }
-                );
+            );
     }
 
+    /**
+     * Replies the primitive id for this history.
+     *
+     * @return the primitive id
+     * @see #getPrimitiveId
+     * @see #getType
+     */
     public long getId() {
         return id;
     }
@@ -165,12 +219,18 @@ public class History{
      * Replies the primitive id for this history.
      *
      * @return the primitive id
+     * @see #getId
      */
     public PrimitiveId getPrimitiveId() {
         return new SimplePrimitiveId(id, type);
     }
 
-    public boolean contains(long version){
+    /**
+     * Determines if this history contains a specific version number.
+     * @param version the version number to look for
+     * @return {@code true} if this history contains {@code version}, {@code false} otherwise
+     */
+    public boolean contains(long version) {
         for (HistoryOsmPrimitive primitive: versions) {
             if (primitive.matches(id,version))
                 return true;
@@ -193,6 +253,13 @@ public class History{
         return null;
     }
 
+    /**
+     * Replies the history primitive at given <code>date</code>. null,
+     * if no such primitive exists.
+     *
+     * @param date the date
+     * @return the history primitive at given <code>date</code>
+     */
     public HistoryOsmPrimitive getByDate(Date date) {
         History h = sortAscending();
 
@@ -208,24 +275,44 @@ public class History{
         return h.getLatest();
     }
 
+    /**
+     * Replies the history primitive at index <code>idx</code>.
+     *
+     * @param idx the index
+     * @return the history primitive at index <code>idx</code>
+     * @throws IndexOutOfBoundsException if index out or range
+     */
     public HistoryOsmPrimitive get(int idx) throws IndexOutOfBoundsException {
         if (idx < 0 || idx >= versions.size())
-            throw new IndexOutOfBoundsException(MessageFormat.format("Parameter ''{0}'' in range 0..{1} expected. Got ''{2}''.", "idx", versions.size()-1, idx));
+            throw new IndexOutOfBoundsException(MessageFormat.format(
+                    "Parameter ''{0}'' in range 0..{1} expected. Got ''{2}''.", "idx", versions.size()-1, idx));
         return versions.get(idx);
     }
 
+    /**
+     * Replies the earliest entry of this history.
+     * @return the earliest entry of this history
+     */
     public HistoryOsmPrimitive getEarliest() {
         if (isEmpty())
             return null;
         return sortAscending().versions.get(0);
     }
 
+    /**
+     * Replies the latest entry of this history.
+     * @return the latest entry of this history
+     */
     public HistoryOsmPrimitive getLatest() {
         if (isEmpty())
             return null;
         return sortDescending().versions.get(0);
     }
 
+    /**
+     * Replies the number of versions.
+     * @return the number of versions
+     */
     public int getNumVersions() {
         return versions.size();
     }
@@ -238,6 +325,11 @@ public class History{
         return versions.isEmpty();
     }
 
+    /**
+     * Replies the primitive type for this history.
+     * @return the primitive type
+     * @see #getId
+     */
     public OsmPrimitiveType getType() {
         return type;
     }
