@@ -11,11 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -69,18 +66,6 @@ public class HistoryBrowserDialogManager implements MapView.LayerChangeListener 
         } else {
             placeOnScreen(dialog);
             dialog.setVisible(true);
-            // Debug stuff for #10462
-            if (Main.isDebugEnabled()) {
-                Main.debug("#10462 - JDialog.isDefaultLookAndFeelDecorated: "+JDialog.isDefaultLookAndFeelDecorated());
-                Main.debug("#10462 - JFrame.isDefaultLookAndFeelDecorated: "+JFrame.isDefaultLookAndFeelDecorated());
-                Main.debug("#10462 - dialog.isUndecorated: "+dialog.isUndecorated());
-                Main.debug("#10462 - UIManager.getLookAndFeel: "+UIManager.getLookAndFeel());
-                Main.debug("#10462 - LookAndFeel.getSupportsWindowDecorations: "+UIManager.getLookAndFeel().getSupportsWindowDecorations());
-                Main.debug("#10462 - JRootPane.getWindowDecorationStyle: "+dialog.getRootPane().getWindowDecorationStyle());
-                Main.debug("#10462 - Window.getIconImages: "+dialog.getIconImages());
-                Main.debug("#10462 - Dialog.getTitle: "+dialog.getTitle());
-                Main.debug("#10462 - Dialog.getInsets: "+dialog.getInsets());
-            }
             dialogs.put(id, dialog);
         }
     }
