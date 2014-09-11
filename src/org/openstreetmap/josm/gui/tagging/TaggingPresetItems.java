@@ -360,7 +360,7 @@ public final class TaggingPresetItems {
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             initializeLocaleText(null);
             addLabel(p, locale_text);
-            return false;
+            return true;
         }
 
         /**

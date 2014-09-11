@@ -227,6 +227,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         for (TaggingPresetItem i : data) {
             if (i instanceof Link) {
                 l.add((Link) i);
+                p.hasElements = true;
             } else if (i instanceof PresetLink) {
                 presetLink.add((PresetLink) i);
             } else {
