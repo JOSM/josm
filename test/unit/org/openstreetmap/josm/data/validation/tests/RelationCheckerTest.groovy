@@ -37,7 +37,7 @@ class RelationCheckerTest extends GroovyTestCase {
 
     void testUnknownType() {
         def errors = testRelation(createRelation("type=foobar"))
-        assert errors.size() == 1
+        assert errors.size() >= 1
         assert errors.get(0).getMessage() == "Relation type is unknown"
     }
 
