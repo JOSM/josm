@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmChangeCompressedTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmChangeTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmCompressedTask;
@@ -58,6 +59,7 @@ public class OpenLocationAction extends JosmAction {
         this.downloadTasks = new ArrayList<>();
         addDownloadTaskClass(DownloadOsmTask.class);
         addDownloadTaskClass(DownloadGpsTask.class);
+        addDownloadTaskClass(DownloadNotesTask.class);
         addDownloadTaskClass(DownloadOsmChangeTask.class);
         addDownloadTaskClass(DownloadOsmUrlTask.class);
         addDownloadTaskClass(DownloadOsmCompressedTask.class);

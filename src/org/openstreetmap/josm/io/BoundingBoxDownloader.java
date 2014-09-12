@@ -5,9 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -153,4 +156,62 @@ public class BoundingBoxDownloader extends OsmServerReader {
             activeConnection = null;
         }
     }
+
+    @Override
+    public List<Note> parseNotes(Integer noteLimit, Integer daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException {
+        progressMonitor.beginTask("Downloading notes");
+        noteLimit = checkNoteLimit(noteLimit);
+        daysClosed = checkDaysClosed(daysClosed);
+        String url = new StringBuilder()
+        .append("notes?limit=")
+        .append(noteLimit)
+        .append("&closed=")
+        .append(daysClosed)
+        .append("&bbox=")
+        .append(lon1)
+        .append(",").append(lat1)
+        .append(",").append(lon2)
+        .append(",").append(lat2)
+        .toString();
+        try {
+            InputStream is = getInputStream(url, progressMonitor.createSubTaskMonitor(1, false));
+            NoteReader reader = new NoteReader(is);
+            return reader.parse();
+        } catch (IOException e) {
+            throw new OsmTransferException(e);
+        } catch (SAXException e) {
+            throw new OsmTransferException(e);
+        } finally {
+            progressMonitor.finishTask();
+        }
+    }
+
+    private Integer checkNoteLimit(Integer limit) {
+        if (limit == null) {
+            limit = Main.pref.getInteger("osm.notes.downloadLimit", 1000);
+        }
+        if (limit > 10000) {
+            Main.error("Requested note limit is over API hard limit of 10000. Reducing to 10000.");
+            limit = 10000;
+        }
+        if (limit < 1) {
+            Main.error("Requested note limit is less than 1. Setting to 1.");
+            limit = 1;
+        }
+        Main.debug("returning note limit: " + limit);
+        return limit;
+    }
+
+    private Integer checkDaysClosed(Integer days) {
+        if (days == null) {
+            days = Main.pref.getInteger("osm.notes.daysClosed", 1);
+        }
+        if (days < -1) {
+            Main.error("Requested days closed must be greater than -1");
+            days = -1;
+        }
+        Main.debug("returning days closed: " + days);
+        return days;
+    }
+
 }
