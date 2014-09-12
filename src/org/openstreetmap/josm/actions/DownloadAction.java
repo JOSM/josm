@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
@@ -51,6 +52,14 @@ public class DownloadAction extends JosmAction {
             if (dialog.isDownloadGpxData()) {
                 DownloadGpsTask task = new DownloadGpsTask();
                 Future<?> future = task.download(dialog.isNewLayerRequired(),area, null);
+                Main.worker.submit(new PostDownloadHandler(task, future));
+            }
+
+            //TODO: This eventually needs to be a checkbox in the UI
+            //For now I'm adding it as a hidden feature since this is still a work in progress
+            if (Main.pref.getBoolean("osm.notes.enableDownload", false)) {
+                DownloadNotesTask task = new DownloadNotesTask();
+                Future<?> future = task.download(false, area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }
         }

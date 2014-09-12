@@ -19,6 +19,7 @@ import java.util.zip.InflaterInputStream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Utils;
@@ -347,5 +348,39 @@ public abstract class OsmServerReader extends OsmConnection {
      */
     public final boolean isGpxParsedProperly() {
         return gpxParsedProperly;
+    }
+
+    /**
+     * Downloads notes from the API, given API limit parameters
+     *
+     * @param noteLimit How many notes to download. Defaults to 1000 if not specified. API has a hard limit of 10000
+     * @param daysClosed Return notes closed this many days in the past. -1 means all notes, ever. 0 means only unresolved notes.
+     * @param progressMonitor Progress monitor for user feedback
+     * @return List of notes returned by the API
+     * @throws OsmTransferException if any errors happen
+     */
+    public List<Note> parseNotes(Integer noteLimit, Integer daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+
+    /**
+     * Downloads notes from a given raw URL. The URL is assumed to be complete and no API limits are added
+     *
+     * @param progressMonitor
+     * @return A list of notes parsed from the URL
+     * @throws OsmTransferException
+     */
+    public List<Note> parseRawNotes(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
+    }
+
+    /**
+     * Download notes from a URL that contains a bzip2 compressed notes dump file
+     * @param progressMonitor
+     * @return A list of notes parsed from the URL
+     * @throws OsmTransferException
+     */
+    public List<Note> parseRawNotesBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return null;
     }
 }

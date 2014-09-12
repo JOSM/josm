@@ -5,9 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Utils;
@@ -105,6 +108,16 @@ public class OsmServerLocationReader extends OsmServerReader {
         return doParse(new GpxParser(progressMonitor, Compression.BZIP2), progressMonitor);
     }
 
+    @Override
+    public List<Note> parseRawNotes(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new NoteParser(progressMonitor, Compression.NONE), progressMonitor);
+    }
+
+    @Override
+    public List<Note> parseRawNotesBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
+        return doParse(new NoteParser(progressMonitor, Compression.BZIP2), progressMonitor);
+    }
+
     protected class OsmParser extends Parser<DataSet> {
         protected OsmParser(ProgressMonitor progressMonitor, Compression compression) {
             super(progressMonitor, compression);
@@ -151,6 +164,24 @@ public class OsmServerLocationReader extends OsmServerReader {
             GpxData result = reader.getGpxData();
             result.fromServer = DownloadGpsTask.isFromServer(url);
             return result;
+        }
+    }
+
+    protected class NoteParser extends Parser<List<Note>> {
+
+        public NoteParser(ProgressMonitor progressMonitor, Compression compression) {
+            super(progressMonitor, compression);
+        }
+
+        @Override
+        public List<Note> parse() throws OsmTransferException, IllegalDataException, IOException, SAXException {
+            in = getInputStream(url, progressMonitor.createSubTaskMonitor(1, true));
+            if (in == null) {
+                return new ArrayList<Note>();
+            }
+            progressMonitor.subTask(tr("Downloading OSM notes..."));
+            NoteReader reader = new NoteReader(compression.getUncompressedInputStream(in));
+            return reader.parse();
         }
     }
 }
