@@ -27,6 +27,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.io.XmlWriter;
@@ -119,6 +120,11 @@ public final class ExpressionFactory {
             return o;
         }
 
+        /**
+         * Function associated to the numeric "+" operator.
+         * @param args arguments
+         * @return Sum of arguments
+         */
         public static float plus(float... args) {
             float res = 0;
             for (float f : args) {
@@ -127,6 +133,11 @@ public final class ExpressionFactory {
             return res;
         }
 
+        /**
+         * Function associated to the numeric "-" operator.
+         * @param args arguments
+         * @return Substraction of arguments
+         */
         public static Float minus(float... args) {
             if (args.length == 0) {
                 return 0.0F;
@@ -141,6 +152,11 @@ public final class ExpressionFactory {
             return res;
         }
 
+        /**
+         * Function associated to the numeric "*" operator.
+         * @param args arguments
+         * @return Multiplication of arguments
+         */
         public static float times(float... args) {
             float res = 1;
             for (float f : args) {
@@ -149,6 +165,11 @@ public final class ExpressionFactory {
             return res;
         }
 
+        /**
+         * Function associated to the numeric "/" operator.
+         * @param args arguments
+         * @return Division of arguments
+         */
         public static Float divided_by(float... args) {
             if (args.length == 0) {
                 return 1.0F;
@@ -165,6 +186,8 @@ public final class ExpressionFactory {
 
         /**
          * Creates a list of values, e.g., for the {@code dashes} property.
+         * @param args The values to put in a list
+         * @return list of values
          * @see Arrays#asList(Object[])
          */
         public static List<Object> list(Object... args) {
@@ -182,6 +205,8 @@ public final class ExpressionFactory {
 
         /**
          * Returns the first non-null object. The name originates from the {@code COALESCE} SQL function.
+         * @param args arguments
+         * @return the first non-null object
          * @deprecated Deprecated in favour of {@link #any(Object...)} from the MapCSS standard.
          */
         @NullableArguments
@@ -193,6 +218,8 @@ public final class ExpressionFactory {
         /**
          * Returns the first non-null object.
          * The name originates from <a href="http://wiki.openstreetmap.org/wiki/MapCSS/0.2/eval">MapCSS standard</a>.
+         * @param args arguments
+         * @return the first non-null object
          * @see #coalesce(Object...)
          * @see Utils#firstNonNull(Object[])
          */
@@ -203,6 +230,9 @@ public final class ExpressionFactory {
 
         /**
          * Get the {@code n}th element of the list {@code lst} (counting starts at 0).
+         * @param lst list
+         * @param n index
+         * @return {@code n}th element of the list, or {@code null} if index out of range
          * @since 5699
          */
         public static Object get(List<?> lst, float n) {
@@ -215,6 +245,9 @@ public final class ExpressionFactory {
 
         /**
          * Splits string {@code toSplit} at occurrences of the separator string {@code sep} and returns a list of matches.
+         * @param sep separator string
+         * @param toSplit string to split
+         * @return list of matches
          * @see String#split(String)
          * @since 5699
          */
@@ -224,6 +257,10 @@ public final class ExpressionFactory {
 
         /**
          * Creates a color value with the specified amounts of {@code r}ed, {@code g}reen, {@code b}lue (arguments from 0.0 to 1.0)
+         * @param r the red component
+         * @param g the green component
+         * @param b the blue component
+         * @return color matching the given components
          * @see Color#Color(float, float, float)
          */
         public static Color rgb(float r, float g, float b) {
@@ -234,6 +271,15 @@ public final class ExpressionFactory {
             }
         }
 
+        /**
+         * Creates a color value with the specified amounts of {@code r}ed, {@code g}reen, {@code b}lue, {@code alpha} (arguments from 0.0 to 1.0)
+         * @param r the red component
+         * @param g the green component
+         * @param b the blue component
+         * @param alpha the alpha component
+         * @return color matching the given components
+         * @see Color#Color(float, float, float, float)
+         */
         public static Color rgba(float r, float g, float b, float alpha) {
             try {
                 return new Color(r, g, b, alpha);
@@ -259,6 +305,8 @@ public final class ExpressionFactory {
 
         /**
          * Creates a color value from an HTML notation, i.e., {@code #rrggbb}.
+         * @param html HTML notation
+         * @return color matching the given notation
          */
         public static Color html2color(String html) {
             return ColorHelper.html2color(html);
@@ -266,6 +314,8 @@ public final class ExpressionFactory {
 
         /**
          * Computes the HTML notation ({@code #rrggbb}) for a color value).
+         * @param c color
+         * @return HTML notation matching the given color
          */
         public static String color2html(Color c) {
             return ColorHelper.color2html(c);
@@ -273,6 +323,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the red color channel in the rgb color model
+         * @param c color
          * @return the red color channel in the range [0;1]
          * @see java.awt.Color#getRed()
          */
@@ -282,6 +333,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the green color channel in the rgb color model
+         * @param c color
          * @return the green color channel in the range [0;1]
          * @see java.awt.Color#getGreen()
          */
@@ -291,6 +343,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the blue color channel in the rgb color model
+         * @param c color
          * @return the blue color channel in the range [0;1]
          * @see java.awt.Color#getBlue()
          */
@@ -300,6 +353,7 @@ public final class ExpressionFactory {
 
         /**
          * Get the value of the alpha channel in the rgba color model
+         * @param c color
          * @return the alpha channel in the range [0;1]
          * @see java.awt.Color#getAlpha()
          */
@@ -309,6 +363,8 @@ public final class ExpressionFactory {
 
         /**
          * Assembles the strings to one.
+         * @param args arguments
+         * @return assembled string
          * @see Utils#join
          */
         @NullableArguments
@@ -318,6 +374,8 @@ public final class ExpressionFactory {
 
         /**
          * Assembles the strings to one, where the first entry is used as separator.
+         * @param args arguments. First one is used as separator
+         * @return assembled string
          * @see Utils#join
          */
         @NullableArguments
@@ -327,6 +385,9 @@ public final class ExpressionFactory {
 
         /**
          * Returns the value of the property {@code key}, e.g., {@code prop("width")}.
+         * @param env the environment
+         * @param key the property key
+         * @return the property value
          */
         public static Object prop(final Environment env, String key) {
             return prop(env, key, null);
@@ -334,6 +395,9 @@ public final class ExpressionFactory {
 
         /**
          * Returns the value of the property {@code key} from layer {@code layer}.
+         * @param env the environment
+         * @param key the property key
+         * @return the property value
          */
         public static Object prop(final Environment env, String key, String layer) {
             return env.getCascade(layer).get(key);
@@ -341,6 +405,9 @@ public final class ExpressionFactory {
 
         /**
          * Determines whether property {@code key} is set.
+         * @param env the environment
+         * @param key the property key
+         * @return {@code true} if the property is set, {@code false} otherwise
          */
         public static Boolean is_prop_set(final Environment env, String key) {
             return is_prop_set(env, key, null);
@@ -348,6 +415,9 @@ public final class ExpressionFactory {
 
         /**
          * Determines whether property {@code key} is set on layer {@code layer}.
+         * @param env the environment
+         * @param key the property key
+         * @return {@code true} if the property is set, {@code false} otherwise
          */
         public static Boolean is_prop_set(final Environment env, String key, String layer) {
             return env.getCascade(layer).containsKey(key);
@@ -355,6 +425,9 @@ public final class ExpressionFactory {
 
         /**
          * Gets the value of the key {@code key} from the object in question.
+         * @param env the environment
+         * @param key the OSM key
+         * @return the value for given key
          */
         public static String tag(final Environment env, String key) {
             return env.osm == null ? null : env.osm.get(key);
@@ -362,6 +435,9 @@ public final class ExpressionFactory {
 
         /**
          * Gets the first non-null value of the key {@code key} from the object's parent(s).
+         * @param env the environment
+         * @param key the OSM key
+         * @return first non-null value of the key {@code key} from the object's parent(s)
          */
         public static String parent_tag(final Environment env, String key) {
             if (env.parent == null) {
@@ -379,12 +455,21 @@ public final class ExpressionFactory {
             return env.parent.get(key);
         }
 
+        /**
+         * Gets the value of the key {@code key} from the object's child.
+         * @param env the environment
+         * @param key the OSM key
+         * @return the value of the key {@code key} from the object's child, or {@code null} if there is no child
+         */
         public static String child_tag(final Environment env, String key) {
             return env.child == null ? null : env.child.get(key);
         }
 
         /**
          * Determines whether the object has a tag with the given key.
+         * @param env the environment
+         * @param key the OSM key
+         * @return {@code true} if the object has a tag with the given key, {@code false} otherwise
          */
         public static boolean has_tag_key(final Environment env, String key) {
             return env.osm.hasKey(key);
@@ -392,6 +477,8 @@ public final class ExpressionFactory {
 
         /**
          * Returns the index of node in parent way or member in parent relation.
+         * @param env the environment
+         * @return the index as float. Starts at 1
          */
         public static Float index(final Environment env) {
             if (env.index == null) {
@@ -400,32 +487,70 @@ public final class ExpressionFactory {
             return new Float(env.index + 1);
         }
 
+        /**
+         * Returns the role of current object in parent relation, or role of child if current object is a relation.
+         * @param env the environment
+         * @return role of current object in parent relation, or role of child if current object is a relation
+         * @see Environment#getRole()
+         */
         public static String role(final Environment env) {
             return env.getRole();
         }
 
+        /**
+         * Function associated to the logical "!" operator.
+         * @param b boolean value
+         * @return {@code true} if {@code !b}
+         */
         public static boolean not(boolean b) {
             return !b;
         }
 
+        /**
+         * Function associated to the logical ">=" operator.
+         * @param a first value
+         * @param b second value
+         * @return {@code true} if {@code a >= b}
+         */
         public static boolean greater_equal(float a, float b) {
             return a >= b;
         }
 
+        /**
+         * Function associated to the logical "<=" operator.
+         * @param a first value
+         * @param b second value
+         * @return {@code true} if {@code a <= b}
+         */
         public static boolean less_equal(float a, float b) {
             return a <= b;
         }
 
+        /**
+         * Function associated to the logical ">" operator.
+         * @param a first value
+         * @param b second value
+         * @return {@code true} if {@code a > b}
+         */
         public static boolean greater(float a, float b) {
             return a > b;
         }
 
+        /**
+         * Function associated to the logical "<" operator.
+         * @param a first value
+         * @param b second value
+         * @return {@code true} if {@code a < b}
+         */
         public static boolean less(float a, float b) {
             return a < b;
         }
 
         /**
          * Determines if the objects {@code a} and {@code b} are equal.
+         * @param a First object
+         * @param b Second object
+         * @return {@code true} if objects are equal, {@code false} otherwise
          * @see Object#equals(Object)
          */
         public static boolean equal(Object a, Object b) {
@@ -436,6 +561,10 @@ public final class ExpressionFactory {
 
         /**
          * Determines whether the JOSM search with {@code searchStr} applies to the object.
+         * @param env the environment
+         * @param searchStr the search string
+         * @return {@code true} if the JOSM search with {@code searchStr} applies to the object
+         * @see SearchCompiler
          */
         public static Boolean JOSM_search(final Environment env, String searchStr) {
             Match m;
@@ -450,6 +579,9 @@ public final class ExpressionFactory {
         /**
          * Obtains the JOSM'key {@link org.openstreetmap.josm.data.Preferences} string for key {@code key},
          * and defaults to {@code def} if that is null.
+         * @param key Key in JOSM preference
+         * @param def Default value
+         * @return value for key, or default value if not found
          * @see org.openstreetmap.josm.data.Preferences#get(String, String)
          */
         public static String JOSM_pref(String key, String def) {
@@ -459,6 +591,9 @@ public final class ExpressionFactory {
 
         /**
          * Tests if string {@code target} matches pattern {@code pattern}
+         * @param pattern The regex expression
+         * @param target The character sequence to be matched
+         * @return {@code true} if, and only if, the entire region sequence matches the pattern
          * @see Pattern#matches(String, CharSequence)
          * @since 5699
          */
@@ -468,7 +603,13 @@ public final class ExpressionFactory {
 
         /**
          * Tests if string {@code target} matches pattern {@code pattern}
+         * @param pattern The regex expression
+         * @param target The character sequence to be matched
          * @param flags a string that may contain "i" (case insensitive), "m" (multiline) and "s" ("dot all")
+         * @return {@code true} if, and only if, the entire region sequence matches the pattern
+         * @see Pattern#CASE_INSENSITIVE
+         * @see Pattern#DOTALL
+         * @see Pattern#MULTILINE
          * @since 5699
          */
         public static boolean regexp_test(String pattern, String target, String flags) {
@@ -489,7 +630,13 @@ public final class ExpressionFactory {
          * Tries to match string against pattern regexp and returns a list of capture groups in case of success.
          * The first element (index 0) is the complete match (i.e. string).
          * Further elements correspond to the bracketed parts of the regular expression.
+         * @param pattern The regex expression
+         * @param target The character sequence to be matched
          * @param flags a string that may contain "i" (case insensitive), "m" (multiline) and "s" ("dot all")
+         * @return a list of capture groups if {@link Matcher#matches()}, or {@code null}.
+         * @see Pattern#CASE_INSENSITIVE
+         * @see Pattern#DOTALL
+         * @see Pattern#MULTILINE
          * @since 5701
          */
         public static List<String> regexp_match(String pattern, String target, String flags) {
@@ -503,23 +650,26 @@ public final class ExpressionFactory {
             if (flags.contains("m")) {
                 f |= Pattern.MULTILINE;
             }
-            Matcher m = Pattern.compile(pattern, f).matcher(target);
-            return Utils.getMatches(m);
+            return Utils.getMatches(Pattern.compile(pattern, f).matcher(target));
         }
 
         /**
          * Tries to match string against pattern regexp and returns a list of capture groups in case of success.
          * The first element (index 0) is the complete match (i.e. string).
          * Further elements correspond to the bracketed parts of the regular expression.
+         * @param pattern The regex expression
+         * @param target The character sequence to be matched
+         * @return a list of capture groups if {@link Matcher#matches()}, or {@code null}.
          * @since 5701
          */
         public static List<String> regexp_match(String pattern, String target) {
-            Matcher m = Pattern.compile(pattern).matcher(target);
-            return Utils.getMatches(m);
+            return Utils.getMatches(Pattern.compile(pattern).matcher(target));
         }
 
         /**
          * Returns the OSM id of the current object.
+         * @param env the environment
+         * @return the OSM id of the current object
          * @see OsmPrimitive#getUniqueId()
          */
         public static long osm_id(final Environment env) {
@@ -528,7 +678,9 @@ public final class ExpressionFactory {
 
         /**
          * Translates some text for the current locale. The first argument is the text to translate,
-         * and the subsequent arguments are parameters for the string indicated by {@code {0}}, {@code {1}}, …
+         * and the subsequent arguments are parameters for the string indicated by <code>{0}</code>, <code>{1}</code>, …
+         * @param args arguments
+         * @return the translated string
          */
         @NullableArguments
         public static String tr(String... args) {
@@ -563,7 +715,11 @@ public final class ExpressionFactory {
 
         /**
          * Replaces in {@code s} every {@code} target} substring by {@code replacement}.
-         * * @see String#replace(CharSequence, CharSequence)
+         * @param s The source string
+         * @param target The sequence of char values to be replaced
+         * @param replacement The replacement sequence of char values
+         * @return The resulting string
+         * @see String#replace(CharSequence, CharSequence)
          */
         public static String replace(String s, String target, String replacement) {
             return s == null ? null : s.replace(target, replacement);
@@ -721,6 +877,12 @@ public final class ExpressionFactory {
 
         private Expression condition, firstOption, secondOption;
 
+        /**
+         * Constructs a new {@code CondOperator}.
+         * @param condition condition
+         * @param firstOption first option
+         * @param secondOption second option
+         */
         public CondOperator(Expression condition, Expression firstOption, Expression secondOption) {
             this.condition = condition;
             this.firstOption = firstOption;
@@ -737,10 +899,17 @@ public final class ExpressionFactory {
         }
     }
 
+    /**
+     * "And" logical operator.
+     */
     public static class AndOperator implements Expression {
 
         private List<Expression> args;
 
+        /**
+         * Constructs a new {@code AndOperator}.
+         * @param args arguments
+         */
         public AndOperator(List<Expression> args) {
             this.args = args;
         }
@@ -757,10 +926,17 @@ public final class ExpressionFactory {
         }
     }
 
+    /**
+     * "Or" logical operator.
+     */
     public static class OrOperator implements Expression {
 
         private List<Expression> args;
 
+        /**
+         * Constructs a new {@code OrOperator}.
+         * @param args arguments
+         */
         public OrOperator(List<Expression> args) {
             this.args = args;
         }
@@ -778,11 +954,9 @@ public final class ExpressionFactory {
     }
 
     /**
-     * Function to calculate the length of a string or list in a MapCSS eval
-     * expression.
+     * Function to calculate the length of a string or list in a MapCSS eval expression.
      *
-     * Separate implementation to support overloading for different
-     * argument types.
+     * Separate implementation to support overloading for different argument types.
      *
      * The use for calculating the length of a list is deprecated, use
      * {@link Functions#count(java.util.List)} instead (see #10061).
@@ -791,6 +965,10 @@ public final class ExpressionFactory {
 
         private Expression arg;
 
+        /**
+         * Constructs a new {@code LengthFunction}.
+         * @param args arguments
+         */
         public LengthFunction(Expression args) {
             this.arg = args;
         }
@@ -815,6 +993,11 @@ public final class ExpressionFactory {
         private final List<Expression> args;
         private final boolean computeMax;
 
+        /**
+         * Constructs a new {@code MinMaxFunction}.
+         * @param args arguments
+         * @param computeMax if {@code true}, compute max. If {@code false}, compute min
+         */
         public MinMaxFunction(final List<Expression> args, final boolean computeMax) {
             this.args = args;
             this.computeMax = computeMax;
@@ -859,6 +1042,9 @@ public final class ExpressionFactory {
         private final Class<?>[] expectedParameterTypes;
         private final boolean needsEnvironment;
 
+        /**
+         * Constructs a new {@code ParameterFunction}.
+         */
         public ParameterFunction(Method m, List<Expression> args, boolean needsEnvironment) {
             this.m = m;
             this.nullable = m.getAnnotation(NullableArguments.class) != null;
@@ -913,7 +1099,6 @@ public final class ExpressionFactory {
             b.append(')');
             return b.toString();
         }
-
     }
 
     /**
@@ -931,6 +1116,9 @@ public final class ExpressionFactory {
         private final Class<?>[] expectedParameterTypes;
         private final Class<?> arrayComponentType;
 
+        /**
+         * Constructs a new {@code ArrayFunction}.
+         */
         public ArrayFunction(Method m, List<Expression> args) {
             this.m = m;
             this.nullable = m.getAnnotation(NullableArguments.class) != null;
@@ -963,6 +1151,7 @@ public final class ExpressionFactory {
             }
             return result;
         }
+
         @Override
         public String toString() {
             StringBuilder b = new StringBuilder("ArrayFunction~");
@@ -975,7 +1164,5 @@ public final class ExpressionFactory {
             b.append(')');
             return b.toString();
         }
-
     }
-
 }
