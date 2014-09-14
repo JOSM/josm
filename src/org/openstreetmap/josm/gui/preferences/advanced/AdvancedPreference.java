@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -286,7 +287,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             }
             PrefEntry en = new PrefEntry(e.getKey(), value, def, false);
             // after changes we have nondefault value. Value is changed if is not equal to old value
-            if ( !Preferences.isEqual(old, value) ) {
+            if (!Objects.equals(old, value)) {
                 en.markAsChanged();
             }
             data.add(en);
