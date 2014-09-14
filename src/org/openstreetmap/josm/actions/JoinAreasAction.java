@@ -47,7 +47,8 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * Join Areas (i.e. closed ways and multipolygons)
+ * Join Areas (i.e. closed ways and multipolygons).
+ * @since 2575
  */
 public class JoinAreasAction extends JosmAction {
     // This will be used to commit commands and unite them into one large command sequence at the end
@@ -56,9 +57,8 @@ public class JoinAreasAction extends JosmAction {
     private final List<Relation> addedRelations = new LinkedList<>();
 
     /**
-     * This helper class describes join ares action result.
+     * This helper class describes join areas action result.
      * @author viesturs
-     *
      */
     public static class JoinAreasResult {
 
@@ -393,12 +393,20 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * Gets called whenever the shortcut is pressed or the menu entry is selected
-     * Checks whether the selected objects are suitable to join and joins them if so
+     * Gets called whenever the shortcut is pressed or the menu entry is selected.
+     * Checks whether the selected objects are suitable to join and joins them if so.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        LinkedList<Way> ways = new LinkedList<>(Main.main.getCurrentDataSet().getSelectedWays());
+        join(Main.main.getCurrentDataSet().getSelectedWays());
+    }
+
+    /**
+     * Joins the given ways.
+     * @param ways Ways to join
+     * @since 7534
+     */
+    public void join(Collection<Way> ways) {
         addedRelations.clear();
 
         if (ways.isEmpty()) {
@@ -470,16 +478,17 @@ public class JoinAreasAction extends JosmAction {
                     allWays.addAll(pol.innerWays);
                 }
                 DataSet ds = Main.main.getCurrentDataSet();
-                ds.setSelected(allWays);
-                Main.map.mapView.repaint();
+                if (ds != null) {
+                    ds.setSelected(allWays);
+                    Main.map.mapView.repaint();
+                }
             } else {
                 new Notification(
                         tr("No intersection found. Nothing was changed."))
                         .setIcon(JOptionPane.INFORMATION_MESSAGE)
                         .show();
             }
-        }
-        catch (UserCancelException exception) {
+        } catch (UserCancelException exception) {
             //revert changes
             //FIXME: this is dirty hack
             makeCommitsOneAction(tr("Reverting changes"));
@@ -914,7 +923,7 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * This is a method splits way into smaller parts, using the prepared nodes list as split points.
-     * Uses  SplitWayAction.splitWay for the heavy lifting.
+     * Uses {@link SplitWayAction#splitWay} for the heavy lifting.
      * @return list of split ways (or original ways if no splitting is done).
      */
     private List<Way> splitWayOnNodes(Way way, Set<Node> nodes) {
@@ -923,7 +932,7 @@ public class JoinAreasAction extends JosmAction {
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
 
         if (chunks.size() > 1) {
-            SplitWayResult split = SplitWayAction.splitWay(Main.main.getEditLayer(), way, chunks, Collections.<OsmPrimitive>emptyList());
+            SplitWayResult split = SplitWayAction.splitWay(getEditLayer(), way, chunks, Collections.<OsmPrimitive>emptyList());
 
             //execute the command, we need the results
             cmds.add(split.getCommand());
@@ -1253,7 +1262,7 @@ public class JoinAreasAction extends JosmAction {
      * @param selectedWays the selected ways
      * @return list of polygons, or null if too complex relation encountered.
      */
-    private List<Multipolygon> collectMultipolygons(List<Way> selectedWays) {
+    private List<Multipolygon> collectMultipolygons(Collection<Way> selectedWays) {
 
         List<Multipolygon> result = new ArrayList<>();
 
@@ -1379,7 +1388,7 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * Removes a given OsmPrimitive from all relations
+     * Removes a given OsmPrimitive from all relations.
      * @param osm Element to remove from all relations
      * @return List of relations with roles the primitives was part of
      */

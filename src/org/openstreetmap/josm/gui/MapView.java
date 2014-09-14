@@ -922,9 +922,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     protected void refreshTitle() {
-        boolean dirty = editLayer != null && (editLayer.requiresSaveToFile() || (editLayer.requiresUploadToServer() && !editLayer.isUploadDiscouraged()));
-        ((JFrame) Main.parent).setTitle((dirty ? "* " : "") + tr("Java OpenStreetMap Editor"));
-        ((JFrame) Main.parent).getRootPane().putClientProperty("Window.documentModified", dirty);
+        if (Main.parent != null) {
+            boolean dirty = editLayer != null &&
+                    (editLayer.requiresSaveToFile() || (editLayer.requiresUploadToServer() && !editLayer.isUploadDiscouraged()));
+            ((JFrame) Main.parent).setTitle((dirty ? "* " : "") + tr("Java OpenStreetMap Editor"));
+            ((JFrame) Main.parent).getRootPane().putClientProperty("Window.documentModified", dirty);
+        }
     }
 
     @Override
