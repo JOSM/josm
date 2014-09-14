@@ -83,7 +83,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         if (getValue("toolbar") == null) {
             putValue("toolbar", toolbarId);
         }
-        if (registerInToolbar) {
+        if (registerInToolbar && Main.toolbar != null) {
             Main.toolbar.register(this);
         }
         if (installAdapters) {
@@ -204,7 +204,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @return the current edit layer. null, if no edit layer exists
      */
     protected static OsmDataLayer getEditLayer() {
-        return Main.main.getEditLayer();
+        return Main.main != null ? Main.main.getEditLayer() : null;
     }
 
     /**
@@ -213,7 +213,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @return the current dataset. null, if no current dataset exists
      */
     protected static DataSet getCurrentDataSet() {
-        return Main.main.getCurrentDataSet();
+        return Main.main != null ? Main.main.getCurrentDataSet() : null;
     }
 
     protected void installAdapters() {
