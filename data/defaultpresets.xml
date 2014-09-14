@@ -30,6 +30,8 @@ preset_link: a link to an other preset
 
 label: simple static text label
   text: the text to display
+  icon: location of icon to display (optional)
+  icon_size: maximal size of icon (optional). If no value is given, default is 16px
 
 space: empty line
 

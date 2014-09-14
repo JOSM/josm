@@ -219,7 +219,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(pp, GBC.eol());
         }
         if (preset_name_label) {
-            TaggingPresetItems.Label.addLabel(p, getName());
+            TaggingPresetItems.Label.addLabel(p, getIcon(), getName());
         }
 
         boolean presetInitiallyMatches = !selected.isEmpty() && Utils.forAll(selected, this);
@@ -373,7 +373,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 }
             }
 
-            answer = new PresetDialog(p, title, (ImageIcon) getValue(Action.SMALL_ICON),
+            answer = new PresetDialog(p, title, preset_name_label ? null : (ImageIcon) getValue(Action.SMALL_ICON),
                     sel.isEmpty(), showNewRelation).getValue();
         }
         if (!showNewRelation && answer == 2)

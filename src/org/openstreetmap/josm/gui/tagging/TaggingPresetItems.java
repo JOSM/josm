@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -90,7 +91,9 @@ public final class TaggingPresetItems {
         public String value_context;
         public String display_value;
         public String short_description;
+        /** The location of icon file to display */
         public String icon;
+        /** The size of displayed icon. If not set, default is size from icon file */
         public String icon_size;
         /** The localized version of {@link #display_value}. */
         public String locale_display_value;
@@ -127,17 +130,6 @@ public final class TaggingPresetItems {
          */
         public ImageIcon getIcon() {
             return icon == null ? null : loadImageIcon(icon, zipIcons, parseInteger(icon_size));
-        }
-
-        private Integer parseInteger(String str) {
-            if (str == null || str.isEmpty())
-                return null;
-            try {
-                return Integer.parseInt(str);
-            } catch (Exception e) {
-                //
-            }
-            return null;
         }
 
         /**
@@ -356,20 +348,35 @@ public final class TaggingPresetItems {
      */
     public static class Label extends TaggingPresetTextItem {
 
+        /** The location of icon file to display (optional) */
+        public String icon;
+        /** The size of displayed icon. If not set, default is 16px */
+        public String icon_size;
+
         @Override
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
             initializeLocaleText(null);
-            addLabel(p, locale_text);
+            addLabel(p, getIcon(), locale_text);
             return true;
         }
 
         /**
          * Adds a new {@code JLabel} to the given panel.
          * @param p The panel
+         * @param icon the icon (optional, can be null)
          * @param label The text label
          */
-        public static void addLabel(JPanel p, String label) {
-            p.add(new JLabel(label), GBC.eol().fill(GBC.HORIZONTAL));
+        public static void addLabel(JPanel p, Icon icon, String label) {
+            p.add(new JLabel(label, icon, JLabel.LEADING), GBC.eol().fill(GBC.HORIZONTAL));
+        }
+
+        /**
+         * Returns the label icon, if any.
+         * @return the label icon, or {@code null}
+         */
+        public ImageIcon getIcon() {
+            Integer size = parseInteger(icon_size);
+            return icon == null ? null : loadImageIcon(icon, TaggingPresetReader.getZipIcons(), size != null ? size : 16);
         }
     }
 
@@ -1505,5 +1512,18 @@ public final class TaggingPresetItems {
             imgProv.setMaxSize(maxSize);
         }
         return imgProv.get();
+    }
+
+    protected static Integer parseInteger(String str) {
+        if (str == null || str.isEmpty())
+            return null;
+        try {
+            return Integer.parseInt(str);
+        } catch (Exception e) {
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
+        }
+        return null;
     }
 }

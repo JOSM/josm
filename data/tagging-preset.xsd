@@ -154,6 +154,8 @@
 	<complexType name="label">
 		<attribute name="text" type="string" use="required" />
 		<attribute name="text_context" type="string" />
+		<attribute name="icon" type="string" />
+		<attribute name="icon_size" type="integer" />
 
 		<attribute name="name" use="prohibited" />
 		<anyAttribute processContents="skip" />
