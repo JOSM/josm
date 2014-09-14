@@ -77,6 +77,7 @@ import org.xml.sax.SAXException;
  * put(key, "") means, the property is removed.
  *
  * @author imi
+ * @since 74
  */
 public class Preferences {
     /**
@@ -1659,11 +1660,6 @@ public class Preferences {
         }
 
         String[] obsolete = {
-                "downloadAlong.downloadAlongTrack.distance",   // 07/2013 - can be removed mid-2014. Replaced by downloadAlongWay.distance
-                "downloadAlong.downloadAlongTrack.area",       // 07/2013 - can be removed mid-2014. Replaced by downloadAlongWay.area
-                "gpxLayer.downloadAlongTrack.distance",        // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.distance
-                "gpxLayer.downloadAlongTrack.area",            // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.area
-                "gpxLayer.downloadAlongTrack.near",            // 07/2013 - can be removed mid-2014. Replaced by downloadAlongTrack.near
                 "validator.tests",                             // 01/2014 - can be removed end-2014. Replaced by validator.skip
                 "validator.testsBeforeUpload",                 // 01/2014 - can be removed end-2014. Replaced by validator.skipBeforeUpload
                 "validator.TagChecker.sources",                // 01/2014 - can be removed end-2014. Replaced by validator.TagChecker.source
@@ -1678,11 +1674,6 @@ public class Preferences {
                 Main.info(tr("Preference setting {0} has been removed since it is no longer used.", key));
             }
         }
-    }
-
-    public static boolean isEqual(Setting<?> a, Setting<?> b) {
-        if (a == null) return b == null;
-        return a.equals(b);
     }
 
     /**
