@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
 
@@ -51,9 +53,17 @@ public class JOSMFixture {
     }
 
     /**
-     * Initializes the test fixture.
+     * Initializes the test fixture, without GUI.
      */
     public void init() {
+        init(false);
+    }
+
+    /**
+     * Initializes the test fixture, with or without GUI.
+     * @param createGui if {@code true} creates main GUI components
+     */
+    public void init(boolean createGui) {
 
         // check josm.home
         //
@@ -87,6 +97,18 @@ public class JOSMFixture {
         if (url.startsWith("http://www.openstreetmap.org") || url.startsWith("http://api.openstreetmap.org")
             || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org")) {
             fail(MessageFormat.format("configured server url ''{0}'' seems to be a productive url, aborting.", url));
+        }
+
+        if (createGui) {
+            if (Main.toolbar == null) {
+                Main.toolbar = new ToolbarPreferences();
+            }
+            if (Main.main == null) {
+                new MainApplication();
+            }
+            if (Main.map == null) {
+                Main.main.createMapFrame(null, null);
+            }
         }
     }
 }

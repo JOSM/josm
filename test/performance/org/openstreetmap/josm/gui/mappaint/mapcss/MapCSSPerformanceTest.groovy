@@ -8,15 +8,12 @@ import java.awt.image.BufferedImage
 
 import org.junit.*
 import org.openstreetmap.josm.JOSMFixture
-import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Bounds
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer
-import org.openstreetmap.josm.gui.MainApplication
 import org.openstreetmap.josm.gui.NavigatableComponent
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles
 import org.openstreetmap.josm.gui.preferences.SourceEntry
-import org.openstreetmap.josm.gui.preferences.ToolbarPreferences
 import org.openstreetmap.josm.io.Compression
 import org.openstreetmap.josm.io.OsmReader
 
@@ -50,9 +47,7 @@ class MapCSSPerformanceTest {
 
     @BeforeClass
     public static void createJOSMFixture() {
-        JOSMFixture.createPerformanceTestFixture().init();
-        Main.toolbar = new ToolbarPreferences();
-        new MainApplication();
+        JOSMFixture.createPerformanceTestFixture().init(true);
     }
 
     def timed(Closure c){

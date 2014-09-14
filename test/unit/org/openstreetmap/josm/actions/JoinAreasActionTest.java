@@ -11,9 +11,7 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 
@@ -27,10 +25,7 @@ public class JoinAreasActionTest {
      */
     @BeforeClass
     public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-        Main.toolbar = new ToolbarPreferences();
-        new MainApplication();
-        Main.main.createMapFrame(null, null);
+        JOSMFixture.createUnitTestFixture().init(true);
     }
 
     /**
