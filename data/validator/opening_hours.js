@@ -4196,7 +4196,7 @@
 					} else {
 
 						selectors.week.push(function(week_from, week_to, is_range, period) { return function(date) {
-							var ourweek = date.getWeekNumber();
+							var ourweek = getWeekNumber(date);
 
 							// console.log("week_from: %s, week_to: %s", week_from, week_to);
 							// console.log("ourweek: %s, date: %s", ourweek, date);
@@ -4241,12 +4241,34 @@
 		}
 
 		// http://stackoverflow.com/a/6117889
-		Date.prototype.getWeekNumber = function(){
-			var d = new Date(+this);
-			d.setHours(0,0,0);
-			d.setDate(d.getDate()+4-(d.getDay()||7));
-			return Math.ceil((((d-new Date(d.getFullYear(),0,1))/8.64e7)+1)/7);
-		};
+		/* For a given date, get the ISO week number
+		 *
+		 * Based on information at:
+		 *
+		 *    http://www.merlyn.demon.co.uk/weekcalc.htm#WNR
+		 *
+		 * Algorithm is to find nearest thursday, it's year
+		 * is the year of the week number. Then get weeks
+		 * between that date and the first day of that year.
+		 *
+		 * Note that dates in one year can be weeks of previous
+		 * or next year, overlap is up to 3 days.
+		 *
+		 * e.g. 2014/12/29 is Monday in week  1 of 2015
+		 *      2012/1/1   is Sunday in week 52 of 2011
+		 */
+		function getWeekNumber(d) {
+		    // Copy date so don't modify original
+		    d = new Date(+d);
+		    d.setHours(0,0,0);
+		    // Set to nearest Thursday: current date + 4 - current day number
+		    // Make Sunday's day number 7
+		    d.setDate(d.getDate() + 4 - (d.getDay()||7));
+		    // Get first day of year
+		    var yearStart = new Date(d.getFullYear(),0,1);
+		    // Calculate full weeks to nearest Thursday
+		    return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7)
+		}
 		// http://stackoverflow.com/a/16591175
 		function getDateOfISOWeek(w, y) {
 			var simple = new Date(y, 0, 1 + (w - 1) * 7);
