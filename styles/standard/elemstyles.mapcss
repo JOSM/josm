@@ -1017,7 +1017,13 @@ way[power=minor_line] {
     width: 1;
     color: power#eeeeee;
 }
+way[power=cable] {
+    width: 1;
+    color: power#eeeeee;
+    dashes: 9,9;
+}
 node[power=line],
+node[power=cable],
 node[power=minor_line] {
     icon-image: "misc/deprecated.png";
     set icon_z17;
