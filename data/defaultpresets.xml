@@ -1232,7 +1232,7 @@ Note that for a match, at least one positive and no negative is required.
             <check key="bicycle" text="Cross by bicycle" />
             <check key="horse" text="Cross on horseback" />
         </item> <!-- Pedestrian Crossing -->
-        <item name="Traffic Calming" icon="presets/chicane.png" type="node,way" preset_name_label="true">
+        <item name="Traffic Calming" icon="styles/standard/vehicle/traffic_calming_blue.png" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"

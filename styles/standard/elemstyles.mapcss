@@ -767,7 +767,7 @@ node[highway=platform] {
 /************************/
 
 node[traffic_calming] {
-    icon-image: "vehicle/traffic_calming.png";
+    icon-image: "vehicle/traffic_calming_blue.png";
     set icon_z17;
     text: auto;
 }
