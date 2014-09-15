@@ -12,8 +12,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 /**
- * Tools to work with Swing InputMap
- *
+ * Tools to work with Swing InputMap.
+ * @since 5200
  */
 public final class InputMapUtils {
 
@@ -61,19 +61,30 @@ public final class InputMapUtils {
     }
 
     /**
-     * Enable activating button on Enter (which is replaced with spacebar for certain Look-And-Feels)
+     * Enable activating button on Enter (which is replaced with spacebar for certain Look-And-Feels).
+     * @param b Button
      */
     public static void enableEnter(JButton b) {
          b.setFocusable(true);
          b.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
-         b.getActionMap().put("enter",b.getAction());
+         b.getActionMap().put("enter", b.getAction());
     }
 
+    /**
+     * Add an action activated with Enter key on a component.
+     * @param c The Swing component
+     * @param a action activated with Enter key
+     */
     public static void addEnterAction(JComponent c, Action a) {
          c.getActionMap().put("enter", a);
          c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
     }
 
+    /**
+     * Add an action activated with Spacebar key on a component.
+     * @param c The Swing component
+     * @param a action activated with Spacebar key
+     */
     public static void addSpacebarAction(JComponent c, Action a) {
          c.getActionMap().put("spacebar", a);
          c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "spacebar");

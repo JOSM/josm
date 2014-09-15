@@ -18,6 +18,7 @@ import javax.swing.JMenu;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * Global shortcut class.
@@ -26,12 +27,11 @@ import org.openstreetmap.josm.Main;
  *       shortcut objects from, manages shortcuts and shortcut collisions, and
  *       finally manages loading and saving shortcuts to/from the preferences.
  *
- * Action authors: You only need the {@link #registerShortcut} factory. Ignore everything
- *                 else.
+ * Action authors: You only need the {@link #registerShortcut} factory. Ignore everything else.
  *
  * All: Use only public methods that are also marked to be used. The others are
  *      public so the shortcut preferences can use them.
- *
+ * @since 1084
  */
 public final class Shortcut {
     private String shortText;        // the unique ID of the shortcut
@@ -261,16 +261,26 @@ public final class Shortcut {
         return l;
     }
 
+    /** None group: used with KeyEvent.CHAR_UNDEFINED if no shortcut is defined */
     public static final int NONE = 5000;
     public static final int MNEMONIC = 5001;
+    /** Reserved group: for system shortcuts only */
     public static final int RESERVED = 5002;
+    /** Direct group: no modifier */
     public static final int DIRECT = 5003;
+    /** Alt group */
     public static final int ALT = 5004;
+    /** Shift group */
     public static final int SHIFT = 5005;
+    /** Command group. Matches CTRL modifier on Windows/Linux but META modifier on OS X */
     public static final int CTRL = 5006;
+    /** Alt-Shift group */
     public static final int ALT_SHIFT = 5007;
+    /** Alt-Command group. Matches ALT-CTRL modifier on Windows/Linux but ALT-META modifier on OS X */
     public static final int ALT_CTRL = 5008;
+    /** Command-Shift group. Matches CTRL-SHIFT modifier on Windows/Linux but META-SHIFT modifier on OS X */
     public static final int CTRL_SHIFT = 5009;
+    /** Alt-Command-Shift group. Matches ALT-CTRL-SHIFT modifier on Windows/Linux but ALT-META-SHIFT modifier on OS X */
     public static final int ALT_CTRL_SHIFT = 5010;
 
     /* for reassignment */
@@ -284,16 +294,17 @@ public final class Shortcut {
     private static void doInit() {
         if (initdone) return;
         initdone = true;
+        int commandDownMask = GuiHelper.getMenuShortcutKeyMaskEx();
         groups.put(NONE, -1);
         groups.put(MNEMONIC, KeyEvent.ALT_DOWN_MASK);
         groups.put(DIRECT, 0);
         groups.put(ALT, KeyEvent.ALT_DOWN_MASK);
         groups.put(SHIFT, KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(CTRL, KeyEvent.CTRL_DOWN_MASK);
+        groups.put(CTRL, commandDownMask);
         groups.put(ALT_SHIFT, KeyEvent.ALT_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(ALT_CTRL, KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK);
-        groups.put(CTRL_SHIFT, KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK);
-        groups.put(ALT_CTRL_SHIFT, KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_CTRL, KeyEvent.ALT_DOWN_MASK|commandDownMask);
+        groups.put(CTRL_SHIFT, commandDownMask|KeyEvent.SHIFT_DOWN_MASK);
+        groups.put(ALT_CTRL_SHIFT, KeyEvent.ALT_DOWN_MASK|commandDownMask|KeyEvent.SHIFT_DOWN_MASK);
 
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();

@@ -79,7 +79,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
- * Class that helps PropertiesDialog add and edit tag values
+ * Class that helps PropertiesDialog add and edit tag values.
+ * @since 5633
  */
 class TagEditHelper {
     private final DefaultTableModel tagData;
@@ -138,7 +139,7 @@ class TagEditHelper {
     }
 
     /**
-    * Edit the value in the tags table row
+    * Edit the value in the tags table row.
     * @param row The row of the table from which the value is edited.
     * @param focusOnKey Determines if the initial focus should be set on key instead of value
     * @since 5653
@@ -186,7 +187,7 @@ class TagEditHelper {
     }
 
     /**
-     * Load recently used tags from preferences if needed
+     * Load recently used tags from preferences if needed.
      */
     public void loadTagsIfNeeded() {
         if (PROPERTY_REMEMBER_TAGS.get() && recentTags.isEmpty()) {
@@ -203,7 +204,7 @@ class TagEditHelper {
     }
 
     /**
-     * Store recently used tags in preferences if needed
+     * Store recently used tags in preferences if needed.
      */
     public void saveTagsIfNeeded() {
         if (PROPERTY_REMEMBER_TAGS.get() && !recentTags.isEmpty()) {
@@ -257,24 +258,24 @@ class TagEditHelper {
 
         ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
             final DefaultListCellRenderer def = new DefaultListCellRenderer();
-                @Override
-                public Component getListCellRendererComponent(JList<? extends AutoCompletionListItem> list,
-                        AutoCompletionListItem value, int index, boolean isSelected,  boolean cellHasFocus){
-                    Component c = def.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                    if (c instanceof JLabel) {
-                        String str = value.getValue();
-                        if (valueCount.containsKey(objKey)) {
-                            Map<String, Integer> m = valueCount.get(objKey);
-                            if (m.containsKey(str)) {
-                                str = tr("{0} ({1})", str, m.get(str));
-                                c.setFont(c.getFont().deriveFont(Font.ITALIC + Font.BOLD));
-                            }
+            @Override
+            public Component getListCellRendererComponent(JList<? extends AutoCompletionListItem> list,
+                    AutoCompletionListItem value, int index, boolean isSelected,  boolean cellHasFocus){
+                Component c = def.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (c instanceof JLabel) {
+                    String str = value.getValue();
+                    if (valueCount.containsKey(objKey)) {
+                        Map<String, Integer> m = valueCount.get(objKey);
+                        if (m.containsKey(str)) {
+                            str = tr("{0} ({1})", str, m.get(str));
+                            c.setFont(c.getFont().deriveFont(Font.ITALIC + Font.BOLD));
                         }
-                        ((JLabel) c).setText(str);
                     }
-                    return c;
+                    ((JLabel) c).setText(str);
                 }
-            };
+                return c;
+            }
+        };
 
         private EditTagDialog(String key, int row, Map<String, Integer> map, final boolean initialFocusOnKey) {
             super(Main.parent, trn("Change value?", "Change values?", map.size()), new String[] {tr("OK"),tr("Cancel")});
@@ -462,7 +463,7 @@ class TagEditHelper {
         }
 
         private void selectACComboBoxSavingUnixBuffer(AutoCompletingComboBox cb) {
-            // select compbobox with saving unix system selection (middle mouse paste)
+            // select combobox with saving unix system selection (middle mouse paste)
             Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
             if(sysSel != null) {
                 Transferable old = sysSel.getContents(null);
@@ -492,11 +493,11 @@ class TagEditHelper {
         */
         protected FocusAdapter addFocusAdapter(final AutoCompletionManager autocomplete, final Comparator<AutoCompletionListItem> comparator) {
            // get the combo box' editor component
-           JTextComponent editor = (JTextComponent)values.getEditor()
-                   .getEditorComponent();
+           JTextComponent editor = (JTextComponent)values.getEditor().getEditorComponent();
            // Refresh the values model when focus is gained
            FocusAdapter focus = new FocusAdapter() {
-               @Override public void focusGained(FocusEvent e) {
+               @Override
+               public void focusGained(FocusEvent e) {
                    String key = keys.getEditor().getItem().toString();
 
                    List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
@@ -664,8 +665,7 @@ class TagEditHelper {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         keys.setSelectedItem(t.getKey());
-                        // Update list of values (fix #7951)
-                        // fix #8298 - update list of values before setting value (?)
+                        // fix #7951, #8298 - update list of values before setting value (?)
                         focus.focusGained(null);
                         values.setSelectedItem(t.getValue());
                         selectValuesCombobox();
