@@ -18,6 +18,7 @@ import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.FilteredImageSource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -328,5 +329,20 @@ public final class GuiHelper {
      */
     public static JScrollPane embedInVerticalScrollPane(Component panel) {
         return new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    }
+
+    /**
+     * Returns extended modifier key used as the appropriate accelerator key for menu shortcuts.
+     * It is advised everywhere to use {@link Toolkit#getMenuShortcutKeyMask()} to get the cross-platform modifier, but:
+     * <ul>
+     * <li>it returns KeyEvent.CTRL_MASK instead of KeyEvent.CTRL_DOWN_MASK. We used the extended
+     *    modifier for years, and Oracle recommends to use it instead, so it's best to keep it</li>
+     * <li>the method throws a HeadlessException ! So we would need to handle it for unit tests anyway</li>
+     * </ul>
+     * @return extended modifier key used as the appropriate accelerator key for menu shortcuts
+     * @since 7539
+     */
+    public static int getMenuShortcutKeyMaskEx() {
+        return Main.isPlatformOsx() ? KeyEvent.META_DOWN_MASK : KeyEvent.CTRL_DOWN_MASK;
     }
 }

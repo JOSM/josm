@@ -38,6 +38,8 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     private final ArrayList<ModifierListener> modifierListeners = new ArrayList<>();
     private int previousModifiers;
 
+    private boolean enabled = true;
+
     /**
      * Adds an object that wants to receive key press and release events.
      * @param l listener to add
@@ -83,7 +85,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 timer.stop();
-                if (set.remove(releaseEvent.getKeyCode())) {
+                if (set.remove(releaseEvent.getKeyCode()) && enabled) {
                     synchronized (AdvancedKeyPressDetector.this) {
                         for (KeyPressReleaseListener q: keyListeners) {
                             q.doKeyReleased(releaseEvent);
@@ -120,7 +122,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         if (e.getID() == KeyEvent.KEY_PRESSED) {
             if (timer.isRunning()) {
                 timer.stop();
-            } else if (set.add((e.getKeyCode()))) {
+            } else if (set.add((e.getKeyCode())) && enabled) {
                 synchronized (this) {
                     for (KeyPressReleaseListener q: keyListeners) {
                         q.doKeyPressed(e);
@@ -130,7 +132,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         } else if (e.getID() == KeyEvent.KEY_RELEASED) {
             if (timer.isRunning()) {
                 timer.stop();
-                if (set.remove(e.getKeyCode())) {
+                if (set.remove(e.getKeyCode()) && enabled) {
                     synchronized (this) {
                         for (KeyPressReleaseListener q: keyListeners) {
                             q.doKeyReleased(e);
@@ -176,5 +178,15 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
      */
     public boolean isKeyPressed(int keyCode) {
         return set.contains(keyCode);
+    }
+
+    /**
+     * Sets the enabled state of the key detector. We need to disable it when text fields that disable
+     * shortcuts gain focus.
+     * @param enabled if {@code true}, enables this key detector. If {@code false}, disables it
+     * @since 7539
+     */
+    public final void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

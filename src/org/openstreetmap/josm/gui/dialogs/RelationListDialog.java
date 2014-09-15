@@ -116,6 +116,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     HighlightHelper highlightHelper = new HighlightHelper();
     private boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
+
     /**
      * Constructs <code>RelationListDialog</code>
      */
@@ -196,7 +197,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
     }
 
-    @Override public void showNotify() {
+    @Override
+    public void showNotify() {
         MapView.addLayerChangeListener(newAction);
         newAction.updateEnabledState();
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
@@ -204,7 +206,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         dataChanged(null);
     }
 
-    @Override public void hideNotify() {
+    @Override
+    public void hideNotify() {
         MapView.removeLayerChangeListener(newAction);
         DatasetEventManager.getInstance().removeDatasetListener(this);
         DataSet.removeSelectionListener(addSelectionToRelations);
@@ -322,7 +325,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             EditRelationAction.launchEditor(getSelected());
         }
 
-        @Override public void mouseClicked(MouseEvent e) {
+        @Override
+        public void mouseClicked(MouseEvent e) {
             if (!Main.main.hasEditLayer()) return;
             if (isDoubleClick(e)) {
                 if (e.isControlDown()) {

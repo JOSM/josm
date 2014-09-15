@@ -17,9 +17,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
-
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -68,6 +68,7 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
         public DeleteTagMarker(int num) {
             this.num = num;
         }
+        @Override
         public String toString() {
             return tr("<delete from {0} objects>", num);
         }
@@ -328,9 +329,11 @@ public class AddTagsDialog extends ExtendedDialog implements SelectionChangedLis
     }
 
     /**
-     * Ask user and add the tags he confirm
+     * Ask user and add the tags he confirm.
      * @param keyValue is a table or {{tag1,val1},{tag2,val2},...}
      * @param sender is a string for skipping confirmations. Use epmty string for always confirmed adding.
+     * @param primitives OSM objects that will be modified
+     * @since 7521
      */
     public static void addTags(String[][] keyValue, String sender, Collection<? extends OsmPrimitive> primitives) {
         if (trustedSenders.contains(sender)) {
