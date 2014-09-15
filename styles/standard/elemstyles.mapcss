@@ -2416,6 +2416,21 @@ node[amenity=shelter] {
     set icon_z17;
     text: auto;
 }
+node[amenity=shelter][shelter_type=public_transport] {
+    icon-image: "accommodation/shelter_public_transport_brown.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=shelter][shelter_type=picnic_shelter] {
+    icon-image: "accommodation/shelter_picnic_brown.png";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=shelter][shelter_type=basic_hut] {
+    icon-image: "accommodation/basic_hut_blue.png";
+    set icon_z17;
+    text: auto;
+}
 node[amenity=hunting_stand] {
     icon-image: "hunting_stand.png";
     set icon_z17;
@@ -2524,7 +2539,12 @@ node[tourism=chalet] {
     text: auto;
 }
 node[tourism=alpine_hut] {
-    icon-image: "accommodation/alpine_hut.png";
+    icon-image: "accommodation/alpine_hut_blue.png";
+    set icon_z17;
+    text: auto;
+}
+node[tourism=wilderness_hut] {
+    icon-image: "accommodation/wilderness_hut_blue.png";
     set icon_z17;
     text: auto;
 }
