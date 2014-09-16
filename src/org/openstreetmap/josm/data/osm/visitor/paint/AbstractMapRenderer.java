@@ -37,6 +37,8 @@ public abstract class AbstractMapRenderer implements Rendering {
     protected Color inactiveColor;
     /** Color Preference for selected objects */
     protected Color selectedColor;
+    /** Color Preference for members of selected relations */
+    protected Color relationSelectedColor;
     /** Color Preference for nodes */
     protected Color nodeColor;
 
@@ -69,10 +71,12 @@ public abstract class AbstractMapRenderer implements Rendering {
     }
 
     /**
-     * Draw the node as small rectangle with the given color.
+     * Draw the node as small square with the given color.
      *
      * @param n  The node to draw.
      * @param color The color of the node.
+     * @param size size in pixels
+     * @param fill determines if the square mmust be filled
      */
     public abstract void drawNode(Node n, Color color, int size, boolean fill);
 
@@ -150,6 +154,7 @@ public abstract class AbstractMapRenderer implements Rendering {
         this.backgroundColor = PaintColors.BACKGROUND.get();
         this.inactiveColor = PaintColors.INACTIVE.get();
         this.selectedColor = PaintColors.SELECTED.get();
+        this.relationSelectedColor = PaintColors.RELATIONSELECTED.get();
         this.nodeColor = PaintColors.NODE.get();
         this.highlightColor = PaintColors.HIGHLIGHT.get();
     }

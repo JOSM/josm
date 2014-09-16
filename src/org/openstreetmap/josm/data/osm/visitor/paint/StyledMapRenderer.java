@@ -284,7 +284,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     private MapPaintSettings paintSettings;
 
-    private Color relationSelectedColor;
     private Color highlightColorTransparent;
 
     private static final int FLAG_NORMAL = 0;
@@ -1355,7 +1354,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     @Override
     public void getColors() {
         super.getColors();
-        this.relationSelectedColor = PaintColors.RELATIONSELECTED.get();
         this.highlightColorTransparent = new Color(highlightColor.getRed(), highlightColor.getGreen(), highlightColor.getBlue(), 100);
         this.backgroundColor = PaintColors.getBackgroundColor();
     }

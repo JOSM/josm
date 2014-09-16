@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 /**
  * A map renderer that paints a simple scheme of every primitive it visits to a
  * previous set graphic environment.
+ * @since 23
  */
 public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor {
 
@@ -152,7 +153,6 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
      * @param virtual <code>true</code> if virtual nodes are used
      * @param bounds display boundaries
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void render(DataSet data, boolean virtual, Bounds bounds) {
         BBox bbox = bounds.toBBox();
@@ -245,8 +245,10 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
 
             if (isInactiveMode || n.isDisabled()) {
                 color = inactiveColor;
-            } else if (ds.isSelected(n)) {
+            } else if (n.isSelected()) {
                 color = selectedColor;
+            } else if (n.isMemberOfSelected()) {
+                color = relationSelectedColor;
             } else if (n.isConnectionNode()) {
                 if (isNodeTagged(n)) {
                     color = taggedConnectionColor;
@@ -299,10 +301,12 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
 
         if (isInactiveMode || w.isDisabled()) {
             wayColor = inactiveColor;
-        } else if(w.isHighlighted()) {
+        } else if (w.isHighlighted()) {
             wayColor = highlightColor;
-        } else if(ds.isSelected(w)) {
+        } else if (w.isSelected()) {
             wayColor = selectedColor;
+        } else if (w.isMemberOfSelected()) {
+            wayColor = relationSelectedColor;
         } else if (!w.isTagged()) {
             wayColor = untaggedWayColor;
         } else {
@@ -354,7 +358,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                     continue;
                 }
 
-                g.drawOval(p.x-3, p.y-3, 6, 6);
+                g.drawOval(p.x-4, p.y-4, 9, 9);
             } else if (m.isWay()) {
                 GeneralPath path = new GeneralPath();
 
