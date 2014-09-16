@@ -125,81 +125,6 @@ node[embankment?!] {
     text: auto;
 }
 
-/*****************************/
-/* building/entrance/address */
-/*****************************/
-
-node["addr:housenumber"],
-node["addr:postcode"] {
-    icon-image: "misc/housenumber.png";
-    set icon_z17;
-    text: auto;
-}
-way["addr:interpolation"=odd] {
-    width: 1;
-    color: address#1C86EE;
-    dashes: 15,4;
-}
-way["addr:interpolation"=even] {
-    width: 1;
-    color: address#1C86EE;
-    dashes: 4,4;
-}
-way["addr:interpolation"=all],
-way["addr:interpolation"=alphabetic] {
-    width: 1;
-    color: address#1C86EE;
-    dashes: 2,2;
-}
-area[building][!building?!] {
-    fill-color: building#cb9999;
-}
-node[building][!building?!] {
-    icon-image: "misc/landmark/building.png";
-    set icon_z17;
-    text: auto;
-}
-node[building=garage] {
-    icon-image: "misc/landuse/garages.png";
-    set icon_z17;
-    text: auto;
-}
-node[building=garages] {
-    icon-image: "misc/landuse/garages.png";
-    set icon_z17;
-    text: auto;
-}
-node[building=entrance] {
-    icon-image: "misc/entrance-yes.png";
-    set icon_z17;
-    text: auto;
-}
-node[entrance=yes] {
-    icon-image: "misc/entrance-yes.png";
-    set icon_z17;
-    text: auto;
-}
-node[entrance=main] {
-    icon-image: "misc/entrance-main.png";
-    set icon_z17;
-    text: auto;
-}
-node[entrance=service] {
-    icon-image: "misc/entrance-service.png";
-    set icon_z17;
-    text: auto;
-}
-node[entrance=exit] {
-    icon-image: "misc/entrance-exit.png";
-    set icon_z17;
-    text: auto;
-}
-node[entrance=emergency] {
-    icon-image: "misc/entrance-emergency.png";
-    set icon_z17;
-    text: auto;
-}
-
 /****************************/
 /* access restrictions tags */
 /****************************/
@@ -315,6 +240,81 @@ node[maxstay],
 node[toll] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
+}
+
+/*****************************/
+/* building/entrance/address */
+/*****************************/
+
+node["addr:housenumber"],
+node["addr:postcode"] {
+    icon-image: "misc/housenumber.png";
+    set icon_z17;
+    text: auto;
+}
+way["addr:interpolation"=odd] {
+    width: 1;
+    color: address#1C86EE;
+    dashes: 15,4;
+}
+way["addr:interpolation"=even] {
+    width: 1;
+    color: address#1C86EE;
+    dashes: 4,4;
+}
+way["addr:interpolation"=all],
+way["addr:interpolation"=alphabetic] {
+    width: 1;
+    color: address#1C86EE;
+    dashes: 2,2;
+}
+area[building][!building?!] {
+    fill-color: building#cb9999;
+}
+node[building][!building?!] {
+    icon-image: "misc/landmark/building.png";
+    set icon_z17;
+    text: auto;
+}
+node[building=garage] {
+    icon-image: "misc/landuse/garages.png";
+    set icon_z17;
+    text: auto;
+}
+node[building=garages] {
+    icon-image: "misc/landuse/garages.png";
+    set icon_z17;
+    text: auto;
+}
+node[building=entrance] {
+    icon-image: "misc/entrance-yes.png";
+    set icon_z17;
+    text: auto;
+}
+node[entrance=yes] {
+    icon-image: "misc/entrance-yes.png";
+    set icon_z17;
+    text: auto;
+}
+node[entrance=main] {
+    icon-image: "misc/entrance-main.png";
+    set icon_z17;
+    text: auto;
+}
+node[entrance=service] {
+    icon-image: "misc/entrance-service.png";
+    set icon_z17;
+    text: auto;
+}
+node[entrance=exit] {
+    icon-image: "misc/entrance-exit.png";
+    set icon_z17;
+    text: auto;
+}
+node[entrance=emergency] {
+    icon-image: "misc/entrance-emergency.png";
+    set icon_z17;
+    text: auto;
 }
 
 /****************/
