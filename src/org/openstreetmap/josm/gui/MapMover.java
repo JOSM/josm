@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -82,7 +83,9 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     private boolean movementInPlace = false;
 
     /**
-     * COnstructs a new {@code MapMover}.
+     * Constructs a new {@code MapMover}.
+     * @param navComp the navigatable component
+     * @param contentPane the content pane
      */
     public MapMover(NavigatableComponent navComp, JPanel contentPane) {
         this.nc = navComp;
@@ -125,14 +128,17 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
     }
 
     /**
-     * If the right (and only the right) mouse button is pressed, move the map
+     * If the right (and only the right) mouse button is pressed, move the map.
      */
     @Override
     public void mouseDragged(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
         int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
-        if ((e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK ||
-                Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask) {
+        boolean stdMovement = (e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK;
+        boolean macMovement = Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask;
+        boolean allowedMode = !Main.map.mapModeSelect.equals(Main.map.mapMode)
+                          || Main.map.mapModeSelect.getMode().equals(SelectAction.Mode.SELECT);
+        if (stdMovement || (macMovement && allowedMode)) {
             if (mousePosMove == null)
                 startMovement(e);
             EastNorth center = nc.getCenter();
