@@ -66,9 +66,21 @@ import org.openstreetmap.josm.tools.Shortcut;
  * feature "selection remove" is disabled on this platform.
  */
 public class SelectAction extends MapMode implements ModifierListener, KeyPressReleaseListener, SelectionEnded {
-    // "select" means the selection rectangle and "move" means either dragging
-    // or select if no mouse movement occurs (i.e. just clicking)
-    enum Mode { move, rotate, scale, select }
+
+    /**
+     * Select action mode.
+     * @since 7543
+     */
+    public enum Mode {
+        /** "MOVE" means either dragging or select if no mouse movement occurs (i.e. just clicking) */
+        MOVE,
+        /** "ROTATE" allows to apply a rotation transformation on the selected object (see {@link RotateCommand}) */
+        ROTATE,
+        /** "SCALE" allows to apply a scaling transformation on the selected object (see {@link ScaleCommand}) */
+        SCALE,
+        /** "SELECT" means the selection rectangle */
+        SELECT
+    }
 
     // contains all possible cases the cursor can be in the SelectAction
     private static enum SelectActionCursor {
@@ -240,7 +252,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         HashSet<OsmPrimitive> newHighlights = new HashSet<>();
 
         virtualManager.clear();
-        if(mode == Mode.move) {
+        if(mode == Mode.MOVE) {
             if (!dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
                 DataSet ds = getCurrentDataSet();
                 if (ds != null && drawTargetHighlight) {
@@ -255,7 +267,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         mv.setNewCursor(getCursor(c), this);
 
         // return early if there can't be any highlights
-        if(!drawTargetHighlight || mode != Mode.move || c.isEmpty())
+        if(!drawTargetHighlight || mode != Mode.MOVE || c.isEmpty())
             return repaintIfRequired(newHighlights);
 
         // CTRL toggles selection, but if while dragging CTRL means merge
@@ -281,7 +293,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     private Cursor getCursor(Collection<OsmPrimitive> nearbyStuff) {
         String c = "rect";
         switch(mode) {
-        case move:
+        case MOVE:
             if(virtualManager.hasVirtualNode()) {
                 c = "virtual_node";
                 break;
@@ -311,13 +323,13 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 c += osm == null || osm.isSelected() ? "_rm" : "_add";
             }
             break;
-        case rotate:
+        case ROTATE:
             c = "rotate";
             break;
-        case scale:
+        case SCALE:
             c = "scale";
             break;
-        case select:
+        case SELECT:
             if (lassoMode) {
                 c = "lasso";
             } else {
@@ -410,8 +422,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         determineMapMode(nearestPrimitive!=null);
 
         switch(mode) {
-        case rotate:
-        case scale:
+        case ROTATE:
+        case SCALE:
             //  if nothing was selected, select primitive under cursor for scaling or rotating
             if (getCurrentDataSet().getSelected().isEmpty()) {
                 getCurrentDataSet().setSelected(asColl(nearestPrimitive));
@@ -422,7 +434,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             // Mode.rotate redraws here
             // Mode.scale redraws here
             break;
-        case move:
+        case MOVE:
             // also include case when some primitive is under cursor and no shift+ctrl / alt+ctrl is pressed
             // so this is not movement, but selection on primitive under cursor
             if (!cancelDrawMode && nearestPrimitive instanceof Way) {
@@ -439,7 +451,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 }
             }, false);
             break;
-        case select:
+        case SELECT:
         default:
             if (!(ctrl && Main.isPlatformOsx())) {
                 // start working with rectangle or lasso
@@ -456,8 +468,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
-        if (Main.isPlatformOsx() && (mode == Mode.rotate || mode == Mode.scale)) {
+        // Mac OSX simulates with ctrl + mouse 1 the second mouse button hence no dragging events get fired.
+        if (Main.isPlatformOsx() && (mode == Mode.ROTATE || mode == Mode.SCALE)) {
             mouseDragged(e);
             return;
         }
@@ -483,7 +495,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             return;
 
         cancelDrawMode = true;
-        if (mode == Mode.select) {
+        if (mode == Mode.SELECT) {
             // Unregisters selectionManager if ctrl has been pressed after mouse click on Mac OS X in order to move the map
             if (ctrl && Main.isPlatformOsx()) {
                 selectionManager.unregister(mv);
@@ -495,16 +507,16 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         }
 
         // do not count anything as a move if it lasts less than 100 milliseconds.
-        if ((mode == Mode.move) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay))
+        if ((mode == Mode.MOVE) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay))
             return;
 
-        if (mode != Mode.rotate && mode != Mode.scale) // button is pressed in rotate mode
+        if (mode != Mode.ROTATE && mode != Mode.SCALE) // button is pressed in rotate mode
         {
             if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
                 return;
         }
 
-        if (mode == Mode.move) {
+        if (mode == Mode.MOVE) {
             // If ctrl is pressed we are in merge mode. Look for a nearby node,
             // highlight it and adjust the cursor accordingly.
             final boolean canMerge = ctrl && !getCurrentDataSet().getSelectedNodes().isEmpty();
@@ -551,7 +563,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         }
 
         mv.repaint();
-        if (mode != Mode.scale) {
+        if (mode != Mode.SCALE) {
             lastMousePos = e.getPoint();
         }
 
@@ -573,7 +585,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         startingDraggingPos = null;
         mouseReleaseTime = System.currentTimeMillis();
 
-        if (mode == Mode.select) {
+        if (mode == Mode.SELECT) {
             selectionManager.unregister(mv);
 
             // Select Draw Tool if no selection has been made
@@ -584,7 +596,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             }
         }
 
-        if (mode == Mode.move && e.getButton() == MouseEvent.BUTTON1) {
+        if (mode == Mode.MOVE && e.getButton() == MouseEvent.BUTTON1) {
             if (!didMouseDrag) {
                 // only built in move mode
                 virtualManager.clear();
@@ -657,13 +669,13 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      */
     private void determineMapMode(boolean hasSelectionNearby) {
         if (shift && ctrl) {
-            mode = Mode.rotate;
+            mode = Mode.ROTATE;
         } else if (alt && ctrl) {
-            mode = Mode.scale;
+            mode = Mode.SCALE;
         } else if (hasSelectionNearby || dragInProgress()) {
-            mode = Mode.move;
+            mode = Mode.MOVE;
         } else {
-            mode = Mode.select;
+            mode = Mode.SELECT;
         }
     }
 
@@ -692,11 +704,11 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
         // for these transformations, having only one node makes no sense - quit silently
-        if (affectedNodes.size() < 2 && (mode == Mode.rotate || mode == Mode.scale)) {
+        if (affectedNodes.size() < 2 && (mode == Mode.ROTATE || mode == Mode.SCALE)) {
             return false;
         }
         Command c = getLastCommand();
-        if (mode == Mode.move) {
+        if (mode == Mode.MOVE) {
             if (startEN == null) return false; // fix #8128
             getCurrentDataSet().beginUpdate();
             if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
@@ -724,19 +736,19 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         } else {
             startEN = currentEN; // drag can continue after scaling/rotation
 
-            if (mode != Mode.rotate && mode != Mode.scale) {
+            if (mode != Mode.ROTATE && mode != Mode.SCALE) {
                 return false;
             }
 
             getCurrentDataSet().beginUpdate();
 
-            if (mode == Mode.rotate) {
+            if (mode == Mode.ROTATE) {
                 if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
                     ((RotateCommand) c).handleEvent(currentEN);
                 } else {
                     Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
                 }
-            } else if (mode == Mode.scale) {
+            } else if (mode == Mode.SCALE) {
                 if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
                     ((ScaleCommand) c).handleEvent(currentEN);
                 } else {
@@ -896,18 +908,27 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         }
     }
 
+    /**
+     * Returns the current select mode.
+     * @return the select mode
+     * @since 7543
+     */
+    public final Mode getMode() {
+        return mode;
+    }
+
     @Override
     public String getModeHelpText() {
         if (mouseDownButton == MouseEvent.BUTTON1 && mouseReleaseTime < mouseDownTime) {
-            if (mode == Mode.select)
+            if (mode == Mode.SELECT)
                 return tr("Release the mouse button to select the objects in the rectangle.");
-            else if (mode == Mode.move && (System.currentTimeMillis() - mouseDownTime >= initialMoveDelay)) {
+            else if (mode == Mode.MOVE && (System.currentTimeMillis() - mouseDownTime >= initialMoveDelay)) {
                 final boolean canMerge = getCurrentDataSet()!=null && !getCurrentDataSet().getSelectedNodes().isEmpty();
                 final String mergeHelp = canMerge ? (" " + tr("Ctrl to merge with nearest node.")) : "";
                 return tr("Release the mouse button to stop moving.") + mergeHelp;
-            } else if (mode == Mode.rotate)
+            } else if (mode == Mode.ROTATE)
                 return tr("Release the mouse button to stop rotating.");
-            else if (mode == Mode.scale)
+            else if (mode == Mode.SCALE)
                 return tr("Release the mouse button to stop scaling.");
         }
         return tr("Move objects by dragging; Shift to add to selection (Ctrl to toggle); Shift-Ctrl to rotate selected; Alt-Ctrl to scale selected; or change selection");
