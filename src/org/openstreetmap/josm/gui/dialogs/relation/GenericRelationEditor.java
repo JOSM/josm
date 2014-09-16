@@ -77,6 +77,7 @@ import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.PresetHandler;
+import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetType;
@@ -737,10 +738,12 @@ public class GenericRelationEditor extends RelationEditor  {
                 JOptionPane.WARNING_MESSAGE);
     }
 
-    public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd) throws IllegalArgumentException {
+    public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd)
+            throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(orig, "orig");
         try {
-            final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(EnumSet.of(TaggingPresetType.RELATION), orig.getKeys(), false);
+            final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(
+                    EnumSet.of(TaggingPresetType.RELATION), orig.getKeys(), false);
             Relation relation = new Relation(orig);
             boolean modified = false;
             for (OsmPrimitive p : primitivesToAdd) {
@@ -1369,7 +1372,10 @@ public class GenericRelationEditor extends RelationEditor  {
         @Override
         public void actionPerformed(ActionEvent e) {
             memberTable.stopHighlighting();
-            if (!memberTableModel.hasSameMembersAs(getRelationSnapshot()) || tagEditorPanel.getModel().isDirty()) {
+            TagEditorModel tagModel = tagEditorPanel.getModel();
+            Relation snapshot = getRelationSnapshot();
+            if ( (!memberTableModel.hasSameMembersAs(snapshot) || tagModel.isDirty())
+             && !(snapshot == null && tagModel.getTags().isEmpty())) {
                 //give the user a chance to save the changes
                 int ret = confirmClosingByCancel();
                 if (ret == 0) { //Yes, save the changes
@@ -1377,8 +1383,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     Main.pref.put("relation.editor.generic.lastrole", tfRole.getText());
                     if (getRelation() == null) {
                         applyNewRelation();
-                    } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
-                            || tagEditorPanel.getModel().isDirty()) {
+                    } else if (!memberTableModel.hasSameMembersAs(snapshot) || tagModel.isDirty()) {
                         if (isDirtyRelation()) {
                             if (confirmClosingBecauseOfDirtyState()) {
                                 if (getLayer().getConflicts().hasConflictForMy(getRelation())) {
@@ -1392,8 +1397,7 @@ public class GenericRelationEditor extends RelationEditor  {
                             applyExistingNonConflictingRelation();
                         }
                     }
-                }
-                else if (ret == 2) //Cancel, continue editing
+                } else if (ret == 2) //Cancel, continue editing
                     return;
                 //in case of "No, discard", there is no extra action to be performed here.
             }
