@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -208,7 +209,7 @@ public class ExtendedDialog extends JDialog {
      * The content is played on top of the other elements though.
      *
      * @param content Any element that can be displayed in the message dialog
-     * @param placeContentInScrollPane if  true, places  the content in a JScrollPane
+     * @param placeContentInScrollPane if true, places the content in a JScrollPane
      * @return {@code this}
      */
     public ExtendedDialog setContent(Component content, boolean placeContentInScrollPane) {
@@ -446,7 +447,8 @@ public class ExtendedDialog extends JDialog {
      */
     private void setupEscListener() {
         Action actionListener = new AbstractAction() {
-            @Override public void actionPerformed(ActionEvent actionEvent) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
                 // 0 means that the dialog has been closed otherwise.
                 // We need to set it to zero again, in case the dialog has been re-used
                 // and the result differs from its default value
@@ -607,14 +609,16 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * Convenience function that converts a given string into a JMultilineLabel
-     * @param msg
-     * @return JMultilineLabel
+     * @param msg the message to display
+     * @return JMultilineLabel displaying {@code msg}
      */
     private static JMultilineLabel string2label(String msg) {
         JMultilineLabel lbl = new JMultilineLabel(msg);
         // Make it not wider than 1/2 of the screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         lbl.setMaxWidth(screenSize.width/2);
+        // Disable default Enter key binding to allow dialog's one (then enables to hit default button from here)
+        lbl.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), new Object());
         return lbl;
     }
 
