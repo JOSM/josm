@@ -39,14 +39,10 @@ MouseWheelListener {
     private boolean doubleClickZoomEnabled = true;
 
     public void mouseDragged(MouseEvent e) {
-        debugMouseEvent("DefaultMapController.mouseDragged", e);
         if (!movementEnabled || !isMoving)
             return;
         // Is only the selected mouse button pressed?
         if ((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == movementMouseButtonMask || isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) {
-            if (JMapViewer.debug) {
-                System.err.println("(#9897)  moving");
-            }
             Point p = e.getPoint();
             if (lastDragPoint != null) {
                 int diffx = lastDragPoint.x - p.x;
@@ -58,38 +54,22 @@ MouseWheelListener {
     }
 
     public void mouseClicked(MouseEvent e) {
-        debugMouseEvent("DefaultMapController.mouseClicked", e);
         if (doubleClickZoomEnabled && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             map.zoomIn(e.getPoint());
         }
     }
 
     public void mousePressed(MouseEvent e) {
-        debugMouseEvent("DefaultMapController.mousePressed", e);
-
         if (e.getButton() == movementMouseButton || isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) {
-            if (JMapViewer.debug) {
-                System.err.println("(#9897)  move start");
-            }
             lastDragPoint = null;
             isMoving = true;
         }
     }
 
     public void mouseReleased(MouseEvent e) {
-        debugMouseEvent("DefaultMapController.mouseReleased", e);
         if (e.getButton() == movementMouseButton || isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
-            if (JMapViewer.debug) {
-                System.err.println("(#9897)  move stop");
-            }
             lastDragPoint = null;
             isMoving = false;
-        }
-    }
-
-    public void debugMouseEvent(String s, MouseEvent e) {
-        if (JMapViewer.debug) {
-            System.err.println("(#9897) " + s + ": Button "+ e.getButton() + " Modifiers: " +Integer.toBinaryString(e.getModifiersEx()));
         }
     }
 
