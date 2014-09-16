@@ -67,6 +67,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -172,12 +173,16 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         InputMapUtils.unassignCtrlShiftUpDown(displaylist, JComponent.WHEN_FOCUSED);
 
-        // Select relation on Ctrl-Enter
+        // Select relation on Enter
         InputMapUtils.addEnterAction(displaylist, selectRelationAction);
 
         // Edit relation on Ctrl-Enter
         displaylist.getActionMap().put("edit", editAction);
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_MASK), "edit");
+
+        // Do not hide copy action because of default JList override (fix #9815)
+        displaylist.getActionMap().put("copy", Main.main.menu.copy);
+        displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, GuiHelper.getMenuShortcutKeyMaskEx()), "copy");
 
         updateActionsRelationLists();
     }
