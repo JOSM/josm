@@ -1245,7 +1245,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (wayNodes.size() < 2) return;
 
         // only highlight the segment if the way itself is not highlighted
-        if (!way.isHighlighted()) {
+        if (!way.isHighlighted() && highlightWaySegments != null) {
             GeneralPath highlightSegs = null;
             for (WaySegment ws : highlightWaySegments) {
                 if (ws.way != way || ws.lowerIndex < offset) {
@@ -1359,7 +1359,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    protected void getSettings(boolean virtual) {
+    public void getSettings(boolean virtual) {
         super.getSettings(virtual);
         paintSettings = MapPaintSettings.INSTANCE;
 
