@@ -339,8 +339,10 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         Color col;
         if (isInactiveMode || r.isDisabled()) {
             col = inactiveColor;
-        } else if (ds.isSelected(r)) {
+        } else if (r.isSelected()) {
             col = selectedColor;
+        } else if (r.isMultipolygon() && r.isMemberOfSelected()) {
+            col = relationSelectedColor;
         } else {
             col = relationColor;
         }
