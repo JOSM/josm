@@ -204,6 +204,10 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        // fix #10524 - IndexOutOfBoundsException: Index: 2, Size: 2
+        if (rowIndex >= members.size()) {
+            return;
+        }
         RelationMember member = members.get(rowIndex);
         RelationMember newMember = new RelationMember(value.toString(), member.getMember());
         members.remove(rowIndex);
