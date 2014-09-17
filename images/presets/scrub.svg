@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:docname="nicubunu_RPG_map_symbols_plant.svg"
+   inkscape:export-filename="/home/nicu/Desktop/rpg_color.png"
+   viewBox="0 0 64 64"
+   sodipodi:version="0.32"
+   inkscape:export-xdpi="90.000000"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-ydpi="90.000000"
+   inkscape:version="0.48.5 r10040"
+   version="1.1"
+   width="100%"
+   height="100%">
+  <defs
+     id="defs3">
+    <radialGradient
+       id="radialGradient2033"
+       gradientUnits="userSpaceOnUse"
+       cy="222.03999"
+       cx="14.207"
+       gradientTransform="scale(1.3952,0.71673)"
+       r="8.2518997"
+       inkscape:collect="always">
+      <stop
+         id="stop2059"
+         style="stop-color:#000000"
+         offset="0" />
+      <stop
+         id="stop2061"
+         style="stop-color:#000000;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+    <filter
+       id="filter2989"
+       height="1.4243"
+       width="1.2180001"
+       y="-0.21216001"
+       x="-0.10899"
+       inkscape:collect="always"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur2991"
+         stdDeviation="0.72146876"
+         inkscape:collect="always" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1151"
+     pagecolor="#ffffff"
+     inkscape:zoom="1"
+     inkscape:window-x="1"
+     showgrid="false"
+     borderopacity="1.0"
+     inkscape:current-layer="layer1"
+     inkscape:cx="23.71223"
+     inkscape:cy="64"
+     inkscape:window-y="24"
+     inkscape:window-height="791"
+     inkscape:pageopacity="0.0"
+     inkscape:document-units="px"
+     inkscape:window-maximized="0" />
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(0,-64)">
+    <g
+       id="g1939"
+       transform="matrix(2.4697,0,0,2.4697,-11.476,-501.66)">
+      <path
+         id="path1361"
+         sodipodi:rx="7.9437737"
+         sodipodi:ry="4.0807056"
+         style="opacity:0.5;fill:url(#radialGradient2033);fill-rule:evenodd;filter:url(#filter2989)"
+         sodipodi:type="arc"
+         d="m 28.401713,158.69876 c 0,2.25371 -3.556549,4.08071 -7.943774,4.08071 -4.387225,0 -7.943774,-1.827 -7.943774,-4.08071 0,-2.25371 3.556549,-4.0807 7.943774,-4.0807 4.387225,0 7.943774,1.82699 7.943774,4.0807 z"
+         transform="translate(-3.1219,89.956)"
+         sodipodi:cy="158.69876"
+         sodipodi:cx="20.457939" />
+      <path
+         id="path2865"
+         sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccc"
+         style="fill:#00b300;fill-rule:evenodd"
+         d="m 26.565,233.08 c 0.197,0.46 0.718,1.92 0.718,2.69 0,0.82 -0.692,1.48 -0.947,1.99 -0.064,0.13 0.063,0.92 0,1.04 -0.358,0.72 -1.034,1.07 -1.327,1.8 -0.361,0.91 -0.851,1.99 -1.515,2.66 -0.67,0.66 -1.088,1.63 -1.421,2.46 -0.251,0.63 -0.406,1.53 -0.569,2.18 -0.201,0.8 -0.759,0.7 -1.421,0.57 -0.713,-0.15 -1.323,-0.19 -2.084,-0.19 -0.656,0 -1.029,0.84 -1.616,0.69 -0.559,-0.14 -1.578,-0.85 -2.078,-0.98 -0.42,-0.1 -1.1,-0.54 -1.516,-0.85 -0.387,-0.29 -0.667,-1.02 -0.853,-1.33 -0.406,-0.67 -0.9,-1.73 -1.231,-2.55 -0.232,-0.58 -0.284,-1.33 -0.284,-1.99 0,-0.42 -0.385,-1.15 -0.5688,-1.52 -0.411,-0.82 -0.0948,-1.95 -0.0948,-2.84 0,-0.99 0.3526,-1.51 0.5686,-2.37 0.2,-0.8 0.403,-1.37 0.758,-2.08 0.35,-0.7 0.579,-1.69 0.947,-0.95 0.121,0.24 0.379,0.88 0.474,1.14 0.286,0.76 0.947,1.43 0.947,2.27 0,0.71 0.249,1.44 0.568,2.08 0.446,0.9 0.138,1.89 0.569,2.75 0.257,0.52 0.379,1.41 0.379,1.98 0.795,-0.75 1.192,-1.25 1.326,-1.79 0.161,-0.65 0.122,-1.34 0.284,-1.99 0.213,-0.85 0.298,-1.64 0.663,-2.37 0.458,-0.91 0.336,-1.92 0.581,-2.9 0.21,-0.84 1.063,-1.29 1.687,-1.6 1.235,-0.62 1.237,1.76 1.237,2.7 0,0.84 0.19,1.91 0.19,2.75 0,0.9 -0.445,1.28 -0.284,2.08 0.141,0.71 0.229,1.48 0.947,0.76 0.571,-0.57 0.859,-1.34 1.231,-2.08 0.469,-0.94 1.436,-2.44 2.219,-3.03 0.462,-0.35 0.946,-0.84 1.516,-1.18 z"
+         inkscape:connector-curvature="0" />
+      <path
+         id="path1644"
+         style="fill:#5c2700"
+         d="m 19.678,230.36 c -0.268,0.14 -0.591,0.42 -1,0.78 -0.814,0.72 -1.168,1.33 -1.75,3.19 -1.195,3.82 -1.396,4.92 -1.188,5.84 l 0.188,0.88 0.718,-1.5 c 0.396,-0.83 0.718,-1.72 0.719,-1.97 0.002,-0.25 0.235,-1.24 0.531,-2.19 0.316,-1.01 0.438,-1.76 0.282,-1.81 -0.717,-0.25 0.48,-2.25 1.343,-2.25 1.066,0 1.333,6.02 0.344,7.66 -0.227,0.37 -0.605,0.97 -0.844,1.34 -0.238,0.37 -0.93,2.11 -1.531,3.84 -0.835,2.41 -1.217,3.2 -1.687,3.41 -0.614,0.27 -0.862,0.97 -0.344,0.97 0.15,0 0.281,0.2 0.281,0.44 0,0.23 0.11,0.33 0.25,0.25 0.14,-0.09 0.313,-0.03 0.406,0.12 0.106,0.17 0.421,0.12 0.844,-0.16 0.51,-0.33 1.053,-0.4 2.125,-0.28 0.783,0.1 1.449,0.29 1.5,0.44 0.132,0.4 0.865,0.35 0.906,-0.06 0.019,-0.19 0.024,-0.86 0,-1.5 -0.055,-1.52 0.767,-3.37 2.188,-4.91 0.616,-0.67 1.603,-2.25 2.187,-3.5 0.895,-1.91 1.063,-2.52 1.063,-4.03 0,-0.98 0.128,-1.87 0.281,-1.97 0.153,-0.09 0.208,-0.27 0.125,-0.4 -0.263,-0.43 -1.879,0.03 -2.687,0.78 -0.947,0.87 -2.492,3.13 -3.063,4.5 -0.231,0.55 -0.478,1 -0.562,1 -0.084,0 -0.065,-1 0.031,-2.22 0.106,-1.35 0.047,-3.01 -0.156,-4.19 -0.253,-1.47 -0.489,-2.25 -0.844,-2.5 -0.178,-0.12 -0.389,-0.14 -0.656,0 z m -7.813,0.16 c -0.275,-0.01 -1.497,3.06 -1.9686,4.9 -0.6874,2.69 -0.4585,5.58 0.6246,7.66 0.274,0.53 0.654,1.46 0.844,2.06 0.196,0.62 0.813,1.51 1.438,2.1 1.318,1.22 1.562,1.26 1.562,0.25 0,-0.43 0.231,-1.47 0.531,-2.35 0.654,-1.9 0.701,-2.93 0.157,-5.47 -1.045,-4.85 -2.546,-9.15 -3.188,-9.15 z m -0.125,1.18 c 0.202,-0.21 0.376,-0.08 0.563,0.38 0.521,1.28 1.615,5.44 2.093,8 l 0.532,2.87 -0.625,2.13 -0.657,2.12 -0.625,-0.5 c -0.349,-0.28 -0.944,-1.31 -1.312,-2.28 -0.368,-0.96 -0.866,-2.24 -1.094,-2.84 -0.6531,-1.72 -0.7335,-3.87 -0.219,-5.72 0.252,-0.9 0.568,-2.02 0.688,-2.47 0.242,-0.91 0.454,-1.47 0.656,-1.69 z m 14.656,1.82 c 0.075,-0.01 0.049,0.96 -0.031,2.12 -0.174,2.53 -0.949,4.4 -2.812,6.69 -1.381,1.69 -2.375,3.66 -2.375,4.78 0,0.66 -0.003,0.69 -0.344,0.22 -0.351,-0.48 -0.406,-0.49 -0.813,0.09 -0.283,0.41 -0.781,0.67 -1.531,0.75 -0.616,0.07 -1.125,0.03 -1.125,-0.09 0,-0.13 0.395,-0.28 0.875,-0.31 1.016,-0.08 1.166,-0.18 0.906,-0.6 -0.118,-0.19 -0.526,-0.21 -1.062,-0.09 -0.84,0.18 -0.841,0.14 -0.375,-0.38 0.263,-0.29 0.469,-0.58 0.469,-0.68 0,-0.1 0.544,-0.97 1.187,-1.91 0.643,-0.94 1.322,-2.13 1.531,-2.66 0.21,-0.52 0.59,-1.28 0.844,-1.65 0.255,-0.38 0.553,-0.95 0.656,-1.28 0.375,-1.21 3.39,-4.97 4,-5 z m -6.187,6.12 c 0.101,0.03 0.156,0.21 0.156,0.56 0,0.39 -0.495,1.57 -1.125,2.63 -1.485,2.49 -1.756,2.61 -0.937,0.44 0.897,-2.39 1.601,-3.71 1.906,-3.63 z"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+  <metadata
+     id="metadata15">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2007-12-07T09:16:35</dc:date>
+        <dc:description>Part of the fantasy RPG map elements collection: plant</dc:description>
+        <dc:source>https://openclipart.org/detail/9463/rpg-map-symbols:-plant-by-nicubunu</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>nicubunu</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>bush</rdf:li>
+            <rdf:li>cartography</rdf:li>
+            <rdf:li>fantasy</rdf:li>
+            <rdf:li>geography</rdf:li>
+            <rdf:li>land</rdf:li>
+            <rdf:li>map</rdf:li>
+            <rdf:li>plant</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
