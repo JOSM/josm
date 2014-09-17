@@ -466,6 +466,10 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         if (idx == null || idx.length == 0)
             return;
         for (int row : idx) {
+            // fix #7885 - IndexOutOfBoundsException: Index: 39, Size: 39
+            if (row >= members.size()) {
+                continue;
+            }
             RelationMember oldMember = members.get(row);
             RelationMember newMember = new RelationMember(role, oldMember.getMember());
             members.remove(row);
