@@ -3386,7 +3386,7 @@ area[natural=scrub] {
     fill-color: scrub#007000;
 }
 node[natural=scrub] {
-    icon-image: "misc/no_icon.png";
+    icon-image: "presets/scrub.svg";
     set icon_z17;
     text: auto;
 }
