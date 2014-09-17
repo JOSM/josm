@@ -86,15 +86,18 @@ public class AreaElemStyle extends ElemStyle {
 
     @Override
     public void paintPrimitive(OsmPrimitive osm, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member) {
+        Color myColor = color;
         if (osm instanceof Way) {
-            Color myColor = color;
-            if (color != null && osm.isSelected()) {
-                myColor = paintSettings.getSelectedColor(color.getAlpha());
+            if (color != null) {
+                if (selected) {
+                    myColor = paintSettings.getSelectedColor(color.getAlpha());
+                } else if (member) {
+                    myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
+                }
             }
             painter.drawArea((Way) osm, myColor, fillImage, text);
         } else if (osm instanceof Relation) {
-            Color myColor = color;
-            if (color != null && selected) {
+            if (color != null && (selected || (member && ((Relation) osm).isMultipolygon()))) {
                 myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
             }
             painter.drawArea((Relation) osm, myColor, fillImage, text);

@@ -309,7 +309,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private boolean useStrokes;
     private boolean showNames;
     private boolean showIcons;
-    private boolean  isOutlineOnly;
+    private boolean isOutlineOnly;
 
     private Font orderFont;
 
@@ -1498,7 +1498,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         public void visit(Node n) {
             if (n.isDisabled()) {
                 add(n, FLAG_DISABLED);
-            } else if (data.isSelected(n)) {
+            } else if (n.isSelected()) {
                 add(n, FLAG_SELECTED);
             } else if (n.isMemberOfSelected()) {
                 add(n, FLAG_MEMBER_OF_SELECTED);
@@ -1511,7 +1511,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         public void visit(Way w) {
             if (w.isDisabled()) {
                 add(w, FLAG_DISABLED);
-            } else if (data.isSelected(w)) {
+            } else if (w.isSelected()) {
                 add(w, FLAG_SELECTED);
             } else if (w.isMemberOfSelected()) {
                 add(w, FLAG_MEMBER_OF_SELECTED);
@@ -1524,8 +1524,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         public void visit(Relation r) {
             if (r.isDisabled()) {
                 add(r, FLAG_DISABLED);
-            } else if (data.isSelected(r)) {
+            } else if (r.isSelected()) {
                 add(r, FLAG_SELECTED);
+            } else if (r.isMemberOfSelected()) {
+                add(r, FLAG_MEMBER_OF_SELECTED);
             } else {
                 add(r, FLAG_NORMAL);
             }
