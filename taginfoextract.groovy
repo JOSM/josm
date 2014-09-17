@@ -8,7 +8,6 @@
  */
 
 import java.io.BufferedReader
-//import java.util.ArrayList
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
@@ -108,9 +107,10 @@ class taginfoextract {
             def renderer = new StyledMapRenderer(g, nc, false)
             renderer.getSettings(false)
             elem_style.paintPrimitive(osm, MapPaintSettings.INSTANCE, renderer, false, false)
-            def image_url = "${image_dir}/${type}_${tag[0]}=${tag[1]}.png"
-            ImageIO.write(img, "png", new File(image_url))
-            return image_url
+            def base_url = options.imgurlprefix ? options.imgurlprefix : image_dir
+            def image_name = "${type}_${tag[0]}=${tag[1]}.png"
+            ImageIO.write(img, "png", new File("${image_dir}/${image_name}"))
+            return "${base_url}/${image_name}"
         }
 
         /**
@@ -208,6 +208,7 @@ class taginfoextract {
         cli._(longOpt:'svnrev', args:1, argName:"revision", "corresponding revision of the repository http://svn.openstreetmap.org/ (optional, current revision is fetched from the web if not given)")
         cli._(longOpt:'imgdir', args:1, argName:"directory", "directory to put the generated images in (default: ./taginfo-img)")
         cli._(longOpt:'svnweb', 'fetch revision of the repository http://svn.openstreetmap.org/ from web and not from the local repository')
+        cli._(longOpt:'imgurlprefix', args:1, argName:'prefix', 'image URLs prefix for generated image files')
         cli.h(longOpt:'help', "show this help")
         options = cli.parse(args)
 
