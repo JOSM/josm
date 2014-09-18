@@ -162,11 +162,13 @@ public final class Relation extends OsmPrimitive implements IRelation {
         return members[idx].getType();
     }
 
-    @Override public void accept(Visitor visitor) {
+    @Override
+    public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
-    @Override public void accept(PrimitiveVisitor visitor) {
+    @Override
+    public void accept(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 
@@ -222,7 +224,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
         super(id, version, false);
     }
 
-    @Override public void cloneFrom(OsmPrimitive osm) {
+    @Override
+    public void cloneFrom(OsmPrimitive osm) {
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
@@ -233,7 +236,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
-    @Override public void load(PrimitiveData data) {
+    @Override
+    public void load(PrimitiveData data) {
         boolean locked = writeLock();
         try {
             super.load(data);
@@ -546,5 +550,21 @@ public final class Relation extends OsmPrimitive implements IRelation {
     @Override
     public boolean isOutsideDownloadArea() {
         return false;
+    }
+
+    /**
+     * Returns the set of roles used in this relation.
+     * @return the set of roles used in this relation. Can be empty but never null
+     * @since 7556
+     */
+    public Set<String> getMemberRoles() {
+        Set<String> result = new HashSet<>();
+        for (RelationMember rm : members) {
+            String role = rm.getRole();
+            if (!role.isEmpty()) {
+                result.add(role);
+            }
+        }
+        return result;
     }
 }

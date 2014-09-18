@@ -9,30 +9,32 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 public class MemberRoleCellEditor extends AbstractCellEditor implements TableCellEditor {
     private AutoCompletingTextField editor = null;
-    private DataSet ds;
+    private final DataSet ds;
+    private final Relation relation;
 
     /** user input is matched against this list of auto completion items */
     private AutoCompletionList autoCompletionList = null;
 
     /**
-     * constructor
+     * Constructs a new {@code MemberRoleCellEditor}.
+     * @param ds the data set. Must not be null
+     * @param relation the relation. Can be null
      */
-    public MemberRoleCellEditor(DataSet ds) {
+    public MemberRoleCellEditor(DataSet ds, Relation relation) {
         this.ds = ds;
+        this.relation = relation;
         editor = new AutoCompletingTextField();
         editor.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
         autoCompletionList = new AutoCompletionList();
         editor.setAutoCompletionList(autoCompletionList);
     }
 
-    /**
-     * replies the table cell editor
-     */
     @Override
     public Component getTableCellEditorComponent(JTable table,
             Object value, boolean isSelected, int row, int column) {
@@ -40,7 +42,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
         String role = (String)value;
         editor.setText(role);
         autoCompletionList.clear();
-        ds.getAutoCompletionManager().populateWithMemberRoles(autoCompletionList);
+        ds.getAutoCompletionManager().populateWithMemberRoles(autoCompletionList, relation);
         return editor;
     }
 

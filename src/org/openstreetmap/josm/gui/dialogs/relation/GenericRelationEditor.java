@@ -91,7 +91,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This dialog is for editing relations.
- *
+ * @since 343
  */
 public class GenericRelationEditor extends RelationEditor  {
     /** the tag table and its model */
@@ -171,7 +171,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
         tagEditorPanel.getModel().ensureOneTag();
 
-        JSplitPane pane = buildSplitPane();
+        JSplitPane pane = buildSplitPane(relation);
         pane.setPreferredSize(new Dimension(100, 100));
 
         JPanel pnl = new JPanel();
@@ -292,10 +292,9 @@ public class GenericRelationEditor extends RelationEditor  {
      * @return the panel for the relation member editor
      */
     protected JPanel buildMemberEditorPanel() {
-        final JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        final JPanel pnl = new JPanel(new GridBagLayout());
         // setting up the member table
-        memberTable = new MemberTable(getLayer(),memberTableModel);
+        memberTable = new MemberTable(getLayer(), getRelation(), memberTableModel);
         memberTable.addMouseListener(new MemberTableDblClickAdapter());
         memberTableModel.addMemberModelListener(memberTable);
 
@@ -349,7 +348,7 @@ public class GenericRelationEditor extends RelationEditor  {
                         AutoCompletionList list = tfRole.getAutoCompletionList();
                         if (list != null) {
                             list.clear();
-                            getLayer().data.getAutoCompletionManager().populateWithMemberRoles(list);
+                            getLayer().data.getAutoCompletionManager().populateWithMemberRoles(list, getRelation());
                         }
                     }
                 }
@@ -453,7 +452,7 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      * @return the split panel
      */
-    protected JSplitPane buildSplitPane() {
+    protected JSplitPane buildSplitPane(Relation relation) {
         final JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         pane.setTopComponent(buildTagEditorPanel());
         pane.setBottomComponent(buildMemberEditorPanel());
@@ -1602,8 +1601,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     /**
-     * Creates a new relation with a copy of the current editor state
-     *
+     * Creates a new relation with a copy of the current editor state.
      */
     class DuplicateRelationAction extends AbstractAction {
         public DuplicateRelationAction() {
@@ -1625,9 +1623,7 @@ public class GenericRelationEditor extends RelationEditor  {
     }
 
     /**
-     * Action for editing the currently selected relation
-     *
-     *
+     * Action for editing the currently selected relation.
      */
     class EditAction extends AbstractAction implements ListSelectionListener {
         public EditAction() {
@@ -1735,7 +1731,6 @@ public class GenericRelationEditor extends RelationEditor  {
                 CopyAction.copy(getLayer(), primitives);
             }
         }
-
     }
 
     class MemberTableDblClickAdapter extends MouseAdapter {

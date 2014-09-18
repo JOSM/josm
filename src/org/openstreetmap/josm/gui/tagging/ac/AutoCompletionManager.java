@@ -28,7 +28,10 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetItems;
+import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Role;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * AutoCompletionManager holds a cache of keys with a list of
@@ -209,7 +212,7 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
-     * Populates the an {@link AutoCompletionList} with the currently cached
+     * Populates the {@link AutoCompletionList} with the currently cached
      * member roles.
      *
      * @param list the list to populate
@@ -217,6 +220,35 @@ public class AutoCompletionManager implements DataSetListener {
     public void populateWithMemberRoles(AutoCompletionList list) {
         list.add(presetRoleCache, AutoCompletionItemPriority.IS_IN_STANDARD);
         list.add(getRoleCache(), AutoCompletionItemPriority.IS_IN_DATASET);
+    }
+
+    /**
+     * Populates the {@link AutoCompletionList} with the roles used in this relation
+     * plus the ones defined in its applicable presets, if any. If the relation type is unknown,
+     * then all the roles known globally will be added, as in {@link #populateWithMemberRoles(AutoCompletionList)}.
+     *
+     * @param list the list to populate
+     * @param r the relation to get roles from
+     * @throws IllegalArgumentException if list is null
+     * @since 7556
+     */
+    public void populateWithMemberRoles(AutoCompletionList list, Relation r) {
+        CheckParameterUtil.ensureParameterNotNull(list, "list");
+        Collection<TaggingPreset> presets = r != null ? TaggingPreset.getMatchingPresets(null, r.getKeys(), false) : null;
+        if (r != null && presets != null && !presets.isEmpty()) {
+            for (TaggingPreset tp : presets) {
+                if (tp.roles != null) {
+                    list.add(Utils.transform(tp.roles.roles, new Utils.Function<Role, String>() {
+                        public String apply(Role x) {
+                            return x.key;
+                        }
+                    }), AutoCompletionItemPriority.IS_IN_STANDARD);
+                }
+            }
+            list.add(r.getMemberRoles(), AutoCompletionItemPriority.IS_IN_DATASET);
+        } else {
+            populateWithMemberRoles(list);
+        }
     }
 
     /**
