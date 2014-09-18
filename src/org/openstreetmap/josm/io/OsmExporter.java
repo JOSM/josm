@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Exports data to an .Osm file.
+ * Exports data to an .osm file.
  * @since 1949
  */
 public class OsmExporter extends FileExporter {
@@ -67,7 +67,7 @@ public class OsmExporter extends FileExporter {
         save(file, (OsmDataLayer) layer, noBackup);
     }
 
-    protected static final void checkOsmDataLayer(Layer layer) throws IllegalArgumentException {
+    protected static void checkOsmDataLayer(Layer layer) throws IllegalArgumentException {
         if (!(layer instanceof OsmDataLayer)) {
             throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer. Got ''{0}''.", layer
                     .getClass().getName()));
@@ -89,19 +89,7 @@ public class OsmExporter extends FileExporter {
                 Utils.copyFile(file, tmpFile);
             }
 
-            // create outputstream and wrap it with gzip or bzip, if necessary
-            try (
-                OutputStream out = getOutputStream(file);
-                Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-                OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
-            ) {
-                layer.data.getReadLock().lock();
-                try {
-                    w.writeLayer(layer);
-                } finally {
-                    layer.data.getReadLock().unlock();
-                }
-            }
+            doSave(file, layer);
             if (noBackup || !Main.pref.getBoolean("save.keepbackup", false)) {
                 if (tmpFile != null) {
                     tmpFile.delete();
@@ -131,6 +119,22 @@ public class OsmExporter extends FileExporter {
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
+            }
+        }
+    }
+
+    protected void doSave(File file, OsmDataLayer layer) throws IOException, FileNotFoundException {
+        // create outputstream and wrap it with gzip or bzip, if necessary
+        try (
+            OutputStream out = getOutputStream(file);
+            Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+            OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
+        ) {
+            layer.data.getReadLock().lock();
+            try {
+                w.writeLayer(layer);
+            } finally {
+                layer.data.getReadLock().unlock();
             }
         }
     }
