@@ -7125,7 +7125,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="landuse" value="farmyard" />
             <text key="name" text="Name" />
         </item> <!-- Farmyard -->
-        <item name="Farmland" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
+        <item name="Farmland" icon="styles/standard/misc/landuse/farmland.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=farmland"
                   ca.href="http://wiki.openstreetmap.org/wiki/Ca:Tag:landuse=farmland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=farmland"

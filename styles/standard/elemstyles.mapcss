@@ -2727,7 +2727,7 @@ node[landuse=farm] {
     text: auto;
 }
 node[landuse=farmland] {
-    icon-image: "misc/no_icon.png";
+    icon-image: "misc/landuse/farmland.png";
     set icon_z17;
     text: auto;
 }
