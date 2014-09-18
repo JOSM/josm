@@ -497,7 +497,7 @@
   <node id='-486' action='modify' visible='true' lat='79.89196812781788' lon='-148.76283292589136' />
   <node id='-487' action='modify' visible='true' lat='80.3532083008329' lon='-177.18326803805306'>
     <tag k='place' v='city' />
-    <tag k='name' v='04 : Basic test with differnt tagged inner and outer ways and no area tagging inside relation' />
+    <tag k='name' v='04 : Basic test with different tagged inner and outer ways and no area tagging inside relation' />
   </node>
   <node id='-488' action='modify' visible='true' lat='79.76707249324669' lon='-166.27290704537097' />
   <node id='-489' action='modify' visible='true' lat='79.29375895122858' lon='-141.41693437796695' />
