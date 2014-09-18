@@ -624,7 +624,6 @@ public final class Utils {
     public static <A, B> List<B> transform(final List<? extends A> l, final Function<A, B> f) {
         return new AbstractList<B>() {
 
-
             @Override
             public int size() {
                 return l.size();
@@ -634,8 +633,6 @@ public final class Utils {
             public B get(int index) {
                 return f.apply(l.get(index));
             }
-
-
         };
     }
 
