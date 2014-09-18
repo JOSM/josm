@@ -2720,7 +2720,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route" />
             <space />
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" values_searchable="true" match="keyvalue" />
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,light_rail,bus,trolleybus,aerialway,ferry" values_searchable="true" match="keyvalue" />
             <key key="public_transport:version" value="2" /> <!-- only validate marked relations in order to avoid false positives -->
             <reference ref="name_ref" />
             <optional>
