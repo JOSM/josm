@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<osm version='0.6' generator='JOSM'>
+<osm version='0.6' generator='JOSM' upload='false'>
   <node id='-1' action='modify' visible='true' lat='84.6886106638523' lon='-176.64410351355278' />
   <node id='-2' action='modify' visible='true' lat='84.40349147298387' lon='-178.57369583802236' />
   <node id='-3' action='modify' visible='true' lat='84.09269616851823' lon='-177.10891383398126' />
@@ -115,7 +115,7 @@
   <node id='-113' visible='true' lat='84.01090490447417' lon='-179.24243463947698' />
   <node id='-114' action='modify' visible='true' lat='84.97960003985216' lon='-179.25656344911687' />
   <node id='-115' action='modify' visible='true' lat='84.87707549360687' lon='-178.07230447210404'>
-    <tag k='traffic_sign' v='city_limit' />
+    <tag k='place' v='city' />
     <tag k='name' v='01 : Basic test with untagged ways and area tagging inside relation' />
   </node>
   <node id='-116' action='modify' visible='true' lat='84.50945864100667' lon='-136.49277525800406' />
@@ -240,7 +240,7 @@
   <node id='-235' action='modify' visible='true' lat='83.13520347370438' lon='-132.80208021094836' />
   <node id='-236' action='modify' visible='true' lat='83.44139608276137' lon='-169.1057395083643' />
   <node id='-237' action='modify' visible='true' lat='83.72291011287005' lon='-177.88230504962021'>
-    <tag k='traffic_sign' v='city_limit' />
+    <tag k='place' v='city' />
     <tag k='name' v='02 : Basic test with tagged inner and outer ways and no area tagging inside relation (very old style)' />
   </node>
   <node id='-238' action='modify' visible='true' lat='83.34037740211511' lon='-166.97194405693813' />
@@ -414,7 +414,7 @@
   <node id='-406' action='modify' visible='true' lat='80.79468171912914' lon='-178.54339762790983' />
   <node id='-407' action='modify' visible='true' lat='81.5592943085351' lon='-135.7937382464369' />
   <node id='-408' action='modify' visible='true' lat='82.12337440601868' lon='-177.37326746053688'>
-    <tag k='traffic_sign' v='city_limit' />
+    <tag k='place' v='city' />
     <tag k='name' v='03 : Basic test with untagged outer ways and area tagging inside relation - inner ways have different tagging' />
   </node>
   <node id='-409' action='modify' visible='true' lat='81.18687353494494' lon='-135.61204124170135' />
@@ -496,7 +496,7 @@
   <node id='-485' action='modify' visible='true' lat='80.05702853475016' lon='-148.55595281181752' />
   <node id='-486' action='modify' visible='true' lat='79.89196812781788' lon='-148.76283292589136' />
   <node id='-487' action='modify' visible='true' lat='80.3532083008329' lon='-177.18326803805306'>
-    <tag k='traffic_sign' v='city_limit' />
+    <tag k='place' v='city' />
     <tag k='name' v='04 : Basic test with differnt tagged inner and outer ways and no area tagging inside relation' />
   </node>
   <node id='-488' action='modify' visible='true' lat='79.76707249324669' lon='-166.27290704537097' />
@@ -548,7 +548,7 @@
   <node id='-534' action='modify' visible='true' lat='77.10605094749526' lon='-178.07362749962346' />
   <node id='-535' action='modify' visible='true' lat='77.52077279880578' lon='-168.23719356429848' />
   <node id='-536' action='modify' visible='true' lat='78.30873406730237' lon='-177.86939149237105'>
-    <tag k='traffic_sign' v='city_limit' />
+    <tag k='place' v='city' />
     <tag k='name' v='05 : Other tests' />
   </node>
   <node id='-537' action='modify' visible='true' lat='77.17813516273685' lon='-173.5177893827342' />
@@ -630,7 +630,7 @@
   <node id='-613' action='modify' visible='true' lat='71.01221564302794' lon='-177.47823624656098' />
   <node id='-614' action='modify' visible='true' lat='68.9027512635695' lon='-171.36643553077883' />
   <node id='-615' action='modify' visible='true' lat='73.85422060455194' lon='-177.72270827519228'>
-    <tag k='traffic_sign' v='city_limit' />
+    <tag k='place' v='city' />
     <tag k='name' v='06 : Errors' />
   </node>
   <node id='-616' action='modify' visible='true' lat='72.36349559647225' lon='-176.9892921892984' />
@@ -645,21 +645,21 @@
   <node id='-625' action='modify' visible='true' lat='71.73057719026451' lon='-167.50377747840457' />
   <node id='-626' action='modify' visible='true' lat='73.34344402190429' lon='-176.98929218929837'>
     <tag k='name' v='01 - Unclosed outer way' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-627' action='modify' visible='true' lat='70.23364509468118' lon='-174.69125512016433' />
   <node id='-628' action='modify' visible='true' lat='72.10991143242491' lon='-171.02417469069508' />
   <node id='-629' action='modify' visible='true' lat='73.30134799947216' lon='-161.3430823568962'>
     <tag k='name' v='02 - Unclosed inner ways' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-630' action='modify' visible='true' lat='73.16060825580873' lon='-146.22209244105048'>
     <tag k='name' v='03 - Mismatching way styles' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-631' action='modify' visible='true' lat='77.88521869203151' lon='-177.7716026809185'>
     <tag k='name' v='01 - Different way styles' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-632' action='modify' visible='true' lat='71.68453816086635' lon='-173.4688949770079' />
   <node id='-633' visible='true' lat='70.69535689900081' lon='-147.05117013586155' />
@@ -694,7 +694,7 @@
   <node id='-662' action='modify' visible='true' lat='71.04586372115403' lon='-124.59647893099732' />
   <node id='-663' action='modify' visible='true' lat='73.3374609545726' lon='-132.4312631469622'>
     <tag k='name' v='04 - Mismatching way styles' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-664' action='modify' visible='true' lat='68.9193448225867' lon='-130.4829305641561' />
   <node id='-665' action='modify' visible='true' lat='70.01434085678869' lon='-110.87174371073941' />
@@ -710,7 +710,7 @@
   <node id='-675' action='modify' visible='true' lat='69.71467329833307' lon='-118.62362015722319' />
   <node id='-676' action='modify' visible='true' lat='73.35322798782545' lon='-118.45780461826098'>
     <tag k='name' v='05 - Wrong roles' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-677' action='modify' visible='true' lat='71.95749708632174' lon='-108.301602856825' />
   <node id='-678' action='modify' visible='true' lat='72.69982173725828' lon='-108.5917800500089' />
@@ -718,10 +718,10 @@
   <node id='-680' action='modify' visible='true' lat='71.48952017038106' lon='-116.46801815071433' />
   <node id='-681' action='modify' visible='true' lat='66.12453808241878' lon='-177.07882360188503'>
     <tag k='name' v='01 - Inner/Outer reversed' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-682' action='modify' visible='true' lat='67.50117546793662' lon='-177.37647047289784'>
-    <tag k='traffic_sign' v='city_limit' />
+    <tag k='place' v='city' />
     <tag k='name' v='07 : Geometry Errors' />
   </node>
   <node id='-683' action='modify' visible='true' lat='68.9391233571557' lon='-116.50947203545486' />
@@ -741,7 +741,7 @@
   <node id='-697' action='modify' visible='true' lat='60.915152413904856' lon='-160.03854023640042' />
   <node id='-698' action='modify' visible='true' lat='66.10947453924523' lon='-161.45236287371142'>
     <tag k='name' v='02 - Inner/Outer intersect' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-699' visible='true' lat='63.26489891310659' lon='-168.89353464903218' />
   <node id='-700' visible='true' lat='62.31224697426474' lon='-170.38176900409633' />
@@ -771,7 +771,7 @@
   <node id='-724' action='modify' visible='true' lat='61.50255737402466' lon='-141.88988451977863' />
   <node id='-725' action='modify' visible='true' lat='73.36201070015693' lon='-105.26691894004932'>
     <tag k='name' v='06 - No outer way' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-726' visible='true' lat='72.43184818958737' lon='-102.3633390449238' />
   <node id='-727' action='modify' visible='true' lat='62.86828196386868' lon='-126.13483750568258' />
@@ -803,7 +803,7 @@
   <node id='-753' visible='true' lat='64.2071951085952' lon='-125.38414384279595' />
   <node id='-754' action='modify' visible='true' lat='66.15190859709286' lon='-130.6444018410983'>
     <tag k='name' v='04 - Mixed geometry' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-755' visible='true' lat='63.855497881124926' lon='-125.77981173348789' />
   <node id='-756' visible='true' lat='63.71892744390763' lon='-126.23255300502254' />
@@ -811,7 +811,7 @@
   <node id='-758' visible='true' lat='64.32352884989871' lon='-124.808074370194' />
   <node id='-759' action='modify' visible='true' lat='66.27142148050997' lon='-145.83370556069866'>
     <tag k='name' v='03 - Inner/Outer share way' />
-    <tag k='amenity' v='fuel' />
+    <tag k='natural' v='peak' />
   </node>
   <node id='-760' action='modify' visible='true' lat='60.770136222180014' lon='-158.92236447010234' />
   <node id='-761' visible='true' lat='63.03610647916541' lon='-124.02405899753649' />
