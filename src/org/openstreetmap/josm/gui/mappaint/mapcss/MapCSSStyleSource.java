@@ -427,7 +427,7 @@ public class MapCSSStyleSource extends StyleSource {
     }
 
     @Override
-    public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
+    public void apply(MultiCascade mc, OsmPrimitive osm, double scale, boolean pretendWayIsClosed) {
         Environment env = new Environment(osm, mc, null, this);
         MapCSSRuleIndex matchingRuleIndex;
         if (osm instanceof Node) {

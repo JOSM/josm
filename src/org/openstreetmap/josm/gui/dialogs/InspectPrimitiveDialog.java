@@ -346,7 +346,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 for (StyleSource s : elemstyles.getStyleSources()) {
                     if (s.active) {
                         txtMappaint.append(tr("\n\n> applying {0} style \"{1}\"\n", getSort(s), s.getDisplayString()));
-                        s.apply(mc, osm, scale, null, false);
+                        s.apply(mc, osm, scale, false);
                         txtMappaint.append(tr("\nRange:{0}", mc.range));
                         for (Entry<String, Cascade> e : mc.getLayers()) {
                             txtMappaint.append("\n " + e.getKey() + ": \n" + e.getValue());

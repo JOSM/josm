@@ -145,7 +145,7 @@ public final class MapPaintStyles {
             StyleList styleList;
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
             try {
-                styleList = getStyles().generateStyles(virtualNode, 0.5, null, false).a;
+                styleList = getStyles().generateStyles(virtualNode, 0.5, false).a;
             } finally {
                 MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
             }

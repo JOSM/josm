@@ -167,10 +167,10 @@ public class ElemStyles {
      */
     private Pair<StyleList, Range> getImpl(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         if (osm instanceof Node)
-            return generateStyles(osm, scale, null, false);
+            return generateStyles(osm, scale, false);
         else if (osm instanceof Way)
         {
-            Pair<StyleList, Range> p = generateStyles(osm, scale, null, false);
+            Pair<StyleList, Range> p = generateStyles(osm, scale, false);
 
             boolean isOuterWayOfSomeMP = false;
             Color wayColor = null;
@@ -251,8 +251,7 @@ public class ElemStyles {
                 final Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, ref);
 
                 if (multipolygon.getInnerWays().contains(osm)) {
-                    Iterator<Way> it = multipolygon.getOuterWays().iterator();
-                    p = generateStyles(osm, scale, it.hasNext() ? it.next() : null, false);
+                    p = generateStyles(osm, scale, false);
                     boolean hasIndependentElemStyle = false;
                     for (ElemStyle s : p.a) {
                         if (s.isProperLineStyle() || s instanceof AreaElemStyle) {
@@ -281,13 +280,13 @@ public class ElemStyles {
         }
         else if (osm instanceof Relation)
         {
-            Pair<StyleList, Range> p = generateStyles(osm, scale, null, true);
+            Pair<StyleList, Range> p = generateStyles(osm, scale, true);
             if (drawMultipolygon && ((Relation)osm).isMultipolygon()) {
                 if (!Utils.exists(p.a, AreaElemStyle.class)) {
                     // look at outer ways to find area style
                     Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
                     for (Way w : multipolygon.getOuterWays()) {
-                        Pair<StyleList, Range> wayStyles = generateStyles(w, scale, null, false);
+                        Pair<StyleList, Range> wayStyles = generateStyles(w, scale, false);
                         p.b = Range.cut(p.b, wayStyles.b);
                         ElemStyle area = Utils.find(wayStyles.a, AreaElemStyle.class);
                         if (area != null) {
@@ -318,7 +317,7 @@ public class ElemStyles {
      * outer ways of a multipolygon.
      * @return the generated styles and the valid range as a pair
      */
-    public Pair<StyleList, Range> generateStyles(OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
+    public Pair<StyleList, Range> generateStyles(OsmPrimitive osm, double scale, boolean pretendWayIsClosed) {
 
         List<ElemStyle> sl = new ArrayList<>();
         MultiCascade mc = new MultiCascade();
@@ -326,7 +325,7 @@ public class ElemStyles {
 
         for (StyleSource s : styleSources) {
             if (s.active) {
-                s.apply(mc, osm, scale, multipolyOuterWay, pretendWayIsClosed);
+                s.apply(mc, osm, scale, pretendWayIsClosed);
             }
         }
 
@@ -401,7 +400,7 @@ public class ElemStyles {
 
         for (StyleSource s : styleSources) {
             if (s.active) {
-                s.apply(mc, r, 1, null, false);
+                s.apply(mc, r, 1, false);
             }
         }
         return mc.getCascade("default").get(key, def, c);
@@ -450,7 +449,7 @@ public class ElemStyles {
         try {
             if (MapPaintStyles.getStyles() == null)
                 return null;
-            for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, null, pretendWayIsClosed).a) {
+            for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, pretendWayIsClosed).a) {
                 if (s instanceof AreaElemStyle)
                     return (AreaElemStyle) s;
             }
@@ -483,7 +482,7 @@ public class ElemStyles {
         try {
             if (MapPaintStyles.getStyles() == null)
                 return false;
-            StyleList styles = MapPaintStyles.getStyles().generateStyles(p, 1.0, null, false).a;
+            StyleList styles = MapPaintStyles.getStyles().generateStyles(p, 1.0, false).a;
             if (styles.isEmpty()) {
                 return false;
             }
