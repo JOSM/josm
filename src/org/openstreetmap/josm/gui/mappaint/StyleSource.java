@@ -76,7 +76,7 @@ public abstract class StyleSource extends SourceEntry {
      * we pretend it is. This is useful for generating area styles from the (segmented)
      * outer ways of a multipolygon.
      */
-    public abstract void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed);
+    public abstract void apply(MultiCascade mc, OsmPrimitive osm, double scale, boolean pretendWayIsClosed);
 
     /**
      * Loads the style source.
