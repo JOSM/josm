@@ -2714,6 +2714,14 @@ node[historic=boundary_stone] {
 /* landuse tags */
 /****************/
 
+area[landuse],
+area[leisure],
+area[amenity],
+area[place],
+area[natural],
+area[man_made] {
+    z-index: -2; /* put areas that can have other areas inside (e.g. building) a little lower, see #9606 */
+}
 area[landuse=farm],
 area[landuse=farmland],
 area[landuse=meadow],
