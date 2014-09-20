@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.geom.GeneralPath;
 import java.text.MessageFormat;
@@ -53,7 +54,6 @@ public class MultipolygonTest extends Test {
     protected static final int NOT_CLOSED = 1609;
     protected static final int NO_STYLE = 1610;
     protected static final int NO_STYLE_POLYGON = 1611;
-    protected static final int STYLE_ON_WAY = 1612;
     protected static final int OUTER_STYLE = 1613;
 
     private static ElemStyles styles;
@@ -220,9 +220,12 @@ public class MultipolygonTest extends Test {
                     }
                     if (!"boundary".equals(r.get("type"))) {
                         if (area == null) {
-                            addError(r, new TestError(this, Severity.OTHER, tr("No style for multipolygon"), NO_STYLE, r));
+                            addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
                         } else {
-                            addError(r, new TestError(this, Severity.OTHER, tr("No style in multipolygon relation"),
+                            /* old style multipolygon - solve: copy tags from outer way to multipolygon */
+                            addError(r, new TestError(this, Severity.OTHER, 
+                                    trn("Multipolygon relation should be tagged with area tags and not the outer way",
+                                            "Multipolygon relation should be tagged with area tags and not the outer ways", polygon.getOuterWays().size()),
                                 NO_STYLE_POLYGON, r));
                         }
                     }
@@ -255,9 +258,6 @@ public class MultipolygonTest extends Test {
                                 l, Collections.singletonList(wOuter)));
                             }
                         }
-                    }
-                    if(!areaStyle) { /* old style multipolygon - solve: copy tags from outer way to multipolygon */
-                        addError(r, new TestError(this, Severity.WARNING, tr("Style is on way and not on multipolygon"), STYLE_ON_WAY, r));
                     }
                 }
             }
