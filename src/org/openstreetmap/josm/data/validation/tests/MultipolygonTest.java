@@ -220,10 +220,10 @@ public class MultipolygonTest extends Test {
                     }
                     if (!"boundary".equals(r.get("type"))) {
                         if (area == null) {
-                            addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
+                            addError(r, new TestError(this, Severity.WARNING, tr("No area style for multipolygon"), NO_STYLE, r));
                         } else {
                             /* old style multipolygon - solve: copy tags from outer way to multipolygon */
-                            addError(r, new TestError(this, Severity.OTHER, 
+                            addError(r, new TestError(this, Severity.WARNING, 
                                     trn("Multipolygon relation should be tagged with area tags and not the outer way",
                                             "Multipolygon relation should be tagged with area tags and not the outer ways", polygon.getOuterWays().size()),
                                 NO_STYLE_POLYGON, r));
