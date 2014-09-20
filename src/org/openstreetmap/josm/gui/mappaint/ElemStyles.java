@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -141,11 +142,9 @@ public class ElemStyles {
      *
      * This method does multipolygon handling.
      *
-     *
      * There are different tagging styles for multipolygons, that have to be respected:
      * - tags on the relation
-     * - tags on the outer way
-     * - tags on both, the outer and the inner way (very old style)
+     * - tags on the outer way (deprecated)
      *
      * If the primitive is a way, look for multipolygon parents. In case it
      * is indeed member of some multipolygon as role "outer", all area styles
@@ -158,9 +157,7 @@ public class ElemStyles {
      *
      * Now consider the case that the way is not an outer way of any multipolygon,
      * but is member of a multipolygon as "inner".
-     * First, the style list is regenerated, considering only tags of this way
-     * minus the tags of outer way of the multipolygon (to care for the "very
-     * old style").
+     * First, the style list is regenerated, considering only tags of this way.
      * Then check, if the way describes something in its own right. (linear feature
      * or area) If not, add a default line style from the area color of the multipolygon.
      *
@@ -282,7 +279,7 @@ public class ElemStyles {
         {
             Pair<StyleList, Range> p = generateStyles(osm, scale, true);
             if (drawMultipolygon && ((Relation)osm).isMultipolygon()) {
-                if (!Utils.exists(p.a, AreaElemStyle.class)) {
+                if (!Utils.exists(p.a, AreaElemStyle.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
                     // look at outer ways to find area style
                     Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
                     for (Way w : multipolygon.getOuterWays()) {
