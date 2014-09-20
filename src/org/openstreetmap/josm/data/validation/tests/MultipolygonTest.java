@@ -220,7 +220,7 @@ public class MultipolygonTest extends Test {
                     }
                     if (!"boundary".equals(r.get("type"))) {
                         if (area == null) {
-                            addError(r, new TestError(this, Severity.WARNING, tr("No area style for multipolygon"), NO_STYLE, r));
+                            addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
                         } else {
                             /* old style multipolygon - solve: copy tags from outer way to multipolygon */
                             addError(r, new TestError(this, Severity.WARNING, 
