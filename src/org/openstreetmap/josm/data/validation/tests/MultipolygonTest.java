@@ -53,6 +53,8 @@ public class MultipolygonTest extends Test {
     protected static final int NOT_CLOSED = 1609;
     protected static final int NO_STYLE = 1610;
     protected static final int NO_STYLE_POLYGON = 1611;
+    protected static final int STYLE_ON_WAY = 1612;
+    protected static final int OUTER_STYLE = 1613;
 
     private static ElemStyles styles;
 
@@ -240,14 +242,22 @@ public class MultipolygonTest extends Test {
                     }
                     for (Way wOuter : polygon.getOuterWays()) {
                         AreaElemStyle areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
-                        if (areaOuter != null && !area.equals(areaOuter)) {
+                        if (areaOuter != null) {
                             List<OsmPrimitive> l = new ArrayList<>();
                             l.add(r);
                             l.add(wOuter);
-                            addError(r, new TestError(this, Severity.WARNING, !areaStyle ? tr("Style for outer way mismatches")
-                            : tr("Style for outer way mismatches polygon"),
-                            OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
+                            if (!area.equals(areaOuter)) {
+                                addError(r, new TestError(this, Severity.WARNING, !areaStyle ? tr("Style for outer way mismatches")
+                                : tr("Style for outer way mismatches polygon"),
+                                OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
+                            } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
+                                addError(r, new TestError(this, Severity.WARNING, tr("Style on outer way"), OUTER_STYLE,
+                                l, Collections.singletonList(wOuter)));
+                            }
                         }
+                    }
+                    if(!areaStyle) { /* old style multipolygon - solve: copy tags from outer way to multipolygon */
+                        addError(r, new TestError(this, Severity.WARNING, tr("Style is on way and not on multipolygon"), STYLE_ON_WAY, r));
                     }
                 }
             }
