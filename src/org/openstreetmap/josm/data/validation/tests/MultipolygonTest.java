@@ -254,7 +254,7 @@ public class MultipolygonTest extends Test {
                                 : tr("Style for outer way mismatches polygon"),
                                 OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
                             } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
-                                addError(r, new TestError(this, Severity.WARNING, tr("Style on outer way"), OUTER_STYLE,
+                                addError(r, new TestError(this, Severity.WARNING, tr("Area style on outer way"), OUTER_STYLE,
                                 l, Collections.singletonList(wOuter)));
                             }
                         }
