@@ -241,7 +241,7 @@
   <node id='-236' action='modify' visible='true' lat='83.44139608276137' lon='-169.1057395083643' />
   <node id='-237' action='modify' visible='true' lat='83.72291011287005' lon='-177.88230504962021'>
     <tag k='place' v='city' />
-    <tag k='name' v='02 : Basic test with tagged inner and outer ways and no area tagging inside relation (very old style)' />
+    <tag k='name' v='02 : Basic test with tagged inner and outer ways and no area tagging inside relation (very old style - no longer supported)' />
   </node>
   <node id='-238' action='modify' visible='true' lat='83.34037740211511' lon='-166.97194405693813' />
   <node id='-239' action='modify' visible='true' lat='83.52963734530644' lon='-149.25498982338468' />
@@ -3008,7 +3008,7 @@
     <member type='way' ref='-813' role='inner' />
     <member type='way' ref='-951' role='inner' />
     <member type='way' ref='-966' role='outer' />
-    <tag k='name' v='Example 2 (02)' />
+    <tag k='name' v='Example 2 (04)' />
     <tag k='type' v='multipolygon' />
   </relation>
   <relation id='-1073' action='modify' visible='true'>

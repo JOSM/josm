@@ -238,16 +238,15 @@ public class MultipolygonTest extends Test {
                                     INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
                         }
                     }
-                    if(!areaStyle) {
-                        for (Way wOuter : polygon.getOuterWays()) {
-                            AreaElemStyle areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
-                            if (areaOuter != null && !area.equals(areaOuter)) {
-                                List<OsmPrimitive> l = new ArrayList<>();
-                                l.add(r);
-                                l.add(wOuter);
-                                addError(r, new TestError(this, Severity.WARNING, tr("Style for outer way mismatches"),
-                                OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
-                            }
+                    for (Way wOuter : polygon.getOuterWays()) {
+                        AreaElemStyle areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
+                        if (areaOuter != null && !area.equals(areaOuter)) {
+                            List<OsmPrimitive> l = new ArrayList<>();
+                            l.add(r);
+                            l.add(wOuter);
+                            addError(r, new TestError(this, Severity.WARNING, !areaStyle ? tr("Style for outer way mismatches")
+                            : tr("Style for outer way mismatches polygon"),
+                            OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
                         }
                     }
                 }
