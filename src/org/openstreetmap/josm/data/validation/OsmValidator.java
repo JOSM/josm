@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.data.validation.tests.Addresses;
+import org.openstreetmap.josm.data.validation.tests.ApiCapabilitiesTest;
 import org.openstreetmap.josm.data.validation.tests.BarriersEntrances;
 import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.ConditionalKeys;
@@ -122,6 +123,7 @@ public class OsmValidator implements LayerChangeListener {
         Lanes.class, // 3100 .. 3199
         ConditionalKeys.class, // 3200 .. 3299
         InternetTags.class, // 3300 .. 3399
+        ApiCapabilitiesTest.class, // 3400 .. 3499
     };
 
     private static Map<String, Test> allTestsMap;
