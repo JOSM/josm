@@ -270,7 +270,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                         OsmValidator.addIgnoredError(s);
                     }
                     continue;
-                } else if (asked == JOptionPane.CANCEL_OPTION) {
+                } else if (asked == JOptionPane.CANCEL_OPTION || asked == JOptionPane.CLOSED_OPTION) {
                     continue;
                 }
             }
