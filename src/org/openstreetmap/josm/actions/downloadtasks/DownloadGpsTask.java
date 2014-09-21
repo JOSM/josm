@@ -105,7 +105,8 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             this.newLayer = newLayer;
         }
 
-        @Override public void realRun() throws IOException, SAXException, OsmTransferException {
+        @Override
+        public void realRun() throws IOException, SAXException, OsmTransferException {
             try {
                 if (isCanceled())
                     return;
@@ -122,7 +123,8 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             }
         }
 
-        @Override protected void finish() {
+        @Override
+        protected void finish() {
             if (isCanceled() || isFailed())
                 return;
             if (rawData == null)

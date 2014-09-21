@@ -20,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.Extensions;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
@@ -37,7 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Read a gpx file.
  *
- * Bounds are not read, as we caluclate them. @see GpxData.recalculateBounds()
+ * Bounds are read, even if we calculate them, see {@link GpxData#recalculateBounds}.<br>
  * Both GPX version 1.0 and 1.1 are supported.
  *
  * @author imi, ramack
@@ -72,7 +73,8 @@ public class GpxReader implements GpxConstants {
 
         private boolean nokiaSportsTrackerBug = false;
 
-        @Override public void startDocument() {
+        @Override
+        public void startDocument() {
             accumulator = new StringBuffer();
             states = new Stack<>();
             data = new GpxData();
@@ -161,6 +163,13 @@ public class GpxReader implements GpxConstants {
                     states.push(currentState);
                     currentState = State.link;
                     currentLink = new GpxLink(atts.getValue("href"));
+                    break;
+                case "bounds":
+                    data.put(META_BOUNDS, new Bounds(
+                                parseCoord(atts.getValue("minlat")),
+                                parseCoord(atts.getValue("minlon")),
+                                parseCoord(atts.getValue("maxlat")),
+                                parseCoord(atts.getValue("maxlon"))));
                 }
                 break;
             case author:
@@ -311,8 +320,11 @@ public class GpxReader implements GpxConstants {
                         currentState = states.pop();
                         break;
                     }
+                case "bounds":
+                    // do nothing, has been parsed on startElement
+                    break;
                 default:
-                    //TODO: parse bounds, extensions
+                    //TODO: parse extensions
                 }
                 break;
             case author:

@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;

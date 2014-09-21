@@ -23,6 +23,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Data;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -89,7 +91,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public final class DataSet implements Cloneable, ProjectionChangeListener {
+public final class DataSet implements Data, Cloneable, ProjectionChangeListener {
 
     /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
@@ -915,18 +917,14 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         }
     }
 
-    /**
-     * Returns the total area of downloaded data (the "yellow rectangles").
-     * @return Area object encompassing downloaded data.
-     */
+    @Override
+    public Collection<DataSource> getDataSources() {
+        return dataSources;
+    }
+
+    @Override
     public Area getDataSourceArea() {
-        if (dataSources.isEmpty()) return null;
-        Area a = new Area();
-        for (DataSource source : dataSources) {
-            // create area from data bounds
-            a.add(new Area(source.bounds.asRect()));
-        }
-        return a;
+        return DataSource.getDataSourceArea(dataSources);
     }
 
     /**
@@ -1316,26 +1314,9 @@ public final class DataSet implements Cloneable, ProjectionChangeListener {
         }
     }
 
-    /**
-     * <p>Replies the list of data source bounds.</p>
-     *
-     * <p>Dataset maintains a list of data sources which have been merged into the
-     * data set. Each of these sources can optionally declare a bounding box of the
-     * data it supplied to the dataset.</p>
-     *
-     * <p>This method replies the list of defined (non {@code null}) bounding boxes.</p>
-     *
-     * @return the list of data source bounds. An empty list, if no non-null data source
-     * bounds are defined.
-     */
+    @Override
     public List<Bounds> getDataSourceBounds() {
-        List<Bounds> ret = new ArrayList<>(dataSources.size());
-        for (DataSource ds : dataSources) {
-            if (ds.bounds != null) {
-                ret.add(ds.bounds);
-            }
-        }
-        return ret;
+        return DataSource.getDataSourceBounds(dataSources);
     }
 
     /**
