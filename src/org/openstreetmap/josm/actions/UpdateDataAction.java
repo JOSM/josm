@@ -13,7 +13,7 @@ import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTaskList;
-import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;

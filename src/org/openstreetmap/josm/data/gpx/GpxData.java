@@ -1,15 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
+import java.awt.geom.Area;
 import java.io.File;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Data;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
 
 /**
@@ -19,7 +25,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
  *
  * @author Raphael Mack &lt;ramack@raphael-mack.de&gt;
  */
-public class GpxData extends WithAttributes {
+public class GpxData extends WithAttributes implements Data {
 
     public File storageFile;
     public boolean fromServer;
@@ -29,6 +35,14 @@ public class GpxData extends WithAttributes {
     public final Collection<GpxTrack> tracks = new LinkedList<>();
     public final Collection<GpxRoute> routes = new LinkedList<>();
     public final Collection<WayPoint> waypoints = new LinkedList<>();
+
+    /**
+     * All data sources (bounds of downloaded bounds) of this GpxData.<br>
+     * Not part of GPX standard but rather a JOSM extension, needed by the fact that
+     * OSM API does not provide {@code <bounds>} element in its GPX reply.
+     * @since 7575
+     */
+    public final Set<DataSource> dataSources = new HashSet<>();
 
     public void mergeFrom(GpxData other) {
         if (storageFile == null && other.storageFile != null) {
@@ -51,8 +65,13 @@ public class GpxData extends WithAttributes {
         tracks.addAll(other.tracks);
         routes.addAll(other.routes);
         waypoints.addAll(other.waypoints);
+        dataSources.addAll(other.dataSources);
     }
 
+    /**
+     * Determines if this GPX data has one or more track points
+     * @return {@code true} if this GPX data has track points, {@code false} otherwise
+     */
     public boolean hasTrackPoints() {
         for (GpxTrack trk : tracks) {
             for (GpxTrackSegment trkseg : trk.getSegments()) {
@@ -63,6 +82,10 @@ public class GpxData extends WithAttributes {
         return false;
     }
 
+    /**
+     * Determines if this GPX data has one or more route points
+     * @return {@code true} if this GPX data has route points, {@code false} otherwise
+     */
     public boolean hasRoutePoints() {
         for (GpxRoute rte : routes) {
             if (!rte.routePoints.isEmpty())
@@ -71,17 +94,43 @@ public class GpxData extends WithAttributes {
         return false;
     }
 
+    /**
+     * Determines if this GPX data is empty (i.e. does not contain any point)
+     * @return {@code true} if this GPX data is empty, {@code false} otherwise
+     */
     public boolean isEmpty() {
         return !hasRoutePoints() && !hasTrackPoints() && waypoints.isEmpty();
     }
 
     /**
-     * calculates the bounding box of available data and returns it.
+     * Returns the bounds defining the extend of this data, as read in metadata, if any.
+     * If no bounds is defined in metadata, {@code null} is returned. There is no guarantee
+     * that data entirely fit in this bounds, as it is not recalculated. To get recalculated bounds,
+     * see {@link #recalculateBounds()}. To get downloaded areas, see {@link #dataSources}.
+     * @return the bounds defining the extend of this data, or {@code null}.
+     * @see #recalculateBounds()
+     * @see #dataSources
+     * @since 7575
+     */
+    public Bounds getMetaBounds() {
+        Object value = get(META_BOUNDS);
+        if (value instanceof Bounds) {
+            return (Bounds) value;
+        }
+        return null;
+    }
+
+    /**
+     * Calculates the bounding box of available data and returns it.
      * The bounds are not stored internally, but recalculated every time
-     * this function is called.
+     * this function is called.<br>
+     * To get bounds as read from metadata, see {@link #getMetaBounds()}.<br>
+     * To get downloaded areas, see {@link #dataSources}.<br>
      *
      * FIXME might perhaps use visitor pattern?
      * @return the bounds
+     * @see #getMetaBounds()
+     * @see #dataSources
      */
     public Bounds recalculateBounds() {
         Bounds bounds = null;
@@ -118,7 +167,7 @@ public class GpxData extends WithAttributes {
      * calculates the sum of the lengths of all track segments
      * @return the length in meters
      */
-    public double length(){
+    public double length() {
         double result = 0.0; // in meters
 
         for (GpxTrack trk : tracks) {
@@ -401,4 +450,18 @@ public class GpxData extends WithAttributes {
         }
     }
 
+    @Override
+    public Collection<DataSource> getDataSources() {
+        return dataSources;
+    }
+
+    @Override
+    public Area getDataSourceArea() {
+        return DataSource.getDataSourceArea(dataSources);
+    }
+
+    @Override
+    public List<Bounds> getDataSourceBounds() {
+        return DataSource.getDataSourceBounds(dataSources);
+    }
 }

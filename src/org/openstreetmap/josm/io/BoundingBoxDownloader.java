@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -44,9 +45,10 @@ public class BoundingBoxDownloader extends OsmServerReader {
         this.crosses180th = downloadArea.crosses180thMeridian();
     }
 
-    private GpxData downloadRawGps(String url, ProgressMonitor progressMonitor) throws IOException, OsmTransferException, SAXException {
+    private GpxData downloadRawGps(Bounds b, ProgressMonitor progressMonitor) throws IOException, OsmTransferException, SAXException {
         boolean done = false;
         GpxData result = null;
+        String url = "trackpoints?bbox="+b.getMinLon()+","+b.getMinLat()+","+b.getMaxLon()+","+b.getMaxLat()+"&page=";
         for (int i = 0;!done;++i) {
             progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * 5000, ((i + 1) * 5000)));
             try (InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true))) {
@@ -69,6 +71,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
         }
         if (result != null) {
             result.fromServer = true;
+            result.dataSources.add(new DataSource(b, "OpenStreetMap server"));
         }
         return result;
     }
@@ -80,12 +83,12 @@ public class BoundingBoxDownloader extends OsmServerReader {
             progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
             if (crosses180th) {
                 // API 0.6 does not support requests crossing the 180th meridian, so make two requests
-                GpxData result = downloadRawGps("trackpoints?bbox="+lon1+","+lat1+",180.0,"+lat2+"&page=", progressMonitor);
-                result.mergeFrom(downloadRawGps("trackpoints?bbox=-180.0,"+lat1+","+lon2+","+lat2+"&page=", progressMonitor));
+                GpxData result = downloadRawGps(new Bounds(lat1, lon1, lat2, 180.0), progressMonitor);
+                result.mergeFrom(downloadRawGps(new Bounds(lat1, -180.0, lat2, lon2), progressMonitor));
                 return result;
             } else {
                 // Simple request
-                return downloadRawGps("trackpoints?bbox="+lon1+","+lat1+","+lon2+","+lat2+"&page=", progressMonitor);
+                return downloadRawGps(new Bounds(lat1, lon1, lat2, lon2), progressMonitor);
             }
         } catch (IllegalArgumentException e) {
             // caused by HttpUrlConnection in case of illegal stuff in the response
