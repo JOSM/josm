@@ -35,6 +35,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.session.SessionLayerExporter;
 import org.openstreetmap.josm.io.session.SessionWriter;
 import org.openstreetmap.josm.tools.GBC;
@@ -81,7 +82,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         FileFilter joz = new ExtensionFileFilter("joz", "joz", tr("Session file (archive) (*.joz)"));
         FileFilter jos = new ExtensionFileFilter("jos", "jos", tr("Session file (*.jos)"));
 
-        JFileChooser fc;
+        AbstractFileChooser fc;
 
         if (zipRequired) {
             fc = createAndOpenFileChooser(false, false, tr("Save session"), joz, JFileChooser.FILES_ONLY, "lastDirectory");

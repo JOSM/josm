@@ -18,6 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -135,7 +136,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, FileFilter, int, String)
      */
     public static File createAndOpenSaveFileChooser(String title, ExtensionFileFilter filter) {
-        JFileChooser fc = createAndOpenFileChooser(false, false, title, filter, JFileChooser.FILES_ONLY, null);
+        AbstractFileChooser fc = createAndOpenFileChooser(false, false, title, filter, JFileChooser.FILES_ONLY, null);
         return checkFileAndConfirmOverWrite(fc, filter.getDefaultExtension());
     }
 
@@ -149,11 +150,11 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, String)
      */
     public static File createAndOpenSaveFileChooser(String title, String extension) {
-        JFileChooser fc = createAndOpenFileChooser(false, false, title, extension);
+        AbstractFileChooser fc = createAndOpenFileChooser(false, false, title, extension);
         return checkFileAndConfirmOverWrite(fc, extension);
     }
 
-    private static File checkFileAndConfirmOverWrite(JFileChooser fc, String extension) {
+    private static File checkFileAndConfirmOverWrite(AbstractFileChooser fc, String extension) {
         if (fc == null) return null;
         File file = fc.getSelectedFile();
 

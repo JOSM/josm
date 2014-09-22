@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -196,7 +197,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                 return tr("JOSM custom settings files (*.xml)");
             }
         };
-        JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(!saveFileFlag, !saveFileFlag, title, filter, JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
+        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(!saveFileFlag, !saveFileFlag, title, filter,
+                JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
         if (fc != null) {
             File[] sel = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
             if (sel.length==1 && !sel[0].getName().contains(".")) sel[0]=new File(sel[0].getAbsolutePath()+".xml");

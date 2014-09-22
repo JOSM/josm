@@ -9,11 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 
-import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.io.FileImporter;
@@ -223,7 +223,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
     }
 
     /**
-     * Applies the choosable {@link FileFilter} to a {@link JFileChooser} before using the
+     * Applies the choosable {@link FileFilter} to a {@link AbstractFileChooser} before using the
      * file chooser for selecting a file for reading.
      *
      * @param fileChooser the file chooser
@@ -232,7 +232,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      *                 If false, only the file filters that include {@code extension} will be proposed
      * @since 5438
      */
-    public static void applyChoosableImportFileFilters(JFileChooser fileChooser, String extension, boolean allTypes) {
+    public static void applyChoosableImportFileFilters(AbstractFileChooser fileChooser, String extension, boolean allTypes) {
         for (ExtensionFileFilter filter: getImportExtensionFileFilters()) {
             if (allTypes || filter.acceptName("file."+extension)) {
                 fileChooser.addChoosableFileFilter(filter);
@@ -242,7 +242,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
     }
 
     /**
-     * Applies the choosable {@link FileFilter} to a {@link JFileChooser} before using the
+     * Applies the choosable {@link FileFilter} to a {@link AbstractFileChooser} before using the
      * file chooser for selecting a file for writing.
      *
      * @param fileChooser the file chooser
@@ -251,7 +251,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      *                 If false, only the file filters that include {@code extension} will be proposed
      * @since 5438
      */
-    public static void applyChoosableExportFileFilters(JFileChooser fileChooser, String extension, boolean allTypes) {
+    public static void applyChoosableExportFileFilters(AbstractFileChooser fileChooser, String extension, boolean allTypes) {
         for (ExtensionFileFilter filter: getExportExtensionFileFilters()) {
             if (allTypes || filter.acceptName("file."+extension)) {
                 fileChooser.addChoosableFileFilter(filter);

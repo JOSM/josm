@@ -19,6 +19,7 @@ import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.Setting;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 
 /**
  * Action that exports some fragment of settings to custom configuration file
@@ -70,7 +71,7 @@ public class ExportProfileAction extends AbstractAction {
                 return tr("JOSM custom settings files (*.xml)");
             }
         };
-        JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(false, false, title, filter, JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
+        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(false, false, title, filter, JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
         if (fc != null) {
             File sel = fc.getSelectedFile();
             if (!sel.getName().endsWith(".xml")) sel=new File(sel.getAbsolutePath()+".xml");

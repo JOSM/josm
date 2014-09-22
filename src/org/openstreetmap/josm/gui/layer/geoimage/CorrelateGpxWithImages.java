@@ -71,6 +71,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.GpxReader;
@@ -150,7 +151,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     return tr("GPX Files (*.gpx *.gpx.gz)");
                 }
             };
-            JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, filter, JFileChooser.FILES_ONLY, null);
+            AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, filter, JFileChooser.FILES_ONLY, null);
             if (fc == null)
                 return;
             File sel = fc.getSelectedFile();
@@ -382,7 +383,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 @Override
                 public void actionPerformed(ActionEvent ae) {
-                    JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(),
+                    AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null, JpegFileFilter.getInstance(),
                             JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
                     if (fc == null)
                         return;

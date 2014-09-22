@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -59,6 +60,7 @@ public class LafPreference implements SubPreferenceSetting {
     private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
     private JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
     private JCheckBox isoDates = new JCheckBox(tr("Display ISO dates"));
+    private JCheckBox nativeFileChoosers = new JCheckBox(tr("Use native file choosers (nicer, but do not support file filters)"));
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
@@ -133,6 +135,11 @@ public class LafPreference implements SubPreferenceSetting {
         isoDates.setSelected(DateUtils.PROP_ISO_DATES.get());
         panel.add(isoDates, GBC.eop().insets(20, 0, 0, 0));
 
+        nativeFileChoosers.setToolTipText(
+                tr("Use file choosers that behave more like native ones. They look nicer but do not support some features like file filters"));
+        nativeFileChoosers.setSelected(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get());
+        panel.add(nativeFileChoosers, GBC.eop().insets(20, 0, 0, 0));
+
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
         panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
@@ -153,6 +160,7 @@ public class LafPreference implements SubPreferenceSetting {
         Main.pref.put("modeless", modeless.isSelected());
         Main.pref.put(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
         Main.pref.put(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
+        Main.pref.put(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());
         mod |= Main.pref.put("laf", ((LookAndFeelInfo)lafCombo.getSelectedItem()).getClassName());
         return mod;
     }
