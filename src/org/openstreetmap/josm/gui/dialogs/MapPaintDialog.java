@@ -72,8 +72,9 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
@@ -442,7 +443,7 @@ public class MapPaintDialog extends ToggleDialog {
                 return;
             final StyleSource s = model.getRow(sel);
 
-            JFileChooserManager fcm = new JFileChooserManager(false, "mappaint.clone-style.lastDirectory", System.getProperty("user.home"));
+            FileChooserManager fcm = new FileChooserManager(false, "mappaint.clone-style.lastDirectory", System.getProperty("user.home"));
             String suggestion = fcm.getInitialDirectory() + File.separator + s.getFileNamePart();
 
             FileFilter ff;
@@ -453,7 +454,7 @@ public class MapPaintDialog extends ToggleDialog {
             }
             fcm.createFileChooser(false, null, Arrays.asList(ff, FileFilterAllFiles.getInstance()), ff, JFileChooser.FILES_ONLY)
                     .getFileChooser().setSelectedFile(new File(suggestion));
-            JFileChooser fc = fcm.openFileChooser();
+            AbstractFileChooser fc = fcm.openFileChooser();
             if (fc == null)
                 return;
             Main.worker.submit(new SaveToFileTask(s, fc.getSelectedFile()));

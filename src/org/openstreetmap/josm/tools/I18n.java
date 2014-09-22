@@ -25,6 +25,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter.TranslationAdapter;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 
 /**
  * Internationalisation support.
@@ -640,6 +641,7 @@ public final class I18n {
     public static void translateJavaInternalMessages() {
         Locale l = Locale.getDefault();
 
+        AbstractFileChooser.setDefaultLocale(l);
         JFileChooser.setDefaultLocale(l);
         JColorChooser.setDefaultLocale(l);
         for (String key : javaInternalMessageKeys) {

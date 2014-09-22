@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.tools.AudioUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -77,7 +78,7 @@ public class ImportAudioAction extends AbstractAction {
                 return tr("Wave Audio files (*.wav)");
             }
         };
-        JFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, true, null, filter, JFileChooser.FILES_ONLY, "markers.lastaudiodirectory");
+        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, true, null, filter, JFileChooser.FILES_ONLY, "markers.lastaudiodirectory");
         if (fc != null) {
             File[] sel = fc.getSelectedFiles();
             // sort files in increasing order of timestamp (this is the end time, but so

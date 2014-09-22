@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -33,6 +32,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -64,7 +64,7 @@ public class OpenFileAction extends DiskAccessAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JFileChooser fc = createAndOpenFileChooser(true, true, null);
+        AbstractFileChooser fc = createAndOpenFileChooser(true, true, null);
         if (fc == null)
             return;
         File[] files = fc.getSelectedFiles();

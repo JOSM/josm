@@ -6,7 +6,8 @@ import java.util.Collection;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import org.openstreetmap.josm.gui.widgets.JFileChooserManager;
+import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -45,32 +46,32 @@ public abstract class DiskAccessAction extends JosmAction {
     }
 
     /**
-     * Creates a new {@link JFileChooser} and makes it visible.
+     * Creates a new {@link AbstractFileChooser} and makes it visible.
      * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
-     * @return The {@code JFileChooser}.
+     * @return The {@code AbstractFileChooser}.
      * @since 1646
      */
-    public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title) {
+    public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title) {
         return createAndOpenFileChooser(open, multiple, title, null);
     }
 
     /**
-     * Creates a new {@link JFileChooser} and makes it visible.
+     * Creates a new {@link AbstractFileChooser} and makes it visible.
      * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
      * @param extension The file extension that will be selected as the default file filter
-     * @return The {@code JFileChooser}.
+     * @return The {@code AbstractFileChooser}.
      * @since 2020
      */
-    public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, String extension) {
+    public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, String extension) {
         return createAndOpenFileChooser(open, multiple, title, extension, JFileChooser.FILES_ONLY, true, null);
     }
 
     /**
-     * Creates a new {@link JFileChooser} and makes it visible.
+     * Creates a new {@link AbstractFileChooser} and makes it visible.
      * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
@@ -81,17 +82,17 @@ public abstract class DiskAccessAction extends JosmAction {
      *                      <li>select both files and directories ({@code JFileChooser.FILES_AND_DIRECTORIES})</li></ul>
      * @param allTypes If true, all the files types known by JOSM will be proposed in the "file type" combobox.
      *                 If false, only the file filters that include {@code extension} will be proposed
-     * @param lastDirProperty The name of the property used to setup the JFileChooser initial directory.
+     * @param lastDirProperty The name of the property used to setup the AbstractFileChooser initial directory.
      *        This property will then be updated to the new "last directory" chosen by the user. If null, the default property "lastDirectory" will be used.
-     * @return The {@code JFileChooser}.
+     * @return The {@code AbstractFileChooser}.
      * @since 5438
      */
-    public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, String extension, int selectionMode, boolean allTypes, String lastDirProperty) {
-        return new JFileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, extension, allTypes, selectionMode).openFileChooser();
+    public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, String extension, int selectionMode, boolean allTypes, String lastDirProperty) {
+        return new FileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, extension, allTypes, selectionMode).openFileChooser();
     }
 
     /**
-     * Creates a new {@link JFileChooser} for a single {@link FileFilter} and makes it visible.
+     * Creates a new {@link AbstractFileChooser} for a single {@link FileFilter} and makes it visible.
      * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
@@ -100,16 +101,16 @@ public abstract class DiskAccessAction extends JosmAction {
      *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li>
      *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li>
      *                      <li>select both files and directories ({@code JFileChooser.FILES_AND_DIRECTORIES})</li></ul>
-     * @param lastDirProperty The name of the property used to setup the JFileChooser initial directory. This property will then be updated to the new "last directory" chosen by the user
-     * @return The {@code JFileChooser}.
+     * @param lastDirProperty The name of the property used to setup the AbstractFileChooser initial directory. This property will then be updated to the new "last directory" chosen by the user
+     * @return The {@code AbstractFileChooser}.
      * @since 5438
      */
-    public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, FileFilter filter, int selectionMode, String lastDirProperty) {
-        return new JFileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, filter, selectionMode).openFileChooser();
+    public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title, FileFilter filter, int selectionMode, String lastDirProperty) {
+        return new FileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, filter, selectionMode).openFileChooser();
     }
 
     /**
-     * Creates a new {@link JFileChooser} for several {@link FileFilter}s and makes it visible.
+     * Creates a new {@link AbstractFileChooser} for several {@link FileFilter}s and makes it visible.
      * @param open If true, pops up an "Open File" dialog. If false, pops up a "Save File" dialog
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
@@ -120,11 +121,11 @@ public abstract class DiskAccessAction extends JosmAction {
      *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li>
      *                      <li>select both files and directories ({@code JFileChooser.FILES_AND_DIRECTORIES})</li></ul>
      * @param lastDirProperty The name of the property used to setup the JFileChooser initial directory. This property will then be updated to the new "last directory" chosen by the user
-     * @return The {@code JFileChooser}.
+     * @return The {@code AbstractFileChooser}.
      * @since 5438
      */
-    public static JFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title,
+    public static AbstractFileChooser createAndOpenFileChooser(boolean open, boolean multiple, String title,
             Collection<? extends FileFilter> filters, FileFilter defaultFilter, int selectionMode, String lastDirProperty) {
-        return new JFileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, filters, defaultFilter, selectionMode).openFileChooser();
+        return new FileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, filters, defaultFilter, selectionMode).openFileChooser();
     }
 }

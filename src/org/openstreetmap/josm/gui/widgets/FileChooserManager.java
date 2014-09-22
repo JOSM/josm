@@ -13,51 +13,59 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.actions.SaveActionBase;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 
 /**
- * A chained utility class used to create and open {@link JFileChooser} dialogs.<br>
- * Use only this class if you need to control specifically your JFileChooser dialog.<br>
+ * A chained utility class used to create and open {@link AbstractFileChooser} dialogs.<br>
+ * Use only this class if you need to control specifically your AbstractFileChooser dialog.<br>
  * <p>
  * A simpler usage is to call the {@link DiskAccessAction#createAndOpenFileChooser} methods.
  *
- * @since 5438
+ * @since 5438 (creation)
+ * @since 7578 (rename)
  */
-public class JFileChooserManager {
+public class FileChooserManager {
+
+    /**
+     * Property to enable use of native file dialogs.
+     */
+    public static final BooleanProperty PROP_USE_NATIVE_FILE_DIALOG = new BooleanProperty("use.native.file.dialog", false);
+
     private final boolean open;
     private final String lastDirProperty;
     private final String curDir;
 
-    private JFileChooser fc;
+    private AbstractFileChooser fc;
 
     /**
-     * Creates a new {@code JFileChooserManager}.
+     * Creates a new {@code FileChooserManager}.
      * @param open If true, "Open File" dialogs will be created. If false, "Save File" dialogs will be created.
      * @see #createFileChooser
      */
-    public JFileChooserManager(boolean open) {
+    public FileChooserManager(boolean open) {
         this(open, null);
     }
 
     /**
-     * Creates a new {@code JFileChooserManager}.
+     * Creates a new {@code FileChooserManager}.
      * @param open If true, "Open File" dialogs will be created. If false, "Save File" dialogs will be created.
-     * @param lastDirProperty The name of the property used to get the last directory. This directory is used to initialize the JFileChooser.
+     * @param lastDirProperty The name of the property used to get the last directory. This directory is used to initialize the AbstractFileChooser.
      *                        Then, if the user effectively chooses a file or a directory, this property will be updated to the directory path.
      * @see #createFileChooser
      */
-    public JFileChooserManager(boolean open, String lastDirProperty) {
+    public FileChooserManager(boolean open, String lastDirProperty) {
         this(open, lastDirProperty, null);
     }
 
     /**
-     * Creates a new {@code JFileChooserManager}.
+     * Creates a new {@code FileChooserManager}.
      * @param open If true, "Open File" dialogs will be created. If false, "Save File" dialogs will be created.
-     * @param lastDirProperty The name of the property used to get the last directory. This directory is used to initialize the JFileChooser.
+     * @param lastDirProperty The name of the property used to get the last directory. This directory is used to initialize the AbstractFileChooser.
      *                        Then, if the user effectively chooses a file or a directory, this property will be updated to the directory path.
-     * @param defaultDir The default directory used to initialize the JFileChooser if the {@code lastDirProperty} property value is missing.
+     * @param defaultDir The default directory used to initialize the AbstractFileChooser if the {@code lastDirProperty} property value is missing.
      * @see #createFileChooser
      */
-    public JFileChooserManager(boolean open, String lastDirProperty, String defaultDir) {
+    public FileChooserManager(boolean open, String lastDirProperty, String defaultDir) {
         this.open = open;
         this.lastDirProperty = lastDirProperty == null || lastDirProperty.isEmpty() ? "lastDirectory" : lastDirProperty;
         this.curDir = Main.pref.get(this.lastDirProperty).isEmpty() ?
@@ -66,32 +74,32 @@ public class JFileChooserManager {
     }
 
     /**
-     * Replies the {@code JFileChooser} that has been previously created.
-     * @return The {@code JFileChooser} that has been previously created, or {@code null} if it has not been created yet.
+     * Replies the {@code AbstractFileChooser} that has been previously created.
+     * @return The {@code AbstractFileChooser} that has been previously created, or {@code null} if it has not been created yet.
      * @see #createFileChooser
      */
-    public final JFileChooser getFileChooser() {
+    public final AbstractFileChooser getFileChooser() {
         return fc;
     }
 
     /**
-     * Replies the initial directory used to construct the {@code JFileChooser}.
-     * @return The initial directory used to construct the {@code JFileChooser}.
+     * Replies the initial directory used to construct the {@code AbstractFileChooser}.
+     * @return The initial directory used to construct the {@code AbstractFileChooser}.
      */
     public final String getInitialDirectory() {
         return curDir;
     }
 
     /**
-     * Creates a new {@link JFileChooser} with default settings. All files will be accepted.
+     * Creates a new {@link AbstractFileChooser} with default settings. All files will be accepted.
      * @return this
      */
-    public final JFileChooserManager createFileChooser() {
+    public final FileChooserManager createFileChooser() {
         return doCreateFileChooser(false, null, null, null, null, JFileChooser.FILES_ONLY, false);
     }
 
     /**
-     * Creates a new {@link JFileChooser} with given settings for a single {@code FileFilter}.
+     * Creates a new {@link AbstractFileChooser} with given settings for a single {@code FileFilter}.
      *
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
@@ -103,14 +111,14 @@ public class JFileChooserManager {
      * @return this
      * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, FileFilter, int, String)
      */
-    public final JFileChooserManager createFileChooser(boolean multiple, String title, FileFilter filter, int selectionMode) {
+    public final FileChooserManager createFileChooser(boolean multiple, String title, FileFilter filter, int selectionMode) {
         doCreateFileChooser(multiple, title, Collections.singleton(filter), filter, null, selectionMode, false);
         getFileChooser().setAcceptAllFileFilterUsed(false);
         return this;
     }
 
     /**
-     * Creates a new {@link JFileChooser} with given settings for a collection of {@code FileFilter}s.
+     * Creates a new {@link AbstractFileChooser} with given settings for a collection of {@code FileFilter}s.
      *
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
@@ -123,12 +131,13 @@ public class JFileChooserManager {
      * @return this
      * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, Collection, FileFilter, int, String)
      */
-    public final JFileChooserManager createFileChooser(boolean multiple, String title, Collection<? extends FileFilter> filters, FileFilter defaultFilter, int selectionMode) {
+    public final FileChooserManager createFileChooser(boolean multiple, String title, Collection<? extends FileFilter> filters,
+            FileFilter defaultFilter, int selectionMode) {
         return doCreateFileChooser(multiple, title, filters, defaultFilter, null, selectionMode, false);
     }
 
     /**
-     * Creates a new {@link JFileChooser} with given settings for a file extension.
+     * Creates a new {@link AbstractFileChooser} with given settings for a file extension.
      *
      * @param multiple If true, makes the dialog allow multiple file selections
      * @param title The string that goes in the dialog window's title bar
@@ -142,12 +151,20 @@ public class JFileChooserManager {
      * @return this
      * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, FileFilter, int, String)
      */
-    public final JFileChooserManager createFileChooser(boolean multiple, String title, String extension, boolean allTypes, int selectionMode) {
+    public final FileChooserManager createFileChooser(boolean multiple, String title, String extension, boolean allTypes, int selectionMode) {
         return doCreateFileChooser(multiple, title, null, null, extension, selectionMode, allTypes);
     }
 
-    private final JFileChooserManager doCreateFileChooser(boolean multiple, String title, Collection<? extends FileFilter> filters, FileFilter defaultFilter, String extension, int selectionMode, boolean allTypes) {
-        fc = new JFileChooser(new File(curDir));
+    private final FileChooserManager doCreateFileChooser(boolean multiple, String title, Collection<? extends FileFilter> filters,
+            FileFilter defaultFilter, String extension, int selectionMode, boolean allTypes) {
+        File file = new File(curDir);
+        // Use native dialog is preference is set, unless an unsupported selection mode is specifically wanted
+        if (PROP_USE_NATIVE_FILE_DIALOG.get() && NativeFileChooser.supportsSelectionMode(selectionMode)) {
+            fc = new NativeFileChooser(file);
+        } else {
+            fc = new SwingFileChooser(file);
+        }
+
         if (title != null) {
             fc.setDialogTitle(title);
         }
@@ -172,22 +189,22 @@ public class JFileChooserManager {
     }
 
     /**
-     * Opens the {@code JFileChooser} that has been created. Nothing happens if it has not been created yet.
-     * @return the {@code JFileChooser} if the user effectively choses a file or directory. {@code null} if the user cancelled the dialog.
+     * Opens the {@code AbstractFileChooser} that has been created. Nothing happens if it has not been created yet.
+     * @return the {@code AbstractFileChooser} if the user effectively choses a file or directory. {@code null} if the user cancelled the dialog.
      */
-    public final JFileChooser openFileChooser() {
+    public final AbstractFileChooser openFileChooser() {
         return openFileChooser(null);
     }
 
     /**
-     * Opens the {@code JFileChooser} that has been created and waits for the user to choose a file/directory, or cancel the dialog.<br>
+     * Opens the {@code AbstractFileChooser} that has been created and waits for the user to choose a file/directory, or cancel the dialog.<br>
      * Nothing happens if the dialog has not been created yet.<br>
      * When the user choses a file or directory, the {@code lastDirProperty} is updated to the chosen directory path.
      *
-     * @param parent The Component used as the parent of the JFileChooser. If null, uses {@code Main.parent}.
-     * @return the {@code JFileChooser} if the user effectively choses a file or directory. {@code null} if the user cancelled the dialog.
+     * @param parent The Component used as the parent of the AbstractFileChooser. If null, uses {@code Main.parent}.
+     * @return the {@code AbstractFileChooser} if the user effectively choses a file or directory. {@code null} if the user cancelled the dialog.
      */
-    public JFileChooser openFileChooser(Component parent) {
+    public AbstractFileChooser openFileChooser(Component parent) {
         if (fc != null) {
             if (parent == null) {
                 parent = Main.parent;
