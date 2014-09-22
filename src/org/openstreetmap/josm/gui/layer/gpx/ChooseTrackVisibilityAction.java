@@ -260,8 +260,9 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         msg.add(scrollPane, GBC.eol().fill(GBC.BOTH));
 
         // build dialog
-        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Set track visibility for {0}", layer.getName()), new String[]{tr("Show all"), tr("Show selected only"), tr("Cancel")});
-        ed.setButtonIcons(new String[]{"dialogs/layerlist/eye", "dialogs/filter", "cancel"});
+        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Set track visibility for {0}", layer.getName()),
+                new String[]{tr("Show all"), tr("Show selected only"), tr("Cancel")});
+        ed.setButtonIcons(new String[]{"eye", "dialogs/filter", "cancel"});
         ed.setContent(msg, false);
         ed.setDefaultButton(2);
         ed.setCancelButton(3);
