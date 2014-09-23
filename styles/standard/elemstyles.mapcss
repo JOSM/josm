@@ -3317,6 +3317,337 @@ node[aerialway=goods] {
     text: auto;
 }
 
+/**************/
+/* sport tags */
+/**************/
+
+area[sport="9pin"],
+area[sport="10pin"],
+area[sport=athletics],
+area[sport=soccer],
+area[sport=australian_football],
+area[sport=american_football],
+area[sport=canadian_football],
+area[sport=gaelic_football],
+area[sport=rugby_league],
+area[sport=rugby_union] {
+    fill-color: sport#bde3cb;
+}
+node[sport="9pin"] {
+    icon-image: "sport/10pin.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport="10pin"] {
+    icon-image: "sport/10pin.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=athletics] {
+    icon-image: "sport/athletics.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=soccer],
+node[sport=australian_football],
+node[sport=american_football],
+node[sport=canadian_football],
+node[sport=gaelic_football] {
+    icon-image: "sport/soccer.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=rugby_league],
+node[sport=rugby_union] {
+    icon-image: "sport/football.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=baseball],
+area[sport=basketball],
+area[sport=boules],
+area[sport=bowls],
+area[sport=canoe],
+area[sport=chess],
+area[sport=climbing]:closed,
+area[sport=cricket],
+area[sport=cricket_nets],
+area[sport=croquet] {
+    fill-color: sport#bde3cb;
+}
+node[sport=baseball] {
+    icon-image: "sport/baseball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=basketball] {
+    icon-image: "sport/basketball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=boules] {
+    icon-image: "sport/boule.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=bowls] {
+    icon-image: "sport/boule.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=canoe] {
+    icon-image: "sport/canoe.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=chess] {
+    icon-image: "sport/chess.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=climbing] {
+    icon-image: "sport/climbing.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=cricket] {
+    icon-image: "sport/cricket.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=cricket_nets] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=croquet] {
+    icon-image: "sport/croquet.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=cycling],
+area[sport=dog_racing],
+area[sport=equestrian],
+area[sport=golf],
+area[sport=gymnastics],
+area[sport=hockey],
+area[sport=horse_racing],
+area[sport=karting],
+area[sport=motocross],
+area[sport=motor] {
+    fill-color: sport#bde3cb;
+}
+node[sport=cycling] {
+    icon-image: "sport/cycling.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=dog_racing] {
+    icon-image: "leisure/dog.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=equestrian] {
+    icon-image: "sport/riding.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=golf] {
+    icon-image: "sport/golf.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=gymnastics] {
+    icon-image: "sport/multi.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=hockey] {
+    icon-image: "sport/hockey.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=horse_racing] {
+    icon-image: "sport/riding.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=karting] {
+    icon-image: "sport/karting.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=motocross] {
+    icon-image: "sport/motocross.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=motor] {
+    icon-image: "sport/motor.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=multi],
+area[sport=pelota],
+area[sport=racquet],
+area[sport=skating],
+area[sport=skateboard] {
+    fill-color: sport#bde3cb;
+}
+node[sport=multi] {
+    icon-image: "sport/multi.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=pelota] {
+    icon-image: "sport/pelota.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=racquet] {
+    icon-image: "sport/racquetball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=skating] {
+    icon-image: "sport/skating.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=skateboard] {
+    icon-image: "sport/skateboard.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=swimming] {
+    fill-color: swimming_pool#51c4ef;
+}
+node[sport=swimming] {
+    icon-image: "sport/pool.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=skiing],
+area[sport=table_tennis],
+area[sport=tennis],
+area[sport=paintball] {
+    fill-color: sport#bde3cb;
+}
+node[sport=skiing] {
+    icon-image: "sport/skiing.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=table_tennis] {
+    icon-image: "sport/table_tennis.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=tennis] {
+    icon-image: "sport/tennis.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=paintball] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=squash],
+area[sport=shooting],
+area[sport=volleyball],
+area[sport=beachvolleyball],
+area[sport=bowling],
+area[sport=handball],
+area[sport=rowing],
+area[sport=sailing],
+area[sport=diving],
+area[sport=badminton] {
+    fill-color: sport#bde3cb;
+}
+node[sport=squash] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=shooting] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=volleyball] {
+    icon-image: "sport/volleyball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=beachvolleyball] {
+    icon-image: "sport/beachvolleyball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=bowling] {
+    icon-image: "sport/10pin.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=handball] {
+    icon-image: "sport/handball.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=rowing] {
+    icon-image: "sport/rowing.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=sailing] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=diving] {
+    icon-image: "sport/diving.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=badminton] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+area[sport=archery],
+area[sport=fishing],
+area[sport=safety_training],
+area[sport=model_aerodrome],
+area[sport=rc_car] {
+    fill-color: sport#bde3cb;
+}
+node[sport=archery] {
+    icon-image: "sport/archery.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=fishing] {
+    icon-image: "sport/fishing.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=safety_training] {
+    icon-image: "sport/safety_training.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=model_aerodrome] {
+    icon-image: "transport/airport.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=rc_car] {
+    icon-image: "transport/car.png";
+    set icon_z17;
+    text: auto;
+}
+
 /****************/
 /* natural tags */
 /****************/
@@ -3671,337 +4002,6 @@ node[route=ski],
 node[route=tour],
 node[route=pub_crawl] {
     icon-image: "misc/deprecated.png";
-    set icon_z17;
-    text: auto;
-}
-
-/**************/
-/* sport tags */
-/**************/
-
-area[sport="9pin"],
-area[sport="10pin"],
-area[sport=athletics],
-area[sport=soccer],
-area[sport=australian_football],
-area[sport=american_football],
-area[sport=canadian_football],
-area[sport=gaelic_football],
-area[sport=rugby_league],
-area[sport=rugby_union] {
-    fill-color: sport#bde3cb;
-}
-node[sport="9pin"] {
-    icon-image: "sport/10pin.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport="10pin"] {
-    icon-image: "sport/10pin.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=athletics] {
-    icon-image: "sport/athletics.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=soccer],
-node[sport=australian_football],
-node[sport=american_football],
-node[sport=canadian_football],
-node[sport=gaelic_football] {
-    icon-image: "sport/soccer.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=rugby_league],
-node[sport=rugby_union] {
-    icon-image: "sport/football.png";
-    set icon_z17;
-    text: auto;
-}
-area[sport=baseball],
-area[sport=basketball],
-area[sport=boules],
-area[sport=bowls],
-area[sport=canoe],
-area[sport=chess],
-area[sport=climbing]:closed,
-area[sport=cricket],
-area[sport=cricket_nets],
-area[sport=croquet] {
-    fill-color: sport#bde3cb;
-}
-node[sport=baseball] {
-    icon-image: "sport/baseball.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=basketball] {
-    icon-image: "sport/basketball.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=boules] {
-    icon-image: "sport/boule.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=bowls] {
-    icon-image: "sport/boule.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=canoe] {
-    icon-image: "sport/canoe.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=chess] {
-    icon-image: "sport/chess.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=climbing] {
-    icon-image: "sport/climbing.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=cricket] {
-    icon-image: "sport/cricket.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=cricket_nets] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=croquet] {
-    icon-image: "sport/croquet.png";
-    set icon_z17;
-    text: auto;
-}
-area[sport=cycling],
-area[sport=dog_racing],
-area[sport=equestrian],
-area[sport=golf],
-area[sport=gymnastics],
-area[sport=hockey],
-area[sport=horse_racing],
-area[sport=karting],
-area[sport=motocross],
-area[sport=motor] {
-    fill-color: sport#bde3cb;
-}
-node[sport=cycling] {
-    icon-image: "sport/cycling.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=dog_racing] {
-    icon-image: "leisure/dog.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=equestrian] {
-    icon-image: "sport/riding.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=golf] {
-    icon-image: "sport/golf.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=gymnastics] {
-    icon-image: "sport/multi.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=hockey] {
-    icon-image: "sport/hockey.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=horse_racing] {
-    icon-image: "sport/riding.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=karting] {
-    icon-image: "sport/karting.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=motocross] {
-    icon-image: "sport/motocross.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=motor] {
-    icon-image: "sport/motor.png";
-    set icon_z17;
-    text: auto;
-}
-area[sport=multi],
-area[sport=pelota],
-area[sport=racquet],
-area[sport=skating],
-area[sport=skateboard] {
-    fill-color: sport#bde3cb;
-}
-node[sport=multi] {
-    icon-image: "sport/multi.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=pelota] {
-    icon-image: "sport/pelota.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=racquet] {
-    icon-image: "sport/racquetball.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=skating] {
-    icon-image: "sport/skating.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=skateboard] {
-    icon-image: "sport/skateboard.png";
-    set icon_z17;
-    text: auto;
-}
-area[sport=swimming] {
-    fill-color: swimming_pool#51c4ef;
-}
-node[sport=swimming] {
-    icon-image: "sport/pool.png";
-    set icon_z17;
-    text: auto;
-}
-area[sport=skiing],
-area[sport=table_tennis],
-area[sport=tennis],
-area[sport=paintball] {
-    fill-color: sport#bde3cb;
-}
-node[sport=skiing] {
-    icon-image: "sport/skiing.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=table_tennis] {
-    icon-image: "sport/table_tennis.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=tennis] {
-    icon-image: "sport/tennis.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=paintball] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
-area[sport=squash],
-area[sport=shooting],
-area[sport=volleyball],
-area[sport=beachvolleyball],
-area[sport=bowling],
-area[sport=handball],
-area[sport=rowing],
-area[sport=sailing],
-area[sport=diving],
-area[sport=badminton] {
-    fill-color: sport#bde3cb;
-}
-node[sport=squash] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=shooting] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=volleyball] {
-    icon-image: "sport/volleyball.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=beachvolleyball] {
-    icon-image: "sport/beachvolleyball.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=bowling] {
-    icon-image: "sport/10pin.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=handball] {
-    icon-image: "sport/handball.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=rowing] {
-    icon-image: "sport/rowing.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=sailing] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=diving] {
-    icon-image: "sport/diving.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=badminton] {
-    icon-image: "misc/no_icon.png";
-    set icon_z17;
-    text: auto;
-}
-area[sport=archery],
-area[sport=fishing],
-area[sport=safety_training],
-area[sport=model_aerodrome],
-area[sport=rc_car] {
-    fill-color: sport#bde3cb;
-}
-node[sport=archery] {
-    icon-image: "sport/archery.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=fishing] {
-    icon-image: "sport/fishing.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=safety_training] {
-    icon-image: "sport/safety_training.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=model_aerodrome] {
-    icon-image: "transport/airport.png";
-    set icon_z17;
-    text: auto;
-}
-node[sport=rc_car] {
-    icon-image: "transport/car.png";
     set icon_z17;
     text: auto;
 }
