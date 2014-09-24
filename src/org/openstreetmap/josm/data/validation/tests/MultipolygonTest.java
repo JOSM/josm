@@ -206,8 +206,7 @@ public class MultipolygonTest extends Test {
 
             List<List<Node>> innerWays = joinWays(polygon.getInnerWays()); // Side effect - sets nonClosedWays
             List<List<Node>> outerWays = joinWays(polygon.getOuterWays());
-            if (styles != null) {
-
+            if (styles != null && !"boundary".equals(r.get("type"))) {
                 AreaElemStyle area = ElemStyles.getAreaElemStyle(r, false);
                 boolean areaStyle = area != null;
                 // If area style was not found for relation then use style of ways
@@ -218,16 +217,14 @@ public class MultipolygonTest extends Test {
                             break;
                         }
                     }
-                    if (!"boundary".equals(r.get("type"))) {
-                        if (area == null) {
-                            addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
-                        } else {
-                            /* old style multipolygon - solve: copy tags from outer way to multipolygon */
-                            addError(r, new TestError(this, Severity.WARNING, 
-                                    trn("Multipolygon relation should be tagged with area tags and not the outer way",
-                                            "Multipolygon relation should be tagged with area tags and not the outer ways", polygon.getOuterWays().size()),
-                                NO_STYLE_POLYGON, r));
-                        }
+                    if (area == null) {
+                        addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
+                    } else {
+                        /* old style multipolygon - solve: copy tags from outer way to multipolygon */
+                        addError(r, new TestError(this, Severity.WARNING, 
+                                trn("Multipolygon relation should be tagged with area tags and not the outer way",
+                                        "Multipolygon relation should be tagged with area tags and not the outer ways", polygon.getOuterWays().size()),
+                           NO_STYLE_POLYGON, r));
                     }
                 }
 
