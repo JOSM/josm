@@ -17,6 +17,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -33,11 +34,12 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This is an extended dialog for resolving conflict between {@link OsmPrimitive}s.
- *
+ * @since 1622
  */
 public class ConflictResolutionDialog extends JDialog implements PropertyChangeListener {
     /** the conflict resolver component */
     private ConflictResolver resolver;
+    private JLabel titleLabel;
 
     private ApplyResolutionAction applyResolutionAction;
 
@@ -108,8 +110,13 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
      */
     protected void build() {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        updateTitle();
         getContentPane().setLayout(new BorderLayout());
+
+        titleLabel = new JLabel();
+        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        getContentPane().add(titleLabel, BorderLayout.NORTH);
+
+        updateTitle();
 
         resolver = new ConflictResolver();
         resolver.setName("panel.conflictresolver");
@@ -122,11 +129,23 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         registerListeners();
     }
 
+    /**
+     * Constructs a new {@code ConflictResolutionDialog}.
+     * @param parent parent component
+     */
     public ConflictResolutionDialog(Component parent) {
         super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         build();
+        pack();
+        if (getInsets().top > 0) {
+            titleLabel.setVisible(false);
+        }
     }
 
+    /**
+     * Replies the conflict resolver component.
+     * @return the conflict resolver component
+     */
     public ConflictResolver getConflictResolver() {
         return resolver;
     }
@@ -233,6 +252,14 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
             setTitle(tr("Resolve conflicts"));
         } else {
             setTitle(tr("Resolve conflicts for ''{0}''", my.getDisplayName(DefaultNameFormatter.getInstance())));
+        }
+    }
+
+    @Override
+    public void setTitle(String title) {
+        super.setTitle(title);
+        if (titleLabel != null) {
+            titleLabel.setText(title);
         }
     }
 
