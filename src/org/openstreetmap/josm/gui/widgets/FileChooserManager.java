@@ -29,7 +29,9 @@ public class FileChooserManager {
     /**
      * Property to enable use of native file dialogs.
      */
-    public static final BooleanProperty PROP_USE_NATIVE_FILE_DIALOG = new BooleanProperty("use.native.file.dialog", false);
+    public static final BooleanProperty PROP_USE_NATIVE_FILE_DIALOG = new BooleanProperty("use.native.file.dialog",
+            // Native dialogs do not support file filters, so do not set them as default, except for OS X where they never worked
+            Main.isPlatformOsx());
 
     private final boolean open;
     private final String lastDirProperty;
