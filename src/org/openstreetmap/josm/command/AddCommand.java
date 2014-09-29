@@ -11,6 +11,7 @@ import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -47,16 +48,25 @@ public class AddCommand extends Command {
         this.osm = osm;
     }
 
+    protected static final void checkNodeStyles(OsmPrimitive osm) {
+        if (osm instanceof Way) {
+            // Fix #10557 - node icon not updated after undoing/redoing addition of a way
+            ((Way)osm).clearCachedNodeStyles();
+        }
+    }
+
     @Override
     public boolean executeCommand() {
         getLayer().data.addPrimitive(osm);
         osm.setModified(true);
+        checkNodeStyles(osm);
         return true;
     }
 
     @Override
     public void undoCommand() {
         getLayer().data.removePrimitive(osm);
+        checkNodeStyles(osm);
     }
 
     @Override
