@@ -37,6 +37,7 @@ import org.openstreetmap.josm.tools.Utils;
  * without the need of loading any class from the plugin jar file.
  *
  * @author imi
+ * @since 153
  */
 public class PluginInformation {
 
@@ -50,6 +51,7 @@ public class PluginInformation {
     public int localmainversion = 0;
     /** The plugin class name. */
     public String className = null;
+    /** Determines if the plugin is an old version loaded for incompatibility with latest JOSM (from plugin list) */
     public boolean oldmode = false;
     /** The list of required plugins, separated by ';' (from plugin list). */
     public String requires = null;
@@ -71,10 +73,13 @@ public class PluginInformation {
     public String localversion = null;
     /** The plugin download link. */
     public String downloadlink = null;
+    /** The plugin icon path inside jar. */
     public String iconPath;
     /** The plugin icon. */
     public ImageIcon icon;
+    /** The libraries referenced in Class-Path manifest attribute. */
     public List<URL> libraries = new LinkedList<>();
+    /** All manifest attributes. */
     public final Map<String, String> attr = new TreeMap<>();
 
     private static final ImageIcon emptyIcon = new ImageIcon(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB));
