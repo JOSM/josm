@@ -738,9 +738,12 @@ public final class Way extends OsmPrimitive implements IWay {
     @Override
     protected void keysChangedImpl(Map<String, String> originalKeys) {
         super.keysChangedImpl(originalKeys);
+        clearCachedNodeStyles();
+    }
+
+    public final void clearCachedNodeStyles() {
         for (final Node n : nodes) {
             n.clearCachedStyle();
         }
     }
-
 }
