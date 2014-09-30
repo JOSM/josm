@@ -137,7 +137,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
         boolean stdMovement = (e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK;
         boolean macMovement = Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask;
         boolean allowedMode = !Main.map.mapModeSelect.equals(Main.map.mapMode)
-                          || Main.map.mapModeSelect.getMode().equals(SelectAction.Mode.SELECT);
+                          || SelectAction.Mode.SELECT.equals(Main.map.mapModeSelect.getMode());
         if (stdMovement || (macMovement && allowedMode)) {
             if (mousePosMove == null)
                 startMovement(e);
