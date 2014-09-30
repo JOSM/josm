@@ -626,7 +626,9 @@ public final class TaggingPresetItems {
             } else {
                 initAutoCompletionField(textField, key);
             }
-            textField.setHint(key);
+            if (Main.pref.getBoolean("taggingpreset.display-keys-as-hint", true)) {
+                textField.setHint(key);
+            }
             if (length != null && !length.isEmpty()) {
                 textField.setMaxChars(Integer.valueOf(length));
             }
@@ -1256,7 +1258,9 @@ public final class TaggingPresetItems {
             combo.reinitialize(lhm.values());
             AutoCompletingTextField tf = new AutoCompletingTextField();
             initAutoCompletionField(tf, key);
-            tf.setHint(key);
+            if (Main.pref.getBoolean("taggingpreset.display-keys-as-hint", true)) {
+                tf.setHint(key);
+            }
             if (length != null && !length.isEmpty()) {
                 tf.setMaxChars(Integer.valueOf(length));
             }
