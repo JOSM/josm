@@ -61,7 +61,7 @@ public class GeoPropertyIndex<T> {
 
     /**
      * Look up the property for a certain point.
-     * This gives the same result as {@link #geoProp#get(LatLon)}, but
+     * This gives the same result as {@link GeoProperty#get(LatLon)}, but
      * should be faster.
      * @param ll the point coordinates
      * @return property value at that point

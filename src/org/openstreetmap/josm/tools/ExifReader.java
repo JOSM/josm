@@ -36,7 +36,7 @@ public final class ExifReader {
      * Returns the date/time from the given JPEG file.
      * @param filename The JPEG file to read
      * @return The date/time read in the EXIF section, or {@code null} if not found
-     * @throws ParseException if {@link DateParser#parse} fails to parse date/time
+     * @throws ParseException if {@link PrimaryDateParser#parse} fails to parse date/time
      */
     public static Date readTime(File filename) throws ParseException {
         try {

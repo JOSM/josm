@@ -69,9 +69,6 @@ public abstract class StyleSource extends SourceEntry {
      * @param mc the current MultiCascade, empty for the first StyleSource
      * @param osm the primitive
      * @param scale the map scale
-     * @param multipolyOuterWay support for a very old multipolygon tagging style
-     * where you add the tags both to the outer and the inner way.
-     * However, independent inner way style is also possible.
      * @param pretendWayIsClosed For styles that require the way to be closed,
      * we pretend it is. This is useful for generating area styles from the (segmented)
      * outer ways of a multipolygon.

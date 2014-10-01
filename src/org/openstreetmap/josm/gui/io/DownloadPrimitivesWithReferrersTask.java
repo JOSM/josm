@@ -78,7 +78,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
 
     /**
      * Cancel recursively the task. Do not call directly
-     * @see DownloadPrimitivesWithReferrersTask#operationCancel
+     * @see DownloadPrimitivesWithReferrersTask#operationCanceled()
      */
     @Override
     protected void cancel() {
