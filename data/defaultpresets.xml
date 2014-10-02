@@ -142,6 +142,7 @@ reference: include an earlier defined template
    description: what is your preset meant to be
    shortdescription: very short description
    link: a link to a helpful website (optional)
+   icon: an icon for the whole presets
  The fields description, shortdescription and link may also be localized (e.g. de.link)
 
 See also https://josm.openstreetmap.de/wiki/TaggingPresets wiki page.

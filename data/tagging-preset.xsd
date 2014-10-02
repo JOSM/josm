@@ -27,6 +27,7 @@
 				<attribute name="shortdescription" type="string" />
 				<attribute name="description" type="string" />
 				<attribute name="link" type="string" />
+				<attribute name="icon" type="string" />
 
 				<anyAttribute processContents="skip" />
 			</extension>
