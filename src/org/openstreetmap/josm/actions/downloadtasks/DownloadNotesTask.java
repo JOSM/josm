@@ -71,10 +71,9 @@ public class DownloadNotesTask extends AbstractDownloadTask {
         protected List<Note> notesData;
 
         public DownloadTask(OsmServerReader reader, ProgressMonitor progressMonitor) {
-            super(tr("Downloading Notes"));
+            super(tr("Downloading Notes"), progressMonitor, false);
             this.reader = reader;
         }
-
 
         @Override
         protected void finish() {

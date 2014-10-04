@@ -67,7 +67,9 @@ public class DownloadGpsTask extends AbstractDownloadTask {
     @Override
     public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
-        if (url.matches(PATTERN_TRACE_ID) || url.matches(PATTERN_EXTERNAL_GPX_SCRIPT) || url.matches(PATTERN_EXTERNAL_GPX_FILE)) {
+        if (url.matches(PATTERN_TRACE_ID)
+         || url.matches(PATTERN_EXTERNAL_GPX_SCRIPT)
+         || url.matches(PATTERN_EXTERNAL_GPX_FILE)) {
             downloadTask = new DownloadTask(newLayer,
                     new OsmServerLocationReader(url), progressMonitor);
             // Extract .gpx filename from URL to set the new layer name
@@ -100,7 +102,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         private final boolean newLayer;
 
         public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
-            super(tr("Downloading GPS data"));
+            super(tr("Downloading GPS data"), progressMonitor, false);
             this.reader = reader;
             this.newLayer = newLayer;
         }
@@ -131,7 +133,8 @@ public class DownloadGpsTask extends AbstractDownloadTask {
                 return;
             String name = newLayerName != null ? newLayerName : tr("Downloaded GPX Data");
 
-            GpxImporterData layers = GpxImporter.loadLayers(rawData, reader.isGpxParsedProperly(), name, tr("Markers from {0}", name));
+            GpxImporterData layers = GpxImporter.loadLayers(rawData, reader.isGpxParsedProperly(), name,
+                    tr("Markers from {0}", name));
 
             GpxLayer gpxLayer = addOrMergeLayer(layers.getGpxLayer(), findGpxMergeLayer());
             addOrMergeLayer(layers.getMarkerLayer(), findMarkerMergeLayer(gpxLayer));

@@ -154,7 +154,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     protected void realRun() throws SAXException, IOException {
         File pluginDir = Main.pref.getPluginsDirectory();
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
-            //lastException = new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
+            /*lastException =*/ new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
             failed.addAll(toUpdate);
             return;
         }
