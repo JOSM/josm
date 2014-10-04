@@ -27,6 +27,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -36,6 +37,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
@@ -138,6 +140,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         protected final List<String> alternatives = new ArrayList<>();
         protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<>();
         protected final Map<String, Boolean> assertions = new HashMap<>();
+        protected boolean deletion = false;
 
         TagCheck(GroupedMapCSSRule rule) {
             this.rule = rule;
@@ -209,6 +212,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                             ? (String) ((Expression) ai.val).evaluate(new Environment())
                             : ai.val instanceof String
                             ? (String) ai.val
+                            : ai.val instanceof Keyword
+                            ? ((Keyword) ai.val).val
                             : null;
                     if (ai.key.startsWith("throw")) {
                         try {
@@ -237,6 +242,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                         CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
                         final String[] x = val.split("=>", 2);
                         check.keyChange.put(Tag.removeWhiteSpaces(x[0]), Tag.removeWhiteSpaces(x[1]));
+                    } else if ("fixDeleteObject".equals(ai.key) && val != null) {
+                        CheckParameterUtil.ensureThat(val.equals("this"), "fixDeleteObject must be followed by 'this'");
+                        check.deletion = true;
                     } else if ("suggestAlternative".equals(ai.key) && val != null) {
                         check.alternatives.add(val);
                     } else if ("assertMatch".equals(ai.key) && val != null) {
@@ -387,7 +395,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @return the fix or {@code null}
          */
         Command fixPrimitive(OsmPrimitive p) {
-            if (change.isEmpty() && keyChange.isEmpty()) {
+            if (change.isEmpty() && keyChange.isEmpty() && !deletion) {
                 return null;
             }
             final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
@@ -402,6 +410,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final String oldKey = insertArguments(matchingSelector, i.getKey());
                 final String newKey = insertArguments(matchingSelector, i.getValue());
                 cmds.add(new ChangePropertyKeyCommand(p, oldKey, newKey));
+            }
+            if (deletion) {
+                cmds.add(new DeleteCommand(p));
             }
             return new SequenceCommand(tr("Fix of {0}", getDescriptionForMatchingSelector(p, matchingSelector)), cmds);
         }

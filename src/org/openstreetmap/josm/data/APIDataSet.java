@@ -28,11 +28,10 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Represents a collection of {@link OsmPrimitive}s which should be uploaded to the
- * API.
+ * Represents a collection of {@link OsmPrimitive}s which should be uploaded to the API.
  * The collection is derived from the modified primitives of an {@link DataSet} and it provides methods
  * for sorting the objects in upload order.
- *
+ * @since 2025
  */
 public class APIDataSet {
     private List<OsmPrimitive> toAdd;
@@ -64,9 +63,6 @@ public class APIDataSet {
         toDelete.clear();
 
         for (OsmPrimitive osm :primitives) {
-            if (osm.get("josm/ignore") != null) {
-                continue;
-            }
             if (osm.isNewOrUndeleted() && !osm.isDeleted()) {
                 toAdd.add(osm);
             } else if (osm.isModified() && !osm.isDeleted()) {

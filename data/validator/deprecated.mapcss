@@ -280,3 +280,9 @@
   fixAdd: "bridge=yes";
   fixAdd: "bridge:structure=suspension";
 }
+
+/* See #10582 - JOSM supported this tag as "don't upload this" feature, before the introduction of upload flag at layer level */
+*[/josm\/ignore/] {
+  throwError: tr("{0} is deprecated. Please delete this object and use a private layer instead", "{0.key}");
+  fixDeleteObject: this;
+}
