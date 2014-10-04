@@ -3701,6 +3701,12 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="fuel" text="Fuel" text_context="grill" values="charcoal,electric,wood" />
             <check key="covered" text="Covered" />
         </item> <!-- Public Grill -->
+        <item name="Firepit" icon="styles/standard/leisure/firepit.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=firepit" />
+            <space />
+            <key key="leisure" value="firepit" />
+            <text key="name" text="Name" />
+        </item> <!-- Firepit -->
         <item name="Fishing" icon="presets/fishing.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=fishing"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:leisure=fishing"
@@ -4311,6 +4317,19 @@ Note that for a match, at least one positive and no negative is required.
                 <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
             </optional>
         </item> <!-- Toilets/Restrooms -->
+        <item name="Shower" icon="styles/standard/service/shower.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=shower" />
+            <space />
+            <key key="amenity" value="shower" />
+            <combo key="access" text="Access rights" values="public,permissive,customers" />
+            <optional>
+                <text key="description" text="Description" />
+                <combo key="fee" text="Fee" values="yes,no" />
+                <text key="operator" text="Operator" />
+                <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
+                <reference ref="oh" />
+            </optional>
+        </item> <!-- Shower -->
         <item name="Post Box" icon="styles/standard/service/post_box.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=post_box"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=post_box"

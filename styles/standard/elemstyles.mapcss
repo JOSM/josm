@@ -1349,7 +1349,8 @@ area[leisure=nature_reserve],
 area[leisure=park],
 area[leisure=playground],
 area[leisure=garden],
-area[leisure=common] {
+area[leisure=common],
+area[leisure=firepit] {
     fill-color: leisure#c7f1a3;
 }
 node[leisure=slipway] {
@@ -1386,6 +1387,11 @@ node[leisure=common] {
     icon-image: "leisure/common.png";
     set icon_z17;
     text: auto;
+}
+node[leisure=firepit] { 
+    icon-image: "leisure/firepit.svg"; 
+    set icon_z17; 
+    text: auto; 
 }
 area[leisure=swimming_pool] {
     fill-color: swimming_pool#51c4ef;
@@ -2051,6 +2057,7 @@ area[emergency=phone],
 area[emergency=aed],
 area[emergency=defibrillator],
 area[amenity=toilets],
+area[amenity=shower],
 area[amenity=recycling] {
     fill-color: amenity_light#f7efb7;
 }
@@ -2073,6 +2080,11 @@ node[amenity=toilets] {
     icon-image: "service/toilets.png";
     set icon_z17;
     text: auto;
+}
+node[amenity=shower] { 
+    icon-image: "service/shower.svg"; 
+    set icon_z17; 
+    text: auto; 
 }
 node[amenity=recycling] {
     icon-image: "service/recycling.png";
