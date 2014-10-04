@@ -584,7 +584,10 @@ public class ImageProvider {
                     return new ImageResource(svg);
                 } else {
                     try {
-                        return new ImageResource(read(new ByteArrayInputStream(bytes), false, false));
+                        // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
+                        // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
+                        // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
+                        return new ImageResource(read(new ByteArrayInputStream(bytes), false, true));
                     } catch (IOException e) {
                         Main.warn("IOException while reading image: "+e.getMessage());
                     }
