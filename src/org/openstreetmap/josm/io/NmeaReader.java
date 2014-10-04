@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -164,7 +165,7 @@ public class NmeaReader {
         return ps.success;
     }
 
-    public NmeaReader(InputStream source) {
+    public NmeaReader(InputStream source) throws IOException {
 
         // create the data tree
         data = new GpxData();
@@ -200,7 +201,7 @@ public class NmeaReader {
             currentTrack.add(ps.waypoints);
             data.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
 
-        } catch (Exception e) {
+        } catch (IllegalDataException e) {
             Main.warn(e);
         }
     }

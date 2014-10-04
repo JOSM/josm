@@ -35,7 +35,6 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
-@SuppressWarnings("CallToThreadDumpStack")
 public final class ExceptionUtil {
 
     private ExceptionUtil() {

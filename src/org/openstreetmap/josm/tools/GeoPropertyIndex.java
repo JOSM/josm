@@ -119,7 +119,7 @@ public class GeoPropertyIndex<T> {
 
             if (children == null) {
                 @SuppressWarnings("unchecked")
-                GPLevel<T>[] tmp = (GPLevel<T>[]) new GPLevel[4];
+                GPLevel<T>[] tmp = new GPLevel[4];
                 this.children = tmp;
             }
 

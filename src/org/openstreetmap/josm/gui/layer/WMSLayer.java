@@ -97,6 +97,7 @@ public class WMSLayer extends ImageryLayer implements ImageObserver, PreferenceC
     }
 
     // Fake reference to keep build scripts from removing ObjectFactory class. This class is not used directly but it's necessary for jaxb to work
+    @SuppressWarnings("unused")
     private static final ObjectFactory OBJECT_FACTORY = null;
 
     // these values correspond to the zoom levels used throughout OSM and are in meters/pixel from zoom level 0 to 18.
