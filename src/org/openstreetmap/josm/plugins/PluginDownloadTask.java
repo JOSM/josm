@@ -43,7 +43,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     private final Collection<PluginInformation> toUpdate = new LinkedList<>();
     private final Collection<PluginInformation> failed = new LinkedList<>();
     private final Collection<PluginInformation> downloaded = new LinkedList<>();
-    private Exception lastException;
+    //private Exception lastException;
     private boolean canceled;
     private HttpURLConnection downloadConnection;
 
@@ -154,7 +154,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     protected void realRun() throws SAXException, IOException {
         File pluginDir = Main.pref.getPluginsDirectory();
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
-            lastException = new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
+            //lastException = new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
             failed.addAll(toUpdate);
             return;
         }
