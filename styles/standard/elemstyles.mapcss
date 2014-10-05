@@ -1504,6 +1504,7 @@ area[shop=bed],
 area[shop=beauty],
 area[shop=tea],
 area[shop=coffee],
+area[shop=antiques],
 area[shop=bag] {
     fill-color: shop#00005f;
 }
@@ -1853,6 +1854,11 @@ node[shop=tea] {
 }
 node[shop=coffee] {
     icon-image: "shop/groceries/coffee.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=antiques] {
+    icon-image: "shop/antique.svg";
     set icon_z17;
     text: auto;
 }

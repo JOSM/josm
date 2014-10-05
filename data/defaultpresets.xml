@@ -6372,6 +6372,15 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="name_oh" />
             <reference ref="link_contact" />
         </item> <!-- Interior Decoration -->
+        <item name="Antiques" icon="styles/standard/shop/antique.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=antiques"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=antiques"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:shop=antiques" />
+            <space />
+            <key key="shop" value="antiques" />
+            <reference ref="name_oh" />
+            <reference ref="link_contact" />
+        </item> <!-- Antiques -->
     </group> <!-- Home decoration -->
     <group name="Printed Material" icon="presets/stationery.png">
         <item name="Stationery" icon="presets/stationery.png" type="node,closedway" preset_name_label="true">

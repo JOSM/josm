@@ -81,13 +81,33 @@
   suggestAlternative: "generator:output";
 }
   
+*[shop=antique] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixAdd: "shop=antiques";
+}
+
+*[shop=bags] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixAdd: "shop=bag";
+}
+
 *[shop=organic] {
   /* from http://wiki.openstreetmap.org/wiki/Tag:shop=organic */
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
   fixAdd: "shop=supermarket";
   fixAdd: "organic=only";
 }
-  
+
+*[shop=pets] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixAdd: "shop=pet";
+}
+
+*[shop=pharmacy] {
+  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  fixChangeKey: "shop => amenity";
+}
+
 *[bicycle_parking=sheffield] {
   /* from http://wiki.openstreetmap.org/wiki/Key:bicycle_parking */
   throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
