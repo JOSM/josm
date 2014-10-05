@@ -437,13 +437,12 @@ public class GenericRelationEditor extends RelationEditor  {
      * @return panel with current selection
      */
     protected JPanel buildSelectionTablePanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
+        MemberRoleCellEditor ce = (MemberRoleCellEditor)memberTable.getColumnModel().getColumn(0).getCellEditor();
         selectionTable = new SelectionTable(selectionTableModel, new SelectionTableColumnModel(memberTableModel));
         selectionTable.setMemberTableModel(memberTableModel);
-        selectionTable.setRowHeight(tfRole.getPreferredSize().height);
-        JScrollPane pane = new JScrollPane(selectionTable);
-        pnl.add(pane, BorderLayout.CENTER);
+        selectionTable.setRowHeight(ce.getEditor().getPreferredSize().height);
+        pnl.add(new JScrollPane(selectionTable), BorderLayout.CENTER);
         return pnl;
     }
 
