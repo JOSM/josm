@@ -2139,7 +2139,7 @@ node[amenity=drinking_water] {
     text: auto;
 }
 node[amenity=fountain] {
-    icon-image: "misc/landmark/spring.png";
+    icon-image: "misc/fountain.png";
     set icon_z17;
     text: auto;
 }

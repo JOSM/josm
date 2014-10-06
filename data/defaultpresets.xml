@@ -5217,7 +5217,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="man_made" value="watermill" />
             <text key="name" text="Name" />
         </item> <!-- Watermill -->
-        <item name="Fountain" icon="presets/spring.png" type="node,closedway" preset_name_label="true">
+        <item name="Fountain" icon="styles/standard/misc/fountain.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fountain"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=fountain"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=fountain"
