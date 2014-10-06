@@ -32,7 +32,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
         private JCheckBoxMenuItem button;
 
         public MapPaintAction(StyleSource style) {
-            super(style.getDisplayString(), style.icon == null ? null : ImageProvider.getIfAvailable(style.icon),
+            super(style.getDisplayString(), style.getIcon(),
                     tr("Select the map painting styles"), null, true, "mappaint/" + style.getDisplayString(), true);
             this.button = new StayOpenCheckBoxMenuItem(this);
             this.style = style;
