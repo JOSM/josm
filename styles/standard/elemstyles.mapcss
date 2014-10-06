@@ -3193,7 +3193,7 @@ node[service=yard], node[service=siding], node[service=spur] {
 /* aeroway tags */
 /****************/
 
-area[aeroway=aerodrome] {
+area[aeroway=aerodrome]:closed {
     fill-color: aeroway#660000;
 }
 way[aeroway=aerodrome] {
@@ -3222,7 +3222,7 @@ node[aeroway=helipad] {
     set icon_z17;
     text: auto;
 }
-area[aeroway=runway] {
+area[aeroway=runway]:closed {
     fill-color: aeroway_dark#330000;
 }
 way[aeroway=runway] {
@@ -3234,7 +3234,7 @@ node[aeroway=runway] {
     set icon_z17;
     text: auto;
 }
-area[aeroway=taxiway] {
+area[aeroway=taxiway]:closed {
     fill-color: aeroway#660000;
 }
 way[aeroway=taxiway] {
