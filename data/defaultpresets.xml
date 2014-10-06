@@ -3026,7 +3026,7 @@ Note that for a match, at least one positive and no negative is required.
             </optional>
         </item> <!-- Airport Ground -->
         <separator/>
-        <item name="Runway" icon="presets/runway.png" type="way" preset_name_label="true">
+        <item name="Runway" icon="presets/runway.png" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=runway"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:aeroway=runway"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:aeroway=runway"
@@ -3037,7 +3037,7 @@ Note that for a match, at least one positive and no negative is required.
                 <text key="ref" text="Reference" />
             </optional>
         </item> <!-- Runway -->
-        <item name="Taxiway" icon="presets/taxiway.png" type="way" preset_name_label="true">
+        <item name="Taxiway" icon="presets/taxiway.png" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=taxiway"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:aeroway=taxiway"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:aeroway=taxiway"
