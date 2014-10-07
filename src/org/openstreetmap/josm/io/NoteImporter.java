@@ -51,7 +51,7 @@ public class NoteImporter extends FileImporter {
             }
             if (noteLayers != null && noteLayers.size() > 0) {
                 NoteLayer layer = noteLayers.get(0);
-                layer.addNotes(fileNotes);
+                layer.getNoteData().addNotes(fileNotes);
             } else {
                 GuiHelper.runInEDT(new Runnable() {
                     @Override
