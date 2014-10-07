@@ -66,6 +66,7 @@ import org.openstreetmap.josm.gui.dialogs.FilterDialog;
 import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.MapPaintDialog;
+import org.openstreetmap.josm.gui.dialogs.NoteDialog;
 import org.openstreetmap.josm.gui.dialogs.RelationListDialog;
 import org.openstreetmap.josm.gui.dialogs.SelectionListDialog;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
@@ -132,6 +133,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public ValidatorDialog validatorDialog;
     public SelectionListDialog selectionListDialog;
     public PropertiesDialog propertiesDialog;
+    public NoteDialog noteDialog;
 
     // Map modes
     public final SelectAction mapModeSelect;
@@ -242,6 +244,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addToggleDialog(filterDialog = new FilterDialog());
         addToggleDialog(new ChangesetDialog(), true);
         addToggleDialog(new MapPaintDialog());
+        //TODO: remove this if statement once note support is complete
+        if(Main.pref.getBoolean("osm.notes.enableDownload", false)) {
+            addToggleDialog(noteDialog = new NoteDialog());
+        }
         toolBarToggle.setFloatable(false);
 
         // status line below the map

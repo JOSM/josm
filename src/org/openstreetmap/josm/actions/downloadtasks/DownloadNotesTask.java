@@ -95,7 +95,7 @@ public class DownloadNotesTask extends AbstractDownloadTask {
             NoteLayer layer;
             if (noteLayers != null && noteLayers.size() > 0) {
                 layer = noteLayers.get(0);
-                layer.addNotes(notesData);
+                layer.getNoteData().addNotes(notesData);
             } else {
                 layer = new NoteLayer(notesData, "Notes");
                 Main.main.addLayer(layer);
