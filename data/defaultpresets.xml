@@ -5017,7 +5017,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,construction" values_context="building" default="yes" match="keyvalue" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,cowshed,construction" values_context="building" default="yes" match="keyvalue" values_searchable="true" />
             <text key="name" text="Name" />
         </item> <!-- Building -->
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation" preset_name_label="true">
