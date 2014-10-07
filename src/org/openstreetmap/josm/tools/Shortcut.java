@@ -412,16 +412,18 @@ public final class Shortcut {
         }
         Shortcut conflict = findShortcut(requestedKey, defaultModifier);
         if (conflict != null) {
+            if (Main.isPlatformOsx()) {
+                // Try to reassign Meta to Ctrl
+                int newmodifier = findNewOsxModifier(requestedGroup);
+                if ( findShortcut(requestedKey, newmodifier) == null ) {
+                    return reassignShortcut(shortText, longText, requestedKey, conflict, requestedGroup, requestedKey, newmodifier);
+                }
+            }
             for (int m : mods) {
                 for (int k : keys) {
                     int newmodifier = getGroupModifier(m);
                     if ( findShortcut(k, newmodifier) == null ) {
-                        Shortcut newsc = new Shortcut(shortText, longText, requestedKey, m, k, newmodifier, false, false);
-                        Main.info(tr("Silent shortcut conflict: ''{0}'' moved by ''{1}'' to ''{2}''.",
-                            shortText, conflict.getShortText(), newsc.getKeyText()));
-                        newsc.saveDefault();
-                        shortcuts.put(shortText, newsc);
-                        return newsc;
+                        return reassignShortcut(shortText, longText, requestedKey, conflict, m, k, newmodifier);
                     }
                 }
             }
@@ -433,6 +435,26 @@ public final class Shortcut {
         }
 
         return null;
+    }
+
+    private static int findNewOsxModifier(int requestedGroup) {
+        switch (requestedGroup) {
+            case CTRL: return KeyEvent.CTRL_DOWN_MASK;
+            case ALT_CTRL: return KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK;
+            case CTRL_SHIFT: return KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK;
+            case ALT_CTRL_SHIFT: return KeyEvent.ALT_DOWN_MASK|KeyEvent.CTRL_DOWN_MASK|KeyEvent.SHIFT_DOWN_MASK;
+            default: return 0;
+        }
+    }
+
+    private static Shortcut reassignShortcut(String shortText, String longText, int requestedKey, Shortcut conflict,
+            int m, int k, int newmodifier) {
+        Shortcut newsc = new Shortcut(shortText, longText, requestedKey, m, k, newmodifier, false, false);
+        Main.info(tr("Silent shortcut conflict: ''{0}'' moved by ''{1}'' to ''{2}''.",
+            shortText, conflict.getShortText(), newsc.getKeyText()));
+        newsc.saveDefault();
+        shortcuts.put(shortText, newsc);
+        return newsc;
     }
 
     /**
