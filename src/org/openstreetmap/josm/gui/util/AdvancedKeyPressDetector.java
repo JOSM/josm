@@ -124,8 +124,10 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
                 timer.stop();
             } else if (set.add((e.getKeyCode())) && enabled) {
                 synchronized (this) {
-                    for (KeyPressReleaseListener q: keyListeners) {
-                        q.doKeyPressed(e);
+                    if (isFocusInMainWindow()) {
+                        for (KeyPressReleaseListener q: keyListeners) {
+                            q.doKeyPressed(e);
+                        }
                     }
                 }
             }
@@ -134,8 +136,10 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
                 timer.stop();
                 if (set.remove(e.getKeyCode()) && enabled) {
                     synchronized (this) {
-                        for (KeyPressReleaseListener q: keyListeners) {
-                            q.doKeyReleased(e);
+                        if (isFocusInMainWindow()) {
+                            for (KeyPressReleaseListener q: keyListeners) {
+                                q.doKeyReleased(e);
+                            }
                         }
                     }
                 }
@@ -164,11 +168,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
             }
         }
 
-        // check if key press is done in main window, not in dialogs
-        Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-        if (SwingUtilities.getWindowAncestor(focused) instanceof JFrame) {
-            processKeyEvent(ke);
-        }
+        processKeyEvent(ke);
     }
 
     /**
@@ -188,5 +188,10 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
      */
     public final void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    private boolean isFocusInMainWindow() {
+        Component focused = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+        return SwingUtilities.getWindowAncestor(focused) instanceof JFrame;
     }
 }
