@@ -341,6 +341,7 @@ node[barrier=gate] {
     set icon_z17;
     text: auto;
 }
+way[barrier=yes],
 way[barrier=hedge],
 way[barrier=fence],
 way[barrier=wall],
