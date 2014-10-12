@@ -84,7 +84,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
      * initializes the model from the current tags
      *
      */
-    protected void rebuild() {
+    public void rebuild() {
         if (tags == null) return;
         for(String key: tags.getKeys()) {
             MultiValueResolutionDecision decision = new MultiValueResolutionDecision(tags.getTagsFor(key));
