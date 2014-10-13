@@ -498,7 +498,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
          * Constructs a new {@code ToolbarButtonAction}.
          */
         public ToolbarButtonAction() {
-            super("", ImageProvider.get("styles/standard/waypoint","pin"));
+            super("", ImageProvider.get("dialogs", "pin"));
             putValue(SHORT_DESCRIPTION, tr("Add or remove toolbar button"));
             LinkedList<String> t = new LinkedList<>(ToolbarPreferences.getToolString());
             toolbarIndex = t.indexOf(getToolbarString());
