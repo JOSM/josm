@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,7 +25,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * This allows to include text fields in toggle dialogs (needed for relation filter).
  * @since 5696
  */
-public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implements FocusListener {
+public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
 
     /**
      * Constructs a new <code>TextField</code>.  A default model is created,
@@ -34,7 +33,6 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
      * and the number of columns is set to 0.
      */
     public DisableShortcutsOnFocusGainedTextField() {
-        init();
     }
 
     /**
@@ -46,7 +44,6 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
      */
     public DisableShortcutsOnFocusGainedTextField(String text) {
         super(text);
-        init();
     }
 
     /**
@@ -62,7 +59,6 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
      */
     public DisableShortcutsOnFocusGainedTextField(int columns) {
         super(columns);
-        init();
     }
 
     /**
@@ -77,7 +73,6 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
      */
     public DisableShortcutsOnFocusGainedTextField(String text, int columns) {
         super(text, columns);
-        init();
     }
 
     /**
@@ -98,18 +93,14 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
      */
     public DisableShortcutsOnFocusGainedTextField(Document doc, String text, int columns) {
         super(doc, text, columns);
-        init();
     }
 
     private final List<Pair<Action,Shortcut>> unregisteredActionShortcuts = new ArrayList<>();
     private final Set<JosmAction> disabledMenuActions = new HashSet<>();
 
-    protected final void init() {
-        addFocusListener(this);
-    }
-
     @Override
     public void focusGained(FocusEvent e) {
+        super.focusGained(e);
         disableMenuActions();
         unregisterActionShortcuts();
         Main.map.keyDetector.setEnabled(false);
@@ -117,6 +108,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField implem
 
     @Override
     public void focusLost(FocusEvent e) {
+        super.focusLost(e);
         Main.map.keyDetector.setEnabled(true);
         restoreActionShortcuts();
         restoreMenuActions();
