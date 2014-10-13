@@ -283,9 +283,12 @@ Note that for a match, at least one positive and no negative is required.
         <text key="brand" text="Brand" />
         <reference ref="oh" />
     </chunk>
-    <chunk id="internet_smoking_wheelchair">
+    <chunk id="internet">
         <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
         <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
+    </chunk>
+    <chunk id="internet_smoking_wheelchair">
+        <reference ref="internet" />
         <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" />
         <combo key="wheelchair" text="Wheelchairs" values="yes,no" />
     </chunk>
@@ -325,6 +328,12 @@ Note that for a match, at least one positive and no negative is required.
         <reference ref="payment_base" />
         <check key="payment:account_cards" text="Account or loyalty cards" />
     </chunk>
+    <chunk id="fee">
+        <combo key="fee" text="Fee" values="yes,no" />
+    </chunk>
+    <chunk id="fee_interval">
+        <combo key="fee" text="Fee" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
+    </chunk>
     <chunk id="parking_name_type_ref">
         <text key="name" text="Name" />
         <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" />
@@ -333,17 +342,19 @@ Note that for a match, at least one positive and no negative is required.
     <chunk id="parking_access_fee_operator_surface">
         <space />
         <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
-        <combo key="fee" text="Fee" values="yes,no,interval" />
+        <reference ref="fee_interval" />
         <text key="operator" text="Operator" />
         <reference ref="surface" />
-        <space />
     </chunk>
     <chunk id="maxstay">
         <combo key="maxstay" text="Time Limit (minutes)" values="0,30,60,90,120,180" />
     </chunk>
+    <chunk id="supervised">
+        <combo key="supervised" text="Supervised" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
+    </chunk>
     <chunk id="supervised_lit_oh">
-        <combo key="supervised" text="Supervised" values="yes,no,interval" />
-        <combo key="lit" text="Lit" values="yes,no,interval" />
+        <reference ref="supervised" />
+        <combo key="lit" text="Lit" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
         <reference ref="oh" />
     </chunk>
     <chunk id="general_access">
@@ -1185,7 +1196,7 @@ Note that for a match, at least one positive and no negative is required.
             <optional text="Optional crossing attributes:">
                 <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
                 <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
-                <check key="supervised" text="Crossing attendant" />
+                <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
                 <check key="bicycle" text="Cross by bicycle" />
                 <check key="horse" text="Cross on horseback" />
             </optional>
@@ -1233,7 +1244,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="highway" value="crossing" />
             <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
             <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
-            <check key="supervised" text="Crossing attendant" />
+            <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
             <check key="bicycle" text="Cross by bicycle" />
             <check key="horse" text="Cross on horseback" />
         </item> <!-- Pedestrian Crossing -->
@@ -1986,7 +1997,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="natural" value="beach" />
             <reference ref="name_wikipedia" />
             <optional>
-                <combo key="supervised" text="Supervised" values="yes,no,interval" />
+                <reference ref="supervised" />
                 <reference ref="oh" />
                 <reference ref="general_access" />
                 <combo key="surface" text="Surface" values="gravel,pebblestone,sand" />
@@ -2243,7 +2254,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=level_crossing" />
             <key key="railway" value="level_crossing" />
             <optional>
-                <check key="supervised" text="Supervised" />
+                <reference ref="supervised" />
                 <check key="crossing:light" text="Traffic lights" />
                 <check key="crossing:bell" text="Sound signals" />
                 <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" values_context="crossing:barrier" />
@@ -2260,9 +2271,9 @@ Note that for a match, at least one positive and no negative is required.
             <key key="railway" value="crossing" />
             <optional>
                 <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals,island,unmarked,no,unknown" />
+                <reference ref="supervised" />
                 <check key="horse" text="Cross on horseback" />
                 <check key="bicycle" text="Cross by bicycle" />
-                <check key="supervised" text="Supervised" />
                 <check key="crossing:light" text="Traffic lights" />
                 <check key="crossing:bell" text="Sound signals" />
                 <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" values_context="crossing:barrier" />
@@ -2636,10 +2647,11 @@ Note that for a match, at least one positive and no negative is required.
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=motorcycle_parking" />
             <space />
             <key key="amenity" value="motorcycle_parking" />
-            <text key="name" text="Name" />
+            <reference ref="parking_name_type_ref" />
             <text key="capacity" text="Capacity" />
-            <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop" />
-            <combo key="fee" text="Fee" values="yes,no" />
+            <reference ref="parking_access_fee_operator_surface" />
+            <reference ref="supervised_lit_oh" />
+            <check key="covered" text="Covered (with roof)" />
         </item> <!-- Parking -->
         <item name="Motorcycle Dealer" icon="presets/motorbike.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=motorcycle"
@@ -2684,7 +2696,8 @@ Note that for a match, at least one positive and no negative is required.
             <text key="capacity" text="Capacity" />
             <combo key="bicycle_parking" text="Type" values="anchors,building,ground_slots,informal,lockers,rack,shed,stands,wall_loops" />
             <check key="covered" text="Covered" />
-            <check key="supervised" text="Supervised" />
+            <reference ref="fee_interval" />
+            <reference ref="supervised_lit_oh" />
         </item> <!-- Parking -->
         <item name="Bike Dealer" icon="presets/bike.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bicycle"
@@ -3095,8 +3108,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="aeroway" value="terminal" />
             <text key="name" text="Name" />
-            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
-            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
+            <reference ref="internet" />
             <reference ref="link_contact" />
         </item> <!-- Terminal -->
         <item name="Gate" name_context="airport" icon="presets/aeroway_gate.png" type="node" preset_name_label="true">
@@ -3223,7 +3235,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="internet_smoking_wheelchair" />
             <space />
             <text key="capacity" text="Number of places" />
-            <combo key="fee" text="Requires a fee" values="yes,no,interval" />
+            <reference ref="fee_interval" />
             <check key="power_supply" text="Power supply" />
             <check key="tents" text="Tents allowed" />
             <space />
@@ -3436,8 +3448,7 @@ Note that for a match, at least one positive and no negative is required.
             <key key="tourism" value="information" />
             <key key="information" value="office" />
             <reference ref="name_oh" />
-            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
-            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
+            <reference ref="internet" />
             <reference ref="link_contact" />
         </item> <!-- Information Office -->
         <item name="Map" icon="presets/map.png" type="node" preset_name_label="true">
@@ -3515,9 +3526,8 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="name_operator" />
             <text key="description" text="Closer description" />
             <text key="ref" text="Reference number" />
-            <combo key="fee" text="Fee" values="yes,no" />
-            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
-            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
+            <reference ref="fee" />
+            <reference ref="internet" />
         </item> <!-- Information Terminal -->
         <item name="Audio Guide" icon="presets/information.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information"
@@ -3533,7 +3543,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="name_operator" />
             <text key="description" text="Closer description" />
             <text key="ref" text="Reference number" />
-            <combo key="fee" text="Fee" values="yes,no" />
+            <reference ref="fee" />
             <space />
             <label text="Audioguide via mobile phone?" />
             <text key="phone" text="Phone number" />
@@ -3641,7 +3651,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="leisure" value="horse_riding" />
             <reference ref="name_operator_oh" />
-            <text key="fee" text="Fee" />
+            <reference ref="fee" />
             <space />
             <reference ref="contact" />
         </item> <!-- Horse Riding -->
@@ -3998,8 +4008,7 @@ Note that for a match, at least one positive and no negative is required.
             <label text="Community Centre" />
             <space />
             <key key="amenity" value="community_centre" />
-            <reference ref="name_operator" />
-            <reference ref="oh" />
+            <reference ref="name_operator_oh" />
         </item> <!-- Community Centre -->
         <item name="Embassy" icon="presets/embassy.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=embassy"
@@ -4035,7 +4044,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=prison" />
             <space />
             <key key="amenity" value="prison" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator" />
             <reference ref="link_contact" />
         </item> <!-- Prison -->
         <item name="Police" icon="styles/standard/service/police.png" type="node,closedway,relation" preset_name_label="true">
@@ -4078,7 +4087,7 @@ Note that for a match, at least one positive and no negative is required.
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:amenity=post_office" />
             <space />
             <key key="amenity" value="post_office" />
-            <reference ref="name_operator" />
+            <reference ref="name_operator_oh" />
         </item> <!-- Post Office -->
     </group> <!-- Public Buildings -->
     <group name="Education" icon="presets/school.png">
@@ -4092,7 +4101,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=kindergarten" />
             <space />
             <key key="amenity" value="kindergarten" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator_oh" />
             <reference ref="link_contact" />
         </item> <!-- Kindergarten -->
         <item name="School" icon="presets/school.png" type="node,closedway,relation" preset_name_label="true">
@@ -4108,7 +4117,7 @@ Note that for a match, at least one positive and no negative is required.
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:amenity=school" />
             <space />
             <key key="amenity" value="school" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator_oh" />
             <reference ref="link_contact" />
         </item> <!-- School -->
         <item name="University" icon="styles/standard/education/university.png" type="node,closedway,relation" preset_name_label="true">
@@ -4123,7 +4132,7 @@ Note that for a match, at least one positive and no negative is required.
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:amenity=university" />
             <space />
             <key key="amenity" value="university" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator" />
             <reference ref="link_contact" />
         </item> <!-- University -->
         <item name="College" icon="styles/standard/education/college.png" type="node,closedway,relation" preset_name_label="true">
@@ -4135,7 +4144,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=college" />
             <space />
             <key key="amenity" value="college" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator" />
             <reference ref="link_contact" />
         </item> <!-- College -->
          <item name="Driving School" icon="styles/standard/education/driving_school.png" type="node,closedway" preset_name_label="true">
@@ -4144,7 +4153,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=driving_school" />
             <space />
             <key key="amenity" value="driving_school" />
-            <reference ref="name_operator" />
+            <reference ref="name_operator_oh" />
             <combo key="license_classes" text="License Classes" values="A;A1;B;BE;C,A;A1;B;B1;C;C1;D;D1;BE;CE;C1E;DE;D1E" />
             <reference ref="link_contact" />
         </item> <!-- Driving School -->
@@ -4169,7 +4178,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=clinic" />
             <space />
             <key key="amenity" value="clinic" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator" />
             <reference ref="link_contact" />
         </item> <!-- Clinic -->
         <item name="Doctor's Office" icon="styles/standard/health/doctor.png" type="node,closedway" preset_name_label="true">
@@ -4312,7 +4321,7 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="toilets:disposal" text="Type" values="flush,pitlatrine,chemical,bucket" />
             <optional>
                 <text key="description" text="Description" />
-                <combo key="fee" text="Fee" values="yes,no" />
+                <reference ref="fee" />
                 <text key="operator" text="Operator" />
                 <combo key="toilets:position" text="Usage Position" values="seated,seated;urinal,squat,urinal" />
                 <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" />
@@ -4375,8 +4384,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:internet_access"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:internet_access" />
             <space />
-            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" match="key" />
-            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" match="key" />
+            <reference ref="internet" />
         </item> <!-- Internet Access -->
         <item name="Automated Defibrillator" icon="presets/aed.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=defibrillator"
@@ -6944,7 +6952,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="name_wikipedia" />
             <reference ref="oh" />
             <reference ref="general_access" />
-            <combo key="fee" text="Fee" values="yes,no" />
+            <reference ref="fee" />
         </item> <!-- Cave Entrance -->
         <separator/>
         <item name="Island" icon="presets/island.png" type="node,closedway" preset_name_label="true">
