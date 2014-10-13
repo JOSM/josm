@@ -3139,8 +3139,11 @@ way[railway=preserved] {
 /* disused often appears together with highway=xy */
 /* -> draw on separate layer with higher z-index, but use */
 /* modifier: false; to suppress default line when used alone. */
-way[railway=disused]::core_railway,
-way[railway=abandoned]::core_railway {
+/* use default layer when used without highway=* to display bridge correctly */
+way[railway=disused][highway]::core_railway,
+way[railway=disused][!highway],
+way[railway=abandoned][highway]::core_railway,
+way[railway=abandoned][!highway] {
     width: 1;
     modifier: false;
     z-index: 1;
