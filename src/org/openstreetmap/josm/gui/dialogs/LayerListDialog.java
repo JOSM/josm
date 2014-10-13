@@ -192,7 +192,6 @@ public class LayerListDialog extends ToggleDialog {
         layerList.getColumnModel().getColumn(2).setCellEditor(new LayerNameCellEditor(new DisableShortcutsOnFocusGainedTextField()));
         // Disable some default JTable shortcuts to use JOSM ones (see #5678, #10458)
         for (KeyStroke ks : new KeyStroke[] {
-                KeyStroke.getKeyStroke(KeyEvent.VK_A, GuiHelper.getMenuShortcutKeyMaskEx()),
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, GuiHelper.getMenuShortcutKeyMaskEx()),
                 KeyStroke.getKeyStroke(KeyEvent.VK_V, GuiHelper.getMenuShortcutKeyMaskEx()),
                 KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_DOWN_MASK),
