@@ -45,7 +45,7 @@ item_separator: horizontal separator line between items (in window)
 key: fixed key/value pair to be set
   key: key to set
   value: value to set
-  match: none/key/key!/keyvalue (default is "keyvalue", see below for more information)
+  match: none/key/key!/keyvalue/keyvalue! (default is "keyvalue!", see below for more information)
 
 text: text box
   key: key to set
@@ -58,7 +58,7 @@ text: text box
                   auto-increment with the given stepping. auto-increment only
                   happens if the user selects it. default is no auto-increment;
                   mutually exclusive with use_last_as_default.
-  match: none/key/key!/keyvalue (default is "none", see below for more information)
+  match: none/key/key!/keyvalue/keyvalue! (default is "none", see below for more information)
   length: length of input box (number of characters allowed)
   alternative_autocomplete_keys: comma separated list of alternative keys to use for autocompletion
 
@@ -82,7 +82,7 @@ combo: combo box, with multiple choices and possible to enter free form text
   default: default string to display (defaults to "")
   use_last_as_default: true/false/force (default is "false")
   editable: allow to add other values as text (default is "true")
-  match: none/key/key!/keyvalue (default is none, see below for more information)
+  match: none/key/key!/keyvalue/keyvalue! (default is none, see below for more information)
   values_searchable: true/false (whether to search in combo (display_)values when searching for presets)
   length: length of input box (number of characters allowed)
 
@@ -107,7 +107,7 @@ multiselect: list of values from which zero or more can be selected
         icon_size: maximal size of icon. If tag is not setup it is taken default size of icon file
   default: default string to display (defaults to "")
   use_last_as_default: true/false/force (default is "false")
-  match: none/key/key!/keyvalue (default is "none", see below for more information)
+  match: none/key/key!/keyvalue/keyvalue! (default is "none", see below for more information)
   values_searchable: true/false (whether to search in multiselect (display_)values when searching for presets)
 
 checkgroup: group of checks
@@ -120,7 +120,7 @@ check: checkbox
   value_on: the value to set when checked (default is "yes")
   value_off: the value to set when unchecked (default is "no")
   disable_off: whether the off value is disabled in the dialog, i.e., only unset or yes are provided
-  match: none/key/key!/keyvalue (default is "none", see below for more information)
+  match: none/key/key!/keyvalue/keyvalue! (default is "none", see below for more information)
 
 role: type to specify possible roles in relations
   key: the role name used in relation
@@ -161,7 +161,8 @@ the tags of an OSM object fit into this preset.
  - none: neutral, i.e., do not consider this item for matching
  - key: positive if key matches, neutral otherwise
  - key!: positive if key matches, negative otherwise
- - keyvalue: positive if key and value matches, negative otherwise
+ - keyvalue: positive if key and value matches, neutral otherwise
+ - keyvalue!: positive if key and value matches, negative otherwise
 Note that for a match, at least one positive and no negative is required.
 -->
     <!-- Item chunks -->
@@ -2730,7 +2731,7 @@ Note that for a match, at least one positive and no negative is required.
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route" />
             <space />
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,light_rail,bus,trolleybus,aerialway,ferry" values_searchable="true" match="keyvalue" />
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,light_rail,bus,trolleybus,aerialway,ferry" values_searchable="true" match="keyvalue!" />
             <key key="public_transport:version" value="2" /> <!-- only validate marked relations in order to avoid false positives -->
             <reference ref="name_ref" />
             <optional>
@@ -2889,7 +2890,7 @@ Note that for a match, at least one positive and no negative is required.
     <group name="Public Transport (Legacy)" icon="presets/bus.png">
         <item name="Public transport route (Legacy)" icon="presets/path.png" type="relation" preset_name_label="true">
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" values_searchable="true" match="keyvalue" />
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" values_searchable="true" match="keyvalue!" />
             <key key="public_transport:version" value="1" /> <!-- only validate marked relations in order to avoid false positives -->
             <reference ref="name_ref" />
             <optional>
@@ -3959,7 +3960,7 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <key key="amenity" value="place_of_worship" />
             <text key="name" text="Name" />
-            <combo key="religion" text="Religion" values="bahai,jain,sikh,spiritualist,taoist,unitarian,zoroastrian" match="keyvalue" values_searchable="true" />
+            <combo key="religion" text="Religion" values="bahai,jain,sikh,spiritualist,taoist,unitarian,zoroastrian" match="keyvalue!" values_searchable="true" />
             <reference ref="service_times" />
             <reference ref="oh" />
         </item> <!-- Other Place of Worship -->
@@ -5017,7 +5018,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,cowshed,construction" values_context="building" default="yes" match="keyvalue" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,farm,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,cowshed,construction" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
         </item> <!-- Building -->
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation" preset_name_label="true">
@@ -5035,7 +5036,7 @@ Note that for a match, at least one positive and no negative is required.
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="residential,apartments,house,hut,dormitory,terrace,detached,roof" default="residential" match="keyvalue" values_context="building" values_searchable="true" />
+            <combo key="building" text="Building" values="residential,apartments,house,hut,dormitory,terrace,detached,roof" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
             <text key="name" text="Name" />
         </item> <!-- Residential Building -->
         <item name="Entrance" icon="styles/standard/misc/entrance-yes.png" type="node" preset_name_label="true">
@@ -5357,7 +5358,7 @@ Note that for a match, at least one positive and no negative is required.
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:bridge"
                   zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Key:bridge" />
             <space />
-            <combo key="bridge" text="Bridge" values="yes,aqueduct,boardwalk,cantilever,covered,low_water_crossing,trestle,viaduct" match="keyvalue" default="yes" />
+            <combo key="bridge" text="Bridge" values="yes,aqueduct,boardwalk,cantilever,covered,low_water_crossing,trestle,viaduct" match="keyvalue!" default="yes" />
             <combo key="bridge:structure" text="Structure" values="arch,beam,truss,floating,suspension,cable-stayed,simple-suspension,humpback" match="key" />
             <reference ref="optional_bridge" />
         </item> <!-- Bridge -->
@@ -5728,7 +5729,7 @@ Note that for a match, at least one positive and no negative is required.
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=line"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:power=line" />
             <space />
-            <combo key="power" text="Line type" values="line,minor_line" default="line" match="keyvalue" />
+            <combo key="power" text="Line type" values="line,minor_line" default="line" match="keyvalue!" />
             <reference ref="voltage_frequency" />
             <reference ref="ref_operator_branch" />
             <optional>
@@ -7730,7 +7731,7 @@ Note that for a match, at least one positive and no negative is required.
                 <space/>
                 <key key="type" value="route"/>
                 <key key="route" value="bicycle"/>
-                <combo key="network" text="Network" values="icn,ncn,rcn,lcn" match="keyvalue" />
+                <combo key="network" text="Network" values="icn,ncn,rcn,lcn" match="keyvalue!" />
                 <reference ref="name_ref_operator"/>
                 <optional>
                     <reference ref="route_hikebike_optionals" />
@@ -7770,7 +7771,7 @@ Note that for a match, at least one positive and no negative is required.
                 <space/>
                 <key key="type" value="route"/>
                 <key key="route" value="hiking"/>
-                <combo key="network" text="Network" values="iwn,nwn,rwn,lwn" match="keyvalue" />
+                <combo key="network" text="Network" values="iwn,nwn,rwn,lwn" match="keyvalue!" />
                 <reference ref="name_ref_operator"/>
                 <optional>
                     <reference ref="route_hikebike_optionals" />
@@ -7787,7 +7788,7 @@ Note that for a match, at least one positive and no negative is required.
                 <space/>
                 <key key="type" value="route"/>
                 <key key="route" value="piste"/>
-                <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,snow_park" match="keyvalue" />
+                <combo key="piste:type" text="Piste type" values="downhill,nordic,skitour,snow_park" match="keyvalue!" />
                 <reference ref="name_ref_operator"/>
                 <optional>
                     <reference ref="route_hikebike_optionals" />
@@ -7808,7 +7809,7 @@ Note that for a match, at least one positive and no negative is required.
                 <space/>
                 <key key="type" value="route"/>
                 <key key="route" value="piste"/>
-                <combo key="piste:type" text="Piste type" values="nordic,alpine" match="keyvalue" />
+                <combo key="piste:type" text="Piste type" values="nordic,alpine" match="keyvalue!" />
                 <reference ref="name_ref_operator"/>
                 <optional>
                     <reference ref="route_hikebike_optionals" />
