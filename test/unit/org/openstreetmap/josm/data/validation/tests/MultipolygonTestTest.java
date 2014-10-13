@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -68,10 +69,10 @@ public class MultipolygonTestTest {
         assertTrue(ElemStyles.hasAreaElemStyle(w, false));
         assertEquals(1, MULTIPOLYGON_TEST.getErrors().size());
 
-        // Correct tag, but has also an area style
+        // Correct tag, without area style since #10601 (r7603)
         w = createUnclosedWay("aeroway=taxiway");
         MULTIPOLYGON_TEST.visit(w);
-        assertTrue(ElemStyles.hasAreaElemStyle(w, false));
+        assertFalse(ElemStyles.hasAreaElemStyle(w, false));
         assertEquals(1, MULTIPOLYGON_TEST.getErrors().size());
 
         MULTIPOLYGON_TEST.endTest();
