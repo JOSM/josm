@@ -253,8 +253,10 @@ public final class TaggingPresetItems {
         KEY("key"),
         /** Positive if key matches, negative otherwise. */
         KEY_REQUIRED("key!"),
+        /** Positive if key and value matches, neutral otherwise. */
+        KEY_VALUE("keyvalue"),
         /** Positive if key and value matches, negative otherwise. */
-        KEY_VALUE("keyvalue");
+        KEY_VALUE_REQUIRED("keyvalue!");
 
         private final String value;
 
@@ -549,7 +551,9 @@ public final class TaggingPresetItems {
             case KEY_REQUIRED:
                 return tags.containsKey(key);
             case KEY_VALUE:
-                return tags.containsKey(key) && (getValues().contains(tags.get(key)));
+                return tags.containsKey(key) && getValues().contains(tags.get(key)) ? true : null;
+            case KEY_VALUE_REQUIRED:
+                return tags.containsKey(key) && getValues().contains(tags.get(key));
             default:
                 throw new IllegalStateException();
             }
@@ -583,7 +587,7 @@ public final class TaggingPresetItems {
 
         @Override
         public MatchType getDefaultMatch() {
-            return MatchType.KEY_VALUE;
+            return MatchType.KEY_VALUE_REQUIRED;
         }
 
         @Override
