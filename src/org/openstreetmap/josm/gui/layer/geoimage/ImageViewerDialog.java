@@ -363,7 +363,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        // Ignored
+        if (currentLayer == null && newLayer instanceof GeoImageLayer) {
+            ((GeoImageLayer)newLayer).showFirstPhoto();
+        }
     }
 
     @Override
@@ -376,6 +378,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         // Clear current image and layer if current layer is deleted
         if (currentLayer != null && currentLayer.equals(oldLayer)) {
             showImage(null, null);
+        }
+        // Check buttons state in case of layer merging
+        if (currentLayer != null && oldLayer instanceof GeoImageLayer) {
+            currentLayer.checkPreviousNextButtons();
         }
     }
 }
