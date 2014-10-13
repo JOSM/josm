@@ -292,6 +292,7 @@
 			<enumeration value="key" />
 			<enumeration value="key!" />
 			<enumeration value="keyvalue" />
+            <enumeration value="keyvalue!" />
 		</restriction>
 	</simpleType>
 
