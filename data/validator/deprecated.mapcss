@@ -302,7 +302,9 @@
 }
 
 /* See #10530 - Incorrect tag proposed in internal preset for years */
-*[fee=interval] {
+*[fee=interval],
+*[lit=interval],
+*[supervised=interval] {
   throwWarning: tr("{0} is deprecated. Please specify ìnterval by using opening_hours syntax", "{0.tag}");
 }
 
