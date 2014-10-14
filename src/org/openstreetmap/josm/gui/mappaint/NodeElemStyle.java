@@ -240,7 +240,8 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, StyledMapRenderer painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, StyledMapRenderer painter,
+            boolean selected, boolean outermember, boolean member) {
         if (primitive instanceof Node) {
             Node n = (Node) primitive;
             if (mapImage != null && painter.isShowIcons()) {

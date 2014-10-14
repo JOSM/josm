@@ -290,6 +290,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private static final int FLAG_DISABLED = 1;
     private static final int FLAG_MEMBER_OF_SELECTED = 2;
     private static final int FLAG_SELECTED = 4;
+    private static final int FLAG_OUTERMEMBER_OF_SELECTED = 8;
 
     private static final double PHI = Math.toRadians(20);
     private static final double cosPHI = Math.cos(PHI);
@@ -1513,6 +1514,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 add(w, FLAG_DISABLED);
             } else if (w.isSelected()) {
                 add(w, FLAG_SELECTED);
+            } else if (w.isOuterMemberOfSelected()) {
+                add(w, FLAG_OUTERMEMBER_OF_SELECTED);
             } else if (w.isMemberOfSelected()) {
                 add(w, FLAG_MEMBER_OF_SELECTED);
             } else {
@@ -1526,6 +1529,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 add(r, FLAG_DISABLED);
             } else if (r.isSelected()) {
                 add(r, FLAG_SELECTED);
+            } else if (r.isOuterMemberOfSelected()) {
+                add(r, FLAG_OUTERMEMBER_OF_SELECTED);
             } else if (r.isMemberOfSelected()) {
                 add(r, FLAG_MEMBER_OF_SELECTED);
             } else {
@@ -1653,6 +1658,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         paintSettings,
                         StyledMapRenderer.this,
                         (r.flags & FLAG_SELECTED) != 0,
+                        (r.flags & FLAG_OUTERMEMBER_OF_SELECTED) != 0,
                         (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
                 );
             }

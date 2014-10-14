@@ -42,9 +42,11 @@ public abstract class ElemStyle implements StyleKeys {
      * @param paintSettings
      * @param painter
      * @param selected true, if primitive is selected
+     * @param outermember true, if primitive is not selected and outer member of a selected multipolygon relation
      * @param member true, if primitive is not selected and member of a selected relation
      */
-    public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member);
+    public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
+            boolean selected, boolean outermember, boolean member);
 
     public boolean isProperLineStyle() {
         return false;

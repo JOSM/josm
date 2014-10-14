@@ -589,6 +589,10 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return dataSet != null && dataSet.isSelected(this);
     }
 
+    /**
+     * Determines if this primitive is a member of a selected relation.
+     * @return {@code true} if this primitive is a member of a selected relation, {@code false} otherwise
+     */
     public boolean isMemberOfSelected() {
         if (referrers == null)
             return false;
@@ -597,6 +601,35 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         for (OsmPrimitive ref : (OsmPrimitive[]) referrers) {
             if (ref instanceof Relation && ref.isSelected())
                 return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determines if this primitive is an outer member of a selected multipolygon relation.
+     * @return {@code true} if this primitive is an outer member of a selected multipolygon relation, {@code false} otherwise
+     * @since 7621
+     */
+    public boolean isOuterMemberOfSelected() {
+        if (referrers == null)
+            return false;
+        if (referrers instanceof OsmPrimitive) {
+            return isOuterMemberOfMultipolygon((OsmPrimitive) referrers);
+        }
+        for (OsmPrimitive ref : (OsmPrimitive[]) referrers) {
+            if (isOuterMemberOfMultipolygon(ref))
+                return true;
+        }
+        return false;
+    }
+
+    private boolean isOuterMemberOfMultipolygon(OsmPrimitive ref) {
+        if (ref instanceof Relation && ref.isSelected() && ((Relation)ref).isMultipolygon()) {
+            for (RelationMember rm : ((Relation)ref).getMembersFor(Collections.singleton(this))) {
+                if ("outer".equals(rm.getRole())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
