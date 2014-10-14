@@ -49,7 +49,8 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
+            boolean selected, boolean outermember, boolean member) {
         Way w = (Way) primitive;
         painter.drawRepeatImage(w, pattern.getImage(), offset, spacing, phase, align);
     }

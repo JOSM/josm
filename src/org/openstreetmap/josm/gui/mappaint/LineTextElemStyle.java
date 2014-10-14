@@ -31,7 +31,8 @@ public class LineTextElemStyle extends ElemStyle {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
+            boolean selected, boolean outermember, boolean member) {
         Way w = (Way)primitive;
         painter.drawTextOnPath(w, text);
     }

@@ -263,7 +263,8 @@ public class LineElemStyle extends ElemStyle {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
+            boolean selected, boolean outermember, boolean member) {
         Way w = (Way)primitive;
         /* show direction arrows, if draw.segment.relevant_directions_only is not set,
         the way is tagged with a direction key
@@ -296,7 +297,7 @@ public class LineElemStyle extends ElemStyle {
         Color myColor = color;
         if (selected) {
             myColor = paintSettings.getSelectedColor(color.getAlpha());
-        } else if (member) {
+        } else if (member || outermember) {
             myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
         } else if(w.isDisabled()) {
             myColor = paintSettings.getInactiveColor();

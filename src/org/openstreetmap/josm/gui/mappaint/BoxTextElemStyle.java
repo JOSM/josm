@@ -178,7 +178,8 @@ public class BoxTextElemStyle extends ElemStyle {
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings settings, StyledMapRenderer painter, boolean selected, boolean member) {
+    public void paintPrimitive(OsmPrimitive osm, MapPaintSettings settings, StyledMapRenderer painter,
+            boolean selected, boolean outermember, boolean member) {
         if (osm instanceof Node) {
             painter.drawBoxText((Node) osm, this);
         }
