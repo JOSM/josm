@@ -6,37 +6,32 @@
  *
  * groovy -cp dist/josm-custom.jar taginfoextract.groovy
  */
-
-import java.io.BufferedReader
 import java.awt.image.BufferedImage
+
 import javax.imageio.ImageIO
 
 import org.openstreetmap.josm.Main
+import org.openstreetmap.josm.data.Version
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.Node
 import org.openstreetmap.josm.data.osm.Way
+import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer
 import org.openstreetmap.josm.data.projection.Projections
-import org.openstreetmap.josm.data.Version
+import org.openstreetmap.josm.gui.NavigatableComponent
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle
-import org.openstreetmap.josm.gui.mappaint.Cascade
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle
-import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
-import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector
+import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
 import org.openstreetmap.josm.io.CachedFile
 
-import org.openstreetmap.josm.gui.NavigatableComponent
-import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer
-import org.openstreetmap.josm.data.Bounds
-//import org.openstreetmap.josm.data.osm.DataSet
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings
-
 class taginfoextract {
-    
+
     static def options
     static String image_dir
     int josm_svn_revision
@@ -45,25 +40,25 @@ class taginfoextract {
     FileWriter output_file
     def base_dir = "."
     def tags = [] as Set
-    
+
     private def cached_svnrev
 
     /**
      * Check if a certain tag is supported by the style as node / way / area.
      */
     abstract class Checker {
-        
+
         def tag
         def osm
-        
+
         Checker(tag) {
             this.tag = tag
         }
-        
+
         def apply_stylesheet(osm) {
             osm.put(tag[0], tag[1])
             def mc = new MultiCascade()
-            
+
             def env = new Environment(osm, mc, null, style_source)
             for (def r in style_source.rules) {
                 env.clearSelectorMatchingInformation()
@@ -79,7 +74,7 @@ class taginfoextract {
             env.layer = "default"
             return env
         }
-        
+
         /**
          * Determine full image url (can refer to JOSM or OSM repository).
          */
@@ -99,14 +94,14 @@ class taginfoextract {
         /**
          * Create image file from ElemStyle.
          * @return the URL
-         */        
+         */
         def create_image(elem_style, type, nc) {
             def img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)
             def g = img.createGraphics()
             g.setClip(0, 0, 16, 16)
             def renderer = new StyledMapRenderer(g, nc, false)
             renderer.getSettings(false)
-            elem_style.paintPrimitive(osm, MapPaintSettings.INSTANCE, renderer, false, false)
+            elem_style.paintPrimitive(osm, MapPaintSettings.INSTANCE, renderer, false, false, false)
             def base_url = options.imgurlprefix ? options.imgurlprefix : image_dir
             def image_name = "${type}_${tag[0]}=${tag[1]}.png"
             ImageIO.write(img, "png", new File("${image_dir}/${image_name}"))
@@ -233,7 +228,7 @@ class taginfoextract {
             image_dir_file.mkdirs()
         }
     }
-    
+
     void run() {
         init()
         parse_style_sheet()
@@ -279,7 +274,7 @@ class taginfoextract {
                     final_url = area_url
                 }
             }
-            
+
             output """${sep}    {
                      |      "key": "${tag[0]}",
                      |      "value": "${tag[1]}",
@@ -293,7 +288,7 @@ class taginfoextract {
                      |    }""".stripMargin()
             }
             sep = ",\n"
-        }    
+        }
         output """
         |  ]
         |}
@@ -342,14 +337,14 @@ class taginfoextract {
         } else {
             xml = "svn info --xml ${base_dir}/images/styles/standard/".execute().text
         }
-        
+
         def svninfo = new XmlParser().parseText(xml)
         def rev = svninfo.entry.'@revision'[0]
         cached_svnrev = Integer.parseInt(rev)
         assert cached_svnrev > 0
         return cached_svnrev
     }
-    
+
     /**
      * Read the style sheet file and parse the MapCSS code.
      */
@@ -361,7 +356,7 @@ class taginfoextract {
         style_source.url = ""
         parser.sheet(style_source)
     }
-    
+
     /**
      * Collect all the tag from the style sheet.
      */
@@ -381,7 +376,7 @@ class taginfoextract {
 
     /**
      * Write the JSON output (either to file or to command line).
-     */    
+     */
     def output(x) {
         if (output_file != null) {
             output_file.write(x)
@@ -397,6 +392,6 @@ class taginfoextract {
     static def err_print(s) {
         System.err.print(s);
     }
-    
+
 }
 
