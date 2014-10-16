@@ -349,7 +349,8 @@ way[barrier=guard_rail],
 way[barrier=city_wall],
 way[barrier=retaining_wall],
 way[barrier=block],
-way[barrier=chain] {
+way[barrier=chain],
+way[barrier=kerb] {
     width: 2;
     color: barrier#F0F050;
 }
@@ -359,6 +360,11 @@ node[barrier=guard_rail],
 node[barrier=city_wall],
 node[barrier=retaining_wall] {
     icon-image: "misc/deprecated.png";
+    set icon_z17;
+    text: auto;
+}
+node[barrier=kerb] {
+    icon-image: "vehicle/kerb.svg";
     set icon_z17;
     text: auto;
 }
