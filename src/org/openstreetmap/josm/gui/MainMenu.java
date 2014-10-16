@@ -72,6 +72,7 @@ import org.openstreetmap.josm.actions.PreferenceToggleAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.PurgeAction;
 import org.openstreetmap.josm.actions.RedoAction;
+import org.openstreetmap.josm.actions.ReportBugAction;
 import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.actions.ReverseWayAction;
 import org.openstreetmap.josm.actions.SaveAction;
@@ -295,6 +296,8 @@ public class MainMenu extends JMenuBar {
     public final AboutAction about = new AboutAction();
     /** Help / Show Status Report */
     public final ShowStatusReportAction statusreport = new ShowStatusReportAction();
+    /** Help / Report bug */
+    public final ReportBugAction reportbug = new ReportBugAction();
 
     /**
      * fileMenu contains I/O actions
@@ -762,6 +765,8 @@ public class MainMenu extends JMenuBar {
         });
 
         helpMenu.add(statusreport);
+        helpMenu.add(reportbug);
+        helpMenu.addSeparator();
 
         current = helpMenu.add(help); // FIXME why is help not a JosmAction?
         current.setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
