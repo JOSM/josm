@@ -28,8 +28,6 @@ import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler;
-import org.openstreetmap.josm.tools.BugReportExceptionHandler;
-import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -201,8 +199,7 @@ public final class ShowStatusReportAction extends JosmAction {
 
         switch (ed.showDialog().getValue()) {
             case 1: Utils.copyToClipboard(text.toString()); break;
-            case 2: OpenBrowser.displayUrl(BugReportExceptionHandler.getBugReportUrl(
-                        Utils.strip(reportHeader)).toExternalForm()) ; break;
+            case 2: ReportBugAction.reportBug(reportHeader) ; break;
         }
     }
 }
