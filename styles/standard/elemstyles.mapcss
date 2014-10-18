@@ -3589,7 +3589,7 @@ area[sport=bowling],
 area[sport=handball],
 area[sport=rowing],
 area[sport=sailing],
-area[sport=diving],
+area[sport=scuba_diving],
 area[sport=badminton] {
     fill-color: sport#bde3cb;
 }
@@ -3633,8 +3633,8 @@ node[sport=sailing] {
     set icon_z17;
     text: auto;
 }
-node[sport=diving] {
-    icon-image: "sport/diving.png";
+node[sport=scuba_diving] {
+    icon-image: "sport/scuba_diving.svg";
     set icon_z17;
     text: auto;
 }
