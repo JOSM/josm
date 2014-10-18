@@ -313,3 +313,10 @@
   throwError: tr("{0} is deprecated. Please delete this object and use a private layer instead", "{0.key}");
   fixDeleteObject: this;
 }
+
+/* see #8281 */
+*[sport=diving] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}"); 
+  suggestAlternative: "sport=scuba_diving";
+  suggestAlternative: "sport=cliff_diving";
+}
