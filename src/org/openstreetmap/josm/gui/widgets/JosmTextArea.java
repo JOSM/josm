@@ -1,14 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
 import javax.swing.JTextArea;
 import javax.swing.text.Document;
+
+import org.openstreetmap.josm.Main;
 
 /**
  * Subclass of {@link JTextArea} that adds a "native" context menu (cut/copy/paste/select all).
  * @since 5886
  */
-public class JosmTextArea extends JTextArea {
+public class JosmTextArea extends JTextArea implements FocusListener {
 
     /**
      * Constructs a new {@code JosmTextArea}. A default model is set, the initial string
@@ -81,5 +86,16 @@ public class JosmTextArea extends JTextArea {
     public JosmTextArea(Document doc, String text, int rows, int columns) {
         super(doc, text, rows, columns);
         TextContextualPopupMenu.enableMenuFor(this);
+        addFocusListener(this);
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+        Main.map.keyDetector.setEnabled(false);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        Main.map.keyDetector.setEnabled(true);
     }
 }

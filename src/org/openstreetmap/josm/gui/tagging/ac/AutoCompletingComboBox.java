@@ -27,7 +27,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
 /**
+ * Auto-completing ComboBox.
  * @author guilhem.bonnefille@gmail.com
+ * @since 272
  */
 public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem> {
 
@@ -38,29 +40,35 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
 
     /**
      * Auto-complete a JosmComboBox.
-     *
-     * Inspired by http://www.orbital-computer.de/JComboBox/
+     * <br>
+     * Inspired by <a href="http://www.orbital-computer.de/JComboBox">Thomas Bierhance example</a>.
      */
     class AutoCompletingComboBoxDocument extends PlainDocument {
         private JosmComboBox<AutoCompletionListItem> comboBox;
         private boolean selecting = false;
 
+        /**
+         * Constructs a new {@code AutoCompletingComboBoxDocument}.
+         * @param comboBox the combobox
+         */
         public AutoCompletingComboBoxDocument(final JosmComboBox<AutoCompletionListItem> comboBox) {
             this.comboBox = comboBox;
         }
 
-        @Override public void remove(int offs, int len) throws BadLocationException {
+        @Override
+        public void remove(int offs, int len) throws BadLocationException {
             if (selecting)
                 return;
             super.remove(offs, len);
         }
 
-        @Override public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+        @Override
+        public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
             if (selecting || (offs == 0 && str.equals(getText(0, getLength()))))
                 return;
             if (maxTextLength > -1 && str.length()+getLength() > maxTextLength)
                 return;
-            boolean initial = (offs == 0 && getLength() == 0 && str.length() > 1);
+            boolean initial = offs == 0 && getLength() == 0 && str.length() > 1;
             super.insertString(offs, str, a);
 
             // return immediately when selecting an item
@@ -103,8 +111,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             }
             if (item != null) {
                 String newText = ((AutoCompletionListItem) item).getValue();
-                if (!newText.equals(curText))
-                {
+                if (!newText.equals(curText)) {
                     selecting = true;
                     super.remove(0, size);
                     super.insertString(0, newText, a);
@@ -138,10 +145,9 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
                 AutoCompletionListItem currentItem = model.getElementAt(i);
                 if (currentItem.getValue().equals(pattern))
                     return currentItem;
-                if (!match && currentItem.getValue().startsWith(pattern)) {
-                    if (bestItem == null || currentItem.getPriority().compareTo(bestItem.getPriority()) > 0) {
-                        bestItem = currentItem;
-                    }
+                if (!match && currentItem.getValue().startsWith(pattern)
+                && (bestItem == null || currentItem.getPriority().compareTo(bestItem.getPriority()) > 0)) {
+                    bestItem = currentItem;
                 }
             }
             return bestItem; // may be null
@@ -157,8 +163,8 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
 
     /**
      * Creates a <code>AutoCompletingComboBox</code> with the specified prototype display value.
-     * @param prototype the <code>Object</code> used to compute the maximum number of elements to be displayed at once before displaying a scroll bar.
-     *                  It also affects the initial width of the combo box.
+     * @param prototype the <code>Object</code> used to compute the maximum number of elements to be displayed at once
+     *                  before displaying a scroll bar. It also affects the initial width of the combo box.
      * @since 5520
      */
     public AutoCompletingComboBox(String prototype) {
@@ -170,9 +176,11 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
                 new FocusListener() {
                     @Override
                     public void focusLost(FocusEvent e) {
+                        Main.map.keyDetector.setEnabled(true);
                     }
                     @Override
                     public void focusGained(FocusEvent e) {
+                        Main.map.keyDetector.setEnabled(false);
                         // save unix system selection (middle mouse paste)
                         Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
                         if(sysSel != null) {
@@ -187,6 +195,10 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
         );
     }
 
+    /**
+     * Sets the maximum text length.
+     * @param length the maximum text length in number of characters
+     */
     public void setMaxTextLength(int length) {
         this.maxTextLength = length;
     }
@@ -235,7 +247,8 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
     }
 
     /**
-     * sets the items of the combobox to the given strings
+     * Sets the items of the combobox to the given {@code String}s.
+     * @param elems String items
      */
     public void setPossibleItems(Collection<String> elems) {
         DefaultComboBoxModel<AutoCompletionListItem> model = (DefaultComboBoxModel<AutoCompletionListItem>)this.getModel();
@@ -251,7 +264,8 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
     }
 
     /**
-     * sets the items of the combobox to the given AutoCompletionListItems
+     * Sets the items of the combobox to the given {@code AutoCompletionListItem}s.
+     * @param elems AutoCompletionListItem items
      */
     public void setPossibleACItems(Collection<AutoCompletionListItem> elems) {
         DefaultComboBoxModel<AutoCompletionListItem> model = (DefaultComboBoxModel<AutoCompletionListItem>)this.getModel();
@@ -265,7 +279,11 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
         this.getEditor().setItem(editorOldValue);
     }
 
-    protected boolean isAutocompleteEnabled() {
+    /**
+     * Determines if autocompletion is enabled.
+     * @return {@code true} if autocompletion is enabled, {@code false} otherwise.
+     */
+    public final boolean isAutocompleteEnabled() {
         return autocompleteEnabled;
     }
 
@@ -276,6 +294,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
     /**
      * If the locale is fixed, English keyboard layout will be used by default for this combobox
      * all other components can still have different keyboard layout selected
+     * @param f fixed locale
      */
     public void setFixedLocale(boolean f) {
         useFixedLocale = f;
@@ -313,8 +332,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
                 AutoCompletionListItem item,
                 int index,
                 boolean isSelected,
-                boolean cellHasFocus)
-        {
+                boolean cellHasFocus) {
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());

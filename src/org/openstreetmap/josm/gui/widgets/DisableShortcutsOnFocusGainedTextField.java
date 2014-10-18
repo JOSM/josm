@@ -103,13 +103,11 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
         super.focusGained(e);
         disableMenuActions();
         unregisterActionShortcuts();
-        Main.map.keyDetector.setEnabled(false);
     }
 
     @Override
     public void focusLost(FocusEvent e) {
         super.focusLost(e);
-        Main.map.keyDetector.setEnabled(true);
         restoreActionShortcuts();
         restoreMenuActions();
     }

@@ -13,9 +13,14 @@ import java.awt.event.FocusListener;
 import javax.swing.JTextField;
 import javax.swing.text.Document;
 
+import org.openstreetmap.josm.Main;
+
 /**
- * Subclass of {@link JTextField} that adds a "native" context menu (cut/copy/paste/select all)
- * and an optional "hint" displayed when no text has been entered.
+ * Subclass of {@link JTextField} that:<ul>
+ * <li>adds a "native" context menu (cut/copy/paste/select all)</li>
+ * <li>adds an optional "hint" displayed when no text has been entered</li>
+ * <li>disables the global advanced key press detector when focused</li>
+ * <br>This class must be used everywhere in core and plugins instead of {@code JTextField}.
  * @since 5886
  */
 public class JosmTextField extends JTextField implements FocusListener {
@@ -135,11 +140,13 @@ public class JosmTextField extends JTextField implements FocusListener {
 
     @Override
     public void focusGained(FocusEvent e) {
+        Main.map.keyDetector.setEnabled(false);
         repaint();
     }
 
     @Override
     public void focusLost(FocusEvent e) {
+        Main.map.keyDetector.setEnabled(true);
         repaint();
     }
 }

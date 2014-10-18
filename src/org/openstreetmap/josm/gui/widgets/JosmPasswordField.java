@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.Action;
@@ -15,13 +17,12 @@ import org.openstreetmap.josm.Main;
 /**
  * A subclass of {@link JPasswordField} to implement a workaround to
  * <a href="https://bugs.openjdk.java.net/browse/JDK-6322854">JDK bug 6322854</a>.
- * This class can be deleted after Oracle decides to fix this bug...
  *
  * @since 5752
  * @see <a href="https://josm.openstreetmap.de/ticket/8404">https://josm.openstreetmap.de/ticket/8404</a>
  * @see <a href="https://hg.netbeans.org/main/rev/33cb2e81b640">https://hg.netbeans.org/main/rev/33cb2e81b640</a>
  */
-public class JosmPasswordField extends JPasswordField {
+public class JosmPasswordField extends JPasswordField implements FocusListener {
 
     /**
      * Constructs a new <code>JosmPasswordField</code>,
@@ -30,6 +31,7 @@ public class JosmPasswordField extends JPasswordField {
      */
     public JosmPasswordField() {
         workaroundJdkBug6322854(this);
+        addFocusListener(this);
     }
 
     /**
@@ -50,6 +52,7 @@ public class JosmPasswordField extends JPasswordField {
     public JosmPasswordField(Document doc, String txt, int columns) {
         super(doc, txt, columns);
         workaroundJdkBug6322854(this);
+        addFocusListener(this);
     }
 
     /**
@@ -62,6 +65,7 @@ public class JosmPasswordField extends JPasswordField {
     public JosmPasswordField(int columns) {
         super(columns);
         workaroundJdkBug6322854(this);
+        addFocusListener(this);
     }
 
     /**
@@ -75,6 +79,7 @@ public class JosmPasswordField extends JPasswordField {
     public JosmPasswordField(String text, int columns) {
         super(text, columns);
         workaroundJdkBug6322854(this);
+        addFocusListener(this);
     }
 
     /**
@@ -87,10 +92,22 @@ public class JosmPasswordField extends JPasswordField {
     public JosmPasswordField(String text) {
         super(text);
         workaroundJdkBug6322854(this);
+        addFocusListener(this);
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+        Main.map.keyDetector.setEnabled(false);
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        Main.map.keyDetector.setEnabled(true);
     }
 
     /**
      * Implements a workaround to <a href="https://bugs.openjdk.java.net/browse/JDK-6322854">JDK bug 6322854</a>.
+     * This method can be deleted after Oracle decides to fix this bug...
      * @param text The {@link JTextComponent} to protect.
      */
     public static final void workaroundJdkBug6322854(final JTextComponent text) {
