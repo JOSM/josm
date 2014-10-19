@@ -74,7 +74,6 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      * @param ignoreException If true, exception will be propagated to calling code. If false then
      * exception will be thrown directly in EDT. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
-     * @throws IllegalArgumentException thrown if parent is null
      */
     public PleaseWaitRunnable(String title, ProgressMonitor progressMonitor, boolean ignoreException) {
         this.title = title;

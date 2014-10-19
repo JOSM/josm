@@ -45,8 +45,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     protected DataSet downloadedData;
     protected DownloadTask downloadTask;
 
-    protected OsmDataLayer targetLayer;
-
     protected String newLayerName = null;
 
     @Override
@@ -170,41 +168,42 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         }
     }
 
-    protected class DownloadTask extends PleaseWaitRunnable {
-        protected OsmServerReader reader;
-        protected DataSet dataSet;
-        protected boolean newLayer;
+    /**
+     * Superclass of internal download task.
+     * @since 7635
+     */
+    public static abstract class AbstractInternalTask extends PleaseWaitRunnable {
 
-        public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
-            super(tr("Downloading data"), progressMonitor, false);
-            this.reader = reader;
+        protected final boolean newLayer;
+        protected DataSet dataSet;
+
+        /**
+         * Constructs a new {@code AbstractInternalTask}.
+         *
+         * @param newLayer if {@code true}, force download to a new layer
+         * @param title message for the user
+         * @param ignoreException If true, exception will be propagated to calling code. If false then
+         * exception will be thrown directly in EDT. When this runnable is executed using executor framework
+         * then use false unless you read result of task (because exception will get lost if you don't)
+         */
+        public AbstractInternalTask(boolean newLayer, String title, boolean ignoreException) {
+            super(title, ignoreException);
             this.newLayer = newLayer;
         }
 
-        protected DataSet parseDataSet() throws OsmTransferException {
-            return reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-        }
-
-        @Override public void realRun() throws IOException, SAXException, OsmTransferException {
-            try {
-                if (isCanceled())
-                    return;
-                dataSet = parseDataSet();
-            } catch(Exception e) {
-                if (isCanceled()) {
-                    Main.info(tr("Ignoring exception because download has been canceled. Exception was: {0}", e.toString()));
-                    return;
-                }
-                if (e instanceof OsmTransferCanceledException) {
-                    setCanceled(true);
-                    return;
-                } else if (e instanceof OsmTransferException) {
-                    rememberException(e);
-                } else {
-                    rememberException(new OsmTransferException(e));
-                }
-                DownloadOsmTask.this.setFailed(true);
-            }
+        /**
+         * Constructs a new {@code AbstractInternalTask}.
+         *
+         * @param newLayer if {@code true}, force download to a new layer
+         * @param title message for the user
+         * @param progressMonitor progress monitor
+         * @param ignoreException If true, exception will be propagated to calling code. If false then
+         * exception will be thrown directly in EDT. When this runnable is executed using executor framework
+         * then use false unless you read result of task (because exception will get lost if you don't)
+         */
+        public AbstractInternalTask(boolean newLayer, String title, ProgressMonitor progressMonitor, boolean ignoreException) {
+            super(title, progressMonitor, ignoreException);
+            this.newLayer = newLayer;
         }
 
         protected OsmDataLayer getEditLayer() {
@@ -245,7 +244,88 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             return createNewLayer(null);
         }
 
-        @Override protected void finish() {
+        protected void computeBboxAndCenterScale(Bounds bounds) {
+            BoundingXYVisitor v = new BoundingXYVisitor();
+            if (bounds != null) {
+                v.visit(bounds);
+            } else {
+                v.computeBoundingBox(dataSet.getNodes());
+            }
+            Main.map.mapView.recalculateCenterScale(v);
+        }
+
+        protected OsmDataLayer addNewLayerIfRequired(String newLayerName, Bounds bounds) {
+            int numDataLayers = getNumDataLayers();
+            if (newLayer || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
+                // the user explicitly wants a new layer, we don't have any layer at all
+                // or it is not clear which layer to merge to
+                //
+                final OsmDataLayer layer = createNewLayer(newLayerName);
+                final boolean isDisplayingMapView = Main.isDisplayingMapView();
+
+                Main.main.addLayer(layer);
+
+                // If the mapView is not there yet, we cannot calculate the bounds (see constructor of MapView).
+                // Otherwise jump to the current download.
+                if (isDisplayingMapView) {
+                    computeBboxAndCenterScale(bounds);
+                }
+                return layer;
+            }
+            return null;
+        }
+
+        protected void loadData(String newLayerName, Bounds bounds) {
+            OsmDataLayer layer = addNewLayerIfRequired(newLayerName, bounds);
+            if (layer == null) {
+                layer = getEditLayer();
+                if (layer == null) {
+                    layer = getFirstDataLayer();
+                }
+                layer.mergeFrom(dataSet);
+                computeBboxAndCenterScale(bounds);
+                layer.onPostDownloadFromServer();
+            }
+        }
+    }
+
+    protected class DownloadTask extends AbstractInternalTask {
+        protected final OsmServerReader reader;
+
+        public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
+            super(newLayer, tr("Downloading data"), progressMonitor, false);
+            this.reader = reader;
+        }
+
+        protected DataSet parseDataSet() throws OsmTransferException {
+            return reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+        }
+
+        @Override
+        public void realRun() throws IOException, SAXException, OsmTransferException {
+            try {
+                if (isCanceled())
+                    return;
+                dataSet = parseDataSet();
+            } catch(Exception e) {
+                if (isCanceled()) {
+                    Main.info(tr("Ignoring exception because download has been canceled. Exception was: {0}", e.toString()));
+                    return;
+                }
+                if (e instanceof OsmTransferCanceledException) {
+                    setCanceled(true);
+                    return;
+                } else if (e instanceof OsmTransferException) {
+                    rememberException(e);
+                } else {
+                    rememberException(new OsmTransferException(e));
+                }
+                DownloadOsmTask.this.setFailed(true);
+            }
+        }
+
+        @Override
+        protected void finish() {
             if (isFailed() || isCanceled())
                 return;
             if (dataSet == null)
@@ -258,43 +338,11 @@ public class DownloadOsmTask extends AbstractDownloadTask {
             }
 
             rememberDownloadedData(dataSet);
-            int numDataLayers = getNumDataLayers();
-            if (newLayer || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
-                // the user explicitly wants a new layer, we don't have any layer at all
-                // or it is not clear which layer to merge to
-                //
-                targetLayer = createNewLayer(newLayerName);
-                final boolean isDisplayingMapView = Main.isDisplayingMapView();
-
-                Main.main.addLayer(targetLayer);
-
-                // If the mapView is not there yet, we cannot calculate the bounds (see constructor of MapView).
-                // Otherwise jump to the current download.
-                if (isDisplayingMapView) {
-                    computeBboxAndCenterScale();
-                }
-            } else {
-                targetLayer = getEditLayer();
-                if (targetLayer == null) {
-                    targetLayer = getFirstDataLayer();
-                }
-                targetLayer.mergeFrom(dataSet);
-                computeBboxAndCenterScale();
-                targetLayer.onPostDownloadFromServer();
-            }
+            loadData(newLayerName, currentBounds);
         }
 
-        protected void computeBboxAndCenterScale() {
-            BoundingXYVisitor v = new BoundingXYVisitor();
-            if (currentBounds != null) {
-                v.visit(currentBounds);
-            } else {
-                v.computeBoundingBox(dataSet.getNodes());
-            }
-            Main.map.mapView.recalculateCenterScale(v);
-        }
-
-        @Override protected void cancel() {
+        @Override
+        protected void cancel() {
             setCanceled(true);
             if (reader != null) {
                 reader.cancel();
