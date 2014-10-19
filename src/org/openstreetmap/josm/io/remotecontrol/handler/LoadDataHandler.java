@@ -18,7 +18,7 @@ import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
 /**
  * Handler to load data directly from the URL.
- * @since 7634
+ * @since 7636
  */
 public class LoadDataHandler extends RequestHandler {
 

@@ -170,7 +170,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
 
     /**
      * Superclass of internal download task.
-     * @since 7635
+     * @since 7636
      */
     public static abstract class AbstractInternalTask extends PleaseWaitRunnable {
 
