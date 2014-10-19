@@ -91,11 +91,15 @@ public class JosmTextArea extends JTextArea implements FocusListener {
 
     @Override
     public void focusGained(FocusEvent e) {
-        Main.map.keyDetector.setEnabled(false);
+        if (Main.map != null) {
+            Main.map.keyDetector.setEnabled(false);
+        }
     }
 
     @Override
     public void focusLost(FocusEvent e) {
-        Main.map.keyDetector.setEnabled(true);
+        if (Main.map != null) {
+            Main.map.keyDetector.setEnabled(true);
+        }
     }
 }

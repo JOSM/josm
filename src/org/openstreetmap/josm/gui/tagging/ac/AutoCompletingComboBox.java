@@ -176,11 +176,15 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
                 new FocusListener() {
                     @Override
                     public void focusLost(FocusEvent e) {
-                        Main.map.keyDetector.setEnabled(true);
+                        if (Main.map != null) {
+                            Main.map.keyDetector.setEnabled(true);
+                        }
                     }
                     @Override
                     public void focusGained(FocusEvent e) {
-                        Main.map.keyDetector.setEnabled(false);
+                        if (Main.map != null) {
+                            Main.map.keyDetector.setEnabled(false);
+                        }
                         // save unix system selection (middle mouse paste)
                         Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
                         if(sysSel != null) {
