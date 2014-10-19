@@ -44,6 +44,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -94,6 +95,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -825,8 +827,26 @@ public abstract class Main {
                 UIManager.setLookAndFeel(laf);
             }
             catch (final NoClassDefFoundError | ClassNotFoundException e) {
-                info("Look and Feel not found: " + laf);
-                Main.pref.put("laf", defaultlaf);
+                // Try to find look and feel in plugin classloaders
+                Class<?> klass = null;
+                for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
+                    try {
+                        klass = cl.loadClass(laf);
+                        break;
+                    } catch (ClassNotFoundException ex) {
+                        // Do nothing
+                    }
+                }
+                if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {
+                    try {
+                        UIManager.setLookAndFeel((LookAndFeel) klass.newInstance());
+                    } catch (Exception ex) {
+                        warn("Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
+                    }
+                } else {
+                    info("Look and Feel not found: " + laf);
+                    Main.pref.put("laf", defaultlaf);
+                }
             }
             catch (final UnsupportedLookAndFeelException e) {
                 info("Look and Feel not supported: " + laf);
