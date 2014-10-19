@@ -87,8 +87,10 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
                 timer.stop();
                 if (set.remove(releaseEvent.getKeyCode()) && enabled) {
                     synchronized (AdvancedKeyPressDetector.this) {
-                        for (KeyPressReleaseListener q: keyListeners) {
-                            q.doKeyReleased(releaseEvent);
+                        if (isFocusInMainWindow()) {
+                            for (KeyPressReleaseListener q: keyListeners) {
+                                q.doKeyReleased(releaseEvent);
+                            }
                         }
                     }
                 }
