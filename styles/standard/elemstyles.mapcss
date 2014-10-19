@@ -1984,8 +1984,8 @@ node[amenity=bicycle_parking] {
     set icon_z17;
     text: auto;
 }
-node[parking=park_and_ride] {
-    icon-image: "vehicle/parking/park_ride.png";
+node[park_ride][park_ride!=no] {
+    icon-image: "vehicle/parking/park_ride.svg";
     set icon_z17;
     text: auto;
 }
