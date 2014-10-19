@@ -30,6 +30,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.FeaturesHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.LoadDataHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadObjectHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.OpenFileHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
@@ -125,6 +126,7 @@ public class RequestProcessor extends Thread {
     static {
         addRequestHandlerClass(LoadAndZoomHandler.command, LoadAndZoomHandler.class, true);
         addRequestHandlerClass(LoadAndZoomHandler.command2, LoadAndZoomHandler.class, true);
+        addRequestHandlerClass(LoadDataHandler.command, LoadDataHandler.class, true);
         addRequestHandlerClass(ImageryHandler.command, ImageryHandler.class, true);
         addRequestHandlerClass(AddNodeHandler.command, AddNodeHandler.class, true);
         addRequestHandlerClass(AddWayHandler.command, AddWayHandler.class, true);
