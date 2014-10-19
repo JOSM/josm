@@ -320,3 +320,11 @@
   suggestAlternative: "sport=scuba_diving";
   suggestAlternative: "sport=cliff_diving";
 }
+
+/* see #8281 */
+*[parking=park_and_ride] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}"); 
+  fixRemove: "parking";
+  fixAdd: "amenity=parking";
+  fixAdd: "park_ride=yes";
+}
