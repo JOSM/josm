@@ -193,7 +193,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
      * @return true if each {@link MultiValueResolutionDecision} is decided; false otherwise
      */
     public boolean isResolvedCompletely() {
-        return numConflicts == 0 && keysWithConflicts.isEmpty();
+        return numConflicts == 0 && keysWithConflicts != null && keysWithConflicts.isEmpty();
     }
 
     public int getNumConflicts() {
