@@ -190,11 +190,10 @@ public class TagConflictResolverModel extends DefaultTableModel {
     /**
      * Replies true if each {@link MultiValueResolutionDecision} is decided.
      *
-     * @return true if each {@link MultiValueResolutionDecision} is decided; false
-     * otherwise
+     * @return true if each {@link MultiValueResolutionDecision} is decided; false otherwise
      */
     public boolean isResolvedCompletely() {
-        return numConflicts == 0;
+        return numConflicts == 0 && keysWithConflicts.isEmpty();
     }
 
     public int getNumConflicts() {
