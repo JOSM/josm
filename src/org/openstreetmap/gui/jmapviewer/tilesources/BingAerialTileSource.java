@@ -3,6 +3,7 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Image;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -45,7 +46,11 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
     private static final Pattern subdomainPattern = Pattern.compile("\\{subdomain\\}");
     private static final Pattern quadkeyPattern = Pattern.compile("\\{quadkey\\}");
     private static final Pattern culturePattern = Pattern.compile("\\{culture\\}");
+    private String brandLogoUri = null;
 
+    /**
+     * Constructs a new {@code BingAerialTileSource}.
+     */
     public BingAerialTileSource() {
         super("Bing Aerial Maps", "http://example.com/");
     }
@@ -96,6 +101,8 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
             for(int i = 0; i < subdomainTxt.getLength(); i++) {
                 subdomains[i] = subdomainTxt.item(i).getNodeValue();
             }
+
+            brandLogoUri = xpath.compile("/Response/BrandLogoUri/text()").evaluate(document);
 
             XPathExpression attributionXpath = xpath.compile("Attribution/text()");
             XPathExpression coverageAreaXpath = xpath.compile("CoverageArea");
@@ -174,10 +181,23 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
     @Override
     public Image getAttributionImage() {
         try {
-            return ImageIO.read(JMapViewer.class.getResourceAsStream("images/bing_maps.png"));
+            final InputStream imageResource = JMapViewer.class.getResourceAsStream("images/bing_maps.png");
+            if (imageResource != null) {
+                return ImageIO.read(imageResource);
+            } else {
+                // Some Linux distributions (like Debian) will remove Bing logo from sources, so get it at runtime
+                for (int i = 0; i < 5 && getAttribution() == null; i++) {
+                    // Makes sure attribution is loaded
+                }
+                if (brandLogoUri != null && !brandLogoUri.isEmpty()) {
+                    System.out.println("Reading Bing logo from "+brandLogoUri);
+                    return ImageIO.read(new URL(brandLogoUri));
+                }
+            }
         } catch (IOException e) {
-            return null;
+            System.err.println("Error while retrieving Bing logo: "+e.getMessage());
         }
+        return null;
     }
 
     @Override

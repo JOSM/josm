@@ -42,8 +42,6 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  */
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
-    private static final long serialVersionUID = 1L;
-
     public static boolean debug = false;
 
     /**
@@ -99,6 +97,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * {@link MemoryTileCache} and the tile loader uses 4 parallel threads for
      * retrieving the tiles.
      */
+    @SuppressWarnings("unused")
     public JMapViewer() {
         this(new MemoryTileCache(), 8);
         new DefaultMapController(this);
@@ -1065,20 +1064,20 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         return attribution;
     }
 
-    protected EventListenerList listenerList = new EventListenerList();
+    protected EventListenerList evtListenerList = new EventListenerList();
 
     /**
      * @param listener listener to set
      */
     public void addJMVListener(JMapViewerEventListener listener) {
-        listenerList.add(JMapViewerEventListener.class, listener);
+        evtListenerList.add(JMapViewerEventListener.class, listener);
     }
 
     /**
      * @param listener listener to remove
      */
     public void removeJMVListener(JMapViewerEventListener listener) {
-        listenerList.remove(JMapViewerEventListener.class, listener);
+        evtListenerList.remove(JMapViewerEventListener.class, listener);
     }
 
     /**
@@ -1087,7 +1086,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * @param evt event to dispatch
      */
     void fireJMVEvent(JMVCommandEvent evt) {
-        Object[] listeners = listenerList.getListenerList();
+        Object[] listeners = evtListenerList.getListenerList();
         for (int i=0; i<listeners.length; i+=2) {
             if (listeners[i]==JMapViewerEventListener.class) {
                 ((JMapViewerEventListener)listeners[i+1]).processCommand(evt);
