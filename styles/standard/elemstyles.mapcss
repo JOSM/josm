@@ -938,6 +938,12 @@ way[highway=track][tracktype=grade5] {
 /* piste tags */
 /**************/
 
+way[route=ski]::core_piste {
+    z-index: -1;
+    modifier: false;
+	width: 6;
+    color: ski#809bc0;
+}
 area[piste:difficulty=easy][!highway]:closed::core_piste {
     fill-color: piste_easy#0000ff;
 }
@@ -4033,16 +4039,9 @@ node[waterway=ditch], node[waterway=drain] {
 /* route tags */
 /**************/
 
-way[route=bus],
-way[route=ferry],
-way[route=flight],
-way[route=ncn],
-way[route=subsea],
-way[route=ski],
-way[route=tour],
-way[route=pub_crawl] {
+way[route=ferry] {
     width: 1;
-    color: route#809bc0;
+    color: ferry#809bc0;
     dashes: 9,9;
 }
 node[route=bus],
