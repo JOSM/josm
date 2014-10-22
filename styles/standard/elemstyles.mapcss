@@ -941,7 +941,7 @@ way[highway=track][tracktype=grade5] {
 way[route=ski]::core_piste {
     z-index: -1;
     modifier: false;
-	width: 6;
+    width: 6;
     color: ski#809bc0;
 }
 area[piste:difficulty=easy][!highway]:closed::core_piste {
