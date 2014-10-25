@@ -614,6 +614,9 @@ way[highway=raceway] {
     width: 1;
     color: raceway#ff80ff;
 }
+way[highway=raceway][area?], relation[type=multipolygon][highway=raceway] {
+    fill-color: raceway#ff80ff;
+}
 node[direction=clockwise] {
     icon-image: "vehicle/restriction/roundabout_left.png";
     set icon_z17;

@@ -5024,7 +5024,7 @@ Note that for a match, at least one positive and no negative is required.
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,track" values_context="racing" />
         </item> <!-- RC Car -->
-        <item name="Raceway" icon="styles/standard/sport/raceway.svg" type="closedway" preset_name_label="true">
+        <item name="Raceway" icon="styles/standard/sport/raceway.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=raceway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=raceway"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=raceway"
