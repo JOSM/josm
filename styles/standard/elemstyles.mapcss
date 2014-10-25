@@ -1112,6 +1112,7 @@ node[power=generator] {
 /*****************/
 
 area[man_made=beacon],
+area[man_made=bridge],
 area[man_made=chimney],
 area[man_made=crane],
 area[man_made=flagpole],

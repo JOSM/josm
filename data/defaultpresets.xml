@@ -5412,6 +5412,14 @@ Note that for a match, at least one positive and no negative is required.
             <space />
             <combo key="bridge:support" text="Type" values="pier,abutment,lift_pier,pivot_pier" match="key" />
         </item> <!-- Bridge Support -->
+        <item name="Bridge outline" icon="presets/bridge.png" type="closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=bridge" />
+            <space />
+            <key key="man_made" value="bridge" />
+            <optional>
+                <reference ref="name_layer" />
+            </optional>
+        </item> <!-- Bridge outline -->
     </group> <!-- Bridges -->
     <group name="Power" icon="presets/power.png">
         <item name="Power Plant" icon="icons/power_station.png" type="closedway,relation" preset_name_label="true">
