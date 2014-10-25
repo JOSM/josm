@@ -5780,8 +5780,7 @@ Note that for a match, at least one positive and no negative is required.
             <reference ref="ref_operator_branch" />
             <space />
             <label text="Transformer Attributes:" />
-            <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,yes" match="key!" values_context="power" />
-            <reference ref="power_loc" />
+            <key key="transformer" value="distribution" match="key!" values_context="power" />
             <reference ref="voltage_frequency" />
             <optional>
                 <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
