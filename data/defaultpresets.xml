@@ -5763,6 +5763,31 @@ Note that for a match, at least one positive and no negative is required.
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
             <reference ref="ref_operator_branch" />
         </item> <!-- Pole -->
+        <item name="Pole with Transformer" icon="icons/power_tower_low.n.16.png" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=pole"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=pole"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:power=pole"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:power=pole"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=pole"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=pole"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:power=pole"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:power=pole" />
+            <space />
+            <key key="power" value="pole" />
+            <label text="Pole Attributes:" />
+            <text key="height" text="Height in meter (m)" />
+            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+            <reference ref="ref_operator_branch" />
+            <space />
+            <label text="Transformer Attributes:" />
+            <combo key="transformer" text="Type of transformer" values="distribution,generator,converter,traction,auto,phase_angle_regulator,yes" match="key!" values_context="power" />
+            <reference ref="power_loc" />
+            <reference ref="voltage_frequency" />
+            <optional>
+                <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
+                <combo key="phases" text="Phases" values="1,3" length="1" />
+            </optional>
+        </item> <!-- Pole with Transformer-->
         <item name="Power Line" icon="presets/power.png" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line"
