@@ -72,7 +72,10 @@ node[tag("power") = parent_tag("power")] ∈ *[power] {
   throwWarning: tr("{0} inside {1}", concat("power=", tag("power")), concat("power=", tag("power")));
 }
 
+/* see #10252 */
 way[route=bus] {
-  /* see #10252 */
   throwWarning: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
+}
+node[route] {
+  throwWarning: tr("{0}=* on a node. Should be used in a relation", "{0.key}"); 
 }
