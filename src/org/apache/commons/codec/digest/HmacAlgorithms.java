@@ -18,7 +18,7 @@
 package org.apache.commons.codec.digest;
 
 /**
- * Standard {@link HmacSHA512} algorithm names from the <cite>Java Cryptography Architecture Standard Algorithm Name
+ * Standard {@link HmacUtils} algorithm names from the <cite>Java Cryptography Architecture Standard Algorithm Name
  * Documentation</cite>.
  *
  * <p>
@@ -28,7 +28,7 @@ package org.apache.commons.codec.digest;
  * @see <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html">Java Cryptography
  *      Architecture Standard Algorithm Name Documentation</a>
  * @since 1.10
- * @version $Id: HmacAlgorithms.java 1619949 2014-08-22 22:56:08Z ggregory $
+ * @version $Id: HmacAlgorithms.java 1634405 2014-10-26 23:07:26Z ggregory $
  */
 public enum HmacAlgorithms {
 

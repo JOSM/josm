@@ -31,7 +31,7 @@ import org.apache.commons.codec.EncoderException;
  * This class is thread-safe.
  * </p>
  *
- * @version $Id: BaseNCodec.java 1619948 2014-08-22 22:53:55Z ggregory $
+ * @version $Id: BaseNCodec.java 1634404 2014-10-26 23:06:10Z ggregory $
  */
 public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
 
@@ -263,6 +263,7 @@ public abstract class BaseNCodec implements BinaryEncoder, BinaryDecoder {
      *
      * @param size minimum spare space required
      * @param context the context to be used
+     * @return the buffer
      */
     protected byte[] ensureBufferSize(final int size, final Context context){
         if ((context.buffer == null) || (context.buffer.length < context.pos + size)){
