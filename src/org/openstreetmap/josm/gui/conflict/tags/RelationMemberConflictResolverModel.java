@@ -30,18 +30,17 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     public static final String NUM_CONFLICTS_PROP = RelationMemberConflictResolverModel.class.getName() + ".numConflicts";
 
     /** the list of conflict decisions */
-    private List<RelationMemberConflictDecision> decisions;
+    protected final List<RelationMemberConflictDecision> decisions;
     /** the collection of relations for which we manage conflicts */
-    private Collection<Relation> relations;
+    protected Collection<Relation> relations;
     /** the number of conflicts */
     private int numConflicts;
-    private PropertyChangeSupport support;
+    private final PropertyChangeSupport support;
 
     /**
      * Replies true if each {@link MultiValueResolutionDecision} is decided.
      *
-     * @return true if each {@link MultiValueResolutionDecision} is decided; false
-     * otherwise
+     * @return true if each {@link MultiValueResolutionDecision} is decided; false otherwise
      */
     public boolean isResolvedCompletely() {
         return numConflicts == 0;
@@ -71,8 +70,12 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         int oldValue = numConflicts;
         numConflicts = count;
         if (numConflicts != oldValue) {
-            support.firePropertyChange(NUM_CONFLICTS_PROP, oldValue, numConflicts);
+            support.firePropertyChange(getProperty(), oldValue, numConflicts);
         }
+    }
+
+    protected String getProperty() {
+        return NUM_CONFLICTS_PROP;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener l) {
@@ -306,7 +309,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * to the decisions managed by this model
      */
     public Set<Relation> getModifiedRelations(OsmPrimitive newPrimitive) {
-        HashSet<Relation> ret = new HashSet<>();
+        Set<Relation> ret = new HashSet<>();
         for (Relation relation: relations) {
             if (isChanged(relation, newPrimitive)) {
                 ret.add(relation);

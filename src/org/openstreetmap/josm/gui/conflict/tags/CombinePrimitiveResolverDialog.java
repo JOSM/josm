@@ -186,7 +186,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     protected JPanel buildRelationMemberConflictResolverPanel() {
-        pnlRelationMemberConflictResolver = new RelationMemberConflictResolver();
+        pnlRelationMemberConflictResolver = new RelationMemberConflictResolver(new RelationMemberConflictResolverModel());
         return pnlRelationMemberConflictResolver;
     }
 
