@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  *   <li>.jar files, assuming that they represent plugin jars</li>
  *   <li>.jar.new files, assuming that these are downloaded but not yet installed plugins</li>
  *   <li>cached lists of available plugins, downloaded for instance from
- *   <a href="https://josm.openstreetmap.de/plugin">https://josm.openstreetmap.de/plugin</a></li>
+ *   <a href="https://josm.openstreetmap.de/pluginicons">https://josm.openstreetmap.de/pluginicons</a></li>
  * </ul>
  *
  */
@@ -102,31 +102,6 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             monitor.worked(1);
         }
     }
-    protected void scanIconCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
-        File[] siteCacheFiles = listFiles(pluginsDirectory, "^([0-9]+-)?site.*plugin-icons\\.zip$");
-        if (siteCacheFiles == null || siteCacheFiles.length == 0)
-            return;
-        monitor.subTask(tr("Processing plugin site cache icon files..."));
-        monitor.setTicksCount(siteCacheFiles.length);
-        for (File f: siteCacheFiles) {
-            String fname = f.getName();
-            monitor.setCustomText(tr("Processing file ''{0}''", fname));
-            for (PluginInformation pi : availablePlugins.values()) {
-                if (pi.icon == null && pi.iconPath != null) {
-                    String path = pi.iconPath;
-                    if(!path.startsWith("data:")) {
-                        path = pi.name+".jar/"+path;
-                    }
-                    pi.icon = new ImageProvider(path)
-                                    .setArchive(f)
-                                    .setMaxWidth(24)
-                                    .setMaxHeight(24)
-                                    .setOptional(true).get();
-                }
-            }
-            monitor.worked(1);
-        }
-    }
 
     protected void scanPluginFiles(ProgressMonitor monitor, File pluginsDirectory) {
         File[] pluginFiles = pluginsDirectory.listFiles(
@@ -165,7 +140,6 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         try {
             monitor.beginTask("");
             scanSiteCacheFiles(monitor, pluginsDirectory);
-            scanIconCacheFiles(monitor, pluginsDirectory);
             scanPluginFiles(monitor, pluginsDirectory);
         } finally {
             monitor.setCustomText("");

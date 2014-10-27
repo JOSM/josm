@@ -57,8 +57,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     private List<PluginInformation> availablePlugins;
     private boolean displayErrMsg;
 
-    protected enum CacheType {PLUGIN_LIST, ICON_LIST}
-
     protected final void init(Collection<String> sites, boolean displayErrMsg) {
         this.sites = sites;
         if (sites == null) {
@@ -110,7 +108,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      * @param type icon cache or plugin list cache
      * @return the file name for the cache file
      */
-    protected File createSiteCacheFile(File pluginDir, String site, CacheType type) {
+    protected File createSiteCacheFile(File pluginDir, String site) {
         String name;
         try {
             site = site.replaceAll("%<(.*)>", "");
@@ -130,14 +128,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                     sb.append("_");
                 }
             }
-            switch (type) {
-            case PLUGIN_LIST:
-                sb.append(".txt");
-                break;
-            case ICON_LIST:
-                sb.append("-icons.zip");
-                break;
-            }
+            sb.append(".txt");
             name = sb.toString();
         } catch(MalformedURLException e) {
             name = "site-unknown.txt";
@@ -256,65 +247,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     }
 
     /**
-     * Downloads the icon archive from a remote location
-     *
-     * @param site the site URL
-     * @param monitor a progress monitor
-     */
-    protected void downloadPluginIcons(String site, File destFile, ProgressMonitor monitor) {
-        try {
-            site = site.replaceAll("%<(.*)>", "");
-
-            monitor.beginTask("");
-            monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", site));
-
-            URL url = new URL(site);
-            synchronized(this) {
-                connection = Utils.openHttpConnection(url);
-                connection.setRequestProperty("Cache-Control", "no-cache");
-            }
-            try (
-                InputStream in = connection.getInputStream();
-                OutputStream out = new FileOutputStream(destFile)
-            ) {
-                byte[] buffer = new byte[8192];
-                for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
-                    out.write(buffer, 0, read);
-                }
-            }
-        } catch (MalformedURLException e) {
-            if (canceled) return;
-            Main.error(e);
-            return;
-        } catch (IOException e) {
-            if (canceled) return;
-            handleIOException(monitor, e, tr("Plugin icons download error"), tr("JOSM failed to download plugin icons:"), displayErrMsg);
-            return;
-        } finally {
-            synchronized(this) {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                connection = null;
-            }
-            monitor.finishTask();
-        }
-        for (PluginInformation pi : availablePlugins) {
-            if (pi.icon == null && pi.iconPath != null) {
-                String path = pi.iconPath;
-                if(!path.startsWith("data:")) {
-                    path = pi.name+".jar/"+path;
-                }
-                pi.icon = new ImageProvider(path)
-                                .setArchive(destFile)
-                                .setMaxWidth(24)
-                                .setMaxHeight(24)
-                                .setOptional(true).get();
-            }
-        }
-    }
-
-    /**
      * Writes the list of plugins to a cache file
      *
      * @param site the site from where the list was downloaded
@@ -325,7 +257,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
             Main.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
         }
-        File cacheFile = createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST);
+        File cacheFile = createSiteCacheFile(pluginDir, site);
         getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
         try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), StandardCharsets.UTF_8))) {
             writer.write(list);
@@ -404,8 +336,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             getProgressMonitor().subTask(tr("Processing plugin list from site ''{0}''", printsite));
             String list = downloadPluginList(site, getProgressMonitor().createSubTaskMonitor(0, false));
             if (canceled) return;
-            siteCacheFiles.remove(createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST));
-            siteCacheFiles.remove(createSiteCacheFile(pluginDir, site, CacheType.ICON_LIST));
+            siteCacheFiles.remove(createSiteCacheFile(pluginDir, site));
             if (list != null) {
                 getProgressMonitor().worked(1);
                 cachePluginList(site, list);
@@ -416,7 +347,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
                 getProgressMonitor().worked(1);
                 if (canceled) return;
             }
-            downloadPluginIcons(site+"-icons.zip", createSiteCacheFile(pluginDir, site, CacheType.ICON_LIST), getProgressMonitor().createSubTaskMonitor(0, false));
         }
         // remove old stuff or whole update process is broken
         for (File file: siteCacheFiles) {

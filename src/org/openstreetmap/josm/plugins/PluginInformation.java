@@ -240,9 +240,14 @@ public class PluginInformation {
         }
         author = attr.getValue("Author");
         iconPath = attr.getValue("Plugin-Icon");
-        if (iconPath != null && file != null) {
-            // extract icon from the plugin jar file
-            icon = new ImageProvider(iconPath).setArchive(file).setMaxWidth(24).setMaxHeight(24).setOptional(true).get();
+        if (iconPath != null)
+        {
+            if (file != null) {
+                // extract icon from the plugin jar file
+                icon = new ImageProvider(iconPath).setArchive(file).setMaxWidth(24).setMaxHeight(24).setOptional(true).get();
+            } else if (iconPath.startsWith("data:")) {
+                icon = new ImageProvider(iconPath).setMaxWidth(24).setMaxHeight(24).setOptional(true).get();
+            }
         }
         if (oldcheck && mainversion > Version.getInstance().getVersion()) {
             int myv = Version.getInstance().getVersion();

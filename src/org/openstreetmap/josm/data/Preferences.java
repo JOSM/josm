@@ -1384,7 +1384,7 @@ public class Preferences {
      * @return the collection of plugin site URLs
      */
     public Collection<String> getPluginSites() {
-        return getCollection("pluginmanager.sites", Collections.singleton(Main.getJOSMWebsite()+"/plugin%<?plugins=>"));
+        return getCollection("pluginmanager.sites", Collections.singleton(Main.getJOSMWebsite()+"/pluginicons%<?plugins=>"));
     }
 
     /**
