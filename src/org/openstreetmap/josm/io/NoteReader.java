@@ -1,8 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -214,6 +216,15 @@ public class NoteReader {
      */
     public NoteReader(InputStream source) throws IOException {
         this.inputSource = new InputSource(source);
+    }
+
+    /**
+     * Initializes the reader with a string as a source
+     * @param source UTF-8 string containing Notes XML to parse
+     * @throws IOException
+     */
+    public NoteReader(String source) throws IOException {
+        this.inputSource = new InputSource(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
     }
 
     /**

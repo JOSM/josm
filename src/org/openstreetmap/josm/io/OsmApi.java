@@ -14,20 +14,25 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -780,5 +785,120 @@ public class OsmApi extends OsmConnection {
         if (!changeset.isOpen())
             throw new IllegalArgumentException(tr("Open changeset expected. Got closed changeset with id {0}.", changeset.getId()));
         this.changeset = changeset;
+    }
+
+    /**
+     * Create a new note on the server
+     * @param latlon Location of note
+     * @param text Comment entered by user to open the note
+     * @param monitor Progress monitor
+     * @return Note as it exists on the server after creation (ID assigned)
+     * @throws OsmTransferException
+     */
+    public Note createNote(LatLon latlon, String text, ProgressMonitor monitor) throws OsmTransferException {
+        initialize(monitor);
+        String url = new StringBuilder()
+            .append("notes?lat=")
+            .append(latlon.lat())
+            .append("&lon=")
+            .append(latlon.lon())
+            .append("&text=")
+            .append(urlEncode(text)).toString();
+
+        String response = sendRequest("POST", url, null, monitor, true, false);
+        return parseSingleNote(response);
+    }
+
+    /**
+     * Add a comment to an existing note.
+     * @param note The note to add a comment to
+     * @param comment Text of the comment
+     * @param monitor Progress monitor
+     * @return Note returned by the API after the comment was added
+     * @throws OsmTransferException
+     */
+    public Note addCommentToNote(Note note, String comment, ProgressMonitor monitor) throws OsmTransferException {
+        initialize(monitor);
+        String url = new StringBuilder()
+            .append("notes/")
+            .append(note.getId())
+            .append("/comment?text=")
+            .append(urlEncode(comment)).toString();
+
+        String response = sendRequest("POST", url, null, monitor, true, false);
+        return parseSingleNote(response);
+    }
+
+    /**
+     * Close a note
+     * @param note Note to close. Must currently be open
+     * @param closeMessage Optional message supplied by the user when closing the note
+     * @param monitor Progress monitor
+     * @return Note returned by the API after the close operation
+     * @throws OsmTransferException
+     */
+    public Note closeNote(Note note, String closeMessage, ProgressMonitor monitor) throws OsmTransferException {
+        initialize(monitor);
+        String encodedMessage = urlEncode(closeMessage);
+        StringBuilder urlBuilder = new StringBuilder()
+            .append("notes/")
+            .append(note.getId())
+            .append("/close");
+        if (encodedMessage != null && !encodedMessage.trim().isEmpty()) {
+            urlBuilder.append("?text=");
+            urlBuilder.append(encodedMessage);
+        }
+
+        String response = sendRequest("POST", urlBuilder.toString(), null, monitor, true, false);
+        return parseSingleNote(response);
+    }
+
+    /**
+     * Reopen a closed note
+     * @param note Note to reopen. Must currently be closed
+     * @param reactivateMessage Optional message supplied by the user when reopening the note
+     * @param monitor Progress monitor
+     * @return Note returned by the API after the reopen operation
+     * @throws OsmTransferException
+     */
+    public Note reopenNote(Note note, String reactivateMessage, ProgressMonitor monitor) throws OsmTransferException {
+        initialize(monitor);
+        String encodedMessage = urlEncode(reactivateMessage);
+        StringBuilder urlBuilder = new StringBuilder()
+            .append("notes/")
+            .append(note.getId())
+            .append("/reopen");
+        if (encodedMessage != null && !encodedMessage.trim().isEmpty()) {
+            urlBuilder.append("?text=");
+            urlBuilder.append(encodedMessage);
+        }
+
+        String response = sendRequest("POST", urlBuilder.toString(), null, monitor, true, false);
+        return parseSingleNote(response);
+    }
+
+    /** Method for parsing API responses for operations on individual notes */
+    private Note parseSingleNote(String xml) throws OsmTransferException {
+        try {
+            List<Note> newNotes = new NoteReader(xml).parse();
+            if(newNotes.size() == 1) {
+                return newNotes.get(0);
+            }
+            //Shouldn't ever execute. Server will either respond with an error (caught elsewhere) or one note
+            throw new OsmTransferException(tr("Note upload failed"));
+        } catch (SAXException|IOException e) {
+            Main.error(e, true);
+            throw new OsmTransferException(tr("Error parsing note response from server"), e);
+        }
+    }
+
+    /** URL encodes a string. Useful for transforming user input into URL query strings*/
+    private String urlEncode(String string) throws OsmTransferException {
+        try {
+            return URLEncoder.encode(string, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            Main.error(e, true);
+            throw new OsmTransferException(tr("Error encoding string: {0}", string), e);
+        }
     }
 }
