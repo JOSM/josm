@@ -113,7 +113,11 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             monitor.setCustomText(tr("Processing file ''{0}''", fname));
             for (PluginInformation pi : availablePlugins.values()) {
                 if (pi.icon == null && pi.iconPath != null) {
-                    pi.icon = new ImageProvider(pi.name+".jar/"+pi.iconPath)
+                    String path = pi.iconPath;
+                    if(!path.startsWith("data:")) {
+                        path = pi.name+".jar/"+path;
+                    }
+                    pi.icon = new ImageProvider(path)
                                     .setArchive(f)
                                     .setMaxWidth(24)
                                     .setMaxHeight(24)

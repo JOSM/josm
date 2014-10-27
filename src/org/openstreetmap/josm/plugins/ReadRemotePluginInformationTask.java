@@ -301,7 +301,11 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
         for (PluginInformation pi : availablePlugins) {
             if (pi.icon == null && pi.iconPath != null) {
-                pi.icon = new ImageProvider(pi.name+".jar/"+pi.iconPath)
+                String path = pi.iconPath;
+                if(!path.startsWith("data:")) {
+                    path = pi.name+".jar/"+path;
+                }
+                pi.icon = new ImageProvider(path)
                                 .setArchive(destFile)
                                 .setMaxWidth(24)
                                 .setMaxHeight(24)
