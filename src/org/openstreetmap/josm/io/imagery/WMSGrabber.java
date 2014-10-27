@@ -258,6 +258,7 @@ public class WMSGrabber implements Runnable {
         Main.info("Grabbing WMS " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
         HttpURLConnection conn = Utils.openHttpConnection(url);
+        conn.setUseCaches(true);
         for (Entry<String, String> e : props.entrySet()) {
             conn.setRequestProperty(e.getKey(), e.getValue());
         }
