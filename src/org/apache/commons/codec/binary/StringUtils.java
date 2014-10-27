@@ -32,7 +32,7 @@ import org.apache.commons.codec.Charsets;
  *
  * @see CharEncoding
  * @see <a href="http://download.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html">Standard charsets</a>
- * @version $Id: StringUtils.java 1634432 2014-10-27 01:10:23Z ggregory $
+ * @version $Id: StringUtils.java 1634456 2014-10-27 05:26:56Z ggregory $
  * @since 1.4
  */
 public class StringUtils {
@@ -41,12 +41,12 @@ public class StringUtils {
      * <p>
      * Compares two CharSequences, returning <code>true</code> if they represent equal sequences of characters.
      * </p>
-     * 
+     *
      * <p>
      * <code>null</code>s are handled without exceptions. Two <code>null</code> references are considered to be equal.
      * The comparison is case sensitive.
      * </p>
-     * 
+     *
      * <pre>
      * StringUtils.equals(null, null)   = true
      * StringUtils.equals(null, "abc")  = false
@@ -54,11 +54,11 @@ public class StringUtils {
      * StringUtils.equals("abc", "abc") = true
      * StringUtils.equals("abc", "ABC") = false
      * </pre>
-     * 
+     *
      * <p>
      * Copied from Apache Commons Lang r1583482 on April 10, 2014 (day of 3.3.2 release).
      * </p>
-     * 
+     *
      * @see Object#equals(Object)
      * @param cs1
      *            the first CharSequence, may be <code>null</code>

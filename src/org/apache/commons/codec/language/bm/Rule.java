@@ -77,7 +77,7 @@ import org.apache.commons.codec.language.bm.Languages.LanguageSet;
  * </ul>
  *
  * @since 1.6
- * @version $Id: Rule.java 1634419 2014-10-27 00:45:18Z ggregory $
+ * @version $Id: Rule.java 1634456 2014-10-27 05:26:56Z ggregory $
  */
 public class Rule {
 
@@ -141,9 +141,9 @@ public class Rule {
 
         /**
          * Deprecated since 1.9.
-         * 
-         * @param right the Phoneme to join 
-         * @return a new Phoneme 
+         *
+         * @param right the Phoneme to join
+         * @return a new Phoneme
          * @deprecated since 1.9
          */
         @Deprecated
