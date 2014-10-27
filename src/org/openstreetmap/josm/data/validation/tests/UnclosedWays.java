@@ -142,7 +142,7 @@ public class UnclosedWays extends Test {
         new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"), Arrays.asList("water_slide", "climbing")),
         new UnclosedWaysCheck(1105, "tourism",   marktr("tourism type {0}"), Arrays.asList("attraction")),
         new UnclosedWaysCheck(1106, "shop",      marktr("shop type {0}")),
-        new UnclosedWaysCheck(1107, "leisure",   marktr("leisure type {0}"), Arrays.asList("track")),
+        new UnclosedWaysCheck(1107, "leisure",   marktr("leisure type {0}"), Arrays.asList("track", "slipway")),
         new UnclosedWaysCheck(1108, "waterway",  marktr("waterway type {0}"), Arrays.asList("riverbank"), false),
         new UnclosedWaysCheck(1109, "boundary", marktr("boundary type {0}")),
         new UnclosedWaysBooleanCheck(1120, "building", marktr("building")),
