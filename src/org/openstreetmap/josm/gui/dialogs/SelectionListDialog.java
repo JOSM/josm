@@ -200,7 +200,15 @@ public class SelectionListDialog extends ToggleDialog  {
             if (isDoubleClick(e)) {
                 OsmDataLayer layer = Main.main.getEditLayer();
                 if (layer == null) return;
-                layer.data.setSelected(Collections.singleton(model.getElementAt(idx)));
+                OsmPrimitive osm = model.getElementAt(idx);
+                Collection<OsmPrimitive> sel = layer.data.getSelected();
+                if (sel.size() != 1 || !sel.iterator().next().equals(osm)) {
+                    // Select primitive if it's not the whole current selection
+                    layer.data.setSelected(Collections.singleton(osm));
+                } else if (osm instanceof Relation) {
+                    // else open relation editor if applicable
+                    actEditRelationSelection.actionPerformed(null);
+                }
             } else if (highlightEnabled && Main.isDisplayingMapView()) {
                 if (helper.highlightOnly(model.getElementAt(idx))) {
                     Main.map.mapView.repaint();
