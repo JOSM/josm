@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -34,7 +34,7 @@ public class OsmServerWriter {
      * If a server connection error occurs, this may contain fewer entries
      * than where passed in the list to upload*.
      */
-    private Collection<IPrimitive> processed;
+    private Collection<OsmPrimitive> processed;
 
     private static List<OsmServerWritePostprocessor> postprocessors;
     public static void registerPostprocessor(OsmServerWritePostprocessor pp) {
@@ -84,12 +84,12 @@ public class OsmServerWriter {
      * @param progressMonitor the progress monitor
      * @throws OsmTransferException thrown if an exception occurs
      */
-    protected void uploadChangesIndividually(Collection<? extends IPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
+    protected void uploadChangesIndividually(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
             progressMonitor.beginTask(tr("Starting to upload with one request per primitive ..."));
             progressMonitor.setTicksCount(primitives.size());
             uploadStartTime = System.currentTimeMillis();
-            for (IPrimitive osm : primitives) {
+            for (OsmPrimitive osm : primitives) {
                 int progress = progressMonitor.getTicks();
                 String time_left_str = timeLeft(progress, primitives.size());
                 String msg = "";
@@ -126,7 +126,7 @@ public class OsmServerWriter {
      * @param progressMonitor  the progress monitor
      * @throws OsmTransferException thrown if an exception occurs
      */
-    protected void uploadChangesAsDiffUpload(Collection<? extends IPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
+    protected void uploadChangesAsDiffUpload(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
             progressMonitor.beginTask(tr("Starting to upload in one request ..."));
             processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
@@ -146,13 +146,13 @@ public class OsmServerWriter {
      * @throws IllegalArgumentException thrown if chunkSize &lt;= 0
      * @throws OsmTransferException thrown if an exception occurs
      */
-    protected void uploadChangesInChunks(Collection<? extends IPrimitive> primitives, ProgressMonitor progressMonitor, int chunkSize) throws OsmTransferException, IllegalArgumentException {
+    protected void uploadChangesInChunks(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor, int chunkSize) throws OsmTransferException, IllegalArgumentException {
         if (chunkSize <=0)
             throw new IllegalArgumentException(tr("Value >0 expected for parameter ''{0}'', got {1}", "chunkSize", chunkSize));
         try {
             progressMonitor.beginTask(tr("Starting to upload in chunks..."));
-            List<IPrimitive> chunk = new ArrayList<>(chunkSize);
-            Iterator<? extends IPrimitive> it = primitives.iterator();
+            List<OsmPrimitive> chunk = new ArrayList<>(chunkSize);
+            Iterator<? extends OsmPrimitive> it = primitives.iterator();
             int numChunks = (int)Math.ceil((double)primitives.size() / (double)chunkSize);
             int i= 0;
             while(it.hasNext()) {
@@ -189,7 +189,7 @@ public class OsmServerWriter {
      * @throws IllegalArgumentException thrown if strategy is null
      * @throws OsmTransferException thrown if something goes wrong
      */
-    public void uploadOsm(UploadStrategySpecification strategy, Collection<? extends IPrimitive> primitives, Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
+    public void uploadOsm(UploadStrategySpecification strategy, Collection<? extends OsmPrimitive> primitives, Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
         CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
         processed = new LinkedList<>();
         monitor = monitor == null ? NullProgressMonitor.INSTANCE : monitor;
@@ -223,7 +223,7 @@ public class OsmServerWriter {
         }
     }
 
-    void makeApiRequest(IPrimitive osm, ProgressMonitor progressMonitor) throws OsmTransferException {
+    void makeApiRequest(OsmPrimitive osm, ProgressMonitor progressMonitor) throws OsmTransferException {
         if (osm.isDeleted()) {
             api.deletePrimitive(osm, progressMonitor);
         } else if (osm.isNew()) {
@@ -245,7 +245,7 @@ public class OsmServerWriter {
      *
      * @return the collection of successfully processed primitives
      */
-    public Collection<IPrimitive> getProcessedPrimitives() {
+    public Collection<OsmPrimitive> getProcessedPrimitives() {
         return processed;
     }
 
