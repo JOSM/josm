@@ -29,7 +29,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * Operations to simplify common {@link java.security.MessageDigest} tasks.
  * This class is immutable and thread-safe.
  *
- * @version $Id: DigestUtils.java 1563226 2014-01-31 19:38:06Z ggregory $
+ * @version $Id: DigestUtils.java 1634433 2014-10-27 01:10:47Z ggregory $
  */
 public class DigestUtils {
 
@@ -55,9 +55,9 @@ public class DigestUtils {
      *
      * @param algorithm
      *            the name of the algorithm requested. See <a
-     *            href="http://docs.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA">Appendix A in the Java
-     *            Cryptography Architecture Reference Guide</a> for information about standard algorithm
-     *            names.
+     *            href="http://docs.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA"
+     *            >Appendix A in the Java Cryptography Architecture Reference Guide</a> for information about standard
+     *            algorithm names.
      * @return A digest instance.
      * @see MessageDigest#getInstance(String)
      * @throws IllegalArgumentException
