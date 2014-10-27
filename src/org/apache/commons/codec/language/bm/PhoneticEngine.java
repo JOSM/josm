@@ -48,7 +48,7 @@ import org.apache.commons.codec.language.bm.Rule.Phoneme;
  * Ported from phoneticengine.php
  *
  * @since 1.6
- * @version $Id: PhoneticEngine.java 1608115 2014-07-05 19:58:38Z tn $
+ * @version $Id: PhoneticEngine.java 1634418 2014-10-27 00:43:25Z ggregory $
  */
 public class PhoneticEngine {
 
@@ -391,8 +391,9 @@ public class PhoneticEngine {
      * @param input
      *            String to phoneticise; a String with dashes or spaces separating each word
      * @param languageSet
-     * @return a phonetic representation of the input; a String containing '-'-separated phonetic representations
-     *   of the input
+     *            set of possible origin languages
+     * @return a phonetic representation of the input; a String containing '-'-separated phonetic representations of the
+     *         input
      */
     public String encode(String input, final Languages.LanguageSet languageSet) {
         final Map<String, List<Rule>> rules = Rule.getInstanceMap(this.nameType, RuleType.RULES, languageSet);

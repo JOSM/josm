@@ -33,7 +33,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * @see <a href="http://drdobbs.com/184401251?pgno=2">Original Article</a>
  * @see <a href="http://en.wikipedia.org/wiki/Metaphone">http://en.wikipedia.org/wiki/Metaphone</a>
  *
- * @version $Id: DoubleMetaphone.java 1619948 2014-08-22 22:53:55Z ggregory $
+ * @version $Id: DoubleMetaphone.java 1634417 2014-10-27 00:42:28Z ggregory $
  */
 public class DoubleMetaphone implements StringEncoder {
 
@@ -896,7 +896,7 @@ public class DoubleMetaphone implements StringEncoder {
         return input.toUpperCase(java.util.Locale.ENGLISH);
     }
 
-    /**
+    /*
      * Gets the character at index <code>index</code> if available, otherwise
      * it returns <code>Character.MIN_VALUE</code> so that there is some sort
      * of a default.
@@ -908,7 +908,7 @@ public class DoubleMetaphone implements StringEncoder {
         return value.charAt(index);
     }
 
-    /**
+    /*
      * Determines whether <code>value</code> contains any of the criteria starting at index <code>start</code> and
      * matching up to length <code>length</code>.
      */
