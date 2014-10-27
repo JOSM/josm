@@ -108,8 +108,13 @@ public class DiffResultProcessor  {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
-        DataSet ds = primitives.iterator().next().getDataSet();
-        ds.beginUpdate();
+        DataSet ds = null;
+        if (!primitives.isEmpty()) {
+            ds = primitives.iterator().next().getDataSet();
+        }
+        if (ds != null) {
+            ds.beginUpdate();
+        }
         try {
             monitor.beginTask("Postprocessing uploaded data ...");
             monitor.setTicksCount(primitives.size());
@@ -133,7 +138,9 @@ public class DiffResultProcessor  {
             }
             return processed;
         } finally {
-            ds.endUpdate();
+            if (ds != null) {
+                ds.endUpdate();
+            }
             monitor.finishTask();
         }
     }
