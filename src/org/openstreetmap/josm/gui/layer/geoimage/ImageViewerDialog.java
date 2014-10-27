@@ -279,7 +279,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 // (e.g. to update the OSD).
                 imgDisplay.setImage(entry.getFile(), entry.getExifOrientation());
             }
-            setTitle("Geotagged Images" + (entry.getFile() != null ? " - " + entry.getFile().getName() : ""));
+            setTitle(tr("Geotagged Images") + (entry.getFile() != null ? " - " + entry.getFile().getName() : ""));
             StringBuilder osd = new StringBuilder(entry.getFile() != null ? entry.getFile().getName() : "");
             if (entry.getElevation() != null) {
                 osd.append(tr("\nAltitude: {0} m", entry.getElevation().longValue()));
@@ -300,8 +300,12 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
             imgDisplay.setOsdText(osd.toString());
         } else {
+            // if this method is called to reinitialize dialog content with a blank image,
+            // do not actually show the dialog again with a blank image if currently hidden (fix #10672)
+            setTitle(tr("Geotagged Images"));
             imgDisplay.setImage(null, null);
             imgDisplay.setOsdText("");
+            return;
         }
         if (! isDialogShowing()) {
             setIsDocked(false);     // always open a detached window when an image is clicked and dialog is closed
