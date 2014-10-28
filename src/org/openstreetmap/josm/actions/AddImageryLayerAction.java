@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
@@ -46,6 +47,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     public AddImageryLayerAction(ImageryInfo info) {
         super(info.getMenuName(), /* ICON */"imagery_menu", tr("Add imagery layer {0}",info.getName()), null, false, false);
         putValue("toolbar", "imagery_" + info.getToolbarName());
+        putValue("help", ht("/Preferences/Imagery"));
         this.info = info;
         installAdapters();
 
