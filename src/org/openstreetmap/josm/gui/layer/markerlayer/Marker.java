@@ -294,7 +294,7 @@ public class Marker implements TemplateEngineDataProvider {
 
         this.offset = offset;
         this.time = time;
-        /* tell icon checking that we expect these names to exist
+        /* tell icon checking that we expect these names to exist */
         // /* ICON(markers/) */"Bridge"
         // /* ICON(markers/) */"Crossing"
         this.symbol = iconName != null ? ImageProvider.getIfAvailable("markers",iconName) : null;
