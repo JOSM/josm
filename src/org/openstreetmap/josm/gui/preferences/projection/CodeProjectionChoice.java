@@ -39,7 +39,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
      * Constructs a new {@code CodeProjectionChoice}.
      */
     public CodeProjectionChoice() {
-        super(tr("By Code (EPSG)"), "core:code");
+        super(tr("By Code (EPSG)"), /* NO-ICON */ "core:code");
     }
 
     private static class CodeSelectionPanel extends JPanel implements ListSelectionListener, DocumentListener {

@@ -65,7 +65,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     }
 
     private AdvancedPreference() {
-        super("advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
+        super(/* ICON(preferences/) */ "advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
     }
 
     @Override

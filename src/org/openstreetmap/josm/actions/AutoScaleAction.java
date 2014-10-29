@@ -41,14 +41,14 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class AutoScaleAction extends JosmAction {
 
     public static final Collection<String> MODES = Collections.unmodifiableList(Arrays.asList(
-        marktr("data"),
-        marktr("layer"),
-        marktr("selection"),
-        marktr("conflict"),
-        marktr("download"),
-        marktr("problem"),
-        marktr("previous"),
-        marktr("next")));
+        marktr(/* ICON(dialogs/autoscale/) */ "data"),
+        marktr(/* ICON(dialogs/autoscale/) */ "layer"),
+        marktr(/* ICON(dialogs/autoscale/) */ "selection"),
+        marktr(/* ICON(dialogs/autoscale/) */ "conflict"),
+        marktr(/* ICON(dialogs/autoscale/) */ "download"),
+        marktr(/* ICON(dialogs/autoscale/) */ "problem"),
+        marktr(/* ICON(dialogs/autoscale/) */ "previous"),
+        marktr(/* ICON(dialogs/autoscale/) */ "next")));
 
     private final String mode;
 

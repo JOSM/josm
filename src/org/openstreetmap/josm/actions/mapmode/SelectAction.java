@@ -84,21 +84,21 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     // contains all possible cases the cursor can be in the SelectAction
     private static enum SelectActionCursor {
-        rect("normal", "selection"),
-        rect_add("normal", "select_add"),
-        rect_rm("normal", "select_remove"),
-        way("normal", "select_way"),
-        way_add("normal", "select_way_add"),
-        way_rm("normal", "select_way_remove"),
-        node("normal", "select_node"),
-        node_add("normal", "select_node_add"),
-        node_rm("normal", "select_node_remove"),
-        virtual_node("normal", "addnode"),
-        scale("scale", null),
-        rotate("rotate", null),
-        merge("crosshair", null),
-        lasso("normal", "rope"),
-        merge_to_node("crosshair", "joinnode"),
+        rect("normal", /* ICON(cursor/modifier/) */ "selection"),
+        rect_add("normal", /* ICON(cursor/modifier/) */ "select_add"),
+        rect_rm("normal", /* ICON(cursor/modifier/) */ "select_remove"),
+        way("normal", /* ICON(cursor/modifier/) */ "select_way"),
+        way_add("normal", /* ICON(cursor/modifier/) */ "select_way_add"),
+        way_rm("normal", /* ICON(cursor/modifier/) */ "select_way_remove"),
+        node("normal", /* ICON(cursor/modifier/) */ "select_node"),
+        node_add("normal", /* ICON(cursor/modifier/) */ "select_node_add"),
+        node_rm("normal", /* ICON(cursor/modifier/) */ "select_node_remove"),
+        virtual_node("normal", /* ICON(cursor/modifier/) */ "addnode"),
+        scale(/* ICON(cursor/) */ "scale", null),
+        rotate(/* ICON(cursor/) */ "rotate", null),
+        merge(/* ICON(cursor/) */ "crosshair", null),
+        lasso("normal", /* ICON(cursor/modifier/) */ "rope"),
+        merge_to_node("crosshair", /* ICON(cursor/modifier/) */ "joinnode"),
         move(Cursor.MOVE_CURSOR);
 
         private final Cursor c;

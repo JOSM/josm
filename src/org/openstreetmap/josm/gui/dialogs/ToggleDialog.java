@@ -521,7 +521,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             lblTitle_weak.setMinimumSize(new Dimension(0,20));
             add(lblTitle_weak, GBC.std().fill(GBC.HORIZONTAL));
 
-            buttonsHide = new JButton(ImageProvider.get("misc", buttonHiding != ButtonHidingType.ALWAYS_SHOWN ? "buttonhide" : "buttonshow"));
+            buttonsHide = new JButton(ImageProvider.get("misc", buttonHiding != ButtonHidingType.ALWAYS_SHOWN
+                ? /* ICON(misc/)*/ "buttonhide" :  /* ICON(misc/)*/ "buttonshow"));
             buttonsHide.setToolTipText(tr("Toggle dynamic buttons"));
             buttonsHide.setBorder(BorderFactory.createEmptyBorder());
             buttonsHide.addActionListener(
@@ -940,7 +941,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     private void refreshHidingButtons() {
-        titleBar.buttonsHide.setIcon(ImageProvider.get("misc", buttonHiding != ButtonHidingType.ALWAYS_SHOWN ? "buttonhide" : "buttonshow"));
+        titleBar.buttonsHide.setIcon(ImageProvider.get("misc", buttonHiding != ButtonHidingType.ALWAYS_SHOWN
+            ?  /* ICON(misc/)*/ "buttonhide" :  /* ICON(misc/)*/ "buttonshow"));
         titleBar.buttonsHide.setEnabled(buttonHiding != ButtonHidingType.ALWAYS_HIDDEN);
         if (buttonsPanel != null) {
             buttonsPanel.setVisible(buttonHiding != ButtonHidingType.ALWAYS_HIDDEN || !isDocked);

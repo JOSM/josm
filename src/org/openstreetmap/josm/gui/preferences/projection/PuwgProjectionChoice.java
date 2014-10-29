@@ -30,7 +30,7 @@ public class PuwgProjectionChoice extends ListProjectionChoice {
      * Constructs a new {@code PuwgProjectionChoice}.
      */
     public PuwgProjectionChoice() {
-        super(tr("PUWG (Poland)"), "core:puwg", NAMES, tr("PUWG Zone"));
+        super(tr("PUWG (Poland)"), /* NO-ICON */ "core:puwg", NAMES, tr("PUWG Zone"));
     }
 
     @Override

@@ -59,7 +59,7 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
     }
 
     private RemoteControlPreference() {
-        super("remotecontrol", tr("Remote Control"), tr("Settings for the remote control feature."));
+        super(/* ICON(preferences/) */ "remotecontrol", tr("Remote Control"), tr("Settings for the remote control feature."));
         for (PermissionPrefWithDefault p : PermissionPrefWithDefault.getPermissionPrefs()) {
             JCheckBox cb = new JCheckBox(p.preferenceText);
             cb.setSelected(p.isAllowed());

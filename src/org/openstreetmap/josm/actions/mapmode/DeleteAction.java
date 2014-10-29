@@ -61,13 +61,13 @@ public class DeleteAction extends MapMode implements ModifierListener {
     private boolean drawTargetHighlight;
 
     private enum DeleteMode {
-        none("delete"),
-        segment("delete_segment"),
-        node("delete_node"),
-        node_with_references("delete_node"),
-        way("delete_way_only"),
-        way_with_references("delete_way_normal"),
-        way_with_nodes("delete_way_node_only");
+        none(/* ICON(cursor/modifier/) */ "delete"),
+        segment(/* ICON(cursor/modifier/) */ "delete_segment"),
+        node(/* ICON(cursor/modifier/) */ "delete_node"),
+        node_with_references(/* ICON(cursor/modifier/) */ "delete_node"),
+        way(/* ICON(cursor/modifier/) */ "delete_way_only"),
+        way_with_references(/* ICON(cursor/modifier/) */ "delete_way_normal"),
+        way_with_nodes(/* ICON(cursor/modifier/) */ "delete_way_node_only");
 
         private final Cursor c;
 

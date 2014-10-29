@@ -82,7 +82,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     private ImageryPreference() {
-        super("imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"), false, new JTabbedPane());
+        super(/* ICON(preferences/) */ "imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"), false, new JTabbedPane());
     }
 
     private ImageryProvidersPanel imageryProviders;
@@ -452,8 +452,12 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             public NewEntryAction(ImageryInfo.ImageryType type) {
                 putValue(NAME, type.toString());
                 putValue(SHORT_DESCRIPTION, tr("Add a new {0} entry by entering the URL", type.toString()));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs",
-                            "add" + (ImageryInfo.ImageryType.WMS.equals(type) ? "_wms" : ImageryInfo.ImageryType.TMS.equals(type) ? "_tms" : "")));
+                String icon = /* ICON(dialogs/) */ "add";
+                if(ImageryInfo.ImageryType.WMS.equals(type))
+                    icon = /* ICON(dialogs/) */ "add_wms";
+                else if(ImageryInfo.ImageryType.TMS.equals(type))
+                    icon = /* ICON(dialogs/) */ "add_tms";
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", icon));
                 this.type = type;
             }
 
