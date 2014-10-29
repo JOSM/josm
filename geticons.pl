@@ -34,11 +34,12 @@ for my $arg (@ARGV ? @ARGV : @default)
         ++$icons{$1};
       }
 
-      if($l =~ /(?:icon-image|repeat-image|fill-image)\s*:\s*\"?(.*?)\"?\s*;/)
+      if(($l =~ /(?:icon-image|repeat-image|fill-image)\s*:\s*(\"?(.*?)\"?)\s*;/) && ($1 ne "none"))
       {
-        my $img = "styles/standard/$1";
-        $img = "styles/$1" if((!-f "images/$img") && -f "images/styles/$1");
-        $img = $1 if((!-f "images/$img") && -f "images/$1");
+        my $val = $2;
+        my $img = "styles/standard/$val";
+        $img = "styles/$val" if((!-f "images/$img") && -f "images/styles/$val");
+        $img = $val if((!-f "images/$img") && -f "images/$val");
         ++$icons{$img};
       }
       if($l =~ /ImageProvider\.get\(\"([^\"]*?)\"\)/)
