@@ -727,7 +727,7 @@ public final class ExpressionFactory {
         /**
          * Percent-encode a string. (See https://en.wikipedia.org/wiki/Percent-encoding)
          * This is especially useful for data urls, e.g.
-         * <code>icon-image: concat("data:image/svg+xml,", URL_encode("&lt;svg&gt;...&lt;/svg&gt;"));</code>
+         * <code>concat("data:image/svg+xml,", URL_encode("&lt;svg&gt;...&lt;/svg&gt;"));</code>
          * @param s arbitrary string
          * @return the encoded string
          */

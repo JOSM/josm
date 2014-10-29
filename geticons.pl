@@ -29,14 +29,7 @@ for my $arg (@ARGV ? @ARGV : @default)
     while(my $l = <FILE>)
     {
       next if $l =~ /NO-ICON/;
-      if($l =~ /src\s*=\s*["'](.*?)["']/)
-      {
-        my $img = "styles/standard/$1";
-        $img = "styles/$1" if((!-f "images/$img") && -f "images/styles/$1");
-        $img = $1 if((!-f "images/$img") && -f "images/$1");
-        ++$icons{$img};
-      }
-      elsif($l =~ /icon\s*[:=]\s*["']([^+]+?)["']/)
+      if($l =~ /icon\s*[:=]\s*["']([^+]+?)["']/)
       {
         ++$icons{$1};
       }
