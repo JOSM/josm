@@ -112,10 +112,10 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
     private AutoAdjustingSplitPane spTagConflictTypes;
     private TagConflictResolver pnlTagConflictResolver;
-    private RelationMemberConflictResolver pnlRelationMemberConflictResolver;
+    protected RelationMemberConflictResolver pnlRelationMemberConflictResolver;
     private boolean canceled;
     private JPanel pnlButtons;
-    private OsmPrimitive targetPrimitive;
+    protected OsmPrimitive targetPrimitive;
 
     /** the private help action */
     private ContextSensitiveHelpAction helpAction;
@@ -190,11 +190,15 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         return pnlRelationMemberConflictResolver;
     }
 
+    protected ApplyAction buildApplyAction() {
+        return new ApplyAction();
+    }
+
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         // -- apply button
-        ApplyAction applyAction = new ApplyAction();
+        ApplyAction applyAction = buildApplyAction();
         pnlTagConflictResolver.getModel().addPropertyChangeListener(applyAction);
         pnlRelationMemberConflictResolver.getModel().addPropertyChangeListener(applyAction);
         btnApply = new SideButton(applyAction);
@@ -294,9 +298,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     protected void prepareDefaultTagDecisions() {
-        TagConflictResolverModel model = getTagConflictResolverModel();
-        model.prepareDefaultTagDecisions();
-        model.rebuild();
+        getTagConflictResolverModel().prepareDefaultTagDecisions();
     }
 
     protected void prepareDefaultRelationDecisions() {
@@ -416,7 +418,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
     }
 
-    class ApplyAction extends AbstractAction implements PropertyChangeListener {
+    protected class ApplyAction extends AbstractAction implements PropertyChangeListener {
 
         public ApplyAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Apply resolved conflicts"));
