@@ -96,7 +96,7 @@ public class MapPaintDialog extends ToggleDialog {
     protected JCheckBox cbWireframe;
 
     public static final JosmAction PREFERENCE_ACTION = PreferencesAction.forPreferenceSubTab(
-            tr("Map paint preferences"), null, MapPaintPreference.class, "dialogs/mappaintpreference");
+            tr("Map paint preferences"), null, MapPaintPreference.class, /* ICON */ "dialogs/mappaintpreference");
 
     /**
      * Constructs a new {@code MapPaintDialog}.

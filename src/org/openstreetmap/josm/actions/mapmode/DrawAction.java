@@ -1739,7 +1739,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private class SnapChangeAction extends JosmAction {
         public SnapChangeAction() {
-            super(tr("Angle snapping"), "anglesnap",
+            super(tr("Angle snapping"), /* ICON() */ "anglesnap",
                     tr("Switch angle snapping mode while drawing"), null, false);
             putValue("help", ht("/Action/Draw/AngleSnap"));
         }

@@ -45,7 +45,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
      * Constructs a new {@code CustomProjectionChoice}.
      */
     public CustomProjectionChoice() {
-        super(tr("Custom Projection"), "core:custom");
+        super(tr("Custom Projection"), /* NO-ICON */ "core:custom");
     }
 
     private static class PreferencePanel extends JPanel {

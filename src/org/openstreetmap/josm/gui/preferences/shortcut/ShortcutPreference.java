@@ -30,7 +30,7 @@ public final class ShortcutPreference extends DefaultTabPreferenceSetting {
     }
 
     private ShortcutPreference() {
-        super("shortcuts", tr("Keyboard Shortcuts"), tr("Changing keyboard shortcuts manually."));
+        super(/* ICON(preferences/) */ "shortcuts", tr("Keyboard Shortcuts"), tr("Changing keyboard shortcuts manually."));
     }
 
     @Override

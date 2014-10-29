@@ -9,7 +9,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
  * @since 6068
  */
 public enum TaggingPresetType {
-    NODE("Mf_node", "node"), WAY("Mf_way", "way"), RELATION("Mf_relation", "relation"), CLOSEDWAY("Mf_closedway", "closedway");
+    NODE(/* ICON */ "Mf_node", "node"),
+    WAY(/* ICON */ "Mf_way", "way"),
+    RELATION(/* ICON */ "Mf_relation", "relation"),
+    CLOSEDWAY(/* ICON */ "Mf_closedway", "closedway");
     private final String iconName;
     private final String name;
 

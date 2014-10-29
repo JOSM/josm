@@ -890,7 +890,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         static final String DELETE_FROM_RELATION_PREF = "delete_from_relation";
 
         public DeleteAction() {
-            super(tr("Delete"), "dialogs/delete", tr("Delete the selected key in all objects"),
+            super(tr("Delete"), /* ICON() */ "dialogs/delete", tr("Delete the selected key in all objects"),
                     Shortcut.registerShortcut("properties:delete", tr("Delete Tags"), KeyEvent.VK_D,
                             Shortcut.ALT_CTRL_SHIFT), false);
             updateEnabledState();
@@ -998,7 +998,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     class AddAction extends JosmAction {
         public AddAction() {
-            super(tr("Add"), "dialogs/add", tr("Add a new key/value pair to all objects"),
+            super(tr("Add"), /* ICON() */ "dialogs/add", tr("Add a new key/value pair to all objects"),
                     Shortcut.registerShortcut("properties:add", tr("Add Tag"), KeyEvent.VK_A,
                             Shortcut.ALT), false);
         }
@@ -1015,7 +1015,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      */
     class EditAction extends JosmAction implements ListSelectionListener {
         public EditAction() {
-            super(tr("Edit"), "dialogs/edit", tr("Edit the value of the selected key for all objects"),
+            super(tr("Edit"), /* ICON() */ "dialogs/edit", tr("Edit the value of the selected key for all objects"),
                     Shortcut.registerShortcut("properties:edit", tr("Edit Tags"), KeyEvent.VK_S,
                             Shortcut.ALT), false);
             updateEnabledState();

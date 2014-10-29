@@ -569,7 +569,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private String movingComponent;
 
         public Settings(DefaultMutableTreeNode rootActionsNode) {
-            super("toolbar", tr("Toolbar customization"), tr("Customize the elements on the toolbar."));
+            super(/* ICON(preferences/) */ "toolbar", tr("Toolbar customization"), tr("Customize the elements on the toolbar."));
             actionsTreeModel = new DefaultTreeModel(rootActionsNode);
             actionsTree = new JTree(actionsTreeModel);
         }

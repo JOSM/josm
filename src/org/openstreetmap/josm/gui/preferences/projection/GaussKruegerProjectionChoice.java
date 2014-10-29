@@ -16,7 +16,7 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice {
      * Constructs a new {@code GaussKruegerProjectionChoice}.
      */
     public GaussKruegerProjectionChoice() {
-        super(tr("Gau\u00DF-Kr\u00FCger"), "core:gauss-krueger", zones, tr("GK Zone"));
+        super(tr("Gau\u00DF-Kr\u00FCger"), /* NO-ICON */ "core:gauss-krueger", zones, tr("GK Zone"));
     }
 
     @Override

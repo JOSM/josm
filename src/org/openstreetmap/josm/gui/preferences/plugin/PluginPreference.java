@@ -75,7 +75,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     }
 
     private PluginPreference() {
-        super("plugin", tr("Plugins"), tr("Configure available plugins."), false, new JTabbedPane());
+        super(/* ICON(preferences/) */ "plugin", tr("Plugins"), tr("Configure available plugins."), false, new JTabbedPane());
     }
 
     /**

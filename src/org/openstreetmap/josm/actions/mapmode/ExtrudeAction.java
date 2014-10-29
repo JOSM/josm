@@ -187,7 +187,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     private class DualAlignChangeAction extends JosmAction {
         public DualAlignChangeAction() {
-            super(tr("Dual alignment"), "mapmode/extrude/dualalign",
+            super(tr("Dual alignment"), /* ICON() */ "mapmode/extrude/dualalign",
                     tr("Switch dual alignment mode while extruding"), null, false);
             putValue("help", ht("/Action/Extrude#DualAlign"));
         }
@@ -203,7 +203,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * @param mapFrame The MapFrame this action belongs to.
      */
     public ExtrudeAction(MapFrame mapFrame) {
-        super(tr("Extrude"), "extrude/extrude", tr("Create areas"),
+        super(tr("Extrude"), /* ICON(mapmode/) */ "extrude/extrude", tr("Create areas"),
                 Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.DIRECT),
                 mapFrame,
                 ImageProvider.getCursor("normal", "rectangle"));

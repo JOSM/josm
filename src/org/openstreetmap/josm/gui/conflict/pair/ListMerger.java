@@ -417,7 +417,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     abstract class CopyAction extends AbstractAction implements ListSelectionListener {
 
         protected CopyAction(String icon_name, String action_name, String short_description) {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", icon_name+".png");
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", icon_name);
             putValue(Action.SMALL_ICON, icon);
             if (icon == null) {
                 putValue(Action.NAME, action_name);
@@ -434,7 +434,8 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyStartLeftAction extends CopyAction {
 
         public CopyStartLeftAction() {
-            super("copystartleft", tr("> top"), tr("Copy my selected nodes to the start of the merged node list"));
+            super(/* ICON(dialogs/conflict/)*/ "copystartleft", tr("> top"),
+                tr("Copy my selected nodes to the start of the merged node list"));
         }
 
         @Override
@@ -455,7 +456,8 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyEndLeftAction extends CopyAction {
 
         public CopyEndLeftAction() {
-            super("copyendleft", tr("> bottom"), tr("Copy my selected elements to the end of the list of merged elements."));
+            super(/* ICON(dialogs/conflict/)*/ "copyendleft", tr("> bottom"),
+                tr("Copy my selected elements to the end of the list of merged elements."));
         }
 
         @Override
@@ -476,7 +478,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyBeforeCurrentLeftAction extends CopyAction {
 
         public CopyBeforeCurrentLeftAction() {
-            super("copybeforecurrentleft", tr("> before"),
+            super(/* ICON(dialogs/conflict/)*/ "copybeforecurrentleft", tr("> before"),
                     tr("Copy my selected elements before the first selected element in the list of merged elements."));
         }
 
@@ -506,7 +508,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyAfterCurrentLeftAction extends CopyAction {
 
         public CopyAfterCurrentLeftAction() {
-            super("copyaftercurrentleft", tr("> after"),
+            super(/* ICON(dialogs/conflict/)*/ "copyaftercurrentleft", tr("> after"),
                     tr("Copy my selected elements after the first selected element in the list of merged elements."));
         }
 
@@ -532,7 +534,8 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyStartRightAction extends CopyAction {
 
         public CopyStartRightAction() {
-            super("copystartright", tr("< top"), tr("Copy their selected element to the start of the list of merged elements."));
+            super(/* ICON(dialogs/conflict/)*/ "copystartright", tr("< top"),
+                tr("Copy their selected element to the start of the list of merged elements."));
         }
 
         @Override
@@ -549,7 +552,8 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyEndRightAction extends CopyAction {
 
         public CopyEndRightAction() {
-            super("copyendright", tr("< bottom"), tr("Copy their selected elements to the end of the list of merged elements."));
+            super(/* ICON(dialogs/conflict/)*/ "copyendright", tr("< bottom"),
+                tr("Copy their selected elements to the end of the list of merged elements."));
         }
 
         @Override
@@ -566,7 +570,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyBeforeCurrentRightAction extends CopyAction {
 
         public CopyBeforeCurrentRightAction() {
-            super("copybeforecurrentright", tr("< before"),
+            super(/* ICON(dialogs/conflict/)*/ "copybeforecurrentright", tr("< before"),
                     tr("Copy their selected elements before the first selected element in the list of merged elements."));
         }
 
@@ -592,7 +596,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     class CopyAfterCurrentRightAction extends CopyAction {
 
         public CopyAfterCurrentRightAction() {
-            super("copyaftercurrentright", tr("< after"),
+            super(/* ICON(dialogs/conflict/)*/ "copyaftercurrentright", tr("< after"),
                     tr("Copy their selected element after the first selected element in the list of merged elements"));
         }
 
