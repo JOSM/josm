@@ -123,7 +123,7 @@ public class ImageSVG extends RenderableElement
                     } catch (Exception e)
                     {
                         Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING,
-                            "Could not parse xlink:href", e);
+                            "Could not parse xlink:href " + src, e);
 //                        e.printStackTrace();
                         imageSrc = null;
                     }

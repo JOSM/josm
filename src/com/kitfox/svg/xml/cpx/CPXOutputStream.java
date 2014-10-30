@@ -38,8 +38,6 @@ package com.kitfox.svg.xml.cpx;
 
 import java.io.*;
 import java.util.zip.*;
-import java.security.*;
-import javax.crypto.*;
 
 /**
  * @author Mark McKay

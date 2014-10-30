@@ -96,7 +96,7 @@ public class PatternPaintContext implements PaintContext
     public Raster getRaster(int x, int y, int w, int h)
     {
 //System.err.println("" + x + ", " + y + ", " + w + ", " + h);
-        if (buf == null || buf.getWidth() != w || buf.getHeight() != buf.getHeight())
+        if (buf == null || buf.getWidth() != w || buf.getHeight() != h)
         {
             buf = new BufferedImage(w, h, source.getType());
         }

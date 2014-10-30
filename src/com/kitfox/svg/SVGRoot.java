@@ -43,7 +43,10 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 /**
  * The root element of an SVG tree.
@@ -238,22 +241,43 @@ public class SVGRoot extends Group
 
         clipRect.setRect(xx, yy, ww, hh);
 
+//        if (viewBox == null)
+//        {
+//            viewXform.setToIdentity();
+//        }
+//        else
+//        {
+//            //If viewport window is set, we are drawing to entire viewport
+//            clipRect.setRect(deviceViewport);
+//            
+//            viewXform.setToIdentity();
+//            viewXform.setToTranslation(deviceViewport.x, deviceViewport.y);
+//            viewXform.scale(deviceViewport.width, deviceViewport.height);
+//            viewXform.scale(1 / viewBox.width, 1 / viewBox.height);
+//            viewXform.translate(-viewBox.x, -viewBox.y);
+//        }
+    }
+
+    public void renderToViewport(Graphics2D g) throws SVGException
+    {
+        prepareViewport();
+
         if (viewBox == null)
         {
             viewXform.setToIdentity();
         }
         else
         {
-            viewXform.setToTranslation(clipRect.x, clipRect.y);
-            viewXform.scale(clipRect.width, clipRect.height);
+            Rectangle deviceViewport = g.getClipBounds();
+            //If viewport window is set, we are drawing to entire viewport
+            clipRect.setRect(deviceViewport);
+            
+            viewXform.setToIdentity();
+            viewXform.setToTranslation(deviceViewport.x, deviceViewport.y);
+            viewXform.scale(deviceViewport.width, deviceViewport.height);
             viewXform.scale(1 / viewBox.width, 1 / viewBox.height);
             viewXform.translate(-viewBox.x, -viewBox.y);
         }
-    }
-
-    public void render(Graphics2D g) throws SVGException
-    {
-        prepareViewport();
         
         AffineTransform cachedXform = g.getTransform();
         g.transform(viewXform);
@@ -261,6 +285,34 @@ public class SVGRoot extends Group
         super.render(g);
         
         g.setTransform(cachedXform);
+    }
+
+    public void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List retVec) throws SVGException
+    {
+        if (viewXform != null)
+        {
+            ltw = new AffineTransform(ltw);
+            ltw.concatenate(viewXform);
+        }
+        
+        super.pick(pickArea, ltw, boundingBox, retVec);
+    }
+    
+    public void pick(Point2D point, boolean boundingBox, List retVec) throws SVGException
+    {
+        Point2D xPoint = new Point2D.Double(point.getX(), point.getY());
+        if (viewXform != null)
+        {
+            try
+            {
+                viewXform.inverseTransform(point, xPoint);
+            } catch (NoninvertibleTransformException ex)
+            {
+                throw new SVGException(ex);
+            }
+        }
+        
+        super.pick(xPoint, boundingBox, retVec);
     }
 
     public Shape getShape()

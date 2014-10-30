@@ -41,6 +41,7 @@ import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -208,7 +209,7 @@ public class Text extends ShapeElement
             }
         } else
         {
-            fontWeight = TXWE_BOLD;
+            fontWeight = TXWE_NORMAL;
         }
 
         if (getStyle(sty.setName("text-anchor")))
@@ -351,14 +352,14 @@ public class Text extends ShapeElement
             case TXAN_MIDDLE:
             {
                 AffineTransform at = new AffineTransform();
-                at.translate(-textPath.getBounds2D().getWidth() / 2, 0);
+                at.translate(-textPath.getBounds().getWidth() / 2, 0);
                 textPath.transform(at);
                 break;
             }
             case TXAN_END:
             {
                 AffineTransform at = new AffineTransform();
-                at.translate(-textPath.getBounds2D().getWidth(), 0);
+                at.translate(-textPath.getBounds().getWidth(), 0);
                 textPath.transform(at);
                 break;
             }
@@ -389,7 +390,8 @@ public class Text extends ShapeElement
 
             if (obj instanceof String)
             {
-                String text = (String) obj;
+                String text = (String)obj;
+                text = text.trim();
 
                 Shape textShape = font.createGlyphVector(frc, text).getOutline(cursorX, cursorY);
                 textPath.append(textShape, false);
@@ -414,12 +416,15 @@ public class Text extends ShapeElement
                  */
 
 
-                Tspan tspan = (Tspan) obj;
-                tspan.setCursorX(cursorX);
-                tspan.setCursorY(cursorY);
-                tspan.addShape(textPath);
-                cursorX = tspan.getCursorX();
-                cursorY = tspan.getCursorY();
+                Tspan tspan = (Tspan)obj;
+                Point2D cursor = new Point2D.Float(cursorX, cursorY);
+//                tspan.setCursorX(cursorX);
+//                tspan.setCursorY(cursorY);
+                tspan.appendToShape(textPath, cursor);
+//                cursorX = tspan.getCursorX();
+//                cursorY = tspan.getCursorY();
+                cursorX = (float)cursor.getX();
+                cursorY = (float)cursor.getY();
 
             }
         }
@@ -429,14 +434,14 @@ public class Text extends ShapeElement
             case TXAN_MIDDLE:
             {
                 AffineTransform at = new AffineTransform();
-                at.translate(-textPath.getBounds2D().getWidth() / 2, 0);
+                at.translate(-textPath.getBounds().getWidth() / 2, 0);
                 textPath.transform(at);
                 break;
             }
             case TXAN_END:
             {
                 AffineTransform at = new AffineTransform();
-                at.translate(-textPath.getBounds2D().getWidth(), 0);
+                at.translate(-Math.ceil(textPath.getBounds().getWidth()), 0);
                 textPath.transform(at);
                 break;
             }

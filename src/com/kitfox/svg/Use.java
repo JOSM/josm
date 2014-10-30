@@ -123,7 +123,7 @@ public class Use extends ShapeElement
             return;
         }
 
-        RenderableElement rendEle = (RenderableElement) ref;
+        RenderableElement rendEle = (RenderableElement)ref;
         rendEle.pushParentContext(this);
         rendEle.render(g);
         rendEle.popParentContext();

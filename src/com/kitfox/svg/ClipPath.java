@@ -130,8 +130,10 @@ public class ClipPath extends SVGElement
      * Updates all attributes in this diagram associated with a time event. Ie,
      * all attributes with track information.
      *
+     * @param curTime
      * @return - true if this node has changed state as a result of the time
      * update
+     * @throws com.kitfox.svg.SVGException
      */
     public boolean updateTime(double curTime) throws SVGException
     {
@@ -159,6 +161,12 @@ public class ClipPath extends SVGElement
             build();
         }
 
+        for (int i = 0; i < children.size(); ++i)
+        {
+            SVGElement ele = (SVGElement) children.get(i);
+            ele.updateTime(curTime);
+        }
+        
         return shapeChange;
     }
 }
