@@ -19,7 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
@@ -168,7 +167,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
     }
 
     protected static String getUserUrl(String username) throws UnsupportedEncodingException {
-        return AbstractInfoAction.getBaseUserUrl() + "/" +  URLEncoder.encode(username, "UTF-8").replaceAll("\\+", "%20");
+        return Main.getBaseUserUrl() + "/" +  URLEncoder.encode(username, "UTF-8").replaceAll("\\+", "%20");
     }
 
     @Override
@@ -180,7 +179,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
 
         if (!model.isLatest(primitive)) {
             User user = primitive.getUser();
-            String url = AbstractInfoAction.getBaseBrowseUrl() + "/changeset/" + primitive.getChangesetId();
+            String url = Main.getBaseBrowseUrl() + "/changeset/" + primitive.getChangesetId();
             lblChangeset.setUrl(url);
             lblChangeset.setDescription(Long.toString(primitive.getChangesetId()));
 

@@ -1561,6 +1561,28 @@ public abstract class Main {
     }
 
     /**
+     * Replies the base URL for browsing information about a primitive.
+     * @return the base URL, i.e. https://www.openstreetmap.org
+     * @since 7678
+     */
+    public static String getBaseBrowseUrl() {
+        if (Main.pref != null)
+            return Main.pref.get("osm-browse.url", getOSMWebsite());
+        return getOSMWebsite();
+    }
+
+    /**
+     * Replies the base URL for browsing information about a user.
+     * @return the base URL, i.e. https://www.openstreetmap.org/user
+     * @since 7678
+     */
+    public static String getBaseUserUrl() {
+        if (Main.pref != null)
+            return Main.pref.get("osm-user.url", getOSMWebsite() + "/user");
+        return getOSMWebsite() + "/user";
+    }
+
+    /**
      * Determines if we are currently running on OSX.
      * @return {@code true} if we are currently running on OSX
      * @since 6957
