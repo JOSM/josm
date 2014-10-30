@@ -33,48 +33,6 @@ public abstract class AbstractInfoAction extends JosmAction {
         super(name, iconName, tooltip, shortcut, register, toolbarId, installAdapters);
     }
 
-    /**
-     * Replies the base URL for browsing information about about a primitive.
-     *
-     * @return the base URL, i.e. https://www.openstreetmap.org
-     */
-    public static String getBaseBrowseUrl() {
-        String baseUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
-        Pattern pattern = Pattern.compile("/api/?$");
-        String ret = pattern.matcher(baseUrl).replaceAll("");
-        if (ret.equals(baseUrl)) {
-            Main.warn(tr("Unexpected format of API base URL. Redirection to info or history page for OSM object will probably fail. API base URL is: ''{0}''",baseUrl));
-        }
-        for (String prefix : new String[]{"http://api.openstreetmap.org/", "https://api.openstreetmap.org/"}) {
-            if (ret.startsWith(prefix)) {
-                ret = Main.getOSMWebsite() + "/" + ret.substring(prefix.length());
-                break;
-            }
-        }
-        return ret;
-    }
-
-    /**
-     * Replies the base URL for browsing information about a user.
-     *
-     * @return the base URL, i.e. https://www.openstreetmap.org/user
-     */
-    public static String getBaseUserUrl() {
-        String baseUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
-        Pattern pattern = Pattern.compile("/api/?$");
-        String ret =  pattern.matcher(baseUrl).replaceAll("/user");
-        if (ret.equals(baseUrl)) {
-            Main.warn(tr("Unexpected format of API base URL. Redirection to user page for OSM user will probably fail. API base URL is: ''{0}''",baseUrl));
-        }
-        for (String prefix : new String[]{"http://api.openstreetmap.org/", "https://api.openstreetmap.org/"}) {
-            if (ret.startsWith(prefix)) {
-                ret = Main.getOSMWebsite() + "/" + ret.substring(prefix.length());
-                break;
-            }
-        }
-        return ret;
-    }
-
     public static boolean confirmLaunchMultiple(int numBrowsers) {
         String msg  = /* for correct i18n of plural forms - see #9110 */ trn(
                 "You are about to launch {0} browser window.<br>"
