@@ -86,7 +86,7 @@ abstract public class ShapeElement extends RenderableElement
 
     void pick(Point2D point, boolean boundingBox, List retVec) throws SVGException
     {
-        StyleAttribute styleAttrib = new StyleAttribute();
+//        StyleAttribute styleAttrib = new StyleAttribute();
 //        if (getStyle(styleAttrib.setName("fill")) && getShape().contains(point))
         if ((boundingBox ? getBoundingBox() : getShape()).contains(point))
         {

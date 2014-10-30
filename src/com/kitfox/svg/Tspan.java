@@ -43,6 +43,7 @@ import java.awt.font.GlyphMetrics;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -59,8 +60,8 @@ public class Tspan extends ShapeElement
     float[] dy = null;
     float[] rotate = null;
     private String text = "";
-    float cursorX;
-    float cursorY;
+//    float cursorX;
+//    float cursorY;
 
 //    Shape tspanShape;
     /**
@@ -75,25 +76,25 @@ public class Tspan extends ShapeElement
         return TAG_NAME;
     }
 
-    public float getCursorX()
-    {
-        return cursorX;
-    }
-
-    public float getCursorY()
-    {
-        return cursorY;
-    }
-
-    public void setCursorX(float cursorX)
-    {
-        this.cursorX = cursorX;
-    }
-
-    public void setCursorY(float cursorY)
-    {
-        this.cursorY = cursorY;
-    }
+//    public float getCursorX()
+//    {
+//        return cursorX;
+//    }
+//
+//    public float getCursorY()
+//    {
+//        return cursorY;
+//    }
+//
+//    public void setCursorX(float cursorX)
+//    {
+//        this.cursorX = cursorX;
+//    }
+//
+//    public void setCursorY(float cursorY)
+//    {
+//        this.cursorY = cursorY;
+//    }
     /*
      public void loaderStartElement(SVGLoaderHelper helper, Attributes attrs, SVGElement parent)
      {
@@ -164,23 +165,23 @@ public class Tspan extends ShapeElement
         }
     }
 
-    public void addShape(GeneralPath addShape) throws SVGException
+    public void appendToShape(GeneralPath addShape, Point2D cursor) throws SVGException
     {
-        if (x != null)
-        {
-            cursorX = x[0];
-        } else if (dx != null)
-        {
-            cursorX += dx[0];
-        }
-
-        if (y != null)
-        {
-            cursorY = y[0];
-        } else if (dy != null)
-        {
-            cursorY += dy[0];
-        }
+//        if (x != null)
+//        {
+//            cursorX = x[0];
+//        } else if (dx != null)
+//        {
+//            cursorX += dx[0];
+//        }
+//
+//        if (y != null)
+//        {
+//            cursorY = y[0];
+//        } else if (dy != null)
+//        {
+//            cursorY += dy[0];
+//        }
 
         StyleAttribute sty = new StyleAttribute();
 
@@ -208,7 +209,7 @@ public class Tspan extends ShapeElement
         Font font = diagram.getUniverse().getFont(fontFamily);
         if (font == null)
         {
-            addShapeSysFont(addShape, font, fontFamily, fontSize, letterSpacing);
+            addShapeSysFont(addShape, font, fontFamily, fontSize, letterSpacing, cursor);
             return;
         }
 
@@ -220,19 +221,41 @@ public class Tspan extends ShapeElement
 
         strokeWidthScalar = 1f / fontScale;
 
-        int posPtr = 1;
+        float cursorX = (float)cursor.getX();
+        float cursorY = (float)cursor.getY();
+    
+//        int i = 0;
 
-        for (int i = 0; i < text.length(); i++)
+        String drawText = this.text;
+        drawText = drawText.trim();
+        for (int i = 0; i < drawText.length(); i++)
         {
+            if (x != null && i < x.length)
+            {
+                cursorX = x[i];
+            } else if (dx != null && i < dx.length)
+            {
+                cursorX += dx[i];
+            }
+            
+            if (y != null && i < y.length)
+            {
+                cursorY = y[i];
+            } else if (dy != null && i < dy.length)
+            {
+                cursorY += dy[i];
+            }
+  //          i++;
+            
             xform.setToIdentity();
             xform.setToTranslation(cursorX, cursorY);
             xform.scale(fontScale, fontScale);
             if (rotate != null)
             {
-                xform.rotate(rotate[posPtr]);
+                xform.rotate(rotate[i]);
             }
 
-            String unicode = text.substring(i, i + 1);
+            String unicode = drawText.substring(i, i + 1);
             MissingGlyph glyph = font.getGlyph(unicode);
 
             Shape path = glyph.getPath();
@@ -242,63 +265,76 @@ public class Tspan extends ShapeElement
                 addShape.append(path, false);
             }
 
-            if (x != null && posPtr < x.length)
-            {
-                cursorX = x[posPtr];
-                cursorY = y[posPtr++];
-            } else if (dx != null && posPtr < dx.length)
-            {
-                cursorX += dx[posPtr];
-                cursorY += dy[posPtr++];
-            }
-
             cursorX += fontScale * glyph.getHorizAdvX() + letterSpacing;
         }
 
+        //Save final draw point so calling method knows where to begin next
+        // text draw
+        cursor.setLocation(cursorX, cursorY);
         strokeWidthScalar = 1f;
     }
 
     private void addShapeSysFont(GeneralPath addShape, Font font,
-        String fontFamily, float fontSize, float letterSpacing)
+        String fontFamily, float fontSize, float letterSpacing, Point2D cursor)
     {
+
         java.awt.Font sysFont = new java.awt.Font(fontFamily, java.awt.Font.PLAIN, (int) fontSize);
 
         FontRenderContext frc = new FontRenderContext(null, true, true);
-        GlyphVector textVector = sysFont.createGlyphVector(frc, text);
+        String renderText = this.text.trim();
 
         AffineTransform xform = new AffineTransform();
 
-        int posPtr = 1;
-        for (int i = 0; i < text.length(); i++)
+        float cursorX = (float)cursor.getX();
+        float cursorY = (float)cursor.getY();
+//        int i = 0;
+        for (int i = 0; i < renderText.length(); i++)
         {
+            if (x != null && i < x.length)
+            {
+                cursorX = x[i];
+            } else if (dx != null && i < dx.length)
+            {
+                cursorX += dx[i];
+            }
+
+            if (y != null && i < y.length)
+            {
+                cursorY = y[i];
+            } else if (dy != null && i < dy.length)
+            {
+                cursorY += dy[i];
+            }
+//            i++;
+            
             xform.setToIdentity();
-            xform.setToTranslation(cursorX + i * letterSpacing, cursorY);
+            xform.setToTranslation(cursorX, cursorY);
             if (rotate != null)
             {
                 xform.rotate(rotate[Math.min(i, rotate.length - 1)]);
             }
 
-            String unicode = text.substring(i, i + 1);
-            Shape glyphOutline = textVector.getGlyphOutline(i);
-            GlyphMetrics glyphMetrics = textVector.getGlyphMetrics(i);
+//            String unicode = renderText.substring(i, i + 1);
+            GlyphVector textVector = sysFont.createGlyphVector(frc, renderText.substring(i, i + 1));
+            Shape glyphOutline = textVector.getGlyphOutline(0);
+            GlyphMetrics glyphMetrics = textVector.getGlyphMetrics(0);
 
             glyphOutline = xform.createTransformedShape(glyphOutline);
             addShape.append(glyphOutline, false);
 
-            if (x != null && posPtr < x.length)
-            {
-                cursorX = x[posPtr];
-                cursorY = y[posPtr++];
-            } else if (dx != null && posPtr < dx.length)
-            {
-                cursorX += dx[posPtr];
-                cursorY += dy[posPtr++];
-            }
+
+//            cursorX += fontScale * glyph.getHorizAdvX() + letterSpacing;
+            cursorX += glyphMetrics.getAdvance() + letterSpacing;
         }
+        
+        cursor.setLocation(cursorX, cursorY);
     }
 
     public void render(Graphics2D g) throws SVGException
     {
+        float cursorX = 0;
+        float cursorY = 0;
+    
         if (x != null)
         {
             cursorX = x[0];
@@ -384,6 +420,9 @@ public class Tspan extends ShapeElement
 
     protected void renderSysFont(Graphics2D g, java.awt.Font font) throws SVGException
     {
+        float cursorX = 0;
+        float cursorY = 0;
+    
         int posPtr = 1;
         FontRenderContext frc = g.getFontRenderContext();
 

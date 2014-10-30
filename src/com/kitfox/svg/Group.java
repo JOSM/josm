@@ -159,10 +159,10 @@ public class Group extends ShapeElement
 
         //Do not process offscreen groups
         boolean ignoreClip = diagram.ignoringClipHeuristic();
-        if (!ignoreClip && outsideClip(g))
-        {
-            return;
-        }
+//        if (!ignoreClip && outsideClip(g))
+//        {
+//            return;
+//        }
 
         beginLayer(g);
 
@@ -270,14 +270,18 @@ public class Group extends ShapeElement
             {
                 RenderableElement rendEle = (RenderableElement) ele;
                 Rectangle2D bounds = rendEle.getBoundingBox();
-                if (bounds != null)
+                if (bounds != null && (bounds.getWidth() != 0 || bounds.getHeight() != 0))
                 {
                     if (retRect == null)
                     {
                         retRect = bounds;
-                    } else
+                    }
+                    else
                     {
-                        retRect = retRect.createUnion(bounds);
+                        if (retRect.getWidth() != 0 || retRect.getHeight() != 0)
+                        {
+                            retRect = retRect.createUnion(bounds);
+                        }
                     }
                 }
             }

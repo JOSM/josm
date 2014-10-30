@@ -70,7 +70,7 @@ abstract public class TransformableElement extends SVGElement
      */
     public AffineTransform getXForm()
     {
-        return xform != null ? new AffineTransform(xform) : null;
+        return xform == null ? null : new AffineTransform(xform);
     }
     /*
      public void loaderStartElement(SVGLoaderHelper helper, Attributes attrs, SVGElement parent)
