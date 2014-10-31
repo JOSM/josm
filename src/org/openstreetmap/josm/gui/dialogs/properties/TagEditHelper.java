@@ -618,7 +618,7 @@ class TagEditHelper {
                 }
             });
             JCheckBoxMenuItem rememberLastTags = new JCheckBoxMenuItem(
-                new AbstractAction(tr("Remember last used tags")){
+                new AbstractAction(tr("Remember last used tags after a restart")){
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     boolean sel=((JCheckBoxMenuItem) e.getSource()).getState();
