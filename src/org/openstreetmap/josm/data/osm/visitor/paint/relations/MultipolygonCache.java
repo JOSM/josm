@@ -238,7 +238,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
 
     @Override
     public void tagsChanged(TagsChangedEvent event) {
-        // Do nothing
+        updateMultipolygonsReferringTo(event);
     }
 
     @Override
