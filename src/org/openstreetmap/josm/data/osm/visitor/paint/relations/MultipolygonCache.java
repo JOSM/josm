@@ -220,6 +220,10 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         for (Map<Relation, Multipolygon> map : maps) {
             map.remove(r);
         }
+        // Erase style cache for polygon members
+        for (OsmPrimitive member : r.getMemberPrimitives()) {
+            member.clearCachedStyle();
+        }
     }
 
     @Override
