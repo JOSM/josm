@@ -108,6 +108,21 @@ public class ImageProvider {
     }
 
     /**
+     * Supported image sizes
+     * @since 7687
+     */
+    public static enum ImageSizes {
+        /* SMALL_ICON value of on Action */
+        SMALLICON,
+        /* LARGE_ICON_KEY value of on Action */
+        LARGEICON,
+        /* MAP icon */
+        MAP,
+        /* MAP icon maximum size*/
+        MAPMAX,
+    }
+
+    /**
      * Property set on {@code BufferedImage} returned by {@link #makeImageTransparent}.
      * @since 7132
      */
@@ -217,6 +232,23 @@ public class ImageProvider {
     }
 
     /**
+     * Convert enumarated size values to real numbers
+     * @return dimension of imagei
+     * @since 7687
+     */
+    public Dimension getImageSizes(ImageSizes size) {
+        int sizeval;
+        switch(size) {
+        case MAPMAX: sizeval = Main.pref.getInteger("iconsize.mapmax", 48); break;
+        case MAP: sizeval = Main.pref.getInteger("iconsize.mapmax", 16); break;
+        case LARGEICON: sizeval = Main.pref.getInteger("iconsize.largeicon", 24); break;
+        case SMALLICON: sizeval = Main.pref.getInteger("iconsize.smallicon", 16); break;
+        default: sizeval = Main.pref.getInteger("iconsize.default", 24); break;
+        }
+        return new Dimension(sizeval, sizeval);
+    }
+    
+    /**
      * Set the dimensions of the image.
      *
      * If not specified, the original size of the image is used.
@@ -228,6 +260,17 @@ public class ImageProvider {
         this.width = size.width;
         this.height = size.height;
         return this;
+    }
+
+    /**
+     * Set the dimensions of the image.
+     *
+     * If not specified, the original size of the image is used.
+     * @return the current object, for convenience
+     * @since 7687
+     */
+    public ImageProvider setSize(ImageSizes size) {
+        return setSize(getImageSizes(size));
     }
 
     /**
@@ -261,6 +304,20 @@ public class ImageProvider {
         this.maxWidth = maxSize.width;
         this.maxHeight = maxSize.height;
         return this;
+    }
+
+    /**
+     * Limit the maximum size of the image.
+     *
+     * It will shrink the image if necessary, but keep the aspect ratio.
+     * The given width or height can be -1 which means this direction is not bounded.
+     *
+     * 'size' and 'maxSize' are not compatible, you should set only one of them.
+     * @return the current object, for convenience
+     * @since 7687
+     */
+    public ImageProvider setMaxSize(ImageSizes size) {
+        return setMaxSize(getImageSizes(size));
     }
 
     /**

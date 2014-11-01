@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -142,18 +143,16 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     /**
      * Called from the XML parser to set the icon.
      * This task is performed in the background in order to speedup startup.
-     *
-     * FIXME for Java 1.6 - use 24x24 icons for LARGE_ICON_KEY (button bar)
-     * and the 16x16 icons for SMALL_ICON.
      */
     public void setIcon(final String iconName) {
-        ImageProvider imgProv = new ImageProvider(iconName);
+        File arch = TaggingPresetReader.getZipIcons();
         final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
+        ImageProvider imgProv = new ImageProvider(iconName);
         imgProv.setDirs(s);
         imgProv.setId("presets");
-        imgProv.setArchive(TaggingPresetReader.getZipIcons());
+        imgProv.setArchive(arch);
         imgProv.setOptional(true);
-        imgProv.setMaxWidth(16).setMaxHeight(16);
+        imgProv.setSize(ImageProvider.ImageSizes.SMALLICON);
         imgProv.getInBackground(new ImageProvider.ImageCallback() {
             @Override
             public void finished(final ImageIcon result) {
@@ -166,6 +165,25 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     });
                 } else {
                     Main.warn("Could not get presets icon " + iconName);
+                }
+            }
+        });
+        imgProv = new ImageProvider(iconName);
+        imgProv.setDirs(s);
+        imgProv.setId("presets");
+        imgProv.setArchive(arch);
+        imgProv.setOptional(true);
+        imgProv.setSize(ImageProvider.ImageSizes.LARGEICON);
+        imgProv.getInBackground(new ImageProvider.ImageCallback() {
+            @Override
+            public void finished(final ImageIcon result) {
+                if (result != null) {
+                    GuiHelper.runInEDT(new Runnable() {
+                        @Override
+                        public void run() {
+                            putValue(Action.LARGE_ICON_KEY, result);
+                        }
+                    });
                 }
             }
         });

@@ -123,7 +123,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
 
         public Icon getDisplayIcon() {
-            return ico != null ? ico : (Icon) action.getValue(Action.SMALL_ICON);
+            if(ico != null)
+                return ico;
+            Object o = action.getValue(Action.LARGE_ICON_KEY);
+            if(o == null)
+                o = action.getValue(Action.SMALL_ICON);
+            return (Icon) o;
         }
 
         public void setName(String name) {
