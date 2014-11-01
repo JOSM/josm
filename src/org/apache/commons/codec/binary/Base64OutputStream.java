@@ -35,8 +35,12 @@ import java.io.OutputStream;
  * Since this class operates directly on byte streams, and not character streams, it is hard-coded to only encode/decode
  * character encodings which are compatible with the lower 127 ASCII chart (ISO-8859-1, Windows-1252, UTF-8, etc).
  * </p>
+ * <p>
+ * <b>Note:</b> It is mandatory to close the stream after the last byte has been written to it, otherwise the
+ * final padding will be omitted and the resulting data will be incomplete/inconsistent.
+ * </p>
  *
- * @version $Id: Base64OutputStream.java 1634430 2014-10-27 01:08:56Z ggregory $
+ * @version $Id: Base64OutputStream.java 1635952 2014-11-01 14:19:04Z tn $
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 1.4
  */
