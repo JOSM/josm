@@ -55,7 +55,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         try {
             if (info.getIcon() != null) {
                 new ImageProvider(info.getIcon()).setOptional(true).
-                        setMaxHeight(MAX_ICON_SIZE).setMaxWidth(MAX_ICON_SIZE).getInBackground(new ImageCallback() {
+                        setMaxSize(ImageProvider.ImageSizes.SMALLICON).getInBackground(new ImageCallback() {
                             @Override
                             public void finished(final ImageIcon result) {
                                 if (result != null) {
@@ -63,6 +63,20 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                                         @Override
                                         public void run() {
                                             putValue(Action.SMALL_ICON, result);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                new ImageProvider(info.getIcon()).setOptional(true).
+                        setMaxSize(ImageProvider.ImageSizes.LARGEICON).getInBackground(new ImageCallback() {
+                            @Override
+                            public void finished(final ImageIcon result) {
+                                if (result != null) {
+                                    GuiHelper.runInEDT(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            putValue(Action.LARGE_ICON_KEY, result);
                                         }
                                     });
                                 }
