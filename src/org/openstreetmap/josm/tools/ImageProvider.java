@@ -232,7 +232,7 @@ public class ImageProvider {
     }
 
     /**
-     * Convert enumarated size values to real numbers
+     * Convert enumerated size values to real numbers
      * @return dimension of imagei
      * @since 7687
      */
