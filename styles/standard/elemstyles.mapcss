@@ -1523,6 +1523,8 @@ area[shop=tea],
 area[shop=coffee],
 area[shop=antiques],
 area[shop=music],
+area[shop=funeral_directors],
+area[shop=wine],
 area[shop=bag] {
     fill-color: shop#00005f;
 }
@@ -1882,6 +1884,16 @@ node[shop=antiques] {
 }
 node[shop=music] {
     icon-image: "shop/music.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=funeral_directors] {
+    icon-image: "shop/funeral_directors.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=wine] {
+    icon-image: "shop/wine.svg";
     set icon_z17;
     text: auto;
 }

@@ -5984,6 +5984,13 @@
             <reference ref="name_oh" />
             <reference ref="link_contact" />
         </item> <!-- Beverages -->
+        <item name="Wine" icon="styles/standard/shop/wine.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=wine" />
+            <space />
+            <key key="shop" value="wine" />
+            <reference ref="name_oh" />
+            <reference ref="link_contact" />
+        </item> <!-- Wine -->
     </group> <!-- Food -->
     <group name="Clothes" icon="styles/standard/shop/clothes.png">
         <item name="Clothes" icon="styles/standard/shop/clothes.png" type="node,closedway" preset_name_label="true">
@@ -6595,6 +6602,13 @@
             <reference ref="name_oh" />
             <reference ref="link_contact" />
         </item> <!-- Pet -->
+        <item name="Funeral Directors" icon="styles/standard/shop/funeral_directors.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=funeral_directors" />
+            <space />
+            <key key="shop" value="funeral_directors" />
+            <reference ref="name_oh" />
+            <reference ref="link_contact" />
+        </item> <!-- Funeral Directors -->
     </group> <!-- Other -->
         <separator/>
     <item name="Vending Machine" icon="presets/vending_machine.png" type="node" preset_name_label="true">
