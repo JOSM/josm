@@ -35,8 +35,6 @@ import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
  * @since 3715
  */
 public class AddImageryLayerAction extends JosmAction implements AdaptableAction {
-
-    private static final int MAX_ICON_SIZE = 24;
     private final ImageryInfo info;
 
     /**
