@@ -199,14 +199,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
             return singleOffset;
         }
         offsetAction.setEnabled(true);
-        JMenu newMenu = new JMenu(trc("layer","Offset")) {
-            // Hack to prevent ToolbarPreference from tracing this menu
-            // TODO: Modify ToolbarPreference to not to trace such dynamic submenus?
-            @Override
-            public MenuElement[] getSubElements() {
-                return new MenuElement[0];
-            }
-        };
+        JMenu newMenu = new JMenu(trc("layer","Offset"));
         newMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
         newMenu.setAction(offsetAction);
         if (layers.size() == 1)
