@@ -6166,6 +6166,13 @@
             <reference ref="name_oh" />
             <reference ref="link_contact" />
         </item> <!-- Video Games -->
+        <item name="Music" icon="styles/standard/shop/music.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=music" />
+            <space />
+            <key key="shop" value="music" />
+            <reference ref="name_oh" />
+            <reference ref="link_contact" />
+        </item> <!-- Music -->
     </group> <!-- Electronic -->
     <group name="Cash" icon="presets/dollar.png">
         <item name="Bank" icon="styles/standard/money/bank.png" type="node,closedway" preset_name_label="true">

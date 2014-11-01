@@ -1522,6 +1522,7 @@ area[shop=beauty],
 area[shop=tea],
 area[shop=coffee],
 area[shop=antiques],
+area[shop=music],
 area[shop=bag] {
     fill-color: shop#00005f;
 }
@@ -1876,6 +1877,11 @@ node[shop=coffee] {
 }
 node[shop=antiques] {
     icon-image: "shop/antique.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=music] {
+    icon-image: "shop/music.svg";
     set icon_z17;
     text: auto;
 }
