@@ -233,7 +233,7 @@ public class ImageProvider {
 
     /**
      * Convert enumerated size values to real numbers
-     * @return dimension of imagei
+     * @return dimension of image
      * @since 7687
      */
     public Dimension getImageSizes(ImageSizes size) {
