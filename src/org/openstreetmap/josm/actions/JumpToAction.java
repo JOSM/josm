@@ -8,7 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -36,7 +36,7 @@ public class JumpToAction extends JosmAction {
      * Constructs a new {@code JumpToAction}.
      */
     public JumpToAction() {
-        super(tr("Jump To Position"), (Icon) null, tr("Opens a dialog that allows to jump to a specific location"),
+        super(tr("Jump To Position"), (ImageProvider) null, tr("Opens a dialog that allows to jump to a specific location"),
                 Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump To Position")),
                         KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", true);
     }

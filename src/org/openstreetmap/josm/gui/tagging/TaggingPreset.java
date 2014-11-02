@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.tagging.TaggingPresetItems.Roles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
@@ -152,38 +153,18 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         imgProv.setId("presets");
         imgProv.setArchive(arch);
         imgProv.setOptional(true);
-        imgProv.setSize(ImageProvider.ImageSizes.SMALLICON);
-        imgProv.getInBackground(new ImageProvider.ImageCallback() {
+        imgProv.getInBackground(new ImageProvider.ImageResourceCallback() {
             @Override
-            public void finished(final ImageIcon result) {
+            public void finished(final ImageResource result) {
                 if (result != null) {
                     GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {
-                            putValue(Action.SMALL_ICON, result);
+                            result.getImageIcon(TaggingPreset.this);
                         }
                     });
                 } else {
                     Main.warn("Could not get presets icon " + iconName);
-                }
-            }
-        });
-        imgProv = new ImageProvider(iconName);
-        imgProv.setDirs(s);
-        imgProv.setId("presets");
-        imgProv.setArchive(arch);
-        imgProv.setOptional(true);
-        imgProv.setSize(ImageProvider.ImageSizes.LARGEICON);
-        imgProv.getInBackground(new ImageProvider.ImageCallback() {
-            @Override
-            public void finished(final ImageIcon result) {
-                if (result != null) {
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            putValue(Action.LARGE_ICON_KEY, result);
-                        }
-                    });
                 }
             }
         });

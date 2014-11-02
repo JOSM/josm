@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.Action;
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
 import com.kitfox.svg.SVGDiagram;
@@ -19,7 +21,7 @@ import com.kitfox.svg.SVGDiagram;
  * at least one entry for the key DEFAULT_DIMENSION.
  * @since 4271
  */
-class ImageResource {
+public class ImageResource {
 
     /**
      * Caches the image data for resized versions of the same image.
@@ -42,6 +44,18 @@ class ImageResource {
         return getImageIcon(DEFAULT_DIMENSION);
     }
 
+    /**
+     * Set both icons of an Action
+     * @param action The action for the icons
+     * @since 7693
+     */
+    public void getImageIcon(AbstractAction a) {
+        ImageIcon icon = getImageIcon(ImageProvider.getImageSizes(ImageProvider.ImageSizes.SMALLICON));
+        a.putValue(Action.SMALL_ICON, icon);
+        icon = getImageIcon(ImageProvider.getImageSizes(ImageProvider.ImageSizes.LARGEICON));
+        a.putValue(Action.LARGE_ICON_KEY, icon);
+    }
+    
     /**
      * Get an ImageIcon object for the image of this resource
      * @param   dim The requested dimensions. Use (-1,-1) for the original size

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,7 +27,8 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
+import org.openstreetmap.josm.tools.ImageProvider.ImageResourceCallback;
+import org.openstreetmap.josm.tools.ImageResource;
 
 /**
  * Action displayed in imagery menu to add a new imagery layer.
@@ -51,30 +51,16 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
         // change toolbar icon from if specified
         try {
-            if (info.getIcon() != null) {
-                new ImageProvider(info.getIcon()).setOptional(true).
-                        setMaxSize(ImageProvider.ImageSizes.SMALLICON).getInBackground(new ImageCallback() {
+            String icon = info.getIcon();
+            if (icon != null) {
+                new ImageProvider(icon).setOptional(true).getInBackground(new ImageResourceCallback() {
                             @Override
-                            public void finished(final ImageIcon result) {
+                            public void finished(final ImageResource result) {
                                 if (result != null) {
                                     GuiHelper.runInEDT(new Runnable() {
                                         @Override
                                         public void run() {
-                                            putValue(Action.SMALL_ICON, result);
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                new ImageProvider(info.getIcon()).setOptional(true).
-                        setMaxSize(ImageProvider.ImageSizes.LARGEICON).getInBackground(new ImageCallback() {
-                            @Override
-                            public void finished(final ImageIcon result) {
-                                if (result != null) {
-                                    GuiHelper.runInEDT(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            putValue(Action.LARGE_ICON_KEY, result);
+                                            result.getImageIcon(AddImageryLayerAction.this);
                                         }
                                     });
                                 }

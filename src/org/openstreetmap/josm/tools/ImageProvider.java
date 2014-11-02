@@ -162,8 +162,19 @@ public class ImageProvider {
 
     private static final ExecutorService IMAGE_FETCHER = Executors.newSingleThreadExecutor();
 
+    /**
+     * Callback interface for asynchronous image loading.
+     */
     public interface ImageCallback {
         void finished(ImageIcon result);
+    }
+
+    /**
+     * Callback interface for asynchronous image loading (with delayed scaling possibility).
+     * @since 7693
+     */
+    public interface ImageResourceCallback {
+        void finished(ImageResource result);
     }
 
     /**
@@ -236,7 +247,7 @@ public class ImageProvider {
      * @return dimension of image
      * @since 7687
      */
-    public Dimension getImageSizes(ImageSizes size) {
+    static public Dimension getImageSizes(ImageSizes size) {
         int sizeval;
         switch(size) {
         case MAPMAX: sizeval = Main.pref.getInteger("iconsize.mapmax", 48); break;
@@ -381,10 +392,23 @@ public class ImageProvider {
     }
 
     /**
-     * Execute the image request.
+     * Execute the image request and scale result.
      * @return the requested image or null if the request failed
      */
     public ImageIcon get() {
+        ImageResource ir = getResource();
+        if (maxWidth != -1 || maxHeight != -1)
+            return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight));
+        else
+            return ir.getImageIcon(new Dimension(width, height));
+    }
+
+    /**
+     * Execute the image request.
+     * @return the requested image or null if the request failed
+     * @since 7693
+     */
+    public ImageResource getResource() {
         ImageResource ir = getIfAvailableImpl(additionalClassLoaders);
         if (ir == null) {
             if (!optional) {
@@ -397,10 +421,7 @@ public class ImageProvider {
                 return null;
             }
         }
-        if (maxWidth != -1 || maxHeight != -1)
-            return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight));
-        else
-            return ir.getImageIcon(new Dimension(width, height));
+        return ir;
     }
 
     /**
@@ -427,6 +448,32 @@ public class ImageProvider {
         } else {
             ImageIcon result = get();
             callback.finished(result);
+        }
+    }
+
+    /**
+     * Load the image in a background thread.
+     *
+     * This method returns immediately and runs the image request
+     * asynchronously.
+     *
+     * @param callback a callback. It is called, when the image is ready.
+     * This can happen before the call to this method returns or it may be
+     * invoked some time (seconds) later. If no image is available, a null
+     * value is returned to callback (just like {@link #get}).
+     * @since 7693
+     */
+    public void getInBackground(final ImageResourceCallback callback) {
+        if (name.startsWith("http://") || name.startsWith("wiki://")) {
+            Runnable fetch = new Runnable() {
+                @Override
+                public void run() {
+                    callback.finished(getResource());
+                }
+            };
+            IMAGE_FETCHER.submit(fetch);
+        } else {
+            callback.finished(getResource());
         }
     }
 
