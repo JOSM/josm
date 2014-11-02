@@ -603,7 +603,7 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, save);
         add(fileMenu, saveAs);
         sessionMenu.setToolTipText(tr("Save and load the current session (list of layers, etc.)"));
-        sessionMenu.setIcon(ImageProvider.get("session"));
+        sessionMenu.setIcon(new ImageProvider("session").setSize(ImageProvider.ImageSizes.MENU).get());
         sessionSaveAs = new SessionSaveAsAction();
         sessionLoad = new SessionLoadAction();
         add(sessionMenu, sessionSaveAs);

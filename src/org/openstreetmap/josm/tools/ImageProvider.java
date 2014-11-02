@@ -118,8 +118,10 @@ public class ImageProvider {
         LARGEICON,
         /* MAP icon */
         MAP,
-        /* MAP icon maximum size*/
+        /* MAP icon maximum size */
         MAPMAX,
+        /* MENU icon size */
+        MENU,
     }
 
     /**
@@ -253,6 +255,7 @@ public class ImageProvider {
         case MAPMAX: sizeval = Main.pref.getInteger("iconsize.mapmax", 48); break;
         case MAP: sizeval = Main.pref.getInteger("iconsize.mapmax", 16); break;
         case LARGEICON: sizeval = Main.pref.getInteger("iconsize.largeicon", 24); break;
+        case MENU: /* MENU is SMALLICON - only provided in case of future changes */ 
         case SMALLICON: sizeval = Main.pref.getInteger("iconsize.smallicon", 16); break;
         default: sizeval = Main.pref.getInteger("iconsize.default", 24); break;
         }
@@ -948,7 +951,12 @@ public class ImageProvider {
      * in one of the corners)
      * @return an icon that represent the overlay of the two given icons. The second icon is layed
      * on the first relative to the given position.
+     * FIXME: This function does not fit into the ImageProvider concept as public function!
+     * Overlay should be handled like all the other functions only settings arguments and
+     * overlay must be transparent in the background.
+     * Also scaling is not cared about with current implementation.
      */
+    @Deprecated
     public static ImageIcon overlay(Icon ground, Icon overlay, OverlayPosition pos) {
         int w = ground.getIconWidth();
         int h = ground.getIconHeight();
