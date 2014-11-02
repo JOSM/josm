@@ -156,6 +156,9 @@ public class UrlValidator extends AbstractValidator {
     private static final String PORT_REGEX = "^:(\\d{1,5})$";
     private static final Pattern PORT_PATTERN = Pattern.compile(PORT_REGEX);
 
+    private static final String SIMPLE_WEBSITE = "^www[.].*";
+    private static final Pattern SIMPLE_WEBSITE_PATTERN = Pattern.compile(SIMPLE_WEBSITE);
+
     /**
      * Holds the set of current validation options.
      */
@@ -297,6 +300,9 @@ public class UrlValidator extends AbstractValidator {
         String scheme = urlMatcher.group(PARSE_URL_SCHEME);
         if (!isValidScheme(scheme)) {
             setErrorMessage(tr("URL contains an invalid protocol: {0}", scheme));
+            if (SIMPLE_WEBSITE_PATTERN.matcher(value).matches()) {
+                setFix("http://" + value);
+            }
             return false;
         }
 
