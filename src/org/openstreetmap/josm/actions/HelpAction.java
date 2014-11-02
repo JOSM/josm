@@ -26,7 +26,8 @@ public class HelpAction extends AbstractAction {
      * Constructs a new {@code HelpAction}.
      */
     public HelpAction() {
-        super(tr("Help"), ImageProvider.get("help"));
+        super(tr("Help"));
+        new ImageProvider("help").getResource().getImageIcon(this);
         putValue("toolbar", "help");
         setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
     }

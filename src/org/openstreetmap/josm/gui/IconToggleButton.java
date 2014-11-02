@@ -157,7 +157,10 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     @Override
     public Icon getIcon() {
-        return (Icon) getSafeActionValue(Action.SMALL_ICON);
+        Object o = getSafeActionValue(Action.LARGE_ICON_KEY);
+        if (o == null)
+            o = getSafeActionValue(Action.SMALL_ICON);
+        return (Icon) o;
     }
 
     @Override

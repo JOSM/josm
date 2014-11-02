@@ -84,7 +84,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
      */
     public MapPaintMenu() {
         super(tr("Map Paint Styles"));
-        setIcon(ImageProvider.get("dialogs", "mapstyle"));
+        setIcon(new ImageProvider("dialogs", "mapstyle").setSize(ImageProvider.ImageSizes.MENU).get());
         MapPaintStyles.addMapPaintSylesUpdateListener(this);
         putClientProperty("help", ht("/Dialog/MapPaint"));
     }
