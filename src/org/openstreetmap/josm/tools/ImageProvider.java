@@ -255,13 +255,13 @@ public class ImageProvider {
         case MAPMAX: sizeval = Main.pref.getInteger("iconsize.mapmax", 48); break;
         case MAP: sizeval = Main.pref.getInteger("iconsize.mapmax", 16); break;
         case LARGEICON: sizeval = Main.pref.getInteger("iconsize.largeicon", 24); break;
-        case MENU: /* MENU is SMALLICON - only provided in case of future changes */ 
+        case MENU: /* MENU is SMALLICON - only provided in case of future changes */
         case SMALLICON: sizeval = Main.pref.getInteger("iconsize.smallicon", 16); break;
         default: sizeval = Main.pref.getInteger("iconsize.default", 24); break;
         }
         return new Dimension(sizeval, sizeval);
     }
-    
+
     /**
      * Set the dimensions of the image.
      *
@@ -400,6 +400,8 @@ public class ImageProvider {
      */
     public ImageIcon get() {
         ImageResource ir = getResource();
+        if (ir == null)
+            return null;
         if (maxWidth != -1 || maxHeight != -1)
             return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight));
         else
