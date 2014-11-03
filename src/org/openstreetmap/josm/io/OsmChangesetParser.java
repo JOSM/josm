@@ -75,16 +75,7 @@ public final class OsmChangesetParser {
             if (value == null) {
                 throwException(tr("Missing mandatory attribute ''{0}''.", "id"));
             }
-            int id = 0;
-            try {
-                id = Integer.parseInt(value);
-            } catch(NumberFormatException e) {
-                throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "id", value));
-            }
-            if (id <= 0) {
-                throwException(tr("Illegal numeric value for attribute ''{0}''. Got ''{1}''.", "id", id));
-            }
-            current.setId(id);
+            current.setId(parseNumericAttribute(value, 1));
 
             // -- user
             String user = atts.getValue("user");
@@ -155,6 +146,25 @@ public final class OsmChangesetParser {
                 }
                 current.setMax(new LatLon(maxLon, maxLat));
             }
+
+            // -- comments_count
+            String commentsCount = atts.getValue("comments_count");
+            if (commentsCount != null) {
+                current.setCommentsCount(parseNumericAttribute(commentsCount, 0));
+            }
+        }
+
+        private int parseNumericAttribute(String value, int minAllowed) throws XmlParsingException {
+            int att = 0;
+            try {
+                att = Integer.parseInt(value);
+            } catch(NumberFormatException e) {
+                throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "id", value));
+            }
+            if (att < minAllowed) {
+                throwException(tr("Illegal numeric value for attribute ''{0}''. Got ''{1}''.", "id", att));
+            }
+            return att;
         }
 
         @Override
@@ -163,6 +173,7 @@ public final class OsmChangesetParser {
             case "osm":
                 if (atts == null) {
                     throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", "osm"));
+                    return;
                 }
                 String v = atts.getValue("version");
                 if (v == null) {

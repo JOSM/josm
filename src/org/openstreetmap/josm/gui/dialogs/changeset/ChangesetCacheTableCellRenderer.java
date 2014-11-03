@@ -95,6 +95,11 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         setToolTipText("");
     }
 
+    protected void renderDiscussions(Changeset cs) {
+        setText(Integer.toString(cs.getCommentsCount()));
+        setToolTipText("");
+    }
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
@@ -110,6 +115,7 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
         case 3: /* user */ renderUser(cs); break;
         case 4: /* created at */ renderDate(cs.getCreatedAt()); break;
         case 5: /* closed at */ renderDate(cs.getClosedAt()); break;
+        case 6: /* discussions */ renderDiscussions(cs); break;
         }
         return this;
     }
