@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.UploadNotesAction;
 import org.openstreetmap.josm.actions.mapmode.AddNoteAction;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
@@ -72,18 +73,22 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
     private final CloseAction closeAction;
     private final NewAction newAction;
     private final ReopenAction reopenAction;
+    private final UploadNotesAction uploadAction;
 
     private NoteData noteData;
 
     /** Creates a new toggle dialog for notes */
     public NoteDialog() {
         super("Notes", "notes/note_open.png", "List of notes", null, 150);
-        Main.debug("constructed note dialog");
+        if (Main.isDebugEnabled()) {
+            Main.debug("constructed note dialog");
+        }
 
         addCommentAction = new AddCommentAction();
         closeAction = new CloseAction();
         newAction = new NewAction();
         reopenAction = new ReopenAction();
+        uploadAction = new UploadNotesAction();
         buildDialog();
     }
 
@@ -113,7 +118,8 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
                 new SideButton(newAction, false),
                 new SideButton(addCommentAction, false),
                 new SideButton(closeAction, false),
-                new SideButton(reopenAction, false)}));
+                new SideButton(reopenAction, false),
+                new SideButton(uploadAction, false)}));
         updateButtonStates();
     }
 
@@ -130,6 +136,11 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
             closeAction.setEnabled(false);
             addCommentAction.setEnabled(false);
             reopenAction.setEnabled(true);
+        }
+        if(noteData == null || !noteData.isModified()) {
+            uploadAction.setEnabled(false);
+        } else {
+            uploadAction.setEnabled(true);
         }
     }
 
@@ -148,9 +159,13 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
 
     @Override
     public void layerAdded(Layer newLayer) {
-        Main.debug("layer added: " + newLayer);
+        if (Main.isDebugEnabled()) {
+            Main.debug("layer added: " + newLayer);
+        }
         if (newLayer instanceof NoteLayer) {
-            Main.debug("note layer added");
+            if (Main.isDebugEnabled()) {
+                Main.debug("note layer added");
+            }
             noteData = ((NoteLayer)newLayer).getNoteData();
             model.setData(noteData.getNotes());
         }
@@ -159,7 +174,9 @@ public class NoteDialog extends ToggleDialog implements LayerChangeListener {
     @Override
     public void layerRemoved(Layer oldLayer) {
         if (oldLayer instanceof NoteLayer) {
-            Main.debug("note layer removed. Clearing everything");
+            if (Main.isDebugEnabled()) {
+                Main.debug("note layer removed. Clearing everything");
+            }
             noteData = null;
             model.clearData();
             if (Main.map.mapMode instanceof AddNoteAction) {

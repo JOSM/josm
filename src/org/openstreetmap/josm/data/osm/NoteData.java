@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -58,15 +59,36 @@ public class NoteData {
      */
     public void setSelectedNote(Note note) {
         selectedNote = note;
-        Main.map.noteDialog.selectionChanged();
-        Main.map.mapView.repaint();
+        if (Main.map != null) {
+            Main.map.noteDialog.selectionChanged();
+            Main.map.mapView.repaint();
+        }
+    }
+
+    /**
+     * Return whether or not there are any changes in the note data set.
+     * These changes may need to be either uploaded or saved.
+     * @return true if local modifications have been made to the note data set. False otherwise.
+     */
+    public synchronized boolean isModified() {
+        for (Note note : noteList) {
+            if (note.getId() < 0) { //notes with negative IDs are new
+                return true;
+            }
+            for (NoteComment comment : note.getComments()) {
+                if (comment.getIsNew()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
      * Add notes to the data set. It only adds a note if the ID is not already present
      * @param newNotes A list of notes to add
      */
-    public void addNotes(List<Note> newNotes) {
+    public synchronized void addNotes(List<Note> newNotes) {
         for (Note newNote : newNotes) {
             if (!noteList.contains(newNote)) {
                 noteList.add(newNote);
@@ -76,7 +98,9 @@ public class NoteData {
             }
         }
         dataUpdated();
-        Main.debug("notes in current set: " + noteList.size());
+        if (Main.isDebugEnabled()) {
+            Main.debug("notes in current set: " + noteList.size());
+        }
     }
 
     /**
@@ -84,7 +108,7 @@ public class NoteData {
      * @param location Location of note
      * @param text Required comment with which to open the note
      */
-    public void createNote(LatLon location, String text) {
+    public synchronized void createNote(LatLon location, String text) {
         if(text == null || text.isEmpty()) {
             throw new IllegalArgumentException("Comment can not be blank when creating a note");
         }
@@ -94,7 +118,9 @@ public class NoteData {
         note.setId(newNoteId--);
         NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.opened, true);
         note.addComment(comment);
-        Main.debug("Created note {0} with comment: {1}", note.getId(), text);
+        if (Main.isDebugEnabled()) {
+            Main.debug("Created note {0} with comment: {1}", note.getId(), text);
+        }
         noteList.add(note);
         dataUpdated();
     }
@@ -104,14 +130,16 @@ public class NoteData {
      * @param note Note to add comment to. Must already exist in the layer
      * @param text Comment to add
      */
-    public void addCommentToNote(Note note, String text) {
+    public synchronized void addCommentToNote(Note note, String text) {
         if (!noteList.contains(note)) {
             throw new IllegalArgumentException("Note to modify must be in layer");
         }
         if (note.getState() == State.closed) {
             throw new IllegalStateException("Cannot add a comment to a closed note");
         }
-        Main.debug("Adding comment to note {0}: {1}", note.getId(), text);
+        if (Main.isDebugEnabled()) {
+            Main.debug("Adding comment to note {0}: {1}", note.getId(), text);
+        }
         NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.commented, true);
         note.addComment(comment);
         dataUpdated();
@@ -122,14 +150,16 @@ public class NoteData {
      * @param note Note to close. Must already exist in the layer
      * @param text Comment to attach to close action, if desired
      */
-    public void closeNote(Note note, String text) {
+    public synchronized void closeNote(Note note, String text) {
         if (!noteList.contains(note)) {
             throw new IllegalArgumentException("Note to close must be in layer");
         }
         if (note.getState() != State.open) {
             throw new IllegalStateException("Cannot close a note that isn't open");
         }
-        Main.debug("closing note {0} with comment: {1}", note.getId(), text);
+        if (Main.isDebugEnabled()) {
+            Main.debug("closing note {0} with comment: {1}", note.getId(), text);
+        }
         NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.closed, true);
         note.addComment(comment);
         note.setState(State.closed);
@@ -142,14 +172,16 @@ public class NoteData {
      * @param note Note to reopen. Must already exist in the layer
      * @param text Comment to attach to the reopen action, if desired
      */
-    public void reOpenNote(Note note, String text) {
+    public synchronized void reOpenNote(Note note, String text) {
         if (!noteList.contains(note)) {
             throw new IllegalArgumentException("Note to reopen must be in layer");
         }
         if (note.getState() != State.closed) {
             throw new IllegalStateException("Cannot reopen a note that isn't closed");
         }
-        Main.debug("reopening note {0} with comment: {1}", note.getId(), text);
+        if (Main.isDebugEnabled()) {
+            Main.debug("reopening note {0} with comment: {1}", note.getId(), text);
+        }
         NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.reopened, true);
         note.addComment(comment);
         note.setState(State.open);
@@ -164,5 +196,19 @@ public class NoteData {
     private User getCurrentUser() {
         JosmUserIdentityManager userMgr = JosmUserIdentityManager.getInstance();
         return User.createOsmUser(userMgr.getUserId(), userMgr.getUserName());
+    }
+
+    /**
+     * Updates notes with new state. Primarily to be used when updating the
+     * note layer after uploading note changes to the server.
+     * @param updatedNotes Map containing the original note as the key and the updated note as the value
+     */
+    public synchronized void updateNotes(Map<Note, Note> updatedNotes) {
+        for (Map.Entry<Note, Note> entry : updatedNotes.entrySet()) {
+            Note oldNote = entry.getKey();
+            Note newNote = entry.getValue();
+            oldNote.updateWith(newNote);
+        }
+        dataUpdated();
     }
 }
