@@ -5747,6 +5747,13 @@
             <space />
             <key key="historic" value="memorial" />
             <text key="name" text="Name" />
+            <combo key="memorial" text="Type" values="statue,bust,plaque,stele,stone,war_memorial" />
+            <optional>
+                <text key="inscription" text="Inscription" />
+                <text key="artist_name" text="Artist Name" />
+                <text key="start_date" text="Start date" />
+                <text key="wikipedia" text="Wikipedia" />
+            </optional>
         </item> <!-- Memorial -->
         <item name="Wayside Cross" icon="presets/wayside_cross.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=wayside_cross"
