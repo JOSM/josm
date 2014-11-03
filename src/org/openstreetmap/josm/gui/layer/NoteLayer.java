@@ -72,17 +72,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public boolean isModified() {
-        for (Note note : noteData.getNotes()) {
-            if (note.getId() < 0) { //notes with negative IDs are new
-                return true;
-            }
-            for (NoteComment comment : note.getComments()) {
-                if (comment.getIsNew()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return noteData.isModified();
     }
 
     @Override
