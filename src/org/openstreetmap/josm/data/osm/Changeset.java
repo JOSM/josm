@@ -34,6 +34,8 @@ public final class Changeset implements Tagged {
     private LatLon min;
     /** the max. coordinates of the bounding box of this changeset */
     private LatLon max;
+    /** the number of comments for this changeset */
+    private int commentsCount;
     /** the map of tags */
     private Map<String,String> tags;
     /** indicates whether this changeset is incomplete. For an
@@ -160,6 +162,24 @@ public final class Changeset implements Tagged {
         this.max = max;
     }
 
+    /**
+     * Replies the number of comments for this changeset.
+     * @return the number of comments for this changeset
+     * @since 7700
+     */
+    public final int getCommentsCount() {
+        return commentsCount;
+    }
+
+    /**
+     * Sets the number of comments for this changeset.
+     * @param commentsCount the number of comments for this changeset
+     * @since 7700
+     */
+    public final void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
     @Override
     public Map<String, String> getKeys() {
         return tags;
@@ -235,6 +255,9 @@ public final class Changeset implements Tagged {
                 return false;
         } else if (!user.equals(other.user))
             return false;
+        if (commentsCount != other.commentsCount) {
+            return false;
+        }
         return true;
     }
 
@@ -285,6 +308,7 @@ public final class Changeset implements Tagged {
         this.open  = other.open;
         this.min = other.min;
         this.max = other.max;
+        this.commentsCount = other.commentsCount;
         this.tags = new HashMap<>(other.tags);
         this.incomplete = other.incomplete;
 
