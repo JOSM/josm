@@ -32,7 +32,7 @@ public class RemoteControl {
      * changes.
      */
     static final int protocolMajorVersion = 1;
-    static final int protocolMinorVersion = 6;
+    static final int protocolMinorVersion = 7;
 
     /**
      * Starts the remote control server
