@@ -330,6 +330,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
+                <text key="width" text="Width (meters)" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="bridge" text="Bridge" disable_off="true" />
@@ -354,6 +355,7 @@
             <key key="highway" value="motorway_link" />
             <optional>
                 <reference ref="highway_base" />
+                <text key="width" text="Width (meters)" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="bridge" text="Bridge" disable_off="true" />
@@ -381,6 +383,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
+                <text key="width" text="Width (meters)" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="motorroad" text="Motorroad" default="on" />
@@ -406,6 +409,7 @@
             <text key="ref" text="Reference" />
             <optional>
                 <reference ref="highway_base" />
+                <text key="width" text="Width (meters)" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
                     <check key="motorroad" text="Motorroad" default="on" />
@@ -437,7 +441,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
                 <check key="motorroad" text="Motorroad" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Primary -->
         <item name="Primary Link" icon="presets/way_primary.png" type="way" preset_name_label="true">
@@ -452,7 +456,7 @@
             <optional>
                 <reference ref="highway_base" />
                 <check key="motorroad" text="Motorroad" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Primary Link -->
         <item name="Secondary" icon="presets/way_secondary.png" type="way,closedway" preset_name_label="true">
@@ -473,7 +477,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Secondary -->
         <item name="Secondary Link" icon="presets/way_secondary.png" type="way" preset_name_label="true">
@@ -487,7 +491,7 @@
             <key key="highway" value="secondary_link" />
             <optional>
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Secondary Link -->
         <item name="Tertiary" icon="presets/way_tertiary.png" type="way,closedway" preset_name_label="true">
@@ -508,7 +512,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Tertiary -->
         <item name="Tertiary Link" icon="presets/way_tertiary.png" type="way" preset_name_label="true">
@@ -522,7 +526,7 @@
             <key key="highway" value="tertiary_link" />
             <optional>
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Tertiary Link -->
         <item name="Unclassified" icon="presets/way_unclassified.png" type="way,closedway" preset_name_label="true">
@@ -540,9 +544,8 @@
                 <text key="name" text="Name" />
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <check key="passing_places" text="Passing Places" />
-                <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Unclassified -->
         <item name="Residential" icon="presets/residential.png" type="way,closedway" preset_name_label="true">
@@ -562,8 +565,7 @@
             <optional>
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
-                <text key="width" text="Width (meters)" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Residential -->
         <item name="Bicycle Road" icon="presets/bicycle_road.svg" type="way" preset_name_label="true">
@@ -604,8 +606,7 @@
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <combo key="lanes" text="Lanes" values="1,2,3,4,5" length="3" />
                 <reference ref="surface" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
-                <text key="width" text="Width (meters)" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Living Street -->
         <item name="Pedestrian" icon="presets/pedestrian.png" type="way,closedway,relation" preset_name_label="true">
@@ -647,9 +648,8 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <check key="passing_places" text="Passing Places" />
-                <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Service -->
         <item name="Parking Aisle" icon="presets/way_unclassified.png" type="way,closedway" preset_name_label="true">
@@ -698,9 +698,8 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="junction" text="Junction" values="roundabout,jughandle,yes" />
-                <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Construction -->
         <separator/>
@@ -808,13 +807,12 @@
             <optional>
                 <reference ref="name_layer" />
                 <combo key="surface" text="Surface" values="paved,concrete,cobblestone,gravel,ground,grass,sand" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
                 <reference ref="general_access" />
                 <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
-                <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Track -->
         <item name="Path" icon="presets/path.png" type="way,closedway" preset_name_label="true">
@@ -833,7 +831,7 @@
             <optional>
                 <reference ref="name_layer" />
                 <reference ref="surface" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="sac_scale" text="SAC Scale" values_searchable="true">
                     <list_entry value="hiking" display_value="T1 - hiking trail" short_description="Trail well cleared. Area flat or slightly sloped, no fall hazard" />
                     <list_entry value="mountain_hiking" display_value="T2 - mountain hiking trail" short_description="Trail with continuous line and balanced ascent. Terrain partially steep, fall hazard possible" />
@@ -851,7 +849,6 @@
                 <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" />
                 <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <!-- <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" /> -->
-                <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Path -->
         <separator/>
@@ -868,8 +865,7 @@
                 <reference ref="name_layer" />
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <reference ref="surface" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
-                <text key="width" text="Width (meters)" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Dedicated Bridleway -->
         <item name="Cycle Lane/Track" type="way" preset_name_label="true">
@@ -910,9 +906,8 @@
             <optional>
                 <reference ref="name_layer" />
                 <reference ref="surface" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="foot" text="Pedestrians" values="unknown,yes,no" />
-                <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Dedicated Cycleway -->
         <item name="Segregated Foot- and Cycleway" icon="presets/foot_and_cycleway_segregated.png" type="way" preset_name_label="true">
@@ -926,8 +921,7 @@
             <optional>
                 <reference ref="name_layer" />
                 <reference ref="surface" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
-                <text key="width" text="Width (meters)" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Segregated Foot- and Cycleway -->
         <item name="Combined Foot- and Cycleway" icon="presets/foot_and_cycleway_combined.png" type="way" preset_name_label="true">
@@ -941,9 +935,8 @@
             <optional>
                 <reference ref="name_layer" />
                 <reference ref="surface" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <check key="passing_places" text="Passing Places" />
-                <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Combined Foot- and Cycleway -->
         <item name="Dedicated Footway" icon="presets/footway.png" type="way" preset_name_label="true">
@@ -983,8 +976,7 @@
                 <reference ref="name_layer" />
                 <reference ref="surface" />
                 <text key="step_count" text="Amount of Steps" />
-                <reference ref="highway_yesno_incline_oneway_lit" />
-                <text key="width" text="Width (meters)" />
+                <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Steps -->
     </group> <!-- Ways -->
@@ -5747,7 +5739,7 @@
             <space />
             <key key="historic" value="memorial" />
             <text key="name" text="Name" />
-            <combo key="memorial" text="Type" values="statue,bust,plaque,stele,stone,war_memorial" />
+            <combo key="memorial" text="Type" values="statue,bust,plaque,stele,stone,war_memorial" values_context="memorial" />
             <optional>
                 <text key="inscription" text="Inscription" />
                 <text key="artist_name" text="Artist Name" />
