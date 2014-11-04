@@ -44,6 +44,10 @@
         <reference ref="highway_yesno_incline_oneway_lit" />
         <text key="width" text="Width (meters)" />
     </chunk>
+    <chunk id="highway_yesno_incline_oneway_lit_width_sidewalk">
+        <reference ref="highway_yesno_incline_oneway_lit_width" />
+        <combo key="sidewalk" text="Sidewalk" values="both,left,right,no" values_context="sidewalk" />
+    </chunk>
     <chunk id="railway_service">
         <combo key="service" text="Service type" values="yard,siding,spur" />
     </chunk>
@@ -441,7 +445,7 @@
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
                 <check key="motorroad" text="Motorroad" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
             </optional>
         </item> <!-- Primary -->
         <item name="Primary Link" icon="presets/way_primary.png" type="way" preset_name_label="true">
@@ -456,7 +460,7 @@
             <optional>
                 <reference ref="highway_base" />
                 <check key="motorroad" text="Motorroad" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
             </optional>
         </item> <!-- Primary Link -->
         <item name="Secondary" icon="presets/way_secondary.png" type="way,closedway" preset_name_label="true">
@@ -477,7 +481,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
             </optional>
         </item> <!-- Secondary -->
         <item name="Secondary Link" icon="presets/way_secondary.png" type="way" preset_name_label="true">
@@ -491,7 +495,7 @@
             <key key="highway" value="secondary_link" />
             <optional>
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
             </optional>
         </item> <!-- Secondary Link -->
         <item name="Tertiary" icon="presets/way_tertiary.png" type="way,closedway" preset_name_label="true">
@@ -512,7 +516,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
             </optional>
         </item> <!-- Tertiary -->
         <item name="Tertiary Link" icon="presets/way_tertiary.png" type="way" preset_name_label="true">
@@ -526,7 +530,7 @@
             <key key="highway" value="tertiary_link" />
             <optional>
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
             </optional>
         </item> <!-- Tertiary Link -->
         <item name="Unclassified" icon="presets/way_unclassified.png" type="way,closedway" preset_name_label="true">
@@ -544,7 +548,7 @@
                 <text key="name" text="Name" />
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <check key="passing_places" text="Passing Places" />
             </optional>
         </item> <!-- Unclassified -->
@@ -565,7 +569,7 @@
             <optional>
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
             </optional>
         </item> <!-- Residential -->
         <item name="Bicycle Road" icon="presets/bicycle_road.svg" type="way" preset_name_label="true">
@@ -588,6 +592,7 @@
                 <reference ref="highway_yesno_incline" />
                 <check key="lit" text="Lit" />
                 <text key="width" text="Width (meters)" />
+                <combo key="sidewalk" text="Sidewalk" values="both,left,right,no" values_context="sidewalk" />
             </optional>
         </item> <!-- Bicycle Road -->
         <item name="Living Street" icon="presets/living_street.png" type="way,closedway" preset_name_label="true">
@@ -648,7 +653,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <check key="passing_places" text="Passing Places" />
             </optional>
         </item> <!-- Service -->
@@ -682,7 +687,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
             </optional>
         </item> <!-- Road (Unknown Type) -->
         <item name="Construction" icon="presets/construction.png" type="way,closedway" preset_name_label="true">
@@ -698,7 +703,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <combo key="junction" text="Junction" values="roundabout,jughandle,yes" />
             </optional>
         </item> <!-- Construction -->

@@ -2,6 +2,7 @@
 node[oneway],
 node[bridge?],
 node[landuse],
+node[sidewalk],
 node[source:outline] {
   throwWarning: tr("{0} on a node", "{0.key}");
   assertMatch: "node oneway=-1";
