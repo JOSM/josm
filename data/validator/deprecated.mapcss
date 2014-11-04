@@ -339,3 +339,7 @@
   throwWarning: tr("{0} should be replaced with {1}", "{0.key}", "{1.key}");
   fixChangeKey: "place_name => name";
 }
+
+way[sidewalk=yes] {
+  throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by ''left'', ''right'' or ''both''.", "{0.key}", "{0.value}");
+}
