@@ -83,6 +83,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
     private boolean canceled;
     private Exception lastException;
     private Set<Changeset> downloadedChangesets;
+    private final boolean includeDiscussion;
 
     protected void init(Collection<Integer> ids) {
         if (ids == null) {
@@ -111,6 +112,7 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
         // parent for dialog is Main.parent
         super(tr("Download changesets"), false /* don't ignore exceptions */);
         init(ids);
+        this.includeDiscussion = false;
     }
 
     /**
@@ -124,8 +126,26 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
      * @throws IllegalArgumentException thrown if dialogParent is null
      */
     public ChangesetHeaderDownloadTask(Component dialogParent, Collection<Integer> ids) throws IllegalArgumentException{
-        super(dialogParent,tr("Download changesets"), false /* don't ignore exceptions */);
+        this(dialogParent, ids, false);
+    }
+
+    /**
+     * Creates the download task for a collection of changeset ids, with possibility to download changeset discussion.
+     * Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog} whose parent is the parent window of <code>dialogParent</code>.
+     *
+     * Null ids or or ids &lt;= 0 in the id collection are ignored.
+     *
+     * @param dialogParent the parent reference component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be null.
+     * @param ids the collection of ids. Empty collection assumed if null.
+     * @param includeDiscussion determines if discussion comments must be downloaded or not
+     * @throws IllegalArgumentException thrown if dialogParent is null
+     * @since 7704
+     */
+    public ChangesetHeaderDownloadTask(Component dialogParent, Collection<Integer> ids, boolean includeDiscussion)
+            throws IllegalArgumentException {
+        super(dialogParent, tr("Download changesets"), false /* don't ignore exceptions */);
         init(ids);
+        this.includeDiscussion = includeDiscussion;
     }
 
     @Override
@@ -179,7 +199,8 @@ public class ChangesetHeaderDownloadTask extends PleaseWaitRunnable implements C
                 reader = new OsmServerChangesetReader();
             }
             downloadedChangesets = new HashSet<>();
-            downloadedChangesets.addAll(reader.readChangesets(idsToDownload, getProgressMonitor().createSubTaskMonitor(0, false)));
+            downloadedChangesets.addAll(reader.readChangesets(idsToDownload, includeDiscussion,
+                    getProgressMonitor().createSubTaskMonitor(0, false)));
         } catch(OsmTransferException e) {
             if (canceled)
                 // ignore exception if canceled

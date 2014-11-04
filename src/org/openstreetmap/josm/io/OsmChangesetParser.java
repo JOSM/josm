@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetDiscussionComment;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.XmlParsingException;
@@ -69,6 +71,12 @@ public final class OsmChangesetParser {
         /** The current changeset */
         private Changeset current = null;
 
+        /** The current comment */
+        private ChangesetDiscussionComment comment = null;
+
+        /** The current comment text */
+        private StringBuilder text = null;
+
         protected void parseChangesetAttributes(Changeset cs, Attributes atts) throws XmlParsingException {
             // -- id
             String value = atts.getValue("id");
@@ -77,10 +85,8 @@ public final class OsmChangesetParser {
             }
             current.setId(parseNumericAttribute(value, 1));
 
-            // -- user
-            String user = atts.getValue("user");
-            String uid = atts.getValue("uid");
-            current.setUser(createUser(uid, user));
+            // -- user / uid
+            current.setUser(createUser(atts));
 
             // -- created_at
             value = atts.getValue("created_at");
@@ -154,6 +160,17 @@ public final class OsmChangesetParser {
             }
         }
 
+        private void parseCommentAttributes(Attributes atts) throws XmlParsingException {
+            // -- date
+            String value = atts.getValue("date");
+            Date date = null;
+            if (value != null) {
+                date = DateUtils.fromString(value);
+            }
+
+            comment = new ChangesetDiscussionComment(date, createUser(atts));
+        }
+
         private int parseNumericAttribute(String value, int minAllowed) throws XmlParsingException {
             int att = 0;
             try {
@@ -192,8 +209,23 @@ public final class OsmChangesetParser {
                 String value = atts.getValue("v");
                 current.put(key, value);
                 break;
+            case "discussion":
+                break;
+            case "comment":
+                parseCommentAttributes(atts);
+                break;
+            case "text":
+                text = new StringBuilder();
+                break;
             default:
                 throwException(tr("Undefined element ''{0}'' found in input stream. Aborting.", qName));
+            }
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            if (text != null) {
+                text.append(ch, start, length);
             }
         }
 
@@ -201,10 +233,19 @@ public final class OsmChangesetParser {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if ("changeset".equals(qName)) {
                 changesets.add(current);
+                current = null;
+            } else if ("comment".equals(qName)) {
+                current.addDiscussionComment(comment);
+                comment = null;
+            } else if ("text".equals(qName)) {
+                comment.setText(text.toString());
+                text = null;
             }
         }
 
-        protected User createUser(String uid, String name) throws XmlParsingException {
+        protected User createUser(Attributes atts) throws XmlParsingException {
+            String name = atts.getValue("user");
+            String uid = atts.getValue("uid");
             if (uid == null) {
                 if (name == null)
                     return null;

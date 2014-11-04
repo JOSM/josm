@@ -28,20 +28,28 @@ import org.openstreetmap.josm.tools.XmlParsingException;
 public class OsmServerChangesetReader extends OsmServerReader {
 
     /**
-     * constructor
-     *
+     * Constructs a new {@code OsmServerChangesetReader}.
      */
-    public OsmServerChangesetReader(){
+    public OsmServerChangesetReader() {
         setDoAuthenticate(false);
     }
 
     /**
      * don't use - not implemented!
-     *
      */
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
+    }
+
+    protected final InputStream getChangesetInputStream(long id, boolean includeDiscussion, ProgressMonitor monitor)
+            throws OsmTransferException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("changeset/").append(id);
+        if (includeDiscussion) {
+            sb.append("?include_discussion=true");
+        }
+        return getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
     }
 
     /**
@@ -81,15 +89,17 @@ public class OsmServerChangesetReader extends OsmServerReader {
     }
 
     /**
-     * Reads the changeset with id <code>id</code> from the server
+     * Reads the changeset with id <code>id</code> from the server.
      *
-     * @param id  the changeset id. id &gt; 0 required.
+     * @param id the changeset id. id &gt; 0 required.
+     * @param includeDiscussion determines if discussion comments must be downloaded or not
      * @param monitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the changeset read
      * @throws OsmTransferException thrown if something goes wrong
      * @throws IllegalArgumentException if id &lt;= 0
+     * @since 7704
      */
-    public Changeset readChangeset(long id, ProgressMonitor monitor) throws OsmTransferException {
+    public Changeset readChangeset(long id, boolean includeDiscussion, ProgressMonitor monitor) throws OsmTransferException {
         if (id <= 0)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
         if (monitor == null) {
@@ -98,9 +108,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
         Changeset result = null;
         try {
             monitor.beginTask(tr("Reading changeset {0} ...",id));
-            StringBuilder sb = new StringBuilder();
-            sb.append("changeset/").append(id);
-            try (InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true))) {
+            try (InputStream in = getChangesetInputStream(id, includeDiscussion, monitor)) {
                 if (in == null)
                     return null;
                 monitor.indeterminateSubTask(tr("Downloading changeset {0} ...", id));
@@ -122,15 +130,17 @@ public class OsmServerChangesetReader extends OsmServerReader {
     }
 
     /**
-     * Reads the changeset with id <code>id</code> from the server
+     * Reads the changesets with id <code>ids</code> from the server.
      *
-     * @param ids  the list of ids. Ignored if null. Only load changesets for ids &gt; 0.
+     * @param ids the list of ids. Ignored if null. Only load changesets for ids &gt; 0.
+     * @param includeDiscussion determines if discussion comments must be downloaded or not
      * @param monitor the progress monitor. Set to {@link NullProgressMonitor#INSTANCE} if null
      * @return the changeset read
      * @throws OsmTransferException thrown if something goes wrong
      * @throws IllegalArgumentException if id &lt;= 0
+     * @since 7704
      */
-    public List<Changeset> readChangesets(Collection<Integer> ids, ProgressMonitor monitor) throws OsmTransferException {
+    public List<Changeset> readChangesets(Collection<Integer> ids, boolean includeDiscussion, ProgressMonitor monitor) throws OsmTransferException {
         if (ids == null)
             return Collections.emptyList();
         if (monitor == null) {
@@ -146,9 +156,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                     continue;
                 }
                 i++;
-                StringBuilder sb = new StringBuilder();
-                sb.append("changeset/").append(id);
-                try (InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true))) {
+                try (InputStream in = getChangesetInputStream(id, includeDiscussion, monitor)) {
                     if (in == null)
                         return null;
                     monitor.indeterminateSubTask(tr("({0}/{1}) Downloading changeset {2} ...", i, ids.size(), id));
