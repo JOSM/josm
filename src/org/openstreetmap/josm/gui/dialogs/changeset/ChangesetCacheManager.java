@@ -180,12 +180,19 @@ public class ChangesetCacheManager extends JFrame {
         tp.add(pnlChangesetContent);
         model.addPropertyChangeListener(pnlChangesetContent);
 
+        // -- add the panel for the changeset discussion
+        ChangesetDiscussionPanel pnlChangesetDiscussion = new ChangesetDiscussionPanel();
+        tp.add(pnlChangesetDiscussion);
+        model.addPropertyChangeListener(pnlChangesetDiscussion);
+
         tp.setTitleAt(0, tr("Properties"));
         tp.setToolTipTextAt(0, tr("Display the basic properties of the changeset"));
         tp.setTitleAt(1, tr("Tags"));
         tp.setToolTipTextAt(1, tr("Display the tags of the changeset"));
         tp.setTitleAt(2, tr("Content"));
         tp.setToolTipTextAt(2, tr("Display the objects created, updated, and deleted by the changeset"));
+        tp.setTitleAt(3, tr("Discussion"));
+        tp.setToolTipTextAt(3, tr("Display the public discussion around this changeset"));
 
         pnl.add(tp, BorderLayout.CENTER);
         return pnl;

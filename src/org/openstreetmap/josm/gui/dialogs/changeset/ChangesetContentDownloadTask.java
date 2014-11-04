@@ -134,7 +134,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
         synchronized(this) {
             reader = new OsmServerChangesetReader();
         }
-        Changeset cs = reader.readChangeset(changesetId, getProgressMonitor().createSubTaskMonitor(0, false));
+        Changeset cs = reader.readChangeset(changesetId, false, getProgressMonitor().createSubTaskMonitor(0, false));
         synchronized(this) {
             reader = null;
         }

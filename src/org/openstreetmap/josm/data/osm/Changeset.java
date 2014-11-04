@@ -1,9 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -38,12 +41,12 @@ public final class Changeset implements Tagged {
     private int commentsCount;
     /** the map of tags */
     private Map<String,String> tags;
-    /** indicates whether this changeset is incomplete. For an
-     * incomplete changeset we only know its id
-     */
+    /** indicates whether this changeset is incomplete. For an incomplete changeset we only know its id */
     private boolean incomplete;
     /** the changeset content */
     private ChangesetDataSet content = null;
+    /** the changeset discussion */
+    private List<ChangesetDiscussionComment> discussion = null;
 
     /**
      * Creates a new changeset with id 0.
@@ -326,5 +329,32 @@ public final class Changeset implements Tagged {
 
     public void setContent(ChangesetDataSet content) {
         this.content = content;
+    }
+
+    /**
+     * Replies the list of comments in the changeset discussion, if any.
+     * @return the list of comments in the changeset discussion. May be empty but never null
+     * @since 7704
+     */
+    public synchronized final List<ChangesetDiscussionComment> getDiscussion() {
+        if (discussion == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(discussion);
+    }
+
+    /**
+     * Adds a comment to the changeset discussion.
+     * @param comment the comment to add. Ignored if null
+     * @since 7704
+     */
+    public synchronized final void addDiscussionComment(ChangesetDiscussionComment comment) {
+        if (comment == null) {
+            return;
+        }
+        if (discussion == null) {
+            discussion = new ArrayList<>();
+        }
+        discussion.add(comment);
     }
 }
