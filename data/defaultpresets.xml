@@ -6271,6 +6271,13 @@
             <reference ref="name_operator_oh" />
             <reference ref="link_contact" />
         </item> <!-- Curtain -->
+        <item name="Art" icon="styles/standard/shop/art.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=art" />
+            <space />
+            <key key="shop" value="art" />
+            <reference ref="name_operator_oh" />
+            <reference ref="link_contact" />
+        </item> <!-- Art -->
         <item name="Frame" icon="presets/frame.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=frame"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=frame"
@@ -6425,6 +6432,13 @@
             <reference ref="name_oh" />
             <reference ref="link_contact" />
         </item> <!-- Beauty -->
+        <item name="Tattoo" icon="styles/standard/shop/tattoo.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=tattoo" />
+            <space />
+            <key key="shop" value="tattoo" />
+            <reference ref="name_oh" />
+            <reference ref="link_contact" />
+        </item> <!-- Tattoo -->
         <item name="Optician" icon="styles/standard/shop/optician.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=optician"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=optician"

@@ -1525,6 +1525,9 @@ area[shop=antiques],
 area[shop=music],
 area[shop=funeral_directors],
 area[shop=wine],
+area[shop=farm],
+area[shop=tattoo],
+area[shop=art],
 area[shop=bag] {
     fill-color: shop#00005f;
 }
@@ -1894,6 +1897,21 @@ node[shop=funeral_directors] {
 }
 node[shop=wine] {
     icon-image: "shop/wine.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=farm] {
+    icon-image: "presets/apple.png";
+    set icon_z17;
+    text: auto;
+}
+node[shop=tattoo] {
+    icon-image: "shop/tattoo.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=art] {
+    icon-image: "shop/art.svg";
     set icon_z17;
     text: auto;
 }
