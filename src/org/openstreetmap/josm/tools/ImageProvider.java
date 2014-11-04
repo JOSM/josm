@@ -682,7 +682,7 @@ public class ImageProvider {
                         return null;
                     }
                 }
-                if (mediatype != null && mediatype.contains("image/svg+xml")) {
+                if ("image/svg+xml".equals(mediatype)) {
                     String s = new String(bytes, StandardCharsets.UTF_8);
                     URI uri = getSvgUniverse().loadSVG(new StringReader(s), URLEncoder.encode(s, "UTF-8"));
                     SVGDiagram svg = getSvgUniverse().getDiagram(uri);
@@ -696,7 +696,8 @@ public class ImageProvider {
                         // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
                         // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
                         // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
-                        return new ImageResource(read(new ByteArrayInputStream(bytes), false, true));
+                        Image img = read(new ByteArrayInputStream(bytes), false, true);
+                        return img == null ? null : new ImageResource(img);
                     } catch (IOException e) {
                         Main.warn("IOException while reading image: "+e.getMessage());
                     }
